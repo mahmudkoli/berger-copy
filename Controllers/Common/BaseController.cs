@@ -1,0 +1,90 @@
+﻿using System;
+using BergerMsfaApi.Core;
+using BergerMsfaApi.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using X.PagedList;
+
+namespace BergerMsfaApi.Controllers.Common
+{
+    [ApiController]
+    public abstract class BaseController : ControllerBase
+    {
+        public IActionResult OkResult(IPagedList model)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = 200,
+                Status = "Success",
+                Msg = "Successful",
+                Data = new
+                {
+                    model.PageCount,
+                    model.PageNumber,
+                    model.PageSize,
+                    model.TotalItemCount,
+                    model.IsLastPage,
+                    model.HasNextPage,
+                    model.LastItemOnPage,
+                    model.FirstItemOnPage,
+                    model
+                }
+            };
+            return ObjectResult(apiResult);
+        }
+        public IActionResult OkResult(object data)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = 200,
+                Status = "Success",
+                Msg = "Successful",
+                Data = data
+            };
+            return ObjectResult(apiResult);
+        }
+        public IActionResult OkResult(object data, string message)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = 200,
+                Status = "Success",
+                Msg = message,
+                Data = data
+            };
+            return ObjectResult(apiResult);
+        }
+        public IActionResult ValidationResult(ModelStateDictionary modelState)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = 400,
+                Status = "ValidationError",
+                Msg = "Validation Fail",
+                Errors = modelState.GetErrors()
+            };
+            return ObjectResult(apiResult);
+        }
+        public IActionResult ExceptionResult(Exception ex)
+        {
+            ex.ToWriteLog();
+
+            var apiResult = new ApiResponse
+            {
+                StatusCode = 500,
+                Status = "Error",
+                Msg = ex.Message,
+                Data = new object()
+            };
+            return ObjectResult(apiResult);
+        }
+        public IActionResult ObjectResult(ApiResponse model)
+        {
+            var result = new ObjectResult(model)
+            {
+                StatusCode = model.StatusCode
+            };
+            return result;
+        }
+    }
+}

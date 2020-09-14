@@ -1,0 +1,19 @@
+<div class="card-body">
+    <ngb-tabset>
+        <ngb-tab title="Delegations">
+            <ng-template ngbTabContent>
+                    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="delegationNewList"
+                                 (customActivityOnRecord)="fnCustomTrigger($event)">
+                    </app-p-table>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab>
+            <ng-template ngbTabTitle>Delegation Logs</ng-template>
+            <ng-template ngbTabContent>
+                    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="delegationPastList"
+                                 (customActivityOnRecord)="fnCustomTrigger($event)">
+                    </app-p-table>
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
+</div>

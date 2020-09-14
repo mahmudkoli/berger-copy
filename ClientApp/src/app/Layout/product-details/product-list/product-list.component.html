@@ -1,0 +1,8 @@
+<!--<app-page-title [heading]="heading" [subheading]="subheading" [icon]="icon"></app-page-title>-->
+
+<div class="col col-lg-12">
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="productList"
+                 (customActivityOnRecord)="fnCustomTrigger($event)"
+                 (cellClickCallbackFn)="fnPtableCellClick($event)">
+    </app-p-table>
+</div>

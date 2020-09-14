@@ -1,0 +1,45 @@
+<form>
+    <div class="modal-header">
+        <h4 class="modal-title">Import CM User</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="position-relative form-group">
+                    <label>1. Download excel template (optional)</label><br />
+                    <a href="examples/cmuser.xlsx" type="button" class="btn btn-info btn-sm">Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="position-relative form-group">
+                    <label>2. Edit your excel file</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="position-relative form-group">
+                    <label for="inputFile">3. Upload your excel file</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" accept=".xlsx,.xls,.csv" #inputFile id="inputFile" 
+                            (change)="onChangeInputFile($event)">
+                        <label class="custom-file-label" for="inputFile">{{selectedFileName?selectedFileName:'Choose file'}}</label>
+                    </div>
+                    <small class="text-danger" *ngIf="fileError">
+                        {{fileError}}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!isFormValid">Import</button>
+    </div>
+</form>

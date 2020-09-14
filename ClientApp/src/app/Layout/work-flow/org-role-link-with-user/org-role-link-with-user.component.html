@@ -1,0 +1,42 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Organization Role Link With User </div>
+        <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteRoleList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to organization role list
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <form #roleMappingForm="ngForm" (submit)="fnSaveRoleMapping(roleMappingForm.value)">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Select User</label>
+                        <ng-select required name="userInfoId" #userInfoId="ngModel" [(ngModel)]="roleMappingModel.userInfoId" [ngClass]="{'is-valid':userInfoId.valid,'is-invalid':userInfoId.invalid && userInfoId.touched }">
+                            <ng-option *ngFor="let userInfo of this.userInfoList; index as i" [value]="userInfo.id"> {{userInfo.name}} </ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="userInfoId.valid || userInfoId.untouched">
+                            User is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="roleId">Select Organization Role</label>
+                        <ng-select required name="roleId" #roleId="ngModel" [(ngModel)]="roleMappingModel.roleId" [ngClass]="{'is-valid':roleId.valid,'is-invalid':roleId.invalid && roleId.touched }">
+                            <ng-option *ngFor="let role of this.roleList; index as i" [value]="role.id"> {{role.name}} </ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">
+                            Organization Role is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <button [disabled]="!roleMappingForm.valid" type="submit" class="mt-2 btn btn-primary pull-right"><fa class="mr-2" name="save"></fa> Save </button>
+        </form>
+    </div>
+</div>

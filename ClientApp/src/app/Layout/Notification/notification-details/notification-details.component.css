@@ -1,0 +1,51 @@
+.notification-details{
+    display: flex;
+}
+.notification-details .noti-sidebar{
+    background: #f8f9fa;
+    width: 220px;
+}
+.notification-details .sidebar-list .list-item{
+    position: relative;
+    list-style: none;
+    padding: 3px 0;
+    cursor: pointer;
+    margin-bottom: 3px;
+}
+.notification-details .sidebar-list .list-item .badge{
+    position: absolute;
+    right: 0;
+    top: 6px;
+}
+.notification-details .sidebar-list .list-item:hover{
+    color: #2bbbad;
+}
+.notification-details .sidebar-list .list-item.active{
+    color: #2bbbad;
+}
+.notification-details .noti-content{
+    flex: 1;
+    background: #fff;
+}
+.notification-details .noti-content .noti-content-header{
+    display: flex;
+    justify-content: space-between;
+}
+.notification-details .noti-content-body td i{
+    cursor: pointer;
+}
+
+.notification-details .noti-content-body td .approve-reject{
+    /* position: absolute; */
+    right: 5px;
+    top: 35%;
+}
+.notification-details .noti-content-body td .approve-reject i{
+    font-size: 25px;
+}
+.notification-details .noti-content-body td .approve-reject i:first-child{
+    margin-right: 5px;
+}
+.notification-details .noti-content-body td .approve-reject i:last-child{
+    margin-right: 10px;
+}

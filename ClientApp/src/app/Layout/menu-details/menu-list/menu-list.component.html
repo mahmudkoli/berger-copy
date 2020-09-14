@@ -1,0 +1,53 @@
+<div class="main-card mb-3 card menu-list-area">
+  <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Menu List</div>
+  </div>
+  <div class="card-body">
+    <div class="menu-list text-center">
+
+      <div class="role-dropdown text-left">
+        <ul class="p-2 border mt-3 rounded">
+
+          <li class="role-dropdown-item custom-control">
+            <div class="custom-checkbox custom-control">
+              <input type="checkbox" id="exampleCustomCheckboxRoot" class="custom-control-input" checked="checked">
+              <label for="exampleCustomCheckboxRoot" class="custom-control-label">Root</label>
+              <i class="pe-7s-plus menu-list-plus text-primary font-weight-bold ml-1" (click)="onCreateNewMenu()"> </i>
+
+              <ul class="sub-role-dropdown">
+                <ng-container *ngTemplateOutlet="recursiveMenuListTmpl; context:{ $implicit: menuList }">
+                </ng-container>
+              </ul>
+            </div>
+          </li>
+
+          <div class="dropdown-divider"></div>
+          <li class="d-flex justify-content-end">
+            <button class="btn btn-dark mr-2" type="button"><i class="pe-7s-back pr-1"></i>Back</button>
+            <!-- <button class="btn btn-primary " type="button"><i class="fa fa-save pr-1"></i>Save</button> -->
+
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #recursiveMenuListTmpl let-menuList>
+  <li *ngFor="let item of menuList;" class="role-dropdown-item custom-control">
+    <div class="custom-checkbox custom-control">
+      <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+item.id" [attr.checked]="item.isParent"
+        class="custom-control-input">
+      <label [attr.for]="'exampleCustomCheckbox'+item.id" class="custom-control-label">{{item.name}}</label>
+      <i class="pe-7s-plus menu-list-plus text-primary font-weight-bold ml-1" (click)="onCreateNewMenu(item)">
+      </i>
+      <i class="fa fa-fw ml-1 mr-1 menu-list-edit text-info" aria-hidden="true" title="edit"
+        (click)="openMenuModal(item)"></i>
+      <i *ngIf="!item.isParent" class="pe-7s-trash menu-list-delete font-weight-bold" (click)="delete(item.id)"> </i>
+
+      <ul *ngIf="item.children.length > 0" class="sub-role-dropdown">
+        <ng-container *ngTemplateOutlet="recursiveMenuListTmpl; context:{ $implicit: item.children }"></ng-container>
+      </ul>
+    </div>
+  </li>
+</ng-template>

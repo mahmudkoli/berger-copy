@@ -1,0 +1,28 @@
+<!-- for image start -->
+<div class="form-group text-center mt-2 py-2 border rounded">
+  <label class="label form-control-label" *ngIf="title">{{title}}</label>
+    <div class="file-preview">
+    <input type="file" accept="image/*" #inputFile id="inputFile" (change)="onChangeInputFile($event)">
+      <div class="input-file col-md-12 position-relative">
+        <label for="inputFile">
+        <div class="file-container" [style.width]="width" [style.height]="height" >
+          <div class="plus" *ngIf="!url">
+            <i class="fa fa-plus" title="Click here"></i>
+          </div>
+          <!-- <div *ngIf="url"> -->
+            <img [src]="url" class="rounded" alt="{{title}}" *ngIf="url">
+            <!-- </div> -->
+          </div>
+        </label>
+          <span class="remove" *ngIf="url && removable"> 
+            <a (click)="onRemoveInputFile()" title="remove"><i class="fa fa-times-circle-o"></i></a>
+          </span>
+      </div>
+      <div class="col-md-12 text-center">
+        <span class="caption text-danger" *ngIf="imageError">
+          {{ imageError }}
+        </span>
+      </div>
+    </div>
+</div>
+<!-- for image end -->

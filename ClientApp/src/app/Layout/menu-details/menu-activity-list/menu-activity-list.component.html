@@ -1,0 +1,85 @@
+<div class="main-card mb-3 card">
+    <!--[hidden]="!showForm"-->
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New Activity</div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form #menuActivityForm="ngForm" method="post" (ngSubmit)="submit()">
+            <div class="form-row">
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="menuId">Select Menu</label>
+                        <select id="menuId" name="menuId" [(ngModel)]="menuActivityModel.menuId" #menuId="ngModel" required
+                            class="form-control" 
+                            [ngClass]="{'is-valid':menuActivityModel.menuId>0,'is-invalid':menuActivityModel.menuId===0 && menuId.touched }">
+                            
+                            <option *ngFor="let menu of menus" [value]="menu.id">
+                                {{menu.name}}
+                            </option>
+                        </select>
+                        <small class="text-danger" [class.d-none]="menuActivityModel.menuId>0 || menuId.untouched">
+                            Menu is Required
+                        </small>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="status">Select Status</label>
+                        <select name="status" id="status" class="form-control" [(ngModel)]="menuActivityModel.status"
+                            required>
+                            <option *ngFor="let s of statusValues" [value]="s" [label]="enumStatus[s]">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Activity Name</label>
+                        <input required name="name" #name="ngModel" id="name" placeholder="" type="text"
+                            class="form-control"
+                            [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
+                            [(ngModel)]="menuActivityModel.name" />
+                        <small class="text-danger" [class.d-none]="name.valid || name.untouched">
+                            Activity Name is Required
+                        </small>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="activityCode">Activity Code </label>
+                        <input required name="activityCode" #activityCode="ngModel" id="activityCode" placeholder=""
+                            type="text" class="form-control"
+                            [ngClass]="{'is-valid':activityCode.valid,'is-invalid':activityCode.invalid && activityCode.touched }"
+                            [(ngModel)]="menuActivityModel.activityCode" />
+                        <small class="text-danger" [class.d-none]="activityCode.valid || activityCode.untouched">
+                            Activity Code is Required
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="text-right">
+                <button [disabled]="!menuActivityForm.valid || menuActivityModel.menuId===0" type="submit"
+                    class="mt-2 btn btn-primary" >
+                    <i class="fa fa-save pr-1"></i>{{'save'}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="menuActivity"
+        (customActivityOnRecord)="fnCustomTrigger($event)">
+    </app-p-table>
+</div>

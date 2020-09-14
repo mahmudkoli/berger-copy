@@ -1,0 +1,186 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Edit User Details</div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form #userInfoForm="ngForm" method="post" (ngSubmit)="submitUserForm(userInfo)">
+            <div class="form-row">
+                <!-- <div class="col-md-6">
+
+                    <div class="position-relative form-group">
+                        <label for="code">Code</label>
+                        <input required name="code" #code="ngModel" id="code" placeholder=""
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':phoneNumber.valid,'is-invalid':code.invalid && code.touched }"
+                               [(ngModel)]="userInfo.code" />
+                        <small class="text-danger" [class.d-none]="code.valid || code.untouched">
+                            Code is Required
+                        </small>
+                    </div>
+
+                </div> -->
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Name</label>
+                        <input required name="name" #name="ngModel" id="name"
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
+                               [(ngModel)]="userInfo.name" />
+                        <small class="text-danger" [class.d-none]="name.valid || name.untouched">
+                            Required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="email">Email</label>
+                        <input [readonly]="true" name="code" #email="ngModel" id="email" placeholder=""
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':email.valid,'is-invalid':email.invalid && email.touched }"
+                               [(ngModel)]="userInfo.email" />
+                        <small class="text-danger" [class.d-none]="email.valid || email.untouched">
+                            Email is Required
+                        </small>
+                    </div>
+
+                </div>
+
+               
+
+              
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="designation">Designation</label>
+                        <input required name="designation" #designation="ngModel" id="designation" placeholder=""
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':designation.valid,'is-invalid':designation.invalid && designation.touched }"
+                               [(ngModel)]="userInfo.designation" />
+                        <small class="text-danger" [class.d-none]="designation.valid || designation.untouched">
+                            Designation is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="phoneNumber">Mobile Number</label>
+                        <input required name="phoneNumber" #phoneNumber="ngModel" id="phoneNumber" placeholder=""
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':phoneNumber.valid,'is-invalid':phoneNumber.invalid && phoneNumber.touched }"
+                               [(ngModel)]="userInfo.phoneNumber" />
+                        <small class="text-danger" [class.d-none]="phoneNumber.valid || phoneNumber.untouched">
+                            Mobile Number is Required
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="roleId">Application Role</label>                                
+                        <ng-select required id="roleId" #roleId="ngModel" name="roleId" [multiple]="false" [(ngModel)]="userInfo.roleId" [disabled]="!isAdmin">
+                            <ng-option *ngFor="let role of roleList" [value]="role.id" [disabled]="roleId.disabled">{{role.name}}</ng-option>
+                        </ng-select>
+
+                        <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">
+                            Application Role is Required
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="status">Status</label>                                
+            
+
+                        <ng-select required id="status" #status="ngModel" name="status" [multiple]="false" [(ngModel)]="userInfo.status">
+                            <ng-option *ngFor="let key of enumStatusTypes;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+
+                        <small class="text-danger" [class.d-none]="status.valid || status.untouched">
+                            Status is required
+                        </small>
+                    </div>
+                </div>
+
+
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="hierarchyId">Select Hierarchy</label>
+                            <ng-select required #hierarchyId="ngModel" name="hierarchyId" 
+                            (change)="changeFnOptType($event)"
+                            [multiple]="false" [(ngModel)]="userInfo.hierarchyId"
+                            [ngClass]="{'is-valid':hierarchyId.valid,'is-invalid':hierarchyId.invalid && hierarchyId.touched }">
+                                <ng-option *ngFor="let key of hierarchyType;" [value]="key.id">{{key.hierarchyName}}</ng-option>
+        
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="hierarchyId.valid || hierarchyId.untouched">
+                                Hierarchy is required
+                            </small>
+                        </div>
+                    </div>
+        
+                <ng-container *ngIf="isNational">
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="nationalNodeId">Select National</label>
+                            <ng-select id="nationalNodeId" #nationalNodeId="ngModel" name="nationalNodeId" [multiple]="true" [(ngModel)]="userInfo.nationalNodeIds">
+                                <ng-option [value]="394">National</ng-option>
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="nationalNodeId.valid || nationalNodeId.untouched">
+                                National is Required
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="isRegion">
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="regionNodeId">Select Region</label>
+                            <ng-select id="regionNodeId" #regionNodeId="ngModel" name="regionNodeId" [multiple]="true" [(ngModel)]="userInfo.regionNodeIds">
+                                <ng-option *ngFor="let region of regions" [value]="region.nodeId" [disabled]="regionNodeId.disabled">{{region.name}}</ng-option>
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="regionNodeId.valid || regionNodeId.untouched">
+                                Region is Required
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="isArea">
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="regionNodeId">Select Area</label>
+                            <ng-select id="areaNodeId" #areaNodeId="ngModel" name="areaNodeId" [multiple]="true" [(ngModel)]="userInfo.areaNodeIds">
+                                <ng-option *ngFor="let area of areas" [value]="area.nodeId" [disabled]="areaNodeId.disabled">{{area.name}}</ng-option>
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="areaNodeId.valid || areaNodeId.untouched">
+                                Area is Required
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="isTerritory">
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="terrNodeId">Select Territory</label>
+                            <ng-select id="terrNodeId" #terrNodeId="ngModel" name="terrNodeId" [multiple]="true" [(ngModel)]="userInfo.territoryNodeIds">
+                                <ng-option *ngFor="let territory of territories" [value]="territory.nodeId" [disabled]="terrNodeId.disabled">{{territory.name}}</ng-option>
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="terrNodeId.valid || terrNodeId.untouched">
+                                Territory is Required
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
+
+
+            </div>
+            <div class="text-right">
+                <button [disabled]="!userInfoForm.valid" type="submit" class="mt-2 btn btn-primary"><i class="fa fa-save pr-1"></i>Save User Info</button>
+            </div>
+        </form>
+    </div>
+</div>

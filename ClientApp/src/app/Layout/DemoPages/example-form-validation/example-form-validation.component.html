@@ -1,0 +1,76 @@
+
+<div class="main-card mb-3 card">
+  <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Sticky Page Headers</div>
+    <div class="btn-actions-pane-right">
+      <button type="button" class="btn-shadow d-inline-flex align-items-center btn btn-success">
+        <fa class="mr-2" name="plus"></fa>
+        Add
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <form #examplForm="ngForm" (submit)="submitUserFomr(examplForm.value)">
+      <div class="form-row">
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label for="exampleEmail11">Email</label>
+            <input required name="email" #emailAddress="ngModel" id="exampleEmail11" placeholder="with a placeholder"
+              type="email" class="form-control"
+              [ngClass]="{'is-valid':emailAddress.valid,'is-invalid':emailAddress.invalid && emailAddress.touched }"
+              [(ngModel)]="userModel.emailAddress" />
+            <small class="text-danger" [class.d-none]="emailAddress.valid || emailAddress.untouched">
+              Email address is required
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label for="exampleEmail11">City</label>
+            <ng-select [items]="companies" [addTag]="addTagPromise" multiple="true" bindLabel="name" [loading]="loading"
+              [(ngModel)]="selectedCompanies">
+              <ng-template ng-tag-tmp let-search="searchTerm">
+                <b>create new</b>: {{search}}
+              </ng-template>
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label for="examplePassword11">Password</label>
+            <input required name="password" #password="ngModel"
+              [ngClass]="{'is-valid':password.valid,'is-invalid':password.invalid && password.touched }"
+              placeholder="Password" type="password" class="form-control" [(ngModel)]="userModel.password" />
+            <small class="text-danger" [class.d-none]="password.valid || password.untouched"> Password is
+              required
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative form-group"><label for="exampleAddress">Address</label><input name="address"
+          id="exampleAddress" placeholder="1234 Main St" type="text" class="form-control" [(ngModel)]="userModel.address">
+      </div>
+      <div class="form-row">
+        <div class="col-md-6">
+          <div class="position-relative form-group"><label for="exampleCity">City</label><input name="city"
+              id="exampleCity" type="text" class="form-control">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="position-relative form-group"><label for="exampleState">State</label>
+            <input name="state"  id="exampleState" type="text" class="form-control" [(ngModel)]="userModel.state" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="position-relative form-group"><label for="exampleZip">Zip</label>
+            <input name="zip" id="exampleZip" [(ngModel)]="userModel.zip" type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="position-relative form-check"><input name="check" id="exampleCheck" type="checkbox"
+          class="form-check-input"><label for="exampleCheck" class="form-check-label">Check
+          me out</label></div>
+      <button [disabled]="!examplForm.valid" type="submit" class="mt-2 btn btn-primary">Sign in </button>
+    </form>
+  </div>
+</div>

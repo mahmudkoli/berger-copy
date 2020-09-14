@@ -1,0 +1,122 @@
+
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Menu Activity Permission</div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form #menuActivityPermissionForm="ngForm" method="post" (ngSubmit)="submitPermissionForm(menuActivityPermissionVMlist)">
+            <div class="form-row">
+                <div class="col-md-6 d-flex align-items-center mb-3">
+                        <label class="mb-0 mr-2" for="roleId">Role Select</label>
+                        <ng-select class="flex-fill" id="roleId" name="roleId" [(ngModel)]="roleId" [multiple]="false" >
+                            <ng-option *ngFor="let role of roleList" [value]="role.id" >
+                                {{role.name}}
+                            </ng-option>
+                        </ng-select>
+                    <button [disabled]="this.roleId == null" class="btn btn-primary ml-2" type="button" (click)="onRoleChange(roleId)">Load</button>
+                </div>
+        
+                
+
+                <table class="table table-hover table-sm table-striped table-bordered">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Menu</th>
+                            <th scope="col">Activity</th>
+                            <th scope="col">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="selectAllCanView"  
+                                    [(ngModel)]="selectAllCanView"
+                                    (change)="onSelectAllCanView()"
+                                    name="selectAllCanView"  >
+                                    <label class="custom-control-label" for="selectAllCanView">Can View</label>
+                                  </div>
+                            
+                            </th>
+                            <th scope="col">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="selectAllCanInsert"  
+                                    [(ngModel)]="selectAllCanInsert"
+                                    (change)="onSelectAllCanInsert()"
+                                    name="selectAllCanInsert"  >
+                                    <label class="custom-control-label" for="selectAllCanInsert">Can Insert</label>
+                                  </div>
+                            
+                            </th>
+                            <th scope="col">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="selectAllCanUpdate"  
+                                    [(ngModel)]="selectAllCanUpdate"
+                                    (change)="onSelectAllCanUpdate()"
+                                    name="selectAllCanUpdate"  >
+                                    <label class="custom-control-label" for="selectAllCanUpdate">Can Update</label>
+                                  </div>
+                            
+                            </th>
+
+                            <th scope="col">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="selectAllCanDelete"  
+                                    [(ngModel)]="selectAllCanDelete"
+                                    (change)="onSelectAllCanDelete()"
+                                    name="selectAllCanDelete"  >
+                                    <label class="custom-control-label" for="selectAllCanDelete">Can Delete</label>
+                                  </div>
+                            
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let m of menuActivityPermissionVMlist;let i = index" [attr.data-index]="i">
+                            <td scope="row">{{i+1}}</td>
+                            <td>{{m.menuName}}</td>
+                            <td>{{m.activityName}}</td>
+                            <td >
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [(ngModel)]="m.canView" name="{{ 'canView' + i }}" #canView="ngModel"  id = "{{ 'canView' + i }}">
+                                    <label class="custom-control-label" for="{{ 'canView' + i }}"></label>
+                                  </div>
+                            </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [(ngModel)]="m.canInsert"
+                                    name="{{'canInsert' + i}}" #canInsert="ngModel" id="{{'canInsert' + i}}">
+                                    <label class="custom-control-label" for="{{'canInsert' + i}}"></label>
+                                  </div>
+                            </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [(ngModel)]="m.canUpdate"
+                                    name="{{ 'canUpdate' + i}}" #canUpdate="ngModel" id="{{ 'canUpdate' + i}}">
+                                    <label class="custom-control-label" for="{{ 'canUpdate' + i}}"></label>
+                                  </div>
+                            </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [(ngModel)]="m.canDelete"
+                                    name="{{ 'canDelete' + i}}" #canDelete="ngModel" id="{{ 'canDelete' + i}}">
+                                    <label class="custom-control-label" for="{{ 'canDelete' + i}}"></label>
+                                  </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+            
+            
+            <div class="text-right">
+                <button [disabled]="this.menuActivityPermissionVMlist.length == 0" type="submit" class="mt-2 btn btn-primary"><i class="fa fa-save pr-1"></i>Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+

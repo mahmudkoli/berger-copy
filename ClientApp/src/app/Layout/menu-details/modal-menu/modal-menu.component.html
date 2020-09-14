@@ -1,0 +1,98 @@
+<form #menuForm="ngForm">
+    <div class="modal-header">
+        <h4 class="modal-title">Menu</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="menuName">Menu Title</label>
+                    <input class="form-control" type="text" placeholder="Name of the menu" id="name" name="name"
+                        [(ngModel)]="menuItem.name" required #name="ngModel"
+                        [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }" />
+                    <small class="text-danger" [class.d-none]="name.valid || name.untouched">
+                        Title is required
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="status">Select Status</label>
+                    <select id="status" class="form-control" [(ngModel)]="menuItem.status" name="status" required>
+                        <option *ngFor="let s of statusValues" [value]="s" [label]="enumStatus[s]">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="controller">Controller Name</label>
+                    <input class="form-control" type="text" placeholder="Name of the controller" id="controller"
+                        name="controller" [(ngModel)]="menuItem.controller" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="action">Action Name</label>
+                    <input class="form-control" type="text" placeholder="Name of the action" id="action" name="action"
+                        [(ngModel)]="menuItem.action" />
+                </div>
+            </div>
+           
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="url">Url</label>
+                    <input class="form-control" type="text" placeholder="Enter url" id="url" name="url"
+                        [(ngModel)]="menuItem.url" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="iconClass">Icon-class</label>
+                    <input class="form-control" type="text" placeholder="Name of the iconClass" id="iconClass"
+                        name="iconClass" [(ngModel)]="menuItem.iconClass" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="parentId">Select Parent</label>
+                    <select [disabled]="menuItem.hasParentOnCreateNew" id="parentId" class="form-control" [(ngModel)]="menuItem.parentId" name="parentId">
+                        <option value='0' label="Select Parent">
+                        </option>
+                        <option *ngFor="let pMenu of parentMenuList" [value]="pMenu.id" [label]="pMenu.name">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="sequence">Sequence</label>
+                    <input class="form-control" type="number" placeholder="Sequence of the menu" id="sequence" name="sequence"
+                        [(ngModel)]="menuItem.sequence" #sequence="ngModel" min='0' required
+                        pattern="^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$"
+                        [ngClass]="{'is-valid': sequence.valid,'is-invalid':sequence.invalid && sequence.touched }" />
+                    <small class="text-danger" [class.d-none]="sequence.valid || sequence.untouched">
+                        Please give a positive sequence
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!menuForm.valid">Save</button>
+    </div>
+</form>

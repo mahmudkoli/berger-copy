@@ -1,0 +1,39 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { BaseLayoutComponent } from './LayoutComponent/base-layout/base-layout.component';
+import { MsalGuard } from '@azure/msal-angular';
+import { AuthGuard } from '../Shared/Guards/auth.guard';
+
+const routes: Routes = [
+    {
+        path: '',
+        component: BaseLayoutComponent,
+        canActivate: [ AuthGuard ],
+        children: [
+
+            { path: '', redirectTo: 'demo' },
+            // { path: '', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
+
+            { path: 'menu', loadChildren: () => import('./menu-details/menu-details.module').then(m => m.MenuDetailsModule) },
+            // tslint:disable-next-line:max-line-length
+            { path: 'product', loadChildren: () => import('./product-details/product-details.module').then(m => m.ProductDetailsModule) },
+            // tslint:disable-next-line:max-line-length
+            { path: 'role', loadChildren: () => import('./role-details/role-details.module').then(m => m.RoleDetailsModule) },
+            { path: 'demo', loadChildren: () => import('./DemoPages/demo.module').then(m => m.DemoModule) },
+            { path: 'users', loadChildren: () => import('./cm-user-details/user-details.module').then(m => m.UserDetailsModule) },
+            { path: 'users-info', loadChildren: () => import('./user-info/user-info.module').then(m => m.UserInfoModule) },
+          { path: 'work-flow', loadChildren: () => import('./work-flow/work-flow.module').then(m => m.WorkFlowModule) },
+            { path: 'notification', loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule) }
+         
+
+
+
+        ]
+    }
+];
+
+@NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
+})
+export class LayoutRoutingModule { }

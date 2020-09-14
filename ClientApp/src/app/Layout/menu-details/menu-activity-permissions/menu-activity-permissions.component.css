@@ -1,0 +1,6 @@
+:host .custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #ffffff;
+}
+:host .table-hover tbody tr:hover {
+    background-color: #d1f3ff;
+}

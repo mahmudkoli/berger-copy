@@ -1,0 +1,74 @@
+<!-- <div class="col col-lg-12">
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="users"
+                 (customActivityOnRecord)="fnCustomTrigger($event)">
+    </app-p-table>
+</div> -->
+
+
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">CM User List</div>
+        <div class="btn-actions-pane-right">
+            <button *ngIf="this.permissionGroup.canCreate"type="button" class="mb-2 mr-2 btn-transition btn btn-outline-info  pr-1" (click)="openExcelImportModal()" >
+                <fa class="mr-2 fa fa-file-excel-o"></fa>
+                Import CM User
+            </button>
+           
+            <button *ngIf="this.permissionGroup.canCreate" type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="addNewUser()">
+                <fa class="mr-2" name="plus"></fa>
+                Create New
+            </button>
+        </div>
+    </div>
+    <div>
+            <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="users"
+                         (customActivityOnRecord)="fnCustomTrigger($event)">
+            </app-p-table>
+    </div>
+</div>
+
+
+
+<!--<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Users List</div>
+        <div class="btn-actions-pane-right">
+            <button type="button" class="btn-shadow d-inline-flex align-items-center btn btn-success" (click)="addNewUser()">
+                <fa class="mr-2" name="plus"></fa>
+                Create New
+            </button>
+        </div>
+    </div>
+    <div class="container">
+
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users; index as i">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.phoneNumber }}</td>
+                        <td>{{ user.address }}</td>
+                        <td>
+                        <td><button type="button" (click)="deleteUser(user.id)">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>-->
+
+
+<!--<app-page-title [heading]="heading" [subheading]="subheading" [icon]="icon"></app-page-title>-->
+

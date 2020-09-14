@@ -1,0 +1,193 @@
+// custom css 
+.sticky-card {
+    position: sticky;
+    top: 60px;
+    z-index: 8;
+  }
+  
+  .logo-src{
+    position: relative;
+    &::after {
+      content: "FM CM Management Tool";
+      white-space: nowrap;
+      position: absolute;
+      left: 100%;
+      bottom: 0;
+      color: #2bbbad;
+      font-size: smaller;
+    }
+  }
+  .closed-sidebar .logo-src::after{
+    display: none;
+  }
+  
+  .fm-toast{
+    opacity: 1;
+    .toast-header{
+      background: #2bbbad;
+      color: #fff;
+    }
+    .close{
+      color: #fff;
+    }
+  }
+  
+  .survey-generation-form{
+    .btn-outline-info{
+      &:disabled{
+        color: #fff;
+        background-color: #2FA4E7;
+        border-color: #2FA4E7
+      }
+    }
+    .btn-outline-danger{
+      &:disabled{
+        color: #212529;
+        background-color: #da9297;
+        border-color: #da9297;
+      }
+    }
+  }
+  
+  .btn-outline-danger{
+    &:hover{
+      color: #fff;
+    }
+  }
+  
+  .p-table .popover{
+    min-width: 250px;
+  }
+  .btn-danger{
+    color: #fff;
+  }
+  :disabled,.disabled{
+    cursor: not-allowed;
+  }
+  .role-table thead th.name{
+    width: 70%!important;
+  }
+  .menu-list-area  {
+    .ng-select-container{
+      color: #2bbbad;
+      border-color:#2bbbad;
+    }
+    .ng-clear{
+      color: #2bbbad;
+    }
+    .ng-select .ng-arrow-wrapper .ng-arrow {
+      border-color: #2bbbad transparent transparent;
+  }
+  }
+  .unauthorize-carousel .carousel-control-prev,
+  .unauthorize-carousel .carousel-control-next{
+      background:transparent;
+  }
+  .unauthorize-carousel .carousel-inner:focus,
+  .unauthorize-carousel .carousel.slide:focus,
+  .unauthorize-carousel .carousel-item:focus{
+      outline: none;
+  }
+  
+  .cm-task-accordion .accordion .card:first-of-type,
+  .posm-accordion .accordion .card:first-of-type,
+  .cm-task-accordion .accordion .card:last-of-type,
+  .posm-accordion .accordion .card:last-of-type{
+      border-bottom: 1px solid rgba(19, 83, 77, 0.125);
+      border-radius: 0.25rem;
+  }
+  .cm-activity-form .accordion .card  .card-header{
+    background-color: rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    padding:0;
+    &.table-card-header {
+      padding: 0.75rem 1.25rem;
+    }
+    .card-header-content{
+      padding: 0.75rem 1.25rem;
+    }
+  }
+  
+  // role dropdown
+  .role-dropdown{
+    background: #fff;
+    min-width: 250px;
+    display: inline-block;
+    border-radius: 5px;
+    .menu-list-delete, .menu-list-edit,.menu-list-plus{
+      cursor: pointer;
+    }
+    .menu-list-delete{
+      color: #da9297;;
+    }
+    .role-dropdown-item{
+        display: block;
+        width: 100%;
+        padding: 0.4rem 1rem;
+        clear: both;
+        font-weight: 400;
+        color: #212529;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+        position: relative;
+        &:hover{
+          color: #16181b;
+          text-decoration: none;
+          background: #d1f3ff linear-gradient(180deg, #d8f5ff, #d1f3ff) repeat-x;
+        }
+        
+        .sub-role-dropdown{
+          position: relative;
+          left: 0;
+          top: 0;
+          display: none;
+          padding-left: 0;
+          background: #fff;
+          border-left: 1px dashed #777;
+          .role-dropdown-item{
+            &::before{
+              position: absolute;
+              content: "";
+              width: 20px;
+              height: 20px;
+              border-bottom: 1px dashed #777;
+              background: transparent;
+              left: 0;
+              top: -2px;
+            }
+          }
+        }
+        .custom-control-input{
+          &:checked~.sub-role-dropdown{
+            display: block;
+          }
+        }
+  
+    }
+  }
+  .role-select,
+  .role-select:focus,
+  .role-select:active{
+    color: #fff;
+    background: #2bbbad linear-gradient(180deg, #4bc5b9, #2bbbad) repeat-x;
+    border-color: #2bbbad;
+    option{
+      background: #fff;
+      color:#495057;
+    }
+  }
+.card-header.sticky-card{
+  border-top: 5px solid #2bbbad;
+}
+.main-card .p-table-content{
+  border-top: none!important;
+}
+.app-role-list .statusText{
+  width:100%!important;
+}
+.posm-product-approval select {
+    -moz-appearance: none;
+    -webkit-appearance:none;
+}

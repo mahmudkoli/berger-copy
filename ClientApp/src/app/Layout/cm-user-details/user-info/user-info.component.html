@@ -1,0 +1,107 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New User</div>
+        <div class="btn-actions-pane-right">
+            <!--<button type="button" class="btn-shadow d-inline-flex align-items-center btn btn-success">
+                <fa class="mr-2" name="plus"></fa>
+                Add
+            </button>-->
+        </div>
+    </div>
+    <div class="card-body">
+        <form #examplForm="ngForm" method="post" (ngSubmit)="submitUserForm(examplForm.value)">
+            <div class="form-row">
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="userName">Name</label>
+                        <input required name="userName" #userName="ngModel" id="userName" 
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':userName.valid,'is-invalid':userName.invalid && userName.touched }"
+                               [(ngModel)]="userModel.name" />
+                        <small class="text-danger" [class.d-none]="userName.valid || userName.untouched">
+                            Required
+                        </small>
+                        <!--<div class="text-danger" *ngIf="userName.errors.required">First Name is required</div>-->
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="emailAddress">Email</label>
+                        <input required name="emailAddress" #emailAddress="ngModel" id="emailAddress" placeholder="Please provide a valid email address"
+                               type="email" class="form-control"
+                               [ngClass]="{'is-valid':emailAddress.valid,'is-invalid':emailAddress.invalid && emailAddress.touched }"
+                               [(ngModel)]="userModel.email" />
+                        <small class="text-danger" [class.d-none]="emailAddress.valid || emailAddress.untouched">
+                            Email address is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="phoneNumber">Mobile Number</label>
+                        <input required name="phoneNumber" #phoneNumber="ngModel" id="phoneNumber" placeholder="Please Provide Mobile Number"
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':phoneNumber.valid,'is-invalid': phoneNumber.touched }"
+                               [(ngModel)]="userModel.phoneNumber" />
+                        <small class="text-danger" [class.d-none]="phoneNumber.valid || phoneNumber.untouched">
+                            Mobile Number is Required
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="passWord">Password</label>
+                        <input required name="passWord" #passWord="ngModel"
+                               [ngClass]="{'is-valid':passWord.valid,'is-invalid':passWord.invalid && passWord.touched }"
+                               placeholder="Please give a strong password" type="password" class="form-control" [(ngModel)]="userModel.passWord" />
+                        <small class="text-danger" [class.d-none]="passWord.valid || passWord.untouched">
+                            Password is
+                            required
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="position-relative form-group">
+                <label for="address">Address</label>
+                <input #address="ngModel"  name="address" id="address" placeholder="" type="text" class="form-control" [(ngModel)]="userModel.address">
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="exampleCity">City</label><input name="city"
+                                                                    id="exampleCity" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="exampleState">IsActive</label>
+                     
+                        <select  name="isActive" id="isActive"  class="form-control" [(ngModel)]="userModel.isActive">
+                            <!--<option value="">Please select an option</option>-->
+                            <option value="1">Active</option>
+                            <option value="0">InActive</option>
+                        </select>
+                    </div>
+                </div>
+                <!--<div class="col-md-2">
+                    <div class="position-relative form-group">
+                        <label for="exampleZip">Zip</label>
+                        <input name="zip" id="exampleZip" [(ngModel)]="userModel.zip" type="text" class="form-control" />
+                    </div>
+                </div>-->
+            </div>
+            <!--<div class="position-relative form-check">
+                <input name="check" id="exampleCheck" type="text"
+                       class="form-check-input"><label for="exampleCheck" class="form-check-label">
+                    
+                </label>
+            </div>-->
+            <button [disabled]="!examplForm.valid" type="submit" class="mt-2 btn btn-primary">Add User</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="main-card mb-3 card menu-list-area">
+
+<div class="card-header sticky-card d-flex justify-content-between align-items-center">
+  <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Workflow Tree</div>
+</div>
+
+<div class="menu-list">
+  <div class="d-flex">
+    <!-- <div class="role-select-wrapper">
+      <select class="role-select form-control w-auto mb-2" (change)="showMenuPermission($event)">
+        <option *ngFor="let role of roleList" [value]="role.id" [label]="role.name"></option>
+      </select>
+    </div> -->
+    <div class="btn-role">
+      <!-- <button class="btn btn-primary btn-lg ml-2" (click)="onCreateNewMenu()">Add New Menu</button> -->
+    </div>
+  </div>
+  <div class="role-dropdown">
+    <ul class="p-3">
+
+      <li class="role-dropdown-item custom-checkbox custom-control">
+        <div class="custom-checkbox custom-control">
+          <input type="checkbox" id="exampleCustomCheckboxRoot" class="custom-control-input" checked="checked">
+          <label for="exampleCustomCheckboxRoot" class="custom-control-label">Root</label>
+          <!-- <i class="pe-7s-plus menu-list-plus" (click)="onCreateNewMenu()"> </i> -->
+
+
+          <ul class="sub-role-dropdown">
+
+
+            <li *ngFor="let root of workFlowList; let i = index"
+              class="role-dropdown-item custom-checkbox custom-control">
+              <div class="custom-checkbox custom-control">
+                <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+i" class="custom-control-input"
+                  [attr.checked]="root.checked">
+                <label [attr.for]="'exampleCustomCheckbox'+i" class="custom-control-label">{{root.name}}
+                  </label>
+               
+
+
+                <ul class="sub-role-dropdown">
+                  <li *ngFor="let level0sibling of root.configList; let i0 = index" class="role-dropdown-item">
+                    <div class="custom-checkbox custom-control">
+                      <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+i+i0" class="custom-control-input"
+                        [attr.checked]="">
+                      <label [attr.for]="'exampleCustomCheckbox'+i+i0"
+                             class="custom-control-label">{{level0sibling.orgRoleName}}</label>
+                     
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </li>
+
+
+          </ul>
+        </div>
+      </li>
+
+      <div class="dropdown-divider"></div>
+      <!-- <li class="d-flex justify-content-between">
+        <button class="btn btn-primary" type="button">Save</button>
+        <button class="btn btn-danger" type="button">Cancel</button>
+      </li> -->
+    </ul>
+  </div>
+</div>
+</div>

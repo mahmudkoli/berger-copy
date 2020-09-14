@@ -1,0 +1,136 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create WorkFlow Configuration </div>
+        <div class="btn-actions-pane-right">
+            <!--<button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteWorkFlowConfigurationList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to role list
+            </button>-->
+        </div>
+    </div>
+    <div class="card-body">
+        <form #workFlowConfigurationsForm="ngForm" (submit)="fnSaveWorkFlowConfiguration()">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="masterWorkFlowId">Select WorkFlow</label>
+                        <ng-select required name="masterWorkFlowId" #masterWorkFlowId="ngModel" [(ngModel)]="workFlowConfigurationModel.masterWorkFlowId" [ngClass]="{'is-valid':masterWorkFlowId.valid,'is-invalid':masterWorkFlowId.invalid && masterWorkFlowId.touched }">
+                            <ng-option *ngFor="let workFlow of this.workFlowList; index as i" [value]="workFlow.id"> {{workFlow.name}} </ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="masterWorkFlowId.valid || masterWorkFlowId.untouched">
+                            WorkFlow is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="orgRoleId">Select Organization Role</label>
+                        <ng-select required name="orgRoleId" #orgRoleId="ngModel" [(ngModel)]="workFlowConfigurationModel.orgRoleId" [ngClass]="{'is-valid':orgRoleId.valid,'is-invalid':orgRoleId.invalid && orgRoleId.touched }">
+                            <ng-option *ngFor="let role of this.organizationRoleList; index as i" [value]="role.id"> {{role.name}} </ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="orgRoleId.valid || orgRoleId.untouched">
+                            Organization Role is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="modeOfApproval">Select Mode of Approval</label>
+                        <ng-select required name="modeOfApproval" #modeOfApproval="ngModel" [(ngModel)]="workFlowConfigurationModel.modeOfApproval" [ngClass]="{'is-valid':modeOfApproval.valid,'is-invalid':modeOfApproval.invalid && modeOfApproval.touched }">
+                            <ng-option *ngFor="let key of modeOfApprovalOptions;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="modeOfApproval.valid || modeOfApproval.untouched">
+                            Mode of Approval is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="approvalStatus">Select Approval Status</label>
+                        <ng-select required name="approvalStatus" #approvalStatus="ngModel" [(ngModel)]="workFlowConfigurationModel.approvalStatus" [ngClass]="{'is-valid':approvalStatus.valid,'is-invalid':approvalStatus.invalid && approvalStatus.touched }">
+                            <ng-option *ngFor="let key of approvalStatusOptions;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="approvalStatus.valid || approvalStatus.untouched">
+                            Approval Status is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="rejectedStatus">Select Rejected Status</label>
+                        <ng-select required name="rejectedStatus" #rejectedStatus="ngModel" [(ngModel)]="workFlowConfigurationModel.rejectedStatus" [ngClass]="{'is-valid':rejectedStatus.valid,'is-invalid':rejectedStatus.invalid && rejectedStatus.touched }">
+                            <ng-option *ngFor="let key of rejectedStatusOptions;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="rejectedStatus.valid || rejectedStatus.untouched">
+                            Rejected Status is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="notificationStatus">Select Notification Status</label>
+                        <ng-select required name="notificationStatus" #notificationStatus="ngModel" [(ngModel)]="workFlowConfigurationModel.notificationStatus" [ngClass]="{'is-valid':notificationStatus.valid,'is-invalid':notificationStatus.invalid && notificationStatus.touched }">
+                            <ng-option *ngFor="let key of notificationStatusOptions;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" [class.d-none]="notificationStatus.valid || notificationStatus.untouched">
+                            Notification Status is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="status">Status</label>
+                        <ng-select name="status" #status="ngModel" [(ngModel)]="workFlowConfigurationModel.status">
+                            <ng-option *ngFor="let key of enumStatusTypes;" [value]="key.id">{{key.label}}</ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+                <div *ngIf="workFlowConfigurationModel.id > 0" class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="sequence">Sequence</label>
+                        <input required [readonly]="true" name="sequence" #sequence="ngModel"  placeholder=""
+                               type="number" class="form-control"
+    
+                
+                               [ngClass]="{'is-valid':sequence.valid,'is-invalid':sequence.invalid && sequence.touched }"
+                               [(ngModel)]="workFlowConfigurationModel.sequence" />
+                        <small class="text-danger" [class.d-none]="sequence.valid || sequence.untouched">
+                            Sequence is required
+                        </small>
+                        
+                    </div>
+                </div>
+               
+
+                    <div *ngIf="workFlowConfigurationModel.id  <= 0 || workFlowConfigurationModel.id == null" class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="sequence">Sequence</label>
+                            <input required name="sequence" #sequence="ngModel"  placeholder=""
+                                   type="number" class="form-control"
+        
+                    
+                                   [ngClass]="{'is-valid':sequence.valid,'is-invalid':sequence.invalid && sequence.touched }"
+                                   [(ngModel)]="workFlowConfigurationModel.sequence" />
+                            <small class="text-danger" [class.d-none]="sequence.valid || sequence.untouched">
+                                Sequence is required
+                            </small>
+                            
+                        </div>
+                    </div>
+
+                
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteWorkFlowConfigurationList()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button [disabled]="!workFlowConfigurationsForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

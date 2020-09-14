@@ -1,0 +1,89 @@
+<form #logHistoryForm="ngForm" class="posm-product-approval">
+    <div class="modal-header">
+        <!-- <h4 class="modal-title">POSM Product Approval</h4> -->
+        <h4 class="modal-title">{{workflowLogModel.workflowMessage}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <!-- <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="workflowTitle">Workflow Title</label>
+                    <input class="form-control" type="text" placeholder="" id="workflowTitle" name="workflowTitle"
+                        [(ngModel)]="workflowLogHistory.workflowTitle" required #workflowTitle="ngModel"
+                        [ngClass]="{'is-valid':workflowTitle.valid,'is-invalid':workflowTitle.invalid && workflowTitle.touched }" />
+                    <small class="text-danger" [class.d-none]="workflowTitle.valid || workflowTitle.untouched">
+                        Workflow Title is required
+                    </small>
+                </div>
+            </div> -->
+
+                <div class="col-md-4" *ngIf="workflowLogModel.workflowStatus == workFlowStatusEnum.Pending">
+                    <div class="position-relative form-group">
+                        <label for="workflowStatus">Select Workflow Status</label>
+                        <select class="form-control" [(ngModel)]="workflowLogHistory.workflowStatus" 
+                                id="workflowStatus" name="workflowStatus" #workflowStatus="ngModel" required
+                                [ngClass]="{'is-valid':workflowStatus.valid,'is-invalid':workflowStatus.invalid && workflowStatus.touched }">
+                            <option *ngFor="let key of workFlowStatusEnumLabel" [value]="key.id" [label]="key.label">{{key.label}}
+                            </option>
+                        </select>
+                        <small class="text-danger" [class.d-none]="workflowStatus.valid || workflowStatus.untouched">
+                            Workflow status is required
+                        </small>
+                    </div>
+                </div>
+                
+
+            <div class="col-md-8" *ngIf="workflowLogModel.workflowStatus == workFlowStatusEnum.Pending">
+                <div class="position-relative form-group">
+                    <label for="comments">Comment</label>
+                    <textarea class="form-control" rows="1" type="text" placeholder="" id="comments" name="comments"
+                        [(ngModel)]="workflowLogHistory.comments" required #comments="ngModel"
+                        [ngClass]="{'is-valid':comments.valid,'is-invalid':comments.invalid && comments.touched }">
+                    </textarea>
+                    <small class="text-danger" [class.d-none]="comments.valid || comments.untouched">
+                        Comment is required
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-md-12" *ngIf="workflowLogModel.data">
+                <label>Data</label>
+                <table class="table table-sm table-bordered table-responsive">
+                    <tr>
+                        <th *ngFor="let wfLog of workflowLogModel.data | keyvalue">{{wfLog.key}}</th>
+                    </tr>
+                    <tr>
+                        <td *ngFor="let wfLog of workflowLogModel.data | keyvalue">{{wfLog.value}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-12" *ngIf="workflowLogModel.logHistories && workflowLogModel.logHistories.length > 0">
+                <label>Log History</label>
+                <table class="table table-sm table-bordered table-responsive">
+                    <tr>
+                        <th>Submit By</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                    </tr>
+                    <tr *ngFor="let wfLogHistory of workflowLogModel.logHistories">
+                        <td>{{wfLogHistory.userName}}</td>
+                        <td>{{wfLogHistory.createdTime | date:'dd-MM-yyyy hh.mm.ss a'}}</td>
+                        <td>{{getStatusText(wfLogHistory.workflowStatus)}}</td>
+                        <td>{{wfLogHistory.comments}}</td>
+                    </tr>
+                </table>
+            </div>
+            
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!logHistoryForm.valid" *ngIf="workflowLogModel.workflowStatus == workFlowStatusEnum.Pending">Save</button>
+    </div>
+</form>

@@ -1,0 +1,59 @@
+<div class="main-card mb-3 card menu-list-area menu-permission">
+  <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Menu Permissions</div>
+  </div>
+  <div class="card-body">
+    <div class="menu-list text-center">
+      <div>
+        <div class="role-select-wrapper m-auto" style="width: 41%;">
+          <form #examplForm="ngForm" class="menu-form d-flex justify-content-center align-items-center">
+              <label for="role-id" class="mb-0 mr-2">Select Role</label>
+              <ng-select id="role-id" class="flex-fill" name="role" [multiple]="false" [(ngModel)]="selectedRole"
+              >
+              <ng-option *ngFor="let role of roleList" [value]="role.id">
+                {{role.name}}
+              </ng-option>
+              </ng-select>
+              <button class="btn btn-primary ml-3" type="button" (click)="showMenuPermission(selectedRole)">Load</button>
+          </form>
+        </div>
+      </div>
+      <div class="role-dropdown text-left">
+        <ul class="p-2 border mt-3 rounded">
+          <li class="role-dropdown-item custom-control">
+            <div class="custom-checkbox custom-control">
+              <input type="checkbox" id="exampleCustomCheckboxRoot" class="custom-control-input" checked="checked">
+              <label for="exampleCustomCheckboxRoot" class="custom-control-label">Root</label>
+
+              <ul class="sub-role-dropdown">
+                <ng-container *ngTemplateOutlet="recursiveMenuListTmpl; context:{ $implicit: menuList }">
+                </ng-container>
+              </ul>
+            </div>
+          </li>
+
+          <div class="dropdown-divider"></div>
+          <li class="d-flex justify-content-end">
+            <button class="btn btn-dark mr-2" type="button" (click)="backToMenuList()"><i class="pe-7s-back pr-1"></i>Back</button>
+            <button class="btn btn-primary " type="button" (click)="assignRoleToMenu()"><i class="fa fa-save pr-1"></i>Save</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #recursiveMenuListTmpl let-menuList>
+  <li *ngFor="let item of menuList;" class="role-dropdown-item custom-control">
+    <div class="custom-checkbox custom-control">
+      <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+item.id" [attr.checked]="item.menuChecked"
+        class="custom-control-input"
+        (change)="selectMenu($event, item)">
+      <label [attr.for]="'exampleCustomCheckbox'+item.id" class="custom-control-label">{{item.name}}</label>
+
+      <ul *ngIf="item.children.length > 0" class="sub-role-dropdown">
+        <ng-container *ngTemplateOutlet="recursiveMenuListTmpl; context:{ $implicit: item.children }"></ng-container>
+      </ul>
+    </div>
+  </li>
+</ng-template>

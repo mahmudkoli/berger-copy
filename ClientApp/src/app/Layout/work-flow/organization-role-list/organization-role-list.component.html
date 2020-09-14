@@ -1,0 +1,84 @@
+﻿<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Roles List</div>
+        <div class="btn-actions-pane-right">
+            <!-- <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-info" (click)="fnRouteLinkRoleWithUser()">
+                <fa class="mr-2" name="link"></fa>
+                Role Link with User
+            </button> -->
+            &nbsp;
+            <button *ngIf="this.permissionGroup.canCreate"type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteAddRole()">
+                <fa class="mr-2" name="plus"></fa>
+                Create New
+            </button>
+        </div>
+    </div>
+
+
+
+    <div class="main-card mb-3 card menu-list-area">
+
+        <div class="menu-list">
+            <div class="d-flex">
+                <!-- <div class="role-select-wrapper">
+                  <select class="role-select form-control w-auto mb-2" (change)="showMenuPermission($event)">
+                    <option *ngFor="let role of roleList" [value]="role.id" [label]="role.name"></option>
+                  </select>
+                </div> -->
+                <div class="btn-role">
+                    <!-- <button class="btn btn-primary btn-lg ml-2" (click)="onCreateNewMenu()">Add New Menu</button> -->
+                </div>
+            </div>
+            <div class="role-dropdown">
+                <ul class="p-3">
+
+                    <li class="role-dropdown-item custom-checkbox custom-control">
+                        <div class="custom-checkbox custom-control">
+                            <input type="checkbox" id="exampleCustomCheckboxRoot" class="custom-control-input" checked="checked">
+                            <label for="exampleCustomCheckboxRoot" class="custom-control-label">Root</label>
+                            <!-- <i class="pe-7s-plus menu-list-plus" (click)="onCreateNewMenu()"> </i> -->
+
+
+                            <ul class="sub-role-dropdown">
+
+
+                                <li *ngFor="let root of orgUserList; let i = index"
+                                    class="role-dropdown-item custom-checkbox custom-control">
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+i" class="custom-control-input"
+                                               [attr.checked]="root.checked">
+                                        <label [attr.for]="'exampleCustomCheckbox'+i" class="custom-control-label">
+                                            {{root.name}}
+                                        </label>
+
+                                        <i *ngIf="this.permissionGroup.canUpdate" class="fa fa-fw ml-1 mr-1 menu-list-edit text-info" aria-hidden="true" title="edit"
+                                           (click)="edit(root.id)"></i>
+                                        <ul class="sub-role-dropdown">
+                                            <li *ngFor="let config of root.configList" class="role-dropdown-item">
+                                                <div class="custom-checkbox custom-control">
+                                                    <input type="checkbox" [attr.id]="'exampleCustomCheckbox'+i+i" class="custom-control-input"
+                                                           [attr.checked]="">
+                                                    <label class="custom-control-label">{{config.userName }}</label>
+
+                                                </div>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <div class="dropdown-divider"></div>
+                    <!--<li class="d-flex justify-content-between">
+                      <button class="btn btn-primary" type="button">Save</button>
+                      <button class="btn btn-danger" type="button">Cancel</button>
+                    </li>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

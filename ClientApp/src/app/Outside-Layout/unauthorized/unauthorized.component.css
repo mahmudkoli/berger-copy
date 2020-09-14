@@ -1,0 +1,18 @@
+
+.carousel-content{
+    width: 70%;
+    margin:auto;
+    text-align: center;
+    color: #fff;
+}
+.error-page .error-content{
+   max-width: 600px;
+}
+.error-page h1{
+   font-size: 70px;
+   font-weight: bold;
+}
+.error-page p{
+   font-size: 26px;
+   font-weight: bold;
+}
