@@ -35,7 +35,7 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.prod = !environment.production;
+    this.prod = environment.production;
     setTimeout(() => {
 
       this.innerWidth = window.innerWidth;

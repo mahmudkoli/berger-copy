@@ -57,7 +57,6 @@ namespace BergerMsfaApi.Domain
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
-        public DbSet<Delegation> Delegations { get; set; }
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
 
         #endregion

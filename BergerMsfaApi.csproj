@@ -114,7 +114,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Models\Common\" />
     <Folder Include="Models\DailyActivities\" />
     <Folder Include="Models\Reports\" />

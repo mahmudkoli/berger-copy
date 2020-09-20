@@ -33,12 +33,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
 };
 
-export const protectedResourceMap: [string, string[]][] = [
-    ['https://graph.microsoft.com/v1.0/me', ['user.read']],
-    ['https://graph.microsoft.com/v1.0', ['user.read.all']]
-];
 
-const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
 @NgModule({
     declarations: [
@@ -80,7 +75,6 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
         // DEFAULT_DROPZONE_CONFIG,
     },
         ConfigActions,
-        AuthGuard,
         PermissionGuard
     ],
     bootstrap: [AppComponent]

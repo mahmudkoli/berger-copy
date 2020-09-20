@@ -7,9 +7,7 @@ import { ActivityPermissionService } from './Shared/Services/Activity-Permission
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbPaginationNext } from '@ng-bootstrap/ng-bootstrap';
-const requestObj = {
-    scopes: ['user.read.all']
-};
+
 @Injectable({ providedIn: 'root' })
 export class AppInterceptorService implements HttpInterceptor {
     /**
@@ -58,7 +56,7 @@ export class AppInterceptorService implements HttpInterceptor {
 
             token = localStorage.getItem('adtoken');
         } else {
-            token = localStorage.getItem('fmapptoken');
+            token = localStorage.getItem('bergermsfa');
         }
 
         if (request.method === 'POST' || request.method === 'PUT') {

@@ -39,9 +39,6 @@ namespace BergerMsfaApi.Domain.Users
         public List<UserRoleMapping> Roles { get; set; }
         public List<CMUser> CMUsers { get; set; }
         public List<UserTerritoryMapping> Territories { get; set; }
-
-        //public List<Delegation> SentDelegations { get; set; }
-        //public List<Delegation> ReceivedDelegations { get; set; }
     }
 
 

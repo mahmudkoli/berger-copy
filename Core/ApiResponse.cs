@@ -6,7 +6,7 @@ namespace BergerMsfaApi.Core
     public class ApiResponse<T> where T : class
     {
         /*
-         	status:err
+    status:err
 	statusCode:
 	data:[]
 	mgs:"Bad return"

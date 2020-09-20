@@ -68,8 +68,8 @@ export class NotificationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getWorkflowLogForCurrentUser();
-    this.getWorkflowLogHistoryForCurrentUser();
+    // this.getWorkflowLogForCurrentUser();
+    // this.getWorkflowLogHistoryForCurrentUser();
   }
 
   getStatusText(status) {

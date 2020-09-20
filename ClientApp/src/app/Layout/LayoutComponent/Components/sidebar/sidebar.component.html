@@ -59,12 +59,12 @@
 
 
                             <ngb-panel>
-                                <ng-template ngbPanelHeader *ngIf="this.prod">
+                                <ng-template ngbPanelHeader *ngIf="!this.prod">
                                     <div class="vsm-header">Bootstrap Demo Components</div>
                                 </ng-template>
                             </ngb-panel>
 
-                            <ngb-panel id="dashboardsMenu" *ngIf="this.prod">
+                            <ngb-panel id="dashboardsMenu" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-rocket"></i>
@@ -92,7 +92,7 @@
                                 </ng-template>
                             </ngb-panel>
 
-                            <ngb-panel id="elementsMenu" *ngIf="this.prod">
+                            <ngb-panel id="elementsMenu" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-diamond"></i>
@@ -143,7 +143,7 @@
                                     </div>
                                 </ng-template>
                             </ngb-panel>
-                            <ngb-panel id="componentsMenu" *ngIf="this.prod">
+                            <ngb-panel id="componentsMenu" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-car"></i>
@@ -206,7 +206,7 @@
                                     </div>
                                 </ng-template>
                             </ngb-panel>
-                            <ngb-panel id="formElementsMenu" *ngIf="this.prod">
+                            <ngb-panel id="formElementsMenu" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-helm"></i>
@@ -239,7 +239,7 @@
                                     </div>
                                 </ng-template>
                             </ngb-panel>
-                            <ngb-panel id="tablesMenu" *ngIf="this.prod">
+                            <ngb-panel id="tablesMenu" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-safe"></i>
@@ -267,7 +267,7 @@
                                 </ng-template>
                             </ngb-panel>
 
-                            <ngb-panel id="pagesMenu3" *ngIf="this.prod">
+                            <ngb-panel id="pagesMenu3" *ngIf="!this.prod">
                                 <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="vsm-link">
                                         <i class="vsm-icon pe-7s-graph2"></i>
@@ -291,8 +291,8 @@
 
 
                         </ngb-accordion>
-                        <div class="vsm-header" *ngIf="this.prod">Charts</div>
-                        <div class="vsm-item" *ngIf="this.prod">
+                        <div class="vsm-header" *ngIf="!this.prod">Charts</div>
+                        <div class="vsm-item" *ngIf="!this.prod">
                             <a routerLink="/demo/chartjs" routerLinkActive="active-item" class="vsm-link">
                                 <i class="vsm-icon pe-7s-graph2"></i>
                                 <span class="vsm-title">ChartJS</span>
