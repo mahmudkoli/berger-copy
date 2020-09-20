@@ -30,8 +30,8 @@ namespace BergerMsfaApi.Core
         // public bool IsActive { get; set; }
 
         public Status Status { get; set; }
-        public int? WorkflowId { get; set; }
-        public WorkflowStatus WFStatus { get; set; }
+        //public int? WorkflowId { get; set; }
+        //public WorkflowStatus WFStatus { get; set; }
     }
 
 }

@@ -66,11 +66,12 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
         ReactiveFormsModule,
         HttpClientModule
     ],
-    providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: AppInterceptorService,
-        multi: true
-    },
+    providers: [
+    //    {
+    //    provide: HTTP_INTERCEPTORS,
+    //    useClass: AppInterceptorService,
+    //    multi: true
+    //},
     {
         provide:
             PERFECT_SCROLLBAR_CONFIG,
