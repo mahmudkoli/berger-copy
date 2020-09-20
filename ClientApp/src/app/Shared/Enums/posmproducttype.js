@@ -5,6 +5,7 @@
 //    Temporary = 3
 //}
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PosmProductType = void 0;
 var PosmProductType = /** @class */ (function () {
     function PosmProductType() {
     }

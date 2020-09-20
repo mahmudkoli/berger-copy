@@ -50,7 +50,7 @@ export class DropdownListComponent implements OnInit {
 
     private fnDropdownList() {
         this.alertService.fnLoading(true);
-        this.dnamiynDropdownService.get().subscribe(
+        this.dnamiynDropdownService.getDropdownList().subscribe(
             (res) => {
                 this.dropdownTypeDetailList = res.data || [];;
             },

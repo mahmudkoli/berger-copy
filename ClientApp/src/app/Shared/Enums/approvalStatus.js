@@ -7,6 +7,7 @@
 //    ProgramCompleted = 5
 //}
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApprovalStatuses = void 0;
 var ApprovalStatuses = /** @class */ (function () {
     function ApprovalStatuses() {
     }

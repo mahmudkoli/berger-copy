@@ -49,6 +49,7 @@ import { SharedMasterModule } from '../Shared/Modules/shared-master/shared-maste
 
 import { NotificationComponent } from './LayoutComponent/Components/header/elements/notification/notification.component';
 import { ModalNotificationComponent } from './LayoutComponent/Components/header/modal-notification/modal-notification.component';
+import { CollectionEntryListComponent } from './Collection-Entry/collection-entry-list/collection-entry-list.component';
 
 
 

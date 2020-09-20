@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WorkFlowConfiguration = void 0;
 var status_1 = require("../../Enums/status");
 var WorkFlowConfiguration = /** @class */ (function () {
     function WorkFlowConfiguration() {

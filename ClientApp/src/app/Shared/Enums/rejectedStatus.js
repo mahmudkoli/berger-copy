@@ -6,6 +6,7 @@
 //    ReturnFromFMD = 4
 //}
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RejectedStatuses = void 0;
 var RejectedStatuses = /** @class */ (function () {
     function RejectedStatuses() {
     }

@@ -19,6 +19,76 @@ namespace BergerMsfaApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("BergerMsfaApi.Domain.CollectionEntry.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreditControlAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ManualNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentForm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SAPID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditControlAreaId");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("BergerMsfaApi.Domain.Examples.Example", b =>
                 {
                     b.Property<int>("Id")
@@ -893,6 +963,17 @@ namespace BergerMsfaApi.Migrations
                     b.HasIndex("WorkflowLogId");
 
                     b.ToTable("WorkflowLogHistories");
+                });
+
+            modelBuilder.Entity("BergerMsfaApi.Domain.CollectionEntry.Payment", b =>
+                {
+                    b.HasOne("BergerMsfaApi.Domain.Setup.DropdownDetail", "CreditControlArea")
+                        .WithMany()
+                        .HasForeignKey("CreditControlAreaId");
+
+                    b.HasOne("BergerMsfaApi.Domain.Setup.DropdownDetail", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId");
                 });
 
             modelBuilder.Entity("BergerMsfaApi.Domain.Menus.MenuActivity", b =>

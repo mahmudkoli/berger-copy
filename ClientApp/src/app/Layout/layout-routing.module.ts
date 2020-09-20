@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BaseLayoutComponent } from './LayoutComponent/base-layout/base-layout.component';
-import { MsalGuard } from '@azure/msal-angular';
 import { AuthGuard } from '../Shared/Guards/auth.guard';
 
 const routes: Routes = [
@@ -25,6 +24,7 @@ const routes: Routes = [
             { path: 'work-flow', loadChildren: () => import('./work-flow/work-flow.module').then(m => m.WorkFlowModule) },
             { path: 'notification', loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule) },
             { path: 'setup', loadChildren: () => import('./setup/setup.module').then(m => m.SetupModule) },
+            { path: 'collection', loadChildren: () => import('./Collection-Entry/collectionEntry.module').then(m => m.CollectionEntryModule) },
 
 
 

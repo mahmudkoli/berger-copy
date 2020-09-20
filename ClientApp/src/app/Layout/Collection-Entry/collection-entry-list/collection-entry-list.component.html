@@ -1,0 +1,17 @@
+
+<div class="col col-lg-12">
+
+    <div class="col-md-4">
+        <div class="position-relative form-group">
+            <label for="name">Customer Type</label>
+            <select required class="form-control" [ngModel]="selectedType" (ngModelChange)="onChange($event)" >
+                <option *ngFor="let option of customerTypeList" [value]="option.key">{{option.key}}-{{option.type}}</option>
+            </select>
+        </div>
+    </div>
+   
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="gridDataSource"
+                 (customActivityOnRecord)="fnCustomTrigger($event)"
+                 (cellClickCallbackFn)="fnPtableCellClick($event)">
+    </app-p-table>
+</div>

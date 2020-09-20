@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Domain.Examples;
+﻿using BergerMsfaApi.Domain.CollectionEntry;
+using BergerMsfaApi.Domain.Examples;
 using BergerMsfaApi.Domain.Menus;
 using BergerMsfaApi.Domain.Organizations;
 using BergerMsfaApi.Domain.Setup;
@@ -60,12 +61,15 @@ namespace BergerMsfaApi.Domain
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         //public DbSet<Delegation> Delegations { get; set; }
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
+
+        #endregion
         #region Setup
         public DbSet<DropdownType> DropdownTypes { get; set; }
         public DbSet<DropdownDetail> DropdownDetails { get; set; }
         #endregion
+        #region CollectionEntry
+        public DbSet<Payment> Payments { get; set; }
         #endregion
-
         #region WorkFlows
         public DbSet<WorkFlow> WorkFlows { get; set; }
         public DbSet<WorkFlowConfiguration> WorkFlowConfigurations { get; set; }
