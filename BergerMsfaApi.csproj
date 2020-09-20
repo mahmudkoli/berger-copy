@@ -118,6 +118,7 @@
     <Folder Include="Models\DailyActivities\" />
     <Folder Include="Models\Reports\" />
     <Folder Include="Models\Organizations\" />
+    <Folder Include="HanaDb\" />
     <Folder Include="Services\Examples\" />
   </ItemGroup>
 
