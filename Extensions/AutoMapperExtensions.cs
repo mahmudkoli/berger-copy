@@ -23,11 +23,11 @@ namespace BergerMsfaApi.Extensions
             return result;
         }
 
-        public static IQueryable<TDest> ToMap<TSource, TDest>(this IQueryable<TSource> sources)
+        //public static IQueryable<TDest> ToMap<TSource, TDest>(this IQueryable<TSource> sources)
 
-        {
-            return sources.NewModel().ToMap<TDest>();
-        }
+        //{
+        //    return sources.NewModel().ToMap<TDest>();
+        //}
 
         public static IPagedList<TDest> ToMap<TSource, TDest>(this IPagedList<TSource> list)
         {

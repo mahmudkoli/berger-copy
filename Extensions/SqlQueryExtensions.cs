@@ -49,6 +49,8 @@ namespace BergerMsfaApi.Extensions
 
                 base.OnConfiguring(optionsBuilder);
             }
+
+            [Obsolete]
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                 var t = modelBuilder.Query<T>();
@@ -56,7 +58,7 @@ namespace BergerMsfaApi.Extensions
                 //to support anonymous types, configure entity properties for read-only properties
                 foreach (var prop in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    if (!prop.CustomAttributes.Any(a => a.AttributeType == typeof(NotMappedAttribute)))
+                    if (prop.CustomAttributes.All(a => a.AttributeType != typeof(NotMappedAttribute)))
                     {
                         t.Property(prop.Name);
                     }

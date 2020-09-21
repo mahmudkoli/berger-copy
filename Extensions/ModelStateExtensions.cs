@@ -10,7 +10,7 @@ namespace BergerMsfaApi.Extensions
         public static List<ValidationError> GetErrors(this ModelStateDictionary modelState)
         {
             var errors = (from m in modelState
-                          where m.Value.Errors.Count() > 0
+                          where m.Value.Errors.Any()
                           select
                              new ValidationError
                              {
