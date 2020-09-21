@@ -121,14 +121,6 @@ namespace BergerMsfaApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            
-
-                // app.UseExceptionHandler("/api/errors/500");
-                // app.UseStatusCodePagesWithReExecute("/api/errors/{0}");
-              
-            
-
             else
             {
                 app.UseExceptionHandler("/Error");

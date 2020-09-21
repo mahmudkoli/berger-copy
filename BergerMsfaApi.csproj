@@ -66,29 +66,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200425064157_ProductAndPosmProductColumnUpdated.cs" />
-    <Compile Remove="Migrations\20200425064157_ProductAndPosmProductColumnUpdated.Designer.cs" />
-    <Compile Remove="Migrations\20200505072837_ActivityAndPErmissionTableAdd.cs" />
-    <Compile Remove="Migrations\20200505072837_ActivityAndPErmissionTableAdd.Designer.cs" />
-    <Compile Remove="Migrations\20200511070311_workflowTypetable.cs" />
-    <Compile Remove="Migrations\20200511070311_workflowTypetable.Designer.cs" />
-    <Compile Remove="Migrations\20200514102407_removeFKfromUserTerr.cs" />
-    <Compile Remove="Migrations\20200514102407_removeFKfromUserTerr.Designer.cs" />
-    <Compile Remove="Migrations\20200514103055_removeFKfromUserTerr.cs" />
-    <Compile Remove="Migrations\20200514103055_removeFKfromUserTerr.Designer.cs" />
-    <Compile Remove="Migrations\20200519155016_AddHierarchyTable.cs" />
-    <Compile Remove="Migrations\20200519155016_AddHierarchyTable.Designer.cs" />
-    <Compile Remove="Migrations\20200610072840_AuditReportEntityUpdated.cs" />
-    <Compile Remove="Migrations\20200610072840_AuditReportEntityUpdated.Designer.cs" />
-    <Compile Remove="Migrations\20200610084328_AuditReportEntityUpdated.cs" />
-    <Compile Remove="Migrations\20200610084328_AuditReportEntityUpdated.Designer.cs" />
-    <Compile Remove="Migrations\20200610124525_AuditReportEntityUpdate.cs" />
-    <Compile Remove="Migrations\20200610124525_AuditReportEntityUpdate.Designer.cs" />
-    <Compile Remove="Migrations\20200610125527_AuditReportEntityUpdate.cs" />
-    <Compile Remove="Migrations\20200610125527_AuditReportEntityUpdate.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
 
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.css" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.html" />
