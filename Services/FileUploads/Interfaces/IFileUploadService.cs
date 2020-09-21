@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Threading.Tasks;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
 using Microsoft.AspNetCore.Http;
 
 namespace BergerMsfaApi.Services.FileUploads.Interfaces

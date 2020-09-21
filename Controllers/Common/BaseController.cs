@@ -10,7 +10,7 @@ namespace BergerMsfaApi.Controllers.Common
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-        public IActionResult OkResult(IPagedList model)
+        protected IActionResult OkResult(IPagedList model)
         {
             var apiResult = new ApiResponse
             {
@@ -32,7 +32,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        public IActionResult OkResult(object data)
+        protected IActionResult OkResult(object data)
         {
             var apiResult = new ApiResponse
             {
@@ -43,7 +43,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        public IActionResult OkResult(object data, string message)
+        protected IActionResult OkResult(object data, string message)
         {
             var apiResult = new ApiResponse
             {
@@ -54,7 +54,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        public IActionResult ValidationResult(ModelStateDictionary modelState)
+        protected IActionResult ValidationResult(ModelStateDictionary modelState)
         {
             var apiResult = new ApiResponse
             {
@@ -65,7 +65,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        public IActionResult ExceptionResult(Exception ex)
+        protected IActionResult ExceptionResult(Exception ex)
         {
             ex.ToWriteLog();
 
@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        public IActionResult ObjectResult(ApiResponse model)
+        protected IActionResult ObjectResult(ApiResponse model)
         {
             var result = new ObjectResult(model)
             {

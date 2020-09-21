@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BergerMsfaApi.Domain.Organizations;
-using BergerMsfaApi.Domain.Users;
+using Berger.Data.MsfaEntity.Organizations;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Organizations;
 using BergerMsfaApi.Models.Users;

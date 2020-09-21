@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BergerMsfaApi.Attributes;
+using Berger.Data;
+using Berger.Data.Attributes;
+using Berger.Data.Common;
 using BergerMsfaApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;

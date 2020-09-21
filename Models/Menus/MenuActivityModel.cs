@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
 
 namespace BergerMsfaApi.Models.Menus
 {

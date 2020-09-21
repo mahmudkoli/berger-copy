@@ -1,7 +1,8 @@
 using System.Reflection;
 using System.Security.Principal;
 using System.Text;
-using BergerMsfaApi.Domain;
+using Berger.Data.Common;
+using Berger.Data.MsfaEntity;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Helpers;
 using BergerMsfaApi.Middlewares;
@@ -64,6 +65,7 @@ namespace BergerMsfaApi
 
             services.AddScoped<DbContext, ApplicationDbContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, ApplicationDbContext>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Repository"))
@@ -109,6 +111,7 @@ namespace BergerMsfaApi
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+            services.AddSwaggerGen();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -140,7 +143,17 @@ namespace BergerMsfaApi
                 app.UseSpaStaticFiles();
             }
             app.UseAuthentication();
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
 
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Berger MSFA V1");
+                c.RoutePrefix = "msfa";
+                
+            });
             app.UseRouting();
             app.UseAuthorization();
             app.UseRequestLocalization();

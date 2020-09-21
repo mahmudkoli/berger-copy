@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

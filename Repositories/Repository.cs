@@ -7,12 +7,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
-using BergerMsfaApi.Attributes;
+using Berger.Common.Enumerations;
+using Berger.Data;
+using Berger.Data.Attributes;
+using Berger.Data.Common;
+using Berger.Data.MsfaEntity.Organizations;
+using Berger.Data.MsfaEntity.Users;
+using Berger.Data.MsfaEntity.WorkFlows;
 using BergerMsfaApi.Core;
-using BergerMsfaApi.Domain.Organizations;
-using BergerMsfaApi.Domain.Users;
-using BergerMsfaApi.Domain.WorkFlows;
-using BergerMsfaApi.Enumerations;
 using BergerMsfaApi.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -20,7 +22,7 @@ using X.PagedList;
 
 namespace BergerMsfaApi.Repositories
 {
-    // By: Ashiquzzaman;
+    
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         #region CONFIG
@@ -28,6 +30,7 @@ namespace BergerMsfaApi.Repositories
         private DbContext _context;
         private bool _shareContext;
         private bool _disposed;
+        private readonly IUnitOfWork _uow;
         public bool ShareContext
         {
             get { return _shareContext; }
@@ -36,9 +39,10 @@ namespace BergerMsfaApi.Repositories
 
 
 
-        public Repository(DbContext context)
+        public Repository(DbContext context, IUnitOfWork uow)
         {
             _context = context;
+            _uow = uow;
             //Context.Database.CommandTimeout = 100000;
             // DbInterception.Add(new AzRInterceptor());
         }
@@ -369,15 +373,8 @@ namespace BergerMsfaApi.Repositories
             var entry = _context.Entry(item);
             DbSet.Attach(item);
             entry.State = EntityState.Modified;
-            var result = await SaveChangesAsync();
-            if (result > 0)
-            {
-                return item;
-            }
-            else
-            {
-                return null;
-            }
+           _uow.Commit();
+           return item;
         }
         public async Task<TEntity> CreateOrUpdateAsync(TEntity item)
         {            
@@ -950,7 +947,7 @@ namespace BergerMsfaApi.Repositories
                                                         int? skip = null,
                                                         int? take = null)
         {
-            includeProperties = includeProperties ?? string.Empty;
+            includeProperties ??= string.Empty;
             //IQueryable<TEntity> query = _dbContext.Set<T>();
             IQueryable<TEntity> query = DbSet.AsNoTracking().AsQueryable();
 

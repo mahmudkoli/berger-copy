@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using BergerMsfaApi.Domain.Menus;
-using BergerMsfaApi.Domain.Users;
+using Berger.Data.MsfaEntity.Menus;
+using Berger.Data.MsfaEntity.Users;
 
 namespace BergerMsfaApi.Models.Menus
 {

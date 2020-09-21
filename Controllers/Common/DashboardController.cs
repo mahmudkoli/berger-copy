@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BergerMsfaApi.Controllers.Common
 {
@@ -28,6 +30,10 @@ namespace BergerMsfaApi.Controllers.Common
         /// </summary>
         /// <returns>ApiResponse</returns>
         [HttpGet("")]
+        [SwaggerOperation("GetAllDashboardData")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+
         public async Task<IActionResult> GetAllDashboardData()
         {
             try

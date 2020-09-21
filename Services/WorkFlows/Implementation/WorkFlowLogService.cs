@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using BergerMsfaApi.Domain.Organizations;
-using BergerMsfaApi.Domain.WorkFlows;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.Organizations;
+using Berger.Data.MsfaEntity.WorkFlows;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.WorkFlows;
 using BergerMsfaApi.Repositories;

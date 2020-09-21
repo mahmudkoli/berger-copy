@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using BergerMsfaApi.Domain.Menus;
+using Berger.Data.MsfaEntity.Menus;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Menus;
 using BergerMsfaApi.Repositories;

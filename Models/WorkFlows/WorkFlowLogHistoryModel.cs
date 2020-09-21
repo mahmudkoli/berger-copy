@@ -1,5 +1,5 @@
 ﻿using System;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
 
 namespace BergerMsfaApi.Models.WorkFlows
 {

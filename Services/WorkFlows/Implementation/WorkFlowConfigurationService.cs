@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BergerMsfaApi.Domain.WorkFlows;
+using Berger.Data.MsfaEntity.WorkFlows;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.WorkFlows;
 using BergerMsfaApi.Repositories;

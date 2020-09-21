@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using BergerMsfaApi.Domain.Users;
+using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore.Query;
 using X.PagedList;
 

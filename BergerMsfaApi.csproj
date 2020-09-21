@@ -30,9 +30,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.1.0" />
     <PackageReference Include="X.PagedList" Version="7.9.0" />
@@ -118,12 +120,15 @@
     <Folder Include="Models\DailyActivities\" />
     <Folder Include="Models\Reports\" />
     <Folder Include="Models\Organizations\" />
-    <Folder Include="HanaDb\" />
     <Folder Include="Services\Examples\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="BergerMSFA.sln" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

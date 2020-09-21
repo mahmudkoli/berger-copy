@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Core;
-using BergerMsfaApi.Domain.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Interfaces;

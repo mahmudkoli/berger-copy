@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using BergerMsfaApi.Enumerations;
+using Berger.Common.Enumerations;
 using BergerMsfaApi.Models.Users;
 
 namespace BergerMsfaApi.Models.Menus

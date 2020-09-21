@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BergerMsfaApi", "BergerMsfaApi.csproj", "{AE901456-2F3A-45B9-9AB4-EFCC9FE2045E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berger.Data", "..\Berger.Data\Berger.Data.csproj", "{F14EE371-67F6-475F-80F8-B6E5626D8B76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berger.Common", "..\Berger.Common\Berger.Common.csproj", "{B5C898C7-90E7-4D11-B948-2236F7FFF892}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{AE901456-2F3A-45B9-9AB4-EFCC9FE2045E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE901456-2F3A-45B9-9AB4-EFCC9FE2045E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE901456-2F3A-45B9-9AB4-EFCC9FE2045E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F14EE371-67F6-475F-80F8-B6E5626D8B76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F14EE371-67F6-475F-80F8-B6E5626D8B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F14EE371-67F6-475F-80F8-B6E5626D8B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F14EE371-67F6-475F-80F8-B6E5626D8B76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C898C7-90E7-4D11-B948-2236F7FFF892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C898C7-90E7-4D11-B948-2236F7FFF892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C898C7-90E7-4D11-B948-2236F7FFF892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C898C7-90E7-4D11-B948-2236F7FFF892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
