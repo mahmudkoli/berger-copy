@@ -62,9 +62,9 @@ export class CollectionEntryListComponent implements OnInit {
 
 
     private getCustomerDetails(type: any) {
-        this.alertService.fnLoading(true);
+ 
         this.collectionEntryService.getCollectionByType(type).subscribe(res => {
-            this.alertService.fnLoading(false);
+     
             this.gridDataSource = res.data;
         })
     }
@@ -74,7 +74,7 @@ export class CollectionEntryListComponent implements OnInit {
 
     private customerWiseTableConfig(selected) {
         let tableColDef: any;
-
+        this.gridDataSource = [];
         let tableName: string = "";
 
         if (CustomerTypeEnum.Dealer == selected) {

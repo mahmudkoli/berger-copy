@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace BergerMsfaApi.Models.CollectionEntry
     public class PaymentModel
     {
         public int Id { get; set; }
+        [Required]
         public string PaymentFrom { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
