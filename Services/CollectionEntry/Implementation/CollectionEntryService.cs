@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
         public async Task<IEnumerable<PaymentModel>> GetCollectionByType(string paymentFrom)
         {
-            var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControlArea).Where(f=>f.PaymentForm==paymentFrom);
+            var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControllArea).Where(f=>f.PaymentFrom==paymentFrom);
             return result.Select(s => new PaymentModel()
             {
                 Id = s.Id,
@@ -35,47 +35,56 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                 Address = s.Address,
                 BankName = s.BankName,
                 Code = s.Code,
-                CreditControllAreaId = s.CreditControlArea.Id,
-                CreditControllAreaName = s.CreditControlArea.DropdownName,
+                CreditControllAreaId = s.CreditControllArea.Id,
+                CreditControllAreaName = s.CreditControllArea.DropdownName,
                 ManualNumber = s.ManualNumber,
                 MobileNumber = s.MobileNumber,
                 Name = s.Name,
                 Number = s.Number,
-                PaymentForm = s.PaymentForm,
+                PaymentFrom = s.PaymentFrom,
                 PaymentMethodId = s.PaymentMethod.Id,
                 PaymentMethodName=s.PaymentMethod.DropdownName,
                 Remarks = s.Remarks,
-                SAPID = s.SAPID
+                SapId = s.SapId
 
             }).ToList();
         }
 
         public  async Task<IEnumerable<PaymentModel>> GetCollectionList()
         {
-            var result = _payment.GetAllInclude(f => f.PaymentMethod,f=>f.CreditControlArea);
-           return result.Select(s => new PaymentModel()
+            try
             {
-                Id = s.Id,
-               Amount = s.Amount,
-               Address=s.Address,
-               BankName=s.BankName,
-               Code=s.Code,
-               CreditControllAreaId=s.CreditControlArea.Id,
-               CreditControllAreaName = s.CreditControlArea.DropdownName,
-               ManualNumber =s.ManualNumber,
-               MobileNumber=s.MobileNumber,
-               Name=s.Name,
-               Number=s.Number,
-               PaymentForm=s.PaymentForm,
-               PaymentMethodId=s.PaymentMethod.Id,
-               PaymentMethodName = s.PaymentMethod.DropdownName,
-               Remarks =s.Remarks,
-               SAPID=s.SAPID
-                
-            }).ToList();
+                var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControllArea);
+                return result.Select(s => new PaymentModel()
+                {
+                    Id = s.Id,
+                    Amount = s.Amount,
+                    Address = s.Address,
+                    BankName = s.BankName,
+                    Code = s.Code,
+                    CreditControllAreaId = s.CreditControllArea.Id,
+                    CreditControllAreaName = s.CreditControllArea.DropdownName,
+                    ManualNumber = s.ManualNumber,
+                    MobileNumber = s.MobileNumber,
+                    Name = s.Name,
+                    Number = s.Number,
+                    PaymentFrom = s.PaymentFrom,
+                    PaymentMethodId = s.PaymentMethod.Id,
+                    PaymentMethodName = s.PaymentMethod.DropdownName,
+                    Remarks = s.Remarks,
+                    SapId = s.SapId
+
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex ;
+            }
+          
         }
 
-        public async Task<bool> IsExistAsync(PaymentModel model) => model.Id > 0 ? await _payment.IsExistAsync(f => f.Id == model.Id) : false;
+        public async Task<bool> IsExistAsync(int id) => await _payment.IsExistAsync(f => f.Id == id);
 
         public async Task<PaymentModel> UpdateAsync(PaymentModel model)
         {

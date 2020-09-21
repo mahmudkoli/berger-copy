@@ -33,7 +33,12 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             try
             {
                 if (string.IsNullOrEmpty(paymentFrom)) return ValidationResult(null);
-                var result = await _paymentService.GetCollectionByType(paymentFrom);
+                var result = await _paymentService.GetCollectionByType(paymentFrom.Trim());
+                if (result.Count() == 0)
+                {
+                    ModelState.AddModelError(nameof(paymentFrom), "does not exist");
+                    return ValidationResult(ModelState);
+                }
                 return OkResult(result);
             }
             catch (Exception ex)

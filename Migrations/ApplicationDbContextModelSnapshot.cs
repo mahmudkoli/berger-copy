@@ -44,7 +44,7 @@ namespace BergerMsfaApi.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CreditControlAreaId")
+                    b.Property<int>("CreditControllAreaId")
                         .HasColumnType("int");
 
                     b.Property<string>("ManualNumber")
@@ -65,24 +65,24 @@ namespace BergerMsfaApi.Migrations
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentForm")
+                    b.Property<string>("PaymentFrom")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaymentMethodId")
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SAPID")
-                        .HasColumnType("int");
+                    b.Property<string>("SAPID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreditControlAreaId");
+                    b.HasIndex("CreditControllAreaId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -969,11 +969,15 @@ namespace BergerMsfaApi.Migrations
                 {
                     b.HasOne("BergerMsfaApi.Domain.Setup.DropdownDetail", "CreditControlArea")
                         .WithMany()
-                        .HasForeignKey("CreditControlAreaId");
+                        .HasForeignKey("CreditControllAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BergerMsfaApi.Domain.Setup.DropdownDetail", "PaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PaymentMethodId");
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BergerMsfaApi.Domain.Menus.MenuActivity", b =>

@@ -18,26 +18,26 @@ namespace BergerMsfaApi.Migrations
                     ModifiedBy = table.Column<int>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: true),
                     Status = table.Column<int>(nullable: false),
-                    PaymentForm = table.Column<string>(nullable: true),
+                    PaymentFrom = table.Column<string>(nullable: true),
                     Code = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
                     MobileNumber = table.Column<string>(nullable: true),
-                    SAPID = table.Column<int>(nullable: false),
+                    SapId = table.Column<string>(nullable: false),
                     BankName = table.Column<string>(nullable: true),
                     Number = table.Column<string>(nullable: true),
-                    Account = table.Column<string>(nullable: true),
+                    Amount = table.Column<decimal>(nullable: true),
                     ManualNumber = table.Column<string>(nullable: true),
                     Remarks = table.Column<string>(nullable: true),
                     PaymentMethodId = table.Column<int>(nullable: true),
-                    CreditControlAreaId = table.Column<int>(nullable: true)
+                    CreditControllAreaId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payments_DropdownDetails_CreditControlAreaId",
-                        column: x => x.CreditControlAreaId,
+                        name: "FK_Payments_DropdownDetails_CreditControllAreaId",
+                        column: x => x.CreditControllAreaId,
                         principalTable: "DropdownDetails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -50,9 +50,9 @@ namespace BergerMsfaApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_CreditControlAreaId",
+                name: "IX_Payments_CreditControllAreaId",
                 table: "Payments",
-                column: "CreditControlAreaId");
+                column: "CreditControllAreaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_PaymentMethodId",

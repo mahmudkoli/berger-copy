@@ -14,6 +14,6 @@ namespace BergerMsfaApi.Services.CollectionEntry.Interface
         Task<PaymentModel> CreateAsync(PaymentModel model);
         Task<PaymentModel> UpdateAsync(PaymentModel model);
         Task<int> DeleteAsync(int id);
-        Task<bool> IsExistAsync(PaymentModel model);
+        Task<bool> IsExistAsync(int id);
     }
 }

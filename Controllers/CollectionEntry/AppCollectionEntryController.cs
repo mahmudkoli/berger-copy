@@ -2,8 +2,10 @@
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
@@ -17,13 +19,13 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         private readonly ILogger<AppCollectionEntryController> _logger;
         private readonly ICollectionEntryService _paymentService;
 
-        public AppCollectionEntryController( ILogger<AppCollectionEntryController> logger
-            ,ICollectionEntryService paymentService)
+        public AppCollectionEntryController(ILogger<AppCollectionEntryController> logger
+            , ICollectionEntryService paymentService)
         {
             _logger = logger;
             _paymentService = paymentService;
         }
-        
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetCollectionList()
         {
@@ -46,7 +48,12 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             try
             {
                 if (string.IsNullOrEmpty(paymentFrom)) return ValidationResult(null);
-                var result = await _paymentService.GetCollectionByType(paymentFrom);
+                var result = await _paymentService.GetCollectionByType(paymentFrom.Trim());
+                if (result.Count() == 0)
+                {
+                    ModelState.AddModelError(nameof(paymentFrom), "does not exist");
+                    return ValidationResult(ModelState);
+                }
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -55,16 +62,15 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             }
         }
 
-  
+
 
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Create([FromBody] PaymentModel model)
         {
-
             try
             {
-
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _paymentService.CreateAsync(model);
                 return OkResult(result);
             }
@@ -79,18 +85,15 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
 
             try
             {
-                var isExist = await _paymentService.IsExistAsync(model);
-                if (isExist)
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!await _paymentService.IsExistAsync(model.Id))
                 {
-                    var result = await _paymentService.UpdateAsync(model);
-                    return OkResult(result);
-
-                }
-                else
-                {
-                    ModelState.AddModelError(nameof(model.Id), "Does Not Exist");
+                    ModelState.AddModelError(nameof(model.Name), "does not exist");
                     return ValidationResult(ModelState);
                 }
+
+                var result = await _paymentService.UpdateAsync(model);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
@@ -104,6 +107,11 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         {
             try
             {
+                if (!await _paymentService.IsExistAsync(id))
+                {
+                    ModelState.AddModelError(nameof(id), "does not exist");
+                    return ValidationResult(ModelState);
+                }
                 var result = await _paymentService.DeleteAsync(id);
                 return OkResult(result);
             }

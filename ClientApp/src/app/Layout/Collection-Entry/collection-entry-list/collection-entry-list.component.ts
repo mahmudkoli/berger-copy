@@ -5,9 +5,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 
-export enum CustomerType {
+export enum CustomerTypeEnum {
     Dealer = 1,
-    Subdealer = 2,
+    SubDealer = 2,
+    Project = 3,
+    Customer = 4
 }
 @Component({
     selector: 'app-collection-entry-list',
@@ -24,12 +26,13 @@ export class CollectionEntryListComponent implements OnInit {
         { key: 1, type: 'Dealer' },
         { key: 2, type: 'Sub Dealer' },
         { key: 3, type: 'Project' },
+        { key: 4, type: 'Customer' },
 
     ]
     ptableSettings: any = null;
     gridDataSource: any[] = [];
     selectedType: number;
-    tableColDef: any;
+
     constructor(
         private collectionEntryService: CollectionEntryService,
         private alertService: AlertService,
@@ -38,7 +41,9 @@ export class CollectionEntryListComponent implements OnInit {
         private router: Router) { this._initPermissionGroup(); }
 
     ngOnInit() {
-        this.selectedType = CustomerType.Subdealer;
+
+        this.selectedType = CustomerTypeEnum.Dealer;
+        this.onChange(this.selectedType);
     }
     private _initPermissionGroup() {
 
@@ -48,60 +53,106 @@ export class CollectionEntryListComponent implements OnInit {
         //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
         //this.ptableSettings.enabledDeleteBtn = this.permissionGroup.canDelete;
 
-       
-
     }
-    onChange(val: number) {
+
+    onChange(selected: number) {
+
+        this.customerWiseTableConfig(selected);
+    }
+
+
+    private getCustomerDetails(type: any) {
+        this.alertService.fnLoading(true);
+        this.collectionEntryService.getCollectionByType(type).subscribe(res => {
+            this.alertService.fnLoading(false);
+            this.gridDataSource = res.data;
+        })
+    }
+
+
+
+
+    private customerWiseTableConfig(selected) {
         let tableColDef: any;
+
         let tableName: string = "";
 
-        if (CustomerType.Dealer == val) {
+        if (CustomerTypeEnum.Dealer == selected) {
             tableName = "Dealer Collection";
             tableColDef = [
-                { headerName: 'Name ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Code  ', width: '30%', internalName: 'code', sort: true, type: "" },
-                { headerName: 'Bank Name ', width: '20%', internalName: 'bankName', sort: true, type: "" },
-
-
+                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
+                { headerName: 'Dealer ', width: '10%', internalName: 'name', sort: true, type: "" },
+                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
+                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
+                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
+                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
+                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
             ];
-
-            this.collectionEntryService.getCollectionByType("Dealer").subscribe(res => {
-                this.gridDataSource = res.data;
-            })
-
-
         }
-        else if (CustomerType.Subdealer == val) {
+
+        else if (CustomerTypeEnum.SubDealer == selected) {
             tableName = "Sub Dealer Collection";
             tableColDef = [
-                { headerName: 'Name ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Code  ', width: '30%', internalName: 'Code', sort: true, type: "" },
-                { headerName: 'Bank Name ', width: '20%', internalName: 'bankName', sort: true, type: "" },
-
+                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
+                { headerName: 'Sub Dealer ', width: '10%', internalName: 'name', sort: true, type: "" },
+                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
+                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
+                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
+                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
+                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
 
             ];
-            this.collectionEntryService.getCollectionByType("SubDealer").subscribe(res => {
-                this.gridDataSource = res.data;
-            })
-            this.gridDataSource = [];
+
+        }
+        else if (CustomerTypeEnum.Project == selected) {
+            tableName = "Project Collection";
+            tableColDef = [
+                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
+                { headerName: 'Project ', width: '10%', internalName: 'name', sort: true, type: "" },
+                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
+                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
+                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
+                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
+                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+
+            ];
+
+        }
+        else if (CustomerTypeEnum.Customer == selected) {
+            tableName = "Cutomer Collection";
+            tableColDef = [
+                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
+                { headerName: 'Customer ', width: '10%', internalName: 'name', sort: true, type: "" },
+                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
+                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
+                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
+                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
+                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
+                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+
+            ];
+
         }
 
-
+        this.getCustomerDetails(CustomerTypeEnum[selected]);
         this.configureTable(tableName, tableColDef);
     }
+
+
     private configureTable(tableName: string, tableCol: any) {
         this.ptableSettings = {
             tableID: "Setup-table",
             tableClass: "table table-border ",
             tableName: tableName,
             tableRowIDInternalName: "Id",
-            //tableColDef: [
-            //    { headerName: 'Code ', width: '10%', internalName: 'typeCode', sort: true, type: "" },
-            //    { headerName: 'Type Name  ', width: '30%', internalName: 'typeName', sort: true, type: "" },
-            //    { headerName: 'Dropdown Name ', width: '20%', internalName: 'dropdownName', sort: true, type: "" },
-            //    { headerName: 'Sequence', width: '10%', internalName: 'sequence', sort: true, type: "" },
 
-            //],
             tableColDef: tableCol,
             enabledSearch: true,
             enabledSerialNo: true,
