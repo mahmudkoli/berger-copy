@@ -101,10 +101,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="BergerMSFA.sln" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
     <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,12 @@
+E:\Berger_MSFA\Berger.Data\bin\Debug\netstandard2.0\Berger.DataLayer.deps.json
+E:\Berger_MSFA\Berger.Data\bin\Debug\netstandard2.0\Berger.DataLayer.dll
+E:\Berger_MSFA\Berger.Data\bin\Debug\netstandard2.0\Berger.DataLayer.pdb
+E:\Berger_MSFA\Berger.Data\bin\Debug\netstandard2.0\Berger.Common.dll
+E:\Berger_MSFA\Berger.Data\bin\Debug\netstandard2.0\Berger.Common.pdb
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.csprojAssemblyReference.cache
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.csproj.CoreCompileInputs.cache
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.AssemblyInfoInputs.cache
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.AssemblyInfo.cs
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.csproj.CopyComplete
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.dll
+E:\Berger_MSFA\Berger.Data\obj\Debug\netstandard2.0\Berger.DataLayer.pdb
