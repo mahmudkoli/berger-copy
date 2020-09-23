@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
@@ -47,20 +48,24 @@
     <Compile Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <Compile Remove="Interfaces\**" />
     <Compile Remove="Models\DailyActivities\**" />
+    <Compile Remove="Models\Reports\**" />
     <Compile Remove="Services\DailyPOSM\**" />
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <Content Remove="Interfaces\**" />
     <Content Remove="Models\DailyActivities\**" />
+    <Content Remove="Models\Reports\**" />
     <Content Remove="Services\DailyPOSM\**" />
     <EmbeddedResource Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <EmbeddedResource Remove="Interfaces\**" />
     <EmbeddedResource Remove="Models\DailyActivities\**" />
+    <EmbeddedResource Remove="Models\Reports\**" />
     <EmbeddedResource Remove="Services\DailyPOSM\**" />
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <None Remove="Interfaces\**" />
     <None Remove="Models\DailyActivities\**" />
+    <None Remove="Models\Reports\**" />
     <None Remove="Services\DailyPOSM\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
@@ -94,8 +99,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Common\" />
-    <Folder Include="Models\DailyActivities\" />
-    <Folder Include="Models\Reports\" />
     <Folder Include="Models\Organizations\" />
     <Folder Include="Services\Examples\" />
   </ItemGroup>

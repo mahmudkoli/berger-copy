@@ -6,7 +6,9 @@ using Berger.Data.MsfaEntity;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Helpers;
 using BergerMsfaApi.Middlewares;
+using BergerMsfaApi.Models.Examples;
 using BergerMsfaApi.Repositories;
+using GenericServices.Setup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -111,6 +113,11 @@ namespace BergerMsfaApi
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+            services.GenericServicesSimpleSetup<ApplicationDbContext>(Assembly.GetAssembly(typeof(QuickCrudModel)));
+
+
+
             services.AddSwaggerGen();
         }
         

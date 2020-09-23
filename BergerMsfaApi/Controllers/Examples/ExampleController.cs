@@ -14,6 +14,7 @@ namespace BergerMsfaApi.Controllers.Examples
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     [JwtAuthorize]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ExampleController : BaseController
     {
         private readonly ILogger<ExampleController> _logger;
