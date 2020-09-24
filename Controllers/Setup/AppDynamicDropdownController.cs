@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Controllers.Setup
 
        
 
-        [HttpGet("[action]/{typeCode}")]
+        [HttpGet("GetDropdownByTypeCd/{typeCode}")]
         public async Task<IActionResult> GetDropdownByTypeCd(string typeCode)
         {
 
@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("[action]/{typeId}")]
+        [HttpGet("GetDropdownByTypeId/{typeId}")]
         public async Task<IActionResult> GetDropdownByTypeId(int typeId)
         {
 

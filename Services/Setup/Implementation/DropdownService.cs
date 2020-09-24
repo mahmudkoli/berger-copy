@@ -84,7 +84,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         }
         public async Task<int> DeleteAsync(int id) => await _dropdownDetail.DeleteAsync(s => s.Id == id);
 
-        public async Task<bool> IsExistAsync(DropdownModel model) => model.Id > 0 ? await _dropdownDetail.IsExistAsync(f => f.Id == model.Id) : false;
+        public async Task<bool> IsExistAsync(int id) =>  await _dropdownDetail.IsExistAsync(f => f.Id == id);
 
         public async Task<IEnumerable<DropdownModel>> GetDropdownByTypeCd(string typeCode)
         {

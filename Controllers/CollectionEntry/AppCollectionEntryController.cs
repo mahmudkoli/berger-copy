@@ -26,7 +26,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             _paymentService = paymentService;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("GetCollectionList")]
         public async Task<IActionResult> GetCollectionList()
         {
             try
@@ -41,7 +41,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             }
         }
 
-        [HttpGet("[action]/{paymentFrom}")]
+        [HttpGet("GetCollectionByType/{paymentFrom}")]
         public async Task<IActionResult> GetCollectionByType(string paymentFrom)
         {
 
@@ -65,7 +65,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
 
 
 
-        [HttpPost("[action]")]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] PaymentModel model)
         {
             try
@@ -79,7 +79,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
                 return ExceptionResult(ex);
             }
         }
-        [HttpPut("[action]")]
+        [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] PaymentModel model)
         {
 

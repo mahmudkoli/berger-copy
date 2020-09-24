@@ -20,7 +20,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
         Task<int> DeleteAsync(int id);
 
 
-        Task<bool> IsExistAsync(DropdownModel model);
+        Task<bool> IsExistAsync(int id);
       
       
      
