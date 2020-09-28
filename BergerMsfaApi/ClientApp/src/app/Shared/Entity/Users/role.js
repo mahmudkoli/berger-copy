@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Role = void 0;
 var status_1 = require("../../Enums/status");
 var Role = /** @class */ (function () {
     function Role() {

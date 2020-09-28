@@ -61,11 +61,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule
     ],
-    providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: AppInterceptorService,
-        multi: true
-    },
+    providers: [
+    //    {
+    //    provide: HTTP_INTERCEPTORS,
+    //    useClass: AppInterceptorService,
+    //    multi: true
+    //},
     {
         provide:
             PERFECT_SCROLLBAR_CONFIG,

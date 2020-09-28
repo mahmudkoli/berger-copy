@@ -76,6 +76,8 @@
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.html" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.spec.ts" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.ts" />
+    <None Remove="ClientApp\src\app\Layout\Collection-Entry\collectionEntry-routing.ts" />
+    <None Remove="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
 
@@ -109,6 +111,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\Layout\Collection-Entry\collectionEntry-routing.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />

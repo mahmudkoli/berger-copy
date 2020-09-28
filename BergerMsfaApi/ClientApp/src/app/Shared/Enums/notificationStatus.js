@@ -4,6 +4,7 @@
 //    NotificationSent
 //} 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationStatuses = void 0;
 var NotificationStatuses = /** @class */ (function () {
     function NotificationStatuses() {
     }

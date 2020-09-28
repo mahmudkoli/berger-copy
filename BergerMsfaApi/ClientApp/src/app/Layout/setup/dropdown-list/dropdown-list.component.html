@@ -1,0 +1,6 @@
+<div class="col col-lg-12">
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="dropdownTypeDetailList"
+                 (customActivityOnRecord)="fnCustomTrigger($event)"
+                 (cellClickCallbackFn)="fnPtableCellClick($event)">
+    </app-p-table>
+</div>

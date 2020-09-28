@@ -22,3 +22,15 @@ E:\Berger_MSFA\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.Assem
 E:\Berger_MSFA\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.csproj.CopyComplete
 E:\Berger_MSFA\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.dll
 E:\Berger_MSFA\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.pdb
+G:\projects\BergerMsfa\Berger.Data\bin\Debug\netstandard2.0\Berger.Data.deps.json
+G:\projects\BergerMsfa\Berger.Data\bin\Debug\netstandard2.0\Berger.Data.dll
+G:\projects\BergerMsfa\Berger.Data\bin\Debug\netstandard2.0\Berger.Data.pdb
+G:\projects\BergerMsfa\Berger.Data\bin\Debug\netstandard2.0\Berger.Common.dll
+G:\projects\BergerMsfa\Berger.Data\bin\Debug\netstandard2.0\Berger.Common.pdb
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.csprojAssemblyReference.cache
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.AssemblyInfoInputs.cache
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.AssemblyInfo.cs
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.csproj.CoreCompileInputs.cache
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.csproj.CopyComplete
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.dll
+G:\projects\BergerMsfa\Berger.Data\obj\Debug\netstandard2.0\Berger.Data.pdb

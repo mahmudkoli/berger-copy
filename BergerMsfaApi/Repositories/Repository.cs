@@ -370,10 +370,12 @@ namespace BergerMsfaApi.Repositories
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-            var entry = _context.Entry(item);
+           
             DbSet.Attach(item);
+            var entry = _context.Entry(item);
             entry.State = EntityState.Modified;
-           _uow.Commit();
+            await SaveChangesAsync();
+         //  _uow.Commit();
            return item;
         }
         public async Task<TEntity> CreateOrUpdateAsync(TEntity item)

@@ -4,6 +4,7 @@
 //    Notified = 2
 //}
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ModeOfApprovals = void 0;
 var ModeOfApprovals = /** @class */ (function () {
     function ModeOfApprovals() {
     }

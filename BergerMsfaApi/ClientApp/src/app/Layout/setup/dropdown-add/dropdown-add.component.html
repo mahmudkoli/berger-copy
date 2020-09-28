@@ -1,0 +1,64 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New Dropdown</div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form #dropdownForm="ngForm" (submit)="fnSave()">
+            <div class="form-row">
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Dropdown Type</label>
+                        <select required class="form-control" (ngModelChange)="onChange($event)" name="typeId" #typeId="ngModel" [(ngModel)]="dropdownModel.typeId">
+                            <option *ngFor="let option of dropdownTypeList" [value]="option.id">{{option.typeCode}}-{{option.typeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Dropdown Name</label>
+                        <input required name="dropdownName" #dropdownName="ngModel"
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':dropdownName.valid,'is-invalid':dropdownName.invalid && dropdownName.touched }"
+                               [(ngModel)]="dropdownModel.dropdownName" />
+                        <small class="text-danger" [class.d-none]="dropdownName.valid || dropdownName.untouched">
+                            dropdown name is required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Squence</label>
+                        <input required name="sequence" #sequence="ngModel"
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':sequence.valid,'is-invalid':sequence.invalid && sequence.touched }"
+                               [(ngModel)]="dropdownModel.sequence" />
+                        <small class="text-danger" [class.d-none]="sequence.valid || sequence.untouched">
+                            squence is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Description </label>
+                        <textarea name="description" #description="ngModel"
+                                  type="text" class="form-control"
+                                  [(ngModel)]="dropdownModel.description"></textarea>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button [disabled]="!dropdownForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+
+</div>   

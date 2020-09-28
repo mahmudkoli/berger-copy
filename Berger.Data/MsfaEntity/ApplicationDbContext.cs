@@ -1,10 +1,14 @@
+
 ﻿using System;
 using Berger.Data.Common;
+using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
+using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -107,17 +111,25 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
+
+        //public DbSet<Delegation> Delegations { get; set; }
+
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
 
         #endregion
-
+        #region Setup
+        public DbSet<DropdownType> DropdownTypes { get; set; }
+        public DbSet<DropdownDetail> DropdownDetails { get; set; }
+        #endregion
+        #region CollectionEntry
+        public DbSet<Payment> Payments { get; set; }
+        #endregion
         #region WorkFlows
         public DbSet<WorkFlow> WorkFlows { get; set; }
         public DbSet<WorkFlowConfiguration> WorkFlowConfigurations { get; set; }
         public DbSet<WorkflowLog> WorkflowLogs { get; set; }
         public DbSet<WorkflowLogHistory> WorkflowLogHistories { get; set; }
         public DbSet<WorkFlowType> WorkFlowTypes { get; set; }
-
         #endregion
     }
 }

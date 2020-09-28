@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PosmProduct = void 0;
 var status_1 = require("../../Enums/status");
 var PosmProduct = /** @class */ (function () {
     function PosmProduct() {
@@ -8,6 +9,7 @@ var PosmProduct = /** @class */ (function () {
         //this.isJTIProduct = YesNo.Yes;
         //this.isDigitalSignatureEnable = YesNo.Yes;
         this.status = status_1.Status.Active;
+        this.isSelected = false;
     }
     return PosmProduct;
 }());

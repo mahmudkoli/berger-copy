@@ -1,1 +1,1 @@
-{"version":3,"file":"workflowconfiguration.js","sourceRoot":"","sources":["workflowconfiguration.ts"],"names":[],"mappings":";;AAAA,6CAA4C;AAG5C;IAYI;QACI,IAAI,CAAC,EAAE,GAAG,CAAC,CAAC;QACZ,IAAI,CAAC,MAAM,GAAG,eAAM,CAAC,MAAM,CAAC;IAChC,CAAC;IACL,4BAAC;AAAD,CAAC,AAhBD,IAgBC;AAhBY,sDAAqB"}
+{"version":3,"file":"workflowconfiguration.js","sourceRoot":"","sources":["workflowconfiguration.ts"],"names":[],"mappings":";;;AAAA,6CAA4C;AAG5C;IAaI;QACI,IAAI,CAAC,EAAE,GAAG,CAAC,CAAC;QACZ,IAAI,CAAC,MAAM,GAAG,eAAM,CAAC,MAAM,CAAC;IAChC,CAAC;IACL,4BAAC;AAAD,CAAC,AAjBD,IAiBC;AAjBY,sDAAqB"}
