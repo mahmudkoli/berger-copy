@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "G:\\projects\\BergerMsfa\\Berger.Data\\Berger.Data.csproj": {}
+    "E:\\Berger_MSFA\\BergerMsfa\\Berger.Data\\Berger.Data.csproj": {}
   },
   "projects": {
-    "G:\\projects\\BergerMsfa\\Berger.Common\\Berger.Common.csproj": {
+    "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\Berger.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\projects\\BergerMsfa\\Berger.Common\\Berger.Common.csproj",
+        "projectUniqueName": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\Berger.Common.csproj",
         "projectName": "Berger.Common",
-        "projectPath": "G:\\projects\\BergerMsfa\\Berger.Common\\Berger.Common.csproj",
-        "packagesPath": "C:\\Users\\subrata-roy\\.nuget\\packages\\",
-        "outputPath": "G:\\projects\\BergerMsfa\\Berger.Common\\obj\\",
+        "projectPath": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\Berger.Common.csproj",
+        "packagesPath": "C:\\Users\\BS211\\.nuget\\packages\\",
+        "outputPath": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\subrata-roy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\BS211\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -62,24 +62,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files (x86)\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "G:\\projects\\BergerMsfa\\Berger.Data\\Berger.Data.csproj": {
+    "E:\\Berger_MSFA\\BergerMsfa\\Berger.Data\\Berger.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\projects\\BergerMsfa\\Berger.Data\\Berger.Data.csproj",
+        "projectUniqueName": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Data\\Berger.Data.csproj",
         "projectName": "Berger.Data",
-        "projectPath": "G:\\projects\\BergerMsfa\\Berger.Data\\Berger.Data.csproj",
-        "packagesPath": "C:\\Users\\subrata-roy\\.nuget\\packages\\",
-        "outputPath": "G:\\projects\\BergerMsfa\\Berger.Data\\obj\\",
+        "projectPath": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Data\\Berger.Data.csproj",
+        "packagesPath": "C:\\Users\\BS211\\.nuget\\packages\\",
+        "outputPath": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\subrata-roy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\BS211\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -92,8 +92,8 @@
         "frameworks": {
           "netstandard2.0": {
             "projectReferences": {
-              "G:\\projects\\BergerMsfa\\Berger.Common\\Berger.Common.csproj": {
-                "projectPath": "G:\\projects\\BergerMsfa\\Berger.Common\\Berger.Common.csproj"
+              "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\Berger.Common.csproj": {
+                "projectPath": "E:\\Berger_MSFA\\BergerMsfa\\Berger.Common\\Berger.Common.csproj"
               }
             }
           }
@@ -158,7 +158,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files (x86)\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

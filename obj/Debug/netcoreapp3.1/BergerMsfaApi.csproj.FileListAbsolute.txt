@@ -1,5 +1,0 @@
-G:\projects\BergerMsfa\obj\Debug\netcoreapp3.1\BergerMsfaApi.csproj.CoreCompileInputs.cache
-G:\projects\BergerMsfa\obj\Debug\netcoreapp3.1\BergerMsfaApi.MvcApplicationPartsAssemblyInfo.cs
-G:\projects\BergerMsfa\obj\Debug\netcoreapp3.1\BergerMsfaApi.MvcApplicationPartsAssemblyInfo.cache
-G:\projects\BergerMsfa\obj\Debug\netcoreapp3.1\BergerMsfaApi.RazorAssemblyInfo.cache
-G:\projects\BergerMsfa\obj\Debug\netcoreapp3.1\BergerMsfaApi.RazorAssemblyInfo.cs
