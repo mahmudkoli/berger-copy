@@ -455,8 +455,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DropdownName")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
