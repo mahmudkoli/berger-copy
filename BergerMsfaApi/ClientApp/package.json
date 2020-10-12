@@ -45,6 +45,8 @@
     "ng2-charts": "^2.2.2",
     "ngx-perfect-scrollbar": "^7.2.1",
     "pe7-icon": "^1.0.4",
+    "primeng": "^10.0.2",
+    "primeng-lts": "^9.1.6",
     "redux": "4.0.0",
     "rxjs": "^6.5.0",
     "tslib": "^1.9.0",

@@ -26,7 +26,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
         public async Task<UserViewModel> CreateUserAsync(UserViewModel model)
         {
             var user = model.ToMap<UserViewModel, CMUser>();
-
+        
             var result = await _user.CreateAsync(user);
             return result.ToMap<CMUser, UserViewModel>();
 

@@ -48,11 +48,15 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
 
             try
             {
-                if (string.IsNullOrEmpty(paymentFrom)) return ValidationResult(null);
+                if (string.IsNullOrEmpty(paymentFrom))
+                {
+                    ModelState.AddModelError(nameof(paymentFrom), "PaymentFrom Can Not Be Empty");
+                    return ValidationResult(null);
+                }
                 var result = await _paymentService.GetCollectionByType(paymentFrom.Trim());
                 if (result.Count() == 0)
                 {
-                    ModelState.AddModelError(nameof(paymentFrom), "does not exist");
+                    ModelState.AddModelError(nameof(paymentFrom), "Collection Not Found");
                     return ValidationResult(ModelState);
                 }
                 return OkResult(result);
@@ -86,7 +90,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 if (!await _paymentService.IsExistAsync(model.Id))
                 {
-                    ModelState.AddModelError(nameof(model.Name), "does not exist");
+                    ModelState.AddModelError(nameof(model), "Payment Not Found");
                     return ValidationResult(ModelState);
                 }
 
@@ -107,7 +111,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             {
                 if (!await _paymentService.IsExistAsync(id))
                 {
-                    ModelState.AddModelError(nameof(id), "does not exist");
+                    ModelState.AddModelError(nameof(id), "Payment Not Found");
                     return ValidationResult(ModelState);
                 }
                 var result = await _paymentService.DeleteAsync(id);

@@ -80,6 +80,7 @@
     <None Remove="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
+    <None Remove="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
 
     <None Remove="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
 
@@ -103,6 +104,7 @@
     <Folder Include="Models\Common\" />
     <Folder Include="Models\Organizations\" />
     <Folder Include="Services\Examples\" />
+    <Folder Include="wwwroot\uploads\images\POSMProducts\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,6 +119,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\role.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\userInfo.ts" />

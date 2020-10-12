@@ -128,6 +128,7 @@ export class DropdownListComponent implements OnInit {
         // enabledColumnSetting:true,
         enabledRecordCreateBtn: true,
         // enabledTotal:true,
+        
     };
     private add() {
         this.router.navigate(['/setup/dropdown-add']);

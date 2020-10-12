@@ -2,9 +2,11 @@
 ﻿using System;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.CollectionEntry;
+using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
@@ -131,5 +133,15 @@ namespace Berger.Data.MsfaEntity
         public DbSet<WorkflowLogHistory> WorkflowLogHistories { get; set; }
         public DbSet<WorkFlowType> WorkFlowTypes { get; set; }
         #endregion
+    
+        #region JourneyPlan&FocusDealer
+        public DbSet<FocusDealer> FocusDealers { get; set; }
+        public DbSet<JourneyPlan> JourneyPlans { get; set; }
+        #endregion
+
+        #region Painter
+        public DbSet<Painter> Painters { get; set; }
+        #endregion
+
     }
 }

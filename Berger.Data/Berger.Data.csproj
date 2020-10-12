@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20201011120744_PainterEntity.cs" />
+    <Compile Remove="Migrations\20201011120744_PainterEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201011121353_PainterEntity.cs" />
+    <Compile Remove="Migrations\20201011121353_PainterEntity.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />

@@ -68,7 +68,7 @@ namespace BergerMsfaApi.Controllers.Common
         protected IActionResult ExceptionResult(Exception ex)
         {
             ex.ToWriteLog();
-
+            
             var apiResult = new ApiResponse
             {
                 StatusCode = 500,

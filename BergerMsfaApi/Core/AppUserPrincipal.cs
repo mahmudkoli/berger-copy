@@ -10,7 +10,7 @@ namespace BergerMsfaApi.Core
         public AppUserPrincipal(string userName)
         {
             Identity = new GenericIdentity(userName);
-            UserName = userName;
+            UserName = userName; 
         }
         public AppUserPrincipal(string userName, string type)
         {

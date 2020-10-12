@@ -1,0 +1,58 @@
+<!--<div class="col col-lg-12">
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="journeyPlanList"
+                 (customActivityOnRecord)="fnCustomTrigger($event)"
+                 (cellClickCallbackFn)="fnPtableCellClick($event)">
+    </app-p-table>
+</div>-->
+<p-table #dt [value]="journeyPlanList" [globalFilterFields]="['code','employeeRegId','visitDate','approvedStatus']">
+    <ng-template pTemplate="caption">
+        <div class="table-header">
+
+            <div class="row">
+                <div class="col-md-4">
+                    Journey Plan List
+                </div>
+                
+                <div class="col-md-4 offset-md-4">
+                    <button  class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
+                    <div >
+                        <span class="p-input-icon-right m-2 pull-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="'code'">Code <p-sortIcon field="'code'"></p-sortIcon></th>
+            <th pSortableColumn="employeeRegId">Employee <p-sortIcon field="employeeRegId"></p-sortIcon></th>
+            <th pSortableColumn="visitDate">Visit Date <p-sortIcon field="visitDate"></p-sortIcon></th>
+            <th pSortableColumn="approvedStatus">Status <p-sortIcon field="approvedStatus"></p-sortIcon></th>
+   
+            <th>
+
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-jPlan>
+        <tr>
+            <td>{{jPlan.code}}</td>
+            <td>{{jPlan.employeeRegId}}</td>
+            <td>{{jPlan.visitDate| date }}</td>
+            <td>
+                <button class="mb-2 mr-2 border-0 btn-transition btn" (click)="onStatusChange(jPlan)" [ngClass]="{'btn-outline-success':jPlan.approvedStatus,'btn-outline-danger':!jPlan.approvedStatus}">
+                    {{jPlan.approvedStatus?"Approved":"Pending"}}
+                </button>
+            </td>
+            <td>
+                <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
+                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

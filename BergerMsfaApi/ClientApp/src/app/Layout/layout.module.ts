@@ -7,7 +7,7 @@ import {NgRedux, DevToolsExtension} from '@angular-redux/store';
 // import {ConfigActions} from './ThemeOptions/store/config.actions';
 
 import {CommonModule} from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 // BOOTSTRAP COMPONENTS
 
@@ -49,9 +49,6 @@ import { SharedMasterModule } from '../Shared/Modules/shared-master/shared-maste
 
 import { NotificationComponent } from './LayoutComponent/Components/header/elements/notification/notification.component';
 import { ModalNotificationComponent } from './LayoutComponent/Components/header/modal-notification/modal-notification.component';
-import { CollectionEntryListComponent } from './Collection-Entry/collection-entry-list/collection-entry-list.component';
-
-
 
 
 @NgModule({
@@ -105,7 +102,9 @@ import { CollectionEntryListComponent } from './Collection-Entry/collection-entr
     FormsModule,
     ReactiveFormsModule,
     // HttpClientModule,
-    SharedMasterModule
+      SharedMasterModule,
+
+     
   ],
   entryComponents: [ModalNotificationComponent]
 })

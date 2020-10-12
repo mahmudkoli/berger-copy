@@ -34,7 +34,12 @@ namespace BergerMsfaApi.Controllers.Setup
 
             try
             {
-                var result = await _dropdownService.GetDropdownByTypeCd(typeCode);
+                if(string.IsNullOrEmpty(typeCode))
+                {
+                    ModelState.AddModelError(nameof(typeCode), "TypeCode Can Not Be Empty");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _dropdownService.GetDropdownByTypeCd(typeCode.Trim());
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -48,6 +53,7 @@ namespace BergerMsfaApi.Controllers.Setup
 
             try
             {
+              
                 var result = await _dropdownService.GetDropdownByTypeId(typeId);
                 return OkResult(result);
             }

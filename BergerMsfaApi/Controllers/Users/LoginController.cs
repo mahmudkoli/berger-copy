@@ -35,7 +35,7 @@ namespace BergerMsfaApi.Controllers.Users
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var apiResult = new ApiResponse<IEnumerable<LoginModel>>
             {
@@ -45,18 +45,30 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 try
                 {
-                    bool IsLoginSuccessful = true; //await  _cmuserservice.LoginCMUser(model);
-                    if (IsLoginSuccessful)
+                    //bool IsLoginSuccessful = true; 
+                    ////await  _cmuserservice.LoginCMUser(model);
+                    //if (IsLoginSuccessful)
+                    //{
+                    //    var result = await authService.GetJWTToken(model);
+                    //    return OkResult(result);
+
+                    //}
+                    //else
+                    //{
+                    //    return Unauthorized();
+                    //}
+                    if (await _cmuserservice.LoginCMUser(model))
                     {
                         var result = await authService.GetJWTToken(model);
                         return OkResult(result);
-
                     }
                     else
                     {
                         return Unauthorized();
                     }
-                   
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -78,7 +90,7 @@ namespace BergerMsfaApi.Controllers.Users
         }
 
         [HttpPost("portallogin")]
-        public async Task<IActionResult> AdUserLogin([FromBody]PortalLoginModel model)
+        public async Task<IActionResult> AdUserLogin([FromBody] PortalLoginModel model)
         {
             var apiResult = new ApiResponse<IEnumerable<PortalLoginModel>>
             {
@@ -109,14 +121,9 @@ namespace BergerMsfaApi.Controllers.Users
                     apiResult.Msg = ex.Message;
                     return BadRequest(apiResult);
                 }
-
-
             }
 
-
             return BadRequest();
-
-
         }
 
 
@@ -167,7 +174,8 @@ namespace BergerMsfaApi.Controllers.Users
             };
             try
             {
-                UserInfoModel userInfo = new UserInfoModel() {
+                UserInfoModel userInfo = new UserInfoModel()
+                {
                     Name = AppIdentity.AppUser.FullName,
                     RoleId = AppIdentity.AppUser.ActiveRoleId,
                     RoleIds = AppIdentity.AppUser.RoleIdList,
@@ -177,8 +185,8 @@ namespace BergerMsfaApi.Controllers.Users
                     Email = AppIdentity.AppUser.Email,
                     RoleName = AppIdentity.AppUser.ActiveRoleName
 
-                };              
-               
+                };
+
 
                 return OkResult(userInfo);
 

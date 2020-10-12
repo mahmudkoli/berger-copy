@@ -1,0 +1,98 @@
+
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New Focus Dealer</div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form #focusDealerForm="ngForm" (submit)="fnSave()">
+            <div class="form-row">
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Dealer</label>
+                        <select required class="form-control" name="code" #code="ngModel" [(ngModel)]="focusDealerModel.code">
+                            <option *ngFor="let option of dealerList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Employee</label>
+                        <select required class="form-control" name="employeeRegId" #employeeRegId="ngModel" [(ngModel)]="focusDealerModel.employeeRegId">
+                            <option *ngFor="let option of employeeRegList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <!--<div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label for="name">Valid From</label>
+                        <input required name="validFrom" #validFrom="ngModel"
+                               type="datetime" class="form-control"
+                               [ngClass]="{'is-valid':validFrom.valid,'is-invalid':validFrom.invalid && validFrom.touched }"
+                               [(ngModel)]="focusDealerModel.validFrom" />
+                        <small class="text-danger" [class.d-none]="validFrom.valid || validFrom.untouched">
+                            Valid From is required
+                        </small>
+                    </div>
+                </div>-->
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <!--<label for="name">Valid To</label>
+            <input required name="validFrom" #validTo="ngModel"
+                   type="datetime" class="form-control"
+                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
+                   [(ngModel)]="focusDealerModel.validTo" />
+            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
+                Valid From is required
+            </small>-->
+
+                        <label for="name">Valid From</label>
+                        <div class="input-group">
+                            <input class="form-control" placeholder="yyyy-mm-dd"
+                                   name="validFromNgbDate" [(ngModel)]="focusDealerModel.validFromNgbDate" ngbDatepicker #validFrom="ngbDatepicker">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="validFrom.toggle()" type="button">
+                                    <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <!--<label for="name">Valid To</label>
+            <input required name="validFrom" #validTo="ngModel"
+                   type="datetime" class="form-control"
+                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
+                   [(ngModel)]="focusDealerModel.validTo" />
+            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
+                Valid From is required
+            </small>-->
+
+                        <label for="name">Valid To</label>
+                        <div class="input-group">
+                            <input class="form-control" placeholder="yyyy-mm-dd"
+                                   name="validToNgbDate" [(ngModel)]="focusDealerModel.validToNgbDate" ngbDatepicker #validTo="ngbDatepicker">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="validTo.toggle()" type="button">
+                                    <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button [disabled]="!focusDealerForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+        {{focusDealerModel|json}}
+    </div>
+
+</div>   

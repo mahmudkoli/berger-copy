@@ -31,19 +31,34 @@ namespace BergerMsfaApi.Services.Implementation
         {
             try
             {
-                //var cmUser = await _cmUserService.GetCMUserByLogin(model);
+                ////var cmUser = await _cmUserService.GetCMUserByLogin(model);
 
-                var user = new AppUserPrincipal("brainstation23")
+                //var user = new AppUserPrincipal("brainstation23")
+                //{
+                //    UserId = 1,
+                //    Email = "abc@abc.com",
+                //    ActiveRoleId = 0,
+                //    RoleIdList = new List<int> { 0 },
+                //    Avatar = "/img/user.png",
+                //    FullName = "Full Name",
+                //    EmployeeId = "0",
+                //    Phone = "011121",
+                //    UserAgentInfo = "127.0.0.1",
+
+                //};
+
+                var cmUser = await _cmUserService.GetCMUserByLogin(model);
+                var user = new AppUserPrincipal(model.MobileNumber)
                 {
-                    UserId = 1,
-                    Email = "abc@abc.com",
-                    ActiveRoleId = 0,
-                    RoleIdList = new List<int> { 0 },
+                    UserId =AppIdentity.AppUser.UserId,
+                    Email = AppIdentity.AppUser.Email,
+                    ActiveRoleId = AppIdentity.AppUser.ActiveRoleId,
+                    RoleIdList = AppIdentity.AppUser.RoleIdList,
                     Avatar = "/img/user.png",
-                    FullName = "Full Name",
-                    EmployeeId = "0",
-                    Phone = "011121",
-                    UserAgentInfo = "127.0.0.1",
+                    FullName = AppIdentity.AppUser.FullName,
+                    EmployeeId = AppIdentity.AppUser.EmployeeId,
+                    Phone = AppIdentity.AppUser.Phone,
+                    UserAgentInfo = AppIdentity.AppUser.UserAgentInfo
 
                 };
                 var appClaimes = user
@@ -52,7 +67,6 @@ namespace BergerMsfaApi.Services.Implementation
 
                 var claims = new List<Claim>()
                     {
-
                             new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName),
                             new Claim(JwtRegisteredClaimNames.Sub,user.UserId.ToString()),
                             new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
@@ -80,8 +94,10 @@ namespace BergerMsfaApi.Services.Implementation
 
                 var results = new
                 {
-                    userId = 1,
-                    fullName = "Full Name",
+                    //userId = 1,
+                    //fullName = "Full Name",
+                    userId=AppIdentity.AppUser.UserId,
+                    fullName=AppIdentity.AppUser.FullName,
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo
                 };

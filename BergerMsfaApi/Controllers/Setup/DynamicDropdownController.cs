@@ -18,7 +18,7 @@ namespace BergerMsfaApi.Controllers.Setup
         public DynamicDropdownController
             (
               ILogger<DynamicDropdownController> logger
-             ,IDropdownService dropdownService
+             , IDropdownService dropdownService
             )
         {
             _logger = logger;
@@ -109,7 +109,7 @@ namespace BergerMsfaApi.Controllers.Setup
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 else if (!await _dropdownService.IsExistAsync(model.Id))
                 {
-                    ModelState.AddModelError(nameof(model.DropdownName), "dose not exist");
+                    ModelState.AddModelError(nameof(model), "Dropdown Not Found");
                     return ValidationResult(ModelState);
                   
                 }
@@ -131,7 +131,7 @@ namespace BergerMsfaApi.Controllers.Setup
             {
                 if (!await _dropdownService.IsExistAsync(id))
                 {
-                    ModelState.AddModelError(nameof(id), "does not exist");
+                    ModelState.AddModelError(nameof(id), "Dropdown  Not Found");
                     return ValidationResult(ModelState);
                 }
                 var result = await _dropdownService.DeleteAsync(id);
@@ -152,7 +152,7 @@ namespace BergerMsfaApi.Controllers.Setup
             {
                 if (string.IsNullOrEmpty(typeCode))
                 {
-                    ModelState.AddModelError(nameof(typeCode), "does not exist");
+                    ModelState.AddModelError(nameof(typeCode), "TypeCode Could Not Be Empty");
                     return ValidationResult(ModelState);
                 }
                 var result = await _dropdownService.GetDropdownByTypeCd(typeCode.Trim());

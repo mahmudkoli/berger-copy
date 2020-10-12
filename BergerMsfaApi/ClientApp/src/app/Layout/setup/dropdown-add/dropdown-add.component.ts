@@ -92,7 +92,7 @@ export class DropdownAddComponent implements OnInit {
 
     private update(model: Dropdown) {
         this.dynamicDropdownService.update(model).subscribe(res => {
-            console.log("Dropdown upd res: ", res);
+            console.log("Dropdown update res: ", res);
             this.router.navigate(['/setup/dropdown-list']).then(() => {
                 this.alertService.tosterSuccess("dropdown has been edited successfully.");
             });
