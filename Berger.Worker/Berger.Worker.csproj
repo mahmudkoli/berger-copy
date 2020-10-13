@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
+    <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
+  </ItemGroup>
 </Project>
