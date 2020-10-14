@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity;
 using Berger.Worker.Common;
 using Berger.Worker.JSONParser;
 using Berger.Worker.Query;
@@ -15,12 +17,14 @@ namespace Berger.Worker.Services
     {
         private HttpClient _client;
         private CustomerQuery _query;
+        private readonly ApplicationDbContext _db;
 
 
-        public CustomerService()
+        public CustomerService(ApplicationDbContext db)
         {
             _client = new HttpClient();
             _query = new CustomerQuery();
+            _db = db;
         }
 
         public async Task<int> getData()
@@ -35,7 +39,13 @@ namespace Berger.Worker.Services
                 response.EnsureSuccessStatusCode();
                 string responseBody = response.Content.ReadAsStringAsync().Result;
                 Parser<CustomerModel> objParser = new Parser<CustomerModel>();
-                objParser.ParseJson(responseBody);
+                var mappedData = objParser.ParseJson(responseBody);
+
+                //foreach (var item in mappedData.results)
+                //{
+                //    _db.CMUsers.Add()
+                //}
+
             }
             catch (Exception ex)
             {
