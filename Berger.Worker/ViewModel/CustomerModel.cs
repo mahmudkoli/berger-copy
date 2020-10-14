@@ -19,6 +19,7 @@ namespace Berger.Worker.ViewModel
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string CreditControlArea { get; set; }
+        public Object __metadata { get; set; }
 
     }
 }

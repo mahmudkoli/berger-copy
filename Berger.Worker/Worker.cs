@@ -41,7 +41,7 @@ namespace Berger.Worker
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                _customerService.getData();
+                await  _customerService.getData();
                 //await _client.PostAsync();
                 await Task.Delay(1000, stoppingToken);
             }
