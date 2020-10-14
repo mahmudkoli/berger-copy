@@ -9,6 +9,16 @@
     <Compile Remove="Migrations\20201011120744_PainterEntity.Designer.cs" />
     <Compile Remove="Migrations\20201011121353_PainterEntity.cs" />
     <Compile Remove="Migrations\20201011121353_PainterEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201013070827_UpdatePainterAttachmentModel.cs" />
+    <Compile Remove="Migrations\20201013070827_UpdatePainterAttachmentModel.Designer.cs" />
+    <Compile Remove="Migrations\20201013071434_UpdatePainterAttachmentModel.cs" />
+    <Compile Remove="Migrations\20201013071434_UpdatePainterAttachmentModel.Designer.cs" />
+    <Compile Remove="Migrations\20201013072939_UpdatePainterAttachmemtV_1.cs" />
+    <Compile Remove="Migrations\20201013072939_UpdatePainterAttachmemtV_1.Designer.cs" />
+    <Compile Remove="Migrations\20201013075715_PainerAttachment.cs" />
+    <Compile Remove="Migrations\20201013075715_PainerAttachment.Designer.cs" />
+    <Compile Remove="Migrations\20201013080027_PainterAttachment.cs" />
+    <Compile Remove="Migrations\20201013080027_PainterAttachment.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

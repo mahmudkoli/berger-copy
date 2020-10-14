@@ -20,13 +20,30 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
             _painterSvc = painterSvc;
         }
 
-
         [HttpGet("GetPainterList")]
         public async Task<IActionResult> GetPainterList()
         {
             try
             {
                 var result = await _painterSvc.GetPainterListAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpGet("GetPainterById/{Id}")]
+        public async Task<IActionResult> GetPainterById(int Id)
+        {
+            try
+            {
+                if (!await _painterSvc.IsExistAsync(Id))
+                {
+                    ModelState.AddModelError(nameof(Id), "Painter Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _painterSvc.GetPainterByIdAsync(Id);
                 return OkResult(result);
             }
             catch (Exception ex)

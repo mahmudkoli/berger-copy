@@ -3,12 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.PainterRegistration
 {
     public class PainterModel
     {
+        public PainterModel()
+        {
+            AttachmentModel = new List<AttachmentModel>();
+        }
         public int Id { get; set; }
         public string DepotName { get; set; }
         public string SaleGroup { get; set; }
@@ -31,7 +36,14 @@ namespace BergerMsfaApi.Models.PainterRegistration
         //public string PainterCatName { get; set; }
         public int TerritoryId { get; set; }
         //public string TerritoryName { get; set; }
+       public List<AttachmentModel> AttachmentModel { get; set; }
 
 
+    }
+
+    public class AttachmentModel
+    {
+        public string Name { get; set; }
+        public string Path { get; set; }
     }
 }

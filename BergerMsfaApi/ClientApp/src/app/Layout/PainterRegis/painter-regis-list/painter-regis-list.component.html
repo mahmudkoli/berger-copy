@@ -1,8 +1,65 @@
-<div class="col col-lg-12">
+<!--<div class="col col-lg-12">
     <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="painterList"
                  (customActivityOnRecord)="fnCustomTrigger($event)"
                  (cellClickCallbackFn)="fnPtableCellClick($event)">
     </app-p-table>
-</div>
+</div>-->
 
 
+<p-table #dt [value]="painterList" [globalFilterFields]="['name','phone','depotName']">
+<ng-template pTemplate="caption">
+    <div class="table-header">
+
+        <div class="row">
+            <div class="col-md-4">
+                Painter List
+            </div>
+
+            <div class="col-md-4 offset-md-4">
+                <!--<button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>-->
+                <div>
+                    <span class="p-input-icon-right m-2 pull-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</ng-template>
+<ng-template pTemplate="header">
+    <tr>
+     
+        <th pSortableColumn="'name'">Code <p-sortIcon field="'name'"></p-sortIcon></th>
+        <th pSortableColumn="'painterImage'">Painter <p-sortIcon field="'painterImage'"></p-sortIcon></th>
+        <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon></th>
+        <th pSortableColumn="depotName">Depot Name <p-sortIcon field="depotName"></p-sortIcon></th>
+
+
+        <th>
+
+        </th>
+    </tr>
+</ng-template>
+<ng-template pTemplate="body" let-painter>
+    <tr>
+
+        <td>{{painter.name}}</td>
+        <td>
+
+            <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImage}}" width="60" style="vertical-align: middle; border-radius: 50%;" />
+
+        </td>
+        <td>{{painter.phone}}</td>
+        <td>{{painter.depotName }}</td>
+
+        <td>
+            <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View Detail</button>
+            <!--<i class="fa fa-edit mr-2" (click)="detail(painter.id)"> </i>-->
+           
+        </td>
+    </tr>
+</ng-template>
+</p-table>

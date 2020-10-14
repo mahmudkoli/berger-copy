@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Painter } from '../../../Shared/Entity/Painter/Painter';
 import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
-import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/focusdealer.service';
+
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { Router } from '@angular/router';
+import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/painterRegister.service';
 
 @Component({
     selector: 'app-painter-regis-list',
@@ -12,14 +14,21 @@ import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 export class PainterRegisListComponent implements OnInit {
     permissionGroup: PermissionGroup = new PermissionGroup();
     public painterList: Painter[] = [];
+    public baseUrl: string;
     constructor(
+        private router: Router,
         private activityPermissionService: ActivityPermissionService,
         private painterRegisSvc: PainterRegisService,
-        private alertService: AlertService,) { this.fnPainterList();}
+        private alertService: AlertService,
+        @Inject('BASE_URL') baseUrl: string) { this.fnPainterList(); this.baseUrl = baseUrl; }
 
     ngOnInit() {
+
         this._initPermissionGroup();
        
+    }
+    detail(id) {
+        this.router.navigate(['/painter/detail/' + id]);
     }
     private fnPainterList() {
         this.alertService.fnLoading(true);

@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Berger.Common.Enumerations;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace BergerMsfaApi.Controllers.PainterRegistration1
 {
@@ -46,13 +48,30 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             }
         }
 
+        //[HttpPost("CreatePainter")]
+        //public async Task<IActionResult> CreatePainter([FromBody] PainterModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _painterSvc.CreatePainterAsync(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
+
+
         [HttpPost("CreatePainter")]
-        public async Task<IActionResult> CreatePainter([FromBody] PainterModel model)
+        public async Task<IActionResult> CreatePainter([ModelBinder(BinderType = typeof(JsonModelBinder))] string model, IFormFile profile, List<IFormFile> attachments)
         {
             try
             {
+                var _painter = JsonConvert.DeserializeObject<PainterModel>(model);
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _painterSvc.CreatePainterAsync(model);
+                var result = await _painterSvc.CreatePainterAsync(_painter, profile, attachments);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -60,7 +79,8 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
-        [HttpPost("GetPainterById/{Id}")]
+
+        [HttpGet("GetPainterById/{Id}")]
         public async Task<IActionResult> GetPainterById(int Id)
         {
             try
@@ -79,14 +99,31 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             }
         }
 
-        [HttpPut("UpdatePainter")]
-        public async Task<IActionResult> UpdatePainter([FromBody] PainterModel model)
+        //[HttpPut("UpdatePainter")]
+        //public async Task<IActionResult> UpdatePainter([FromBody] PainterModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        if (!await _painterSvc.IsExistAsync(model.Id)) return NotFound();
+        //        var result = await _painterSvc.UpdateAsync(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
+      
+         [HttpPut("UpdatePainter")]
+        public async Task<IActionResult> UpdatePainter([ModelBinder(BinderType = typeof(JsonModelBinder))] string model, IFormFile profile, List<IFormFile> attachments)
         {
             try
             {
+                var _painter = JsonConvert.DeserializeObject<PainterModel>(model);
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (!await _painterSvc.IsExistAsync(model.Id)) return NotFound();
-                var result = await _painterSvc.UpdateAsync(model);
+                if (!await _painterSvc.IsExistAsync(_painter.Id)) return NotFound();
+                var result = await _painterSvc.UpdatePainterAsync(_painter.Id,profile,attachments);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -94,6 +131,8 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
+
+
 
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
@@ -105,7 +144,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                     ModelState.AddModelError(nameof(Id), "Painter Not Found");
                     return ValidationResult(ModelState);
                 }
-              
+
                 var result = await _painterSvc.DeleteAsync(Id);
                 return OkResult(result);
             }
@@ -115,30 +154,61 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             }
         }
 
-        [HttpPost("UploadPainterImage/{PainterId}")]
-        public async Task<IActionResult> UploadPainterImage(int PainterId, IFormFile file)
-        {
-            try
-            {
-                if (!await _painterSvc.IsExistAsync(PainterId))
-                {
-                    ModelState.AddModelError(nameof(PainterId), "Painter Not Found");
-                    return ValidationResult(ModelState);
-                }
-                if (file==null)
-                {
-                    ModelState.AddModelError(nameof(file), "File Not Found");
-                    return ValidationResult(ModelState);
-                }
-                 var _painter= await _painterSvc.UploadPainterProfile(PainterId, file);
-                return OkResult(_painter);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
+        //[HttpPost("UploadPainterImage/{PainterId}")]
+        //public async Task<IActionResult> UploadPainterImage(int PainterId, IFormFile file)
+        //{
+        //    try
+        //    {
+        //        if (!await _painterSvc.IsExistAsync(PainterId))
+        //        {
+        //            ModelState.AddModelError(nameof(PainterId), "Painter Not Found");
+        //            return ValidationResult(ModelState);
+        //        }
+        //        if (file == null)
+        //        {
+        //            ModelState.AddModelError(nameof(file), "File Not Found");
+        //            return ValidationResult(ModelState);
+        //        }
+        //        var _painter = await _painterSvc.UpdatePainterAsync(PainterId, file);
+        //        return OkResult(_painter);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
 
-        }
+        //}
 
     }
+
+
+    public class JsonModelBinder : IModelBinder
+    {
+        public Task BindModelAsync(ModelBindingContext bindingContext)
+        {
+            if (bindingContext == null)
+            {
+                throw new ArgumentNullException(nameof(bindingContext));
+            }
+
+            // Check the value sent in
+            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            if (valueProviderResult != ValueProviderResult.None)
+            {
+                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
+
+                // Attempt to convert the input value
+                var valueAsString = valueProviderResult.FirstValue;
+                var result = Newtonsoft.Json.JsonConvert.DeserializeObject(valueAsString, bindingContext.ModelType);
+                if (result != null)
+                {
+                    bindingContext.Result = ModelBindingResult.Success(result);
+                    return Task.CompletedTask;
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+    }
+
 }

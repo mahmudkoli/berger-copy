@@ -19,7 +19,11 @@ export class PainterRegisService {
     }
 
     public GetPainterList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/PainterRegis/GetPainterList');
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/AppPainterRegis/GetPainterList');
+    }
+    public GetRegisterPainterById(id) {
+
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/AppPainterRegis/GetPainterById/' + id);
     }
    
 }

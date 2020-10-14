@@ -6,11 +6,12 @@ import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PainterRegisRoutingModule } from './painterRegis-routing.module';
+import { PainterRegisDetailComponent } from './painter-regis-detail/painter-regis-detail.component';
 
 
 
 @NgModule({
-  declarations: [PainterRegisListComponent],
+  declarations: [PainterRegisListComponent, PainterRegisDetailComponent],
   imports: [
       CommonModule,
       SharedMasterModule,

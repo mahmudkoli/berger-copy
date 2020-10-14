@@ -7,8 +7,12 @@ using System.Text;
 
 namespace Berger.Data.MsfaEntity.PainterRegistration
 {
-    public class Painter : AuditableEntity<int>
-    {
+    [Table("Painters")]
+    public class Painter :AuditableEntity<int>    {
+        public Painter()
+        {
+           Attachments= new List<Attachment>();
+        }
         public string DepotName { get; set; }
         public string SaleGroup { get; set; }
 
@@ -37,6 +41,9 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 
         [ForeignKey("TerritoryId")]
         public DropdownDetail Territory { get; set; }
+
+
+        public List<Attachment> Attachments { get; set; }
 
     }
 }

@@ -141,6 +141,8 @@ namespace Berger.Data.MsfaEntity
 
         #region Painter
         public DbSet<Painter> Painters { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
+        //public DbSet<ParentAttachment> ParentAttachments { get; set; }
         #endregion
 
     }
