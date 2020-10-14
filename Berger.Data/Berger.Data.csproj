@@ -9,6 +9,26 @@
     <Compile Remove="Migrations\20201011120744_PainterEntity.Designer.cs" />
     <Compile Remove="Migrations\20201011121353_PainterEntity.cs" />
     <Compile Remove="Migrations\20201011121353_PainterEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201014010707_dealerInfo.cs" />
+    <Compile Remove="Migrations\20201014010707_dealerInfo.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.Development.json" />
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +47,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="HanaEntity\" />
   </ItemGroup>
 
 </Project>

@@ -8,14 +8,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Berger.Worker.JSONParser
 {
-    public   class Parser<TEntity> where TEntity : class
+    public static  class Parser<TEntity> where TEntity : class
     {
         public class Data
         {
             public List<TEntity> results { get; set; }
         }
           
-        public  Data ParseJson(string json)
+        public static Data ParseJson(string json)
         {
 
 

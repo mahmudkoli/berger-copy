@@ -7,7 +7,8 @@ using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.PainterRegistration;
-using Berger.Data.MsfaEntity.Setup;
+ using Berger.Data.MsfaEntity.SAPTables;
+ using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -141,6 +142,13 @@ namespace Berger.Data.MsfaEntity
 
         #region Painter
         public DbSet<Painter> Painters { get; set; }
+        #endregion
+
+        #region SAP Tables
+
+        public DbSet<DealerInfo> DealerInfos { get; set; }
+
+
         #endregion
 
     }
