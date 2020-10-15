@@ -17,38 +17,25 @@ namespace Berger.Worker.JSONParser
           
         public static Data ParseJson(string json)
         {
+            Data dataObj = new Data();
 
-
-            try
+            JObject data = JObject.Parse(json);
+            if (data.HasValues)
             {
-                Data dataObj = new Data();
-
-                JObject data = JObject.Parse(json);
-                if (data.HasValues)
+                if (data.First?.First != null)
                 {
-                    if (data.First != null)
-                    {
-                        if (data.First.First != null)
-                        {
-                            dataObj = JsonConvert.DeserializeObject<Data>(data.First.First.ToString());
+                    JsonSerializerSettings settings = new JsonSerializerSettings();
+                    settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+                    dataObj = JsonConvert.DeserializeObject<Data>(data.First.First.ToString(),settings);
                             
-                        }
-                    }
                 }
-                else
-                {
-                    return new Data();
-                }
-
-                return dataObj;
-
             }
-            catch (System.Exception ex)
+            else
             {
-
-                throw;
+                return new Data();
             }
-            
+
+            return dataObj;
         }
 
     }

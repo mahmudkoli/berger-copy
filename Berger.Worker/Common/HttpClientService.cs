@@ -25,8 +25,16 @@ namespace Berger.Worker.Common
                 
                 var response = task.Result;
                 response.EnsureSuccessStatusCode();
-                string responseBody = response.Content.ReadAsStringAsync().Result;
-                return responseBody;
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
+                    return responseBody;
+                }
+                else
+                {
+                    throw new ArgumentException("Something Wrong with host");
+                }
+                
             }
             catch (HttpRequestException httpEx)
             {
@@ -35,6 +43,7 @@ namespace Berger.Worker.Common
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.InnerException.Message);
                 throw;
             }
         }

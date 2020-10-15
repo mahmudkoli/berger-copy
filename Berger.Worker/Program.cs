@@ -35,7 +35,7 @@ namespace Berger.Worker
                     services.AddScoped<IHttpClientService, HttpClientService>();
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
                     services.AddScoped<IUnitOfWork, ApplicationDbContext>();
-
+                    
                     services.AddHostedService<Worker>();
                 });
     }

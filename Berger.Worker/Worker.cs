@@ -49,7 +49,7 @@ namespace Berger.Worker
                     await _customerService.getData();
                 }
                 
-                //await _client.PostAsync();
+                //await _client.PostAsync(); 
                 await Task.Delay(1000, stoppingToken);
             }
         }
