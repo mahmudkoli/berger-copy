@@ -26,7 +26,7 @@ const routes: Routes = [
             { path: 'setup', loadChildren: () => import('./setup/setup.module').then(m => m.SetupModule) },
             { path: 'collection', loadChildren: () => import('./Collection-Entry/collectionEntry.module').then(m => m.CollectionEntryModule) },
             { path: 'journey-plan', loadChildren: () => import('./JourneyPlan/journeyPlan.module').then(m => m.JourneyPlanModule) },
-            { path: 'focus-dealer', loadChildren: () => import('./FocusDealer/focusDealer.module').then(m => m.FocusDealerModule) },
+            { path: 'dealer', loadChildren: () => import('./FocusDealer/focusDealer.module').then(m => m.FocusDealerModule) },
             { path: 'painter', loadChildren: () => import('./PainterRegis/painter-regis.module').then(m => m.PainterRegisModule) },
 
 

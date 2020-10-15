@@ -1,10 +1,4 @@
-﻿using Berger.Data.MsfaEntity.Setup;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BergerMsfaApi.Models.PainterRegistration
 {
@@ -39,11 +33,5 @@ namespace BergerMsfaApi.Models.PainterRegistration
        public List<AttachmentModel> AttachmentModel { get; set; }
 
 
-    }
-
-    public class AttachmentModel
-    {
-        public string Name { get; set; }
-        public string Path { get; set; }
     }
 }

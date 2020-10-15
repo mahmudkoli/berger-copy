@@ -28,6 +28,7 @@ export class PainterRegisListComponent implements OnInit {
        
     }
     detail(id) {
+
         this.router.navigate(['/painter/detail/' + id]);
     }
     private fnPainterList() {

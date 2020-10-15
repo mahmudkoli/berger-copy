@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -115,7 +115,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
         //    }
         //}
       
-         [HttpPut("UpdatePainter")]
+        [HttpPut("UpdatePainter")]
         public async Task<IActionResult> UpdatePainter([ModelBinder(BinderType = typeof(JsonModelBinder))] string model, IFormFile profile, List<IFormFile> attachments)
         {
             try
@@ -182,33 +182,6 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
     }
 
 
-    public class JsonModelBinder : IModelBinder
-    {
-        public Task BindModelAsync(ModelBindingContext bindingContext)
-        {
-            if (bindingContext == null)
-            {
-                throw new ArgumentNullException(nameof(bindingContext));
-            }
-
-            // Check the value sent in
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
-            if (valueProviderResult != ValueProviderResult.None)
-            {
-                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
-
-                // Attempt to convert the input value
-                var valueAsString = valueProviderResult.FirstValue;
-                var result = Newtonsoft.Json.JsonConvert.DeserializeObject(valueAsString, bindingContext.ModelType);
-                if (result != null)
-                {
-                    bindingContext.Result = ModelBindingResult.Success(result);
-                    return Task.CompletedTask;
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-    }
+   
 
 }

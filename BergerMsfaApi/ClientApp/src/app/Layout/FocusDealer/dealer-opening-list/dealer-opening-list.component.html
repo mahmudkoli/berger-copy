@@ -1,0 +1,50 @@
+<p-table #dt [value]="dealerOpeningList" [globalFilterFields]="['businessArea','saleOffice','zoneNo','territoryNo']">
+
+    <ng-template pTemplate="caption">
+        <div class="table-header">
+
+            <div class="row">
+                <div class="col-md-4">
+                    Dealer Opening List
+                </div>
+
+                <div class="col-md-4 offset-md-4">
+                  
+                    <div>
+                        <span class="p-input-icon-right m-2 pull-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="'businessArea'">Business Area <p-sortIcon field="'businessArea'"></p-sortIcon></th>
+            <th pSortableColumn="'saleOffice'">Sale Office <p-sortIcon field="'saleOffice'"></p-sortIcon></th>
+            <th pSortableColumn="zoneNo">Zone No <p-sortIcon field="zoneNo"></p-sortIcon></th>
+            <th pSortableColumn="territoryNo">Territory No<p-sortIcon field="territoryNo"></p-sortIcon></th>
+            <th></th>
+        </tr>
+
+    </ng-template>
+    <ng-template pTemplate="body" let-dOpen>
+        <tr>
+
+            <td>{{dOpen.businessArea}}</td>
+
+            <td>{{dOpen.saleOffice}}</td>
+            <td>{{dOpen.zoneNo }}</td>
+            <td>{{dOpen.territoryNo }}</td>
+
+            <td>
+                <button class="btn btn-sm btn-primary" type="button" (click)="detail(dOpen.id)">View Detail</button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
