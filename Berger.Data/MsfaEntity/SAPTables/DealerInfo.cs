@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Berger.Data.Attributes;
 using Berger.Data.Common;
 
 namespace Berger.Data.MsfaEntity.SAPTables
@@ -23,5 +25,12 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string CreditControlArea { get; set; }
+        private string CompoKey;
+        [NotMapped] 
+        public string CompositeKey
+        {
+            get => CustomerNo.ToString() + AccountGroup + BusinessArea;
+            set => CompoKey = value;
+        }
     }
 }

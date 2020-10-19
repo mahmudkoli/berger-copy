@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
 using Berger.Worker.JSONParser;
@@ -18,15 +19,17 @@ namespace Berger.Worker.Services
         private readonly CustomerQuery _query;
         private readonly IRepository<DealerInfo> _repo;
         private readonly IHttpClientService _httpService;
+        private readonly IDataEqualityComparer<DealerInfo> _dataCoparer;
 
 
 
-        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService)
+        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer)
         {
             _client = new HttpClient();
             _query = new CustomerQuery();
             _repo = repo;
             _httpService = httpClientService;
+            _dataCoparer = comparer;
 
         }
 
@@ -41,14 +44,11 @@ namespace Berger.Worker.Services
             var dataFromDatabase = await _repo.GetAllAsync();
             var fromDatabase = dataFromDatabase as DealerInfo[] ?? dataFromDatabase.ToArray();
 
-            List<int> insertDeleteKeys = new List<int>();
+            List<string> insertDeleteKeys = new List<string>();
             if (fromDatabase.Length != mappedDataFromApi.Count)
             {
-
-                GetGenericNewAndDeletedDataFromTwoList<DealerInfo> obGetGenericNewAndDeletedDataFromTwoList = new GetGenericNewAndDeletedDataFromTwoList<DealerInfo>();
-
-
-                var data = await obGetGenericNewAndDeletedDataFromTwoList.GetNewDataFromApiDataList(x => x.CustomerNo, mappedDataFromApi, fromDatabase);
+                
+                var data = await _dataCoparer.GetNewDatasetOfApi(x => x.CompositeKey, mappedDataFromApi, fromDatabase);
                 await _repo.CreateListAsync(data.Item2);
                 insertDeleteKeys.AddRange(data.Item1);
 
@@ -57,15 +57,15 @@ namespace Berger.Worker.Services
                 //var newKeyInApiList = await InsertNewDataList(mappedDataFromApi, fromDatabase, insertDeleteKeys);
 
                 //Filter Record for delete, database e ache but api list e nai
-                var deletedList = await obGetGenericNewAndDeletedDataFromTwoList.GetDeletedData(x => x.CustomerNo, mappedDataFromApi, fromDatabase);
+                var deletedList = await _dataCoparer.GetDeletedDataOfApi(x => x.CompositeKey, mappedDataFromApi, fromDatabase);
                 await _repo.UpdateListAsync(deletedList.Item2);
-                insertDeleteKeys.AddRange(deletedList.Item1);
+                //insertDeleteKeys.AddRange(deletedList.Item1);
 
 
                 // Data Update Check
                 if (insertDeleteKeys.Count > 0)
                 {
-                    var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CustomerNo))
+                    var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CompositeKey))
                         .ToList();
                     //updatedData.GroupBy(x=>x.CustomerNo).Select(y => y.FirstOrDefault()).ToList();
                     await _repo.UpdateListAsync(updatedData);
