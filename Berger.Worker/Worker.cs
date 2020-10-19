@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Berger.Worker.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -13,10 +15,13 @@ namespace Berger.Worker
     {
         private readonly ILogger<Worker> _logger;
         private HttpClient _client;
-
-        public Worker(ILogger<Worker> logger)
+        private  ICustomerService _customerService;
+        private readonly IServiceProvider _serviceProvider;
+        public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
+            _serviceProvider = serviceProvider;
+
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -37,8 +42,14 @@ namespace Berger.Worker
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                //await _client.PostAsync();
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    await _customerService.getData();
+                }
+                
+                //await _client.PostAsync(); 
                 await Task.Delay(1000, stoppingToken);
             }
         }
