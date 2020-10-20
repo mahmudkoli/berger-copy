@@ -15,10 +15,11 @@ namespace Berger.Worker.Common
             _logger = logger;
         }
 
-        public string GetHttpResponse(HttpClient client, string url)
+        public string GetHttpResponse(string url)
         {
             try
             {
+                HttpClient client = new HttpClient();
                 var RequestMessage = HttpClientAuthentication.Authenticate(url);
                 //make the request
                 var task = client.SendAsync(RequestMessage);

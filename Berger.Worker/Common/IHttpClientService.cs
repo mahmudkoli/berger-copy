@@ -7,7 +7,7 @@ namespace Berger.Worker.Common
 {
     public interface IHttpClientService
     {
-        public string GetHttpResponse(HttpClient client, string url);
+        public string GetHttpResponse(string url);
 
     }
 }

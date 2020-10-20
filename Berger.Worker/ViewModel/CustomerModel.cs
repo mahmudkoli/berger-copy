@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-
-namespace Berger.Worker.ViewModel
+﻿namespace Berger.Worker.ViewModel
 {
     class CustomerModel
     {
         public int CustomerNo { get; set; }
-        public int DivisionId { get; set; }
+        public int Division { get; set; }
         public string DayLimit { get; set; }
         public decimal CreditLimit { get; set; }
         public decimal TotalDue { get; set; }
@@ -27,7 +22,6 @@ namespace Berger.Worker.ViewModel
             get => CustomerNo.ToString() + AccountGroup + BusinessArea;
             set => CompoKey = value;
         }
-        //public Object __metadata { get; set; }
 
     }
 }

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Berger.Worker.Common
 {
@@ -32,7 +33,7 @@ namespace Berger.Worker.Common
 
             string key = predicate.Body.ToString().Split('.')[1];
             var property = typeof(TEntity).GetProperty(key, BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Instance);
-            var deletedDataInApi = firstList.Where(a => deletedKeysInApiList.Contains((string)property.GetValue(a))).ToList();
+            var deletedDataInApi = secondList.Where(a => deletedKeysInApiList.Contains((string)property.GetValue(a))).ToList();
             deletedDataInApi = deletedDataInApi.GroupBy(predicate.Compile()).Select(y => y.FirstOrDefault()).ToList();
 
             return (deletedKeysInApiList, deletedDataInApi);
