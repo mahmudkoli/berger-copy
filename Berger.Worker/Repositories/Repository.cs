@@ -320,6 +320,23 @@ namespace BergerMsfaApi.Repositories
             }
         }
 
+        public async Task<int> UpdateListiAsync(List<TEntity> items)
+        {
+            
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            try
+            {
+                //_context.Entry(await _context.FirstOrDefaultAsync(x => x.Id == item.Id)).CurrentValues.SetValues(item);
+                _context.UpdateRange(items);
+                var result = await SaveChangesAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
         public async Task<int> DeleteListAsync(List<TEntity> items)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));

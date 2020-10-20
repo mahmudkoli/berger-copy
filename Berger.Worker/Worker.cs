@@ -44,9 +44,16 @@ namespace Berger.Worker
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                    await _customerService.getData();
+                    try
+                    {
+                        _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                        _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                        await _customerService.getData();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogCritical($"{ex.Message}");
+                    }
                 }
                 
                 //await _client.PostAsync(); 

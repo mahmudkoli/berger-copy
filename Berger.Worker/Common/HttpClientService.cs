@@ -21,9 +21,8 @@ namespace Berger.Worker.Common
             {
                 HttpClient client = new HttpClient();
                 var RequestMessage = HttpClientAuthentication.Authenticate(url);
-                //make the request
+                _logger.LogInformation($"Http request started with authentication");
                 var task = client.SendAsync(RequestMessage);
-                
                 var response = task.Result;
                 response.EnsureSuccessStatusCode();
                 if (response.IsSuccessStatusCode)
@@ -33,13 +32,14 @@ namespace Berger.Worker.Common
                 }
                 else
                 {
-                    throw new ArgumentException("Something Wrong with host");
+                   _logger.LogInformation($"Something Wrong with host STATUS CODE: {response.StatusCode}");
+                   return "";
                 }
                 
             }
             catch (HttpRequestException httpEx)
             {
-                //_logger.LogCritical(httpEx.Message);
+                _logger.LogCritical(httpEx.Message);
                 throw;
             }
             catch (Exception ex)

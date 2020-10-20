@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Berger.Worker
 {
@@ -20,12 +21,28 @@ namespace Berger.Worker
         
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole()
+                    .AddEventLog();
+                    
+            });
+            ILogger logger = loggerFactory.CreateLogger<Program>();
+            
+            try
+            {
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation($"{ex.Message}");
+            }
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                //.UseConsoleLifetime()
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext))));
@@ -38,6 +55,9 @@ namespace Berger.Worker
                     services.AddScoped<IUnitOfWork, ApplicationDbContext>();
                     
                     services.AddHostedService<Worker>();
-                });
+                    
+                    
+                })
+        ;
     }
 }

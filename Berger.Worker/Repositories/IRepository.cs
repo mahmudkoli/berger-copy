@@ -65,6 +65,7 @@ namespace BergerMsfaApi.Repositories
         Task<TEntity> CreateAsync(TEntity entity);
         Task<List<TEntity>> CreateListAsync(List<TEntity> items);
         Task<List<TEntity>> UpdateListAsync(List<TEntity> items);
+        Task<int> UpdateListiAsync(List<TEntity> items);
         Task<int> DeleteListAsync(List<TEntity> item);
         Task<TEntity> UpdateAsync(TEntity item);
         Task<TEntity> CreateOrUpdateAsync(TEntity item);
