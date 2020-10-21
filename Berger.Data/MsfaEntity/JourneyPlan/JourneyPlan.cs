@@ -1,5 +1,6 @@
 ﻿using Berger.Data.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Berger.Data.MsfaEntity
 {
@@ -11,4 +12,30 @@ namespace Berger.Data.MsfaEntity
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
     }
+
+    public class JourneyPlanDetail: AuditableEntity<int>
+    {
+        public int DealerId { get; set; }
+        public DateTime VisitDate { get; set; }
+        public int PlanId { get; set; }
+        public JourneyPlanMaster JourneyPlanMaster { get; set; }
+    }
+
+    public class JourneyPlanMaster: AuditableEntity<int>
+    {
+        public JourneyPlanMaster()
+        {
+            JourneyPlanDetail = new List<JourneyPlanDetail>();
+        }
+        public int EmployeeId { get; set; }
+        public DateTime  PlanDate { get; set; }
+        public int ApprovedById { get; set; }
+        public DateTime ApprovedDate { get; set; }
+        public bool IsActive { get; set; }
+        public int RejectedBy { get; set; }
+        public  DateTime RejectedDate { get; set; }
+        public List<JourneyPlanDetail> JourneyPlanDetail { get; set; }
+    }
+
+
 }

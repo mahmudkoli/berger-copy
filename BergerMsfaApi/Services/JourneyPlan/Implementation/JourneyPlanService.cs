@@ -1,63 +1,296 @@
-﻿using Berger.Data.MsfaEntity;
-using BergerMsfaApi.Extensions;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity;
+using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.Users;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
 
 namespace BergerMsfaApi.Services.Setup.Implementation
 {
-    public class JourneyPlanService : IJourneyService
+    public class JourneyPlanService : IJourneyPlanService
     {
-        private readonly IRepository<JourneyPlan> _journeyPlanService;
+        private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailSvc;
+        private readonly IRepository<JourneyPlanMaster> _journeyPlanMasterSvc;
+        private readonly IRepository<DealerInfo> _dealerInforSvc; 
+        private readonly IRepository<UserInfo> _userInfoSvc;
+
 
         public JourneyPlanService(
-            IRepository<JourneyPlan> journeyPlanService
-            ) 
-            => _journeyPlanService = journeyPlanService;
-      
-        public async Task<IEnumerable<JourneyPlanModel>> GetJourneyPlanList()
+            IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
+            IRepository<JourneyPlanMaster> journeyPlanMasterSvc,
+            IRepository<DealerInfo> dealerInforSvc,
+            IRepository<UserInfo> userInfoSvc 
+            )
         {
-            var result = await _journeyPlanService.GetAllAsync();
-            return await result.ToMap<JourneyPlan, JourneyPlanModel>().ToListAsync();
-
+            _journeyPlanDetailSvc = journeyPlanDetailSvc;
+            _journeyPlanMasterSvc = journeyPlanMasterSvc;
+            _dealerInforSvc = dealerInforSvc;
+            _userInfoSvc = userInfoSvc;
         }
-        public async Task<bool> SetApprovedPlan(JourneyPlanModel model)
+      public async Task<bool> ChangePlanStatus(JourneyPlanStatusChangeModel model)
         {
-            var find = await _journeyPlanService.FindAsync(f => f.Id == model.Id);
+            var find = await _journeyPlanMasterSvc.FindAsync(f => f.Id == model.PlanId);
             if (find != null)
             {
-                if (model.ApprovedStatus) find.ApprovedDate = null;
-                else find.ApprovedDate = DateTime.Now;
-                find.ApprovedBy = AppIdentity.AppUser.UserId;
-                await _journeyPlanService.UpdateAsync(find);
+                find.Status =(Status)model.Status;
+                if (Status.Active== (Status)model.Status)
+                {
+                    find.ApprovedDate = DateTime.Now;
+                    find.ApprovedById = AppIdentity.AppUser.UserId;
+                }
+                if (Status.Rejected== (Status)model.Status)
+                {
+                    find.RejectedDate = DateTime.Now;
+                    find.RejectedBy = AppIdentity.AppUser.UserId;
+                }
+          
+                await _journeyPlanMasterSvc.UpdateAsync(find);
                 return true;
             }
             return false;
         }
-        public async Task<JourneyPlanModel> CreateAsync(JourneyPlanModel model)
+     
+        public async Task<int> DeleteJourneyAsync(int id)
         {
-            var journeyPlan = model.ToMap<JourneyPlanModel, JourneyPlan>();
-            var result = await _journeyPlanService.CreateAsync(journeyPlan);
-            return result.ToMap<JourneyPlan, JourneyPlanModel>();
+            await _journeyPlanDetailSvc.DeleteAsync(s => s.PlanId == id);
+            return await _journeyPlanMasterSvc.DeleteAsync(s => s.Id == id);
         }
-        public async Task<JourneyPlanModel> UpdateAsync(JourneyPlanModel model)
+
+        public async Task<bool> IsExistAsync(int id) => await _journeyPlanMasterSvc.IsExistAsync(f => f.Id == id);
+
+        public async Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetail()
         {
-            var journeyPlan = model.ToMap<JourneyPlanModel, JourneyPlan>();
-            var result = await _journeyPlanService.UpdateAsync(journeyPlan);
-            return result.ToMap<JourneyPlan, JourneyPlanModel>();
+
+          
+
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f =>f.EmployeeId==AppIdentity.AppUser.UserId);
+
+            var result = planList.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.Id,
+                EmployeeId = s.EmployeeId,
+                PlanDate = s.PlanDate,
+                Status = s.Status,
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
+                                    on dealer.Id equals planDetail.DealerId
+                                    select new DealerInfoModel
+                                    {
+                                        Id = planDetail.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Terrritory = dealer.Territory,
+                                        VisitDate = planDetail.VisitDate
+                                    }).ToList()
+            }).ToList();
+
+            return result;
+
         }
-        public async Task<int> DeleteAsync(int id) => await _journeyPlanService.DeleteAsync(s => s.Id == id);
-
-        public async Task<bool> IsExistAsync(int id) => await _journeyPlanService.IsExistAsync(f => f.Id == id);
-
-        public async Task<JourneyPlanModel> GetJourneyPlanById(int id)
+        public async Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager()
         {
-            var result = await _journeyPlanService.FindAsync(f => f.Id == id);
-            return result.ToMap<JourneyPlan, JourneyPlanModel>();
+
+            var result = new List<JourneyPlanDetailModel>();
+            var user = await _userInfoSvc.FindAsync(f => f.EmployeeId =="1");
+            if (user.LinemanagerId.HasValue == false) return result;
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == int.Parse( user.EmployeeId));
+
+             result = planList.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.Id,
+                EmployeeId = s.EmployeeId,
+                PlanDate = s.PlanDate,
+                Status = s.Status,
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
+                                    on dealer.Id equals planDetail.DealerId
+                                    select new DealerInfoModel
+                                    {
+                                        Id = planDetail.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Terrritory = dealer.Territory,
+                                        VisitDate = planDetail.VisitDate
+                                    }).ToList()
+            }).ToList();
+
+            return result;
+
+        }
+        public async Task<JourneyPlanDetailModel> GetJourneyPlanDetailById(int PlanId)
+        {
+            
+            var plan = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id ==PlanId,f=>f.JourneyPlanDetail);
+            
+            var result = new JourneyPlanDetailModel
+            {
+
+                Id = plan.Id,
+                EmployeeId = plan.EmployeeId,
+                PlanDate = plan.PlanDate,
+                Status = plan.Status,
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == plan.Id).DefaultIfEmpty()
+                                    on dealer.Id equals planDetail.DealerId
+                                    select new DealerInfoModel
+                                    {
+                                        Id = planDetail.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Terrritory = dealer.Territory,
+                                        VisitDate = planDetail.VisitDate
+                                    }).ToList()
+
+            };
+          
+            return result;
+
+        }
+
+        public async Task<PortalPlanDetailModel> PortalCreateJourneyPlan(PortalCreateJouneryModel model)
+        {
+            var result = new PortalPlanDetailModel();
+            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = AppIdentity.AppUser.UserId, PlanDate = DateTime.Now, Status = Status.Pending });
+            if (plan == null) return result;
+            foreach (var id in model.Dealers)
+            {
+
+                await _journeyPlanDetailSvc.CreateAsync(new JourneyPlanDetail { DealerId = id, PlanId = plan.Id, VisitDate = model.VisitDate });
+                var dealerInfo = await _dealerInforSvc.FindAsync(f => f.Id == id);
+                result.DealerInfo.Add(new DealerInfoModel
+                {
+                    Id = dealerInfo.Id,
+                    CustomerName = dealerInfo.CustomerName,
+                    CustomerNo = dealerInfo.CustomerNo,
+                    Terrritory = dealerInfo.Territory
+                });
+            }
+            result.Id = plan.Id;
+            result.PlanDate = plan.PlanDate;
+            return result;
+
+        }
+        public async Task<PortalPlanDetailModel> PortalUpdateJourneyPlan(PortalCreateJouneryModel model)
+        {
+            var result = new PortalPlanDetailModel();
+            var findPlan = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.JourneyPlanDetail);
+
+            await _journeyPlanDetailSvc.DeleteAsync(f => f.PlanId == findPlan.Id);
+
+            foreach (var id in model.Dealers)
+            {
+                await _journeyPlanDetailSvc.CreateAsync(new JourneyPlanDetail { DealerId = id, PlanId = findPlan.Id, VisitDate = model.VisitDate });
+                var dealerInfo = await _dealerInforSvc.FindAsync(f => f.Id == id);
+                result.DealerInfo.Add(new DealerInfoModel
+                {
+                    Id = dealerInfo.Id,
+                    CustomerName = dealerInfo.CustomerName,
+                    CustomerNo = dealerInfo.CustomerNo,
+                    Terrritory = dealerInfo.Territory
+                });
+            }
+            result.Id = findPlan.Id;
+            result.PlanDate = findPlan.PlanDate;
+            return result;
+
+        }
+
+
+        public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id)
+        {
+            PortalCreateJouneryModel result = new PortalCreateJouneryModel();
+            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == Id && f.EmployeeId == AppIdentity.AppUser.UserId);
+            result.Id = find.Id;
+            result.Dealers = _journeyPlanDetailSvc.FindAll(s => s.PlanId == find.Id).Select(s => s.DealerId).ToArray();
+            result.VisitDate = _journeyPlanDetailSvc.Find(s => s.PlanId == find.Id).VisitDate;
+            return result;
+        }
+
+        public async Task<bool> CheckAlreadyTodayPlan()
+        {
+            return await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == AppIdentity.AppUser.UserId && f.PlanDate.Date == DateTime.Now.Date);
+        }
+
+        //this method expose journey plan list by employeeId
+        public async Task<IEnumerable<JourneyPlanDetailModel>> AppGetJourneyPlanDetailList(int employeeId)
+        {
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId);
+
+            var result = planList.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.Id,
+                EmployeeId = s.EmployeeId,
+                PlanDate = s.PlanDate,
+                Status = s.Status,
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
+                                    on dealer.Id equals planDetail.DealerId
+                                    select new DealerInfoModel
+                                    {
+                                        Id = planDetail.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Terrritory = dealer.Territory,
+                                        VisitDate = planDetail.VisitDate
+                                    }).ToList()
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<PortalPlanDetailModel> AppCreateJourneyPlan(PortalCreateJouneryModel model)
+        {
+            var result = new PortalPlanDetailModel();
+            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = AppIdentity.AppUser.UserId, PlanDate = DateTime.Now, Status = Status.Pending });
+            if (plan == null) return result;
+            foreach (var id in model.Dealers)
+            {
+
+                await _journeyPlanDetailSvc.CreateAsync(new JourneyPlanDetail { DealerId = id, PlanId = plan.Id, VisitDate = model.VisitDate });
+                var dealerInfo = await _dealerInforSvc.FindAsync(f => f.Id == id);
+                result.DealerInfo.Add(new DealerInfoModel
+                {
+                    Id = dealerInfo.Id,
+                    CustomerName = dealerInfo.CustomerName,
+                    CustomerNo = dealerInfo.CustomerNo,
+                    Terrritory = dealerInfo.Territory
+                });
+            }
+            result.Id = plan.Id;
+            result.PlanDate = plan.PlanDate;
+            return result;
+        }
+
+        public async Task<PortalPlanDetailModel> AppUpdateJourneyPlan(PortalCreateJouneryModel model)
+        {
+            var result = new PortalPlanDetailModel();
+            var findPlan = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.JourneyPlanDetail);
+
+            await _journeyPlanDetailSvc.DeleteAsync(f => f.PlanId == findPlan.Id);
+
+            foreach (var id in model.Dealers)
+            {
+                await _journeyPlanDetailSvc.CreateAsync(new JourneyPlanDetail { DealerId = id, PlanId = findPlan.Id, VisitDate = model.VisitDate });
+                var dealerInfo = await _dealerInforSvc.FindAsync(f => f.Id == id);
+                result.DealerInfo.Add(new DealerInfoModel
+                {
+                    Id = dealerInfo.Id,
+                    CustomerName = dealerInfo.CustomerName,
+                    CustomerNo = dealerInfo.CustomerNo,
+                    Terrritory = dealerInfo.Territory
+                });
+            }
+          
+            result.Id = findPlan.Id;
+            result.PlanDate = findPlan.PlanDate;
+            return result;
         }
     }
 }

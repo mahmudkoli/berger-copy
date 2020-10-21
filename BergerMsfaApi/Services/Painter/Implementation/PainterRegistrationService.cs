@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Berger.Common.Enumerations;
-using Berger.Data.MsfaEntity;
+﻿using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.PainterRegistration;
@@ -8,9 +6,6 @@ using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.OpenApi.Expressions;
-using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

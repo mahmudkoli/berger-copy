@@ -35,7 +35,7 @@ namespace Berger.Data.MsfaEntity.Users
         [StringLength(256)]
         public string Designation { get; set; }// Is it int or string
         public int HierarchyId { get; set; }
-
+        public int? LinemanagerId { get; set; }
         public List<UserRoleMapping> Roles { get; set; }
         public List<CMUser> CMUsers { get; set; }
         public List<UserTerritoryMapping> Territories { get; set; }

@@ -80,6 +80,7 @@ namespace BergerMsfaApi.Extensions
         }
         public static AppUserPrincipal ToAppUser(this IEnumerable<Claim> claims)
         {
+           
             if (claims == null)
             {
                 return EmptyAppUser;

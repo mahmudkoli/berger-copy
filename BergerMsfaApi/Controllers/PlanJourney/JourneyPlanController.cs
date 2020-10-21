@@ -14,8 +14,8 @@ namespace BergerMsfaApi.Controllers.Journey
 
     public class JourneyPlanController : BaseController
     {
-        private readonly IJourneyService _journeyService;
-        public JourneyPlanController(IJourneyService journeyService)
+        private readonly IJourneyPlanService _journeyService;
+        public JourneyPlanController(IJourneyPlanService journeyService)
         {
             _journeyService = journeyService;
         }
@@ -25,7 +25,50 @@ namespace BergerMsfaApi.Controllers.Journey
         {
             try
             {
-                var result = await _journeyService.GetJourneyPlanList();
+                var result = await _journeyService.GetJourneyPlanDetail();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpGet("GetLineManagerJourneyPlanDetail")]
+        public async Task<IActionResult> GetJourneyPlanDetailForLineManager()
+        {
+            try
+            {
+                var result = await _journeyService.GetJourneyPlanDetailForLineManager();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+        
+        [HttpGet("GetJourneyPlanById/{id}")]
+        public async Task<IActionResult> GetJourneyPlanById(int id)
+        {
+            try
+            {
+                var result = await _journeyService.PortalGetJourneyPlanById(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetJourneyPlanDetailById/{PlanId}")]
+        public async Task<IActionResult> GetJourneyPlanDetailById(int PlanId)
+        {
+            try
+            {
+                var result = await _journeyService.GetJourneyPlanDetailById(PlanId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -35,13 +78,13 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
-        [HttpPut("ApproveJournetPlan")]
-        public async Task<IActionResult> ApproveJournetPlan(JourneyPlanModel model)
+        [HttpPut("ChangeJourneyPlanStatus")]
+        public async Task<IActionResult> ChangePlanStatus(JourneyPlanStatusChangeModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.SetApprovedPlan(model);
+                var result = await _journeyService.ChangePlanStatus(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -49,49 +92,37 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             };
         }
-        [HttpGet("GetJourneyPlanById/{id}")]
-        public async Task<IActionResult> GetJourneyPlanById(int id)
-        {
-            try
-            {
-                var result = await _journeyService.GetJourneyPlanById(id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] JourneyPlanModel model)
+  
+        [HttpPost("CreateJourneyPlan")]
+        public async Task<IActionResult> CreateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
 
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.CreateAsync(model);
+                if (await _journeyService.CheckAlreadyTodayPlan())
+                {
+                    ModelState.AddModelError("Plan", "you have already created today's plan");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _journeyService.PortalCreateJourneyPlan(model);
                 return OkResult(result);
+
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
         }
-        [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] JourneyPlanModel model)
+
+        [HttpPut("UpdateJourneyPlan")]
+        public async Task<IActionResult> UpdateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
 
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                else if (!await _journeyService.IsExistAsync(model.Id))
-                {
-                    ModelState.AddModelError(nameof(model), "Journey Plan Not Found");
-                    return ValidationResult(ModelState);
-
-                }
-                var result = await _journeyService.UpdateAsync(model);
+                var result = await _journeyService.PortalUpdateJourneyPlan(model);
                 return OkResult(result);
 
             }
@@ -100,20 +131,20 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             }
         }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("DeleteJourneyPlan/{PlanId}")]
+        public async Task<IActionResult> DeleteJourneyPlan(int PlanId)
         {
+
             try
             {
-                if (!await _journeyService.IsExistAsync(id))
+               if(!await _journeyService.IsExistAsync(PlanId))
                 {
-                    ModelState.AddModelError(nameof(id), "Journey Plan Not Found");
+                    ModelState.AddModelError(nameof(PlanId), "Jounery Plan Not found");
                     return ValidationResult(ModelState);
                 }
-                var result = await _journeyService.DeleteAsync(id);
+                var result = await _journeyService.DeleteJourneyAsync(PlanId);
                 return OkResult(result);
+
             }
             catch (Exception ex)
             {

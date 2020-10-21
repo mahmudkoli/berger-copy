@@ -18,5 +18,8 @@ namespace BergerMsfaApi.Core
         string UserAgentInfo { get; set; }
         int NodeId { get; set; }
         Dictionary<string, string> GetByName();
+
+     
+
     }
 }

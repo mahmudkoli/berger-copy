@@ -1,27 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { JourneyPlan } from '../../../Shared/Entity/JourneyPlan/JourneyPlan';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
-import { JourneyPlan } from '../../../Shared/Entity/JourneyPlan/JourneyPlan';
 import { Status } from '../../../Shared/Enums/status';
 import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPlanStatus';
 
-
-
 @Component({
-    templateUrl: './journey-plan-list.component.html',
-    styleUrls: ['./journey-plan-list.component.css']
+  selector: 'app-journey-plan-list-line-manager',
+  templateUrl: './journey-plan-list-line-manager.component.html',
+  styleUrls: ['./journey-plan-list-line-manager.component.css']
 })
-
-export class JourneyPlanListComponent implements OnInit {
+export class JourneyPlanListLineManagerComponent implements OnInit {
 
     permissionGroup: PermissionGroup = new PermissionGroup();
     journeyPlanStatus: JourneyPlanStatus = new JourneyPlanStatus();
     public journeyPlanList: JourneyPlan[] = [];
     changeStatus = Status;
     statusKeys: any[] = [];
-   
+
     constructor(
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
@@ -43,7 +41,7 @@ export class JourneyPlanListComponent implements OnInit {
         this.journeyPlanStatus.status = Number(key);
 
         this.alertService.confirm(`Are you sure to change status?`, () => {
-
+            this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
                     this.alertService.tosterSuccess(`Status Successfully.`);
@@ -60,16 +58,26 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     private _initPermissionGroup() {
+
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
+        console.log(this.permissionGroup);
+        //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
+        //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
+        //this.ptableSettings.enabledDeleteBtn = this.permissionGroup.canDelete;
+
+        //this.ptableSettings.enabledRecordCreateBtn = true;
+        //this.ptableSettings.enabledEditBtn = true;
+        //this.ptableSettings.enabledDeleteBtn = true;
+
     }
 
     private fnJourneyPlanList() {
 
         this.alertService.fnLoading(true);
-        this.journeyPlanService.getJourneyPlanList()
+        this.journeyPlanService.getLinerManagerJourneyPlanList()
             .subscribe(
                 (res) => {
-                    this.journeyPlanList =res.data as [] || [];
+                    this.journeyPlanList = res.data as [] || [];
 
                 },
                 (error) => {
@@ -79,10 +87,10 @@ export class JourneyPlanListComponent implements OnInit {
             );
     }
 
-    detail(plan) {
+    openModal(plan) {
         this.router.navigate(["/journey-plan/detail", plan.id]);
     }
-
+    
      add() {
         this.router.navigate(['/journey-plan/add']);
     }
@@ -94,8 +102,7 @@ export class JourneyPlanListComponent implements OnInit {
 
      delete(id: number) {
         console.log("Id:", id);
-         this.alertService.confirm("Are you sure you want to delete this item?", () => {
-             this.alertService.fnLoading(true);
+        this.alertService.confirm("Are you sure you want to delete this item?", () => {
             this.journeyPlanService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);
@@ -104,11 +111,10 @@ export class JourneyPlanListComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
-                }, () => () => this.alertService.fnLoading(false)
+                }
             );
         }, () => {
 
         });
     }
-
 }

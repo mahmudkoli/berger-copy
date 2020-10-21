@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { UniqueFilterByPipe } from './unique-filter.pipe';
+import { StatusPipe } from './status-filter.pipe';
 
 @NgModule({
   declarations: [
-    UniqueFilterByPipe
+        UniqueFilterByPipe,
+        StatusPipe
   ],
   imports: [
   ],
@@ -11,7 +13,9 @@ import { UniqueFilterByPipe } from './unique-filter.pipe';
   //   UniqueFilterByPipe
   // ],
   exports: [
-    UniqueFilterByPipe
+      UniqueFilterByPipe,
+      StatusPipe,
+
   ]
 })
 export class PipeSharedModule { }

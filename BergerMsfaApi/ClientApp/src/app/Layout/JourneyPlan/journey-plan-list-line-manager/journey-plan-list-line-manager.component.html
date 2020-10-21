@@ -1,5 +1,3 @@
-
-
 <p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
     <ng-template pTemplate="caption">
         <div class="table-header">
@@ -48,7 +46,7 @@
             <td>
                 <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
                 <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>
-                <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="detail(jPlan)">
+                <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="openModal(jPlan)">
                     View Detail
                 </button>
             </td>

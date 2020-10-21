@@ -1,0 +1,58 @@
+
+<div *ngIf="journeyPlan" class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10"><p>Plan Date : {{journeyPlan.planDate|date}} <button class="btn-sm btn btn-primary">{{journeyPlan.status|msfaStatus}}</button></p></div>
+    </div>
+    <div class="row">
+
+        <p-table #dt [value]="journeyPlan.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','visitDate']">
+            <ng-template pTemplate="caption">
+                <div class="table-header">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Journey Plan Dealer List
+                        </div>
+
+                        <div class="col-md-4 offset-md-4">
+                       
+                            <div>
+                                <span class="p-input-icon-right m-2 pull-right">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+
+                    <th pSortableColumn="'customerNo'">Customer No <p-sortIcon field="'customerNo'"></p-sortIcon></th>
+                    <th pSortableColumn="'customerName'">Customer Name <p-sortIcon field="'customerName'"></p-sortIcon></th>
+                    <th pSortableColumn="territory">Territory <p-sortIcon field="territory"></p-sortIcon></th>
+                    <th pSortableColumn="visitDate">Visit Date<p-sortIcon field="visitDate"></p-sortIcon></th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-jplan>
+                <tr>
+
+                    <td>{{jplan.customerNo}}</td>
+                    <td>{{jplan.customerName}}</td>
+                    <td>{{jplan.territory}}</td>
+                    <td>{{jplan.visitDate |date}}</td>
+              
+                </tr>
+            </ng-template>
+            <br />
+            <ng-template pTemplate="footer" >
+                <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
