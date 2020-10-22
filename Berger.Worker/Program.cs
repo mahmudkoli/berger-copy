@@ -7,6 +7,7 @@ using Berger.Data.MsfaEntity;
 using Berger.Worker.Common;
 using Berger.Worker.Services;
 using BergerMsfaApi.Repositories;
+using Coravel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,13 @@ namespace Berger.Worker
             
             try
             {
-                CreateHostBuilder(args).Build().Run();
+                IHost host = CreateHostBuilder(args).Build();
+                host.Services.UseScheduler(scheduler => {
+                    scheduler
+                        .Schedule<Worker>()
+                        .EveryFiveMinutes();
+                });
+                host.Run();
             }
             catch (Exception ex)
             {
@@ -53,7 +60,8 @@ namespace Berger.Worker
                     services.AddScoped(typeof(IDataEqualityComparer<>), typeof(DataEqualityComparer<>));
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
                     services.AddScoped<IUnitOfWork, ApplicationDbContext>();
-                    
+                    services.AddScheduler();
+
                     services.AddHostedService<Worker>();
                     
                     

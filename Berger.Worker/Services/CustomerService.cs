@@ -100,7 +100,7 @@ namespace Berger.Worker.Services
                     else
                     {
                         _logger.LogInformation("No new or Delete data found!!!");
-                        dataFromDatabase
+                       dataFromDatabase = dataFromDatabase
                             .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
                             .ToList();
                         foreach (var dealerInfo in mappedDataFromApi)
@@ -112,7 +112,7 @@ namespace Berger.Worker.Services
                             }
                         }
                         var upres = await _repo.UpdateListiAsync(mappedDataFromApi);
-                        _logger.LogInformation($"Total record updated {upres}");
+                        _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }
             }
