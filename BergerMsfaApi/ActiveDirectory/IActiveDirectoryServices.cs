@@ -7,6 +7,6 @@ namespace BergerMsfaApi.ActiveDirectory
 {
     public interface IActiveDirectoryServices
     {
-        bool AuthenticateUser();
+        bool AuthenticateUser(string username, string password);
     }
 }

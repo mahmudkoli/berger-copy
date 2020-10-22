@@ -23,8 +23,8 @@ namespace BergerMsfaApi.ActiveDirectory
         }
 
         private String LDAPPath => $"LDAP://bergerbd.com";
-        private String username => $"nizamuddinbs";
-        private String password => $"XrXW4jNVQX78WKjy";
+        //private String username => $"nizamuddinbs";
+        //private String password => $"XrXW4jNVQX78WKjy";
 
         //private String LDAPUser
         //{
@@ -44,7 +44,7 @@ namespace BergerMsfaApi.ActiveDirectory
 
         private String LDAPDomain => $"bergerbd.com";
 
-        public bool AuthenticateUser()
+        public bool AuthenticateUser(string username, string password)
         {
             bool ret = false;
 

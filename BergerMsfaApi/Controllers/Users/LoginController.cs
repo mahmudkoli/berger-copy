@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Users;
+using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Extensions;
@@ -24,15 +25,23 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IAuthService authService;
         private readonly IUserInfoService _userService;
         private readonly ICMUserService _cmuserservice;
+        private readonly IActiveDirectoryServices _adservice;
 
-        public LoginController(IConfiguration config, IAuthService service, IUserInfoService user, ICMUserService userService)
+
+
+        public LoginController(IConfiguration config, IAuthService service, 
+            IUserInfoService user, ICMUserService userService, IActiveDirectoryServices adservice)
         {
             _config = config;
             authService = service;
             _userService = user;
             _cmuserservice = userService;
+            _adservice = adservice;
         }
 
+
+        private String username => $"nizamuddinbs";
+        private String password => $"XrXW4jNVQX78WKjy";
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -45,6 +54,16 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 try
                 {
+
+
+                    bool isAdLoginSuccess =_adservice.AuthenticateUser(username, password);
+                    bool loginSuccess = false;
+                    if (isAdLoginSuccess)
+                    {
+                        //Check db for user
+                       loginSuccess = await _userService.IsUserExistAsync("",1);
+                    }
+
                     //bool IsLoginSuccessful = true; 
                     ////await  _cmuserservice.LoginCMUser(model);
                     //if (IsLoginSuccessful)
@@ -57,7 +76,7 @@ namespace BergerMsfaApi.Controllers.Users
                     //{
                     //    return Unauthorized();
                     //}
-                    if (await _cmuserservice.LoginCMUser(model))
+                    if (loginSuccess)
                     {
                         var result = await authService.GetJWTToken(model);
                         return OkResult(result);
