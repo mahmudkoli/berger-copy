@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
@@ -19,10 +20,12 @@ namespace BergerMsfaApi.Controllers.Users
     {
         private readonly ILogger<UserInfoController> logger;
         private readonly IUserInfoService _User;
-        public UserInfoController(IUserInfoService userService, ILogger<UserInfoController> logger)
+        private readonly IActiveDirectoryServices _adservice;
+        public UserInfoController(IUserInfoService userService, ILogger<UserInfoController> logger, IActiveDirectoryServices services)
         {
             this.logger = logger;
             this._User = userService;
+            _adservice = services;
         }
 
         /// <summary>
@@ -81,11 +84,21 @@ namespace BergerMsfaApi.Controllers.Users
                 return ExceptionResult(ex);
             }
         }
-        /// <summary>
-        /// create or update User object and Return a single of User Model objects
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+
+        [HttpGet("getaduser")]
+        public async Task<IActionResult> GetAdUser(string username)
+        {
+            try
+            {
+                var result = _adservice.GetUserByFullName(username);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         //[HttpPost("save")]
         //public async Task<IActionResult> SaveUser([FromBody]UserInfoModel model)
         //{
@@ -141,6 +154,10 @@ namespace BergerMsfaApi.Controllers.Users
                 return ExceptionResult(ex);
             }
         }
+
+
+
+
         /// <summary>
         /// Update User object and Return a single of User Model objects
         /// </summary>

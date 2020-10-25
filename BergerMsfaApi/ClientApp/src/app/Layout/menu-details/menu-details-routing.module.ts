@@ -12,10 +12,16 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'menu-list' },
 
-        { path: 'menu-list', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
-        { path: 'menu-permissions', component: MenuPermissionsComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-permissions' } },
+      { path: 'menu-list', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
+        { path: 'menu-permissions', component: MenuPermissionsComponent },
         { path: 'menu-activity', component: MenuActivityListComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-activity' } },
         { path: 'menu-activity-permission', component: MenuActivityPermissionsComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-activity-permission' } },
+
+
+        // { path: 'menu-list', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
+        // { path: 'menu-permissions', component: MenuPermissionsComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-permissions' } },
+        // { path: 'menu-activity', component: MenuActivityListComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-activity' } },
+        // { path: 'menu-activity-permission', component: MenuActivityPermissionsComponent,canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: '/menu/menu-activity-permission' } },
 
      
 

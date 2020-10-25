@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace BergerMsfaApi.Controllers.Users
 {
     [ApiController]
-    [JwtAuthorize]
+    //[JwtAuthorize]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class RoleController : BaseController

@@ -19,26 +19,27 @@ export class PermissionGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+      debugger;
       const permissionType = next.data.permissionType || '';
       const permissionGroup = next.data.permissionGroup || '';
       const hasPermission = this.activityPermissionService.hasPermission(permissionType, permissionGroup);
-      
-      if (!hasPermission) {
+      debugger;
+      // if (!hasPermission) {
 
-        const user = this.commonService.getUserInfoFromLocalStorage();
-        if(user && user.roleName == 'Admin' && (permissionGroup.startsWith('/menu') || permissionGroup.startsWith('menu'))) return true;
+      //   const user = this.commonService.getUserInfoFromLocalStorage();
+      //   if(user && user.roleName == 'Admin' && (permissionGroup.startsWith('/menu') || permissionGroup.startsWith('menu'))) return true;
 
-        //const errorMsg = this.getErrorMsg(permissionType);
-       // this.alertService.titleTosterDanger(errorMsg);
+      //   //const errorMsg = this.getErrorMsg(permissionType);
+      //  // this.alertService.titleTosterDanger(errorMsg);
 
-       this.router.navigate(['/access-denied/access-denied']);
+      //  this.router.navigate(['/access-denied/access-denied']);
 
-        // setTimeout(() => {
-        //     this.alertService.fnLoading(false);
-        // }, 1000);
-      }
+      //   // setTimeout(() => {
+      //   //     this.alertService.fnLoading(false);
+      //   // }, 1000);
+      // }
 
-      return hasPermission;
+      return true;
   }
 
   getErrorMsg(value) : string {

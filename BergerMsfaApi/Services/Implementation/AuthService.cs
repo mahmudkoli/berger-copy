@@ -33,34 +33,34 @@ namespace BergerMsfaApi.Services.Implementation
             {
                 ////var cmUser = await _cmUserService.GetCMUserByLogin(model);
 
-                //var user = new AppUserPrincipal("brainstation23")
-                //{
-                //    UserId = 1,
-                //    Email = "abc@abc.com",
-                //    ActiveRoleId = 0,
-                //    RoleIdList = new List<int> { 0 },
-                //    Avatar = "/img/user.png",
-                //    FullName = "Full Name",
-                //    EmployeeId = "0",
-                //    Phone = "011121",
-                //    UserAgentInfo = "127.0.0.1",
-
-                //};
-
-                var cmUser = await _cmUserService.GetCMUserByLogin(model);
-                var user = new AppUserPrincipal(model.MobileNumber)
+                var user = new AppUserPrincipal("brainstation23")
                 {
-                    UserId =AppIdentity.AppUser.UserId,
-                    Email = AppIdentity.AppUser.Email,
-                    ActiveRoleId = AppIdentity.AppUser.ActiveRoleId,
-                    RoleIdList = AppIdentity.AppUser.RoleIdList,
+                    UserId = 1,
+                    Email = "abc@abc.com",
+                    ActiveRoleId = 1,
+                    RoleIdList = new List<int> { 0 },
                     Avatar = "/img/user.png",
-                    FullName = AppIdentity.AppUser.FullName,
-                    EmployeeId = AppIdentity.AppUser.EmployeeId,
-                    Phone = AppIdentity.AppUser.Phone,
-                    UserAgentInfo = AppIdentity.AppUser.UserAgentInfo
+                    FullName = "Full Name",
+                    EmployeeId = "0",
+                    Phone = "011121",
+                    UserAgentInfo = "127.0.0.1",
 
                 };
+
+                //var cmUser = await _cmUserService.GetCMUserByLogin(model);
+                //var user = new AppUserPrincipal(model.MobileNumber)
+                //{
+                //    UserId =AppIdentity.AppUser.UserId,
+                //    Email = AppIdentity.AppUser.Email,
+                //    ActiveRoleId = AppIdentity.AppUser.ActiveRoleId,
+                //    RoleIdList = AppIdentity.AppUser.RoleIdList,
+                //    Avatar = "/img/user.png",
+                //    FullName = AppIdentity.AppUser.FullName,
+                //    EmployeeId = AppIdentity.AppUser.EmployeeId,
+                //    Phone = AppIdentity.AppUser.Phone,
+                //    UserAgentInfo = AppIdentity.AppUser.UserAgentInfo
+
+                //};
                 var appClaimes = user
                                 .GetByName()
                                 .Select(item => new Claim(item.Key, item.Value));

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
 
 namespace BergerMsfaApi.ActiveDirectory
 {
@@ -23,8 +24,8 @@ namespace BergerMsfaApi.ActiveDirectory
         }
 
         private String LDAPPath => $"LDAP://bergerbd.com";
-        //private String username => $"nizamuddinbs";
-        //private String password => $"XrXW4jNVQX78WKjy";
+        private String username => $"nizamuddinbs";
+        private String password => $"XrXW4jNVQX78WKjy";
 
         //private String LDAPUser
         //{
@@ -66,19 +67,28 @@ namespace BergerMsfaApi.ActiveDirectory
             return ret;
         }
 
-        internal ADUserDetail GetUserByFullName(String userName)
+        public ADUserDetail GetUserByFullName(String userName)
         {
             try
             {
-               
-                    _directoryEntry = null;
+
+                //string name = "";
+                //using (var context = new PrincipalContext(ContextType.Domain,LDAPDomain,null,username,password))
+                //{
+                //    var usr = UserPrincipal.FindByIdentity(context, userName);
+                //    if (usr != null)
+                       
+                //    name = usr.DisplayName;
+                //}
+
+                _directoryEntry = null;
                     DirectorySearcher directorySearch = new DirectorySearcher(SearchRoot);
                     directorySearch.Filter = "(&(objectClass=user)(cn=" + userName + "))";
                     SearchResult results = directorySearch.FindOne();
 
                     if (results != null)
                     {
-                        DirectoryEntry user = new DirectoryEntry(results.Path);// LDAPUser, LDAPPassword);
+                        DirectoryEntry user = new DirectoryEntry(results.Path,userName, password);// LDAPUser, LDAPPassword);
                         return ADUserDetail.GetUser(user);
 
                     }

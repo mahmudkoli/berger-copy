@@ -10,7 +10,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
 
-            { path: '', redirectTo: 'demo' },
+            { path: '', redirectTo: 'menu' },
             // { path: '', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
 
             { path: 'menu', loadChildren: () => import('./menu-details/menu-details.module').then(m => m.MenuDetailsModule) },
