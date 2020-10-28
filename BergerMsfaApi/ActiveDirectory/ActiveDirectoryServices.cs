@@ -253,10 +253,10 @@ namespace BergerMsfaApi.ActiveDirectory
                 SearchResultCollection userCollection = directorySearch.FindAll();
                 foreach (SearchResult users in userCollection)
                 {
-                    DirectoryEntry userEntry = new DirectoryEntry(users.Path,username, password);//, LDAPUser, LDAPPassword);
-                    ADUserDetail userInfo = ADUserDetail.GetUser(userEntry);
+                    //DirectoryEntry userEntry = new DirectoryEntry(users.Path,username, password);//, LDAPUser, LDAPPassword);
+                    //ADUserDetail userInfo = ADUserDetail.GetUser(userEntry);
 
-                    userlist.Add(userInfo);
+                    //userlist.Add(userInfo);
 
                 }
 

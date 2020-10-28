@@ -1,9 +1,8 @@
-import { Component, OnInit, Directive, Input, ViewChild } from '@angular/core';
-import { UserInfo } from '../../../Shared/Entity/Users/userInfo';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/Shared/Services/Users/user.service';
-import { SalesPoint } from '../../../Shared/Entity';
 import { Node } from '../../../Shared/Entity';
+import { UserInfo } from '../../../Shared/Entity/Users/userInfo';
 import { SalesPointService } from '../../../Shared/Services/Sales';
 import { NodeService } from "../../../Shared/Services/Sales/node.service";
 
@@ -24,6 +23,14 @@ export class UserInfoInsertComponent implements OnInit {
     regions: Node[] = [];
     areas: Node[] = [];
     territories: Node[] = [];
+
+    plants: any[] = [];
+    saleOffices: any[] = [];
+    areaGroups: any[] = [];
+   // territorys: any[] = [];
+    zones: any[] = [];
+
+
 
 
     constructor(private userService: UserService,

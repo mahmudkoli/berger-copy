@@ -116,7 +116,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
 
         //public DbSet<Delegation> Delegations { get; set; }
-
+        public DbSet<UserHirearchyInfo> UserHirearchyInfos { get; set; }
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
 
         #endregion

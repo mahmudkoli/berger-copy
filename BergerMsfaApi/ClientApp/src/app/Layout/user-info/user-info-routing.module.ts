@@ -11,9 +11,9 @@ const routes: Routes = [
         path: '',
         children: [
             { path: '', redirectTo: 'users-infolist' },
-            { path: 'insertuser-info', component: UserInfoInsertComponent, canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'users-info/users-infolist' } },
-            { path: 'users-infolist', component: UserInfoListComponent, canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: 'users-info/users-infolist' } },
-            { path: 'edituser-info/:id', component: UserInfoEditComponent, canActivate: [PermissionGuard], data: { permissionType: 'update', permissionGroup: 'users-info/users-infolist' } }
+            { path: 'insertuser-info', component: UserInfoInsertComponent, /*canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'users-info/users-infolist' }*/ },
+            { path: 'users-infolist', component: UserInfoListComponent,/* canActivate: [PermissionGuard], data: { permissionType: 'view', permissionGroup: 'users-info/users-infolist' } */ },
+            { path: 'edituser-info/:id', component: UserInfoEditComponent, /*canActivate: [PermissionGuard], data: { permissionType: 'update', permissionGroup: 'users-info/users-infolist' } */ }
         ]
     }
 ];

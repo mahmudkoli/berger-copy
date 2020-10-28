@@ -38,8 +38,11 @@ export class UserInfoListComponent implements OnInit {
   
 private initPermissionGroup() {
     this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
-    this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
-    this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
+    //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
+    //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
+
+    this.ptableSettings.enabledRecordCreateBtn = true;
+    this.ptableSettings.enabledEditBtn = true;
 }
     getAllUserInfo() {
         this.userService.getAllUserInfo().subscribe(
