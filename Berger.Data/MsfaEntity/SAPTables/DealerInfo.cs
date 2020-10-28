@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿
 using Berger.Data.Common;
 
 namespace Berger.Data.MsfaEntity.SAPTables
 {
     public class DealerInfo : AuditableEntity<int>
     {
-    
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public int CustomerNo { get; set; }
         public int DivisionId { get; set; }
         public string DayLimit { get; set; }

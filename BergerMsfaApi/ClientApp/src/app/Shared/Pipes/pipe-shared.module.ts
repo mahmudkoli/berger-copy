@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { UniqueFilterByPipe } from './unique-filter.pipe';
-import { StatusPipe } from './status-filter.pipe';
+
 
 @NgModule({
   declarations: [
         UniqueFilterByPipe,
-        StatusPipe
+
   ],
   imports: [
   ],
@@ -14,7 +14,7 @@ import { StatusPipe } from './status-filter.pipe';
   // ],
   exports: [
       UniqueFilterByPipe,
-      StatusPipe,
+   
 
   ]
 })

@@ -86,7 +86,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Id = planDetail.Id,
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
-                                        Terrritory = dealer.Territory,
+                                        Territory = dealer.Territory,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList()
             }).ToList();
@@ -116,7 +116,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Id = planDetail.Id,
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
-                                        Terrritory = dealer.Territory,
+                                        Territory = dealer.Territory,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList()
             }).ToList();
@@ -144,7 +144,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Id = planDetail.Id,
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
-                                        Terrritory = dealer.Territory,
+                                        Territory = dealer.Territory,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList()
 
@@ -169,7 +169,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     Id = dealerInfo.Id,
                     CustomerName = dealerInfo.CustomerName,
                     CustomerNo = dealerInfo.CustomerNo,
-                    Terrritory = dealerInfo.Territory
+                    Territory = dealerInfo.Territory
                 });
             }
             result.Id = plan.Id;
@@ -193,7 +193,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     Id = dealerInfo.Id,
                     CustomerName = dealerInfo.CustomerName,
                     CustomerNo = dealerInfo.CustomerNo,
-                    Terrritory = dealerInfo.Territory
+                    Territory = dealerInfo.Territory
                 });
             }
             result.Id = findPlan.Id;
@@ -237,7 +237,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Id = planDetail.Id,
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
-                                        Terrritory = dealer.Territory,
+                                        Territory = dealer.Territory,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList()
             }).ToList();
@@ -260,7 +260,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     Id = dealerInfo.Id,
                     CustomerName = dealerInfo.CustomerName,
                     CustomerNo = dealerInfo.CustomerNo,
-                    Terrritory = dealerInfo.Territory
+                    Territory = dealerInfo.Territory
                 });
             }
             result.Id = plan.Id;
@@ -284,7 +284,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     Id = dealerInfo.Id,
                     CustomerName = dealerInfo.CustomerName,
                     CustomerNo = dealerInfo.CustomerNo,
-                    Terrritory = dealerInfo.Territory
+                    Territory = dealerInfo.Territory
                 });
             }
           

@@ -37,13 +37,14 @@
         <tr>
             <td>{{jPlan.planDate| date }}</td>
             <td>
-                <div ngbDropdown class="d-inline-block">
-                    <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                        <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
+                {{jPlan.status|msfaStatus}}
+                <!--<div ngbDropdown class="d-inline-block">
+        <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+            <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
 
-                    </div>
-                </div>
+        </div>
+    </div>-->
             </td>
             <td>
                 <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>

@@ -35,7 +35,7 @@ export class DropdownAddComponent implements OnInit {
         
     }
 
-    private onChange(typeId) {
+     onChange(typeId) {
 
         this.dynamicDropdownService.getLastSquence(this.dropdownModel.id, typeId).subscribe(
             (result: any) => {
