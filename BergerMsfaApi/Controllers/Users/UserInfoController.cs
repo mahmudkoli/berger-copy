@@ -90,7 +90,7 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
-                var result = _adservice.GetUserByFullName(username);
+                var result = _adservice.GetUserByUserName(username);
                 return OkResult(result);
             }
             catch (Exception ex)

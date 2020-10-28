@@ -7,6 +7,7 @@ using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Helpers;
 using BergerMsfaApi.Middlewares;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Examples;
 using BergerMsfaApi.Repositories;
 using GenericServices.Setup;
@@ -112,6 +113,7 @@ namespace BergerMsfaApi
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+            services.Configure<AppSettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

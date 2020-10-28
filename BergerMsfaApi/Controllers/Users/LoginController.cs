@@ -63,19 +63,10 @@ namespace BergerMsfaApi.Controllers.Users
                         //Check db for user
                        loginSuccess = await _userService.IsUserExistAsync("",1);
                     }
-
-                    //bool IsLoginSuccessful = true; 
-                    ////await  _cmuserservice.LoginCMUser(model);
-                    //if (IsLoginSuccessful)
-                    //{
-                    //    var result = await authService.GetJWTToken(model);
-                    //    return OkResult(result);
-
-                    //}
-                    //else
-                    //{
-                    //    return Unauthorized();
-                    //}
+                    else
+                    {
+                        
+                    }
                     if (loginSuccess)
                     {
                         var result = await authService.GetJWTToken(model);
@@ -92,11 +83,10 @@ namespace BergerMsfaApi.Controllers.Users
                 catch (Exception ex)
                 {
                     ex.ToWriteLog();
-
-                    apiResult.StatusCode = 500;
+                    apiResult.StatusCode = 401;
                     apiResult.Status = "Fail";
                     apiResult.Msg = ex.Message;
-                    return BadRequest(apiResult);
+                    return Unauthorized(apiResult);
                 }
 
 

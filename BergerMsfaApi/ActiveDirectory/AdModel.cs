@@ -4,74 +4,128 @@ namespace BergerMsfaApi.ActiveDirectory
 {
     public class AdModel
     {
-        public const String OBJECTCLASS = "objectClass";
-        public const String CONTAINERNAME = "cn";
-        public const String LASTNAME = "sn";
-        public const String COUNTRYNOTATION = "c";
-        public const String CITY = "l";
-        public const String STATE = "st";
-        public const String TITLE = "title";
-        public const String POSTALCODE = "postalCode";
-        public const String PHYSICALDELIVERYOFFICENAME = "physicalDeliveryOfficeName";
-        public const String FIRSTNAME = "givenName";
-        public const String MIDDLENAME = "initials";
-        public const String DISTINGUISHEDNAME = "distinguishedName";
-        public const String INSTANCETYPE = "instanceType";
-        public const String WHENCREATED = "whenCreated";
-        public const String WHENCHANGED = "whenChanged";
-        public const String DISPLAYNAME = "displayName";
-        public const String USNCREATED = "uSNCreated";
-        public const String MEMBEROF = "memberOf";
-        public const String USNCHANGED = "uSNChanged";
-        public const String COUNTRY = "co";
-        public const String DEPARTMENT = "department";
-        public const String COMPANY = "company";
-        public const String PROXYADDRESSES = "proxyAddresses";
-        public const String STREETADDRESS = "streetAddress";
-        public const String DIRECTREPORTS = "directReports";
-        public const String NAME = "name";
-        public const String OBJECTGUID = "objectGUID";
-        public const String USERACCOUNTCONTROL = "userAccountControl";
-        public const String BADPWDCOUNT = "badPwdCount";
-        public const String CODEPAGE = "codePage";
-        public const String COUNTRYCODE = "countryCode";
-        public const String BADPASSWORDTIME = "badPasswordTime";
-        public const String LASTLOGOFF = "lastLogoff";
-        public const String LASTLOGON = "lastLogon";
-        public const String PWDLASTSET = "pwdLastSet";
-        public const String PRIMARYGROUPID = "primaryGroupID";
-        public const String OBJECTSID = "objectSid";
-        public const String ADMINCOUNT = "adminCount";
-        public const String ACCOUNTEXPIRES = "accountExpires";
-        public const String LOGONCOUNT = "logonCount";
-        public const String LOGINNAME = "sAMAccountName";
-        public const String SAMACCOUNTTYPE = "sAMAccountType";
-        public const String SHOWINADDRESSBOOK = "showInAddressBook";
-        public const String LEGACYEXCHANGEDN = "legacyExchangeDN";
-        public const String USERPRINCIPALNAME = "userPrincipalName";
-        public const String EXTENSION = "ipPhone";
-        public const String SERVICEPRINCIPALNAME = "servicePrincipalName";
-        public const String OBJECTCATEGORY = "objectCategory";
-        public const String DSCOREPROPAGATIONDATA = "dSCorePropagationData";
-        public const String LASTLOGONTIMESTAMP = "lastLogonTimestamp";
-        public const String EMAILADDRESS = "mail";
-        public const String MANAGER = "manager";
-        public const String MOBILE = "mobile";
-        public const String PAGER = "pager";
-        public const String FAX = "facsimileTelephoneNumber";
-        public const String HOMEPHONE = "homePhone";
-        public const String MSEXCHUSERACCOUNTCONTROL = "msExchUserAccountControl";
-        public const String MDBUSEDEFAULTS = "mDBUseDefaults";
-        public const String MSEXCHMAILBOXSECURITYDESCRIPTOR = "msExchMailboxSecurityDescriptor";
-        public const String HOMEMDB = "homeMDB";
-        public const String MSEXCHPOLICIESINCLUDED = "msExchPoliciesIncluded";
-        public const String HOMEMTA = "homeMTA";
-        public const String MSEXCHRECIPIENTTYPEDETAILS = "msExchRecipientTypeDetails";
-        public const String MAILNICKNAME = "mailNickname";
-        public const String MSEXCHHOMESERVERNAME = "msExchHomeServerName";
-        public const String MSEXCHVERSION = "msExchVersion";
-        public const String MSEXCHRECIPIENTDISPLAYTYPE = "msExchRecipientDisplayType";
-        public const String MSEXCHMAILBOXGUID = "msExchMailboxGuid";
-        public const String NTSECURITYDESCRIPTOR = "nTSecurityDescriptor";
+        public string Manager { get; set; }
+        public string EmployeeId { get; set; }
+
+        public String Department { get; set; }
+
+        public String FirstName { get; set; }
+
+        public String MiddleName { get; set; }
+
+        public String LastName { get; set; }
+
+        public String LoginName { get; set; }
+
+        public String LoginNameWithDomain { get; set; }
+
+        public String StreetAddress { get; set; }
+
+        public String City { get; set; }
+
+        public String State { get; set; }
+
+        public String PostalCode { get; set; }
+
+        public String Country { get; set; }
+
+        public String HomePhone { get; set; }
+
+        public String Extension { get; set; }
+
+        public String Mobile { get; set; }
+
+        public String Fax { get; set; }
+
+        public String EmailAddress { get; set; }
+
+        public String Title { get; set; }
+
+        public String Company { get; set; }
+
+        //public AdModel GetManager
+        //{
+        //    get
+        //    {
+        //        if (!String.IsNullOrEmpty(ManagerName))
+        //        {
+        //            ActiveDirectoryServices ad = new ActiveDirectoryServices();
+        //            return ad.GetUserByUserName(ManagerName);
+        //        }
+        //        return null;
+        //    }
+        //    set => throw new NotImplementedException();
+        //}
+
+        public String ManagerName { get; set; }
+
+
+        //private AdModel(DirectoryEntry directoryUser)
+        //{
+
+        //    String domainAddress;
+        //    String domainName;
+        //    FirstName = GetProperty(directoryUser, AdProperties.FIRSTNAME);
+        //    MiddleName = GetProperty(directoryUser, AdProperties.MIDDLENAME);
+        //    LastName = GetProperty(directoryUser, AdProperties.LASTNAME);
+        //    LoginName = GetProperty(directoryUser, AdProperties.LOGINNAME);
+        //    String userPrincipalName = GetProperty(directoryUser, AdProperties.USERPRINCIPALNAME);
+        //    if (!string.IsNullOrEmpty(userPrincipalName))
+        //    {
+        //        domainAddress = userPrincipalName.Split('@')[1];
+        //    }
+        //    else
+        //    {
+        //        domainAddress = String.Empty;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(domainAddress))
+        //    {
+        //        domainName = domainAddress.Split('.').First();
+        //    }
+        //    else
+        //    {
+        //        domainName = String.Empty;
+        //    }
+        //    LoginNameWithDomain = $@"{domainName}\{LoginName}";
+        //    StreetAddress = GetProperty(directoryUser, AdProperties.STREETADDRESS);
+        //    City = GetProperty(directoryUser, AdProperties.CITY);
+        //    State = GetProperty(directoryUser, AdProperties.STATE);
+        //    PostalCode = GetProperty(directoryUser, AdProperties.POSTALCODE);
+        //    Country = GetProperty(directoryUser, AdProperties.COUNTRY);
+        //    Company = GetProperty(directoryUser, AdProperties.COMPANY);
+        //    Department = GetProperty(directoryUser, AdProperties.DEPARTMENT);
+        //    HomePhone = GetProperty(directoryUser, AdProperties.HOMEPHONE);
+        //    Extension = GetProperty(directoryUser, AdProperties.EXTENSION);
+        //    Mobile = GetProperty(directoryUser, AdProperties.MOBILE);
+        //    Fax = GetProperty(directoryUser, AdProperties.FAX);
+        //    EmailAddress = GetProperty(directoryUser, AdProperties.EMAILADDRESS);
+        //    Title = GetProperty(directoryUser, AdProperties.TITLE);
+        //    Manager = GetProperty(directoryUser, AdProperties.MANAGER);
+        //    EmployeeId = GetProperty(directoryUser, AdProperties.EmployeeId);
+        //    if (!String.IsNullOrEmpty(Manager))
+        //    {
+        //        String[] managerArray = Manager.Split(',');
+        //        ManagerName = managerArray[0].Replace("CN=", "");
+        //    }
+        //}
+
+
+        //private static String GetProperty(DirectoryEntry userDetail, String propertyName)
+        //{
+        //    if (userDetail.Properties.Contains(propertyName))
+        //    {
+        //        return userDetail.Properties[propertyName][0].ToString();
+        //    }
+        //    else
+        //    {
+        //        return string.Empty;
+        //    }
+        //}
+
+        //public static AdModel GetUser(DirectoryEntry directoryUser)
+        //{
+        //    return new AdModel(directoryUser);
+        //}
     }
 }
