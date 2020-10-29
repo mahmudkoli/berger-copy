@@ -65,12 +65,34 @@ export class UserInfoInsertComponent implements OnInit {
             employeeId: this.userInfoModel.employeeId,
             email: this.userInfoModel.email,
             adGuid: this.userInfoModel.adGuid,
-            groups: this.userInfoModel.groups
+            groups: this.userInfoModel.groups,
+            firstName: this.userInfoModel.firstName,
+            lastName: this.userInfoModel.lastName,
+            middleName: this.userInfoModel.middleName,
+            manager: this.userInfoModel.manager,
+            managerName: this.userInfoModel.managerName,
+            city: this.userInfoModel.city,
+            departMent: this.userInfoModel.departMent,
+            country: this.userInfoModel.country,
+            streetAddress: this.userInfoModel.streetAddress,
+            extension: this.userInfoModel.extension,
+            fax: this.userInfoModel.fax,
+            statusText: this.userInfoModel.statusText,
+            status: this.userInfoModel.status,
+            state: this.userInfoModel.state,
+            plantId: this.userInfoModel.plantId,
+            areaGroupId: this.userInfoModel.areaGroupId,
+            zoneId: this.userInfoModel.zoneId,
+            loginName: this.userInfoModel.loginName,
+            loginNameWithDomain: this.userInfoModel.loginNameWithDomain,
+            saleOfficeId: this.userInfoModel.saleOfficeId,
+            postalCode: this.userInfoModel.postalCode,
+           
         }
 
-        var result = this.userService.createUserInfo(userInfoObj).subscribe(res => {
-            this.router.navigate(['/users-info']);
-        });
+        //var result = this.userService.createUserInfo(userInfoObj).subscribe(res => {
+        //    this.router.navigate(['/users-info']);
+        //});
 
     }
 

@@ -313,8 +313,8 @@
                     <div class="position-relative form-group">
                         <label for="plantId">Plant</label>
 
-                        <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="false" [(ngModel)]="userInfoModel.plantId">
-                            <ng-option *ngFor="let plant of plants" [value]="plant.typeId">{{plant.dropdownName}}</ng-option>
+                        <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="true" [(ngModel)]="userInfoModel.plantId">
+                            <ng-option *ngFor="let plant of plants" [value]="plant.id">{{plant.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="plantId.valid || plantId.untouched">
@@ -327,8 +327,8 @@
                     <div class="position-relative form-group">
                         <label for="saleOfficeId">Sale Office</label>
 
-                        <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="false" [(ngModel)]="userInfoModel.saleOfficeId">
-                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.typeId">{{sale.dropdownName}}</ng-option>
+                        <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="true" [(ngModel)]="userInfoModel.saleOfficeId">
+                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.id">{{sale.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="saleOfficeId.valid || saleOfficeId.untouched">
@@ -341,8 +341,8 @@
                     <div class="position-relative form-group">
                         <label for="areaId">Area Group</label>
 
-                        <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="false" [(ngModel)]="userInfoModel.areaId">
-                            <ng-option *ngFor="let area of areaGroups" [value]="area.typeId">{{area.dropdownName}}</ng-option>
+                        <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="true" [(ngModel)]="userInfoModel.areaId">
+                            <ng-option *ngFor="let area of areaGroups" [value]="area.id">{{area.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="areaId.valid || areaId.untouched">
