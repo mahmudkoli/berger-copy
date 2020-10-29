@@ -10,23 +10,23 @@
     <div class="card-body">
         <form #dropdownForm="ngForm" (submit)="fnSave()">
             <div class="form-row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="name">Dealer</label>
-                        <select required class="form-control" name="code" #code="ngModel" [(ngModel)]="journeyPlanModel.code">
-                            <option *ngFor="let option of dealerList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
-                        </select>
+                     
+
+                        <ng-select [items]="dealerList"
+                                   bindLabel="customerName"
+                                   bindValue="id"
+                                   [multiple]="true"
+                                   [(ngModel)]="journeyPlanModel.dealers"
+                                   name="dealers" #dealers="ngModel"
+                                  >
+                        </ng-select>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="position-relative form-group">
-                        <label for="name">Employee</label>
-                        <select required class="form-control" name="employeeRegId" #employeeRegId="ngModel" [(ngModel)]="journeyPlanModel.employeeRegId">
-                            <option *ngFor="let option of employeeRegList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
+              
+                <div class="col-md-6">
                     <!--<div class="position-relative form-group">
                         <label for="name">Visit Date</label>
                         <input required name="visitDate" #visitDate="ngModel"

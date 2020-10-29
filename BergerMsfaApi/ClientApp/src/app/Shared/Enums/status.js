@@ -5,5 +5,13 @@ var Status;
 (function (Status) {
     Status[Status["Inactive"] = 0] = "Inactive";
     Status[Status["Active"] = 1] = "Active";
+    Status[Status["Pending"] = 2] = "Pending";
+    Status[Status["Revert"] = 3] = "Revert";
+    Status[Status["Rejected"] = 4] = "Rejected";
+    Status[Status["Completed"] = 5] = "Completed";
+    Status[Status["NotCompleted"] = 6] = "NotCompleted";
+    Status[Status["InCompleted"] = 7] = "InCompleted";
+    Status[Status["InPlace"] = 8] = "InPlace";
+    Status[Status["NotInPlace"] = 9] = "NotInPlace";
 })(Status = exports.Status || (exports.Status = {}));
 //# sourceMappingURL=status.js.map

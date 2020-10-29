@@ -8,8 +8,8 @@ const routes: Routes = [
     {
         path: '',
         children: [
-            { path: '', redirectTo: 'list' },
-            { path: 'list', component: PainterRegisListComponent, /*canActivate: [PermissionGuard], data: { extraParameter: 'product', permissionType: 'view', permissionGroup: 'product/product-list' }*/ },
+            { path: '', redirectTo: 'register-list' },
+            { path: 'register-list', component: PainterRegisListComponent, /*canActivate: [PermissionGuard], data: { extraParameter: 'product', permissionType: 'view', permissionGroup: 'product/product-list' }*/ },
             { path: "detail/:id", component: PainterRegisDetailComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } }
         ]
     }

@@ -360,7 +360,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
         public async Task<int?> GetFMUserIdByEmailAsync(string email)
         {
-            return (await _user.FindAsync(x => x.email.ToUpper() == email.ToUpper()))?.Id;
+            return (await _user.FindAsync(x => x.Email.ToUpper() == email.ToUpper()))?.Id;
         }
 
 

@@ -1,0 +1,55 @@
+<p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
+    <ng-template pTemplate="caption">
+        <div class="table-header">
+
+            <div class="row">
+                <div class="col-md-4">
+                    Journey Plan List
+                </div>
+
+                <div class="col-md-4 offset-md-4">
+                    <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
+                    <div>
+                        <span class="p-input-icon-right m-2 pull-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="planDate">Plan Date <p-sortIcon field="planDate"></p-sortIcon></th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+
+            <th>
+
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-jPlan>
+        <tr>
+            <td>{{jPlan.planDate| date }}</td>
+            <td>
+                <div ngbDropdown class="d-inline-block">
+                    <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+                        <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
+
+                    </div>
+                </div>
+            </td>
+            <td>
+                <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
+                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>
+                <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="openModal(jPlan)">
+                    View Detail
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

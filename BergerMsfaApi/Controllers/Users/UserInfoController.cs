@@ -11,7 +11,6 @@ namespace BergerMsfaApi.Controllers.Users
 {
     [ApiController]
 
-    [JwtAuthorize]
 
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

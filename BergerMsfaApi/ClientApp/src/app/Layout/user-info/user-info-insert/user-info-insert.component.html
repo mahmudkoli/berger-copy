@@ -15,7 +15,9 @@
     </div>
 
 </div>-->
+
 <div class="main-card mb-3 card">
+
     <div class=" card-header sticky-card d-flex justify-content-between align-items-center">
         <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Search User</div>
         <div class="btn-actions-pane-right">
@@ -28,8 +30,9 @@
         <input type="text" class="form-control" placeholder="Enter organization email" name="adUser" #adUser />
 
         <div class="input-group-append">
-            <button (click)="onUserInfoSearch(adUser.value)" type="submit" class="btn btn-primary "><i
-                    class="fa fa-search"></i> Get User</button>
+            <button (click)="onUserInfoSearch(adUser.value)" type="submit" class="btn btn-primary ">
+                <i class="fa fa-search"></i> Get User
+            </button>
         </div>
     </div>
     <div class="position-relative form-group">
@@ -37,7 +40,7 @@
             {{this.adError}}
         </small>
     </div>
-    
+
 </div>
 <div class="main-card mb-3 card">
     <div class="card-header sticky-card d-flex justify-content-between align-items-center">
@@ -78,17 +81,17 @@
                     </div>
 
                 </div>
-                <!--<div class="col-md-6">
-        <div class="position-relative form-group">
-            <label for="name">Name</label>
-            <input required name="name" #name="ngModel" id="name" type="text" class="form-control"
-                   [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
-                   [(ngModel)]="userInfoModel.name" />
-            <small class="text-danger" [class.d-none]="name.valid || name.untouched">
-                Name is Required
-            </small>
-        </div>
-    </div>-->
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Name</label>
+                        <input required name="name" #name="ngModel" id="name" type="text" class="form-control"
+                               [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
+                               [(ngModel)]="userInfoModel.name" />
+                        <small class="text-danger" [class.d-none]="name.valid || name.untouched">
+                            Name is Required
+                        </small>
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="name">First Name</label>
@@ -252,6 +255,7 @@
 
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+
                         <label for="name">State </label>
                         <input required name="state" #state="ngModel" id="state" type="text" class="form-control"
                                [ngClass]="{'is-valid':state.valid,'is-invalid':state.invalid && state.touched }"
@@ -285,12 +289,15 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+                        <!--<label for="roleId">Application Role</label>-->
+
                         <label for="roleId">Application Role</label>
-                        <!-- <ng-select id="roleId" name="roleId" [multiple]="false" [(ngModel)]="userInfoModel.roleId">
-                <ng-option *ngFor="let role of roleList" [value]="role.id">
-                    {{role.name}}
-                </ng-option>
-            </ng-select> -->
+
+                        <!--<ng-select id="roleId" name="roleId" [multiple]="false" [(ngModel)]="userInfoModel.roleId">
+                            <ng-option *ngFor="let role of roleList" [value]="role.id">
+                                {{role.name}}
+                            </ng-option>
+                        </ng-select>-->
 
                         <ng-select required id="roleId" #roleId="ngModel" name="roleId" [multiple]="false" [(ngModel)]="userInfoModel.roleId">
                             <ng-option *ngFor="let role of roleList" [value]="role.id" [disabled]="roleId.disabled">{{role.name}}</ng-option>
@@ -301,12 +308,13 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="plantId">Plant</label>
 
                         <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="false" [(ngModel)]="userInfoModel.plantId">
-                            <ng-option *ngFor="let plant of plants" [value]="plant.id">{{plant.name}}</ng-option>
+                            <ng-option *ngFor="let plant of plants" [value]="plant.typeId">{{plant.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="plantId.valid || plantId.untouched">
@@ -314,12 +322,13 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="saleOfficeId">Sale Office</label>
 
                         <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="false" [(ngModel)]="userInfoModel.saleOfficeId">
-                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.id">{{sale.name}}</ng-option>
+                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.typeId">{{sale.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="saleOfficeId.valid || saleOfficeId.untouched">
@@ -327,12 +336,13 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="areaId">Area Group</label>
 
                         <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="false" [(ngModel)]="userInfoModel.areaId">
-                            <ng-option *ngFor="let area of areaGroups" [value]="area.id">{{area.name}}</ng-option>
+                            <ng-option *ngFor="let area of areaGroups" [value]="area.typeId">{{area.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="areaId.valid || areaId.untouched">
@@ -340,12 +350,13 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="zoneId">Zone</label>
 
-                        <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="false" [(ngModel)]="userInfoModel.zoneId">
-                            <ng-option *ngFor="let zone of zones" [value]="zone.id">{{zone.name}}</ng-option>
+                        <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="true" [(ngModel)]="userInfoModel.zoneId">
+                            <ng-option *ngFor="let zone of zones" [value]="zone.id">{{zone.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="zoneId.valid || zoneId.untouched">
@@ -353,13 +364,14 @@
                         </small>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="position-relative form-group">
 
                         <label for="status">Status</label>
 
                         <ng-select required id="status" #status="ngModel" name="status" [multiple]="false" [(ngModel)]="userInfoModel.status">
-                            <ng-option *ngFor="let key of enumStatusTypes;" [value]="key.id">{{key.label}}</ng-option>
+                            <ng-option *ngFor="let key of statusKeys" [value]="key">{{changeStatus[key]}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="status.valid || status.untouched">
@@ -367,10 +379,6 @@
                         </small>
                     </div>
                 </div>
-
-
-
-
 
                 <div class="col-md-6">
                     <div class="position-relative form-group">
@@ -403,6 +411,7 @@
                         </div>
                     </div>
                 </ng-container>
+
                 <ng-container *ngIf="isRegion">
                     <div class="col-md-6">
                         <div class="position-relative form-group">
@@ -418,6 +427,7 @@
                         </div>
                     </div>
                 </ng-container>
+
                 <ng-container *ngIf="isArea">
                     <div class="col-md-6">
                         <div class="position-relative form-group">
@@ -433,6 +443,7 @@
                         </div>
                     </div>
                 </ng-container>
+
                 <ng-container *ngIf="isTerritory">
                     <div class="col-md-6">
                         <div class="position-relative form-group">
@@ -450,26 +461,26 @@
                 </ng-container>
 
 
-                <!--<ng-container *ngIf="isSalesPoint">
-        <div class="col-md-6">
-            <div class="position-relative form-group">
-                <label for="salesPointId">Select Sales Point</label>
-                <ng-select id="salesPointId" #salesPointId="ngModel" name="salesPoint" [multiple]="false" [(ngModel)]="userInfoModel.salesPointId">
-                    <ng-option *ngFor="let salespoint of salesPoints" [value]="salespoint.salesPointId" [disabled]="salesPointId.disabled">{{salespoint.name}}</ng-option>
-                </ng-select>
-                <small class="text-danger" [class.d-none]="salesPointId.valid || salesPointId.untouched">
-                    Sales Point is Required
-                </small>
-            </div>
-        </div>
-    </ng-container>-->
+                <ng-container *ngIf="isSalesPoint">
+                    <div class="col-md-6">
+                        <div class="position-relative form-group">
+                            <label for="salesPointId">Select Sales Point</label>
+                            <ng-select id="salesPointId" #salesPointId="ngModel" name="salesPoint" [multiple]="false" [(ngModel)]="userInfoModel.salesPointId">
+                                <ng-option *ngFor="let salespoint of salesPoints" [value]="salespoint.salesPointId" [disabled]="salesPointId.disabled">{{salespoint.name}}</ng-option>
+                            </ng-select>
+                            <small class="text-danger" [class.d-none]="salesPointId.valid || salesPointId.untouched">
+                                Sales Point is Required
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
 
             </div>
             <div class="d-flex justify-content-end">
                 <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteUserInfoList()">
                     <i class="pe-7s-back pr-1"></i> Back
                 </button>
-                <button [disabled]="!userInfoForm.valid" type="submit" class="mb-2 btn btn-primary">
+                <button  type="submit" class="mb-2 btn btn-primary">
                     <i class="fa fa-save pr-1"></i> Save
                 </button>
             </div>

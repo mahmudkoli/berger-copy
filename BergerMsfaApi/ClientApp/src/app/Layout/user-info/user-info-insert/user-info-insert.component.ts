@@ -5,6 +5,9 @@ import { Node } from '../../../Shared/Entity';
 import { UserInfo } from '../../../Shared/Entity/Users/userInfo';
 import { SalesPointService } from '../../../Shared/Services/Sales';
 import { NodeService } from "../../../Shared/Services/Sales/node.service";
+import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
+import { forkJoin } from 'rxjs';
+import { Status } from '../../../Shared/Enums/status';
 
 @Component({
     selector: 'app-user-info-insert',
@@ -27,18 +30,23 @@ export class UserInfoInsertComponent implements OnInit {
     plants: any[] = [];
     saleOffices: any[] = [];
     areaGroups: any[] = [];
-   // territorys: any[] = [];
+    // territorys: any[] = [];
     zones: any[] = [];
+    changeStatus = Status;
+    statusKeys: any[] = [];
 
 
 
-
-    constructor(private userService: UserService,
+    constructor(
+        private userService: UserService,
         private router: Router,
         private salesPointService: SalesPointService,
+        private dropdownService: DynamicDropdownService,
         private nodeService: NodeService) { }
 
     ngOnInit() {
+        this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
+        this.populateDropdwonDataList();
         this.findAllAdUser();
         //this.getAllSalesPoint();
         this.getAllNodes();
@@ -52,7 +60,7 @@ export class UserInfoInsertComponent implements OnInit {
             designation: this.userInfoModel.designation,
             phoneNumber: this.userInfoModel.phoneNumber,
             code: this.userInfoModel.code,
-            salesPointId: this.userInfoModel.salesPointId,           
+            salesPointId: this.userInfoModel.salesPointId,
             territoryNodeIds: this.userInfoModel.territoryNodeIds,
             employeeId: this.userInfoModel.employeeId,
             email: this.userInfoModel.email,
@@ -69,7 +77,7 @@ export class UserInfoInsertComponent implements OnInit {
 
     findAllAdUser() {
 
-       
+
 
     }
 
@@ -117,6 +125,26 @@ export class UserInfoInsertComponent implements OnInit {
             this.territories = this.nodes.filter(s => s.code.startsWith('T'));
             console.log('regions console', this.regions);
         });
+    }
+
+    populateDropdwonDataList() {
+       
+        forkJoin(
+            this.dropdownService.GetDropdownByTypeCd('P01'),
+            this.dropdownService.GetDropdownByTypeCd('Z01'),
+            this.dropdownService.GetDropdownByTypeCd('SO01'),
+            this.dropdownService.GetDropdownByTypeCd('PA01'),
+            this.dropdownService.GetDropdownByTypeCd('T01'),
+        ).subscribe(res => {
+
+            this.plants = res[0].data;
+            this.zones = res[1].data;
+            this.saleOffices = res[2].data;
+            this.areaGroups = res[3].data;
+            this.territories = res[4].data;
+
+        }, (err) => { }, () => { });
+
     }
 
     public val: any;
