@@ -36,7 +36,7 @@ namespace Berger.Data.MsfaEntity
 
         private IDbContextTransaction _transaction;
 
-        
+
 
         public void BeginTransaction()
         {
@@ -106,7 +106,7 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
 
-      
+
 
 
         #region Users
@@ -116,8 +116,9 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
 
         //public DbSet<Delegation> Delegations { get; set; }
-
+        public DbSet<UserHirearchyInfo> UserHirearchyInfos { get; set; }
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
+        public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
 
         #endregion
         #region Setup
@@ -134,14 +135,19 @@ namespace Berger.Data.MsfaEntity
         public DbSet<WorkflowLogHistory> WorkflowLogHistories { get; set; }
         public DbSet<WorkFlowType> WorkFlowTypes { get; set; }
         #endregion
-    
+
         #region JourneyPlan&FocusDealer
         public DbSet<FocusDealer> FocusDealers { get; set; }
+        
         public DbSet<JourneyPlan> JourneyPlans { get; set; }
-        #endregion
+        public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
+        public DbSet<JourneyPlanDetail> JourneyPlanDetails { get;set;}
+       
+#endregion
 
-        #region Painter
-        public DbSet<Painter> Painters { get; set; }
+#region Painter
+public DbSet<Painter> Painters { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
         #endregion
 
         #region SAP Tables

@@ -177,7 +177,7 @@ export class PTableComponent implements OnInit, DoCheck {
   async fnFilterPTable(args: any, executionType: boolean = false) {
     let execution = false;
     args = args.trim();
-
+       
     if (this.pTableSetting.enabledServerSitePaggination) {
       this.serverSiteCallbackFn.emit({ searchVal: args, pageNo: this.pageNo });
     } else {

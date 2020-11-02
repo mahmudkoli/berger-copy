@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Common", "Berger.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Data", "Berger.Data\Berger.Data.csproj", "{CBAA2E7D-45E5-470F-AD00-F347A0981327}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berger.Worker", "Berger.Worker\Berger.Worker.csproj", "{F0751C10-8E78-4092-B4F6-3A310C2CE05A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Worker", "Berger.Worker\Berger.Worker.csproj", "{F0751C10-8E78-4092-B4F6-3A310C2CE05A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

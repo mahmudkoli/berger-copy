@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { UniqueFilterByPipe } from './unique-filter.pipe';
 
+
 @NgModule({
   declarations: [
-    UniqueFilterByPipe
+        UniqueFilterByPipe,
+
   ],
   imports: [
   ],
@@ -11,7 +13,9 @@ import { UniqueFilterByPipe } from './unique-filter.pipe';
   //   UniqueFilterByPipe
   // ],
   exports: [
-    UniqueFilterByPipe
+      UniqueFilterByPipe,
+   
+
   ]
 })
 export class PipeSharedModule { }

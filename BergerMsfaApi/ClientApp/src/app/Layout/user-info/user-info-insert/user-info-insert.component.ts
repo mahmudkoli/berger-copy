@@ -1,11 +1,12 @@
-import { Component, OnInit, Directive, Input, ViewChild } from '@angular/core';
-import { UserInfo } from '../../../Shared/Entity/Users/userInfo';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/Shared/Services/Users/user.service';
-import { SalesPoint } from '../../../Shared/Entity';
-import { Node } from '../../../Shared/Entity';
+import { UserInfo } from '../../../Shared/Entity/Users/userInfo';
 import { SalesPointService } from '../../../Shared/Services/Sales';
 import { NodeService } from "../../../Shared/Services/Sales/node.service";
+import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
+import { forkJoin } from 'rxjs';
+import { Status } from '../../../Shared/Enums/status';
 
 @Component({
     selector: 'app-user-info-insert',
@@ -14,24 +15,41 @@ import { NodeService } from "../../../Shared/Services/Sales/node.service";
     providers: [UserService, SalesPointService]
 })
 export class UserInfoInsertComponent implements OnInit {
+
     public userInfoModel: UserInfo = new UserInfo();
+
     adUser: any;
     azureUser: any[] = [];
     activeStatus: boolean;
     adUserList: any[] = [];
     //salesPoints: SalesPoint[] = [];
-    nodes: Node[] = [];
-    regions: Node[] = [];
-    areas: Node[] = [];
-    territories: Node[] = [];
+    //nodes: Node[] = [];
+    //regions: Node[] = [];
+    //areas: Node[] = [];
+    //territories: Node[] = [];
+
+    plants: any[] = [];
+    saleOffices: any[] = [];
+    areaGroups: any[] = [];
+    // territorys: any[] = [];
+    zones: any[] = [];
+    roles: any[] = [];
+    territories:any[]=[]
+    changeStatus = Status;
+    statusKeys: any[] = [];
 
 
-    constructor(private userService: UserService,
+
+    constructor(
+        private userService: UserService,
         private router: Router,
         private salesPointService: SalesPointService,
+        private dropdownService: DynamicDropdownService,
         private nodeService: NodeService) { }
 
     ngOnInit() {
+        this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
+        this.populateDropdwonDataList();
         this.findAllAdUser();
         //this.getAllSalesPoint();
         this.getAllNodes();
@@ -41,16 +59,43 @@ export class UserInfoInsertComponent implements OnInit {
 
         let userInfoObj = {
 
-            name: this.userInfoModel.name,
+           // name: this.userInfoModel.name,
+            firstName: this.userInfoModel.firstName,
+            middleName: this.userInfoModel.middleName,
+            lastName: this.userInfoModel.lastName,
             designation: this.userInfoModel.designation,
             phoneNumber: this.userInfoModel.phoneNumber,
             code: this.userInfoModel.code,
-            salesPointId: this.userInfoModel.salesPointId,           
-            territoryNodeIds: this.userInfoModel.territoryNodeIds,
             employeeId: this.userInfoModel.employeeId,
             email: this.userInfoModel.email,
             adGuid: this.userInfoModel.adGuid,
-            groups: this.userInfoModel.groups
+            //manager: this.userInfoModel.manager,
+            managerName: this.userInfoModel.managerName,
+            loginName: this.userInfoModel.loginName,
+            loginNameWithDomain: this.userInfoModel.loginNameWithDomain,
+            postalCode: this.userInfoModel.postalCode,
+            //salesPointId: this.userInfoModel.salesPointId,
+            //territoryNodeIds: this.userInfoModel.territoryNodeIds,
+         
+            //groups: this.userInfoModel.groups,
+   
+            city: this.userInfoModel.city,
+            department: this.userInfoModel.department,
+            country: this.userInfoModel.country,
+            streetAddress: this.userInfoModel.streetAddress,
+            extension: this.userInfoModel.extension,
+            fax: this.userInfoModel.fax,
+            statusText: this.userInfoModel.statusText,
+            status: this.userInfoModel.status,
+            state: this.userInfoModel.state,
+            plantIds: this.userInfoModel.plantIds,
+            territoryIds: this.userInfoModel.territoryIds,
+            areaIds: this.userInfoModel.areaIds,
+            zoneIds: this.userInfoModel.zoneIds,
+            saleOfficeIds: this.userInfoModel.saleOfficeIds,
+            roleIds:this.userInfoModel.roleIds
+           
+           
         }
 
         var result = this.userService.createUserInfo(userInfoObj).subscribe(res => {
@@ -62,7 +107,7 @@ export class UserInfoInsertComponent implements OnInit {
 
     findAllAdUser() {
 
-       
+
 
     }
 
@@ -102,14 +147,36 @@ export class UserInfoInsertComponent implements OnInit {
     //}
 
     getAllNodes() {
-        this.nodeService.getNodeList().subscribe(res => {
-            this.nodes = res.data;
-            console.log('getAllNodes this.nodes', this.nodes);
-            this.regions = this.nodes.filter(s => s.code.startsWith('R'));
-            this.areas = this.nodes.filter(s => s.code.startsWith('A'));
-            this.territories = this.nodes.filter(s => s.code.startsWith('T'));
-            console.log('regions console', this.regions);
-        });
+        //this.nodeService.getNodeList().subscribe(res => {
+        //    this.nodes = res.data;
+        //    console.log('getAllNodes this.nodes', this.nodes);
+        //    this.regions = this.nodes.filter(s => s.code.startsWith('R'));
+        //    this.areas = this.nodes.filter(s => s.code.startsWith('A'));
+        //    this.territories = this.nodes.filter(s => s.code.startsWith('T'));
+        //    console.log('regions console', this.regions);
+        //});
+    }
+
+    populateDropdwonDataList() {
+       
+        forkJoin(
+            this.dropdownService.GetDropdownByTypeCd('P01'),
+            this.dropdownService.GetDropdownByTypeCd('Z01'),
+            this.dropdownService.GetDropdownByTypeCd('SO01'),
+            this.dropdownService.GetDropdownByTypeCd('PA01'),
+            this.dropdownService.GetDropdownByTypeCd('T01'),
+            this.dropdownService.GetDropdownByTypeCd('Role'),
+        ).subscribe(res => {
+
+            this.plants = res[0].data;
+            this.zones = res[1].data;
+            this.saleOffices = res[2].data;
+            this.areaGroups = res[3].data;
+            this.territories = res[4].data;
+            this.roles = res[5].data;
+
+        }, (err) => { }, () => { });
+
     }
 
     public val: any;

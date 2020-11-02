@@ -57,7 +57,7 @@ namespace BergerMsfaApi.Core
 
         public string UserAgentInfo { get; set; }
         public int NodeId { get;  set; }
-        
+        public List<int> Successors { get; set; } = new List<int>();
 
         public Dictionary<string, string> GetByName()
         {
@@ -80,6 +80,6 @@ namespace BergerMsfaApi.Core
             return result;
         }
 
-
+ 
     }
 }

@@ -5,6 +5,7 @@
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <TypeScriptExperimentalDecorators>True</TypeScriptExperimentalDecorators>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
@@ -80,6 +81,7 @@
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\user-info.component.ts" />
     <None Remove="ClientApp\src\app\Layout\Collection-Entry\collectionEntry-routing.ts" />
     <None Remove="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
+    <None Remove="ClientApp\src\app\Shared\Entity\JourneyPlan\JourneyPlanStatus.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
@@ -100,6 +102,8 @@
 
     <None Remove="ClientApp\src\app\Shared\Enums\yesno.ts" />
 
+    <None Remove="ClientApp\src\app\Shared\Pipes\status-filter.pipe.ts" />
+
   </ItemGroup>
 
   <ItemGroup>
@@ -118,6 +122,7 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Layout\Collection-Entry\collectionEntry.module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\JourneyPlan\JourneyPlanStatus.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
@@ -133,6 +138,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\rejectedStatus.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\statusTypes.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\yesno.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Pipes\status-filter.pipe.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -7,9 +7,9 @@ import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey
 import { NgbDateParserFormatter, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-journey-plan-add',
-  templateUrl: './journey-plan-add.component.html',
-  styleUrls: ['./journey-plan-add.component.css']
+    selector: 'app-journey-plan-add',
+    templateUrl: './journey-plan-add.component.html',
+    styleUrls: ['./journey-plan-add.component.css']
 })
 
 
@@ -17,22 +17,17 @@ export class JourneyPlanAddComponent implements OnInit {
 
     journeyPlanModel: JourneyPlan = new JourneyPlan();
     dealerList: any[] = [];
-    employeeRegList: any[] = [];
-    date: { year: number, month: number };
 
     constructor(
         private calender: NgbCalendar,
         public formatter: NgbDateParserFormatter,
         private alertService: AlertService,
         private route: ActivatedRoute,
-        private dynamicDropdownService: DynamicDropdownService,
         private journeyPlanService: JourneyPlanService,
         private router: Router
     ) { }
 
     ngOnInit() {
-
-        this.getEmpList();
 
         this.getDealerList();
 
@@ -47,16 +42,32 @@ export class JourneyPlanAddComponent implements OnInit {
         else
             this.journeyPlanModel.visitDDate = this.calender.getToday();
 
-  }
-    private getEmpList() {
-        //hard code param for temporary
-        this.dynamicDropdownService.GetDropdownByTypeCd("E01").subscribe(
-            (result: any) => {
-                this.employeeRegList = result.data;
-            },
-            (err: any) => console.log(err)
-        );
     }
+    private getDealerList() {
+
+        this.alertService.fnLoading(true);
+        this.journeyPlanService.getDealerList().subscribe(
+            (result: any) => {
+                this.dealerList = result.data;
+            },
+            (err: any) => console.log(err),
+            () => this.alertService.fnLoading(false)
+        );
+
+    }
+
+    private getJourneyPlanById(id) {
+        this.alertService.fnLoading(true);
+        this.journeyPlanService.getJourneyPlanById(id).subscribe(
+            (result: any) => {
+                let editData = result.data as JourneyPlan;
+                editData.visitDDate = NgbDate.from(this.formatter.parse(editData.visitDate));
+                this.editForm(editData);
+            },
+            (err: any) => console.log(err),
+            () => this.alertService.fnLoading(false)
+        );
+    };
 
     public fnRouteList() {
         this.router.navigate(['/journey-plan/list']);
@@ -67,9 +78,8 @@ export class JourneyPlanAddComponent implements OnInit {
         this.journeyPlanModel.id == 0 ? this.insert(this.journeyPlanModel) : this.update(this.journeyPlanModel);
     }
 
-
     private insert(journeyPlan: JourneyPlan) {
-
+        this.alertService.fnLoading(true);
         this.journeyPlanService.create(journeyPlan).subscribe(res => {
             console.log("JourneyPlan res: ", res);
             this.router.navigate(['/journey-plan/list']).then(() => {
@@ -84,6 +94,7 @@ export class JourneyPlanAddComponent implements OnInit {
     }
 
     private update(model: JourneyPlan) {
+        this.alertService.fnLoading(true);
         this.journeyPlanService.update(model).subscribe(res => {
             console.log("Journey update res: ", res);
             this.router.navigate(['/journey-plan/list']).then(() => {
@@ -96,29 +107,13 @@ export class JourneyPlanAddComponent implements OnInit {
             }, () => this.alertService.fnLoading(false)
         );
     }
-    private getJourneyPlanById(id) {
-        this.journeyPlanService.getJourneyPlanById(id).subscribe(
-            (result: any) => {
-                let editData = result.data as JourneyPlan;
-                editData.visitDDate = NgbDate.from(this.formatter.parse(editData.visitDate));
-                this.editForm(editData);
-            },
-            (err: any) => console.log(err)
-        );
-    };
+
     private editForm(journeyPlan: JourneyPlan) {
         this.journeyPlanModel = journeyPlan;
     }
 
-    private getDealerList() {
-        //hard code param for temporary
-        this.dynamicDropdownService.GetDropdownByTypeCd("D01").subscribe(
-            (result: any) => {
-                this.dealerList = result.data;
-            },
-            (err: any) => console.log(err)
-        );
-    }
+
+
     private displayError(errorDetails: any) {
         // this.alertService.fnLoading(false);
         console.log("error", errorDetails);

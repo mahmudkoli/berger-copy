@@ -38,8 +38,12 @@ export class UserInfoListComponent implements OnInit {
   
 private initPermissionGroup() {
     this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
-    this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
-    this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
+    //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
+    //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
+
+    this.ptableSettings.enabledRecordCreateBtn = true;
+    this.ptableSettings.enabledEditBtn = true;
+    this.ptableSettings.enabledDeleteBtn = true;
 }
     getAllUserInfo() {
         this.userService.getAllUserInfo().subscribe(
@@ -103,7 +107,7 @@ private initPermissionGroup() {
         tableName: 'Application User',
         tableRowIDInternalName: "Id",
         tableColDef: [
-            { headerName: 'Name', width: '20%', internalName: 'name', sort: true, type: "" },
+            { headerName: 'Name', width: '20%', internalName: 'firstName', sort: true, type: "" },
             { headerName: 'Designation', width: '10%', internalName: 'designation', sort: true, type: "" },
             { headerName: 'Phone Number', width: '15%', internalName: 'phoneNumber', sort: true, type: "" },
             { headerName: 'Email', width: '30%', internalName: 'email', sort: true, type: "" },
@@ -118,6 +122,7 @@ private initPermissionGroup() {
         enabledEditBtn: true,
         enabledColumnFilter: true,
         enabledRecordCreateBtn: true,
+        enabledDeleteBtn: true
     };
 
     public fnCustomTrigger(event) {
@@ -126,9 +131,30 @@ private initPermissionGroup() {
         if (event.action == "new-record") {
             this.addNewUserInfo();
         }
+        else if (event.action == "delete-item") {
+            this.delete(event.record.id);
+        }
         else if (event.action == "edit-item") {
             console.log(event.record);
             this.editUserInfo(event.record.id);
         }
+    }
+
+    private delete(id: number) {
+        console.log("Id:", id);
+        this.alertService.confirm("Are you sure you want to delete this item?", () => {
+            this.userService.deleteUserInfo(id).subscribe(
+                (res: any) => {
+                    console.log('res from del func', res);
+                    this.alertService.tosterSuccess("dropdown has been deleted successfully.");
+                    this.getAllUserInfo();
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        }, () => {
+
+        });
     }
 }

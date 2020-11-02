@@ -29,7 +29,7 @@ export class FocusdealerListComponent implements OnInit {
         this.fnFocusDealerList();
 
     }
-    private fnFocusDealerList() {
+     fnFocusDealerList() {
         this.alertService.fnLoading(true);
 
         this.focusDealerService.getFocusDealerList().subscribe(

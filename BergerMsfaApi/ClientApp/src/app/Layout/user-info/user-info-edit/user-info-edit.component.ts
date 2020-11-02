@@ -11,6 +11,9 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { Hierarchy } from 'src/app/Shared/Entity/Sales/hierarchy';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { DynamicDropdownService } from '../../../Shared/Entity/Setup/dynamic-dropdown.service';
+import { Status } from '../../../Shared/Enums/status';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: "app-user-info-edit",
   templateUrl: "./user-info-edit.component.html",
@@ -19,17 +22,27 @@ import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 })
 export class UserInfoEditComponent implements OnInit {
   public form: FormGroup;
-  userInfo: UserInfo = new UserInfo();
+    userInfoModel: UserInfo = new UserInfo();
   nodes: Node[] = [];
   regions: Node[] = [];
   areas: Node[] = [];
-  territories: Node[] = [];
+  //territories: Node[] = [];
   selectedRole = null;
   roleList: any[] = [];
 
   selectedNode: Node = new Node();
   enumStatusTypes: MapObject[] = StatusTypes.statusType;
   hierarchyType: Hierarchy[] = [];
+
+    plants: any[] = [];
+    saleOffices: any[] = [];
+    areaGroups: any[] = [];
+    // territorys: any[] = [];
+    zones: any[] = [];
+    roles: any[] = [];
+    territories: any[] = []
+    changeStatus = Status;
+    statusKeys: any[] = [];
 
   public val: any;
   public isNational: boolean;
@@ -46,13 +59,19 @@ export class UserInfoEditComponent implements OnInit {
     private nodeService: NodeService,
     private userService: UserService,
     private roleService: RoleService,
-    private commonService: CommonService
+      private commonService: CommonService,
+      private dropdownService: DynamicDropdownService
   ) {}
 
-  ngOnInit() {
-    if (this.activatedRoute.snapshot.params.hasOwnProperty("id")) {
-      this.getUserById(this.activatedRoute.snapshot.params.id);
-    }
+    ngOnInit() {
+        this.activatedRoute.paramMap.subscribe(params => {
+            if (params.has('id'))
+                this.getUserById(Number(params.get('id')))
+        });
+    //if (this.activatedRoute.snapshot.params.hasOwnProperty("id")) {
+    //  this.getUserById(this.activatedRoute.snapshot.params.id);
+    //  }
+      this.populateDropdwonDataList();
     this.getHierarchyType();
     this.getRoles();
     this.getAllNodes();
@@ -85,42 +104,42 @@ export class UserInfoEditComponent implements OnInit {
     console.log(id);
     this.alertService.fnLoading(true);
     this.userService.getUserInfoById(id).subscribe(
-      (res: any) => {
-        this.userInfo = res.data || new UserInfo();
+        (res: any) => {
+            this.userInfoModel = res.data  || new UserInfo();
 
         if (Object.keys(res.data).length == 0) {
           this.showError("No such user!Create a new user");
           this.router.navigate([`/users-info/users-infolist/`]);
         } else {
-          console.log("User Info", this.userInfo);
+            console.log("User Info", this.userInfoModel);
           this.userService
-            .getDesignationCodeById(this.userInfo.id)
+              .getDesignationCodeById(this.userInfoModel.id)
             .subscribe((result: any) => {
               debugger;
               this.selectedNode = result.data;
               if (this.selectedNode != null) {
                   if (this.selectedNode.code.startsWith("N")) {
-                      this.userInfo.nationalNodeIds = this.selectedNode.nodeIdList;
+                      this.userInfoModel.nationalNodeIds = this.selectedNode.nodeIdList;
      
                   
                 }
 
                   if (this.selectedNode.code.startsWith("R")) {
-                      this.userInfo.regionNodeIds = this.selectedNode.nodeIdList;
+                      this.userInfoModel.regionNodeIds = this.selectedNode.nodeIdList;
                   
                 }
 
                   if (this.selectedNode.code.startsWith("A")) {
-                      this.userInfo.areaNodeIds = this.selectedNode.nodeIdList;
+                      this.userInfoModel.areaNodeIds = this.selectedNode.nodeIdList;
                  
                 }
 
                   if (this.selectedNode.code.startsWith("T")) {
-                      this.userInfo.territoryNodeIds = this.selectedNode.nodeIdList;
+                      this.userInfoModel.territoryNodeIds = this.selectedNode.nodeIdList;
                 
                 }
 
-                this.changeFnOptType(this.userInfo.hierarchyId);  
+                  this.changeFnOptType(this.userInfoModel.hierarchyId);  
 
 
               }
@@ -145,31 +164,31 @@ export class UserInfoEditComponent implements OnInit {
 
   submitUserForm(userInfoPostModel : UserInfo) {
 
-    userInfoPostModel.hierarchyId
+  //  userInfoPostModel.hierarchyId
 
-    if(userInfoPostModel.hierarchyId == 1){
-      userInfoPostModel.regionNodeIds = [];
-      userInfoPostModel.areaNodeIds = [];
-      userInfoPostModel.territoryNodeIds = [];
-    }
-    else if(userInfoPostModel.hierarchyId == 2)
-    {
-      userInfoPostModel.nationalNodeIds = [];
-      userInfoPostModel.areaNodeIds = [];
-      userInfoPostModel.territoryNodeIds = [];
-    }
-    else if(userInfoPostModel.hierarchyId == 3)
-    {
-      userInfoPostModel.nationalNodeIds = [];
-      userInfoPostModel.regionNodeIds = [];
-      userInfoPostModel.territoryNodeIds = [];
-    }
-    else if(userInfoPostModel.hierarchyId == 4)
-    {
-      userInfoPostModel.nationalNodeIds = [];
-      userInfoPostModel.regionNodeIds = [];
-      userInfoPostModel.areaNodeIds = [];
-    }
+    //if(userInfoPostModel.hierarchyId == 1){
+    //  userInfoPostModel.regionNodeIds = [];
+    //  userInfoPostModel.areaNodeIds = [];
+    //  userInfoPostModel.territoryNodeIds = [];
+    //}
+    //else if(userInfoPostModel.hierarchyId == 2)
+    //{
+    //  userInfoPostModel.nationalNodeIds = [];
+    //  userInfoPostModel.areaNodeIds = [];
+    //  userInfoPostModel.territoryNodeIds = [];
+    //}
+    //else if(userInfoPostModel.hierarchyId == 3)
+    //{
+    //  userInfoPostModel.nationalNodeIds = [];
+    //  userInfoPostModel.regionNodeIds = [];
+    //  userInfoPostModel.territoryNodeIds = [];
+    //}
+    //else if(userInfoPostModel.hierarchyId == 4)
+    //{
+    //  userInfoPostModel.nationalNodeIds = [];
+    //  userInfoPostModel.regionNodeIds = [];
+    //  userInfoPostModel.areaNodeIds = [];
+    //}
     console.log(userInfoPostModel);
     debugger;
 
@@ -220,5 +239,27 @@ export class UserInfoEditComponent implements OnInit {
       this.territories = this.nodes.filter((s) => s.code.startsWith("T"));
       console.log("regions console", this.regions);
     });
-  }
+    }
+    populateDropdwonDataList() {
+
+        forkJoin(
+            this.dropdownService.GetDropdownByTypeCd('P01'),
+            this.dropdownService.GetDropdownByTypeCd('Z01'),
+            this.dropdownService.GetDropdownByTypeCd('SO01'),
+            this.dropdownService.GetDropdownByTypeCd('PA01'),
+            this.dropdownService.GetDropdownByTypeCd('T01'),
+            this.dropdownService.GetDropdownByTypeCd('Role'),
+        ).subscribe(res => {
+
+            this.plants = res[0].data;
+            this.zones = res[1].data;
+            this.saleOffices = res[2].data;
+            this.areaGroups = res[3].data;
+            this.territories = res[4].data;
+            this.roles = res[5].data;
+
+        }, (err) => { }, () => { });
+
+    }
+
 }

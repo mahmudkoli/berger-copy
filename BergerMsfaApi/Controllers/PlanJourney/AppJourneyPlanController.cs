@@ -15,21 +15,22 @@ namespace BergerMsfaApi.Controllers.Journey
 
     public class AppJourneyPlanController : BaseController
     {
-        private readonly IJourneyService _journeyService;
+        private readonly IJourneyPlanService _journeyService;
 
-        public AppJourneyPlanController(IJourneyService journeyService)
+        public AppJourneyPlanController(IJourneyPlanService journeyService)
         {
             _journeyService = journeyService;
 
         }
 
-        [HttpGet("GetJourneyPlanList")]
-        public async Task<IActionResult> GetJourneyPlanList()
+        //this method expose journey plan list by employeeId
+
+        [HttpGet("GetJourneyPlanList/{employeeId}")]
+        public async Task<IActionResult> GetJourneyPlanList(int employeeId)
         {
             try
-                
             {
-                var result = await _journeyService.GetJourneyPlanList();
+                var result = await _journeyService.AppGetJourneyPlanDetailList(employeeId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -37,26 +38,14 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             }
         }
-        [HttpPut("ApproveJournetPlan")]
-        public async Task<IActionResult> ApproveJournetPlan(JourneyPlanModel model)
+
+        [HttpPost("CreateJourneyPlan")]
+        public async Task<IActionResult> CreateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.SetApprovedPlan(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            { 
-                return ExceptionResult(ex);
-            };
-        }
-        [HttpGet("GetJourneyPlanById/{id}")]
-        public async Task<IActionResult> GetJourneyPlanById(int id)
-        {
-            try
-            {
-                var result = await _journeyService.GetJourneyPlanById(id);
+                var result = await _journeyService.AppCreateJourneyPlan(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -65,14 +54,13 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
-
-        [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] JourneyPlanModel model)
+        [HttpPost("UpdateJourneyPlan")]
+        public async Task<IActionResult>  UpdateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.CreateAsync(model);
+                var result = await _journeyService.AppUpdateJourneyPlan(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -82,40 +70,13 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
 
-        [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] JourneyPlanModel model)
+        [HttpDelete("DeleteJourneyPlan")]
+        public async Task<IActionResult> DeleteJourneyPlan(int PlanId)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                else if (!await _journeyService.IsExistAsync(model.Id))
-                {
-                    ModelState.AddModelError(nameof(model), "Journey Plan Not Found");
-                    return ValidationResult(ModelState);
-
-                }
-                var result = await _journeyService.UpdateAsync(model);
-                return OkResult(result);
-
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                if (!await _journeyService.IsExistAsync(id))
-                {
-                    ModelState.AddModelError(nameof(id), "Journey Plan Not Found");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _journeyService.DeleteAsync(id);
+                var result = await _journeyService.DeleteJourneyAsync(PlanId);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -21,6 +21,12 @@
     <Compile Remove="Migrations\20201013080027_PainterAttachment.Designer.cs" />
     <Compile Remove="Migrations\20201014010707_dealerInfo.cs" />
     <Compile Remove="Migrations\20201014010707_dealerInfo.Designer.cs" />
+    <Compile Remove="Migrations\20201028142624_renameColumn.cs" />
+    <Compile Remove="Migrations\20201028142624_renameColumn.Designer.cs" />
+    <Compile Remove="Migrations\20201028143007_renameColumn.cs" />
+    <Compile Remove="Migrations\20201028143007_renameColumn.Designer.cs" />
+    <Compile Remove="Migrations\20201101060204_Addign UserZoneAreaMapping.cs" />
+    <Compile Remove="Migrations\20201101060204_Addign UserZoneAreaMapping.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
