@@ -8,10 +8,10 @@
     public statusText: string;
     public employeeId: string;
     public salesPointId: number;
-    // public nationalNodeId: number;
-    // public regionNodeId: number;
-    // public areaNodeId: number;
-    // public terrNodeId: number;
+    public nationalNodeId: number;
+    public regionNodeId: number;
+    public areaNodeId: number;
+    public terrNodeId: number;
     public nationalNodeIds: number[];
     public territoryNodeIds: number[];
     public areaNodeIds: number[];
@@ -24,7 +24,7 @@
     public nodeId: number;
     public city: string;
     public country: string;
-    public departMent: string;
+    public department: string;
     public extension: string;
     public fax: string;
     public firstName: string;
@@ -41,11 +41,11 @@
 
     public hierarchyId: number;
 
-    public plantId: any[] = [];
-    public areaGroupId: any[] = [];
-    public saleOfficeId: any[] = [];
-    // territorys: any[] = [];
-    public zoneId: any[] = [];
+    public plantIds: any[] = [];
+    public areaIds: any[] = [];
+    public saleOfficeIds: any[] = [];
+    public territoryIds: any[] = [];
+    public zoneIds: any[] = [];
 
     constructor() {
         this.status = 1;
@@ -53,11 +53,12 @@
         this.regionNodeIds = [];
         this.areaNodeIds = [];
         this.territoryNodeIds = [];
-
-        this.zoneId = [];
-        this.areaGroupId = [];
-        this.saleOfficeId = [];
-        this.plantId = [];
+        this.roleIds = [];
+        this.plantIds = [];
+        this.zoneIds = [];
+        this.areaIds = [];
+        this.saleOfficeIds = [];
+        this.plantIds = [];
 
     }
 }

@@ -118,6 +118,7 @@ namespace Berger.Data.MsfaEntity
         //public DbSet<Delegation> Delegations { get; set; }
         public DbSet<UserHirearchyInfo> UserHirearchyInfos { get; set; }
         public DbSet<UserTerritoryMapping> UserTerritoryMapping { get; set; }
+        public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
 
         #endregion
         #region Setup
@@ -137,6 +138,7 @@ namespace Berger.Data.MsfaEntity
 
         #region JourneyPlan&FocusDealer
         public DbSet<FocusDealer> FocusDealers { get; set; }
+        
         public DbSet<JourneyPlan> JourneyPlans { get; set; }
         public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
         public DbSet<JourneyPlanDetail> JourneyPlanDetails { get;set;}

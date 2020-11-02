@@ -81,17 +81,17 @@
                     </div>
 
                 </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="name">Name</label>
-                        <input required name="name" #name="ngModel" id="name" type="text" class="form-control"
-                               [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
-                               [(ngModel)]="userInfoModel.name" />
-                        <small class="text-danger" [class.d-none]="name.valid || name.untouched">
-                            Name is Required
-                        </small>
-                    </div>
-                </div>
+                <!--<div class="col-md-6">
+        <div class="position-relative form-group">
+            <label for="name">Name</label>
+            <input required name="name" #name="ngModel" id="name" type="text" class="form-control"
+                   [ngClass]="{'is-valid':name.valid,'is-invalid':name.invalid && name.touched }"
+                   [(ngModel)]="userInfoModel.name" />
+            <small class="text-danger" [class.d-none]="name.valid || name.untouched">
+                Name is Required
+            </small>
+        </div>
+    </div>-->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="name">First Name</label>
@@ -132,7 +132,7 @@
                         <input required name="email" #email="ngModel" id="email" placeholder="" type="text"
                                class="form-control"
                                [ngClass]="{'is-valid':email.valid,'is-invalid':email.invalid && email.touched }"
-                               [(ngModel)]="userInfoModel.email" disabled />
+                               [(ngModel)]="userInfoModel.email" />
                         <small class="text-danger" [class.d-none]="email.valid || email.untouched">
                             Email is Required
                         </small>
@@ -149,6 +149,18 @@
                                [(ngModel)]="userInfoModel.designation" />
                         <small class="text-danger" [class.d-none]="designation.valid || designation.untouched">
                             Designation is Required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="designation">Code</label>
+                        <input required name="code" #code="ngModel" id="code" placeholder=""
+                               type="text" class="form-control"
+                               [ngClass]="{'is-valid':designation.valid,'is-invalid':code.invalid && code.touched }"
+                               [(ngModel)]="userInfoModel.code" />
+                        <small class="text-danger" [class.d-none]="code.valid || code.untouched">
+                            Code is Required
                         </small>
                     </div>
                 </div>
@@ -188,12 +200,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="name">DepartMent </label>
+                        <label for="name">Department </label>
                         <input required name="department" #department="ngModel" id="department" type="text" class="form-control"
                                [ngClass]="{'is-valid':department.valid,'is-invalid':department.invalid && department.touched }"
                                [(ngModel)]="userInfoModel.department" />
                         <small class="text-danger" [class.d-none]="department.valid || department.untouched">
-                            DepartMent is Required
+                            Department is Required
                         </small>
                     </div>
                 </div>
@@ -219,17 +231,17 @@
                         </small>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="name">Manager </label>
-                        <input required name="manager" #manager="ngModel" id="manager" type="text" class="form-control"
-                               [ngClass]="{'is-valid':manager.valid,'is-invalid':manager.invalid && manager.touched }"
-                               [(ngModel)]="userInfoModel.manager" />
-                        <small class="text-danger" [class.d-none]="manager.valid || manager.untouched">
-                            Manager is Required
-                        </small>
-                    </div>
-                </div>
+                <!--<div class="col-md-6">
+        <div class="position-relative form-group">
+            <label for="name">Manager </label>
+            <input required name="manager" #manager="ngModel" id="manager" type="text" class="form-control"
+                   [ngClass]="{'is-valid':manager.valid,'is-invalid':manager.invalid && manager.touched }"
+                   [(ngModel)]="userInfoModel.manager" />
+            <small class="text-danger" [class.d-none]="manager.valid || manager.untouched">
+                Manager is Required
+            </small>
+        </div>
+    </div>-->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="name">Manager Name </label>
@@ -294,13 +306,13 @@
                         <label for="roleId">Application Role</label>
 
                         <!--<ng-select id="roleId" name="roleId" [multiple]="false" [(ngModel)]="userInfoModel.roleId">
-                            <ng-option *ngFor="let role of roleList" [value]="role.id">
-                                {{role.name}}
-                            </ng-option>
-                        </ng-select>-->
+                <ng-option *ngFor="let role of roleList" [value]="role.id">
+                    {{role.name}}
+                </ng-option>
+            </ng-select>-->
 
-                        <ng-select required id="roleId" #roleId="ngModel" name="roleId" [multiple]="false" [(ngModel)]="userInfoModel.roleId">
-                            <ng-option *ngFor="let role of roleList" [value]="role.id" [disabled]="roleId.disabled">{{role.name}}</ng-option>
+                        <ng-select required id="roleId" #roleId="ngModel" name="roleId" [multiple]="true" [(ngModel)]="userInfoModel.roleIds">
+                            <ng-option *ngFor="let role of roles" [value]="role.id" [disabled]="roleId.disabled">{{role.dropdownName}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">
@@ -313,7 +325,9 @@
                     <div class="position-relative form-group">
                         <label for="plantId">Plant</label>
 
-                        <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="true" [(ngModel)]="userInfoModel.plantId">
+                        l>
+
+                        <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="true" [(ngModel)]="userInfoModel.plantIds">
                             <ng-option *ngFor="let plant of plants" [value]="plant.id">{{plant.dropdownName}}</ng-option>
                         </ng-select>
 
@@ -327,7 +341,7 @@
                     <div class="position-relative form-group">
                         <label for="saleOfficeId">Sale Office</label>
 
-                        <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="true" [(ngModel)]="userInfoModel.saleOfficeId">
+                        <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="true" [(ngModel)]="userInfoModel.saleOfficeIds">
                             <ng-option *ngFor="let sale of saleOffices" [value]="sale.id">{{sale.dropdownName}}</ng-option>
                         </ng-select>
 
@@ -341,7 +355,7 @@
                     <div class="position-relative form-group">
                         <label for="areaId">Area Group</label>
 
-                        <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="true" [(ngModel)]="userInfoModel.areaId">
+                        <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="true" [(ngModel)]="userInfoModel.areaIds">
                             <ng-option *ngFor="let area of areaGroups" [value]="area.id">{{area.dropdownName}}</ng-option>
                         </ng-select>
 
@@ -350,12 +364,24 @@
                         </small>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="zoneId">Territory</label>
 
+                        <ng-select required id="territoryId" #territoryId="ngModel" name="territoryId" [multiple]="true" [(ngModel)]="userInfoModel.territoryIds">
+                            <ng-option *ngFor="let territory of territories" [value]="territory.id">{{territory.dropdownName}}</ng-option>
+                        </ng-select>
+
+                        <small class="text-danger" [class.d-none]="territoryId.valid || territoryId.untouched">
+                            Territory  is Required
+                        </small>
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="zoneId">Zone</label>
 
-                        <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="true" [(ngModel)]="userInfoModel.zoneId">
+                        <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="true" [(ngModel)]="userInfoModel.zoneIds">
                             <ng-option *ngFor="let zone of zones" [value]="zone.id">{{zone.dropdownName}}</ng-option>
                         </ng-select>
 
@@ -380,100 +406,94 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="hierarchyId">Select Hierarchy</label>
-                        <ng-select required #hierarchyId="ngModel" name="hierarchyId"
-                                   (change)="changeFnOptType($event)"
-                                   [multiple]="false" [(ngModel)]="userInfoModel.hierarchyId"
-                                   [ngClass]="{'is-valid':hierarchyId.valid,'is-invalid':hierarchyId.invalid && hierarchyId.touched }">
-                            <ng-option *ngFor="let key of hierarchyType;" [value]="key.id">{{key.hierarchyName}}</ng-option>
+                <!--<div class="col-md-6">
+        <div class="position-relative form-group">
+            <label for="hierarchyId">Select Hierarchy</label>
+            <ng-select required #hierarchyId="ngModel" name="hierarchyId"
+                       (change)="changeFnOptType($event)"
+                       [multiple]="false" [(ngModel)]="userInfoModel.hierarchyId"
+                       [ngClass]="{'is-valid':hierarchyId.valid,'is-invalid':hierarchyId.invalid && hierarchyId.touched }">
+                <ng-option *ngFor="let key of hierarchyType;" [value]="key.id">{{key.hierarchyName}}</ng-option>
 
-                        </ng-select>
-                        <small class="text-danger" [class.d-none]="hierarchyId.valid || hierarchyId.untouched">
-                            Hierarchy is required
-                        </small>
-                    </div>
-                </div>
-
-                <ng-container *ngIf="isNational">
-                    <div class="col-md-6">
-                        <div class="position-relative form-group">
-                            <label for="nationalNodeId">Select National</label>
-                            <ng-select id="nationalNodeId" #nationalNodeId="ngModel" name="nationalNodeId"
-                                       [multiple]="true" [(ngModel)]="userInfoModel.nationalNodeIds">
-                                <ng-option [value]="1">National</ng-option>
-                            </ng-select>
-                            <small class="text-danger"
-                                   [class.d-none]="nationalNodeId.valid || nationalNodeId.untouched">
-                                National is Required
-                            </small>
-                        </div>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="isRegion">
-                    <div class="col-md-6">
-                        <div class="position-relative form-group">
-                            <label for="regionNodeId">Select Region</label>
-                            <ng-select id="regionNodeId" #regionNodeId="ngModel" name="regionNodeId" [multiple]="true"
-                                       [(ngModel)]="userInfoModel.regionNodeIds">
-                                <ng-option *ngFor="let region of regions" [value]="region.nodeId"
-                                           [disabled]="regionNodeId.disabled">{{region.name}}</ng-option>
-                            </ng-select>
-                            <small class="text-danger" [class.d-none]="regionNodeId.valid || regionNodeId.untouched">
-                                Region is Required
-                            </small>
-                        </div>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="isArea">
-                    <div class="col-md-6">
-                        <div class="position-relative form-group">
-                            <label for="regionNodeId">Select Area</label>
-                            <ng-select id="areaNodeId" #areaNodeId="ngModel" name="areaNodeId" [multiple]="true"
-                                       [(ngModel)]="userInfoModel.areaNodeIds">
-                                <ng-option *ngFor="let area of areas" [value]="area.nodeId"
-                                           [disabled]="areaNodeId.disabled">{{area.name}}</ng-option>
-                            </ng-select>
-                            <small class="text-danger" [class.d-none]="areaNodeId.valid || areaNodeId.untouched">
-                                Area is Required
-                            </small>
-                        </div>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="isTerritory">
-                    <div class="col-md-6">
-                        <div class="position-relative form-group">
-                            <label for="terrNodeId">Select Territory</label>
-                            <ng-select id="terrNodeId" #terrNodeId="ngModel" name="terrNodeId" [multiple]="true"
-                                       [(ngModel)]="userInfoModel.territoryNodeIds">
-                                <ng-option *ngFor="let territory of territories" [value]="territory.nodeId"
-                                           [disabled]="terrNodeId.disabled">{{territory.name}}</ng-option>
-                            </ng-select>
-                            <small class="text-danger" [class.d-none]="terrNodeId.valid || terrNodeId.untouched">
-                                Territory is Required
-                            </small>
-                        </div>
-                    </div>
-                </ng-container>
-
-
-                <ng-container *ngIf="isSalesPoint">
-                    <div class="col-md-6">
-                        <div class="position-relative form-group">
-                            <label for="salesPointId">Select Sales Point</label>
-                            <ng-select id="salesPointId" #salesPointId="ngModel" name="salesPoint" [multiple]="false" [(ngModel)]="userInfoModel.salesPointId">
-                                <ng-option *ngFor="let salespoint of salesPoints" [value]="salespoint.salesPointId" [disabled]="salesPointId.disabled">{{salespoint.name}}</ng-option>
-                            </ng-select>
-                            <small class="text-danger" [class.d-none]="salesPointId.valid || salesPointId.untouched">
-                                Sales Point is Required
-                            </small>
-                        </div>
-                    </div>
-                </ng-container>
+            </ng-select>
+            <small class="text-danger" [class.d-none]="hierarchyId.valid || hierarchyId.untouched">
+                Hierarchy is required
+            </small>
+        </div>
+    </div>-->
+                <!--<ng-container *ngIf="isNational">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+                <label for="nationalNodeId">Select National</label>
+                <ng-select id="nationalNodeId" #nationalNodeId="ngModel" name="nationalNodeId"
+                           [multiple]="true" [(ngModel)]="userInfoModel.nationalNodeIds">
+                    <ng-option [value]="1">National</ng-option>
+                </ng-select>
+                <small class="text-danger"
+                       [class.d-none]="nationalNodeId.valid || nationalNodeId.untouched">
+                    National is Required
+                </small>
+            </div>
+        </div>
+    </ng-container>-->
+                <!--<ng-container *ngIf="isRegion">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+                <label for="regionNodeId">Select Region</label>
+                <ng-select id="regionNodeId" #regionNodeId="ngModel" name="regionNodeId" [multiple]="true"
+                           [(ngModel)]="userInfoModel.regionNodeIds">
+                    <ng-option *ngFor="let region of regions" [value]="region.nodeId"
+                               [disabled]="regionNodeId.disabled">{{region.name}}</ng-option>
+                </ng-select>
+                <small class="text-danger" [class.d-none]="regionNodeId.valid || regionNodeId.untouched">
+                    Region is Required
+                </small>
+            </div>
+        </div>
+    </ng-container>-->
+                <!--<ng-container *ngIf="isArea">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+                <label for="regionNodeId">Select Area</label>
+                <ng-select id="areaNodeId" #areaNodeId="ngModel" name="areaNodeId" [multiple]="true"
+                           [(ngModel)]="userInfoModel.areaNodeIds">
+                    <ng-option *ngFor="let area of areas" [value]="area.nodeId"
+                               [disabled]="areaNodeId.disabled">{{area.name}}</ng-option>
+                </ng-select>
+                <small class="text-danger" [class.d-none]="areaNodeId.valid || areaNodeId.untouched">
+                    Area is Required
+                </small>
+            </div>
+        </div>
+    </ng-container>-->
+                <!--<ng-container *ngIf="isTerritory">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+                <label for="terrNodeId">Select Territory</label>
+                <ng-select id="terrNodeId" #terrNodeId="ngModel" name="terrNodeId" [multiple]="true"
+                           [(ngModel)]="userInfoModel.territoryNodeIds">
+                    <ng-option *ngFor="let territory of territories" [value]="territory.nodeId"
+                               [disabled]="terrNodeId.disabled">{{territory.name}}</ng-option>
+                </ng-select>
+                <small class="text-danger" [class.d-none]="terrNodeId.valid || terrNodeId.untouched">
+                    Territory is Required
+                </small>
+            </div>
+        </div>
+    </ng-container>-->
+                <!--<ng-container *ngIf="isSalesPoint">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+                <label for="salesPointId">Select Sales Point</label>
+                <ng-select id="salesPointId" #salesPointId="ngModel" name="salesPoint" [multiple]="false" [(ngModel)]="userInfoModel.salesPointId">
+                    <ng-option *ngFor="let salespoint of salesPoints" [value]="salespoint.salesPointId" [disabled]="salesPointId.disabled">{{salespoint.name}}</ng-option>
+                </ng-select>
+                <small class="text-danger" [class.d-none]="salesPointId.valid || salesPointId.untouched">
+                    Sales Point is Required
+                </small>
+            </div>
+        </div>
+    </ng-container>-->
 
             </div>
             <div class="d-flex justify-content-end">

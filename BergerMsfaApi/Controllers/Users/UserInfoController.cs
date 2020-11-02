@@ -67,7 +67,7 @@ namespace BergerMsfaApi.Controllers.Users
         /// </summary>
         /// <param name="id"></param>
         /// <returns>ApiResponse</returns>
-        [HttpGet("{id}")]
+        [HttpGet("getUserById/{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
             try
@@ -120,11 +120,11 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
-                var isExist = await _User.IsUserExistAsync(model.AdGuid);
-                if (isExist)
-                {
-                    ModelState.AddModelError(nameof(model.Code), "User Already Exist");
-                }
+                //var isExist = await _User.IsUserExistAsync(model.AdGuid);
+                //if (isExist)
+                //{
+                //    ModelState.AddModelError(nameof(model.Code), "User Already Exist");
+                //}
                 if (!ModelState.IsValid)
                 {
                     return ValidationResult(ModelState);
@@ -150,11 +150,11 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
-                var isExist = await _User.IsUserExistAsync(model.Code, model.Id);
-                if (isExist)
-                {
-                    ModelState.AddModelError(nameof(model.Code), "User Already Exist");
-                }
+                //var isExist = await _User.IsUserExistAsync(model.Code, model.Id);
+                //if (isExist)
+                //{
+                //    ModelState.AddModelError(nameof(model.Code), "User Already Exist");
+                //}
                 if (!ModelState.IsValid)
                 {
                     return ValidationResult(ModelState);

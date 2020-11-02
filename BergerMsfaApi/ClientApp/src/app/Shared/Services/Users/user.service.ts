@@ -64,7 +64,7 @@ createUserInfo(userInfoModel) {
     }
 
     getUserInfoById(id) {
-        return this.http.get(`${this.baseUrl}v1/userinfo/${id}`);
+        return this.http.get(`${this.baseUrl}v1/userinfo/getUserById/${id}`);
     }
 
     getDesignationCodeById(id) {

@@ -8,6 +8,10 @@ namespace Berger.Data.MsfaEntity.Users
     public class UserInfo : AuditableEntity<int>
     {
 
+        public UserInfo()
+        {
+            this.UserZoneAreaMappings = new List<UserZoneAreaMapping>();
+        }
         //[Required]
         [StringLength(128)]
         public string EmployeeId { get; set; }
@@ -37,8 +41,11 @@ namespace Berger.Data.MsfaEntity.Users
         public string DepartMent { get; set; }
         public string Extension { get; set; }
         public string Fax { get; set; }
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
+     
+
         public string LoginName { get; set; }
         public string LoginNameWithDomain { get; set; }
 
@@ -53,13 +60,10 @@ namespace Berger.Data.MsfaEntity.Users
         [StringLength(256)]
         public string Designation { get; set; }// Is it int or string
         public int HierarchyId { get; set; }
-
-
-        public List<UserHirearchyInfo> UserHirearchyInfos { get; set; }
-
         public int? LinemanagerId { get; set; }
-
+        public List<UserHirearchyInfo> UserHirearchyInfos { get; set; }
         public List<UserRoleMapping> Roles { get; set; }
+        public List<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
         public List<CMUser> CMUsers { get; set; }
         public List<UserTerritoryMapping> Territories { get; set; }
     }
