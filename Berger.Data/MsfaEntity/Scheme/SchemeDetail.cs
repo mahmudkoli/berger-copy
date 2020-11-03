@@ -14,5 +14,6 @@ namespace Berger.Data.MsfaEntity.Scheme
         [ForeignKey("SchemeMasterId")]
         public SchemeMaster SchemeMaster { get; set; }
         public int SchemeMasterId { get; set; }
+        public List<SchemeBenefit> SchemeBenefits { get; set; }
     }
 }

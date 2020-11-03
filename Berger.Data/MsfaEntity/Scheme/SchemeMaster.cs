@@ -10,7 +10,7 @@ namespace Berger.Data.MsfaEntity.Scheme
         public string   SchemeName { get; set; }
         public string   Condition { get; set; }
         public string   Desc { get; set; }
-        public SchemeDetail SchemeDetail { get; set; }
-        public List<SchemeBenefit> SchemeBenefits { get; set; }
+        public List<SchemeDetail> SchemeDetail { get; set; }
+       
     }
 }

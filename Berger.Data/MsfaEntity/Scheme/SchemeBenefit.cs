@@ -13,10 +13,15 @@ namespace Berger.Data.MsfaEntity.Scheme
         public string TargetVolum { get; set; }
         public DateTime Date { get; set; }
 
-        public int SchemeMasterId { get; set; }
+       
+        public int SchemeDeatailId { get; set; }
+        [ForeignKey("SchemeDeatailId")]
+        public SchemeDetail SchemeDetail { get; set; }
 
-        [ForeignKey("SchemeMasterId")]
-        public SchemeMaster SchemeMaster { get; set; }
+        //public int SchemeMasterId { get; set; }
+        //[ForeignKey("SchemeMasterId")]
+        //public SchemeMaster SchemeMaster { get; set; }
+      
 
     }
 }

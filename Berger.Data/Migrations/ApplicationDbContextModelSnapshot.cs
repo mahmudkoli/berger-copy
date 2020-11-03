@@ -884,7 +884,7 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SchemeMasterId")
+                    b.Property<int>("SchemeDeatailId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -901,7 +901,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchemeMasterId");
+                    b.HasIndex("SchemeDeatailId");
 
                     b.ToTable("SchemeBenefits");
                 });
@@ -948,8 +948,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchemeMasterId")
-                        .IsUnique();
+                    b.HasIndex("SchemeMasterId");
 
                     b.ToTable("SchemeDetails");
                 });
@@ -1881,9 +1880,9 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeBenefit", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.Scheme.SchemeMaster", "SchemeMaster")
+                    b.HasOne("Berger.Data.MsfaEntity.Scheme.SchemeDetail", "SchemeDetail")
                         .WithMany("SchemeBenefits")
-                        .HasForeignKey("SchemeMasterId")
+                        .HasForeignKey("SchemeDeatailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1891,8 +1890,8 @@ namespace Berger.Data.Migrations
             modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeDetail", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.Scheme.SchemeMaster", "SchemeMaster")
-                        .WithOne("SchemeDetail")
-                        .HasForeignKey("Berger.Data.MsfaEntity.Scheme.SchemeDetail", "SchemeMasterId")
+                        .WithMany("SchemeDetail")
+                        .HasForeignKey("SchemeMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
