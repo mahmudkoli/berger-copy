@@ -1,9 +1,8 @@
-﻿using Berger.Common.Enumerations;
-using System;
+﻿using System;
 
 namespace BergerMsfaApi.Models.JourneyPlan
 {
-    public class PortalCreateJouneryModel
+    public class AppCreateJourneyModel
     {
         public int Id { get; set; }
         public int[] Dealers { get; set; }

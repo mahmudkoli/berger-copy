@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Security.Principal;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Core;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -40,11 +39,13 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpPost("CreateJourneyPlan")]
-        public async Task<IActionResult> CreateJourneyPlan([FromBody] PortalCreateJouneryModel model)
+        public async Task<IActionResult>CreateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
+                //have to check from app if there is any existing plan create same date and login employee;
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
+
                 var result = await _journeyService.AppCreateJourneyPlan(model);
                 return OkResult(result);
             }
@@ -54,8 +55,20 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
+        [HttpGet("CheckHasAlreadyPlan/{employeeId}/{planDate}")]
+        public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string planDate)
+        {
+            if (await _journeyService.AppCheckAlreadyTodayPlan(employeeId, DateTime.Parse(planDate)))
+            {
+                ModelState.AddModelError("Plan", "already exists");
+                return ValidationResult(ModelState);
+            }
+            return OkResult(false);
+
+        }
+
         [HttpPost("UpdateJourneyPlan")]
-        public async Task<IActionResult>  UpdateJourneyPlan([FromBody] PortalCreateJouneryModel model)
+        public async Task<IActionResult> UpdateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
