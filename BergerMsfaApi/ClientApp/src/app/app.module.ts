@@ -76,7 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         // DEFAULT_DROPZONE_CONFIG,
     },
         ConfigActions,
-        PermissionGuard
+     //   PermissionGuard
     ],
     bootstrap: [AppComponent]
 })

@@ -13,6 +13,7 @@ var UserInfo = /** @class */ (function () {
         this.regionNodeIds = [];
         this.areaNodeIds = [];
         this.territoryNodeIds = [];
+        this.roleIds = [];
         this.plantIds = [];
         this.zoneIds = [];
         this.areaIds = [];

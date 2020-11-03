@@ -55,7 +55,7 @@ export class UserInfoInsertComponent implements OnInit {
         this.getAllNodes();
     }
 
-    submitUserForm(model) {
+    submitUserForm() {
 
         let userInfoObj = {
 
@@ -195,7 +195,7 @@ export class UserInfoInsertComponent implements OnInit {
         //this.isSalesPoint = val.some(el => el === 5);
     }
 
-    private fnRouteUserInfoList() {
+     fnRouteUserInfoList() {
         this.router.navigate(['/users-info/users-infolist']);
     }
 }

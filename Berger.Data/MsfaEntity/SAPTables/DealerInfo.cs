@@ -15,8 +15,6 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public string DayLimit { get; set; }
         public decimal CreditLimit { get; set; }
         public decimal TotalDue { get; set; }
-
-        public DateTime VisitDate{ get; set; }
         public string CustomerName { get; set; }
         public string CustZone { get; set; }
         public string BusinessArea { get; set; }

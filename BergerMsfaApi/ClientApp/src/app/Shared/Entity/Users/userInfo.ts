@@ -38,6 +38,7 @@
     public state: string;
     public streetAddress: string;
     public title: string;
+    public company: string;
 
     public hierarchyId: number;
 

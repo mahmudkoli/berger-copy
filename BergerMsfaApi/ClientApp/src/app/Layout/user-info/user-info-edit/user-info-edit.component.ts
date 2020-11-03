@@ -261,5 +261,7 @@ export class UserInfoEditComponent implements OnInit {
         }, (err) => { }, () => { });
 
     }
-
+    fnRouteUserInfoList() {
+        this.router.navigate(['/users-info/users-infolist']);
+    }
 }

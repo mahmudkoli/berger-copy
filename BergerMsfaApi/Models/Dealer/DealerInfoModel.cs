@@ -11,7 +11,6 @@ namespace BergerMsfaApi.Models.Dealer
         public string CustomerName { get; set; }
         public int CustomerNo { get; set; }
         public string Territory { get; set; }
-        public string AppVisitDate { get; set; }
         public DateTime VisitDate { get; set; }
 
     }

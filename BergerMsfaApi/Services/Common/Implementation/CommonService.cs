@@ -1,4 +1,5 @@
-﻿using Berger.Data.MsfaEntity.SAPTables;
+﻿using AutoMapper;
+using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Repositories;
@@ -18,10 +19,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _dealerInfoSvc = dealerInfoSvc;
         }
         //this method expose dealer list by territory for App
-        public async Task<IEnumerable<DealerInfoModel>> GeApptDealerInfoList(string territory)
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
         {
             var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
-            return result.ToMap<DealerInfo, DealerInfoModel>();
+           return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
 
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
