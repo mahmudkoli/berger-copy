@@ -1,0 +1,43 @@
+
+
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create Scheme  </div>
+        <div class="btn-actions-pane-right">
+
+        </div>
+    </div>
+    <div class="card-body">
+        <form  #schemeMasterForm="ngForm" (submit)="fnSave()">
+            <div class="form-row">
+     
+
+                <div class="col-md-6">
+                    <label for="name">Scheme Name</label>
+                    <div class="input-group">
+                        <input class="form-control" placeholder="" id="schemeName" name="schemeName" #schemeName="ngModel" [(ngModel)]="schemeMasterModel.schemeName">
+                    </div>
+                    <small class="text-danger" [class.d-none]="schemeName.valid || schemeName.untouched">
+                        Scheme name is required
+                    </small>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="name">Condition</label>
+                    <div class="input-group">
+                        <input class="form-control" placeholder="" id="condition" name="condition" #condition="ngModel" [(ngModel)]="schemeMasterModel.condition">
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button [disabled]="!schemeMasterForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+
+</div>   

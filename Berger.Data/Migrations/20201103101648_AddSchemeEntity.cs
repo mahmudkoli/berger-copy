@@ -77,7 +77,7 @@ namespace Berger.Data.Migrations
                     Slab = table.Column<string>(nullable: true),
                     Item = table.Column<string>(nullable: true),
                     Condition = table.Column<string>(nullable: true),
-                    TagetVolume= table.Column<string>(nullable: true),
+                    TargetVolume= table.Column<string>(nullable: true),
                     Benefit = table.Column<string>(nullable: true),
                     Date = table.Column<string>(nullable: true),
                     SchemeMasterId = table.Column<int>(nullable: false)

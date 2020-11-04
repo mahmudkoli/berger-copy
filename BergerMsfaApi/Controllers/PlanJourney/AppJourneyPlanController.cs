@@ -58,12 +58,7 @@ namespace BergerMsfaApi.Controllers.Journey
         [HttpGet("CheckHasAlreadyPlan/{employeeId}/{planDate}")]
         public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string planDate)
         {
-            if (await _journeyService.AppCheckAlreadyTodayPlan(employeeId, DateTime.Parse(planDate)))
-            {
-                ModelState.AddModelError("Plan", "already exists");
-                return ValidationResult(ModelState);
-            }
-            return OkResult(false);
+            return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId, DateTime.Parse(planDate)));
 
         }
 

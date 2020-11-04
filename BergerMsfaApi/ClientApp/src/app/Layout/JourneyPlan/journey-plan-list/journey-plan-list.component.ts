@@ -37,6 +37,30 @@ export class JourneyPlanListComponent implements OnInit {
         this.fnJourneyPlanList();
 
     }
+    first = 0;
+
+    rows = 10;
+    next() {
+        this.first = this.first + this.rows;
+    }
+
+    prev() {
+        this.first = this.first - this.rows;
+    }
+
+    reset() {
+        this.first = 0;
+    }
+
+    isLastPage(): boolean {
+      
+        return this.journeyPlanList ? this.first === (this.journeyPlanList.length - this.rows) : true;
+    }
+
+    isFirstPage(): boolean {
+      
+      return this.journeyPlanList ? this.first === 0 : true;
+    }
     onStatusChange(key, jPlan) {
 
         this.journeyPlanStatus.planId = jPlan.id;

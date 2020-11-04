@@ -222,7 +222,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         }
         public async Task<bool> AppCheckAlreadyTodayPlan(int employeeId, DateTime date)
         {
-            return await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date == date);
+            return await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date== date);
         }
         //this method expose journey plan list by employeeId
         public async Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(int employeeId)
