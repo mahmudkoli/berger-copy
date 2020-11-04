@@ -160,7 +160,7 @@ namespace Berger.Data.MsfaEntity
         #region Scheme
         public DbSet<SchemeMaster> SchemeMasters { get; set; }
         public DbSet<SchemeDetail> SchemeDetails { get; set; }
-        public DbSet<SchemeBenefit> SchemeBenefits { get; set; }
+        //public DbSet<SchemeBenefit> SchemeBenefits { get; set; }
 
         #endregion
 

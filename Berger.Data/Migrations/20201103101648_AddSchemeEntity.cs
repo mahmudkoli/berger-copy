@@ -50,42 +50,15 @@ namespace Berger.Data.Migrations
                     WFStatus = table.Column<int>(nullable: false),
                     SchemeName = table.Column<string>(nullable: true),
                     Condition = table.Column<string>(nullable: true),
-                    Desc = table.Column<string>(nullable: true)
+
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SchemeMasters", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "SchemeBenefits",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    CreatedTime = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    ModifiedTime = table.Column<DateTime>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
-                    WorkflowId = table.Column<int>(nullable: true),
-                    WFStatus = table.Column<int>(nullable: false),
-                    Codition = table.Column<string>(nullable: true),
-                    Benifit = table.Column<string>(nullable: true),
-                    TargetVolum = table.Column<string>(nullable: true),
-                    Date = table.Column<DateTime>(nullable: false),
-                    SchemeMasterId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SchemeBenefits", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SchemeBenefits_SchemeMasters_SchemeMasterId",
-                        column: x => x.SchemeMasterId,
-                        principalTable: "SchemeMasters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+
+
 
             migrationBuilder.CreateTable(
                 name: "SchemeDetails",
@@ -102,7 +75,11 @@ namespace Berger.Data.Migrations
                     WFStatus = table.Column<int>(nullable: false),
                     Code = table.Column<string>(nullable: true),
                     Slab = table.Column<string>(nullable: true),
-                    Product = table.Column<string>(nullable: true),
+                    Item = table.Column<string>(nullable: true),
+                    Condition = table.Column<string>(nullable: true),
+                    TagetVolume= table.Column<string>(nullable: true),
+                    Benefit = table.Column<string>(nullable: true),
+                    Date = table.Column<string>(nullable: true),
                     SchemeMasterId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -116,10 +93,6 @@ namespace Berger.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_SchemeBenefits_SchemeMasterId",
-                table: "SchemeBenefits",
-                column: "SchemeMasterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchemeDetails_SchemeMasterId",
@@ -130,8 +103,6 @@ namespace Berger.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "SchemeBenefits");
 
             migrationBuilder.DropTable(
                 name: "SchemeDetails");
