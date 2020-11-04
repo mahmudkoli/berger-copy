@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginBoxedComponent implements OnInit {
     invalidLogin: boolean;
-     MobileNumber:string;
+     UserName:string;
      Password:string;
 
    constructor(private router: Router,private loginService:LoginService) {
@@ -61,7 +61,7 @@ export class LoginBoxedComponent implements OnInit {
 
 
     onLogin() {
-        let loginModel = '{ "MobileNumber" : "' + this.MobileNumber + '" , "Password": "' + this.Password +'" }';
+        let loginModel = '{ "UserName" : "' + this.UserName + '" , "Password": "' + this.Password +'" }';
         let credentials = loginModel;
         this.loginService.postLoginData(credentials).subscribe(response=>
         {

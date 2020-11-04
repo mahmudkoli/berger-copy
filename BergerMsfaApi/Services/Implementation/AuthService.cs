@@ -27,25 +27,24 @@ namespace BergerMsfaApi.Services.Implementation
             this._cmUserService = cmUser;
         }
 
-        public async Task<object> GetJWTToken(LoginModel model)
+        public async Task<object> GetJWTTokenByUserNameAsync(string userName)
         {
             try
             {
                 ////var cmUser = await _cmUserService.GetCMUserByLogin(model);
 
-                var user = new AppUserPrincipal("brainstation23")
-                {
-                    UserId = 1,
-                    Email = "abc@abc.com",
-                    ActiveRoleId = 1,
-                    RoleIdList = new List<int> { 0 },
-                    Avatar = "/img/user.png",
-                    FullName = "Full Name",
-                    EmployeeId = "0",
-                    Phone = "011121",
-                    UserAgentInfo = "127.0.0.1",
-
-                };
+                //var user = new AppUserPrincipal("brainstation23")
+                //{
+                //    UserId = 1,
+                //    Email = "abc@abc.com",
+                //    ActiveRoleId = 1,
+                //    RoleIdList = new List<int> { 0 },
+                //    Avatar = "/img/user.png",
+                //    FullName = "Full Name",
+                //    EmployeeId = "0",
+                //    Phone = "011121",
+                //    UserAgentInfo = "127.0.0.1",
+                //};
 
                 //var cmUser = await _cmUserService.GetCMUserByLogin(model);
                 //var user = new AppUserPrincipal(model.MobileNumber)
@@ -61,41 +60,52 @@ namespace BergerMsfaApi.Services.Implementation
                 //    UserAgentInfo = AppIdentity.AppUser.UserAgentInfo
 
                 //};
+
+                var userInfo = await _userService.GetUserByUserNameAsync(userName);
+
+                var user = new AppUserPrincipal(userInfo.UserName)
+                {
+                    UserId = userInfo.Id,
+                    Email = userInfo.Email,
+                    ActiveRoleId = userInfo.RoleId,
+                    RoleIdList = userInfo.RoleIds,
+                    Avatar = "/img/user.png",
+                    FullName = $"{userInfo.FirstName} {userInfo.MiddleName} {userInfo.LastName}",
+                    EmployeeId = userInfo.EmployeeId,
+                    Phone = userInfo.PhoneNumber,
+                    UserAgentInfo = "127.0.0.1",
+                };
+
                 var appClaimes = user
                                 .GetByName()
                                 .Select(item => new Claim(item.Key, item.Value));
 
                 var claims = new List<Claim>()
-                    {
-                            new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName),
-                            new Claim(JwtRegisteredClaimNames.Sub,user.UserId.ToString()),
-                            new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    };
+                                {
+                                        new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName),
+                                        new Claim(JwtRegisteredClaimNames.Sub,user.UserId.ToString()),
+                                        new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                                };
                 claims.AddRange(appClaimes);
+
                 foreach (var role in user.RoleIdList)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-
                 }
-
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Tokens:key"]));
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
-                    configuration["Tokens:Issuer"],
-                    configuration["Tokens:Audience"],
-                    claims,
-                    expires: DateTime.UtcNow.AddHours(1.00),
-                    signingCredentials: cred
-
-                    );
-
+                                    configuration["Tokens:Issuer"],
+                                    configuration["Tokens:Audience"],
+                                    claims,
+                                    expires: DateTime.UtcNow.AddHours(1.00),
+                                    signingCredentials: cred
+                                );
 
                 var results = new
                 {
-                    //userId = 1,
-                    //fullName = "Full Name",
                     userId=AppIdentity.AppUser.UserId,
                     fullName=AppIdentity.AppUser.FullName,
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -106,11 +116,8 @@ namespace BergerMsfaApi.Services.Implementation
             }
             catch (Exception ex)
             {
-
-                throw new Exception(ex.Message);
+                throw ex;
             }
-
-
         }
 
 

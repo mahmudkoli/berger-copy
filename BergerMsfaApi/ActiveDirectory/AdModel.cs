@@ -58,6 +58,7 @@ namespace BergerMsfaApi.ActiveDirectory
         //}
 
         public String ManagerName { get; set; }
+        public String ManagerId { get; set; }
 
 
         //private AdModel(DirectoryEntry directoryUser)

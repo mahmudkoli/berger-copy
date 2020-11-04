@@ -54,6 +54,10 @@ createUserInfo(userInfoModel) {
         console.log(userInfoModel);
         return this.http.post(this.baseUrl + 'v1/userinfo/create', userInfoModel);
     }
+    getAdUserInfo(adUserName:any) {
+        console.log(adUserName);
+        return this.http.get(this.baseUrl + `v1/userinfo/getaduser/${adUserName}`);
+    }
     updateUserInfo(userInfoModel) {
         console.log(userInfoModel);
         return this.http.put(this.baseUrl + 'v1/userinfo/update', userInfoModel);

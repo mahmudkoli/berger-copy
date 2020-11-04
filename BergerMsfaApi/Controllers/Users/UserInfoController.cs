@@ -84,7 +84,7 @@ namespace BergerMsfaApi.Controllers.Users
             }
         }
 
-        [HttpGet("getaduser")]
+        [HttpGet("getaduser/{username}")]
         public async Task<IActionResult> GetAdUser(string username)
         {
             try

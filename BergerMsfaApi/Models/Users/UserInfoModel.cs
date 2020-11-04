@@ -39,6 +39,10 @@ namespace BergerMsfaApi.Models.Users
         [StringLength(256)]
         public string Name { get; set; }
 
+        // [Required]
+        [StringLength(256)]
+        public string UserName { get; set; }
+
 
         [StringLength(128)]
         public string PhoneNumber { get; set; }
@@ -52,6 +56,7 @@ namespace BergerMsfaApi.Models.Users
         [StringLength(128)]
         public string MiddleName { get; set; }
         public string ManagerName { get; set; }
+        public string ManagerId { get; set; }
         public string LoginName { get; set; }
         public string LoginNameWithDomain { get; set; }
         public string PostalCode { get; set; }

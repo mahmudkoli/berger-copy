@@ -237,6 +237,12 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
             return result;
         }
+
+        public async Task<bool> IsUserNameExistAsync(string username, int id = 0)
+        {
+            return await _user.IsExistAsync(s => s.UserName.Equals(username) && s.Id != id);
+        }
+
         public async Task<bool> IsRoleLinkWithUserExistAsync(int roleid, int userinfoId)
         {
             var result = true;
@@ -306,6 +312,48 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
 
             var userRoleMapping = await _userRoleMapping.FindAsync(u => u.UserInfoId == id);
+
+            //if (userRoleMapping != null)  
+            //{
+            //    finalResult.RoleId = userRoleMapping.RoleId;
+            //}
+            return finalResult;
+        }
+
+        public async Task<UserInfoModel> GetUserByUserNameAsync(string username)
+        {
+            
+            var  result = await _user.FindAsync(s => s.UserName.Equals(username));
+            var areaZone =  await _userZoneArea.FindAllAsync(f => f.UserInfoId == result.Id);
+            var plantIds = await (from p in areaZone select p.PlanId).Distinct().ToListAsync();
+            var saleOfficeIds = await (from s in areaZone where s.SalesOfficeId != null select s.SalesOfficeId).Distinct().ToListAsync();
+            var areaIds = await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
+            var territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
+            var zoneIds = await (from s in areaZone where s.ZoneId != null select s.ZoneId).Distinct().ToListAsync();
+            var finalResult = result.ToMap<UserInfo, UserInfoModel>();
+           
+            finalResult.plantIds = plantIds;
+            finalResult.saleOfficeIds = saleOfficeIds;
+            finalResult.areaIds = areaIds;
+            finalResult.territoryIds = territoryIds;
+            finalResult.zoneIds = zoneIds;
+
+            //finalResult.plantIds = await (from p in areaZone select p.PlanId).Distinct().ToListAsync();
+            //finalResult.saleOfficeIds = await (from s in areaZone where s.SalesOfficeId != null select s.SalesOfficeId).Distinct().ToListAsync();
+            //finalResult.areaIds =  await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
+            //finalResult.territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
+            //finalResult.zoneIds = await (from s in areaZone where s.ZoneId != null select s.ZoneId).Distinct().ToListAsync();
+            //finalResult.plantIds = (from p in areaZone
+            //                        select p.PlanId).ToList();
+            //finalResult.plantIds = areaZone.Select(s => s.PlanId).Distinct().ToList();
+            //finalResult.saleOfficeIds = areaZone.Select(c => c.SalesOfficeId).ToList();
+            //finalResult.areaIds = areaZone.Select(c => c.AreaId).ToList();
+            //finalResult.territoryIds = areaZone.Select(c => c.TerritoryId).ToList();
+            //finalResult.zoneIds = areaZone.Select(c => c.ZoneId).Distinct().ToList();
+            // finalResult.RoleIds = result.UserZoneAreaMappings.Select(c => c.R).Distinct().ToList();
+
+
+            var userRoleMapping = await _userRoleMapping.FindAsync(u => u.UserInfoId == result.Id);
 
             //if (userRoleMapping != null)  
             //{

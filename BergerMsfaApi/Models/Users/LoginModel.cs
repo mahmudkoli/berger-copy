@@ -5,7 +5,7 @@ namespace BergerMsfaApi.Models.Users
     public class LoginModel
     {
         [Required]
-        public string MobileNumber { get; set; }
+        public string UserName { get; set; }
         [Required]
         public string Password { get; set; }
     }
