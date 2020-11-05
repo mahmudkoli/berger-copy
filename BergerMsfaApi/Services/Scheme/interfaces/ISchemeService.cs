@@ -7,6 +7,7 @@ namespace BergerMsfaApi.Services.Scheme.interfaces
     public interface ISchemeService
     {
         Task<IEnumerable<SchemeMasterModel>> PortalGetSchemeMasters( );
+   
         Task<SchemeMasterModel> PortalGetSchemeMastersById(int Id );
         Task<SchemeMasterModel> PortalCreateSchemeMasters(SchemeMasterModel model);
         Task<SchemeMasterModel> PortalUpdateSchemeMasters(SchemeMasterModel model);

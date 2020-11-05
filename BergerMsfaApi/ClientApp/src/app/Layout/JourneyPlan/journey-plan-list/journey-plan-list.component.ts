@@ -61,6 +61,13 @@ export class JourneyPlanListComponent implements OnInit {
       
       return this.journeyPlanList ? this.first === 0 : true;
     }
+    paginate(event) {
+        debugger;
+        //event.first = Index of the first record
+        //event.rows = Number of rows to display in new page
+        //event.page = Index of the new page
+        //event.pageCount = Total number of pages
+    }
     onStatusChange(key, jPlan) {
 
         this.journeyPlanStatus.planId = jPlan.id;

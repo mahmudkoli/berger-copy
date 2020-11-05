@@ -67,6 +67,12 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">
-
+        <p-paginator 
+                      [rows]="10" 
+                      [totalRecords]="100"
+                      pageLinkSize="5" 
+                      [rowsPerPageOptions]="[10,20,30]"
+                      (onPageChange)="paginate($event)"
+                     ></p-paginator>
     </ng-template>
 </p-table>

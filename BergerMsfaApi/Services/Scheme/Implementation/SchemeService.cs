@@ -112,6 +112,8 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             return result.ToMap<SchemeMaster, SchemeMasterModel>();
         }
 
+   
+
         public async Task<SchemeDetailModel> PortalUpdateSchemeDetail(SchemeDetailModel model)
         {
             var schemeDetail = model.ToMap<SchemeDetailModel, SchemeDetail>();

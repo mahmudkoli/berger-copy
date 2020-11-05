@@ -26,7 +26,7 @@ import { JourneyPlanListLineManagerComponent } from './journey-plan-list-line-ma
         FormsModule,
         ReactiveFormsModule,
         NgSelectModule,
-
+        
    
     ],
     entryComponents: []

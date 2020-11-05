@@ -4,6 +4,7 @@ using Berger.Data.Common;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Examples;
+using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.PainterRegistration;
@@ -22,6 +23,15 @@ namespace Berger.Data.MsfaEntity
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            modelBuilder.Entity<SaleOffice>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -160,7 +170,12 @@ namespace Berger.Data.MsfaEntity
         #region Scheme
         public DbSet<SchemeMaster> SchemeMasters { get; set; }
         public DbSet<SchemeDetail> SchemeDetails { get; set; }
-        //public DbSet<SchemeBenefit> SchemeBenefits { get; set; }
+        public DbSet<SaleOffice> SaleOffice { get; set; }
+        public DbSet<SaleGroup> SaleGroup { get; set; }
+        public DbSet<Territory> Territorie { get; set; }
+        public DbSet<Zone> Zone { get; set; }
+
+
 
         #endregion
 

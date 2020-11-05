@@ -183,6 +183,50 @@ namespace Berger.Data.Migrations
                     b.ToTable("Examples");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Hirearchy.SaleGroup", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("SaleGroup");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Hirearchy.SaleOffice", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("SaleOffice");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Hirearchy.Territory", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Territory");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Hirearchy.Zone", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Zone");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.JourneyPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -856,56 +900,6 @@ namespace Berger.Data.Migrations
                     b.ToTable("DealerInfos");
                 });
 
-            modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeBenefit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Benifit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Codition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SchemeDeatailId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TargetVolum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchemeDeatailId");
-
-                    b.ToTable("SchemeBenefits");
-                });
-
             modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -913,7 +907,13 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Benefit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Condition")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
@@ -922,14 +922,17 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Item")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Product")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SchemeMasterId")
                         .HasColumnType("int");
@@ -939,6 +942,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("TargetVolume")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -968,9 +974,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Desc")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -1874,15 +1877,6 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "Territory")
                         .WithMany()
                         .HasForeignKey("TerritoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeBenefit", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.Scheme.SchemeDetail", "SchemeDetail")
-                        .WithMany("SchemeBenefits")
-                        .HasForeignKey("SchemeDeatailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
