@@ -55,10 +55,26 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
-        [HttpGet("CheckHasAlreadyPlan/{employeeId}/{planDate}")]
-        public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string planDate)
+        [HttpGet("CheckHasAlreadyPlan/{employeeId}/{visitDate}")]
+        public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string visitDate)
         {
-            return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId, DateTime.Parse(planDate)));
+            try
+            {
+                DateTime _visitDate;
+                if (!DateTime.TryParse(visitDate, out _visitDate))
+                {
+                    ModelState.AddModelError(nameof(visitDate), "input visitDate correct format (yyyy-mm-dd)");
+                    return ValidationResult(ModelState);
+                }
+                  
+                return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId, _visitDate));
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+           
 
         }
 

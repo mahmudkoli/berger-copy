@@ -29,7 +29,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
 
         //App
 
-        Task<bool> AppCheckAlreadyTodayPlan(int employeeId, DateTime date);
+        Task<bool> AppCheckAlreadyTodayPlan(int employeeId, DateTime visitDate);
         Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(int employeeId);
         Task<List<AppCreateJourneyModel>> AppCreateJourneyPlan(List<AppCreateJourneyModel> model);
         Task<List<AppCreateJourneyModel>> AppUpdateJourneyPlan(List<AppCreateJourneyModel> model);

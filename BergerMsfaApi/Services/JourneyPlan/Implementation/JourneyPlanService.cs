@@ -220,10 +220,19 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
             return await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == AppIdentity.AppUser.UserId && f.PlanDate.Date == DateTime.Now.Date);
         }
-        public async Task<bool> AppCheckAlreadyTodayPlan(int employeeId, DateTime date)
+        public async Task<bool> AppCheckAlreadyTodayPlan(int employeeId, DateTime visitDate)
         {
-            return await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date== date);
+            var find=await _journeyPlanDetailSvc.FindAsync(f => f.VisitDate.Date == visitDate.Date);
+            if(find != null)
+            {
+                var  result= await _journeyPlanMasterSvc.AnyAsync(f => f.EmployeeId == employeeId && f.Id == find.PlanId);
+                return result;
+            }
+
+            return false; 
+
         }
+        
         //this method expose journey plan list by employeeId
         public async Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(int employeeId)
         {
