@@ -111,8 +111,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Common\" />
     <Folder Include="Models\Organizations\" />
+    <Folder Include="Logs\" />
     <Folder Include="Services\Examples\" />
     <Folder Include="wwwroot\uploads\images\POSMProducts\" />
   </ItemGroup>

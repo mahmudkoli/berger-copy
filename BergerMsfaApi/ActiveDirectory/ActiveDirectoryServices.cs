@@ -1,13 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
+using System.Linq;
+using BergerMsfaApi.Models.Common;
+using Microsoft.Extensions.Options;
 
 namespace BergerMsfaApi.ActiveDirectory
 {
     public class ActiveDirectoryServices: IActiveDirectoryServices
     {
-        private DirectoryEntry _directoryEntry = null;
+        private DirectoryEntry _directoryEntry;
+        private readonly IOptions<AppSettingsModel> _settings;
 
+        public ActiveDirectoryServices(IOptions<AppSettingsModel> settings)
+        {
+            _settings = settings;
+
+        }
+        private String LDAPDomain => $"{_settings.Value.Domain}";
+        private String LDAPPath => $"LDAP://{_settings.Value.Domain}";
+        private String username => $"{_settings.Value.Username}";
+        private String password => $"{_settings.Value.Password}";
+        
         private DirectoryEntry SearchRoot
         {
             get
@@ -15,71 +29,51 @@ namespace BergerMsfaApi.ActiveDirectory
                 if (_directoryEntry == null)
                 {
                     
-                        _directoryEntry = new DirectoryEntry(LDAPPath, "nizamuddinbs", "XrXW4jNVQX78WKjy");//, LDAPUser, LDAPPassword, AuthenticationTypes.Secure);
+                        _directoryEntry = new DirectoryEntry(LDAPPath, _settings.Value.Username, _settings.Value.Password);//, LDAPUser, LDAPPassword, AuthenticationTypes.Secure);
                    
                 }
                 return _directoryEntry;
             }
         }
+        
 
-        private String LDAPPath => $"LDAP://bergerbd.com";
-        //private String username => $"nizamuddinbs";
-        //private String password => $"XrXW4jNVQX78WKjy";
-
-        //private String LDAPUser
-        //{
-        //    get
-        //    {
-        //        return ConfigurationManager.AppSettings["LDAPUser"];
-        //    }
-        //}
-
-        //private String LDAPPassword
-        //{
-        //    get
-        //    {
-        //        return ConfigurationManager.AppSettings["LDAPPassword"];
-        //    }
-        //}
-
-        private String LDAPDomain => $"bergerbd.com";
-
-        public bool AuthenticateUser(string username, string password)
+        public bool AuthenticateUser(string loginUsername, string loginPassword)
         {
-            bool ret = false;
+            bool ret;
 
             try
             {
-                DirectoryEntry de = new DirectoryEntry(LDAPPath, username, password);
+                DirectoryEntry de = new DirectoryEntry(LDAPPath, loginUsername, loginPassword);
                 DirectorySearcher dsearch = new DirectorySearcher(de);
 
                 dsearch.FindOne();
 
                 ret = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                string ass = ex.Message;
                 ret = false;
             }
 
             return ret;
         }
 
-        internal ADUserDetail GetUserByFullName(String userName)
+        public AdModel GetUserByUserName(string searchUsername)
         {
             try
             {
                
-                    _directoryEntry = null;
+                _directoryEntry = null;
                     DirectorySearcher directorySearch = new DirectorySearcher(SearchRoot);
-                    directorySearch.Filter = "(&(objectClass=user)(cn=" + userName + "))";
+                    directorySearch.PropertiesToLoad.Add("employeeid");
+                    directorySearch.Filter = "(&(objectClass=user)(SAMAccountName=" + searchUsername + "))";
+                    //directorySearch.Filter = "(&(objectClass=user)(EmployeeId=253))"; 
                     SearchResult results = directorySearch.FindOne();
 
                     if (results != null)
                     {
-                        DirectoryEntry user = new DirectoryEntry(results.Path);// LDAPUser, LDAPPassword);
-                        return ADUserDetail.GetUser(user);
+                        DirectoryEntry user = new DirectoryEntry(results.Path,username, password);// LDAPUser, LDAPPassword);
+                        return MapUserToModel(user);
 
                     }
                     else
@@ -88,13 +82,79 @@ namespace BergerMsfaApi.ActiveDirectory
                     }
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
         }
 
-        public ADUserDetail GetUserByLoginName(String userName)
+        private AdModel MapUserToModel(DirectoryEntry directoryUser)
+        {
+            AdModel model = new AdModel();
+            String domainAddress;
+            String domainName;
+            model.FirstName = GetProperty(directoryUser, AdProperties.FIRSTNAME);
+            model.MiddleName = GetProperty(directoryUser, AdProperties.MIDDLENAME);
+            model.LastName = GetProperty(directoryUser, AdProperties.LASTNAME);
+            model.LoginName = GetProperty(directoryUser, AdProperties.LOGINNAME);
+            String userPrincipalName = GetProperty(directoryUser, AdProperties.USERPRINCIPALNAME);
+            if (!string.IsNullOrEmpty(userPrincipalName))
+            {
+                domainAddress = userPrincipalName.Split('@')[1];
+            }
+            else
+            {
+                domainAddress = String.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(domainAddress))
+            {
+                domainName = domainAddress.Split('.').First();
+            }
+            else
+            {
+                domainName = String.Empty;
+            }
+            model.LoginNameWithDomain = $@"{domainName}\{model.LoginName}";
+            model.StreetAddress = GetProperty(directoryUser, AdProperties.STREETADDRESS);
+            model.City = GetProperty(directoryUser, AdProperties.CITY);
+            model.State = GetProperty(directoryUser, AdProperties.STATE);
+            model.PostalCode = GetProperty(directoryUser, AdProperties.POSTALCODE);
+            model.Country = GetProperty(directoryUser, AdProperties.COUNTRY);
+            model.Company = GetProperty(directoryUser, AdProperties.COMPANY);
+            model.Department = GetProperty(directoryUser, AdProperties.DEPARTMENT);
+            model.HomePhone = GetProperty(directoryUser, AdProperties.HOMEPHONE);
+            model.Extension = GetProperty(directoryUser, AdProperties.EXTENSION);
+            model.Mobile = GetProperty(directoryUser, AdProperties.MOBILE);
+            model.Fax = GetProperty(directoryUser, AdProperties.FAX);
+            model.EmailAddress = GetProperty(directoryUser, AdProperties.EMAILADDRESS);
+            model.Title = GetProperty(directoryUser, AdProperties.TITLE);
+            model.Manager = GetProperty(directoryUser, AdProperties.MANAGER);
+            model.EmployeeId = GetProperty(directoryUser, AdProperties.EmployeeId);
+            if (!String.IsNullOrEmpty(model.Manager))
+            {
+                String[] managerArray = model.Manager.Split(',');
+                var manager = managerArray[0].Replace("CN=", "");
+                model.ManagerName = manager.Substring(0, manager.LastIndexOf(" "));
+                model.ManagerId = manager.Substring(manager.LastIndexOf(" ")+1);
+            }
+
+            return model;
+        }
+        private static String GetProperty(DirectoryEntry userDetail, String propertyName)
+        {
+            if (userDetail.Properties.Contains(propertyName))
+            {
+                return userDetail.Properties[propertyName][0].ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+
+        public AdModel GetUserByLoginName(String userName)
         {
 
 
@@ -108,7 +168,7 @@ namespace BergerMsfaApi.ActiveDirectory
 
                     _directoryEntry = null;
                     string nn = "LDAP://PRIME.local/DC=PRIME,DC=local";
-                    DirectoryEntry SearchRoot2 = new DirectoryEntry(nn);
+                    DirectoryEntry directoryEntry = new DirectoryEntry(nn);
 
                     DirectorySearcher directorySearch = new DirectorySearcher(SearchRoot);
                     directorySearch.Filter = "(&(objectClass=user)(SAMAccountName=" + userName + "))";
@@ -117,20 +177,20 @@ namespace BergerMsfaApi.ActiveDirectory
                     if (results != null)
                     {
                         DirectoryEntry user = new DirectoryEntry(results.Path);//, LDAPUser, LDAPPassword);
-                        return ADUserDetail.GetUser(user);
+                        return MapUserToModel(user);
                     }
                     return null;
                 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
         }
 
 
-        public ADUserDetail GetUserDetailsByFullName(String FirstName, String MiddleName, String LastName)
+        public AdModel GetUserDetailsByFullName(String FirstName, String MiddleName, String LastName)
         {
             //givenName
             //    initials
@@ -170,7 +230,7 @@ namespace BergerMsfaApi.ActiveDirectory
                     if (results != null)
                     {
                         DirectoryEntry user = new DirectoryEntry(results.Path);//, LDAPUser, LDAPPassword);
-                        return ADUserDetail.GetUser(user);
+                        return MapUserToModel(user);
                     }
                     return null;
                 
@@ -187,9 +247,9 @@ namespace BergerMsfaApi.ActiveDirectory
         /// </summary>
         /// <param name="groupName"></param>
         /// <returns></returns>
-        public List<ADUserDetail> GetUserFromGroup(String groupName)
+        public List<AdModel> GetUserFromGroup(String groupName)
         {
-            List<ADUserDetail> userlist = new List<ADUserDetail>();
+            List<AdModel> userlist = new List<AdModel>();
             try
             {
                 
@@ -215,7 +275,7 @@ namespace BergerMsfaApi.ActiveDirectory
 
 
                             DirectoryEntry user = new DirectoryEntry(path);//, LDAPUser, LDAPPassword);
-                            ADUserDetail userobj = ADUserDetail.GetUser(user);
+                            AdModel userobj = MapUserToModel(user);
                             userlist.Add(userobj);
                             user.Close();
                         }
@@ -232,12 +292,12 @@ namespace BergerMsfaApi.ActiveDirectory
 
         #region Get user with First Name
 
-        public List<ADUserDetail> GetUsersByFirstName(string fName)
+        public List<AdModel> GetUsersByFirstName(string fName)
         {
             
 
                 //UserProfile user;
-                List<ADUserDetail> userlist = new List<ADUserDetail>();
+                List<AdModel> userlist = new List<AdModel>();
                 string filter = "";
 
                 _directoryEntry = null;
@@ -253,23 +313,23 @@ namespace BergerMsfaApi.ActiveDirectory
                 SearchResultCollection userCollection = directorySearch.FindAll();
                 foreach (SearchResult users in userCollection)
                 {
-                    //DirectoryEntry userEntry = new DirectoryEntry(users.Path,username, password);//, LDAPUser, LDAPPassword);
-                    //ADUserDetail userInfo = ADUserDetail.GetUser(userEntry);
+                    DirectoryEntry userEntry = new DirectoryEntry(users.Path,username, password);//, LDAPUser, LDAPPassword);
+                    AdModel userInfo = MapUserToModel(userEntry);
 
-                    //userlist.Add(userInfo);
+                    userlist.Add(userInfo);
 
                 }
 
                 directorySearch.Filter = "(&(objectClass=group)(SAMAccountName=" + fName + "*))";
                 SearchResultCollection results = directorySearch.FindAll();
-                if (results != null)
+                if (results.Count != 0)
                 {
 
                     foreach (SearchResult r in results)
                     {
                         DirectoryEntry deGroup = new DirectoryEntry(r.Path);//, LDAPUser, LDAPPassword);
 
-                        ADUserDetail agroup = ADUserDetail.GetUser(deGroup);
+                        AdModel agroup = MapUserToModel(deGroup);
                         userlist.Add(agroup);
                     }
 
@@ -317,5 +377,17 @@ namespace BergerMsfaApi.ActiveDirectory
             }
         }
         #endregion
+        //string name = "";
+        //using (var context = new PrincipalContext(ContextType.Domain, LDAPDomain, null, username, password))
+        //{
+        //    var usr = UserPrincipal.FindByIdentity(context, searchUsername);
+        //    if (usr != null)
+        //    {
+        //        var userviewModel = usr.ToMap<UserPrincipal, AdViewModel>();
+        //        name = usr.DisplayName;
+        //    }
+
+        //}
+
     }
 }

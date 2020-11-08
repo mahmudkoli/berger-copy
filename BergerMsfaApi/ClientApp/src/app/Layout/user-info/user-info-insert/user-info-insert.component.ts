@@ -112,15 +112,36 @@ export class UserInfoInsertComponent implements OnInit {
     }
 
 
-    onUserInfoSearch() {
-        this.userInfoModel.name = this.adUser.displayName;
-        this.userInfoModel.phoneNumber = this.adUser.mobilePhone;
-        this.userInfoModel.designation = this.adUser.jobTitle;
-        this.userInfoModel.email = this.adUser.mail;
-        this.userInfoModel.adGuid = this.adUser.id;
-
+    onUserInfoSearch(adUserName:any) {
+        this.userService.getAdUserInfo(adUserName).subscribe((res:any) => {
+            console.log(res);
+            this.adUser = res.data;
+            this.mapToUserInfo(this.adUser);
+        });
     }
 
+    mapToUserInfo(data:any) {
+        this.userInfoModel.firstName= data.firstName;
+        this.userInfoModel.middleName= data.middleName;
+        this.userInfoModel.lastName= data.lastName;
+        this.userInfoModel.designation= data.designation;
+        this.userInfoModel.department= data.department;
+        this.userInfoModel.phoneNumber= data.mobile;
+        this.userInfoModel.code= data.code;
+        this.userInfoModel.city= data.city;
+        this.userInfoModel.company= data.company;
+        this.userInfoModel.employeeId= data.employeeId;
+        this.userInfoModel.email= data.emailAddress;
+        this.userInfoModel.adGuid= data.adGuid;
+        this.userInfoModel.managerName= data.managerName;
+        this.userInfoModel.managerId= data.managerId;
+        this.userInfoModel.loginName= data.loginName;
+        this.userInfoModel.loginNameWithDomain= data.loginNameWithDomain;
+        this.userInfoModel.postalCode= data.postalCode;
+        this.userInfoModel.streetAddress= data.streetAddress;
+        this.userInfoModel.state= data.state;
+        this.userInfoModel.title= data.title;
+    }
 
     adUserTableSearch(searchVal: string) {
 

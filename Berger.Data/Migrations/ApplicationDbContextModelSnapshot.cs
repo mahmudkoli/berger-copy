@@ -1316,6 +1316,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Manager")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ManagerId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ManagerName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1350,6 +1353,10 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");

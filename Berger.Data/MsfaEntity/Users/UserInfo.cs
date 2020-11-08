@@ -25,6 +25,10 @@ namespace Berger.Data.MsfaEntity.Users
         [StringLength(256)]
         public string Name { get; set; }
 
+        //[Required]
+        [StringLength(256)]
+        public string UserName { get; set; }
+
         //[StringLength(256)]
         //public string BanglaName { get; set; }
         public string AdGuid { get; set; }
@@ -51,6 +55,7 @@ namespace Berger.Data.MsfaEntity.Users
 
         public string Manager { get; set; }
         public string ManagerName { get; set; }
+        public string ManagerId { get; set; }
         public string MiddleName { get; set; }
         public string PostalCode { get; set; }
         public string State { get; set; }

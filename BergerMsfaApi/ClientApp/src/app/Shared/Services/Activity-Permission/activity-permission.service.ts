@@ -101,7 +101,10 @@ export class ActivityPermissionService {
             perGroup.canDelete = grp.canDelete;
         }
     }
-
+    perGroup.canView =   true;//grp.canView;
+    perGroup.canCreate = true;//grp.canInsert;
+    perGroup.canUpdate = true;//grp.canUpdate;
+    perGroup.canDelete = true;//grp.canDelete;
     return perGroup;
   }
 

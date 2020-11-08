@@ -33,11 +33,11 @@ namespace Berger.Worker
             try
             {
                 IHost host = CreateHostBuilder(args).Build();
-                host.Services.UseScheduler(scheduler => {
-                    scheduler
-                        .Schedule<Worker>()
-                        .EveryFiveMinutes();
-                });
+                //host.Services.UseScheduler(scheduler => {
+                //    scheduler
+                //        .Schedule<Worker>()
+                //        .EveryFiveMinutes();
+                //});
                 host.Run();
             }
             catch (Exception ex)

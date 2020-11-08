@@ -24,6 +24,7 @@
     public nodeId: number;
     public city: string;
     public country: string;
+    public company: string;
     public department: string;
     public extension: string;
     public fax: string;
@@ -33,6 +34,7 @@
     public loginNameWithDomain: string;
     public manager: string;
     public managerName: string;
+    public managerId: string;
     public middleName: string;
     public postalCode: string;
     public state: string;

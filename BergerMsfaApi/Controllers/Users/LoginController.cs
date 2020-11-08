@@ -40,72 +40,61 @@ namespace BergerMsfaApi.Controllers.Users
         }
 
 
-        private String username => $"nizamuddinbs";
-        private String password => $"XrXW4jNVQX78WKjy";
+        private String username => $"nizamuddinbs"; // fazlur1
+        private String password => $"5~nEVER~cATCH:";
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            //temporary
+            model.UserName = username;
+            model.Password = password;
+
             var apiResult = new ApiResponse<IEnumerable<LoginModel>>
             {
                 Data = new List<LoginModel>()
             };
+
             if (ModelState.IsValid)
             {
                 try
                 {
-
-
-                    bool isAdLoginSuccess =_adservice.AuthenticateUser(username, password);
+                    bool isAdLoginSuccess =_adservice.AuthenticateUser(model.UserName, model.Password);
                     bool loginSuccess = false;
+
                     if (isAdLoginSuccess)
                     {
                         //Check db for user
-                       loginSuccess = await _userService.IsUserExistAsync("",1);
-                    }
-
-                    //bool IsLoginSuccessful = true; 
-                    ////await  _cmuserservice.LoginCMUser(model);
-                    //if (IsLoginSuccessful)
-                    //{
-                    //    var result = await authService.GetJWTToken(model);
-                    //    return OkResult(result);
-
-                    //}
-                    //else
-                    //{
-                    //    return Unauthorized();
-                    //}
-                    if (loginSuccess)
-                    {
-                        var result = await authService.GetJWTToken(model);
-                        return OkResult(result);
+                       loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
                     }
                     else
                     {
                         return Unauthorized();
                     }
 
-
-
+                    if (loginSuccess)
+                    {
+                        var result = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                        return OkResult(result);
+                    }
+                    else
+                    {
+                        return Unauthorized();
+                    }
                 }
                 catch (Exception ex)
                 {
                     ex.ToWriteLog();
 
-                    apiResult.StatusCode = 500;
+                    apiResult.StatusCode = 401;
                     apiResult.Status = "Fail";
                     apiResult.Msg = ex.Message;
-                    return BadRequest(apiResult);
+
+                    return Unauthorized(apiResult);
                 }
-
-
             }
 
-
             return BadRequest();
-
-
         }
 
         [HttpPost("portallogin")]

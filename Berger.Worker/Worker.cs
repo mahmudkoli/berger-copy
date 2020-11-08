@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Berger.Worker.Services;
@@ -28,6 +29,11 @@ namespace Berger.Worker
         {
             
             _logger.LogInformation("Worker Started {date}", DateTime.Now);
+            var delayTime = DateTime.Now.Date.AddDays(1)
+                .Subtract(DateTime.Parse(DateTime.Now.TimeOfDay.ToString(@"hh\:mm")));
+
+            Task.Delay(delayTime, cancellationToken);
+            
             return base.StartAsync(cancellationToken);
         }
 
@@ -44,15 +50,25 @@ namespace Berger.Worker
                 using var scope = _serviceProvider.CreateScope();
                 try
                 { 
+                    Stopwatch st = new Stopwatch();
+                    st.Start();
                     _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                     await _customerService.getData();
+                    st.Stop();
+
+                    TimeSpan actualTime = TimeSpan.FromHours(24)- st.Elapsed;
+                    //await Task.Delay(actualTime, stoppingToken);
+                    await Task.Delay(5000, stoppingToken);
+
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical($"{ex.Message}");
+                    await Task.Delay(5000, stoppingToken);
+
                 }
-                await Task.Delay(5000, stoppingToken);
+                //await Task.Delay(5000, stoppingToken);
             }
         }
 

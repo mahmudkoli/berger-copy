@@ -8,5 +8,6 @@ namespace BergerMsfaApi.ActiveDirectory
     public interface IActiveDirectoryServices
     {
         bool AuthenticateUser(string username, string password);
+        AdModel GetUserByUserName(String userName);
     }
 }

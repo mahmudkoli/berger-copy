@@ -27,7 +27,7 @@
 
     <!--<div class="input-group card-body mt-3 w-50">
 
-        <input type="text" class="form-control" placeholder="Enter organization email" name="adUser" #adUser />
+        <input type="text" class="form-control" placeholder="Enter organization username" name="adUser" #adUser />
 
         <div class="input-group-append">
             <button (click)="onUserInfoSearch(adUser.value)" type="submit" class="btn btn-primary ">
@@ -250,6 +250,17 @@
                                [(ngModel)]="userInfoModel.managerName" />
                         <small class="text-danger" [class.d-none]="managerName.valid || managerName.untouched">
                             Manager Name is Required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Manager Id </label>
+                        <input required name="managerId" #managerId="ngModel" id="managerId" type="text" class="form-control"
+                               [ngClass]="{'is-valid':managerId.valid,'is-invalid':managerId.invalid && managerId.touched }"
+                               [(ngModel)]="userInfoModel.managerId" />
+                        <small class="text-danger" [class.d-none]="managerId.valid || managerId.untouched">
+                            Manager Id is Required
                         </small>
                     </div>
                 </div>
