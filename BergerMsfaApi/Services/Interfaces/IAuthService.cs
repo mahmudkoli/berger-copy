@@ -5,7 +5,7 @@ namespace BergerMsfaApi.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<object> GetJWTToken(LoginModel model);
+        Task<object> GetJWTTokenByUserNameAsync(string userName);
         Task<object> GetJWTToken(PortalLoginModel model);
 
     }

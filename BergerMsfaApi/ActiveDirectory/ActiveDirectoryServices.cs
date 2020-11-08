@@ -134,7 +134,9 @@ namespace BergerMsfaApi.ActiveDirectory
             if (!String.IsNullOrEmpty(model.Manager))
             {
                 String[] managerArray = model.Manager.Split(',');
-                model.ManagerName = managerArray[0].Replace("CN=", "");
+                var manager = managerArray[0].Replace("CN=", "");
+                model.ManagerName = manager.Substring(0, manager.LastIndexOf(" "));
+                model.ManagerId = manager.Substring(manager.LastIndexOf(" ")+1);
             }
 
             return model;

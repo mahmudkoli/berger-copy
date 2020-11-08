@@ -34,13 +34,13 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
         public async Task<bool> LoginCMUser(LoginModel model)
         {
-            var isLoggedIn = await _user.AnyAsync(a => a.PhoneNumber == model.MobileNumber && a.Password == model.Password);
+            var isLoggedIn = await _user.AnyAsync(a => a.PhoneNumber == model.UserName && a.Password == model.Password);
             return isLoggedIn;
         }
 
         public async Task<UserViewModel> GetCMUserByLogin(LoginModel model)
         {
-            var result = await _user.FindAsync(a => a.PhoneNumber == model.MobileNumber && a.Password == model.Password);
+            var result = await _user.FindAsync(a => a.PhoneNumber == model.UserName && a.Password == model.Password);
             return result.ToMap<CMUser, UserViewModel>();
         }
 

@@ -1174,6 +1174,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Manager")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ManagerId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ManagerName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1208,6 +1211,10 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -1311,7 +1318,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AreaId")
+                    b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
                     b.Property<int>("CreatedBy")
@@ -1329,13 +1336,13 @@ namespace Berger.Data.Migrations
                     b.Property<int>("PlanId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SalesOfficeId")
+                    b.Property<int?>("SalesOfficeId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TerritoryId")
+                    b.Property<int?>("TerritoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserInfoId")
@@ -1347,7 +1354,7 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ZoneId")
+                    b.Property<int?>("ZoneId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
