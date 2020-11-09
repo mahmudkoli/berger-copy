@@ -1,4 +1,5 @@
-﻿using Berger.Data.MsfaEntity.Hirearchy;
+﻿using Berger.Data.MsfaEntity;
+using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
@@ -6,6 +7,7 @@ using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,6 +16,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
     public class CommonService : ICommonService
     {
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailSvc;
         private readonly IRepository<Zone> _zoneSvc;
         private readonly IRepository<Role> _roleSvc;
         private readonly IRepository<Territory> _territorySvc;
@@ -25,7 +28,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
             IRepository<SaleOffice> saleOfficeSvc,
-            IRepository<Role> roleSvc
+            IRepository<Role> roleSvc,
+           IRepository<JourneyPlanDetail> journeyPlanDetailSvc
             )
         {
             _dealerInfoSvc = dealerInfoSvc;
@@ -33,7 +37,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
             _saleOfficeSvc = saleOfficeSvc;
-            _roleSvc = roleSvc;
+            _roleSvc = roleSvc; 
+            _journeyPlanDetailSvc = journeyPlanDetailSvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -41,7 +46,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
-
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
+        {
+            // var result = await _journeyPlanDetailSvc.FindAllAsync(f => f.VisitDate<);
+            throw new NotImplementedException();
+        }
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
         {
             var result = await _dealerInfoSvc.GetAllAsync();

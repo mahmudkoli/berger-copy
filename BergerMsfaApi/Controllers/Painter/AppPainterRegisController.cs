@@ -80,7 +80,26 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
-
+        [HttpGet("GetPainterByPhone/{Phone}")]
+        public async Task<IActionResult> GetPainterByIPhone(string Phone)
+        {
+            try
+            {
+                //if (!string.IsNullOrEmpty(Phone))
+                //{
+                //    ModelState.AddModelError(nameof(Phone), "Phone Can not be null");
+                //    return ValidationResult(ModelState);
+                //}
+                
+                
+                var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
         [HttpPut("UpdatePainter")]
         public async Task<IActionResult> UpdatePainter(PainterModel model)
@@ -111,7 +130,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                     return ValidationResult(ModelState);
                 }
 
-                var result = await _painterSvc.DeleteAsync(Id);
+                var result = await _painterSvc.AppDeletePainterByIdAsync(Id);
                 return OkResult(result);
             }
             catch (Exception ex)

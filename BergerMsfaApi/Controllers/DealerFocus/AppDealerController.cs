@@ -43,6 +43,21 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
 
         }
+        [HttpGet("GetFocusDealerList/{EmployeeId}")]
+        public async Task<IActionResult> GetFocusDealerList(string EmployeeId)
+        {
+            try
+            {
+               
+                var result = await _commonSvc.AppGetDealerInfoList(EmployeeId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
 
+                return ExceptionResult(ex);
+            }
+
+        }
     }
 }

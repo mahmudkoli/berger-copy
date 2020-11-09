@@ -11,7 +11,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
     {
         #region App
         Task<IEnumerable<PainterCallModel>> AppGetPainterCallListAsync();
-          Task<PainterCallModel> AppGetPainterByIdAsync(int PainterId);
+        Task<PainterCallModel> AppGetPainterByIdAsync(int Id);
+        Task<PainterCallModel> AppGetPainterByPainterIdAsync(int PainterId);
+
         Task<PainterCallModel> AppCreatePainterCallAsync(PainterCallModel model);
         Task<PainterCallModel> AppUpdatePainterCallAsync(PainterCallModel model);
         #endregion
@@ -29,10 +31,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
         Task<int> DeletePainterCallByIdlAsync(int PainterId);
         #endregion
 
-     
-    
-   
-       
+
+
+
+
 
     }
 }

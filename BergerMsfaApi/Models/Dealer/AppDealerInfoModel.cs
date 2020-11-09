@@ -7,7 +7,8 @@
         public int CustomerNo { get; set; }
         public string Territory { get; set; } 
         public string VisitDate { get; set; }
- 
+        public int PlandId { get; set; }
+
 
     }
 }

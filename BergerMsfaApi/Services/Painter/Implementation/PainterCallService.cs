@@ -102,11 +102,30 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
-        public Task<PainterCallModel> AppGetPainterByIdAsync(int PainterId)
+        public async Task<PainterCallModel> AppGetPainterByPainterIdAsync(int PainterId)
         {
-            throw new System.NotImplementedException();
-        }
+            var _mapper = new MapperConfiguration(config =>
+            {
+                config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
 
+            }).CreateMapper();
+       
+            var result = await _painterCallSvc.FindIncludeAsync(f=>f.PainterId==PainterId,f=>f.PainterCompanyMTDValue);
+            return _mapper.Map<PainterCallModel>(result);
+        }
+        public async Task<PainterCallModel> AppGetPainterByIdAsync(int Id)
+        {
+            var _mapper = new MapperConfiguration(config =>
+            {
+                config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+
+            }).CreateMapper();
+
+            var result = await _painterCallSvc.FindIncludeAsync(f => f.Id == Id, f => f.PainterCompanyMTDValue);
+            return _mapper.Map<PainterCallModel>(result);
+        }
         public async Task<PainterCallModel> AppCreatePainterCallAsync(PainterCallModel model)
         {
             var _mapper = new MapperConfiguration(config =>
