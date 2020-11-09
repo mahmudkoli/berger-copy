@@ -26,8 +26,8 @@ export class UserInfoListComponent implements OnInit {
     constructor(private userService: UserService,
          private router: Router,
          private activityPermissionService: ActivityPermissionService,
-        private activatedRoute: ActivatedRoute,
-        private alertService: AlertService) { 
+         private activatedRoute: ActivatedRoute,
+         private alertService: AlertService) { 
             this.initPermissionGroup();
         }
 

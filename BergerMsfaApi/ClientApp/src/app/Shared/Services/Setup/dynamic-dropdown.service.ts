@@ -17,6 +17,10 @@ export class DynamicDropdownService {
     public getDropdownList() {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/dynamicDropdown/getDropdownList');
     }
+    public getDropdownListPaging() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/dynamicDropdown/getDropdownListPaging');
+    }
+    
     public GetDropdownById(id) {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/dynamicDropdown/getDropdownById/' + id);
     }

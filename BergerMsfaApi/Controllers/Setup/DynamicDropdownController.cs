@@ -41,6 +41,22 @@ namespace BergerMsfaApi.Controllers.Setup
             }
         }
 
+
+        [HttpGet("GetDropdownListPaging")]
+        public async Task<IActionResult> GetDropdownListPaging(int index,int pageSize)
+        {
+            try
+            {
+                var result = await _dropdownService.GetDropdownListPaging(index, pageSize);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("GetDropdownById/{id}")]
         public async Task<IActionResult> GetDropdownById(int id)
         {

@@ -14,6 +14,4 @@ namespace BergerMsfaApi.Models.JourneyPlan
         public List<DealerInfoModel> DealerInfoModels { get; set; }
   
     }
-
-   
 }

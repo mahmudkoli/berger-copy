@@ -209,7 +209,7 @@
         </div>
     </div>
 
-    <div class="input-group card-body mt-3 w-50">
+    <!--<div class="input-group card-body mt-3 w-50">
 
         <input type="text" class="form-control" placeholder="Enter organization email" name="adUser" #adUser />
 
@@ -223,7 +223,7 @@
         <small class="text-danger">
             {{this.adError}}
         </small>
-    </div>
+    </div>-->
 
 </div>
 <div class="main-card mb-3 card">
@@ -495,7 +495,7 @@
             </ng-select>-->
 
                         <ng-select required id="roleId" #roleId="ngModel" name="roleId" [multiple]="true" [(ngModel)]="userInfoModel.roleIds">
-                            <ng-option *ngFor="let role of roles" [value]="role.id" [disabled]="roleId.disabled">{{role.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let role of roles" [value]="role.id" [disabled]="roleId.disabled">{{role.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">
@@ -523,7 +523,7 @@
                         <label for="saleOfficeId">Sale Office</label>
 
                         <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="true" [(ngModel)]="userInfoModel.saleOfficeIds">
-                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.id">{{sale.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.code">{{sale.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="saleOfficeId.valid || saleOfficeId.untouched">
@@ -537,7 +537,7 @@
                         <label for="areaId">Area Group</label>
 
                         <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="true" [(ngModel)]="userInfoModel.areaIds">
-                            <ng-option *ngFor="let area of areaGroups" [value]="area.id">{{area.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let area of areaGroups" [value]="area.code">{{area.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="areaId.valid || areaId.untouched">
@@ -550,7 +550,7 @@
                         <label for="zoneId">Territory</label>
 
                         <ng-select required id="territoryId" #territoryId="ngModel" name="territoryId" [multiple]="true" [(ngModel)]="userInfoModel.territoryIds">
-                            <ng-option *ngFor="let territory of territories" [value]="territory.id">{{territory.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let territory of territories" [value]="territory.code">{{territory.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="territoryId.valid || territoryId.untouched">
@@ -563,7 +563,7 @@
                         <label for="zoneId">Zone</label>
 
                         <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="true" [(ngModel)]="userInfoModel.zoneIds">
-                            <ng-option *ngFor="let zone of zones" [value]="zone.id">{{zone.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let zone of zones" [value]="zone.code">{{zone.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="zoneId.valid || zoneId.untouched">

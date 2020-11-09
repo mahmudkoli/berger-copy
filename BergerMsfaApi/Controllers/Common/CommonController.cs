@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
@@ -19,13 +16,26 @@ namespace BergerMsfaApi.Controllers.Common
         {
             _commonSvc = commonSvc;
         }
-
         [HttpGet("GetDealList")]
         public async Task<IActionResult> GetDealerList()
         {
             try
             {
-                var result =await _commonSvc.GetDealerInfoList();
+                var result = await _commonSvc.GetDealerInfoList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpGet("GetSaleOfficeList")]
+        public async Task<IActionResult> GetSaleOfficeList()
+        {
+            try
+            {
+                var result =await _commonSvc.GetSaleOfficeList();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -35,5 +45,55 @@ namespace BergerMsfaApi.Controllers.Common
             }
             
         }
+
+        [HttpGet("GetSaleGroupList")]
+        public async Task<IActionResult> GetSaleGroupList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetSaleGroupList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+
+        }
+
+        [HttpGet("GetTerritoryList")]
+        public async Task<IActionResult> GetTerritoryList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetTerritoryList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+
+        }
+
+        [HttpGet("GetZoneList")]
+        public async Task<IActionResult> GetZoneList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetZoneList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+
+        }
+
+
     }
 }

@@ -27,6 +27,16 @@
     <Compile Remove="Migrations\20201028143007_renameColumn.Designer.cs" />
     <Compile Remove="Migrations\20201101060204_Addign UserZoneAreaMapping.cs" />
     <Compile Remove="Migrations\20201101060204_Addign UserZoneAreaMapping.Designer.cs" />
+    <Compile Remove="Migrations\20201102113131_addVisitDateInDealerInfo.cs" />
+    <Compile Remove="Migrations\20201102113131_addVisitDateInDealerInfo.Designer.cs" />
+    <Compile Remove="Migrations\20201102113349_addVisitDateInDealerInfo.cs" />
+    <Compile Remove="Migrations\20201102113349_addVisitDateInDealerInfo.Designer.cs" />
+    <Compile Remove="Migrations\20201105102405_hirearchyModel.cs" />
+    <Compile Remove="Migrations\20201105102405_hirearchyModel.Designer.cs" />
+    <Compile Remove="Migrations\20201105102553_hirearchyModel.cs" />
+    <Compile Remove="Migrations\20201105102553_hirearchyModel.Designer.cs" />
+    <Compile Remove="Migrations\20201105102806_hirearchyModel.cs" />
+    <Compile Remove="Migrations\20201105102806_hirearchyModel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

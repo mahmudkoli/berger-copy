@@ -801,5 +801,10 @@ namespace BergerMsfaApi.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<X.PagedList.IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
