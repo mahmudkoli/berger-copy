@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
-                var result = await _paintCallSvc.GetPainterCallListAsync();
+                var result = await _paintCallSvc.AppGetPainterCallListAsync();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
-                var result = await _paintCallSvc.GetPainterByIdAsync(PainterId);
+                var result = await _paintCallSvc.AppGetPainterByIdAsync(PainterId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
-                var result = await _paintCallSvc.CreatePainterCallAsync(model);
+                var result = await _paintCallSvc.AppCreatePainterCallAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace BergerMsfaApi.Controllers.Painter
                     ModelState.AddModelError(nameof(model.Id), "Painter Call Not Found");
                     return ValidationResult(ModelState);
                 }
-                var result = await _paintCallSvc.UpdatePainterCallAsync(model);
+                var result = await _paintCallSvc.AppUpdatePainterCallAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
