@@ -7,6 +7,7 @@ import { NodeService } from "../../../Shared/Services/Sales/node.service";
 import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
 import { forkJoin } from 'rxjs';
 import { Status } from '../../../Shared/Enums/status';
+import { CommonService } from '../../../Shared/Services/Common/common.service';
 
 @Component({
     selector: 'app-user-info-insert',
@@ -43,6 +44,7 @@ export class UserInfoInsertComponent implements OnInit {
     constructor(
         private userService: UserService,
         private router: Router,
+        private commonSvc: CommonService,
         private salesPointService: SalesPointService,
         private dropdownService: DynamicDropdownService,
         private nodeService: NodeService) { }
@@ -182,18 +184,26 @@ export class UserInfoInsertComponent implements OnInit {
        
         forkJoin(
             this.dropdownService.GetDropdownByTypeCd('P01'),
-            this.dropdownService.GetDropdownByTypeCd('Z01'),
-            this.dropdownService.GetDropdownByTypeCd('SO01'),
-            this.dropdownService.GetDropdownByTypeCd('PA01'),
-            this.dropdownService.GetDropdownByTypeCd('T01'),
+            this.commonSvc.getSaleOfficeList(),
+            this.commonSvc.getSaleGroupList(),
+            this.commonSvc.getTerritoryList(),
+            this.commonSvc.getZoneList(),
             this.dropdownService.GetDropdownByTypeCd('Role'),
+            //this.dropdownService.GetDropdownByTypeCd('Z01'),
+        
+         //   this.dropdownService.GetDropdownByTypeCd('SO01'),
+          
+            //this.dropdownService.GetDropdownByTypeCd('PA01'),
+        /*this.dropdownService.GetDropdownByTypeCd('T01'),*/
+         
+        
         ).subscribe(res => {
 
             this.plants = res[0].data;
-            this.zones = res[1].data;
-            this.saleOffices = res[2].data;
-            this.areaGroups = res[3].data;
-            this.territories = res[4].data;
+            this.saleOffices = res[1].data;
+            this.areaGroups = res[2].data;
+            this.territories = res[3].data;
+            this.zones = res[4].data;
             this.roles = res[5].data;
 
         }, (err) => { }, () => { });

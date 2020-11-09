@@ -1,11 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { APIResponse } from '../../Entity';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
 
-  constructor() { }
+    public baseUrl: string;
+    constructor(
+        private http: HttpClient,
+        @Inject('BASE_URL') baseUrl: string
+    ) {
+
+        console.log("baseUrl: ", baseUrl);
+        this.baseUrl = baseUrl + 'api/';
+    }
 
   toFormData(obj) {
     let formData = new FormData();
@@ -35,5 +45,25 @@ export class CommonService {
   getActivityPermissionToSessionStorage(): any {
     if(!localStorage.getItem('activitypermission')) return null;
     return JSON.parse(localStorage.getItem('activitypermission'));
-  }
+    }
+
+    getSaleOfficeList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleOfficeList');
+    }
+    getSaleGroupList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleGroupList');
+    }
+
+    getTerritoryList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getTerritoryList');
+    }
+
+    getZoneList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getZoneList');
+    }
+    getRoleList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getRoleList');
+    }
+   
+
 }

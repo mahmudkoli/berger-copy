@@ -172,7 +172,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<SchemeDetail> SchemeDetails { get; set; }
         public DbSet<SaleOffice> SaleOffice { get; set; }
         public DbSet<SaleGroup> SaleGroup { get; set; }
-        public DbSet<Territory> Territorie { get; set; }
+        public DbSet<Territory> Territory { get; set; }
         public DbSet<Zone> Zone { get; set; }
 
 

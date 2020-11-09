@@ -49,7 +49,7 @@ var SchemeService = /** @class */ (function () {
         return this.http.put(this.baseUrl + 'v1/SchemeMaster/updateSchemeDetail', model);
     };
     SchemeService.prototype.deleteSchemeDetail = function (id) {
-        return this.http.delete(this.baseUrl + 'v1/SchemeMaster/deleteSchemeDetail/' + id);
+        return this.http.delete(this.baseUrl + 'v1/SchemeDetail/deleteSchemeDetail/' + id);
     };
     SchemeService = __decorate([
         core_1.Injectable({ providedIn: 'root' }),

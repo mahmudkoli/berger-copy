@@ -53,12 +53,13 @@ export class UserInfoEditComponent implements OnInit {
   public isAdmin = false;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private alertService: AlertService,
-    private nodeService: NodeService,
-    private userService: UserService,
-    private roleService: RoleService,
+      private activatedRoute: ActivatedRoute,
+      private router: Router,
+      private commonSvc: CommonService,
+      private alertService: AlertService,
+      private nodeService: NodeService,
+      private userService: UserService,
+      private roleService: RoleService,
       private commonService: CommonService,
       private dropdownService: DynamicDropdownService
   ) {}
@@ -244,19 +245,30 @@ export class UserInfoEditComponent implements OnInit {
 
         forkJoin(
             this.dropdownService.GetDropdownByTypeCd('P01'),
-            this.dropdownService.GetDropdownByTypeCd('Z01'),
-            this.dropdownService.GetDropdownByTypeCd('SO01'),
-            this.dropdownService.GetDropdownByTypeCd('PA01'),
-            this.dropdownService.GetDropdownByTypeCd('T01'),
-            this.dropdownService.GetDropdownByTypeCd('Role'),
+            this.commonSvc.getSaleOfficeList(),
+            this.commonSvc.getSaleGroupList(),
+            this.commonSvc.getTerritoryList(),
+            this.commonSvc.getZoneList(),
+            this.commonService.getRoleList()
+            //this.dropdownService.GetDropdownByTypeCd('P01'),
+            //this.dropdownService.GetDropdownByTypeCd('Z01'),
+            //this.dropdownService.GetDropdownByTypeCd('SO01'),
+            //this.dropdownService.GetDropdownByTypeCd('PA01'),
+            //this.dropdownService.GetDropdownByTypeCd('T01'),
+            //this.dropdownService.GetDropdownByTypeCd('Role'),
         ).subscribe(res => {
-
             this.plants = res[0].data;
-            this.zones = res[1].data;
-            this.saleOffices = res[2].data;
-            this.areaGroups = res[3].data;
-            this.territories = res[4].data;
+            this.saleOffices = res[1].data;
+            this.areaGroups = res[2].data;
+            this.territories = res[3].data;
+            this.zones = res[4].data;
             this.roles = res[5].data;
+            //this.plants = res[0].data;
+            //this.zones = res[1].data;
+            //this.saleOffices = res[2].data;
+            //this.areaGroups = res[3].data;
+            //this.territories = res[4].data;
+            //this.roles = res[5].data;
 
         }, (err) => { }, () => { });
 

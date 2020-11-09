@@ -336,8 +336,6 @@
                     <div class="position-relative form-group">
                         <label for="plantId">Plant</label>
 
-                        l>
-
                         <ng-select required id="plantId" #plantId="ngModel" name="plantId" [multiple]="true" [(ngModel)]="userInfoModel.plantIds">
                             <ng-option *ngFor="let plant of plants" [value]="plant.id">{{plant.dropdownName}}</ng-option>
                         </ng-select>
@@ -353,7 +351,7 @@
                         <label for="saleOfficeId">Sale Office</label>
 
                         <ng-select required id="saleOfficeId" #saleOfficeId="ngModel" name="saleOfficeId" [multiple]="true" [(ngModel)]="userInfoModel.saleOfficeIds">
-                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.id">{{sale.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let sale of saleOffices" [value]="sale.code">{{sale.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="saleOfficeId.valid || saleOfficeId.untouched">
@@ -367,7 +365,7 @@
                         <label for="areaId">Area Group</label>
 
                         <ng-select required id="areaId" #areaId="ngModel" name="areaId" [multiple]="true" [(ngModel)]="userInfoModel.areaIds">
-                            <ng-option *ngFor="let area of areaGroups" [value]="area.id">{{area.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let area of areaGroups" [value]="area.code">{{area.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="areaId.valid || areaId.untouched">
@@ -380,7 +378,7 @@
                         <label for="zoneId">Territory</label>
 
                         <ng-select required id="territoryId" #territoryId="ngModel" name="territoryId" [multiple]="true" [(ngModel)]="userInfoModel.territoryIds">
-                            <ng-option *ngFor="let territory of territories" [value]="territory.id">{{territory.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let territory of territories" [value]="territory.code">{{territory.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="territoryId.valid || territoryId.untouched">
@@ -393,7 +391,7 @@
                         <label for="zoneId">Zone</label>
 
                         <ng-select required id="zoneId" #zoneId="ngModel" name="zoneId" [multiple]="true" [(ngModel)]="userInfoModel.zoneIds">
-                            <ng-option *ngFor="let zone of zones" [value]="zone.id">{{zone.dropdownName}}</ng-option>
+                            <ng-option *ngFor="let zone of zones" [value]="zone.code">{{zone.name}}</ng-option>
                         </ng-select>
 
                         <small class="text-danger" [class.d-none]="zoneId.valid || zoneId.untouched">

@@ -15,10 +15,10 @@ namespace BergerMsfaApi.Models.Users
 
             plantIds = new List<int>();
             RoleIds = new List<int>();
-            areaIds = new List<int?>();
-            zoneIds = new List<int?>();
-            saleOfficeIds = new List<int?>();
-            territoryIds = new List<int?>();
+            areaIds = new List<string>();
+            zoneIds = new List<string>();
+            saleOfficeIds = new List<string>();
+            territoryIds = new List<string>();
 
 
 
@@ -76,10 +76,10 @@ namespace BergerMsfaApi.Models.Users
         public List<int> AreaNodeIds { get; set; }
         public List<int> RegionNodeIds { get; set; }
         public List<int> plantIds { get; set; }
-        public List<int?> areaIds { get; set; }
-        public List<int?> zoneIds { get; set; }
-        public List<int?> saleOfficeIds { get; set; }
-        public List<int?> territoryIds { get; set; }
+        public List<string> areaIds { get; set; }
+        public List<string> zoneIds { get; set; }
+        public List<string> saleOfficeIds { get; set; }
+        public List<string> territoryIds { get; set; }
         public Status Status { get; set; }
 
         public int MyProperty { get; set; }

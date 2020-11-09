@@ -1460,8 +1460,8 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
+                    b.Property<string>("AreaId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -1478,14 +1478,14 @@ namespace Berger.Data.Migrations
                     b.Property<int>("PlanId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SalesOfficeId")
-                        .HasColumnType("int");
+                    b.Property<string>("SalesOfficeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TerritoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("TerritoryId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserInfoId")
                         .HasColumnType("int");
@@ -1496,8 +1496,8 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ZoneId")
-                        .HasColumnType("int");
+                    b.Property<string>("ZoneId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

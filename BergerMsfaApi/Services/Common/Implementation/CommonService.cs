@@ -1,7 +1,9 @@
 ﻿using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
     {
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IRepository<Zone> _zoneSvc;
+        private readonly IRepository<Role> _roleSvc;
         private readonly IRepository<Territory> _territorySvc;
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
@@ -21,7 +24,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Zone> zoneSvc,
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
-            IRepository<SaleOffice> saleOfficeSvc
+            IRepository<SaleOffice> saleOfficeSvc,
+            IRepository<Role> roleSvc
             )
         {
             _dealerInfoSvc = dealerInfoSvc;
@@ -29,6 +33,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
             _saleOfficeSvc = saleOfficeSvc;
+            _roleSvc = roleSvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -61,6 +66,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             return await _zoneSvc.GetAllAsync();
+        }
+        public async Task<IEnumerable<RoleModel>> GetRoleList()
+        {
+            var result= await _roleSvc.GetAllAsync();
+            return result.ToMap<Role, RoleModel>();
         }
     }
 }

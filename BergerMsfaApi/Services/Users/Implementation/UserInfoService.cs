@@ -288,6 +288,8 @@ namespace BergerMsfaApi.Services.Users.Implementation
             var areaIds = await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
             var territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
             var zoneIds = await (from s in areaZone where s.ZoneId != null select s.ZoneId).Distinct().ToListAsync();
+            var roleIds = await (from s in _userRoleMapping.GetAll() where s.UserInfoId == id select s.RoleId).Distinct().ToListAsync();
+
             var finalResult = result.ToMap<UserInfo, UserInfoModel>();
            
             finalResult.plantIds = plantIds;
@@ -295,20 +297,9 @@ namespace BergerMsfaApi.Services.Users.Implementation
             finalResult.areaIds = areaIds;
             finalResult.territoryIds = territoryIds;
             finalResult.zoneIds = zoneIds;
+            finalResult.RoleIds = roleIds;
 
-            //finalResult.plantIds = await (from p in areaZone select p.PlanId).Distinct().ToListAsync();
-            //finalResult.saleOfficeIds = await (from s in areaZone where s.SalesOfficeId != null select s.SalesOfficeId).Distinct().ToListAsync();
-            //finalResult.areaIds =  await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
-            //finalResult.territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
-            //finalResult.zoneIds = await (from s in areaZone where s.ZoneId != null select s.ZoneId).Distinct().ToListAsync();
-            //finalResult.plantIds = (from p in areaZone
-            //                        select p.PlanId).ToList();
-            //finalResult.plantIds = areaZone.Select(s => s.PlanId).Distinct().ToList();
-            //finalResult.saleOfficeIds = areaZone.Select(c => c.SalesOfficeId).ToList();
-            //finalResult.areaIds = areaZone.Select(c => c.AreaId).ToList();
-            //finalResult.territoryIds = areaZone.Select(c => c.TerritoryId).ToList();
-            //finalResult.zoneIds = areaZone.Select(c => c.ZoneId).Distinct().ToList();
-            // finalResult.RoleIds = result.UserZoneAreaMappings.Select(c => c.R).Distinct().ToList();
+;
 
 
             var userRoleMapping = await _userRoleMapping.FindAsync(u => u.UserInfoId == id);
@@ -494,6 +485,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                     RoleId = role,
                     UserInfoId = result.Id
                 };
+
                 var userRoleMappingData = await GetUserRoleMappingByUserInfoIdAsync(result.Id);
                 if (userRoleMappingData != null)
                 {
