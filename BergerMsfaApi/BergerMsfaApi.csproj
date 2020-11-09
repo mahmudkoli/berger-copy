@@ -14,6 +14,7 @@
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
 	<NullableReferenceTypes>true</NullableReferenceTypes>
   <LangVersion>8.0</LangVersion>
+  <UserSecretsId>367fb947-1b7f-4fc8-923a-6b4da63855de</UserSecretsId>
   <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
