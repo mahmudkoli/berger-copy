@@ -37,6 +37,18 @@
     <Compile Remove="Migrations\20201105102553_hirearchyModel.Designer.cs" />
     <Compile Remove="Migrations\20201105102806_hirearchyModel.cs" />
     <Compile Remove="Migrations\20201105102806_hirearchyModel.Designer.cs" />
+    <Compile Remove="Migrations\20201109075217_PainterEntityUpdate.cs" />
+    <Compile Remove="Migrations\20201109075217_PainterEntityUpdate.Designer.cs" />
+    <Compile Remove="Migrations\20201109123403_PainterCallUpdate_1.cs" />
+    <Compile Remove="Migrations\20201109123403_PainterCallUpdate_1.Designer.cs" />
+    <Compile Remove="Migrations\20201109130732_PainterCallUpdate_1.cs" />
+    <Compile Remove="Migrations\20201109130732_PainterCallUpdate_1.Designer.cs" />
+    <Compile Remove="Migrations\20201109131016_PainterCallUpdate_1.cs" />
+    <Compile Remove="Migrations\20201109131016_PainterCallUpdate_1.Designer.cs" />
+    <Compile Remove="Migrations\20201109131422_PainterCallUpdate_1.cs" />
+    <Compile Remove="Migrations\20201109131422_PainterCallUpdate_1.Designer.cs" />
+    <Compile Remove="Migrations\20201109131748_PainterCallUpdate_1.cs" />
+    <Compile Remove="Migrations\20201109131748_PainterCallUpdate_1.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

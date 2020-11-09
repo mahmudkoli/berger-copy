@@ -40,9 +40,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painter = model.ToMap<PainterModel, Painter>();
 
-            var _fileName = $"{_painter.Name}_{_painter.Phone}";
+            var _fileName = $"{_painter.PainterImageUrl}_{_painter.Phone}";
             var _path = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.POSMProduct);
-            _painter.PainterImage = _path;
+            _painter.PainterImageUrl = _path;
             var result = await _painterSvc.CreateAsync(_painter);
 
             var painterModel = result.ToMap<Painter, PainterModel>();
@@ -107,12 +107,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painter = await _painterSvc.FindAsync(f => f.Id == painterId);
 
-            if (_painter.PainterImage != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImage);
+            if (_painter.PainterImageUrl != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImageUrl);
             if (_painter != null)
             {
-                var _fileName = $"{painterId}_{_painter.Name}";
+                var _fileName = $"{painterId}_{_painter.PainterName}";
                 var _path = await _fileUploadSvc.SaveImageAsync(file, _fileName, FileUploadCode.POSMProduct);
-                _painter.PainterImage = _path;
+                _painter.PainterImageUrl = _path;
             }
             await _painterSvc.UpdateAsync(_painter);
             return _painter.ToMap<Painter, PainterModel>();
@@ -123,9 +123,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _painter = await _painterSvc.FindIncludeAsync(f => f.Id == painterId);
             if (_painter == null) return null;
 
-            if (_painter.PainterImage != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImage);
-            var _fileName = $"{painterId}_{_painter.Name}";
-            _painter.PainterImage = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.POSMProduct);
+            if (_painter.PainterImageUrl != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImageUrl);
+            var _fileName = $"{painterId}_{_painter.PainterName}";
+            _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.POSMProduct);
             await _painterSvc.UpdateAsync(_painter);
 
             var painterModel = _painter.ToMap<Painter, PainterModel>();

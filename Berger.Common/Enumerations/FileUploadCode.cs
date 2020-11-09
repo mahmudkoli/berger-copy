@@ -6,5 +6,6 @@ namespace Berger.Common.Enumerations
         POSMProduct = 1,
         POSMReport = 2,
         AuditReport = 3,
+        RegisterPainter=4
     }
 }

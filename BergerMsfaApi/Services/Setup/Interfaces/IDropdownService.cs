@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Models.Setup;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.Setup.Interfaces
 {
@@ -9,6 +10,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
     {
       
         Task<IEnumerable<DropdownModel>> GetDropdownList();
+        Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index,int pageSize);
         Task<DropdownModel> GetDropdownById(int id);
         Task<IEnumerable<DropdownModel>> GetDropdownByTypeCd(string typeCode);
         Task<IEnumerable<DropdownModel>> GetDropdownByTypeId(int typeId);

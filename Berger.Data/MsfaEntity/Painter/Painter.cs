@@ -1,9 +1,8 @@
 ﻿using Berger.Data.Common;
+using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Setup;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Berger.Data.MsfaEntity.PainterRegistration
 {
@@ -14,36 +13,49 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
            Attachments= new List<Attachment>();
         }
         public string DepotName { get; set; }
-        public string SaleGroup { get; set; }
-
-        public string Name { get; set; }
+        public string SaleGroupCd { get; set; }
+        public string TerritroyCd { get; set; }
+        public string ZoneCd { get; set; }
+        public int PainterCatId { get; set; }
+        public string PainterName { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
+        public int NoOfPainterAttached { get; set; }
         public bool HasDbbl { get; set; }
-        //add attached file
-        public string AccNumber { get; set; }
-        public string AccHolderName { get; set; }
-        public string PersonlIdentityNo { get; set; }
-        public string PainterImage { get; set; }
+        public string AccDbblNumber { get; set; }
+        public string AccDbblHolderName { get; set; }
+        public string PassportNo { get; set; }
+        public string NationalIdNo { get; set; }
+        public string BrithCertificateNo { get; set; }
+        public string PainterImageUrl { get; set; }
+        public int AttachedDealerCd { get; set; }
         public bool IsAppInstalled { get; set; }
         public string Remark { get; set; }
-        public string AvgMonthlyVal { get; set; }
-        public float Loality { get; set; }
-        public int DealerId { get; set; }
+        public decimal AvgMonthlyVal { get; set; }
+        public float Loyality { get; set; }
 
-        [ForeignKey("DealerId")]
-        public DropdownDetail Dealer { get; set; }
-        public int PainterCatId { get; set; }
 
-        [ForeignKey("PainterCatId")]
-        public DropdownDetail PainterCategory { get; set; }
-        public int TerritoryId { get; set; }
 
-        [ForeignKey("TerritoryId")]
-        public DropdownDetail Territory { get; set; }
+        //[ForeignKey("SaleGroupCd")]
+        //public SaleGroup SaleGroup { get; set; }
 
+        //[ForeignKey("TerritroyCd")]
+        //public Territory Territory { get; set; }
+
+        //[ForeignKey("ZoneCd")]
+        //public Zone Zone { get; set; }
+
+        //[ForeignKey("PainterCatId")]
+        // public DropdownDetail PainterCategory { get; set; }
+        //[ForeignKey("AttachedDealerCd")]
+        //   public DropdownDetail Dealer { get; set; }
 
         public List<Attachment> Attachments { get; set; }
 
     }
+
+  
+
+
+
 }

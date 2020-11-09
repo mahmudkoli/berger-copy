@@ -1,5 +1,4 @@
-﻿using AutoMapper.Configuration.Annotations;
-using Berger.Common.Enumerations;
+﻿using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -306,8 +304,8 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         public async Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize)
         {
-            var planList = await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.EmployeeId == 0, index, pageSize);
-          //  var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == AppIdentity.AppUser.UserId);
+           var _index = index == 0 ? index + 1 : index;
+            var planList = await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.EmployeeId == 0, _index, pageSize);
 
             var result = planList.Select(s => new JourneyPlanDetailModel
             {
@@ -332,6 +330,33 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         }
 
+        public async Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize)
+        {
+            var _index = index == 0 ? index + 1 : index;
+            var planList = await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.EmployeeId == 0, _index, pageSize);
 
+            var result = planList.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.Id,
+                EmployeeId = s.EmployeeId,
+                PlanDate = s.PlanDate,
+                Status = s.Status,
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
+                                    on dealer.Id equals planDetail.DealerId
+                                    select new DealerInfoModel
+                                    {
+                                        Id = planDetail.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Territory = dealer.Territory,
+                                        VisitDate = planDetail.VisitDate
+                                    }).ToList()
+            }).ToList();
+
+             var val =           result.ToPagedList();
+            return val;
+
+        }
     }
 }
