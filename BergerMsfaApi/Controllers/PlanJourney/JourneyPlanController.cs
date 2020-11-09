@@ -11,14 +11,10 @@ namespace BergerMsfaApi.Controllers.Journey
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
 
-
     public class JourneyPlanController : BaseController
     {
         private readonly IJourneyPlanService _journeyService;
-        public JourneyPlanController(IJourneyPlanService journeyService)
-        {
-            _journeyService = journeyService;
-        }
+        public JourneyPlanController(IJourneyPlanService journeyService) => _journeyService = journeyService;
 
         [HttpGet("GetJourneyPlanList")]
         public async Task<IActionResult> GetJourneyPlanList()
@@ -36,12 +32,12 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
 
-        [HttpGet("GetJourneyPlanPageList")]
-        public async Task<IActionResult> GetJourneyPlanPageList(int index,int pageSize)
+        [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
+        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize)
         {
             try
             {
-                var result = await _journeyService.PortalGetJourneyPlanDetailPage(index,pageSize);
+                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -93,20 +93,7 @@ namespace BergerMsfaApi.Controllers.Common
             }
 
         }
-        [HttpGet("GetRoleList")]
-        public async Task<IActionResult> GetRoleList()
-        {
-            try
-            {
-                var result = await _commonSvc.GetRoleList();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
 
-                return ExceptionResult(ex);
-            }
 
-        }
     }
 }

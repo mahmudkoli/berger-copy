@@ -4,13 +4,15 @@ using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Models.Setup;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.Setup.Interfaces
 {
     public interface IJourneyPlanService
     {
         //portal
-        Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize);
+      //  Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize);
+        Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize);
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetail();
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager();
         Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id);

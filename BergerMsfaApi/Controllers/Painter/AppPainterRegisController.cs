@@ -120,7 +120,10 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
         {
             try
             {
-                var _painter = JsonConvert.DeserializeObject<PainterModel>(model);
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+
+                var _painter = JsonConvert.DeserializeObject<PainterModel>(model, settings);
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 if (!await _painterSvc.IsExistAsync(_painter.Id)) return NotFound();
                 var result = await _painterSvc.UpdatePainterAsync(_painter.Id,profile,attachments);
