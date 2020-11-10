@@ -41,24 +41,24 @@ namespace Berger.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Painters", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Painters_DropdownDetails_DealerId",
-                        column: x => x.DealerId,
-                        principalTable: "DropdownDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Painters_DropdownDetails_PainterCatId",
-                        column: x => x.PainterCatId,
-                        principalTable: "DropdownDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Painters_DropdownDetails_TerritoryId",
-                        column: x => x.TerritoryId,
-                        principalTable: "DropdownDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                    //table.ForeignKey(
+                    //    name: "FK_Painters_DropdownDetails_DealerId",
+                    //    column: x => x.DealerId,
+                    //    principalTable: "DropdownDetails",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.NoAction);
+                    //table.ForeignKey(
+                    //    name: "FK_Painters_DropdownDetails_PainterCatId",
+                    //    column: x => x.PainterCatId,
+                    //    principalTable: "DropdownDetails",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.NoAction);
+                    //table.ForeignKey(
+                    //    name: "FK_Painters_DropdownDetails_TerritoryId",
+                    //    column: x => x.TerritoryId,
+                    //    principalTable: "DropdownDetails",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

@@ -23,23 +23,23 @@ namespace Berger.Data.Migrations
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<int>(nullable: false),
                     Format = table.Column<string>(nullable: true),
-                    PainterId = table.Column<int>(nullable: true)
+                   
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Attachments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Attachments_Painters_PainterId",
-                        column: x => x.PainterId,
-                        principalTable: "Painters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                    //table.ForeignKey(
+                    //    name: "FK_Attachments_Painters_PainterId",
+                    //    column: x => x.PainterId,
+                    //    principalTable: "Painters",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.NoAction);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Attachments_PainterId",
-                table: "Attachments",
-                column: "PainterId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Attachments_PainterId",
+            //    table: "Attachments",
+            //    column: "PainterId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

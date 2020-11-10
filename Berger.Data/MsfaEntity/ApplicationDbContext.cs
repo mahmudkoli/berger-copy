@@ -162,7 +162,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         #endregion
-
+      
         #region SAP Tables
 
         public DbSet<DealerInfo> DealerInfos { get; set; }

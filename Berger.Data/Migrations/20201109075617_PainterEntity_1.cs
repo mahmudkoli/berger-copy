@@ -7,29 +7,29 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Painters_DropdownDetails_DealerId",
-                table: "Painters");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Painters_DropdownDetails_DealerId",
+            //    table: "Painters");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Painters_DropdownDetails_PainterCatId",
-                table: "Painters");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Painters_DropdownDetails_PainterCatId",
+            //    table: "Painters");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Painters_DropdownDetails_TerritoryId",
-                table: "Painters");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Painters_DropdownDetails_TerritoryId",
+            //    table: "Painters");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Painters_DealerId",
-                table: "Painters");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Painters_DealerId",
+            //    table: "Painters");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Painters_PainterCatId",
-                table: "Painters");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Painters_PainterCatId",
+            //    table: "Painters");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Painters_TerritoryId",
-                table: "Painters");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Painters_TerritoryId",
+            //    table: "Painters");
 
             migrationBuilder.DropColumn(
                 name: "AccHolderName",
@@ -39,9 +39,9 @@ namespace Berger.Data.Migrations
                 name: "AccNumber",
                 table: "Painters");
 
-            migrationBuilder.DropColumn(
-                name: "DealerId",
-                table: "Painters");
+            //migrationBuilder.DropColumn(
+            //    name: "DealerId",
+            //    table: "Painters");
 
             migrationBuilder.DropColumn(
                 name: "Loality",
@@ -63,9 +63,9 @@ namespace Berger.Data.Migrations
                 name: "SaleGroup",
                 table: "Painters");
 
-            migrationBuilder.DropColumn(
-                name: "TerritoryId",
-                table: "Painters");
+            //migrationBuilder.DropColumn(
+            //    name: "TerritoryId",
+            //    table: "Painters");
 
             migrationBuilder.AlterColumn<decimal>(
                 name: "AvgMonthlyVal",
@@ -148,8 +148,8 @@ namespace Berger.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "PainterCompanyMTDValue");
+            //migrationBuilder.DropTable(
+            //    name: "PainterCompanyMTDValue");
 
 
             migrationBuilder.DropColumn(
@@ -223,12 +223,12 @@ namespace Berger.Data.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "DealerId",
-                table: "Painters",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            //migrationBuilder.AddColumn<int>(
+            //    name: "DealerId",
+            //    table: "Painters",
+            //    type: "int",
+            //    nullable: false,
+            //    defaultValue: 0);
 
             migrationBuilder.AddColumn<float>(
                 name: "Loality",
@@ -261,51 +261,51 @@ namespace Berger.Data.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "TerritoryId",
-                table: "Painters",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            //migrationBuilder.AddColumn<int>(
+            //    name: "TerritoryId",
+            //    table: "Painters",
+            //    type: "int",
+            //    nullable: false,
+            //    defaultValue: 0);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_DealerId",
-                table: "Painters",
-                column: "DealerId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Painters_DealerId",
+            //    table: "Painters",
+            //    column: "DealerId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_PainterCatId",
-                table: "Painters",
-                column: "PainterCatId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Painters_PainterCatId",
+            //    table: "Painters",
+            //    column: "PainterCatId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_TerritoryId",
-                table: "Painters",
-                column: "TerritoryId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Painters_TerritoryId",
+            //    table: "Painters",
+            //    column: "TerritoryId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Painters_DropdownDetails_DealerId",
-                table: "Painters",
-                column: "DealerId",
-                principalTable: "DropdownDetails",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Painters_DropdownDetails_DealerId",
+            //    table: "Painters",
+            //    column: "DealerId",
+            //    principalTable: "DropdownDetails",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Painters_DropdownDetails_PainterCatId",
-                table: "Painters",
-                column: "PainterCatId",
-                principalTable: "DropdownDetails",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Painters_DropdownDetails_PainterCatId",
+            //    table: "Painters",
+            //    column: "PainterCatId",
+            //    principalTable: "DropdownDetails",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Painters_DropdownDetails_TerritoryId",
-                table: "Painters",
-                column: "TerritoryId",
-                principalTable: "DropdownDetails",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Painters_DropdownDetails_TerritoryId",
+            //    table: "Painters",
+            //    column: "TerritoryId",
+            //    principalTable: "DropdownDetails",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
         }
     }
 }

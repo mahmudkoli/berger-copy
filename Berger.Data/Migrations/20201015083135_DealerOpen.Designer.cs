@@ -597,8 +597,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DealerOpeningId")
-                        .HasColumnType("int");
+                    //b.Property<int?>("DealerOpeningId")
+                    //    .HasColumnType("int");
 
                     b.Property<string>("Format")
                         .HasColumnType("nvarchar(max)");
@@ -638,7 +638,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DealerOpeningId");
+                  //  b.HasIndex("DealerOpeningId");
 
                     b.HasIndex("PainterId");
 
@@ -1530,9 +1530,9 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Attachment", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.DealerFocus.DealerOpening", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("DealerOpeningId");
+                    //b.HasOne("Berger.Data.MsfaEntity.DealerFocus.DealerOpening", null)
+                    //    .WithMany("Attachments")
+                    //    .HasForeignKey("DealerOpeningId");
 
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", null)
                         .WithMany("Attachments")
