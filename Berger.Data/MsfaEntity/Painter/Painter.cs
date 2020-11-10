@@ -33,6 +33,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string Remark { get; set; }
         public decimal AvgMonthlyVal { get; set; }
         public float Loyality { get; set; }
+        public int EmployeeId { get; set; }
 
 
 

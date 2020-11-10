@@ -766,6 +766,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("DepotName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("HasDbbl")
                         .HasColumnType("bit");
 
@@ -843,6 +846,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("HasAppUsage")
                         .HasColumnType("bit");
@@ -936,7 +942,7 @@ namespace Berger.Data.Migrations
 
                     b.HasIndex("PainterCallId");
 
-                    b.ToTable("PainterCompanyMTDValue");
+                    b.ToTable("PainterCompanyMTDValues");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.DealerInfo", b =>
