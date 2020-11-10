@@ -9,11 +9,11 @@ namespace Berger.Data.MsfaEntity.DealerFocus
     public class DealerOpening:AuditableEntity<int>
     {
         public string BusinessArea { get; set; }
-        public string SaleOffice { get; set; }
-        public string SaleGroup { get; set; }
-        public string  TerritoryNo { get; set; }
-        public string ZoneNo { get; set; }
-        public string EmployeId { get; set; }
-        public List<Attachment> Attachments { get; set; }
+        public string SaleOfficeCd { get; set; }
+        public string SaleGroupCd { get; set; }
+        public string  TerritoryNoCd { get; set; }
+        public string ZoneNoCd { get; set; }
+        public int EmployeId { get; set; }
+      // public List<Attachment> Attachments { get; set; }
     }
 }

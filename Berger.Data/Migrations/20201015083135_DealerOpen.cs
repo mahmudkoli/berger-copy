@@ -26,11 +26,11 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     BusinessArea = table.Column<string>(nullable: true),
-                    SaleOffice = table.Column<string>(nullable: true),
-                    SaleGroup = table.Column<string>(nullable: true),
-                    TerritoryNo = table.Column<string>(nullable: true),
-                    ZoneNo = table.Column<string>(nullable: true),
-                    EmployeId = table.Column<string>(nullable: true)
+                    SaleOfficeCd = table.Column<string>(nullable: true),
+                    SaleGroupCd = table.Column<string>(nullable: true),
+                    TerritoryNoCd = table.Column<string>(nullable: true),
+                    ZoneNoCd = table.Column<string>(nullable: true),
+                    EmployeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
