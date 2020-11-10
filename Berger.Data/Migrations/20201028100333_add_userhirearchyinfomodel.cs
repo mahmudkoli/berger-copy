@@ -7,6 +7,12 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
+            migrationBuilder.RenameColumn(
+                name: "email",
+                table: "UserInfos",
+                newName: "Email");
+
             migrationBuilder.AddColumn<string>(
                 name: "City",
                 table: "UserInfos",
@@ -136,6 +142,11 @@ namespace Berger.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+
+            migrationBuilder.RenameColumn(
+                name: "Email",
+                table: "UserInfos",
+                newName: "email");
             migrationBuilder.DropTable(
                 name: "UserHirearchyInfos");
 

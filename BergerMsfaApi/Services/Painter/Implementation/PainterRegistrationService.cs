@@ -152,6 +152,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painters = await _painterSvc.GetAllAsync();
             var result = _painters.ToMap<Painter, PainterModel>();
+          
             foreach (var item in result.ToList())
             {
                 var attachment = await _attachmentSvc.FindAsync(f => f.ParentId == item.Id && f.TableName == nameof(Painter));
@@ -213,6 +214,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painter = await _painterSvc.FindAsync(f => f.Id == Id);
             var result = _painter.ToMap<Painter, PainterModel>();
+            if (_painter==null) return result;
             var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == _painter.Id && f.TableName == nameof(Painter));
             foreach (var attachment in painterAttachments)
                 result.Attachments.Add(attachment.Path);

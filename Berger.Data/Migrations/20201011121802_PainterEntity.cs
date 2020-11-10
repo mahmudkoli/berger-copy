@@ -21,22 +21,27 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     DepotName = table.Column<string>(nullable: true),
-                    SaleGroup = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
+                    SaleGroupCd = table.Column<string>(nullable: true),
+                    PainterName = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
                     HasDbbl = table.Column<bool>(nullable: false),
-                    AccNumber = table.Column<string>(nullable: true),
-                    AccHolderName = table.Column<string>(nullable: true),
-                    PersonlIdentityNo = table.Column<string>(nullable: true),
-                    PainterImage = table.Column<string>(nullable: true),
+                    AccDbblNumber = table.Column<string>(nullable: true),
+                    AccDbblHolderName = table.Column<string>(nullable: true),
+                    NationalIdNo = table.Column<string>(nullable: true),
+                    PassportNo = table.Column<string>(nullable: true),
+                    PainterImageUrl = table.Column<string>(nullable: true),
                     IsAppInstalled = table.Column<bool>(nullable: false),
                     Remark = table.Column<string>(nullable: true),
                     AvgMonthlyVal = table.Column<string>(nullable: true),
-                    Loality = table.Column<float>(nullable: false),
-                    DealerId = table.Column<int>(nullable: false),
+                    Loyality = table.Column<float>(nullable: false),
+                    AttachedDealerCd = table.Column<string>(nullable: true),
+                    BrithCertificateNo = table.Column<string>(nullable: true),
                     PainterCatId = table.Column<int>(nullable: false),
-                    TerritoryId = table.Column<int>(nullable: false)
+                    TerritroyCd = table.Column<string>(nullable: false),
+                    ZoneCd = table.Column<string>(nullable: false),
+                    NoOfPainterAttached = table.Column<int>(nullable: false,defaultValue:0),
+                    EmployeeId = table.Column<int>(nullable:false,defaultValue:0)
                 },
                 constraints: table =>
                 {
@@ -61,26 +66,23 @@ namespace Berger.Data.Migrations
                     //    onDelete: ReferentialAction.NoAction);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_DealerId",
-                table: "Painters",
-                column: "DealerId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Painters_EmployeeId",
+            //    table: "Painters",
+            //    column: "EmployeeId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_PainterCatId",
-                table: "Painters",
-                column: "PainterCatId");
+      
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Painters_TerritoryId",
-                table: "Painters",
-                column: "TerritoryId");
+           
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            //migrationBuilder.DropIndex(name: "IX_Painters_EmployeeId", table: "Painters");
             migrationBuilder.DropTable(
                 name: "Painters");
+          
+            
         }
     }
 }

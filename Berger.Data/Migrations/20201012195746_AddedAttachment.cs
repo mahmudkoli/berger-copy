@@ -21,9 +21,11 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Size = table.Column<int>(nullable: false),
+                    Size = table.Column<float>(nullable: false),
                     Format = table.Column<string>(nullable: true),
-                   
+                    Path = table.Column<string>(nullable: true),
+                    TableName = table.Column<string>(nullable: true),
+
                 },
                 constraints: table =>
                 {
@@ -36,14 +38,12 @@ namespace Berger.Data.Migrations
                     //    onDelete: ReferentialAction.NoAction);
                 });
 
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_Attachments_PainterId",
-            //    table: "Attachments",
-            //    column: "PainterId");
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+           
             migrationBuilder.DropTable(
                 name: "Attachments");
         }

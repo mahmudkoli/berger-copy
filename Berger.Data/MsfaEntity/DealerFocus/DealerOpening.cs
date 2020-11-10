@@ -14,6 +14,7 @@ namespace Berger.Data.MsfaEntity.DealerFocus
         public string  TerritoryNoCd { get; set; }
         public string ZoneNoCd { get; set; }
         public int EmployeId { get; set; }
-      // public List<Attachment> Attachments { get; set; }
+        public int? LineManagerId { get; set; }
+        // public List<Attachment> Attachments { get; set; }
     }
 }

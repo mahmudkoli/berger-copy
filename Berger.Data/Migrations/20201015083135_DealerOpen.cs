@@ -30,7 +30,8 @@ namespace Berger.Data.Migrations
                     SaleGroupCd = table.Column<string>(nullable: true),
                     TerritoryNoCd = table.Column<string>(nullable: true),
                     ZoneNoCd = table.Column<string>(nullable: true),
-                    EmployeId = table.Column<int>(nullable: false)
+                    EmployeId = table.Column<int>(nullable: false),
+                    LineManagerId= table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

@@ -28,7 +28,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string NationalIdNo { get; set; }
         public string BrithCertificateNo { get; set; }
         public string PainterImageUrl { get; set; }
-        public int AttachedDealerCd { get; set; }
+        public string AttachedDealerCd { get; set; }
         public bool IsAppInstalled { get; set; }
         public string Remark { get; set; }
         public decimal AvgMonthlyVal { get; set; }

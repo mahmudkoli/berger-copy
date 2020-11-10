@@ -7,33 +7,33 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "ZoneId",
-                table: "UserZoneAreaMappings",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "ZoneId",
+            //    table: "UserZoneAreaMappings",
+            //    nullable: true,
+            //    oldClrType: typeof(int),
+            //    oldType: "int");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "TerritoryId",
-                table: "UserZoneAreaMappings",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "TerritoryId",
+            //    table: "UserZoneAreaMappings",
+            //    nullable: true,
+            //    oldClrType: typeof(int),
+            //    oldType: "int");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "SalesOfficeId",
-                table: "UserZoneAreaMappings",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "SalesOfficeId",
+            //    table: "UserZoneAreaMappings",
+            //    nullable: true,
+            //    oldClrType: typeof(int),
+            //    oldType: "int");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "AreaId",
-                table: "UserZoneAreaMappings",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "AreaId",
+            //    table: "UserZoneAreaMappings",
+            //    nullable: true,
+            //    oldClrType: typeof(int),
+            //    oldType: "int");
 
             migrationBuilder.CreateTable(
                 name: "SchemeMasters",
@@ -110,37 +110,37 @@ namespace Berger.Data.Migrations
             migrationBuilder.DropTable(
                 name: "SchemeMasters");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "ZoneId",
-                table: "UserZoneAreaMappings",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "ZoneId",
+            //    table: "UserZoneAreaMappings",
+            //    type: "int",
+            //    nullable: false,
+            //    oldClrType: typeof(int),
+            //    oldNullable: true);
 
-            migrationBuilder.AlterColumn<int>(
-                name: "TerritoryId",
-                table: "UserZoneAreaMappings",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "TerritoryId",
+            //    table: "UserZoneAreaMappings",
+            //    type: "int",
+            //    nullable: false,
+            //    oldClrType: typeof(int),
+            //    oldNullable: true);
 
-            migrationBuilder.AlterColumn<int>(
-                name: "SalesOfficeId",
-                table: "UserZoneAreaMappings",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "SalesOfficeId",
+            //    table: "UserZoneAreaMappings",
+            //    type: "int",
+            //    nullable: false,
+            //    oldClrType: typeof(int),
+            //    oldNullable: true);
 
-            migrationBuilder.AlterColumn<int>(
-                name: "AreaId",
-                table: "UserZoneAreaMappings",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "AreaId",
+            //    table: "UserZoneAreaMappings",
+            //    type: "int",
+            //    nullable: false,
+            //    oldClrType: typeof(int),
+            //    oldNullable: true);
         }
     }
 }

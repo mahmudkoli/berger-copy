@@ -6,15 +6,15 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           
 
-         
 
-            migrationBuilder.AddColumn<int>(
-                name: "EmployeeId",
-                table: "Painters",
-                nullable: false,
-                defaultValue: 0);
+
+
+            //migrationBuilder.AddColumn<int>(
+            //    name: "EmployeeId",
+            //    table: "Painters",
+            //    nullable: false,
+            //    defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "EmployeeId",
@@ -23,15 +23,15 @@ namespace Berger.Data.Migrations
                 defaultValue: 0);
 
 
-          
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
           
-            migrationBuilder.DropColumn(
-                name: "EmployeeId",
-                table: "Painters");
+            //migrationBuilder.DropColumn(
+            //    name: "EmployeeId",
+            //    table: "Painters");
 
             migrationBuilder.DropColumn(
                 name: "EmployeeId",

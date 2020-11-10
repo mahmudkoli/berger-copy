@@ -28,6 +28,7 @@ namespace Berger.Data.MsfaEntity
             JourneyPlanDetail = new List<JourneyPlanDetail>();
         }
         public int EmployeeId { get; set; }
+        public int? LineManagerId { get; set; }
         public DateTime  PlanDate { get; set; }
         public int ApprovedById { get; set; }
         public DateTime ApprovedDate { get; set; }

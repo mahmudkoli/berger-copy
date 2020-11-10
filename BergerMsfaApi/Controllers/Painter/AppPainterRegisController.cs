@@ -61,17 +61,18 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
-
         [HttpGet("GetPainterById/{Id}")]
+        //[HttpGet("GetPainterById/{Id}")]
         public async Task<IActionResult> GetPainterById(int Id)
         {
             try
             {
-                if (!await _painterSvc.IsExistAsync(Id))
-                {
-                    ModelState.AddModelError(nameof(Id), "Painter Not Found");
-                    return ValidationResult(ModelState);
-                }
+                //if (!await _painterSvc.IsExistAsync(Id))
+                //{
+                //    //ModelState.AddModelError(nameof(Id), "Painter Not Found");
+                //    //return ValidationResult(ModelState);
+                //    return OkResult(new PainterModel());
+                //}
                 var result = await _painterSvc.AppGetPainterByIdAsync(Id);
                 return OkResult(result);
             }

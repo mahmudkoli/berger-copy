@@ -7,14 +7,10 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "HomePhone",
-                table: "UserInfos");
+            //migrationBuilder.DropColumn(
+            //    name: "HomePhone",
+            //    table: "UserInfos");
 
-            migrationBuilder.RenameColumn(
-                name: "email",
-                table: "UserInfos",
-                newName: "Email");
 
 
             migrationBuilder.CreateTable(
@@ -67,16 +63,12 @@ namespace Berger.Data.Migrations
 
           
 
-            migrationBuilder.RenameColumn(
-                name: "Email",
-                table: "UserInfos",
-                newName: "email");
 
-            migrationBuilder.AddColumn<string>(
-                name: "HomePhone",
-                table: "UserInfos",
-                type: "nvarchar(max)",
-                nullable: true);
+            //migrationBuilder.AddColumn<string>(
+            //    name: "HomePhone",
+            //    table: "UserInfos",
+            //    type: "nvarchar(max)",
+            //    nullable: true);
         }
     }
 }
