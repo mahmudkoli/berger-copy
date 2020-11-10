@@ -180,6 +180,6 @@ namespace Berger.Data.MsfaEntity
 
 
         #endregion
-
+        public DbSet<DealerOpening> DealerOpenings { get; set; }
     }
 }
