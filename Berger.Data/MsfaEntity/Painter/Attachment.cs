@@ -19,11 +19,43 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         //[ForeignKey("ParentId")]
         //public Painter ParentAttachment { get; set; }
 
- 
+        public Attachment()
+        {
 
+        }
+
+        public Attachment(int parentId, string tableName, string path)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name, string format)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+            this.Format = format;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name, string format, long size)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+            this.Format = format;
+            this.Size = size;
+        }
     }
-
-
-
-  
 }
