@@ -21,7 +21,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
         {
-            string filePath = this.GetFilePath(type);
+            string filePath = this.GetFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -39,7 +39,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetFilePath(type);
+            string filePath = this.GetFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetFilePath(type);
+            string filePath = this.GetFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -101,7 +101,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 File.Delete(Path.Combine(_host.WebRootPath, filePath));
         }
 
-        private string GetFilePath(FileUploadCode type)
+        private string GetFolderPath(FileUploadCode type)
         {
             string filePath = Path.Combine("uploads", "images");
             switch (type)

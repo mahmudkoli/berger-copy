@@ -3,6 +3,7 @@
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
+using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
@@ -155,6 +156,12 @@ public DbSet<Painter> Painters { get; set; }
         public DbSet<DealerInfo> DealerInfos { get; set; }
 
 
+        #endregion
+
+        #region Dealer Sales Call
+        public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
+        public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
+        public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
         #endregion
 
     }

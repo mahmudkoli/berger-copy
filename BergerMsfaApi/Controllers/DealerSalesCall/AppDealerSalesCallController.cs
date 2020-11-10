@@ -14,18 +14,18 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class DealerSalesCallController : BaseController
+    public class AppDealerSalesCallController : BaseController
     {
         private readonly IEnumService _enumService;
         private readonly IDealerSalesCallService _dealerSalesCallService;
 
-        public DealerSalesCallController(
-                IEnumService enumService/*,*/
-                //IDealerSalesCallService dealerSalesCallService
+        public AppDealerSalesCallController(
+                IEnumService enumService,
+                IDealerSalesCallService dealerSalesCallService
             )
         {
             this._enumService = enumService;
-            //this._dealerSalesCallService = dealerSalesCallService;
+            this._dealerSalesCallService = dealerSalesCallService;
         }
 
         [HttpGet]
