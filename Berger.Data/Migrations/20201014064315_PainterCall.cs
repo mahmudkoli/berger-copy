@@ -49,7 +49,7 @@ namespace Berger.Data.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<int>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<int>(nullable: false),  
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     CompanyId = table.Column<int>(nullable: false),

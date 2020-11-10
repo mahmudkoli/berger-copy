@@ -157,7 +157,9 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         #region Painter
+        public DbSet<PainterCompanyMTDValue> PainterCompanyMTDValues { get; set; }
         public DbSet<Painter> Painters { get; set; }
+        public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         #endregion
 
@@ -178,6 +180,6 @@ namespace Berger.Data.MsfaEntity
 
 
         #endregion
-
+        public DbSet<DealerOpening> DealerOpenings { get; set; }
     }
 }

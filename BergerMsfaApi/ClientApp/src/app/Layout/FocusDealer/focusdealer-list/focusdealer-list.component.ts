@@ -55,12 +55,12 @@ export class FocusdealerListComponent implements OnInit {
             this.delete(event.record.id);
         }
     } private add() {
-        this.router.navigate(['/focus-dealer/add']);
+        this.router.navigate(['/dealer/add-focusdealer']);
     }
 
     private edit(id: number) {
         console.log('edit plan', id);
-        this.router.navigate(['/focus-dealer/add/' + id]);
+        this.router.navigate(['/dealer/add-focusdealer/' + id]);
     }
 
     private delete(id: number) {

@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Controllers.Painter
             try
             {
 
-                var result = await _paintCallSvc.GetPainterCallListAsync();
+                var result = await _paintCallSvc.AppGetPainterCallListAsync();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
-                var result = await _paintCallSvc.GetPainterByIdAsync(PainterId);
+                var result = await _paintCallSvc.AppGetPainterByIdAsync(PainterId);
                 return OkResult(result);
             }
             catch (Exception ex)
