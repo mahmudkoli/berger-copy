@@ -8,27 +8,28 @@ import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/im
 //import { TableModule } from 'primeng-lts/table'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng-lts/button'
-
+import { PaginatorModule } from 'primeng/paginator';
 @NgModule({
-  declarations: [
-    PageTitleComponent,
-    ImageUploaderComponent
-  ],
-  imports: [
-    CommonModule,
-    AngularFontAwesomeModule,
-    AlertModule,
-    PTableModule,
-    TableModule,
-    ButtonModule
-  ],
-  exports:[PageTitleComponent,
-     ImageUploaderComponent, 
-      AlertModule,
-      PTableModule,
-    
-      ButtonModule,
-      TableModule,
-  ]
+    declarations: [
+        PageTitleComponent,
+        ImageUploaderComponent
+    ],
+    imports: [
+        CommonModule,
+        AngularFontAwesomeModule,
+        AlertModule,
+        PTableModule,
+        TableModule,
+        PaginatorModule,
+        ButtonModule
+    ],
+    exports: [PageTitleComponent,
+        ImageUploaderComponent,
+        AlertModule,
+        PTableModule,
+        PaginatorModule,
+        ButtonModule,
+        TableModule,
+    ]
 })
 export class SharedMasterModule { }

@@ -6,6 +6,7 @@ using BergerMsfaApi.Services.Setup.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.Setup.Implementation
 {
@@ -38,7 +39,33 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Sequence = s.Sequence
             }).ToList();
         }
+      public async  Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index, int pageSize)
+        {
+          IPagedList<DropdownDetail> result = await _dropdownDetail.GetAllPagedAsync(index, pageSize);
+          return new PagedList<DropdownModel>(result, result.Select(s => new DropdownModel
+            {
+                Id = s.Id,
+                TypeId = s.TypeId,
+                TypeCode = _dropdownType.Find(f => f.Id == s.TypeId).TypeCode,
+                TypeName = _dropdownType.Find(f => f.Id == s.TypeId).TypeName,
+                DropdownName = s.DropdownName,
+                Description = s.Description,
+                Sequence = s.Sequence
 
+            }).ToPagedList());
+            //return result.Select(s => new DropdownModel
+            //{
+            //    Id = s.Id,
+            //    TypeId = s.TypeId,
+            //    TypeCode = _dropdownType.Find(f => f.Id == s.TypeId).TypeCode,
+            //    TypeName = _dropdownType.Find(f => f.Id == s.TypeId).TypeName,
+            //    DropdownName = s.DropdownName,
+            //    Description = s.Description,
+            //    Sequence = s.Sequence
+
+            //}).ToPagedList();
+
+        }
         public async Task<DropdownModel> GetDropdownById(int id)
         {
 

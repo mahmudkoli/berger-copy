@@ -33,7 +33,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                     ModelState.AddModelError(nameof(territory), "territory can not be null");
                     return ValidationResult(ModelState);
                 }
-                var result = await _commonSvc.GeApptDealerInfoList(territory.Trim());
+                var result = await _commonSvc.AppGetDealerInfoList(territory.Trim());
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -43,6 +43,21 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
 
         }
+        [HttpGet("GetFocusDealerList/{EmployeeId}")]
+        public async Task<IActionResult> GetFocusDealerList(string EmployeeId)
+        {
+            try
+            {
+               
+                var result = await _commonSvc.AppGetDealerInfoList(EmployeeId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
 
+                return ExceptionResult(ex);
+            }
+
+        }
     }
 }

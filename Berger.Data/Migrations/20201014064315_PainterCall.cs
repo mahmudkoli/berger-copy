@@ -20,12 +20,16 @@ namespace Berger.Data.Migrations
                     Status = table.Column<int>(nullable: false),
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
-                    SchemeComnunaction = table.Column<bool>(nullable: false),
-                    PremiumProtBriefing = table.Column<bool>(nullable: false),
-                    NewProBriefing = table.Column<bool>(nullable: false),
-                    UsageEftTools = table.Column<bool>(nullable: false),
-                    AppUsage = table.Column<bool>(nullable: false),
-                    Number = table.Column<string>(nullable: true),
+                    HasSchemeComnunaction = table.Column<bool>(nullable: false),
+                    HasPremiumProtBriefing = table.Column<bool>(nullable: false),
+                    HasNewProBriefing = table.Column<bool>(nullable: false),
+                    HasUsageEftTools = table.Column<bool>(nullable: false),
+                    HasAppUsage = table.Column<bool>(nullable: false),
+                    HasDbblIssue = table.Column<bool>(nullable: false),
+                    WorkInHandNumber = table.Column<decimal>(nullable: true),
+                 
+                    Comment = table.Column<string>(nullable: true),
+
                     PainterId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -49,7 +53,7 @@ namespace Berger.Data.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<int>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<int>(nullable: false),  
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     CompanyId = table.Column<int>(nullable: false),
@@ -60,12 +64,12 @@ namespace Berger.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PainterCompanyMTDValues", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PainterCompanyMTDValues_DropdownDetails_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "DropdownDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    //table.ForeignKey(
+                    //    name: "FK_PainterCompanyMTDValues_DropdownDetails_CompanyId",
+                    //    column: x => x.CompanyId,
+                    //    principalTable: "DropdownDetails",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PainterCompanyMTDValues_PainterCalls_PainterCallId",
                         column: x => x.PainterCallId,
@@ -73,16 +77,16 @@ namespace Berger.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+     
             migrationBuilder.CreateIndex(
                 name: "IX_PainterCalls_PainterId",
                 table: "PainterCalls",
                 column: "PainterId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PainterCompanyMTDValues_CompanyId",
-                table: "PainterCompanyMTDValues",
-                column: "CompanyId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_PainterCompanyMTDValues_CompanyId",
+            //    table: "PainterCompanyMTDValues",
+            //    column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PainterCompanyMTDValues_PainterCallId",
@@ -92,6 +96,15 @@ namespace Berger.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(name: "FK_PainterCalls_Painters_PainterId", table: "PainterCalls");
+            migrationBuilder.DropForeignKey(name: "FK_PainterCompanyMTDValues_PainterCalls_PainterCallId", table: "PainterCompanyMTDValues");
+   
+        
+            migrationBuilder.DropIndex(name: "IX_PainterCompanyMTDValues_PainterCallId",
+                table: "PainterCompanyMTDValues");
+            migrationBuilder.DropIndex(name: "IX_PainterCalls_PainterId",
+                table: "PainterCalls");
+
             migrationBuilder.DropTable(
                 name: "PainterCompanyMTDValues");
 

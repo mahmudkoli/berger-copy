@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore.Query;
-//using X.PagedList;
+using X.PagedList;
 
 namespace BergerMsfaApi.Repositories
 {
@@ -53,7 +53,7 @@ namespace BergerMsfaApi.Repositories
         #region LINQ ASYNC
 
         Task<IEnumerable<TEntity>> GetAllAsync();
-        //Task<IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize);
+        Task<IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize);
         Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate);
         //Task<IPagedList<TEntity>> FindAllPagedAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber, int pageSize);
 

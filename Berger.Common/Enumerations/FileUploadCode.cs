@@ -6,5 +6,6 @@ namespace Berger.Common.Enumerations
         DealerOpening = 1,
         PainterRegistration = 2,
         DealerSalesCall = 3,
+        RegisterPainter=4
     }
 }

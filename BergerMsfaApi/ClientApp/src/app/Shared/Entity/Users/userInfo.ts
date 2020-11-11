@@ -40,17 +40,18 @@
     public state: string;
     public streetAddress: string;
     public title: string;
+ 
 
     public hierarchyId: number;
 
     public plantIds: any[] = [];
-    public areaIds: any[] = [];
-    public saleOfficeIds: any[] = [];
-    public territoryIds: any[] = [];
-    public zoneIds: any[] = [];
+    public areaIds: string[] = [];
+    public saleOfficeIds: string[] = [];
+    public territoryIds: string[] = [];
+    public zoneIds: string[] = [];
 
     constructor() {
-        this.status = 1;
+       // this.status = 1;
         this.nationalNodeIds = [];
         this.regionNodeIds = [];
         this.areaNodeIds = [];
