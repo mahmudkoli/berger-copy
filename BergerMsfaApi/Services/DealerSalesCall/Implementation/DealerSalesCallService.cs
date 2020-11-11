@@ -6,6 +6,7 @@ using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -38,16 +39,18 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
 
-            if(model.CompetitionImageFile != null)
+            if(model.CompetitionProductDisplayImageFile != null)
             {
-                var path = await _fileUploadService.SaveImageAsync(model.CompetitionImageFile, 
-                                                                    model.CompetitionImageFile.Name, 
-                                                                    FileUploadCode.DealerSalesCall);
+                dealerSalesCall.CompetitionProductDisplayImage = await SaveImageAsync(model.CompetitionProductDisplayImageFile,
+                                                                        model.CompetitionProductDisplayImageFile.FileName, 
+                                                                        FileUploadCode.DealerSalesCall);
+            }
 
-                dealerSalesCall.CompetitionImage = new Attachment(0, nameof(DealerSalesCall), path, 
-                                                                    model.CompetitionImageFile.FileName, 
-                                                                    Path.GetExtension(model.CompetitionImageFile.FileName), 
-                                                                    model.CompetitionImageFile.Length);
+            if(model.CompetitionSchemeModalityImageFile != null)
+            {
+                dealerSalesCall.CompetitionSchemeModalityImage = await SaveImageAsync(model.CompetitionSchemeModalityImageFile,
+                                                                        model.CompetitionSchemeModalityImageFile.FileName, 
+                                                                        FileUploadCode.DealerSalesCall);
             }
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
@@ -83,6 +86,15 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
 
             return modelResult;
+        }
+
+        private async Task<Attachment> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
+        {
+            var path = await _fileUploadService.SaveImageAsync(file, fileName, type);
+
+            var attachment = new Attachment(0, nameof(DSC.DealerSalesCall), path, fileName, Path.GetExtension(file.FileName), file.Length);
+
+            return attachment;
         }
     }
 }

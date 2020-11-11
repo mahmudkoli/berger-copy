@@ -14,7 +14,7 @@ namespace BergerMsfaApi.Models.DealerSalesCall
     public class DealerCompetitionSalesModel : IMapFrom<DealerCompetitionSales>
     {
         public int DealerSalesCallId { get; set; }
-        public SaveDealerSalesCallModel DealerSalesCall { get; set; }
+        public DealerSalesCallModel DealerSalesCall { get; set; }
 
         public int CompanyId { get; set; }
         public DropdownModel Company { get; set; }
