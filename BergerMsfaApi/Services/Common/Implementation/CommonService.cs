@@ -1,5 +1,6 @@
 ﻿using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
@@ -16,6 +17,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
     public class CommonService : ICommonService
     {
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<Depot> _depotSvc;
         private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailSvc;
         private readonly IRepository<Zone> _zoneSvc;
         private readonly IRepository<Role> _roleSvc;
@@ -29,7 +31,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<SaleGroup> saleGroupSvc,
             IRepository<SaleOffice> saleOfficeSvc,
             IRepository<Role> roleSvc,
-           IRepository<JourneyPlanDetail> journeyPlanDetailSvc
+            IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
+            IRepository<Depot> depotSvc
             )
         {
             _dealerInfoSvc = dealerInfoSvc;
@@ -39,6 +42,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _saleOfficeSvc = saleOfficeSvc;
             _roleSvc = roleSvc; 
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
+            _depotSvc = depotSvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -61,7 +65,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             return await _saleGroupSvc.GetAllAsync();
         }
-
+        public async Task<IEnumerable<Depot>> GetDepotList()
+        {
+            return await _depotSvc.GetAllAsync();
+        }
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             return await _saleOfficeSvc.GetAllAsync();

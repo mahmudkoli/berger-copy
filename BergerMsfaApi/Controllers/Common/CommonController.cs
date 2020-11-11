@@ -93,7 +93,19 @@ namespace BergerMsfaApi.Controllers.Common
             }
 
         }
+        [HttpGet("GetDepotList")]
+        public async Task<IActionResult> GetDepotList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetDepotList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
 
-
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
