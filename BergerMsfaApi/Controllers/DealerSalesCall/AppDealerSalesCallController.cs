@@ -16,20 +16,17 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppDealerSalesCallController : BaseController
     {
-        private readonly IEnumService _enumService;
         private readonly IDealerSalesCallService _dealerSalesCallService;
 
         public AppDealerSalesCallController(
-                IEnumService enumService,
                 IDealerSalesCallService dealerSalesCallService
             )
         {
-            this._enumService = enumService;
             this._dealerSalesCallService = dealerSalesCallService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("GetDealerSalesCallList")]
+        public async Task<IActionResult> GetDealerSalesCallList()
         {
             try
             {
@@ -42,12 +39,12 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("GetDealerSalesCall/{dealerSalesCallId}")]
+        public async Task<IActionResult> GetDealerSalesCall(int dealerSalesCallId)
         {
             try
             {
-                var result = await _dealerSalesCallService.GetByIdAsync(id);
+                var result = await _dealerSalesCallService.GetByIdAsync(dealerSalesCallId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -56,8 +53,8 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] SaveDealerSalesCallModel model)
+        [HttpPost("CreateDealerSalesCall")]
+        public async Task<IActionResult> CreateDealerSalesCall([FromForm] SaveDealerSalesCallModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -74,119 +71,5 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
                 return ExceptionResult(ex);
             }
         }
-
-        #region Helper Get data
-        [HttpGet("GetRatingsSelect")]
-        public async Task<IActionResult> GetRatingsSelect()
-        {
-            try
-            {
-                var result = _enumService.GetRatingsSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetPrioritySelect")]
-        public async Task<IActionResult> GetPrioritySelect()
-        {
-            try
-            {
-                var result = _enumService.GetPrioritySelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetSatisfactionSelect")]
-        public async Task<IActionResult> GetSatisfactionSelect()
-        {
-            try
-            {
-                var result = _enumService.GetSatisfactionSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetProductLiftingSelect")]
-        public async Task<IActionResult> GetProductLiftingSelect()
-        {
-            try
-            {
-                var result = _enumService.GetProductLiftingSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetDealerSalesIssueSelect")]
-        public async Task<IActionResult> GetDealerSalesIssueSelect()
-        {
-            try
-            {
-                var result = _enumService.GetDealerSalesIssueSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetPainterInfluenceSelect")]
-        public async Task<IActionResult> GetPainterInfluenceSelect()
-        {
-            try
-            {
-                var result = _enumService.GetPainterInfluenceSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetSubDealerInfluenceSelect")]
-        public async Task<IActionResult> GetSubDealerInfluenceSelect()
-        {
-            try
-            {
-                var result = _enumService.GetSubDealerInfluenceSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetCompetitionPresenceSelect")]
-        public async Task<IActionResult> GetCompetitionPresenceSelect()
-        {
-            try
-            {
-                var result = _enumService.GetCompetitionPresenceSelect();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-        #endregion
     }
 }
