@@ -15,15 +15,15 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string Format { get; set; }
         public string TableName { get; set; }
         public int ParentId { get; set; }
-
+       
         //[ForeignKey("ParentId")]
         //public Painter ParentAttachment { get; set; }
 
- 
+
 
     }
 
 
 
-  
+
 }

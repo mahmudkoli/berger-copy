@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Berger.Data.MsfaEntity.PainterRegistration;
+using BergerMsfaApi.Models.Painter;
+using System.Collections.Generic;
 
 namespace BergerMsfaApi.Models.PainterRegistration
 {
     public class PainterModel
     {
-        public PainterModel()
-        {
-            Attachments = new List<string>();
-        }
+       
         public int Id { get; set; }
         public string DepotName { get; set; }
         public string SaleGroupCd { get; set; }
@@ -35,7 +34,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string Remark { get; set; }
         public decimal AvgMonthlyVal { get; set; }
         public float Loyality { get; set; }
-        public List<string> Attachments { get; set; }
+        public List<PainterAttachmentModel> Attachments { get; set; }
 
 
     }
