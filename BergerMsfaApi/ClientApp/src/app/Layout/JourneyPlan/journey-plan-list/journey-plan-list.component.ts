@@ -21,7 +21,7 @@ export class JourneyPlanListComponent implements OnInit {
     public journeyPlanList: JourneyPlan[] = [];
     changeStatus = Status;
     statusKeys: any[] = [];
-   
+
     constructor(
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
@@ -34,8 +34,45 @@ export class JourneyPlanListComponent implements OnInit {
 
     ngOnInit() {
         this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-        this.fnJourneyPlanList();
+       this.fnJourneyPlanList();
+     //   this.fnJourneyPlanListPaging(this.first, this.rows);
 
+    }
+    first = 0;
+
+    rows = 5;
+    next() {
+        this.first = this.first + this.rows;
+        this.fnJourneyPlanListPaging(this.first, this.rows);
+    }
+
+    prev() {
+        this.first = this.first - this.rows;
+        this.fnJourneyPlanListPaging(this.first, this.rows);
+    }
+
+    reset() {
+        this.first = 0;
+        this.fnJourneyPlanListPaging(this.first, this.rows=10);
+    }
+
+    isLastPage(): boolean {
+
+        return this.journeyPlanList ? this.first === (this.journeyPlanList.length - this.rows) : true;
+    }
+
+    isFirstPage(): boolean {
+
+        return this.journeyPlanList ? this.first === 0 : true;
+    }
+    paginate(event) {
+        debugger;
+       // event.first == 0 ? event.first+1:event
+        this.fnJourneyPlanListPaging(event.first, event.rows);
+        //event.first = Index of the first record
+        //event.rows = Number of rows to display in new page
+        //event.page = Index of the new page
+        //event.pageCount = Total number of pages
     }
     onStatusChange(key, jPlan) {
 
@@ -69,33 +106,44 @@ export class JourneyPlanListComponent implements OnInit {
         this.journeyPlanService.getJourneyPlanList()
             .subscribe(
                 (res) => {
-                    this.journeyPlanList =res.data as [] || [];
+                    this.journeyPlanList = res.data as [] || [];
 
                 },
                 (error) => {
                     console.log(error);
                 },
                 () => this.alertService.fnLoading(false)
-            );
+            );this.alertService.fnLoading(false)
+    }
+    private fnJourneyPlanListPaging(index, pageSize) {
+
+        this.alertService.fnLoading(true);
+
+        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize)
+            .subscribe(
+                (res) => this.journeyPlanList = res.data as [] || [],
+                (error) => console.log(error),
+                () => this.alertService.fnLoading(false)
+            )
     }
 
     detail(plan) {
         this.router.navigate(["/journey-plan/detail", plan.id]);
     }
 
-     add() {
+    add() {
         this.router.navigate(['/journey-plan/add']);
     }
 
-     edit(id: number) {
+    edit(id: number) {
         console.log('edit plan', id);
         this.router.navigate(['/journey-plan/add/' + id]);
     }
 
-     delete(id: number) {
+    delete(id: number) {
         console.log("Id:", id);
-         this.alertService.confirm("Are you sure you want to delete this item?", () => {
-             this.alertService.fnLoading(true);
+        this.alertService.confirm("Are you sure you want to delete this item?", () => {
+            this.alertService.fnLoading(true);
             this.journeyPlanService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);

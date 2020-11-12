@@ -7,7 +7,7 @@ const routes: Routes = [
     {
         path: '',
         component: BaseLayoutComponent,
-        canActivate: [AuthGuard],
+       // canActivate: [AuthGuard],
         children: [
 
             { path: '', redirectTo: 'menu' },
@@ -28,8 +28,7 @@ const routes: Routes = [
             { path: 'journey-plan', loadChildren: () => import('./JourneyPlan/journeyPlan.module').then(m => m.JourneyPlanModule) },
             { path: 'dealer', loadChildren: () => import('./FocusDealer/focusDealer.module').then(m => m.FocusDealerModule) },
             { path: 'painter', loadChildren: () => import('./PainterRegis/painter-regis.module').then(m => m.PainterRegisModule) },
-
-
+            { path: 'scheme', loadChildren: () => import('./Scheme/scheme.module').then(m => m.SchemeModule) },
 
         ]
     }

@@ -48,7 +48,8 @@ namespace Berger.Data.MsfaEntity.Users
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-     
+
+        
 
         public string LoginName { get; set; }
         public string LoginNameWithDomain { get; set; }

@@ -14,10 +14,12 @@
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
 	<NullableReferenceTypes>true</NullableReferenceTypes>
   <LangVersion>8.0</LangVersion>
+  <UserSecretsId>212e803b-d53a-48c3-8b0e-c6abafd990e3</UserSecretsId>
   <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
@@ -88,6 +90,8 @@
 
     <None Remove="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
 
+    <None Remove="ClientApp\src\app\Shared\Entity\Scheme\SchemeMaster.ts" />
+
     <None Remove="ClientApp\src\app\Shared\Entity\Users\role.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Users\userInfo.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Users\userrolemapping.ts" />
@@ -103,6 +107,8 @@
     <None Remove="ClientApp\src\app\Shared\Enums\yesno.ts" />
 
     <None Remove="ClientApp\src\app\Shared\Pipes\status-filter.pipe.ts" />
+
+    <None Remove="ClientApp\src\app\Shared\Services\Scheme\SchemeService.ts" />
 
   </ItemGroup>
 
@@ -128,6 +134,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Scheme\SchemeMaster.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\role.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\userInfo.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\userrolemapping.ts" />
@@ -140,6 +147,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\statusTypes.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\yesno.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Pipes\status-filter.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Services\Scheme\SchemeService.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

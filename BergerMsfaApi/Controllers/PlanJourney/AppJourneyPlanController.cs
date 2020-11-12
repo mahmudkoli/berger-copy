@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Security.Principal;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Core;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -40,11 +39,13 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpPost("CreateJourneyPlan")]
-        public async Task<IActionResult> CreateJourneyPlan([FromBody] PortalCreateJouneryModel model)
+        public async Task<IActionResult>CreateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
+                //have to check from app if there is any existing plan create same date and login employee;
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
+
                 var result = await _journeyService.AppCreateJourneyPlan(model);
                 return OkResult(result);
             }
@@ -54,8 +55,31 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
+        [HttpGet("CheckHasAlreadyPlan/{employeeId}/{visitDate}")]
+        public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string visitDate)
+        {
+            try
+            {
+                DateTime _visitDate;
+                if (!DateTime.TryParse(visitDate, out _visitDate))
+                {
+                    ModelState.AddModelError(nameof(visitDate), "input visitDate correct format (yyyy-mm-dd)");
+                    return ValidationResult(ModelState);
+                }
+                  
+                return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId, _visitDate));
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+           
+
+        }
+
         [HttpPost("UpdateJourneyPlan")]
-        public async Task<IActionResult>  UpdateJourneyPlan([FromBody] PortalCreateJouneryModel model)
+        public async Task<IActionResult> UpdateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
