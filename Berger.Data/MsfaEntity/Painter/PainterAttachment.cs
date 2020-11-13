@@ -11,8 +11,6 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string Path { get; set; }
         public long Size { get; set; }
         public string Format { get; set; }
-
- 
         public int PainterId { get; set; }
       
 

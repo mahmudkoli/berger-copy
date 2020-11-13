@@ -107,6 +107,8 @@
     <Compile Remove="Migrations\20201112101540_RemovePainterRef.Designer.cs" />
     <Compile Remove="Migrations\20201112104555_RemovePainterRef.cs" />
     <Compile Remove="Migrations\20201112104555_RemovePainterRef.Designer.cs" />
+    <Compile Remove="Migrations\20201113065025_UpdatePainterCallEntity.cs" />
+    <Compile Remove="Migrations\20201113065025_UpdatePainterCallEntity.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -166,6 +166,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return mapper.Map<List<PainterModel>>(_painters);
         }
 
+    
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
             try
@@ -285,6 +286,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 AttachedDealerCd = 1
             };
         }
+
+      
         #endregion
 
     }
