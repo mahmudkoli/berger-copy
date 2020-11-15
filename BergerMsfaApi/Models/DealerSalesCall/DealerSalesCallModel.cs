@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Models.DealerSalesCall
 
         //public EnumRatings SecondarySalesRatings { get; set; }
         public int SecondarySalesRatingsId { get; set; }
-        public DropdownDetail SecondarySalesRatings { get; set; }
+        //public DropdownDetail SecondarySalesRatings { get; set; }
         public string SecondarySalesReasonTitle { get; set; }
         public string SecondarySalesReasonRemarks { get; set; }
 
@@ -164,11 +164,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         //public Attachment CompetitionSchemeModalityImage { get; set; }
         public IFormFile CompetitionSchemeModalityImageFile { get; set; }
         public string CompetitionShopBoysComments { get; set; }
-        public IList<DealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
+        public IList<SaveDealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
 
         public bool HasDealerSalesIssue { get; set; }
         //public EnumDealerSalesIssue? EnumDealerSalesIssue { get; set; }
-        public IList<DealerSalesIssueModel> DealerSalesIssues { get; set; }
+        public IList<SaveDealerSalesIssueModel> DealerSalesIssues { get; set; }
 
         //public EnumSatisfaction DealerSatisfaction { get; set; }
         public int DealerSatisfactionId { get; set; }
