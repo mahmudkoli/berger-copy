@@ -70,13 +70,13 @@ namespace BergerMsfaApi.Extensions
                        {
                            Id = Guid.NewGuid().ToString().ToLower(),
                            ErrorTime = dateTime,
-                           FileName = Path.GetFileName(frame.GetFileName()),
-                           MethodName = frame.GetMethod().Name,
-                           LineNumber = frame.GetFileLineNumber(),
+                           FileName = frame != null ? Path.GetFileName(frame.GetFileName()) : null,
+                           MethodName = frame != null ? frame.GetMethod() != null ? frame.GetMethod().Name : null : null,
+                           LineNumber = frame != null ? frame.GetFileLineNumber() : 0,
                            Message = ex.Message,
-                           ColumnNumber = frame.GetFileColumnNumber(),
-                           EntityName = declaringType != null ? declaringType.Name : frame.GetFileName(),
-                           EntityFullName = declaringType != null ? declaringType.FullName : frame.GetFileName(),
+                           ColumnNumber = frame != null ? frame.GetFileColumnNumber() : 0,
+                           EntityName = declaringType != null ? declaringType.Name : frame != null ? frame.GetFileName() : null,
+                           EntityFullName = declaringType != null ? declaringType.FullName : frame != null ? frame.GetFileName() : null,
                            StackTrace = ex.StackTrace,
                        };
 

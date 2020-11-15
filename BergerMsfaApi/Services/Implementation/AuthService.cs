@@ -108,6 +108,16 @@ namespace BergerMsfaApi.Services.Implementation
                 {
                     userId=AppIdentity.AppUser.UserId,
                     fullName=AppIdentity.AppUser.FullName,
+                    planIds = userInfo.plantIds,
+                    planId = userInfo.plantIds.FirstOrDefault(),
+                    salesOfficeIds = userInfo.saleOfficeIds,
+                    salesOfficeId = userInfo.saleOfficeIds.FirstOrDefault()??"",
+                    areaIds = userInfo.areaIds,
+                    areaId = userInfo.areaIds.FirstOrDefault()??"",
+                    territoryIds = userInfo.territoryIds,
+                    territoryId = userInfo.territoryIds.FirstOrDefault()??"",
+                    zoneIds = userInfo.zoneIds,
+                    zoneId = userInfo.zoneIds.FirstOrDefault()??"",
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo
                 };
