@@ -16,12 +16,12 @@ namespace BergerMsfaApi.Controllers.Common
         {
             _commonSvc = commonSvc;
         }
-        [HttpGet("GetDealList")]
-        public async Task<IActionResult> GetDealerList()
+        [HttpGet("GetDealList/{territory}")]
+        public async Task<IActionResult> GetDealerList(string territory)
         {
             try
             {
-                var result = await _commonSvc.GetDealerInfoList();
+                var result = await _commonSvc.GetDealerInfoList(territory);
                 return OkResult(result);
             }
             catch (Exception ex)
