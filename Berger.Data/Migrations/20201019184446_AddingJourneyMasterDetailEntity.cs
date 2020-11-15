@@ -21,6 +21,7 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     EmployeeId = table.Column<int>(nullable: false),
+                    LineManagerId = table.Column<int>(nullable: true),
                     PlanDate = table.Column<DateTime>(nullable: false),
                     ApprovedById = table.Column<int>(nullable: false),
                     ApprovedDate = table.Column<DateTime>(nullable: false),

@@ -558,8 +558,8 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PainterId")
-                        .HasColumnType("int");
+                    //b.Property<int?>("PainterId")
+                    //    .HasColumnType("int");
 
                     b.Property<int>("ParentId")
                         .HasColumnType("int");
@@ -584,7 +584,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PainterId");
+                    //b.HasIndex("PainterId");
 
                     b.ToTable("Attachments");
                 });
@@ -1441,9 +1441,9 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Attachment", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("PainterId");
+                    //b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", null)
+                    //    .WithMany("Attachments")
+                    //    .HasForeignKey("PainterId");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Painter", b =>

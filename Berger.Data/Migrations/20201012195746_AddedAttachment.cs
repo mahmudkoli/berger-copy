@@ -21,29 +21,29 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Size = table.Column<int>(nullable: false),
+                    Size = table.Column<float>(nullable: false),
                     Format = table.Column<string>(nullable: true),
-                    PainterId = table.Column<int>(nullable: true)
+                    Path = table.Column<string>(nullable: true),
+                    TableName = table.Column<string>(nullable: true),
+
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Attachments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Attachments_Painters_PainterId",
-                        column: x => x.PainterId,
-                        principalTable: "Painters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                    //table.ForeignKey(
+                    //    name: "FK_Attachments_Painters_PainterId",
+                    //    column: x => x.PainterId,
+                    //    principalTable: "Painters",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.NoAction);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Attachments_PainterId",
-                table: "Attachments",
-                column: "PainterId");
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+           
             migrationBuilder.DropTable(
                 name: "Attachments");
         }

@@ -24,6 +24,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.AutoRegisterDi;
+using AutoMapper;
 
 namespace BergerMsfaApi
 {
@@ -80,6 +81,8 @@ namespace BergerMsfaApi
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Service"))
                     .AsPublicImplementedInterfaces();
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             //cache
             services.AddMemoryCache();

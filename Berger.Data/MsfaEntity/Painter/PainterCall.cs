@@ -6,15 +6,18 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 {
     public class PainterCall:AuditableEntity<int>
     {
-        public bool SchemeComnunaction { get; set; }
-        public bool PremiumProtBriefing { get; set; }
-        public bool NewProBriefing { get; set; }
-        public bool UsageEftTools { get; set; }
-        public bool AppUsage { get; set; }
-        public string Number { get; set; }
+        public bool HasSchemeComnunaction { get; set; }
+        public bool HasPremiumProtBriefing { get; set; }
+        public bool HasNewProBriefing { get; set; }
+        public bool HasUsageEftTools { get; set; }
+        public bool HasAppUsage { get; set; }
+        public decimal WorkInHandNumber { get; set; }
+        public bool HasDbblIssue { get; set; }
+        public string Comment { get; set; }
         public int PainterId { get; set; }
         [ForeignKey("PainterId")]
         public Painter Painter { get; set; }
+        public int EmployeeId { get; set; }
         public List<PainterCompanyMTDValue> PainterCompanyMTDValue { get; set; }
     }
 }
