@@ -51,6 +51,8 @@
     <Compile Remove="Migrations\20201109131748_PainterCallUpdate_1.Designer.cs" />
     <Compile Remove="Migrations\20201110063822_UpdateDealerOpeingEntity.cs" />
     <Compile Remove="Migrations\20201110063822_UpdateDealerOpeingEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201115054618_modifiedDealerInfo.cs" />
+    <Compile Remove="Migrations\20201115054618_modifiedDealerInfo.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
