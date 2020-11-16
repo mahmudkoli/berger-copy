@@ -38,7 +38,7 @@ export class UserInfoInsertComponent implements OnInit {
     territories:any[]=[]
     changeStatus = Status;
     statusKeys: any[] = [];
-
+    adError: string;
 
 
     constructor(
