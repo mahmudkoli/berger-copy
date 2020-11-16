@@ -26,6 +26,11 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         private string CompoKey;
+
+        public string SalesOffice { get; set; }
+        public string Area { get; set; }
+        public string Zone { get; set; }
+
         [NotMapped] 
         public string CompositeKey
         {

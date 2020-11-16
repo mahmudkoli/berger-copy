@@ -9,12 +9,32 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
 {
     public interface IPaintCallService
     {
+        #region App
+        Task<IEnumerable<PainterCallModel>> AppGetPainterCallListAsync();
+        Task<PainterCallModel> AppGetPainterByIdAsync(int Id);
+        Task<PainterCallModel> AppGetPainterByPainterIdAsync(int PainterId);
+
+        Task<PainterCallModel> AppCreatePainterCallAsync(PainterCallModel model);
+        Task<PainterCallModel> AppUpdatePainterCallAsync(PainterCallModel model);
+        #endregion
+
+        #region Portal
+        Task<PainterCallModel> GetPainterByIdAsync(int PainterId);
         Task<IEnumerable<PainterCallModel>> GetPainterCallListAsync();
         Task<PainterCallModel> CreatePainterCallAsync(PainterCallModel model);
         Task<PainterCallModel> UpdatePainterCallAsync(PainterCallModel model);
+        #endregion
+
+        #region Common
         Task<bool> IsExistAsync(int Id);
-        Task<PainterCallModel> GetPainterByIdAsync(int PainterId);
+
         Task<int> DeletePainterCallByIdlAsync(int PainterId);
+        #endregion
+
+
+
+
+
 
     }
 }

@@ -7,10 +7,10 @@ namespace Berger.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "DealerOpeningId",
-                table: "Attachments",
-                nullable: true);
+            //migrationBuilder.AddColumn<int>(
+            //    name: "DealerOpeningId",
+            //    table: "Attachments",
+            //    nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "DealerOpenings",
@@ -26,47 +26,48 @@ namespace Berger.Data.Migrations
                     WorkflowId = table.Column<int>(nullable: true),
                     WFStatus = table.Column<int>(nullable: false),
                     BusinessArea = table.Column<string>(nullable: true),
-                    SaleOffice = table.Column<string>(nullable: true),
-                    SaleGroup = table.Column<string>(nullable: true),
-                    TerritoryNo = table.Column<string>(nullable: true),
-                    ZoneNo = table.Column<string>(nullable: true),
-                    EmployeId = table.Column<string>(nullable: true)
+                    SaleOfficeCd = table.Column<string>(nullable: true),
+                    SaleGroupCd = table.Column<string>(nullable: true),
+                    TerritoryNoCd = table.Column<string>(nullable: true),
+                    ZoneNoCd = table.Column<string>(nullable: true),
+                    EmployeId = table.Column<int>(nullable: false),
+                    LineManagerId= table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DealerOpenings", x => x.Id);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Attachments_DealerOpeningId",
-                table: "Attachments",
-                column: "DealerOpeningId");
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_Attachments_DealerOpeningId",
+            //    table: "Attachments",
+            //    column: "DealerOpeningId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Attachments_DealerOpenings_DealerOpeningId",
-                table: "Attachments",
-                column: "DealerOpeningId",
-                principalTable: "DealerOpenings",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Attachments_DealerOpenings_DealerOpeningId",
+            //    table: "Attachments",
+            //    column: "DealerOpeningId",
+            //    principalTable: "DealerOpenings",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Attachments_DealerOpenings_DealerOpeningId",
-                table: "Attachments");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_Attachments_DealerOpenings_DealerOpeningId",
+            //    table: "Attachments");
 
             migrationBuilder.DropTable(
                 name: "DealerOpenings");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Attachments_DealerOpeningId",
-                table: "Attachments");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Attachments_DealerOpeningId",
+            //    table: "Attachments");
 
-            migrationBuilder.DropColumn(
-                name: "DealerOpeningId",
-                table: "Attachments");
+            //migrationBuilder.DropColumn(
+            //    name: "DealerOpeningId",
+            //    table: "Attachments");
         }
     }
 }
