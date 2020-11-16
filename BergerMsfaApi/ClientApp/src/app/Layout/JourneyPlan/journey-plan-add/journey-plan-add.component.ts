@@ -80,17 +80,19 @@ export class JourneyPlanAddComponent implements OnInit {
 
     private insert(journeyPlan: JourneyPlan) {
         this.alertService.fnLoading(true);
-        this.journeyPlanService.create(journeyPlan).subscribe(res => {
-            console.log("JourneyPlan res: ", res);
-            this.router.navigate(['/journey-plan/list']).then(() => {
-                this.alertService.tosterSuccess("JourneyPlan has been created successfully.");
-            });
-        },
+        this.journeyPlanService.create(journeyPlan).subscribe(
+            (res) => {
+                console.log("JourneyPlan res: ", res);
+                this.router.navigate(['/journey-plan/list']).then(
+                    () => {
+                        this.alertService.tosterSuccess("JourneyPlan has been created successfully.");
+                    });
+            },
             (error) => {
                 console.log(error);
                 this.displayError(error);
-            }, () => this.alertService.fnLoading(false)
-        );
+            },
+        ).add(() => this.alertService.fnLoading(false));
     }
 
     private update(model: JourneyPlan) {
@@ -104,8 +106,8 @@ export class JourneyPlanAddComponent implements OnInit {
             (error) => {
                 console.log(error);
                 this.displayError(error);
-            }, () => this.alertService.fnLoading(false)
-        );
+            }
+        ).add(() => this.alertService.fnLoading(false));;
     }
 
     private editForm(journeyPlan: JourneyPlan) {

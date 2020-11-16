@@ -1,6 +1,4 @@
 ﻿using Berger.Data.Common;
-using Berger.Data.MsfaEntity.Hirearchy;
-using Berger.Data.MsfaEntity.Setup;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,7 +8,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
     public class Painter :AuditableEntity<int>    {
         public Painter()
         {
-           Attachments= new List<Attachment>();
+            Attachments = new List<PainterAttachment>();
         }
         public string DepotName { get; set; }
         public string SaleGroupCd { get; set; }
@@ -35,7 +33,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public float Loyality { get; set; }
         public int EmployeeId { get; set; }
 
-
+       public List<PainterAttachment> Attachments { get; set; } 
 
         //[ForeignKey("SaleGroupCd")]
         //public SaleGroup SaleGroup { get; set; }
@@ -51,7 +49,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         //[ForeignKey("AttachedDealerCd")]
         //   public DropdownDetail Dealer { get; set; }
 
-        public List<Attachment> Attachments { get; set; }
+       // public List<Attachment> Attachments { get; set; }
 
     }
 

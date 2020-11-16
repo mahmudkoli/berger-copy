@@ -150,7 +150,7 @@ namespace Berger.Data.MsfaEntity
 
         #region JourneyPlan&FocusDealer
         public DbSet<FocusDealer> FocusDealers { get; set; }
-
+        public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
         public DbSet<JourneyPlan> JourneyPlans { get; set; }
         public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
         public DbSet<JourneyPlanDetail> JourneyPlanDetails { get; set; }
@@ -160,6 +160,7 @@ namespace Berger.Data.MsfaEntity
         #region Painter
         public DbSet<PainterCompanyMTDValue> PainterCompanyMTDValues { get; set; }
         public DbSet<Painter> Painters { get; set; }
+        public DbSet<PainterAttachment> PainterAttachments { get; set; }
         public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         #endregion

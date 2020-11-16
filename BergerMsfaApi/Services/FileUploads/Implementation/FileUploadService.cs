@@ -62,7 +62,13 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetFolderPath(type);
+            string filePath = Path.Combine("uploads", "images");
+            switch (type)
+            {
+                case FileUploadCode.RegisterPainter:
+                    filePath = Path.Combine(filePath, "Painters");
+                    break;
+            }
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));

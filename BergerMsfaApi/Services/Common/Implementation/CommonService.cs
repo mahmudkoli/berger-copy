@@ -1,5 +1,6 @@
 ﻿using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity;
+using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
@@ -27,17 +28,22 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<Territory> _territorySvc;
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
+        private readonly IRepository<FocusDealer> _focusDealerSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
+
             IRepository<Zone> zoneSvc,
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
             IRepository<SaleOffice> saleOfficeSvc,
             IRepository<Role> roleSvc,
             IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
-            IRepository<Depot> depotSvc
+            IRepository<Depot> depotSvc,
+            IRepository<FocusDealer> focusDealerSvc
+
             )
         {
+            _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
             _zoneSvc = zoneSvc;
             _territorySvc = territorySvc;
@@ -55,7 +61,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         }
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
         {
-            // var result = await _journeyPlanDetailSvc.FindAllAsync(f => f.VisitDate<);
+            var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeRegId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()

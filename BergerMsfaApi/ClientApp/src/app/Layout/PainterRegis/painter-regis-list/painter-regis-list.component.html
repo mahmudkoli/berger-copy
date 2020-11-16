@@ -6,7 +6,15 @@
 </div>-->
 
 
-<p-table #dt [value]="painterList" [globalFilterFields]="['name','phone','depotName']">
+<p-table #dt 
+         [value]="painterList" 
+         [paginator]="true"
+         [showCurrentPageReport]="true"
+         [(first)]="first"
+         [rows]="rows"
+         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+         [rowsPerPageOptions]="[10,25,50]"
+         [globalFilterFields]="['name','phone','depotName']">
 <ng-template pTemplate="caption">
     <div class="table-header">
 
@@ -32,8 +40,8 @@
 <ng-template pTemplate="header">
     <tr>
      
-        <th pSortableColumn="'name'">Code <p-sortIcon field="'name'"></p-sortIcon></th>
-        <th pSortableColumn="'painterImage'">Painter <p-sortIcon field="'painterImage'"></p-sortIcon></th>
+        <th pSortableColumn="'painterName'">Painter Name <p-sortIcon field="'painterName'"></p-sortIcon></th>
+        <th pSortableColumn="'painterImageUrl'">Image <p-sortIcon field="'painterImageUrl'"></p-sortIcon></th>
         <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon></th>
         <th pSortableColumn="depotName">Depot Name <p-sortIcon field="depotName"></p-sortIcon></th>
 
@@ -46,10 +54,10 @@
 <ng-template pTemplate="body" let-painter>
     <tr>
 
-        <td>{{painter.name}}</td>
+        <td>{{painter.painterName}}</td>
         <td>
 
-            <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImage}}" width="60" style="vertical-align: middle; border-radius: 50%;" />
+            <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImageUrl}}" width="60" style="vertical-align: middle; border-radius: 50%;" />
 
         </td>
         <td>{{painter.phone}}</td>

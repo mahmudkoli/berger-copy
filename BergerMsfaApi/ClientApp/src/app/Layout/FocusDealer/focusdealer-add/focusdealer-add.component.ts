@@ -115,7 +115,7 @@ export class FocusdealerAddComponent implements OnInit {
 
     private getDealerList() {
         //hard code param for temporary
-        this.dynamicDropdownService.GetDropdownByTypeCd("D01").subscribe(
+        this.dynamicDropdownService.getDealerList().subscribe(
             (result: any) => {
                 this.dealerList = result.data;
             },

@@ -9,11 +9,24 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
 {
     public interface IDealerOpeningService
     {
+        #region App
+        Task<IEnumerable<DealerOpeningModel>> AppGetDealerOpeningListAsync();
+        Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model);
+        Task<DealerOpeningModel> AppUpdateDealerOpeningAsync(DealerOpeningModel model);
+        #endregion
+
+        #region Portal
         Task<IEnumerable<DealerOpeningModel>> GetDealerOpeningListAsync();
-        Task<bool> IsExistAsync(int Id);
+     
         Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<int> DeleteDealerOpeningAsync(int DealerId);
+        #endregion
+
+        #region Common
+        Task<bool> IsExistAsync(int Id);
+        #endregion
+
 
 
     }
