@@ -1,6 +1,7 @@
 ﻿using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Models.Painter;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BergerMsfaApi.Models.PainterRegistration
 {
@@ -27,6 +28,8 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string PassportNo { get; set; }
         public string NationalIdNo { get; set; }
         public string BrithCertificateNo { get; set; }
+        [RegularExpression("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$",
+            ErrorMessage ="painter image must be properly base64 formatted.")]
         public string PainterImageUrl { get; set; }
         public int AttachedDealerCd { get; set; }
         public string AttachedDealer { get; set; }

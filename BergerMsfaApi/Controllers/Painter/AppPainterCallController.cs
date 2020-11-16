@@ -10,7 +10,7 @@ namespace BergerMsfaApi.Controllers.Painter
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v1{v:apiVersion}/[controller]")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     public class AppPainterCallController : BaseController
     {
         private readonly IPaintCallService _paintCallSvc;

@@ -49,6 +49,9 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
         {
             try
             {
+                //var  buffer = new Span<byte>(new byte[model.PainterImageUrl.Length]);
+                //Convert.TryFromBase64String(model.PainterImageUrl, buffer, out int bytesParsed);
+                //^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _painterSvc.AppCreatePainterAsync(model);
                 return OkResult(result);
@@ -78,7 +81,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
         {
             try
             {
-                if (!string.IsNullOrEmpty(Phone))
+                if (string.IsNullOrEmpty(Phone))
                 {
                     ModelState.AddModelError(nameof(Phone), "phone can not be empty ");
                     return ValidationResult(ModelState);

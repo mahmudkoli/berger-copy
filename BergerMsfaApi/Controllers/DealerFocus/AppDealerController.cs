@@ -49,7 +49,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                
-                var result = await _commonSvc.AppGetDealerInfoList(EmployeeId);
+                var result = await _commonSvc.AppGetFocusDealerInfoList(EmployeeId);
                 return OkResult(result);
             }
             catch (Exception ex)

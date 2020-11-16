@@ -264,7 +264,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
-        public async Task<PainterModel> AppGetPainterByPhonesync(string Phone)
+        public async Task<dynamic> AppGetPainterByPhonesync(string Phone)
         {
             var mapper = new MapperConfiguration(cfg =>
             {
@@ -274,17 +274,22 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 cfg.CreateMap<Painter, PainterModel>();
 
             }).CreateMapper();
-
-            return new PainterModel
-            {
-                Id = 1,
-                Phone = Phone,
-                TerritroyCd = "TerritroyCd",
-                ZoneCd = "ZoneCd",
-                PainterCatId = 1,
-                PainterCat = "PainterCat",
-                AttachedDealerCd = 1
-            };
+          //  sp_GetPainterDataByPhone phone
+             var param= new Dictionary<string, object>();
+            param.Add("@phone", Phone);
+            var result = _painterSvc.DynamicListFromSql("sp_GetPainterDataByPhone", param, true);
+            return result;
+            //return new PainterModel
+            //{
+            //    Id = 1,
+            //    Phone = Phone,
+            //    DepotName= "Dhaka Factory",
+            //    TerritroyCd = "Territory 001",
+            //    ZoneCd = "Zone 100",
+            //    PainterCatId = 1,
+            //    AttachedDealerCd = 1,
+            //    Loyality=12.0f
+            //};
         }
 
       
