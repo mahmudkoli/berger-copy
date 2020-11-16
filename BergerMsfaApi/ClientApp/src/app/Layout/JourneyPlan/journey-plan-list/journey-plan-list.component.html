@@ -14,20 +14,16 @@
             <div class="row">
                 <div class="col-md-4">
                     Journey Plan List
-                    <span class="p-mb-3">
-                        <p-button  icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
-                        <p-button  icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text"></p-button>
-                        <p-button  icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
-                    </span>
                 </div>
 
                 <div class="col-md-4 offset-md-4">
-                    <button class="btn btn-sm btn-primary ml-2 pull-right" (click)="add()">New Record</button>
-                    <span class="p-input-icon-right  pull-right">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
-                    </span>
-
+                    <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
+                    <div>
+                        <span class="p-input-icon-right m-2 pull-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -48,6 +44,7 @@
         <tr>
             <td>{{jPlan.planDate| date }}</td>
             <td>
+
                 {{jPlan.status|msfaStatus}}
                 <!--<div ngbDropdown class="d-inline-block">
                     <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
@@ -66,13 +63,13 @@
             </td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="summary">
-        <p-paginator 
-                      [rows]="10" 
+    <!--<ng-template pTemplate="summary">
+        <p-paginator
+                      [rows]="10"
                       [totalRecords]="100"
-                      pageLinkSize="5" 
+                      pageLinkSize="5"
                       [rowsPerPageOptions]="[10,20,30]"
                       (onPageChange)="paginate($event)"
                      ></p-paginator>
-    </ng-template>
+    </ng-template>-->
 </p-table>

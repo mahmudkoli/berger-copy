@@ -238,7 +238,18 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             {
                 await _fileUploadSvc.DeleteImageAsync(item.Path);
                 await _painterAttachmentSvc.DeleteAsync(f => f.Id == item.Id);
+              
             }
+
+            foreach (var attach in _painter.Attachments)
+            {
+                if (!string.IsNullOrEmpty(attach.Path))
+                {
+                    var path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = path;
+                }
+            }
+            
             var result = await _painterSvc.UpdateAsync(_painter);
             return mapper.Map<PainterModel>(result);
         }

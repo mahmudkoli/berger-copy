@@ -97,9 +97,9 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
 
             var result = new List<JourneyPlanDetailModel>();
-            var user = await _userInfoSvc.FindAsync(f => f.EmployeeId == "1");
-            if (user.LinemanagerId.HasValue == false) return result;
-            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == int.Parse(user.EmployeeId));
+            //var user = await _userInfoSvc.FindAsync(f => f.EmployeeId =="1");
+            //if (user.LinemanagerId.HasValue == false) return result;
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.LineManagerId ==0 /*AppIdentity.AppUser.EmployeeId*/);
 
             result = planList.Select(s => new JourneyPlanDetailModel
             {

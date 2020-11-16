@@ -4,6 +4,7 @@
 export class Painter {
 
     public depotName: string;
+    public painterName: string;
     public saleGroup: string;
     public Address: string;
     public Phone: string;
@@ -11,7 +12,7 @@ export class Painter {
     public AccNumber: string;
     public AccHolderName: string;
     public PersonlIdentityNo: string;
-    public PainterImage: string;
+    public painterImageUrl: string;
     public IsAppInstalled: boolean;
     public Remark: string;
     public AvgMonthlyVal: number;

@@ -70,7 +70,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         {
 
             try
-            {
+            { 
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 else if (!await _focusDealerService.IsExistAsync(model.Id))
                 {

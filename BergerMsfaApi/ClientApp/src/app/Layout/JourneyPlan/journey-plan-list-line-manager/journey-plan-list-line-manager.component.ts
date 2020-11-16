@@ -49,9 +49,9 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
-                },
-                () => this.alertService.fnLoading(false)
-            )
+                }
+
+            ).add(() => this.alertService.fnLoading(false));
         }, () => {
 
         });
@@ -82,9 +82,8 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
-                },
-                () => this.alertService.fnLoading(false)
-            );
+                }
+            ).add(() => this.alertService.fnLoading(false));
     }
 
     openModal(plan) {
@@ -102,7 +101,8 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
      delete(id: number) {
         console.log("Id:", id);
-        this.alertService.confirm("Are you sure you want to delete this item?", () => {
+         this.alertService.confirm("Are you sure you want to delete this item?", () => {
+             this.alertService.fnLoading(true);
             this.journeyPlanService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);
@@ -112,7 +112,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 (error) => {
                     console.log(error);
                 }
-            );
+            ).add(() => this.alertService.fnLoading(false));
         }, () => {
 
         });
