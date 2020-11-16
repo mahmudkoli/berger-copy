@@ -40,7 +40,7 @@ export class PainterRegisDetailComponent implements OnInit {
         );
     }
     back() {
-        this.router.navigate(['painter/list']);
+        this.router.navigate(['painter/register-list']);
     }
 
 }

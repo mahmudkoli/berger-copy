@@ -90,6 +90,9 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 case FileUploadCode.AuditReport:
                     filePath = Path.Combine(filePath, "AuditReports");
                     break;
+                case FileUploadCode.RegisterPainter:
+                    filePath = Path.Combine(filePath, "Painters");
+                    break;
                 default:
                     break;
             }

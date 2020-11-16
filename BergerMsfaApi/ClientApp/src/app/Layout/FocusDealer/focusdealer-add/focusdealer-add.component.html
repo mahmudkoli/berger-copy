@@ -14,7 +14,7 @@
                     <div class="position-relative form-group">
                         <label for="name">Dealer</label>
                         <select required class="form-control" name="code" #code="ngModel" [(ngModel)]="focusDealerModel.code">
-                            <option *ngFor="let option of dealerList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
+                            <option *ngFor="let option of dealerList" [value]="option.id">{{option.customerName}}-{{option.dropdownName}}</option>
                         </select>
                     </div>
                 </div>
