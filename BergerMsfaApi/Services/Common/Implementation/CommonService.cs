@@ -1,4 +1,5 @@
-﻿using Berger.Data.MsfaEntity;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
@@ -10,6 +11,8 @@ using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.Common.Implementation
@@ -87,6 +90,21 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var result= await _roleSvc.GetAllAsync();
             return result.ToMap<Role, RoleModel>();
+        }
+
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+            {
+                [EnumUserCategory.Plan.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
+                [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.Area),
+                [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),
+                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.Zone)
+            };
+
+            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
+            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
     }
 }
