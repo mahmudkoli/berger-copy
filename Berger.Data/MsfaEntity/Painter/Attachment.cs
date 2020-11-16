@@ -9,6 +9,46 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
     [Table("Attachments")]
     public class Attachment:AuditableEntity<int>
     {
+
+
+        public Attachment()
+        {
+
+        }
+
+        public Attachment(int parentId, string tableName, string path)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name, string format)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+            this.Format = format;
+        }
+
+        public Attachment(int parentId, string tableName, string path, string name, string format, long size)
+        {
+            this.ParentId = parentId;
+            this.TableName = tableName;
+            this.Path = path;
+            this.Name = name;
+            this.Format = format;
+            this.Size = size;
+        }
         public string Name { get; set; }
         public string Path { get; set; }
         public long Size { get; set; }

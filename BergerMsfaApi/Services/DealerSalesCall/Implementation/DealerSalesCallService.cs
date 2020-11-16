@@ -92,7 +92,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var path = await _fileUploadService.SaveImageAsync(file, fileName, type);
 
-            var attachment = new Attachment(0, nameof(DSC.DealerSalesCall), path, fileName, Path.GetExtension(file.FileName), file.Length);
+            var attachment = new Attachment(0, nameof(DSC.DealerSalesCall), path, fileName,
+                Path.GetExtension(file.FileName), file.Length);
 
             return attachment;
         }
