@@ -65,19 +65,8 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             string filePath = Path.Combine("uploads", "images");
             switch (type)
             {
-                case FileUploadCode.POSMProduct:
-                    filePath = Path.Combine(filePath, "POSMProducts");
-                    break;
-                case FileUploadCode.POSMReport:
-                    filePath = Path.Combine(filePath, "POSMReports");
-                    break;
-                case FileUploadCode.AuditReport:
-                    filePath = Path.Combine(filePath, "AuditReports");
-                    break;
                 case FileUploadCode.RegisterPainter:
                     filePath = Path.Combine(filePath, "Painters");
-                    break;
-                default:
                     break;
             }
 
