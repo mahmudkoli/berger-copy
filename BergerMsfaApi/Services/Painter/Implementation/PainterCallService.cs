@@ -30,7 +30,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>();
 
             }).CreateMapper();
 
@@ -44,7 +44,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
 
@@ -65,7 +65,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
+              
 
             }).CreateMapper();
             var painterCall = await _painterCallSvc.FindIncludeAsync(f => f.PainterId == PainterId, f => f.PainterCompanyMTDValue);
@@ -78,7 +79,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
+            
 
             }).CreateMapper();
             var result = await _painterCallSvc.GetAllInclude(f => f.PainterCompanyMTDValue).ToListAsync();
@@ -94,7 +96,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
+                
+               
 
             }).CreateMapper();
             var result = await _painterCallSvc.GetAllInclude(f => f.PainterCompanyMTDValue).ToListAsync();
@@ -107,7 +111,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
        
@@ -119,7 +123,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
 
@@ -131,7 +135,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
 
@@ -145,7 +149,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
-                config.CreateMap<PainterCall, PainterCallModel>().ForMember(dest => dest.PainterCompanyMTDValueModel, src => src.MapFrom(m => m.PainterCompanyMTDValue)).ReverseMap();
+                config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
 
