@@ -1270,6 +1270,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
@@ -1315,6 +1318,9 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -1329,6 +1335,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

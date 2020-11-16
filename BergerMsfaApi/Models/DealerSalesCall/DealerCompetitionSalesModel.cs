@@ -14,7 +14,7 @@ namespace BergerMsfaApi.Models.DealerSalesCall
     public class DealerCompetitionSalesModel : IMapFrom<DealerCompetitionSales>
     {
         public int DealerSalesCallId { get; set; }
-        public DealerSalesCallModel DealerSalesCall { get; set; }
+        //public DealerSalesCallModel DealerSalesCall { get; set; }
 
         public int CompanyId { get; set; }
         public DropdownModel Company { get; set; }
@@ -27,6 +27,23 @@ namespace BergerMsfaApi.Models.DealerSalesCall
             profile.CreateMap<DealerCompetitionSalesModel, DealerCompetitionSales>();
             profile.CreateMap<DropdownDetail, DropdownModel>();
             profile.CreateMap<DropdownModel, DropdownDetail>();
+        }
+    }
+
+    public class SaveDealerCompetitionSalesModel : IMapFrom<DealerCompetitionSales>
+    {
+        //public int DealerSalesCallId { get; set; }
+        //public DealerSalesCallModel DealerSalesCall { get; set; }
+
+        public int CompanyId { get; set; }
+        //public DropdownModel Company { get; set; }
+        public decimal AverageMonthlySales { get; set; }
+        public decimal ActualAMDSales { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<DealerCompetitionSales, SaveDealerCompetitionSalesModel>();
+            profile.CreateMap<SaveDealerCompetitionSalesModel, DealerCompetitionSales>();
         }
     }
 }
