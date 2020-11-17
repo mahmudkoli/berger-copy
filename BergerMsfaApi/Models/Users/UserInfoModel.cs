@@ -13,7 +13,7 @@ namespace BergerMsfaApi.Models.Users
             this.RegionNodeIds = new List<int>();
             this.NationalNodeIds = new List<int>();
 
-            plantIds = new List<int>();
+            plantIds = new List<string>();
             RoleIds = new List<int>();
             areaIds = new List<string>();
             zoneIds = new List<string>();
@@ -75,7 +75,7 @@ namespace BergerMsfaApi.Models.Users
         public List<int> TerritoryNodeIds { get; set; }
         public List<int> AreaNodeIds { get; set; }
         public List<int> RegionNodeIds { get; set; }
-        public List<int> plantIds { get; set; }
+        public List<string> plantIds { get; set; }
         public List<string> areaIds { get; set; }
         public List<string> zoneIds { get; set; }
         public List<string> saleOfficeIds { get; set; }
