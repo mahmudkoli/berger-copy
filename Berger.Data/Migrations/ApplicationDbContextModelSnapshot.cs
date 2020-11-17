@@ -483,6 +483,17 @@ namespace Berger.Data.Migrations
                     b.ToTable("JourneyPlanMasters");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CreditControlArea", b =>
+                {
+                    b.Property<string>("CreditContrlArea")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("CreditControlAreas");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
                 {
                     b.Property<int>("Id")
