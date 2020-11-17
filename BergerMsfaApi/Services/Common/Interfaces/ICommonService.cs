@@ -19,6 +19,7 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<DealerInfoModel>> GetDealerInfoList(string territory);
         #endregion
 
+        Task<IEnumerable<UserInfoModel>> GetEmployeeList();
         Task<IEnumerable<SaleOffice>> GetSaleOfficeList();
         Task<IEnumerable<SaleGroup>> GetSaleGroupList();
         Task<IEnumerable<Territory>> GetTerritoryList();
