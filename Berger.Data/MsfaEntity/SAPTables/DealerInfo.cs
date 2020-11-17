@@ -17,7 +17,7 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public decimal TotalDue { get; set; }
         public string CustomerName { get; set; }
         public string CustZone { get; set; }
-        public string BusinessArea { get; set; }
+        public string BusinessArea { get; set; } // Plant
         public string Address { get; set; }
         public string ContactNo { get; set; }
         public string AccountGroup { get; set; }

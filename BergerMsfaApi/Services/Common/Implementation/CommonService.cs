@@ -102,7 +102,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                [EnumUserCategory.Plan.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
                 [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
                 [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.Area),
                 [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),

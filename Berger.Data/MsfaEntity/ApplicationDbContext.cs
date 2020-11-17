@@ -6,6 +6,7 @@ using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.PainterRegistration;
@@ -33,6 +34,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -118,7 +120,9 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
 
-
+        #region Master
+        public DbSet<Depot> Depots { get; set; }
+        #endregion
 
 
         #region Users
