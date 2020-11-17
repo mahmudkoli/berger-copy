@@ -13,17 +13,31 @@
                 <div class="col-md-4">
                     <div class="position-relative form-group">
                         <label for="name">Dealer</label>
-                        <select required class="form-control" name="code" #code="ngModel" [(ngModel)]="focusDealerModel.code">
+                        <ng-select [items]="dealerList"
+                                   bindLabel="customerName"
+                                   bindValue="id"
+                                   [multiple]="false"
+                                   [(ngModel)]="focusDealerModel.code"
+                                   name="code" #code="ngModel">
+                        </ng-select>
+                        <!--<select required class="form-control" name="code" #code="ngModel" [(ngModel)]="focusDealerModel.code">
                             <option *ngFor="let option of dealerList" [value]="option.id">{{option.customerName}}-{{option.dropdownName}}</option>
-                        </select>
+                        </select>-->
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="position-relative form-group">
                         <label for="name">Employee</label>
-                        <select required class="form-control" name="employeeRegId" #employeeRegId="ngModel" [(ngModel)]="focusDealerModel.employeeRegId">
-                            <option *ngFor="let option of employeeRegList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
-                        </select>
+                        <ng-select [items]="employeeRegList"
+                                   bindLabel="firstName"
+                                   bindValue="id"
+                                   [multiple]="false"
+                                   [(ngModel)]="focusDealerModel.employeeRegId"
+                                   name="employeeRegId" #employeeRegId="ngModel">
+                        </ng-select>
+                        <!--<select required class="form-control" name="employeeRegId" #employeeRegId="ngModel" [(ngModel)]="focusDealerModel.employeeRegId">
+                            <option *ngFor="let option of employeeRegList" [value]="option.id">{{option.name}}</option>
+                        </select>-->
                     </div>
                 </div>
                 <!--<div class="col-md-4">
@@ -41,13 +55,13 @@
                 <div class="col-md-4">
                     <div class="position-relative form-group">
                         <!--<label for="name">Valid To</label>
-            <input required name="validFrom" #validTo="ngModel"
-                   type="datetime" class="form-control"
-                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
-                   [(ngModel)]="focusDealerModel.validTo" />
-            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
-                Valid From is required
-            </small>-->
+                        <input required name="validFrom" #validTo="ngModel"
+                               type="datetime" class="form-control"
+                               [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
+                               [(ngModel)]="focusDealerModel.validTo" />
+                        <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
+                            Valid From is required
+                        </small>-->
 
                         <label for="name">Valid From</label>
                         <div class="input-group">
@@ -64,13 +78,13 @@
                 <div class="col-md-4">
                     <div class="position-relative form-group">
                         <!--<label for="name">Valid To</label>
-            <input required name="validFrom" #validTo="ngModel"
-                   type="datetime" class="form-control"
-                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
-                   [(ngModel)]="focusDealerModel.validTo" />
-            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
-                Valid From is required
-            </small>-->
+                        <input required name="validFrom" #validTo="ngModel"
+                               type="datetime" class="form-control"
+                               [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
+                               [(ngModel)]="focusDealerModel.validTo" />
+                        <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
+                            Valid From is required
+                        </small>-->
 
                         <label for="name">Valid To</label>
                         <div class="input-group">

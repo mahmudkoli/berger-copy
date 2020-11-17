@@ -9,6 +9,7 @@ namespace BergerMsfaApi.Services.Common.Interfaces
 {
     public interface ICommonService
     {
+        Task<IEnumerable<UserInfoModel>> GetEmployeeList();
         Task<IEnumerable<DealerInfoModel>> GetDealerInfoList();
         Task<IEnumerable<SaleOffice>> GetSaleOfficeList();
         Task<IEnumerable<SaleGroup>> GetSaleGroupList();

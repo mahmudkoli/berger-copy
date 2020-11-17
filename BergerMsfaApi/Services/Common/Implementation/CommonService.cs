@@ -26,10 +26,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
         private readonly IRepository<FocusDealer> _focusDealerSvc;
+        private readonly IRepository<UserInfo> _userInfoSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
-
-            IRepository<Zone> zoneSvc,
+            IRepository<UserInfo> userInfoSvc,
+        IRepository<Zone> zoneSvc,
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
             IRepository<SaleOffice> saleOfficeSvc,
@@ -42,6 +43,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
+            _userInfoSvc = userInfoSvc;
             _zoneSvc = zoneSvc;
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
@@ -74,6 +76,12 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<Depot>> GetDepotList()
         {
             return await _depotSvc.GetAllAsync();
+        }
+        public async Task<IEnumerable<UserInfoModel>> GetEmployeeList()
+        {
+            var result= await _userInfoSvc.FindAllAsync(f => f.LinemanagerId == 0/*AppIdentity.AppUser.EmployeeId*/);
+            return result.ToMap<UserInfo, UserInfoModel>();
+
         }
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
