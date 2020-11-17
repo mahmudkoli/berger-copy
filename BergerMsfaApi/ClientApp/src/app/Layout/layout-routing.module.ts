@@ -22,7 +22,7 @@ const routes: Routes = [
             { path: 'users', loadChildren: () => import('./cm-user-details/user-details.module').then(m => m.UserDetailsModule) },
             { path: 'users-info', loadChildren: () => import('./user-info/user-info.module').then(m => m.UserInfoModule) },
             { path: 'work-flow', loadChildren: () => import('./work-flow/work-flow.module').then(m => m.WorkFlowModule) },
-            { path: 'notification', loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule) },
+            // { path: 'notification', loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule) },
             { path: 'setup', loadChildren: () => import('./setup/setup.module').then(m => m.SetupModule) },
             { path: 'collection', loadChildren: () => import('./Collection-Entry/collectionEntry.module').then(m => m.CollectionEntryModule) },
             { path: 'journey-plan', loadChildren: () => import('./JourneyPlan/journeyPlan.module').then(m => m.JourneyPlanModule) },
