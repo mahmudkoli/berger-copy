@@ -22,7 +22,6 @@ export class FocusdealerAddComponent implements OnInit {
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
-        private dynamicDropdownService: DynamicDropdownService,
         private focusDealerService: FocusdealerService,
         private commonSvc: CommonService,
         private router: Router
@@ -80,7 +79,7 @@ export class FocusdealerAddComponent implements OnInit {
     private insert(focusDealer: FocusDealer) {
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
-            this.router.navigate(['/focus-dealer/list']).then(() => {
+            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been created successfully.");
             });
         },
@@ -121,13 +120,14 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private getDealerList() {
+        this.alertService.fnLoading(true);
         //hard code param for temporary
         this.commonSvc.getDealerList().subscribe(
             (result: any) => {
                 this.dealerList = result.data;
             },
             (err: any) => console.log(err)
-        );
+        ).add(() => this.alertService.fnLoading(false));
     }
     private displayError(errorDetails: any) {
         // this.alertService.fnLoading(false);

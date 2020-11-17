@@ -102,5 +102,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result= await _roleSvc.GetAllAsync();
             return result.ToMap<Role, RoleModel>();
         }
+
+        public async Task<IEnumerable<DealerInfoModel>> GetDealerList()
+        {
+            var result = await _dealerInfoSvc.GetAllAsync();
+            return result.ToMap<DealerInfo, DealerInfoModel>();
+        }
     }
 }

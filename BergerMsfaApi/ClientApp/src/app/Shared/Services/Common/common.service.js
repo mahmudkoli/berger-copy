@@ -62,7 +62,7 @@ var CommonService = /** @class */ (function () {
         return this.http.get(this.baseUrl + 'v1/Common/getEmployeeList');
     };
     CommonService.prototype.getDealerList = function () {
-        return this.http.get(this.baseUrl + 'v1/Common/GetDealList');
+        return this.http.get(this.baseUrl + 'v1/Common/getDealerList');
     };
     CommonService = __decorate([
         core_1.Injectable({
