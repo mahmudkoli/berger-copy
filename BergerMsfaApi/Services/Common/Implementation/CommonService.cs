@@ -55,7 +55,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
         {
-            var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
+            var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory && f.IsActive== false);
            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
@@ -63,9 +63,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeRegId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
-        public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
+        public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList(string territory)
         {
-            var result = await _dealerInfoSvc.GetAllAsync();
+            var result = await _dealerInfoSvc.FindAllAsync(f=>f.IsActive==false && f.Territory== territory);
             return result.ToMap<DealerInfo, DealerInfoModel>();
         }
 

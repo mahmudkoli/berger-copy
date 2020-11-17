@@ -5,13 +5,13 @@ using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
-using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -33,7 +33,6 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<CreditControlArea>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -150,8 +149,7 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         #region JourneyPlan&FocusDealer
-        public DbSet<FocusDealer> FocusDealers { get; set; }
-        public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
+
         public DbSet<JourneyPlan> JourneyPlans { get; set; }
         public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
         public DbSet<JourneyPlanDetail> JourneyPlanDetails { get; set; }
@@ -180,10 +178,15 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Territory> Territory { get; set; }
         public DbSet<Zone> Zone { get; set; }
 
-
+        public DbSet<TintiningMachine> TintiningMachines { get; set; }
 
         #endregion
+
+
+        #region Dealer
+        public DbSet<FocusDealer> FocusDealers { get; set; }
+        public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
         public DbSet<DealerOpening> DealerOpenings { get; set; }
-        public DbSet<CreditControlArea> CreditControlAreas { get; set; }
+        #endregion
     }
 }
