@@ -53,7 +53,9 @@ namespace BergerMsfaApi.Services.Tintining.Implementation
                    );
 
             if (find != null)
-                if (find.No > _tiningMachine.No) _tiningMachine.NoOfCorrection =find.NoOfCorrection+1;
+                if (find.No > _tiningMachine.No) _tiningMachine.NoOfCorrection = find.NoOfCorrection + 1;
+                else _tiningMachine.NoOfCorrection = find.NoOfCorrection;
+        
 
             var result = await _tiningMachineSvc.UpdateAsync(_tiningMachine);
             return result.ToMap<TintiningMachine, TintiningMachineModel>();
@@ -61,12 +63,15 @@ namespace BergerMsfaApi.Services.Tintining.Implementation
         }
 
         public async Task<bool> IsTitiningMachineUpdatable(TintiningMachineModel model)
-            => await _tiningMachineSvc.IsExistAsync(
+        {
+            var result = await _tiningMachineSvc.IsExistAsync(
                     f => f.NoOfCorrection < 2
-                    && f.TerritoryCd==model.TerritoryCd
-                    && f.CompanyId==model.CompanyId
-                    && f.EmployeeId==model.EmployeeId 
+                    && f.TerritoryCd == model.TerritoryCd
+                    && f.CompanyId == model.CompanyId
+                    && f.EmployeeId == model.EmployeeId
                     );
+            return result;
+                }
         
 
         public async Task<bool> DeleteTitiningMachine(int Id)

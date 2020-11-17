@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Controllers.Tintining
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
 
-                if ( await _tintiningService.IsTitiningMachineUpdatable(model))
+                if (! await _tintiningService.IsTitiningMachineUpdatable(model))
                 {
                     ModelState.AddModelError(nameof(model.CompanyId), "you have already excced update limt");
                     return ValidationResult(ModelState);

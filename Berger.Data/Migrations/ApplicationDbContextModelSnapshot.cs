@@ -483,17 +483,6 @@ namespace Berger.Data.Migrations
                     b.ToTable("JourneyPlanMasters");
                 });
 
-            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CreditControlArea", b =>
-                {
-                    b.Property<string>("CreditContrlArea")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("CreditControlAreas");
-                });
-
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
                 {
                     b.Property<int>("Id")
@@ -1371,6 +1360,59 @@ namespace Berger.Data.Migrations
                     b.ToTable("DropdownTypes");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Tinting.TintiningMachine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Cont")
+                        .HasColumnType("real");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("No")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("NoOfCorrection")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TerritoryCd")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("TintiningMachines");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Users.CMUser", b =>
                 {
                     b.Property<int>("Id")
@@ -2202,6 +2244,15 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownType", "DropdownType")
                         .WithMany("DropdownDetails")
                         .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Tinting.TintiningMachine", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
