@@ -109,6 +109,10 @@
     <Compile Remove="Migrations\20201112104555_RemovePainterRef.Designer.cs" />
     <Compile Remove="Migrations\20201113065025_UpdatePainterCallEntity.cs" />
     <Compile Remove="Migrations\20201113065025_UpdatePainterCallEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201117110035_updateTintingMachine.cs" />
+    <Compile Remove="Migrations\20201117110035_updateTintingMachine.Designer.cs" />
+    <Compile Remove="Migrations\20201117111708_updateTintingMachine.cs" />
+    <Compile Remove="Migrations\20201117111708_updateTintingMachine.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

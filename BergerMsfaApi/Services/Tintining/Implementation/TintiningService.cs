@@ -31,20 +31,29 @@ namespace BergerMsfaApi.Services.Tintining.Implementation
             var result = await _tiningMachineSvc.FindAllAsync(f => f.TerritoryCd == territory);
             return result.ToMap<TintiningMachine, TintiningMachineModel>();
         }
+        public async Task<IEnumerable<dynamic>> GetTintingMachineList(string territory)
+
+
+        {
+            var param = new Dictionary<string, object>();
+            param.Add("@trreitory", territory);
+             return _tiningMachineSvc.DynamicListFromSql("Sp_GetTintingMachineByTerritory", param,true);
+           
+        }
 
         public async Task<TintiningMachineModel> AppUpdateTitningMachine(TintiningMachineModel model)
         {
    
             var _tiningMachine = model.ToMap<TintiningMachineModel, TintiningMachine>();
-            
+            _tiningMachine.NoOfCorrection = 0;
             var find= await _tiningMachineSvc.FindAsync(
                     f=> f.CompanyId == model.CompanyId
                     && f.TerritoryCd == model.TerritoryCd
                     && f.EmployeeId == model.EmployeeId
-                    && model.FormCorrectionMode == FormCorrectionMode.UpdateMode);
+                   );
 
             if (find != null)
-                if (find.No < _tiningMachine.No) _tiningMachine.NoOfCorrection += 1;
+                if (find.No > _tiningMachine.No) _tiningMachine.NoOfCorrection =find.NoOfCorrection+1;
 
             var result = await _tiningMachineSvc.UpdateAsync(_tiningMachine);
             return result.ToMap<TintiningMachine, TintiningMachineModel>();
@@ -57,7 +66,7 @@ namespace BergerMsfaApi.Services.Tintining.Implementation
                     && f.TerritoryCd==model.TerritoryCd
                     && f.CompanyId==model.CompanyId
                     && f.EmployeeId==model.EmployeeId 
-                    && model.FormCorrectionMode == FormCorrectionMode.UpdateMode);
+                    );
         
 
         public async Task<bool> DeleteTitiningMachine(int Id)

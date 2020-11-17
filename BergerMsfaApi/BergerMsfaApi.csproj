@@ -109,6 +109,8 @@
 
     <None Remove="ClientApp\src\app\Shared\Services\Scheme\SchemeService.ts" />
 
+    <None Remove="ClientApp\src\app\Shared\Services\Tinting\TintingService.ts" />
+
   </ItemGroup>
 
   <ItemGroup>
@@ -147,6 +149,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\yesno.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Pipes\status-filter.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Services\Scheme\SchemeService.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Services\Tinting\TintingService.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

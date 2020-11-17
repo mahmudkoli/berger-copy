@@ -21,10 +21,10 @@ namespace BergerMsfaApi.Services.Tintining.Interfaces
         #endregion
 
         #region Portal
-
+        Task<IEnumerable<dynamic>> GetTintingMachineList(string territory);
         #endregion
 
 
-     
+
     }
 }

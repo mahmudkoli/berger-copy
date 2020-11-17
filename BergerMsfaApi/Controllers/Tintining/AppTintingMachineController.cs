@@ -10,13 +10,13 @@ namespace BergerMsfaApi.Controllers.Tintining
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class AppTiningMachineController : BaseController
+    public class AppTintingMachineController : BaseController
     {
-        private readonly ILogger<AppTiningMachineController> _logger;
+        private readonly ILogger<AppTintingMachineController> _logger;
         private readonly ITintiningService _tintiningService;
-        public AppTiningMachineController
+        public AppTintingMachineController
             (
-            ILogger<AppTiningMachineController> logger,
+            ILogger<AppTintingMachineController> logger,
             ITintiningService tintiningService
             )
         {

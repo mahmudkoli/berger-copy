@@ -15,8 +15,7 @@ namespace Berger.Data.MsfaEntity.Tinting
         public DropdownDetail Company { get; set; }
         public decimal No { get; set; }
         public float Cont { get; set; }
-        public int? NoOfCorrection { get; set; }
-        public FormCorrectionMode FormCorrectionMode { get; set; }
+        public int NoOfCorrection { get; set; }
     }
 
 }
