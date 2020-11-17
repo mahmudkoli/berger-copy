@@ -2,7 +2,7 @@
 {
     public enum EnumUserCategory
     {
-        Plan = 1,
+        Plant = 1,
         SalesOffice = 2,
         Area = 3,
         Territory = 4,

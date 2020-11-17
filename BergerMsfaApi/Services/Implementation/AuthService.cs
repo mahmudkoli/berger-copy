@@ -131,7 +131,7 @@ namespace BergerMsfaApi.Services.Implementation
                 } 
                 else if (userInfo.plantIds.Any())
                 {
-                    userCat = EnumUserCategory.Plan.ToString();
+                    userCat = EnumUserCategory.Plant.ToString();
                     userCatIds = userInfo.plantIds.Select(x => x.ToString()).ToList();
                 }
                 #endregion

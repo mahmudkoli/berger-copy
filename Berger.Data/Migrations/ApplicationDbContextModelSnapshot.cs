@@ -15,7 +15,7 @@ namespace Berger.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -736,6 +736,206 @@ namespace Berger.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("JourneyPlanMasters");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.Depot", b =>
+                {
+                    b.Property<string>("Achvm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Adrnr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Awsls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bedpl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Betol")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bwkey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bzirk")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bzqhl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Chazv")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChazvOld")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cityc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Counc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepStore")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Dvsart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ekorg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fabkl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fprfw")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FshBomMaintenance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FshMgArunReq")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FshSeaim")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Iwerk")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("J1bbranch")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Kkowk")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Kordb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Kunnr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Land1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Let01")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Let02")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Let03")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Lifnr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mandt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mgvlareval")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mgvlaupd")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mgvupd")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Misch")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nodetype")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nschema")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Oihcredipi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Oihvtype")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Oilival")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ort01")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pfach")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pkosa")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pstlz")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Regio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sourcing")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Spart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Spras")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Storetype")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Stras")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Taxiw")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Txjcd")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TxnamMa1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TxnamMa2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TxnamMa3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vkorg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vlfkz")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vstel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vtbfi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vtweg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Werks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Wksop")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zone1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Depots");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
@@ -2014,8 +2214,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PlanId")
-                        .HasColumnType("int");
+                    b.Property<string>("PlantId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SalesOfficeId")
                         .HasColumnType("nvarchar(max)");
@@ -2336,6 +2536,15 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DealerFocus.DealerOpeningAttachment", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.DealerFocus.DealerOpening", null)
+                        .WithMany("DealerOpeningAttachments")
+                        .HasForeignKey("DealerOpeningId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.DealerCompetitionSales", b =>

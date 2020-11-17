@@ -31,6 +31,7 @@
     public firstName: string;
     public lastName: string;
     public loginName: string;
+    public userName: string;
     public loginNameWithDomain: string;
     public manager: string;
     public managerName: string;
