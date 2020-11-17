@@ -10,12 +10,15 @@ namespace BergerMsfaApi.Controllers.Painter
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("api/v1{v:apiVersion}/[controller]")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     public class AppPainterCallController : BaseController
     {
         private readonly IPaintCallService _paintCallSvc;
         public ILogger<AppPainterCallController> _logger;
-        public AppPainterCallController(ILogger<AppPainterCallController> logger, IPaintCallService paintCallSvc)
+        public AppPainterCallController(
+            ILogger<AppPainterCallController> logger,
+            IPaintCallService paintCallSvc
+            )
         {
             _logger = logger;
             _paintCallSvc=paintCallSvc;
@@ -41,7 +44,7 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
-                var result = await _paintCallSvc.AppGetPainterByPainterIdAsync(Id);
+                var result = await _paintCallSvc.AppGetPainterByIdAsync(Id);
                 return OkResult(result);
             }
             catch (Exception ex)

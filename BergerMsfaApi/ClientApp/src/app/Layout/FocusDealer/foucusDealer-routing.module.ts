@@ -12,8 +12,8 @@ const routes: Routes = [
     {
         path: '',
         children: [
-            { path: '', redirectTo: 'list' },
-            { path: 'list', component: FocusdealerListComponent, data: { extraParameter: 'product', permissionType: 'view', permissionGroup: 'product/product-list' } },
+            { path: '', redirectTo: 'focusdealer-list' },
+            { path: 'focusdealer-list', component: FocusdealerListComponent, data: { extraParameter: 'product', permissionType: 'view', permissionGroup: 'product/product-list' } },
             { path: 'add-focusdealer', component: FocusdealerAddComponent, data: { permissionType: 'create', permissionGroup: 'product/product-list' } },
             { path: "add-focusdealer/:id", component: FocusdealerAddComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } },
             { path: "openingList/:id", component: DealerOpeningDetailComponent },

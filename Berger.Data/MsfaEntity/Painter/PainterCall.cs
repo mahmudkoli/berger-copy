@@ -6,6 +6,10 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 {
     public class PainterCall:AuditableEntity<int>
     {
+        public PainterCall()
+        {
+            PainterCompanyMTDValue = new List<PainterCompanyMTDValue>();
+        }
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
         public bool HasNewProBriefing { get; set; }

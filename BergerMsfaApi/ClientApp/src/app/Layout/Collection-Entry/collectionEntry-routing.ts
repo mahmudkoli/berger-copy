@@ -9,9 +9,9 @@ const routes: Routes = [
     {
         path: '',
         children: [
-            { path: '', redirectTo: 'collection-list' },
+            { path: '', redirectTo: 'payment-list' },
             {
-                path: 'collection-list',
+                path: 'payment-list',
                 component: CollectionEntryListComponent,
                 //data: { extraParameter: 'collection', permissionType: 'view', permissionGroup: 'collection/collection-list' 
             }

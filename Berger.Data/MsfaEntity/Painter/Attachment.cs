@@ -9,15 +9,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
     [Table("Attachments")]
     public class Attachment:AuditableEntity<int>
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public long Size { get; set; }
-        public string Format { get; set; }
-        public string TableName { get; set; }
-        public int ParentId { get; set; }
 
-        //[ForeignKey("ParentId")]
-        //public Painter ParentAttachment { get; set; }
 
         public Attachment()
         {
@@ -57,5 +49,21 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
             this.Format = format;
             this.Size = size;
         }
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public long Size { get; set; }
+        public string Format { get; set; }
+        public string TableName { get; set; }
+        public int ParentId { get; set; }
+       
+        //[ForeignKey("ParentId")]
+        //public Painter ParentAttachment { get; set; }
+
+
+
     }
+
+
+
+
 }

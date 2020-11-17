@@ -34,8 +34,8 @@ export class JourneyPlanListComponent implements OnInit {
 
     ngOnInit() {
         this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-       this.fnJourneyPlanList();
-     //   this.fnJourneyPlanListPaging(this.first, this.rows);
+        this.fnJourneyPlanList();
+        //   this.fnJourneyPlanListPaging(this.first, this.rows);
 
     }
     first = 0;
@@ -53,7 +53,7 @@ export class JourneyPlanListComponent implements OnInit {
 
     reset() {
         this.first = 0;
-        this.fnJourneyPlanListPaging(this.first, this.rows=10);
+        this.fnJourneyPlanListPaging(this.first, this.rows = 10);
     }
 
     isLastPage(): boolean {
@@ -67,7 +67,7 @@ export class JourneyPlanListComponent implements OnInit {
     }
     paginate(event) {
         debugger;
-       // event.first == 0 ? event.first+1:event
+        // event.first == 0 ? event.first+1:event
         this.fnJourneyPlanListPaging(event.first, event.rows);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
@@ -78,9 +78,9 @@ export class JourneyPlanListComponent implements OnInit {
 
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(key);
-
+  
         this.alertService.confirm(`Are you sure to change status?`, () => {
-
+            this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
                     this.alertService.tosterSuccess(`Status Successfully.`);
@@ -88,9 +88,9 @@ export class JourneyPlanListComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
-                },
-                () => this.alertService.fnLoading(false)
-            )
+                }
+             
+            ).add(() => this.alertService.fnLoading(false));
         }, () => {
 
         });
@@ -107,13 +107,11 @@ export class JourneyPlanListComponent implements OnInit {
             .subscribe(
                 (res) => {
                     this.journeyPlanList = res.data as [] || [];
-
                 },
                 (error) => {
                     console.log(error);
-                },
-                () => this.alertService.fnLoading(false)
-            );this.alertService.fnLoading(false)
+                }
+            ).add(()=> this.alertService.fnLoading(false))
     }
     private fnJourneyPlanListPaging(index, pageSize) {
 
@@ -122,9 +120,9 @@ export class JourneyPlanListComponent implements OnInit {
         this.journeyPlanService.getJourneyPlanListPaging(index, pageSize)
             .subscribe(
                 (res) => this.journeyPlanList = res.data as [] || [],
-                (error) => console.log(error),
-                () => this.alertService.fnLoading(false)
-            )
+                (error) => console.log(error)
+
+            ).add(() => this.alertService.fnLoading(false));
     }
 
     detail(plan) {
@@ -152,8 +150,8 @@ export class JourneyPlanListComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
-                }, () => () => this.alertService.fnLoading(false)
-            );
+                }
+            ).add(() => this.alertService.fnLoading(false));;
         }, () => {
 
         });

@@ -34,7 +34,7 @@ namespace Berger.Worker.Services
 
         }
 
-        public async Task<int> getData()
+        public async Task<int> GetCustomerData()
         {
             try
             {
@@ -99,7 +99,7 @@ namespace Berger.Worker.Services
                     }
                     else
                     {
-                        _logger.LogInformation("No new or Delete data found!!!");
+                        _logger.LogInformation("No new or Delete data found!!!Updating Data....Wait");
                        dataFromDatabase = dataFromDatabase
                             .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
                             .ToList();

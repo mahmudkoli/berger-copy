@@ -170,7 +170,7 @@ export class CollectionEntryListComponent implements OnInit {
             // enabledExcelDownload:true,
             // enabledPrint:true,
             // enabledColumnSetting:true,
-            enabledRecordCreateBtn: true,
+            enabledRecordCreateBtn: false,
             // enabledTotal:true,
         };
     }

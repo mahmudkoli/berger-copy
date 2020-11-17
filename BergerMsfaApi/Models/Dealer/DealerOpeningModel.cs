@@ -8,6 +8,10 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 {
     public class DealerOpeningModel
     {
+        public DealerOpeningModel()
+        {
+            DealerOpeningAttachments = new List<DealerOpeningAttachmentModel>();
+        }
         public int Id { get; set; }
         public string BusinessArea { get; set; }
         public string SaleOffice { get; set; }
@@ -15,7 +19,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public string TerritoryNo { get; set; }
         public string ZoneNo { get; set; }
         public string EmployeId { get; set; }
-        public List<AttachmentModel> Attachments { get; set; }
+        public List<DealerOpeningAttachmentModel> DealerOpeningAttachments { get; set; }
 
     }
 }
