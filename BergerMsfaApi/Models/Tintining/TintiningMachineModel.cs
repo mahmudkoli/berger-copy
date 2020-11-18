@@ -13,8 +13,8 @@ namespace BergerMsfaApi.Models.Tintining
         public int EmployeeId { get; set; }
         public int CompanyId { get; set; }
         public decimal No { get; set; }
-        public float Cont { get; set; }
+        //public float Cont { get; set; }
         //public int? NoOfCorrection { get; set; }
-        public FormCorrectionMode FormCorrectionMode { get; set; }
+        //public FormCorrectionMode FormCorrectionMode { get; set; }
     }
 }

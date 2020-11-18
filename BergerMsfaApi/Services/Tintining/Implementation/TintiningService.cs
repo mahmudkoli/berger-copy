@@ -26,10 +26,11 @@ namespace BergerMsfaApi.Services.Tintining.Implementation
 
         }
 
-        public async Task<IEnumerable<TintiningMachineModel>> AppGetTintingMachineList(string territory)
+        public async Task<IEnumerable<dynamic>> AppGetTintingMachineList(string territory)
         {
-            var result = await _tiningMachineSvc.FindAllAsync(f => f.TerritoryCd == territory);
-            return result.ToMap<TintiningMachine, TintiningMachineModel>();
+            var param = new Dictionary<string, object>();
+            param.Add("@trreitory", territory);
+            return _tiningMachineSvc.DynamicListFromSql("Sp_GetTintingMachineByTerritory", param, true);
         }
         public async Task<IEnumerable<dynamic>> GetTintingMachineList(string territory)
 

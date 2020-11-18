@@ -9,7 +9,7 @@ namespace BergerMsfaApi.Services.Tintining.Interfaces
     public interface ITintiningService
     {
         #region App
-        Task<IEnumerable< TintiningMachineModel>> AppGetTintingMachineList(string territory);
+        Task<IEnumerable< dynamic>> AppGetTintingMachineList(string territory);
         Task<TintiningMachineModel> AppCreateTiningMachine(TintiningMachineModel model);
         Task<TintiningMachineModel> AppUpdateTitningMachine(TintiningMachineModel model);
         #endregion
