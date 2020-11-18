@@ -483,6 +483,17 @@ namespace Berger.Data.Migrations
                     b.ToTable("JourneyPlanMasters");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CustomerGroup", b =>
+                {
+                    b.Property<string>("CustomerAccountGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("CustomerGroups");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
                 {
                     b.Property<int>("Id")
