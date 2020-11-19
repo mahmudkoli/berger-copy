@@ -11,7 +11,8 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
     public interface IJourneyPlanService
     {
         //portal
-      //  Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize);
+        //  Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize);
+        Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailPaging(int index, int pageSize,string planDate);
         Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize);
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetail();
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager();

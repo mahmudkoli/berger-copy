@@ -33,11 +33,11 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize)
+        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize,string planDate)
         {
             try
             {
-                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize);
+                var result = await _journeyService.GetJourneyPlanDetailPaging(index,pageSize, planDate);
                 return OkResult(result);
             }
             catch (Exception ex)
