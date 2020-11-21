@@ -13,6 +13,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+//using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -35,6 +36,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -182,6 +184,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<SaleGroup> SaleGroup { get; set; }
         public DbSet<Territory> Territory { get; set; }
         public DbSet<Zone> Zone { get; set; }
+        //public DbSet<TintiningMachine> TintiningMachines { get; set; }
 
         #endregion
         public DbSet<DealerOpening> DealerOpenings { get; set; }
@@ -191,6 +194,11 @@ namespace Berger.Data.MsfaEntity
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
         #endregion
-
+        #region Dealer
+        //public DbSet<FocusDealer> FocusDealers { get; set; }
+        //public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
+        //public DbSet<DealerOpening> DealerOpenings { get; set; }
+        public DbSet<CustomerGroup> CustomerGroups { get; set; }
+        #endregion
     }
 }
