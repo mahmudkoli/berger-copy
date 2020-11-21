@@ -1,4 +1,5 @@
-﻿using Berger.Data.MsfaEntity;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
@@ -12,6 +13,7 @@ using BergerMsfaApi.Services.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.Common.Implementation
@@ -27,26 +29,22 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
         private readonly IRepository<FocusDealer> _focusDealerSvc;
-        private readonly IRepository<UserInfo> _userInfoSvc;
-        private readonly IRepository<CustomerGroup> _customerGrouplSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
-            IRepository<UserInfo> userInfoSvc,
-        IRepository<Zone> zoneSvc,
+
+            IRepository<Zone> zoneSvc,
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
             IRepository<SaleOffice> saleOfficeSvc,
             IRepository<Role> roleSvc,
             IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
             IRepository<Depot> depotSvc,
-            IRepository<FocusDealer> focusDealerSvc,
-            IRepository<CustomerGroup> customerGrouplSvc
+            IRepository<FocusDealer> focusDealerSvc
 
             )
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
-            _userInfoSvc = userInfoSvc;
             _zoneSvc = zoneSvc;
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
@@ -54,12 +52,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _roleSvc = roleSvc; 
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
             _depotSvc = depotSvc;
-            _customerGrouplSvc = customerGrouplSvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
         {
-            var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory && f.IsActive== false);
+            var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
@@ -67,9 +64,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeRegId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
-        public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList(string territory)
+        public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
         {
-            var result = await _dealerInfoSvc.FindAllAsync(f=>f.IsActive==false && f.Territory== territory);
+            var result = await _dealerInfoSvc.GetAllAsync();
             return result.ToMap<DealerInfo, DealerInfoModel>();
         }
 
@@ -80,12 +77,6 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<Depot>> GetDepotList()
         {
             return await _depotSvc.GetAllAsync();
-        }
-        public async Task<IEnumerable<UserInfoModel>> GetEmployeeList()
-        {
-            var result= await _userInfoSvc.FindAllAsync(f => f.LinemanagerId == 0/*AppIdentity.AppUser.EmployeeId*/);
-            return result.ToMap<UserInfo, UserInfoModel>();
-
         }
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
@@ -107,33 +98,19 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.ToMap<Role, RoleModel>();
         }
 
-        public async Task<IEnumerable<DealerInfoModel>> GetDealerList()
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)
         {
-            var result = await _dealerInfoSvc.GetAllAsync();
-            return result.ToMap<DealerInfo, DealerInfoModel>();
-        }
-        public async Task<IEnumerable<DealerModel>> GetDealerListByCode(string code)
-        {
-            var dealerList = await _dealerInfoSvc.FindAllAsync(f => f.AccountGroup ==code);
-
-            var result = dealerList.Select(s => new DealerModel
+            var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                Id = s.Id,
-                CustomerName = s.CustomerName,
-                AccountGroup = s.AccountGroup,
-                SubDealers = _customerGrouplSvc.FindAll(f => f.CustomerAccountGroup == code && f.Description.StartsWith("Subdealer"))
-                                               .Select(z => new SubDealerModel 
-                                               { 
-                                                   Id=s.Id,
-                                                   CustomerName = s.CustomerName,
-                                                   AccountGroup = z.CustomerAccountGroup,
-                                                   Description=z.Description
-                                               }).ToList()
+                [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
+                [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.Area),
+                [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),
+                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.Zone)
+            };
 
-            }).ToList();
-
-            return result;
-          
+            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
+            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
     }
 }

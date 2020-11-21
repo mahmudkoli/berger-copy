@@ -6,7 +6,7 @@ namespace Berger.Data.MsfaEntity.Master
  
     public class CreditControlArea
     {
-        public string CreditContrlArea { get; set; }
+        public double? CreditControlArea1 { get; set; }
         public string Description { get; set; }
     }
 }

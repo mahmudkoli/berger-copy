@@ -38,7 +38,7 @@ export class UserInfoInsertComponent implements OnInit {
     territories:any[]=[]
     changeStatus = Status;
     statusKeys: any[] = [];
-
+    adError: string;
 
 
     constructor(
@@ -73,7 +73,9 @@ export class UserInfoInsertComponent implements OnInit {
             adGuid: this.userInfoModel.adGuid,
             //manager: this.userInfoModel.manager,
             managerName: this.userInfoModel.managerName,
+            managerId: this.userInfoModel.managerId,
             loginName: this.userInfoModel.loginName,
+            userName: this.userInfoModel.userName,
             loginNameWithDomain: this.userInfoModel.loginNameWithDomain,
             postalCode: this.userInfoModel.postalCode,
             //salesPointId: this.userInfoModel.salesPointId,
@@ -138,6 +140,7 @@ export class UserInfoInsertComponent implements OnInit {
         this.userInfoModel.managerName= data.managerName;
         this.userInfoModel.managerId= data.managerId;
         this.userInfoModel.loginName= data.loginName;
+        this.userInfoModel.userName= data.loginName;
         this.userInfoModel.loginNameWithDomain= data.loginNameWithDomain;
         this.userInfoModel.postalCode= data.postalCode;
         this.userInfoModel.streetAddress= data.streetAddress;
@@ -183,12 +186,12 @@ export class UserInfoInsertComponent implements OnInit {
     populateDropdwonDataList() {
        
         forkJoin(
-            this.dropdownService.GetDropdownByTypeCd('P01'),
+            this.commonSvc.getDepotList(),
             this.commonSvc.getSaleOfficeList(),
             this.commonSvc.getSaleGroupList(),
             this.commonSvc.getTerritoryList(),
             this.commonSvc.getZoneList(),
-            this.dropdownService.GetDropdownByTypeCd('Role'),
+            this.commonSvc.getRoleList(),
             //this.dropdownService.GetDropdownByTypeCd('Z01'),
         
          //   this.dropdownService.GetDropdownByTypeCd('SO01'),

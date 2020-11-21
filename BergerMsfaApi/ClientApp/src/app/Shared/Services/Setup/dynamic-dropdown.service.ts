@@ -44,5 +44,7 @@ export class DynamicDropdownService {
     public delete(id: number) {
         return this.http.delete<any>(this.baseUrl + 'v1/dynamicDropdown/' + id);
     }
- 
+    public getDealerList() {
+        return this.http.get<any>(this.baseUrl + 'v1/Common/GetDealList');
+    }
 }

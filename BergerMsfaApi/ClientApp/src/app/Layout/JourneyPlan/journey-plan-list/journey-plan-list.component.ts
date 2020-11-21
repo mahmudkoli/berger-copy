@@ -21,11 +21,7 @@ export class JourneyPlanListComponent implements OnInit {
     public journeyPlanList: JourneyPlan[] = [];
     changeStatus = Status;
     statusKeys: any[] = [];
-    first = 1;
-    rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
-    pageSize: number;
+
     constructor(
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
@@ -38,28 +34,26 @@ export class JourneyPlanListComponent implements OnInit {
 
     ngOnInit() {
         this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-        //this.fnJourneyPlanList();
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.fnJourneyPlanList();
+        //   this.fnJourneyPlanListPaging(this.first, this.rows);
 
     }
+    first = 0;
 
-
+    rows = 5;
     next() {
         this.first = this.first + this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.fnJourneyPlanListPaging(this.first, this.rows);
     }
 
     prev() {
         this.first = this.first - this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.fnJourneyPlanListPaging(this.first, this.rows);
     }
-    onSearch() {
 
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
-    }
     reset() {
-        this.first = 1;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.first = 0;
+        this.fnJourneyPlanListPaging(this.first, this.rows = 10);
     }
 
     isLastPage(): boolean {
@@ -68,13 +62,13 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     isFirstPage(): boolean {
-        return this.journeyPlanList ? this.first === 1 : true;
+
+        return this.journeyPlanList ? this.first === 0 : true;
     }
     paginate(event) {
-     
-       // event.first == 0 ?  1 : event.first;
-        let first = Number(event.first) + 1;
-        this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
+        debugger;
+        // event.first == 0 ? event.first+1:event
+        this.fnJourneyPlanListPaging(event.first, event.rows);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
@@ -90,8 +84,7 @@ export class JourneyPlanListComponent implements OnInit {
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
                     this.alertService.tosterSuccess(`Status Successfully.`);
-                    // this.fnJourneyPlanList();
-                    this.fnJourneyPlanListPaging(this.first, this.rows,  "");
+                    this.fnJourneyPlanList();
                 },
                 (error) => {
                     console.log(error);
@@ -120,17 +113,13 @@ export class JourneyPlanListComponent implements OnInit {
                 }
             ).add(()=> this.alertService.fnLoading(false))
     }
-    private fnJourneyPlanListPaging(index, pageSize,planDate) {
+    private fnJourneyPlanListPaging(index, pageSize) {
 
         this.alertService.fnLoading(true);
 
-        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize, planDate)
+        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize)
             .subscribe(
-                (res) => {
-                    this.pagingConfig = res.data;
-                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
-                    this.journeyPlanList = this.pagingConfig.model as [] || []
-                },
+                (res) => this.journeyPlanList = res.data as [] || [],
                 (error) => console.log(error)
 
             ).add(() => this.alertService.fnLoading(false));

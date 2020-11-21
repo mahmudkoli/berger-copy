@@ -46,14 +46,15 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var _painter = model.ToMap<PainterModel, Painter>();
 
             var _fileName = $"{_painter.PainterImageUrl}_{_painter.Phone}";
-            var _path = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.POSMProduct);
+            var _path = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.PainterRegistration);
             _painter.PainterImageUrl = _path;
+
             var result = await _painterSvc.CreateAsync(_painter);
 
             var painterModel = result.ToMap<Painter, PainterModel>();
             foreach (var attach in attachments)
             {
-                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.POSMProduct);
+                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.PainterRegistration);
                 var attachment = await _attachmentSvc.CreateAsync(new Attachment { ParentId = result.Id, Name = attach.FileName, Path = path, Format = Path.GetExtension(attach.FileName), Size = attach.Length, TableName = nameof(Painter) });
                 //    painterModel.AttachmentModel.Add(attachment.ToMap<Attachment, AttachmentModel>());
             }
@@ -115,9 +116,11 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             if (_painter.PainterImageUrl != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImageUrl);
             if (_painter != null)
             {
+
                 var _fileName = $"{painterId}_{_painter.PainterName}";
-                var _path = await _fileUploadSvc.SaveImageAsync(file, _fileName, FileUploadCode.POSMProduct);
+                var _path = await _fileUploadSvc.SaveImageAsync(file, _fileName, FileUploadCode.PainterRegistration);
                 _painter.PainterImageUrl = _path;
+
             }
             await _painterSvc.UpdateAsync(_painter);
             return _painter.ToMap<Painter, PainterModel>();
@@ -130,7 +133,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             if (_painter.PainterImageUrl != null) await _fileUploadSvc.DeleteImageAsync(_painter.PainterImageUrl);
             var _fileName = $"{painterId}_{_painter.PainterName}";
-            _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.POSMProduct);
+            _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(profile, _fileName, FileUploadCode.PainterRegistration);
+
             await _painterSvc.UpdateAsync(_painter);
 
             var painterModel = _painter.ToMap<Painter, PainterModel>();
@@ -145,7 +149,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             }
             foreach (var attach in attachments)
             {
-                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.FileName, FileUploadCode.POSMProduct);
+                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.FileName, FileUploadCode.PainterRegistration);
                 var _newAttachment = new Attachment { Path = path, Name = attach.FileName, TableName = nameof(Painter), Format = Path.GetExtension(attach.FileName), Size = 1, ParentId = _painter.Id };
                 var attachment = await _attachmentSvc.CreateAsync(_newAttachment);
             }

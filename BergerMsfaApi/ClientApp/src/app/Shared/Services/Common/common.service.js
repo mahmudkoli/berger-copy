@@ -58,12 +58,6 @@ var CommonService = /** @class */ (function () {
     CommonService.prototype.getRoleList = function () {
         return this.http.get(this.baseUrl + 'v1/Common/getRoleList');
     };
-    CommonService.prototype.getEmployeeList = function () {
-        return this.http.get(this.baseUrl + 'v1/Common/getEmployeeList');
-    };
-    CommonService.prototype.getDealerList = function () {
-        return this.http.get(this.baseUrl + 'v1/Common/getDealerList');
-    };
     CommonService = __decorate([
         core_1.Injectable({
             providedIn: 'root'

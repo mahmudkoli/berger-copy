@@ -9,7 +9,11 @@ namespace Berger.Worker.Common
 {
     public class DataEqualityComparer<TEntity>: IDataEqualityComparer<TEntity> where TEntity:class
     {
-        public async Task<(List<string>, List<TEntity>)> GetNewDatasetOfApi(Expression<Func<TEntity, string>> predicate, List<TEntity> firstList, List<TEntity> secondList)
+#pragma warning disable 1998
+        public async Task<(List<string>, List<TEntity>)> GetNewDatasetOfApi(Expression<Func<TEntity, string>> predicate,
+#pragma warning restore 1998
+            List<TEntity> firstList,
+            List<TEntity> secondList)
         {
             var newKeyInApiList = firstList.Select(predicate.Compile())
                 .Except(secondList.Select(predicate.Compile())).ToList();

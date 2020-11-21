@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Berger.Worker
 {
-    public class Worker : BackgroundService, IInvocable
+    public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
         private  ICustomerService _customerService;
@@ -31,8 +31,8 @@ namespace Berger.Worker
             _logger.LogInformation("Worker Started {date}", DateTime.Now);
             var delayTime = DateTime.Now.Date.AddDays(1)
                 .Subtract(DateTime.Parse(DateTime.Now.TimeOfDay.ToString(@"hh\:mm")));
-
-            Task.Delay(delayTime, cancellationToken);
+            _logger.LogInformation($"Total Delay Time: {delayTime}");
+            //Task.Delay(TimeSpan.Parse(delayTime.ToString())).Wait(cancellationToken);
             
             return base.StartAsync(cancellationToken);
         }
@@ -54,10 +54,11 @@ namespace Berger.Worker
                     st.Start();
                     _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                    await _customerService.getData();
+                    await _customerService.GetCustomerData();
                     st.Stop();
 
                     TimeSpan actualTime = TimeSpan.FromHours(24)- st.Elapsed;
+                    _logger.LogInformation($"______Next Service will run after: {actualTime}");
                     //await Task.Delay(actualTime, stoppingToken);
                     await Task.Delay(5000, stoppingToken);
 
@@ -72,10 +73,10 @@ namespace Berger.Worker
             }
         }
 
-        public Task Invoke()
-        {
-            StartAsync(cancellationToken: CancellationToken.None);
-            return Task.CompletedTask;
-        }
+        //public Task Invoke()
+        //{
+        //    StartAsync(cancellationToken: CancellationToken.None);
+        //    return Task.CompletedTask;
+        //}
     }
 }

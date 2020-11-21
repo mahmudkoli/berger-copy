@@ -44,7 +44,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var _dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
             foreach (var attach in attachments)
             {
-                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.POSMProduct);
+                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.DealerOpening);
                 var attachment = await _attachmentSvc.CreateAsync(new Attachment { ParentId = result.Id, Name = attach.FileName, Path = path, Format = Path.GetExtension(attach.FileName), Size = attach.Length, TableName = nameof(DealerOpening) });
              //   _dealerOpeningModel.Attachments.Add(attachment.ToMap<Attachment,AttachmentModel>());
             }
@@ -92,7 +92,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             foreach (var attach in attachments)
             {
-                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.FileName, FileUploadCode.POSMProduct);
+                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.FileName, FileUploadCode.DealerOpening);
                 var _newAttachment = new Attachment { Path = path, Name = attach.FileName, TableName = nameof(DealerOpening), Format = Path.GetExtension(attach.FileName), Size = 1, ParentId = model.Id };
                 var attachment = await _attachmentSvc.CreateAsync(_newAttachment);
               //  dealerOpenigModel.Attachments.Add(attachment.ToMap<Attachment, AttachmentModel>());

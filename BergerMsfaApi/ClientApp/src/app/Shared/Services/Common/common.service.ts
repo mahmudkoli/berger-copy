@@ -65,11 +65,9 @@ export class CommonService {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getRoleList');
     }
 
-    getEmployeeList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getEmployeeList');
+    getDepotList() {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
     }
-    public getDealerList() {
-        return this.http.get<any>(this.baseUrl + 'v1/Common/getDealerList');
-    }
+   
 
 }

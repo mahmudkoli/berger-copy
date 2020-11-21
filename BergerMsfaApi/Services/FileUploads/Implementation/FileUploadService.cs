@@ -21,15 +21,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
         {
-            string filePath = Path.Combine("uploads", "images");
-            switch (type)
-            {
-                case FileUploadCode.POSMProduct:
-                    filePath = Path.Combine(filePath, "POSMProducts");
-                    break;
-                default:
-                    break;
-            }
+            string filePath = this.GetFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -47,15 +39,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = Path.Combine("uploads", "images");
-            switch (type)
-            {
-                case FileUploadCode.POSMProduct:
-                    filePath = Path.Combine(filePath, "POSMProducts");
-                    break;
-                default:
-                    break;
-            }
+            string filePath = this.GetFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -81,19 +65,8 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             string filePath = Path.Combine("uploads", "images");
             switch (type)
             {
-                case FileUploadCode.POSMProduct:
-                    filePath = Path.Combine(filePath, "POSMProducts");
-                    break;
-                case FileUploadCode.POSMReport:
-                    filePath = Path.Combine(filePath, "POSMReports");
-                    break;
-                case FileUploadCode.AuditReport:
-                    filePath = Path.Combine(filePath, "AuditReports");
-                    break;
                 case FileUploadCode.RegisterPainter:
                     filePath = Path.Combine(filePath, "Painters");
-                    break;
-                default:
                     break;
             }
 
@@ -132,6 +105,26 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         {
             if (!string.IsNullOrWhiteSpace(filePath) && File.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 File.Delete(Path.Combine(_host.WebRootPath, filePath));
+        }
+
+        private string GetFolderPath(FileUploadCode type)
+        {
+            string filePath = Path.Combine("uploads", "images");
+            switch (type)
+            {
+                case FileUploadCode.DealerOpening:
+                    filePath = Path.Combine(filePath, "DealerOpening");
+                    break;
+                case FileUploadCode.PainterRegistration:
+                    filePath = Path.Combine(filePath, "PainterRegistration");
+                    break;
+                case FileUploadCode.DealerSalesCall:
+                    filePath = Path.Combine(filePath, "DealerSalesCall");
+                    break;
+                default:
+                    break;
+            }
+            return filePath;
         }
     }
 }

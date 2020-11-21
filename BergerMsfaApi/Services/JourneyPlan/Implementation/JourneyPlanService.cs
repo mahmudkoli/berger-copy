@@ -93,32 +93,6 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
-        public async Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailPaging(int index, int pageSize,string planDate)
-        {
-            IPagedList<JourneyPlanMaster> result = await _journeyPlanMasterSvc.GetAllPagedAsync(index, pageSize);
-            if (!string.IsNullOrEmpty(planDate)) result = result.Where(f => f.PlanDate.Date.Equals(Convert.ToDateTime(planDate).Date)).ToPagedList();
-            return new PagedList<JourneyPlanDetailModel>(result, result
-             .Select(s => new JourneyPlanDetailModel
-             {
-                 Id = s.Id,
-                 EmployeeId = s.EmployeeId,
-                 PlanDate = s.PlanDate,
-                 Status = s.Status,
-                 DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
-                                     join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
-                                     on dealer.Id equals planDetail.DealerId
-                                     select new DealerInfoModel
-                                     {
-                                         Id = planDetail.Id,
-                                         CustomerName = dealer.CustomerName,
-                                         CustomerNo = dealer.CustomerNo,
-                                         Territory = dealer.Territory,
-                                         VisitDate = planDetail.VisitDate
-                                     }).ToList()
-             }).ToPagedList());
-          
-        }
-
         public async Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager()
         {
 

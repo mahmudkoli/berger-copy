@@ -7,9 +7,4 @@
         PlanogramCheckProduct,
         PriceAuditProduct
     }
-    public enum FormCorrectionMode
-    {
-        EntryMode,
-        UpdateMode
-    }
 }

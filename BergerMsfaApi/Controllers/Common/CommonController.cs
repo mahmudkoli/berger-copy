@@ -16,12 +16,12 @@ namespace BergerMsfaApi.Controllers.Common
         {
             _commonSvc = commonSvc;
         }
-        [HttpGet("GetDealList/{territory}")]
-        public async Task<IActionResult> GetDealerList(string territory)
+        [HttpGet("GetDealList")]
+        public async Task<IActionResult> GetDealerList()
         {
             try
             {
-                var result = await _commonSvc.GetDealerInfoList(territory);
+                var result = await _commonSvc.GetDealerInfoList();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -107,12 +107,13 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("GetEmployeeList")]
-        public async Task<IActionResult> GetEmployeeList()
+
+        [HttpGet("GetRoleList")]
+        public async Task<IActionResult> GetRoleList()
         {
             try
             {
-                var result = await _commonSvc.GetEmployeeList();
+                var result = await _commonSvc.GetRoleList();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -121,35 +122,5 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("GetDealerList")]
-        public async Task<IActionResult> GetDealerList()
-        {
-            try
-            {
-                var result = await _commonSvc.GetDealerList();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-
-                return ExceptionResult(ex);
-            }
-        }
-        [HttpGet("GetDealerListByCode/{code}")]
-
-        public async Task<IActionResult> GetDealerListByCode(string code)
-        {
-            try
-            {  
-                var result = await  _commonSvc.GetDealerListByCode(code);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-
-                return ExceptionResult(ex);
-            }
-        }
-        
     }
 }

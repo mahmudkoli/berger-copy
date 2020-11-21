@@ -5,7 +5,6 @@ import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-d
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
-import { CommonService } from '../../../Shared/Services/Common/common.service';
 
 @Component({
     selector: 'app-focusdealer-add',
@@ -22,8 +21,8 @@ export class FocusdealerAddComponent implements OnInit {
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
+        private dynamicDropdownService: DynamicDropdownService,
         private focusDealerService: FocusdealerService,
-        private commonSvc: CommonService,
         private router: Router
     ) { }
 
@@ -43,17 +42,12 @@ export class FocusdealerAddComponent implements OnInit {
 
     private getEmpList() {
         //hard code param for temporary
-        this.alertService.fnLoading(true);
-        this.commonSvc.getEmployeeList().subscribe(
-            (res) => { this.employeeRegList = res.data; },
-            (error) => { this.displayError(error) }
-        ).add(() => { this.alertService.fnLoading(false); });
-        //this.dynamicDropdownService.GetDropdownByTypeCd("E01").subscribe(
-        //    (result: any) => {
-        //        this.employeeRegList = result.data;
-        //    },
-        //    (err: any) => console.log(err)
-        //);
+        this.dynamicDropdownService.GetDropdownByTypeCd("E01").subscribe(
+            (result: any) => {
+                this.employeeRegList = result.data;
+            },
+            (err: any) => console.log(err)
+        );
     }
 
 
@@ -79,7 +73,7 @@ export class FocusdealerAddComponent implements OnInit {
     private insert(focusDealer: FocusDealer) {
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
-            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
+            this.router.navigate(['/focus-dealer/list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been created successfully.");
             });
         },
@@ -92,7 +86,7 @@ export class FocusdealerAddComponent implements OnInit {
     private update(model: FocusDealer) {
         this.focusDealerService.update(model).subscribe(res => {
             console.log("focus update res: ", res);
-            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
+            this.router.navigate(['/focus-dealer/list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been edited successfully.");
             });
         },
@@ -120,14 +114,13 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private getDealerList() {
-        this.alertService.fnLoading(true);
         //hard code param for temporary
-        this.commonSvc.getDealerList().subscribe(
+        this.dynamicDropdownService.getDealerList().subscribe(
             (result: any) => {
                 this.dealerList = result.data;
             },
             (err: any) => console.log(err)
-        ).add(() => this.alertService.fnLoading(false));
+        );
     }
     private displayError(errorDetails: any) {
         // this.alertService.fnLoading(false);
