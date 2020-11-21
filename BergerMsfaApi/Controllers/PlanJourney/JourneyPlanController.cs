@@ -30,7 +30,19 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             }
         }
-
+        [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
+        public async Task<IActionResult> GetJourneyPlanListPaging(int index, int pageSize, string planDate)
+        {
+            try
+            {
+                var result = await _journeyService.GetJourneyPlanDetailPaging(index, pageSize, planDate);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
         public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize)

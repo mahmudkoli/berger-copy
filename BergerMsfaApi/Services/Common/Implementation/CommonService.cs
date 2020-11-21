@@ -28,7 +28,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<Territory> _territorySvc;
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
-        private readonly IRepository<FocusDealer> _focusDealerSvc;
+        private readonly IRepository<FocusDealer> _focusDealerSvc; 
+        private readonly IRepository<CustomerGroup> _customerGrouplSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
 
@@ -39,7 +40,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Role> roleSvc,
             IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
             IRepository<Depot> depotSvc,
-            IRepository<FocusDealer> focusDealerSvc
+            IRepository<FocusDealer> focusDealerSvc, 
+            IRepository<CustomerGroup> customerGrouplSvc
 
             )
         {
@@ -52,6 +54,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _roleSvc = roleSvc; 
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
             _depotSvc = depotSvc;
+            _customerGrouplSvc = customerGrouplSvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -97,7 +100,29 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result= await _roleSvc.GetAllAsync();
             return result.ToMap<Role, RoleModel>();
         }
+        public async Task<IEnumerable<DealerModel>> GetDealerListByCode(string code)
+        {
+            var dealerList = await _dealerInfoSvc.FindAllAsync(f => f.AccountGroup == code);
 
+            var result = dealerList.Select(s => new DealerModel
+            {
+                Id = s.Id,
+                CustomerName = s.CustomerName,
+                AccountGroup = s.AccountGroup,
+                SubDealers = _customerGrouplSvc.FindAll(f => f.CustomerAccountGroup == code && f.Description.StartsWith("Subdealer"))
+                                               .Select(z => new SubDealerModel
+                                               {
+                                                   Id = s.Id,
+                                                   CustomerName = s.CustomerName,
+                                                   AccountGroup = z.CustomerAccountGroup,
+                                                   Description = z.Description
+                                               }).ToList()
+
+            }).ToList();
+
+            return result;
+
+        }
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)
         {
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()

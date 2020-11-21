@@ -13,7 +13,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
-//using Berger.Data.MsfaEntity.Tinting;
+using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -37,6 +37,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
             modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<CreditControlArea>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -184,11 +185,11 @@ namespace Berger.Data.MsfaEntity
         public DbSet<SaleGroup> SaleGroup { get; set; }
         public DbSet<Territory> Territory { get; set; }
         public DbSet<Zone> Zone { get; set; }
-        //public DbSet<TintiningMachine> TintiningMachines { get; set; }
+        public DbSet<TintiningMachine> TintiningMachines { get; set; }
+        public DbSet<CreditControlArea> CreditControlAreas { get; set; }
 
         #endregion
         public DbSet<DealerOpening> DealerOpenings { get; set; }
-
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }

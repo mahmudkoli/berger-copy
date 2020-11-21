@@ -122,5 +122,20 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("GetDealerListByCode/{code}")]
+
+        public async Task<IActionResult> GetDealerListByCode(string code)
+        {
+            try
+            {
+                var result = await _commonSvc.GetDealerListByCode(code);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
