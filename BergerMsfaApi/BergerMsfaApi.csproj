@@ -100,6 +100,7 @@
     <None Remove="ClientApp\src\app\Shared\Enums\approvalStatus.ts" />
     <None Remove="ClientApp\src\app\Shared\Enums\modeOfApproval.ts" />
     <None Remove="ClientApp\src\app\Shared\Enums\notificationStatus.ts" />
+    <None Remove="ClientApp\src\app\Shared\Enums\PlanStatus.ts" />
     <None Remove="ClientApp\src\app\Shared\Enums\posmproducttype.ts" />
     <None Remove="ClientApp\src\app\Shared\Enums\rejectedStatus.ts" />
     <None Remove="ClientApp\src\app\Shared\Enums\statusTypes.ts" />
@@ -142,6 +143,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\approvalStatus.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\modeOfApproval.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\notificationStatus.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\PlanStatus.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\posmproducttype.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\rejectedStatus.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Enums\statusTypes.ts" />

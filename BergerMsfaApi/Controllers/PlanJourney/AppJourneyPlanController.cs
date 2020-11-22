@@ -25,7 +25,7 @@ namespace BergerMsfaApi.Controllers.Journey
         //this method expose journey plan list by employeeId
 
         [HttpGet("GetJourneyPlanList/{employeeId}")]
-        public async Task<IActionResult> GetJourneyPlanList(int employeeId)
+        public async Task<IActionResult> GetJourneyPlanList(string employeeId)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpGet("CheckHasAlreadyPlan/{employeeId}/{visitDate}")]
-        public async Task<IActionResult> CheckHasAlreadyPlan(int employeeId, string visitDate)
+        public async Task<IActionResult> CheckHasAlreadyPlan(string employeeId, string visitDate)
         {
             try
             {

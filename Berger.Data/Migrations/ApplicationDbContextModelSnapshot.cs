@@ -700,14 +700,14 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LineManagerId")
-                        .HasColumnType("int");
+                    b.Property<string>("LineManagerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -717,6 +717,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("PlanDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PlanStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("RejectedBy")
                         .HasColumnType("int");

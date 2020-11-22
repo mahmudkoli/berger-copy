@@ -3,6 +3,7 @@ import { NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap'
 import { ActivatedRoute, Router } from '@angular/router';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
 
 @Component({
     selector: 'app-journey-plan-detail',
@@ -10,7 +11,7 @@ import { AlertService } from '../../../Shared/Modules/alert/alert.service';
     styleUrls: ['./journey-plan-detail.component.css']
 })
 export class JourneyPlanDetailComponent implements OnInit {
-
+    PlanStatusEnum = PlanStatus;
     journeyPlan: any;
     constructor(
         public alertServic: AlertService,

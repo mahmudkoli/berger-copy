@@ -33,11 +33,11 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize)
+        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize,string planDate)
         {
             try
             {
-                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize);
+                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize, planDate);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -47,12 +47,12 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
 
-        [HttpGet("GetLineManagerJourneyPlanDetail")]
-        public async Task<IActionResult> GetJourneyPlanDetailForLineManager()
+        [HttpGet("GetLineManagerJourneyPlanDetail/{index}/{pageSize}")]
+        public async Task<IActionResult> GetJourneyPlanDetailForLineManager(int index,int pageSize,string planDate)
         {
             try
             {
-                var result = await _journeyService.GetJourneyPlanDetailForLineManager();
+                var result = await _journeyService.GetJourneyPlanDetailForLineManager( index,  pageSize, planDate);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Controllers.Journey
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (await _journeyService.CheckAlreadyTodayPlan())
+                if (await _journeyService.CheckAlreadyTodayPlan(model.VisitDate))
                 {
                     ModelState.AddModelError("Plan", "you have already created today's plan");
                     return ValidationResult(ModelState);
