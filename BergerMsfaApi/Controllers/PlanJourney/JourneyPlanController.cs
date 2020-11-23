@@ -21,6 +21,7 @@ namespace BergerMsfaApi.Controllers.Journey
         {
             try
             {
+         
                 var result = await _journeyService.GetJourneyPlanDetail();
                 return OkResult(result);
             }
@@ -37,6 +38,7 @@ namespace BergerMsfaApi.Controllers.Journey
         {
             try
             {
+                var user = AppIdentity.AppUser;
                 var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize, planDate);
                 return OkResult(result);
             }

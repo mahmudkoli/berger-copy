@@ -1,8 +1,86 @@
-<div class="col col-lg-12">
+<!--<div class="col col-lg-12">
     <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="focusDealerList"
-                 (customActivityOnRecord)="fnCustomTrigger($event)"
-                 >
+                 (customActivityOnRecord)="fnCustomTrigger($event)">
     </app-p-table>
-</div>
+</div>-->
 
 
+<!--[paginator]="true"
+       [showCurrentPageReport]="true"
+       [(first)]="first"
+       [rows]="rows"
+       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+       [rowsPerPageOptions]="[10,25,50]"-->
+
+<p-table #dt [value]="focusDealerList"
+         [globalFilterFields]="['planDate','status']">
+    <ng-template pTemplate="caption">
+        <div class="table-header">
+
+            <div class="row">
+                <div class="col-md-4">
+                    Focus Dealer List
+                </div>
+
+                <div class="col-md-4 offset-md-4">
+                    <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
+                    <div>
+                        <span class="p-input-icon-right m-2 pull-right">
+                            <i class="pi pi-search" (click)="onSearch()"></i>
+                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()" [(ngModel)]="searchDate" placeholder="Search (yyyy-m-d)" />
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="dealerName">Dealer<p-sortIcon field="dealerName"></p-sortIcon></th>
+            <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
+            <th pSortableColumn="validFrom">Valid From <p-sortIcon field="validFrom"></p-sortIcon></th>
+            <th pSortableColumn="validTo">Valid To <p-sortIcon field="validTo"></p-sortIcon></th>
+
+            <th>
+
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-focus>
+        <tr>
+            <td>{{focus.dealerName }}</td>
+            <td>
+
+                {{focus.employeeName}}
+
+                <!--<div ngbDropdown class="d-inline-block">
+            <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+                <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
+
+            </div>
+        </div>-->
+            </td>
+            <td>{{focus.validFrom |date }}</td>
+            <td>{{focus.validTo | date }}</td>
+            <td>
+
+                <i class="fa fa-edit mr-2" (click)="edit(focus.id)"> </i>
+                <i class="fa fa-trash" (click)="delete(focus.id)"> </i>
+                <!--<button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="detail(jPlan)">
+                    View Detail
+                </button>-->
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <p-paginator [rows]="rows"
+                     [totalRecords]="pagingConfig?.totalItemCount"
+                     [pageLinkSize]="pageSize"
+                     [rowsPerPageOptions]="[10,20]"
+                     (onPageChange)="paginate($event)"></p-paginator>
+    </ng-template>
+</p-table>

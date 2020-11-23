@@ -50,11 +50,11 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     find.ApprovedDate = DateTime.Now;
                     find.ApprovedById = AppIdentity.AppUser.UserId;
                 }
-                //if (Status.Rejected == (Status)model.Status)
-                //{
-                //    find.RejectedDate = DateTime.Now;
-                //    find.RejectedBy = AppIdentity.AppUser.UserId;
-                //}
+                if (PlanStatus.Rejected == (PlanStatus)model.Status)
+                {
+                    find.RejectedDate = DateTime.Now;
+                    find.RejectedBy = AppIdentity.AppUser.UserId;
+                }
 
                 await _journeyPlanMasterSvc.UpdateAsync(find);
                 return true;
@@ -229,7 +229,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         public async Task<PortalPlanDetailModel> PortalCreateJourneyPlan(PortalCreateJouneryModel model)
         {
             var result = new PortalPlanDetailModel();
-            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = AppIdentity.AppUser.EmployeeId, PlanDate = model.VisitDate, Status = Status.Pending });
+            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = "0", PlanDate = model.VisitDate, Status = Status.Pending });
             if (plan == null) return result;
             foreach (var id in model.Dealers)
             {

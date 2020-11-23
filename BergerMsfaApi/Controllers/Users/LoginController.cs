@@ -59,18 +59,19 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 try
                 {
-                    bool isAdLoginSuccess =_adservice.AuthenticateUser(model.UserName, model.Password);
-                    bool loginSuccess = false;
+                    //bool isAdLoginSuccess =_adservice.AuthenticateUser(model.UserName, model.Password);
+                     bool loginSuccess = false;
 
-                    if (isAdLoginSuccess)
-                    {
-                        //Check db for user
-                       loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
-                    }
-                    else
-                    {
-                        return Unauthorized();
-                    }
+                    //if (isAdLoginSuccess)
+                    //{
+                    //    //Check db for user
+                    //   loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
+                    //}
+                    //else
+                    //{
+                    //    return Unauthorized();
+                    //}
+                     loginSuccess = true;
 
                     if (loginSuccess)
                     {

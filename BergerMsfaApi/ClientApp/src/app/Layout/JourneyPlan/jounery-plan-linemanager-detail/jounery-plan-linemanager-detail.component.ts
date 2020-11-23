@@ -38,21 +38,28 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         this.alertService.fnLoading(true);
         this.journeyPlanService.getJourneyPlanDetailById(id).subscribe(
             (result: any) => {
+                debugger;
                 this.journeyPlan = result.data;
+                if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
+                    this.showStatusBtn = false;
+                }
+                else
+                    this.showStatusBtn = true;
+                
             },
             (err: any) => console.log(err),
             () => this.alertService.fnLoading(false)
         );
     };
+    showStatusBtn: boolean;
     back() {
         this.router.navigate(["/journey-plan/line-manager"]);
     }
     onStatusChange(mySelect, jPlan) {
 
         debugger;
-        if (mySelect.value=="-1") return;
         this.journeyPlanStatus.planId = jPlan.id;
-        this.journeyPlanStatus.status = Number(mySelect.value);
+        this.journeyPlanStatus.status = Number(mySelect);
          
 
         this.alertService.confirm(`are you sure to change status?`, () => {
@@ -79,7 +86,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
     }
 }
 export enum PlanStatusNotEdited {
-    Pending = 0,
     Approved = 1,
+    Rejected=3
    
 }

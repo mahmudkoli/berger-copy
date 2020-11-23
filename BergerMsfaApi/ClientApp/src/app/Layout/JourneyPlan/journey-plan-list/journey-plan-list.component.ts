@@ -158,7 +158,8 @@ export class JourneyPlanListComponent implements OnInit {
                 (res: any) => {
                     console.log('res from del func', res);
                     this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                    this.fnJourneyPlanList();
+                  //  this.fnJourneyPlanList();
+                    this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
                 },
                 (error) => {
                     console.log(error);

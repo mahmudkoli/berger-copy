@@ -19,7 +19,10 @@ export class FocusdealerService {
     }
 
     public getFocusDealerList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/focusdealer/getFocusDealerList');
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/focusdealer/focusdealer');
+    }
+    public getFocusdealerListPaging(index: number, pageSize: number, searchDate="") {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/focusdealer/getFocusdealerListPaging/${index}/${pageSize}?searchDate=${searchDate}`);
     }
     public getFocusDealerById(id) {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/focusdealer/getFocusDealerById/' + id);

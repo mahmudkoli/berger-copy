@@ -13,6 +13,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -190,6 +191,10 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
+        #endregion
+
+        #region Tinting
+        public DbSet<TintiningMachine> TintiningMachines { get; set; }
         #endregion
 
     }

@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import { LoginService } from 'src/app/Shared/Services/Users/login.service';
 import { FormsModule } from '@angular/forms';
+import { CommonService } from '../../Shared/Services/Common/common.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ export class LoginBoxedComponent implements OnInit {
      UserName:string;
      Password:string;
 
-   constructor(private router: Router,private loginService:LoginService) {
+    constructor(private router: Router, private loginService: LoginService, private commonSvc: CommonService) {
 
     }
 
@@ -68,7 +69,8 @@ export class LoginBoxedComponent implements OnInit {
             debugger;
             let tokens =<any>response;        
             let token = tokens.data.token;
-            localStorage.setItem("bergermsfa", token);            
+            localStorage.setItem("bergermsfa", token);
+            this.commonSvc.setUserInfoToLocalStorage(tokens.data);
             // this.loginService.getExampleData(token).subscribe(res =>
             // {
             //    console.log(res);

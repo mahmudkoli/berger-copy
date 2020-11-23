@@ -5,21 +5,25 @@
             Plan Date : {{journeyPlan?.planDate|date}}
             <div class="row">
                 <div class="col-md-6">
-                    <label>Employee Name: {{journeyPlan.employee.firstName}}</label>
-                    <br />
-                    <label>Phone: {{journeyPlan.employee.PhoneNumber}}</label>
-                    Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span>
-                    <div>
-                        Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
-                            <option [value]="-1">Select Status</option>
-                            <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
-                        </select>
-                    </div>
+                    <p>Employee Name: {{journeyPlan.employee.firstName}}</p>
+                    <p>Phone: {{journeyPlan.employee.PhoneNumber}}</p>
+                    <p>Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
+                    
+                        <button *ngIf="showStatusBtn"  (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
+                        <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)"class="btn btn-sm btn-primary">Rejected</button>
+               
+                 
+                    <!--<div>
+        Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
+            <option [value]="-1">Select Status</option>
+            <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
+        </select>
+    </div>-->
                 </div>
                 <div class="col-md-6">
-                    <label>Department: {{journeyPlan.employee.department}}</label>
-                    <br />
-                    <label>Designation: {{journeyPlan.employee.designation}}</label>
+                    <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
+                    <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
+                   
                 </div>
             </div>
         </div>

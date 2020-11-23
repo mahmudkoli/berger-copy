@@ -24,10 +24,68 @@ export class FocusdealerListComponent implements OnInit {
     ) {
         this._initPermissionGroup();
     }
-
+    first = 1;
+    rows = 10;
+    planDate: string = "";
+    pagingConfig: any;
+    pageSize: number;
+    searchDate: string;
     ngOnInit() {
-        this.fnFocusDealerList();
+        // this.fnFocusDealerList();
+        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
 
+    }
+
+    private getFocusdealerListPaging(index, pageSize, searchDate="") {
+
+        this.alertService.fnLoading(true);
+
+        this.focusDealerService.getFocusdealerListPaging(index, pageSize, this.searchDate)
+            .subscribe(
+                (res) => {
+                    debugger;
+                    this.pagingConfig = res.data;
+                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                    this.focusDealerList = this.pagingConfig.model as [] || []
+                },
+                (error) => console.log(error)
+
+            ).add(() => this.alertService.fnLoading(false));
+    }
+    next() {
+        this.first = this.first + this.rows;
+        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+    }
+
+    prev() {
+        this.first = this.first - this.rows;
+        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+    }
+    onSearch() {
+        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+    }
+    reset() {
+        this.first = 1;
+        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+    }
+
+    isLastPage(): boolean {
+
+        return this.focusDealerList ? this.first === (this.focusDealerList.length - this.rows) : true;
+    }
+
+    isFirstPage(): boolean {
+        return this.focusDealerList ? this.first === 1 : true;
+    }
+    paginate(event) {
+
+        // event.first == 0 ?  1 : event.first;
+        let first = Number(event.first) + 1;
+        this.getFocusdealerListPaging(first, event.rows);
+        //event.first = Index of the first record
+        //event.rows = Number of rows to display in new page
+        //event.page = Index of the new page
+        //event.pageCount = Total number of pages
     }
      fnFocusDealerList() {
         this.alertService.fnLoading(true);
@@ -70,7 +128,8 @@ export class FocusdealerListComponent implements OnInit {
                 (res: any) => {
                     console.log('res from del func', res);
                     this.alertService.tosterSuccess("dropdown has been deleted successfully.");
-                    this.fnFocusDealerList();
+                    //this.fnFocusDealerList();
+                    this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
                 },
                 (error) => {
                     console.log(error);
@@ -101,8 +160,8 @@ export class FocusdealerListComponent implements OnInit {
         tableRowIDInternalName: "Id",
         tableColDef: [
 
-            { headerName: 'Code ', width: '10%', internalName: 'code', sort: true, type: "" },
-            { headerName: 'Employee', width: '30%', internalName: 'employeeRegId', sort: true, type: "" },
+            { headerName: 'Dealer ', width: '10%', internalName: 'dealerName', sort: true, type: "" },
+            { headerName: 'Employee', width: '30%', internalName: 'employeeName', sort: true, type: "" },
             { headerName: 'Valid From', width: '30%', internalName: 'validFrom', sort: true, type: "" },
             { headerName: 'Valid To', width: '20%', internalName: 'validTo', sort: true, type: "" },
 
