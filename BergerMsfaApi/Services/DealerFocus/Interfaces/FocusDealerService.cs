@@ -74,6 +74,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<FocusDealerModel> CreateAsync(FocusDealerModel model)
         {
             var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
+            journeyPlan.EmployeeRegId = AppIdentity.AppUser.EmployeeId;
             var result = await _focusDealer.CreateAsync(journeyPlan);
             return result.ToMap<FocusDealer, FocusDealerModel>();
         }

@@ -54,7 +54,8 @@ export class FocusdealerAddComponent implements OnInit {
 
 
     public fnRouteList() {
-        this.router.navigate(['/focus-dealer/list']);
+        this.router.navigate(['/dealer/focusdealer-list'])
+      //  this.router.navigate(['/focus-dealer/list']);
     }
 
     public fnSave() {
@@ -75,7 +76,7 @@ export class FocusdealerAddComponent implements OnInit {
     private insert(focusDealer: FocusDealer) {
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
-            this.router.navigate(['/focus-dealer/list']).then(() => {
+            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been created successfully.");
             });
         },
