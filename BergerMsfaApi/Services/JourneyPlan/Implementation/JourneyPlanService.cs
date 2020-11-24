@@ -100,6 +100,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         }
         public async Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId)
         {
+            //for app user employee id from param
             var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >=DateTime.Now.Date);
             var result = (from plan in planList
                           join planDetail in _journeyPlanDetailSvc.GetAll() on plan.Id equals planDetail.PlanId
@@ -126,7 +127,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
 
             
-            var result = await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.LineManagerId == "0",index,pageSize);
+            var result = await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.LineManagerId == AppIdentity.AppUser.EmployeeId,index,pageSize);
             if (!string.IsNullOrEmpty(planDate))
                 result = result.Where(f => f.PlanDate.Date.Equals(Convert.ToDateTime(planDate).Date)).ToPagedList();
 
@@ -253,7 +254,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         public async Task<PortalPlanDetailModel> PortalCreateJourneyPlan(PortalCreateJouneryModel model)
         {
             var result = new PortalPlanDetailModel();
-            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = "0", PlanDate = model.VisitDate, Status = Status.Pending });
+            var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = AppIdentity.AppUser.EmployeeId, PlanDate = model.VisitDate, Status = Status.Pending });
             if (plan == null) return result;
             foreach (var id in model.Dealers)
             {
@@ -306,7 +307,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id)
         {
             PortalCreateJouneryModel result = new PortalCreateJouneryModel();
-            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == Id && f.EmployeeId == "0");
+            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == Id && f.EmployeeId == AppIdentity.AppUser.EmployeeId);
             result.Id = find.Id;
             result.Dealers = _journeyPlanDetailSvc.FindAll(s => s.PlanId == find.Id).Select(s => s.DealerId).ToArray();
             result.VisitDate = _journeyPlanDetailSvc.Find(s => s.PlanId == find.Id).VisitDate;
@@ -319,6 +320,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         }
         public async Task<bool> AppCheckAlreadyTodayPlan(string employeeId, DateTime visitDate)
         {
+            //for app employeeId pass as param
             var find = await _journeyPlanDetailSvc.FindAsync(f => f.VisitDate.Date == visitDate.Date);
             if (find != null)
             {
@@ -330,9 +332,12 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         }
 
-        //this method expose journey plan list by employeeId
+
         public async Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(string employeeId)
-        {   var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId);
+
+        {
+            // //for app employeeId pass as param
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId);
          
 
             var result = planList.Select(s => new AppJourneyPlanDetailModel
@@ -435,7 +440,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
 
             var result =
-                await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.EmployeeId == "0", index, pageSize);
+                await _journeyPlanMasterSvc.FindAllPagedAsync(f => f.EmployeeId ==AppIdentity.AppUser.EmployeeId, index, pageSize);
 
             if (!string.IsNullOrEmpty(planDate))
                 result = result.Where(f => f.PlanDate.Date.Equals(Convert.ToDateTime(planDate).Date)).ToPagedList();

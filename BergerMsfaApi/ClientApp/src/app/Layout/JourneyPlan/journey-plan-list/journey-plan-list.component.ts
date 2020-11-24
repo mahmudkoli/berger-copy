@@ -74,7 +74,7 @@ export class JourneyPlanListComponent implements OnInit {
     paginate(event) {
      
        // event.first == 0 ?  1 : event.first;
-        let first = Number(event.first) + 1;
+        let first = Number(event.page) + 1;
         this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page

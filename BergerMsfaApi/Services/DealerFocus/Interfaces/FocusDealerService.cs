@@ -31,7 +31,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string searchDate)
 
         {
-            var result = await _focusDealer.FindAllPagedAsync(f => f.EmployeeRegId == "5", index, pageSize);
+            var result = await _focusDealer.FindAllPagedAsync(f => f.EmployeeRegId ==AppIdentity.AppUser.EmployeeId, index, pageSize);
           
                 if (!string.IsNullOrEmpty(searchDate))
                     result = result.Where(f => f.ValidFrom.Date.Equals(Convert.ToDateTime(searchDate).Date) || f.ValidTo.Date.Equals(Convert.ToDateTime(searchDate).Date)).ToPagedList();
