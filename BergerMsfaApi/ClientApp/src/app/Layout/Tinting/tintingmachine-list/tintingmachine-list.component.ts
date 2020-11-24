@@ -17,7 +17,8 @@ export class TintingmachineListComponent implements OnInit {
         private tintingMachineSvc: TintingService) { }
 
     ngOnInit() {
-       // this.getTintingMachineList();
+        // this.getTintingMachineList();
+        this.getTintingMachinePagingList(this.first, this.pageSize, this.searchCompany);
     }
 
     first = 1;
@@ -25,7 +26,7 @@ export class TintingmachineListComponent implements OnInit {
     planDate: string = "";
     pagingConfig: any;
     pageSize: number;
-
+    searchCompany: string="";
     private get _LoggedUser() { return this.commonSvc.getUserInfoFromLocalStorage() }
   
     getTintingMachinePagingList(index, pageSize, companyName) {
@@ -47,20 +48,20 @@ export class TintingmachineListComponent implements OnInit {
     }
     next() {
         this.first = this.first + this.rows;
-        this.getTintingMachinePagingList(this.first, this.rows, this.planDate);
+        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
     }
 
     prev() {
         this.first = this.first - this.rows;
-        this.getTintingMachinePagingList(this.first, this.rows, this.planDate);
+        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
     }
     onSearch() {
 
-        this.getTintingMachinePagingList(this.first, this.rows, this.planDate);
+        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
     }
     reset() {
         this.first = 1;
-        this.getTintingMachinePagingList(this.first, this.rows, this.planDate);
+        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
     }
 
     isLastPage(): boolean {
@@ -75,7 +76,7 @@ export class TintingmachineListComponent implements OnInit {
 
         // event.first == 0 ?  1 : event.first;
         let first = Number(event.first) + 1;
-        this.getTintingMachinePagingList(first, event.rows, this.planDate);
+        this.getTintingMachinePagingList(first, event.rows, this.searchCompany);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page

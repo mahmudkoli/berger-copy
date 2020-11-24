@@ -8,11 +8,14 @@
                     <p>Employee Name: {{journeyPlan.employee.firstName}}</p>
                     <p>Phone: {{journeyPlan.employee.PhoneNumber}}</p>
                     <p>Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
-                    
-                        <button *ngIf="showStatusBtn"  (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
-                        <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)"class="btn btn-sm btn-primary">Rejected</button>
-               
-                 
+
+                    <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
+                    <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->
+
+
+                    <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary" >Approved</button>
+                    <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-3">Rejected</button>
+
                     <!--<div>
         Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
             <option [value]="-1">Select Status</option>

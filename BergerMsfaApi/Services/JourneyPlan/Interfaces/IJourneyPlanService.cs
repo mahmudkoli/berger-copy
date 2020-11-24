@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Models.Setup;
 using X.PagedList;
@@ -31,7 +32,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
 
 
         //App
-
+        Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId);
         Task<bool> AppCheckAlreadyTodayPlan(string employeeId, DateTime visitDate);
         Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(string employeeId);
         Task<List<AppCreateJourneyModel>> AppCreateJourneyPlan(List<AppCreateJourneyModel> model);

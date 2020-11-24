@@ -118,6 +118,7 @@ export class JourneyPlanListComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
+                    this.displayError(error);
                 }
             ).add(()=> this.alertService.fnLoading(false))
     }
@@ -132,7 +133,7 @@ export class JourneyPlanListComponent implements OnInit {
                     this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                 },
-                (error) => console.log(error)
+                (error) => this.displayError(error)
 
             ).add(() => this.alertService.fnLoading(false));
     }
@@ -163,11 +164,22 @@ export class JourneyPlanListComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
+                    this.displayError(error);
                 }
             ).add(() => this.alertService.fnLoading(false));;
         }, () => {
 
         });
     }
-
+    private displayError(errorDetails: any) {
+        // this.alertService.fnLoading(false);
+        console.log("error", errorDetails);
+        let errList = errorDetails.error.errors;
+        if (errList.length) {
+            console.log("error", errList, errList[0].errorList[0]);
+            this.alertService.tosterDanger(errList[0].errorList[0]);
+        } else {
+            this.alertService.tosterDanger(errorDetails.error.msg);
+        }
+    }
 }

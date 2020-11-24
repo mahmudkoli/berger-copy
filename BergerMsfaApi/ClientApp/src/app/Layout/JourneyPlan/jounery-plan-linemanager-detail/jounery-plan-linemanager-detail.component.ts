@@ -34,24 +34,61 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         }
 
     }
+    //private getJourneyPlanById(id) {
+    //    this.alertService.fnLoading(true);
+    //    this.journeyPlanService.getJourneyPlanDetailById(id).subscribe(
+    //        (result: any) => {
+    //            debugger;
+    //            this.journeyPlan = result.data;
+    //            if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
+    //                this.showStatusBtn = false;
+    //            }
+    //            else
+    //                this.showStatusBtn = true;
+                
+    //        },
+    //        (err: any) => console.log(err),
+    //        () => this.alertService.fnLoading(false)
+    //    );
+    //};
+    //showStatusBtn: boolean;
+
     private getJourneyPlanById(id) {
         this.alertService.fnLoading(true);
         this.journeyPlanService.getJourneyPlanDetailById(id).subscribe(
             (result: any) => {
                 debugger;
                 this.journeyPlan = result.data;
+                if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Rejected) {
+                    this.showRejectedBtn = false;
+                    this.showApprovedBtn = true;
+                }
                 if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
                     this.showStatusBtn = false;
+                    this.showRejectedBtn = true;
+                    this.showApprovedBtn = false;
+                }
+                else if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Edited || (this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Pending) {
+                    this.showRejectedBtn = true;
+                    this.showApprovedBtn = true;
                 }
                 else
                     this.showStatusBtn = true;
-                
+
             },
-            (err: any) => console.log(err),
+            (err: any) => { this.displayError(err) },
             () => this.alertService.fnLoading(false)
         );
     };
     showStatusBtn: boolean;
+    showRejectedBtn: boolean;
+    showApprovedBtn: boolean;
+
+
+
+
+
+
     back() {
         this.router.navigate(["/journey-plan/line-manager"]);
     }
@@ -77,12 +114,24 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
                 },
                 (error) => {
                     console.log(error);
+                    this.displayError(error);
                 }
 
             ).add(() => this.alertService.fnLoading(false));
         }, () => {
 
         });
+    }
+    private displayError(errorDetails: any) {
+        // this.alertService.fnLoading(false);
+        console.log("error", errorDetails);
+        let errList = errorDetails.error.errors;
+        if (errList.length) {
+            console.log("error", errList, errList[0].errorList[0]);
+            this.alertService.tosterDanger(errList[0].errorList[0]);
+        } else {
+            this.alertService.tosterDanger(errorDetails.error.msg);
+        }
     }
 }
 export enum PlanStatusNotEdited {

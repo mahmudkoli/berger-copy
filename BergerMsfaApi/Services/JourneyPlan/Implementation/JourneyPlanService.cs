@@ -98,6 +98,30 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
+        public async Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId)
+        {
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >=DateTime.Now.Date);
+            var result = (from plan in planList
+                          join planDetail in _journeyPlanDetailSvc.GetAll() on plan.Id equals planDetail.PlanId
+                          join dealer in _dealerInforSvc.GetAll() 
+                          on planDetail.DealerId equals dealer.Id
+                          join f in _focusDealerSvc.GetAll()
+                          on planDetail.DealerId equals f.Code into focus
+                          from fd in focus.DefaultIfEmpty()
+                          select new DealerInfoModel
+                          {
+                              Id = planDetail.Id,
+                              CustomerName = dealer.CustomerName,
+                              CustomerNo = dealer.CustomerNo,
+                              Territory = dealer.Territory,
+                              ContactNo = dealer.ContactNo,
+                              Address = dealer.Address,
+                              IsFocused = fd!=null? (fd.Code > 0 ? true : false):false,
+                              VisitDate = plan.PlanDate.Date
+                          }).ToList();
+            return result;
+                          
+        }
         public async Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string planDate)
         {
 
@@ -308,8 +332,8 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         //this method expose journey plan list by employeeId
         public async Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(string employeeId)
-        {
-            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == AppIdentity.AppUser.EmployeeId);
+        {   var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId);
+         
 
             var result = planList.Select(s => new AppJourneyPlanDetailModel
             {

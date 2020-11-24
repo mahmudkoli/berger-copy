@@ -108,5 +108,21 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetJouneyPlanDealerList/{employeeId}")]
+        public async Task<IActionResult> GetJouneyPlanDealerList(string employeeId)
+        {
+            try
+            {
+                var result = await _journeyService.AppGetJourneyPlanDealerList(employeeId);
+                return OkResult(result);
+
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+
+        }
     }
 }
