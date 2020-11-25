@@ -427,6 +427,28 @@
     </div>-->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+                        <label for="name">Employee Id </label>
+                        <input required name="employeeId" #employeeId="ngModel" id="employeeId" type="text" class="form-control"
+                               [ngClass]="{'is-valid':employeeId.valid,'is-invalid':employeeId.invalid && employeeId.touched }"
+                               [(ngModel)]="userInfoModel.employeeId" />
+                        <small class="text-danger" [class.d-none]="employeeId.valid || employeeId.untouched">
+                            Empoyee Id is Required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Manager Id </label>
+                        <input required name="managerId" #managerId="ngModel" id="managerId" type="text" class="form-control"
+                               [ngClass]="{'is-valid':managerId.valid,'is-invalid':managerId.invalid && managerId.touched }"
+                               [(ngModel)]="userInfoModel.managerId" />
+                        <small class="text-danger" [class.d-none]="managerId.valid || managerId.untouched">
+                            Manager ID is Required
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
                         <label for="name">Manager Name </label>
                         <input required name="managerName" #managerName="ngModel" id="managerName" type="text" class="form-control"
                                [ngClass]="{'is-valid':managerName.valid,'is-invalid':managerName.invalid && managerName.touched }"

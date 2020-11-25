@@ -82,7 +82,9 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(key);
-
+   
+        
+       
         this.alertService.confirm(`Are you sure to change status?`, () => {
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(

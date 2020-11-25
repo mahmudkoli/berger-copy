@@ -36,11 +36,11 @@ export class FocusdealerListComponent implements OnInit {
 
     }
 
-    private getFocusdealerListPaging(index, pageSize, searchDate="") {
+    private getFocusdealerListPaging(index, pageSize,searchDate) {
 
         this.alertService.fnLoading(true);
 
-        this.focusDealerService.getFocusdealerListPaging(index, pageSize, this.searchDate="")
+        this.focusDealerService.getFocusdealerListPaging(index, pageSize,searchDate)
             .subscribe(
                 (res) => {
                     debugger;
@@ -81,7 +81,7 @@ export class FocusdealerListComponent implements OnInit {
 
         // event.first == 0 ?  1 : event.first;
         let first = Number(event.page) + 1;
-        this.getFocusdealerListPaging(first, event.rows);
+        this.getFocusdealerListPaging(first, event.rows, this.searchDate);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page

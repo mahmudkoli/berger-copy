@@ -64,7 +64,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         }
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
         {
-            var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeRegId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
+            var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()

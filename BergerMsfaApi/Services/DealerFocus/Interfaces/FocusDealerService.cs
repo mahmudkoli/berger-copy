@@ -31,42 +31,35 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string searchDate)
 
         {
-            var result = await _focusDealer.FindAllPagedAsync(f => f.EmployeeRegId ==AppIdentity.AppUser.EmployeeId, index, pageSize);
-          
-                if (!string.IsNullOrEmpty(searchDate))
-                    result = result.Where(f => f.ValidFrom.Date.Equals(Convert.ToDateTime(searchDate).Date) || f.ValidTo.Date.Equals(Convert.ToDateTime(searchDate).Date)).ToPagedList();
-            var  data = (from fd in result
+            var focusDealers = await _focusDealer.GetAllIncludeAsync(
+                  select => select,
+                  p => p.EmployeeId == AppIdentity.AppUser.EmployeeId,
+                  o => o.OrderBy(f => f.ValidTo.Date),
+                  null,
+                  true
+                  );
+            //   var result = await _focusDealer.FindAllPagedAsync(f => f.EmployeeId ==AppIdentity.AppUser.EmployeeId, index, pageSize);
+            var result = focusDealers.ToPagedList<FocusDealer>(index, pageSize);
+
+            if (!string.IsNullOrEmpty(searchDate))
+                    result = result.Where(f => f.ValidFrom.Date <= Convert.ToDateTime(searchDate).Date && f.ValidTo.Date >= Convert.ToDateTime(searchDate).Date).ToPagedList();
+            var  final = (from fd in result
                          join u in _userInfoSvc.GetAll()
-                           on fd.EmployeeRegId equals u.EmployeeId
+                           on fd.EmployeeId equals u.EmployeeId
                          join d in _dealerInfo.GetAll()
                          on fd.Code equals d.Id
                          select new FocusDealerModel
                          {
                              Id = fd.Id,
-                             EmployeeName = u.FirstName,
+                             EmployeeName =$"{u.FirstName},{u.LastName}",
                              Code = fd.Code,
                              DealerName = d.CustomerName,
-                             EmployeeRegId = fd.EmployeeRegId,
+                             EmployeeId = fd.EmployeeId,
                              ValidFrom = fd.ValidFrom,
                              ValidTo = fd.ValidTo
                          }).ToPagedList();
 
-            return data;
-            //var result = from fd  in focusDealers
-            //           join u in _userInfoSvc.GetAll()
-            //             on fd.EmployeeRegId equals u.EmployeeId
-            //             join d in _dealerInfo.GetAll()
-            //             on fd.Code equals d.Id
-            //             select new FocusDealerModel
-            //             {
-            //                 Id = fd.Id,
-            //                 EmployeeName = u.FirstName,
-            //                 Code = fd.Code,
-            //                 DealerName = d.CustomerName,
-            //                 EmployeeRegId = fd.EmployeeRegId,
-            //                 ValidFrom = fd.ValidFrom,
-            //                 ValidTo = fd.ValidTo
-            //             };
+            return final;
            
 
         }
@@ -74,7 +67,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<FocusDealerModel> CreateAsync(FocusDealerModel model)
         {
             var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
-            journeyPlan.EmployeeRegId = AppIdentity.AppUser.EmployeeId;
+            journeyPlan.EmployeeId = AppIdentity.AppUser.EmployeeId;
             var result = await _focusDealer.CreateAsync(journeyPlan);
             return result.ToMap<FocusDealer, FocusDealerModel>();
         }

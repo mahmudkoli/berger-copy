@@ -4,7 +4,7 @@ export class FocusDealer {
 
     public id: number;
     public code: string;
-    public employeeRegId: string;
+    public employeeId: string;
     public validFrom: string;
     public validTo: string;
     public employeeName: string;
@@ -20,7 +20,7 @@ export class FocusDealer {
     constructor() {
         this.id = 0;
         this.code = '',
-        this.employeeRegId = '';
+        this.employeeId = '';
         this.validFrom = '';
         this.validTo=''
       

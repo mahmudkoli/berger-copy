@@ -12,7 +12,7 @@ namespace BergerMsfaApi.Models.FocusDealer
         public int Code { get; set; }
         public string DealerName { get; set; }
         public string EmployeeName { get; set; }
-        public string EmployeeRegId { get; set; }
+        public string EmployeeId { get; set; }
 
         public DateTime ValidFrom { get; set; }
        

@@ -11,24 +11,29 @@
 
                     <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
                     <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->
-
-
-                    <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary" >Approved</button>
-                    <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-3">Rejected</button>
-
                     <!--<div>
-        Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
-            <option [value]="-1">Select Status</option>
-            <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
-        </select>
-    </div>-->
+                        Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
+                            <option [value]="-1">Select Status</option>
+                            <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
+                        </select>
+                    </div>-->
                 </div>
                 <div class="col-md-6">
                     <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
                     <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
-                   
+
                 </div>
             </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
+            <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-2">Rejected</button>
+        </div>
+        <div class="col-md-5">
+            <textarea style="display:inline" *ngIf="showApprovedBtn || showRejectedBtn" [(ngModel)]="journeyPlanStatus.comment" placeholder="comment...." class="form-control"></textarea>
         </div>
 
     </div>

@@ -43,7 +43,16 @@ export class JourneyPlanListComponent implements OnInit {
         this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
 
     }
-
+    compareDate(pDate) {
+        let pd = new Date(Date.parse(pDate));
+        var planDate = pd.getFullYear() + "-" + (pd.getMonth() + 1) + "-" + pd.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var d = new Date();
+        var currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var planDateInMileSeconds = Date.parse(planDate);
+        var currentDateInMileScondes = Date.parse(currentDate);
+        if (planDateInMileSeconds >= currentDateInMileScondes) return true;
+        else return false
+    }
 
     next() {
         this.first = this.first + this.rows;
@@ -146,30 +155,39 @@ export class JourneyPlanListComponent implements OnInit {
         this.router.navigate(['/journey-plan/add']);
     }
 
-    edit(id: number) {
-        console.log('edit plan', id);
-        this.router.navigate(['/journey-plan/add/' + id]);
+    edit(jPlan) {
+        debugger;
+        if (this.compareDate(jPlan.planDate)) {
+            console.log('edit plan', jPlan.id);
+            this.router.navigate(['/journey-plan/add/' + jPlan.id]);
+        }
+        this.alertService.alert("can not modify pervious plan");
     }
 
-    delete(id: number) {
-        console.log("Id:", id);
-        this.alertService.confirm("Are you sure you want to delete this item?", () => {
-            this.alertService.fnLoading(true);
-            this.journeyPlanService.delete(id).subscribe(
-                (res: any) => {
-                    console.log('res from del func', res);
-                    this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                  //  this.fnJourneyPlanList();
-                    this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
-                },
-                (error) => {
-                    console.log(error);
-                    this.displayError(error);
-                }
-            ).add(() => this.alertService.fnLoading(false));;
-        }, () => {
+    delete(jPlan) {
+        console.log("Id:", jPlan.id);
 
-        });
+        if (this.compareDate(jPlan.planDate)) {
+            this.alertService.confirm("Are you sure you want to delete this item?", () => {
+                this.alertService.fnLoading(true);
+                this.journeyPlanService.delete(jPlan.id).subscribe(
+                    (res: any) => {
+                        console.log('res from del func', res);
+                        this.alertService.tosterSuccess("journey plan has been deleted successfully.");
+                        //  this.fnJourneyPlanList();
+                        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+                    },
+                    (error) => {
+                        console.log(error);
+                        this.displayError(error);
+                    }
+                ).add(() => this.alertService.fnLoading(false));;
+            }, () => {
+
+            });
+        }
+        this.alertService.alert("can not delete pervious plan");
+       
     }
     private displayError(errorDetails: any) {
         // this.alertService.fnLoading(false);

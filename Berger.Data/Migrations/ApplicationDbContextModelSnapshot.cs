@@ -215,7 +215,7 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EmployeeRegId")
+                    b.Property<string>("EmployeeId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
@@ -693,6 +693,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("ApprovedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");

@@ -25,6 +25,7 @@
         <tr>
             <th pSortableColumn="planDate">Plan Date <p-sortIcon field="planDate"></p-sortIcon></th>
             <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
+            <th pSortableColumn="comment">Comment <p-sortIcon field="comment"></p-sortIcon></th>
             <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
 
             <th>
@@ -39,16 +40,17 @@
             <td>
                 {{ PlanStatusEnum[jPlan.planStatus]}}
                 <!--<div ngbDropdown class="d-inline-block">
-        <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
-        <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-            <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
+            <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+                <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
 
-        </div>
-    </div>-->
+            </div>
+        </div>-->
             </td>
+            <td>{{jPlan.comment}}</td>
             <td>
                 <!--<i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
-                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>-->
+        <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>-->
                 <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="openModal(jPlan)">
                     View Detail
                 </button>
