@@ -71,7 +71,7 @@ namespace BergerMsfaApi.Controllers.Users
                     //{
                     //    return Unauthorized();
                     //}
-                     loginSuccess = true;
+                     loginSuccess = await _userService.IsUserNameExistAsync(model.UserName); 
 
                     if (loginSuccess)
                     {
