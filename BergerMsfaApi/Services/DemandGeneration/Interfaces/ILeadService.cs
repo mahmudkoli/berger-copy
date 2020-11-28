@@ -12,7 +12,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<int> AddLeadGenerateAsync(SaveLeadGenerationModel model);
         Task<int> AddLeadFollowUpAsync(SaveLeadFollowUpModel model);
         Task<LeadGenerationModel> GetByIdAsync(int id);
-        Task<LeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
+        Task<SaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
         Task<IList<LeadGenerationModel>> GetAllAsync(int pageIndex, int pageSize);
+        Task<IList<LeadGenerationModel>> GetAllByUserIdAsync(int userId);
     }
 }

@@ -25,12 +25,12 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             this._dealerSalesCallService = dealerSalesCallService;
         }
 
-        [HttpGet("GetDealerSalesCallList")]
-        public async Task<IActionResult> GetDealerSalesCallList()
+        [HttpGet("GetAllByUserId/{id}")]
+        public async Task<IActionResult> GetAllByUserId(int id)
         {
             try
             {
-                var result = await _dealerSalesCallService.GetAllAsync(1, int.MaxValue);
+                var result = await _dealerSalesCallService.GetAllByUserIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -39,12 +39,12 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             }
         }
 
-        [HttpGet("GetDealerSalesCall/{dealerSalesCallId}")]
-        public async Task<IActionResult> GetDealerSalesCall(int dealerSalesCallId)
+        [HttpGet("GetDealerSalesCallByDealerId/{id}")]
+        public async Task<IActionResult> GetDealerSalesCallByDealerId(int id)
         {
             try
             {
-                var result = await _dealerSalesCallService.GetByIdAsync(dealerSalesCallId);
+                var result = await _dealerSalesCallService.GetDealerSalesCallByDealerIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
         }
 
         [HttpPost("CreateDealerSalesCall")]
-        public async Task<IActionResult> CreateDealerSalesCall([FromForm] SaveDealerSalesCallModel model)
+        public async Task<IActionResult> CreateDealerSalesCall([FromBody] SaveDealerSalesCallModel model)
         {
             if (!ModelState.IsValid)
             {

@@ -51,6 +51,21 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return modelResult;
         }
 
+        public async Task<IList<LeadGenerationModel>> GetAllByUserIdAsync(int userId)
+        {
+            var result = await _leadGenerationRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserId == userId,
+                                null,
+                                null,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
+
+            return modelResult;
+        }
+
         public async Task<LeadGenerationModel> GetByIdAsync(int id)
         {
             var result = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
@@ -82,7 +97,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return result.Id;
         }
 
-        public async Task<LeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id)
+        public async Task<SaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id)
         {
             var result = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
@@ -91,7 +106,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                 true
                             );
 
-            var modelResult = new LeadFollowUpModel();
+            var modelResult = new SaveLeadFollowUpModel();
 
             modelResult.LeadGenerationId = result.Id;
             modelResult.Depot = result.Depot;
@@ -112,6 +127,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             modelResult.TotalPaintingAreaSqftInteriorChangeCount = result.TotalPaintingAreaSqftInteriorChangeCount;
             modelResult.TotalPaintingAreaSqftExterior = result.TotalPaintingAreaSqftExterior;
             modelResult.TotalPaintingAreaSqftExteriorChangeCount = result.TotalPaintingAreaSqftExteriorChangeCount;
+            modelResult.BusinessAchievement = new SaveLeadBusinessAchievementModel();
 
             if(result.LeadFollowUps.Any())
             {
@@ -127,7 +143,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.ExpectedMonthlyBusinessValue = leadFollowUp.ExpectedMonthlyBusinessValue;
                 modelResult.TotalPaintingAreaSqftInterior = leadFollowUp.TotalPaintingAreaSqftInterior;
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
-
             }
 
             return modelResult;

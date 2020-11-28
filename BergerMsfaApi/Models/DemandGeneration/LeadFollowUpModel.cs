@@ -36,10 +36,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int NumberOfStoriedBuilding { get; set; }
         public string NumberOfStoriedBuildingChangeReason { get; set; }
         public decimal ExpectedValue { get; set; }
-        public int ExpectedValueChangeCount { get; set; }
+        //public int ExpectedValueChangeCount { get; set; }
         public string ExpectedValueChangeReason { get; set; }
         public decimal ExpectedMonthlyBusinessValue { get; set; }
-        public int ExpectedMonthlyBusinessValueChangeCount { get; set; }
+        //public int ExpectedMonthlyBusinessValueChangeCount { get; set; }
         public string ExpectedMonthlyBusinessValueChangeReason { get; set; }
         public int ProjectStatusId { get; set; }
         public DropdownDetail ProjectStatus { get; set; }
@@ -93,9 +93,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public int Id { get; set; }
         public int LeadGenerationId { get; set; }
         //public LeadGenerationModel LeadGeneration { get; set; }
-        //public string Depot { get; set; }
-        //public string Territory { get; set; }
-        //public string Zone { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public DateTime LastVisitedDate { get; set; }
         public DateTime NextVisitDatePlan { get; set; }
         public DateTime ActualVisitDate { get; set; }
@@ -112,8 +112,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int NumberOfStoriedBuilding { get; set; }
         public string NumberOfStoriedBuildingChangeReason { get; set; }
         public decimal ExpectedValue { get; set; }
+        public int ExpectedValueChangeCount { get; set; }
         public string ExpectedValueChangeReason { get; set; }
         public decimal ExpectedMonthlyBusinessValue { get; set; }
+        public int ExpectedMonthlyBusinessValueChangeCount { get; set; }
         public string ExpectedMonthlyBusinessValueChangeReason { get; set; }
         public int ProjectStatusId { get; set; }
         //public DropdownDetail ProjectStatus { get; set; }
@@ -129,8 +131,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public DropdownDetail SwappingCompetition { get; set; }
         public string SwappingCompetitionAnotherCompetitorName { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
+        public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
         public string TotalPaintingAreaSqftInteriorChangeReason { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
+        public int TotalPaintingAreaSqftExteriorChangeCount { get; set; }
         public string TotalPaintingAreaSqftExteriorChangeReason { get; set; }
         public string UpTradingFromBrandName { get; set; }
         public string UpTradingToBrandName { get; set; }
@@ -147,13 +151,14 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int ActualVolumeSoldUnderCoatGallon { get; set; }
         public int ActualVolumeSoldTopCoatGallon { get; set; }
         //public int BusinessAchievementId { get; set; }
-        public LeadBusinessAchievementModel BusinessAchievement { get; set; }
+        public SaveLeadBusinessAchievementModel BusinessAchievement { get; set; }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<LeadFollowUp, LeadFollowUpModel>();
             profile.CreateMap<LeadFollowUpModel, LeadFollowUp>();
-            profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>();
+            profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>();
+            profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>();
         }
     }
 }
