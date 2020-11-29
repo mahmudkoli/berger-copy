@@ -122,5 +122,19 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("GetUserInfoList")]
+        public async Task<IActionResult> GetUserInfoList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

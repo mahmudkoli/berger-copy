@@ -111,6 +111,8 @@
     <Compile Remove="Migrations\20201113065025_UpdatePainterCallEntity.Designer.cs" />
     <Compile Remove="Migrations\20201115054618_modifiedDealerInfo.cs" />
     <Compile Remove="Migrations\20201115054618_modifiedDealerInfo.Designer.cs" />
+    <Compile Remove="Migrations\20201123104654_addedTintingEntity.cs" />
+    <Compile Remove="Migrations\20201123104654_addedTintingEntity.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

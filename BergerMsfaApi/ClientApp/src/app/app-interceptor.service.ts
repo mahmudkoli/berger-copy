@@ -47,17 +47,17 @@ export class AppInterceptorService implements HttpInterceptor {
         this.alertService.fnLoading(true);
         console.log('processing request', request);
         console.log('url', request.url);
-
-        let token = '';
+        debugger;
+        let token = localStorage.getItem('bergermsfa');
 
         // local storege for ad
-        if (request.url.indexOf('graph.microsoft.com') > -1) {
-            console.log('add request');
+        //if (request.url.indexOf('graph.microsoft.com') > -1) {
+        //    console.log('add request');
 
-            token = localStorage.getItem('adtoken');
-        } else {
-            token = localStorage.getItem('bergermsfa');
-        }
+        //    token = localStorage.getItem('adtoken');
+        //} else {
+        //    token = localStorage.getItem('bergermsfa');
+        //}
 
         if (request.method === 'POST' || request.method === 'PUT') {
             this.shiftDates(request.body);

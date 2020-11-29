@@ -14,6 +14,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -197,6 +198,10 @@ namespace Berger.Data.MsfaEntity
         public DbSet<LeadGeneration> LeadGenerations { get; set; }
         public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
         public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
+        #endregion
+
+        #region Tinting
+        public DbSet<TintiningMachine> TintiningMachines { get; set; }
         #endregion
 
     }

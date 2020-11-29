@@ -20,12 +20,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
        
-        [HttpGet("GetFocusDealerList")]
-        public async Task<IActionResult> GetFocusDealerList()
+        [HttpGet("GetFocusdealerListPaging/{index}/{pageSize}")]
+        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string searchDate)
         {
             try
             {
-                var result = await _focusDealerService.GetFocusDealerList();
+                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, searchDate);
                 return OkResult(result);
             }
             catch (Exception ex)

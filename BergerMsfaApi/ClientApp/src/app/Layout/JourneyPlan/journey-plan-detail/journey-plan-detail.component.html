@@ -1,7 +1,7 @@
 
 <div *ngIf="journeyPlan" class="container bootstrap snippet">
     <div class="row">
-        <div class="col-sm-10"><p>Plan Date : {{journeyPlan.planDate|date}} <button class="btn-sm btn btn-primary">{{journeyPlan.status|msfaStatus}}</button></p></div>
+        <div class="col-sm-10"><p>Plan Date : {{journeyPlan.planDate|date}} <button class="btn-sm btn btn-primary">{{PlanStatusEnum[journeyPlan.planStatus]}}</button></p></div>
     </div>
     <div class="row">
 
@@ -33,8 +33,9 @@
 
                     <th pSortableColumn="'customerNo'">Customer No <p-sortIcon field="'customerNo'"></p-sortIcon></th>
                     <th pSortableColumn="'customerName'">Customer Name <p-sortIcon field="'customerName'"></p-sortIcon></th>
-                    <th pSortableColumn="territory">Territory <p-sortIcon field="territory"></p-sortIcon></th>
-                    <th pSortableColumn="visitDate">Visit Date<p-sortIcon field="visitDate"></p-sortIcon></th>
+                    <th pSortableColumn="'contactNo'">Contact No <p-sortIcon field="'contactNo'"></p-sortIcon></th>
+                    <th pSortableColumn="'address'">Address <p-sortIcon field="'address'"></p-sortIcon></th>
+                    <th pSortableColumn="territory">Territory<p-sortIcon field="territory"></p-sortIcon></th>
 
                 </tr>
             </ng-template>
@@ -42,10 +43,12 @@
                 <tr>
 
                     <td>{{jplan.customerNo}}</td>
-                    <td>{{jplan.customerName}}</td>
+                    <td>{{jplan.customerName}} <span class="badge badge-pill badge-primary">{{jplan.isFocused?"Focused":""}}</span></td>
+                    <td>{{jplan.contactNo}}</td>
+                    <td>{{jplan.address}}</td>
                     <td>{{jplan.territory}}</td>
-                    <td>{{jplan.visitDate |date}}</td>
-              
+
+
                 </tr>
             </ng-template>
             <br />

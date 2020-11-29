@@ -62,11 +62,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         HttpClientModule
     ],
     providers: [
-    //    {
-    //    provide: HTTP_INTERCEPTORS,
-    //    useClass: AppInterceptorService,
-    //    multi: true
-    //},
+       {
+       provide: HTTP_INTERCEPTORS,
+       useClass: AppInterceptorService,
+       multi: true
+    },
     {
         provide:
             PERFECT_SCROLLBAR_CONFIG,

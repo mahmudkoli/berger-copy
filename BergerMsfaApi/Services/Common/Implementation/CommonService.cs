@@ -29,6 +29,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<SaleGroup> _saleGroupSvc;
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
         private readonly IRepository<FocusDealer> _focusDealerSvc;
+        private readonly IRepository<UserInfo> _userInfosvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
 
@@ -39,7 +40,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Role> roleSvc,
             IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
             IRepository<Depot> depotSvc,
-            IRepository<FocusDealer> focusDealerSvc
+            IRepository<FocusDealer> focusDealerSvc,
+            IRepository<UserInfo> userInfosvc
 
             )
         {
@@ -52,6 +54,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _roleSvc = roleSvc; 
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
             _depotSvc = depotSvc;
+            _userInfosvc = userInfosvc;
         }
         //this method expose dealer list by territory for App
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -69,7 +72,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _dealerInfoSvc.GetAllAsync();
             return result.ToMap<DealerInfo, DealerInfoModel>();
         }
-
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoList()
+        {
+            var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
             return await _saleGroupSvc.GetAllAsync();

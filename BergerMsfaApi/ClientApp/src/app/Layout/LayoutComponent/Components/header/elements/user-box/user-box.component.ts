@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
+import { Route } from 'src/app/Shared/Entity';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import {ThemeOptions} from '../../../../../../theme-options';
 
   const requestObj = {
@@ -15,7 +18,7 @@ export class UserBoxComponent implements OnInit {
   isIframe = false;
   loggedIn = false;
   constructor(
-    public globals: ThemeOptions, 
+    public globals: ThemeOptions, public commonService: CommonService , public route : Router
       
       
      ) { }
@@ -43,12 +46,14 @@ export class UserBoxComponent implements OnInit {
   //}
 
     getProfile() {
-       
+     this.profile = this.commonService.getUserInfoFromLocalStorage();
+     console.log("Profile View", this.profile);
     }
 
 
   logout() {
-    
+    localStorage.clear();
+    this.route.navigate['/login/loginboxed'];
   }
 
  
