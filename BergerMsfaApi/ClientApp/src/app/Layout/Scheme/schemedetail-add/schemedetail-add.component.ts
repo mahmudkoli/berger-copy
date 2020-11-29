@@ -4,6 +4,7 @@ import { Status } from '../../../Shared/Enums/status';
 import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-schemedetail-add',
@@ -18,6 +19,7 @@ export class SchemedetailAddComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        public formatter: NgbDateParserFormatter,
         private alertService: AlertService,
         private schemeService: SchemeService) { }
 
@@ -36,12 +38,21 @@ export class SchemedetailAddComponent implements OnInit {
 
     getSchemeDetailById(id) {
         this.schemeService.getSchemeDetailById(id).subscribe(
-            (res) => { this.schemeDetailModel = res.data || new SchemeDetail
-                () },
+            (res) => {
+                let schemeDetailData = res.data as SchemeDetail || new SchemeDetail()
+                schemeDetailData.vDate = NgbDate.from(this.formatter.parse(schemeDetailData.date));
+                this.editForm(schemeDetailData);
+                //this.schemeDetailModel = res.data || new SchemeDetail()
+
+            },
             () => { },
             () => { }
         )
     }
+    private editForm(schemeDetail: SchemeDetail) {
+        this.schemeDetailModel = schemeDetail;
+    }
+
     getSchemeMasterList() {
         this.alertService.fnLoading(true);
         this.schemeService.getSchemeMasterList().subscribe((res) => {
@@ -49,6 +60,7 @@ export class SchemedetailAddComponent implements OnInit {
         }, () => { }, () => this.alertService.fnLoading(false));
     }
     fnSave() {
+        this.schemeDetailModel.date = this.schemeDetailModel.vDate.year.toString() + "-" + this.schemeDetailModel.vDate.month.toString() + "-" + this.schemeDetailModel.vDate.day.toString();
         this.schemeDetailModel.id == 0 ? this.insert(this.schemeDetailModel) : this.update(this.schemeDetailModel);
     }
     insert(schemeDetailModel) {

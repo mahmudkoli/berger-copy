@@ -346,10 +346,10 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
             var userRoleMapping = await _userRoleMapping.FindAsync(u => u.UserInfoId == result.Id);
 
-            //if (userRoleMapping != null)  
-            //{
-            //    finalResult.RoleId = userRoleMapping.RoleId;
-            //}
+            if (userRoleMapping != null)
+            {
+                finalResult.RoleId = userRoleMapping.RoleId;
+            }
             return finalResult;
         }
 

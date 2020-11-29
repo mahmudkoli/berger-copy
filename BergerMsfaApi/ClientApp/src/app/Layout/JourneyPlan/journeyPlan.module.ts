@@ -9,14 +9,15 @@ import { JourneyPlanListComponent } from './journey-plan-list/journey-plan-list.
 import { JourneyPlanAddComponent } from './journey-plan-add/journey-plan-add.component';
 import { JourneyPlanRoutingModule } from './journeyPlan-routing.module';
 import { JourneyPlanDetailComponent } from './journey-plan-detail/journey-plan-detail.component';
-import { StatusPipe } from '../../Shared/Pipes/status-filter.pipe';
+import {StatusPipe } from '../../Shared/Pipes/status-filter.pipe';
 import { JourneyPlanListLineManagerComponent } from './journey-plan-list-line-manager/journey-plan-list-line-manager.component';
+import { JouneryPlanLinemanagerDetailComponent } from './jounery-plan-linemanager-detail/jounery-plan-linemanager-detail.component';
 
 
 
 
 @NgModule({
-    declarations: [JourneyPlanListComponent, JourneyPlanAddComponent, StatusPipe,JourneyPlanDetailComponent, JourneyPlanListLineManagerComponent],
+    declarations: [JourneyPlanListComponent, JourneyPlanAddComponent, StatusPipe, JourneyPlanDetailComponent, JourneyPlanListLineManagerComponent, JouneryPlanLinemanagerDetailComponent],
     imports: [
         CommonModule,
         SharedMasterModule,

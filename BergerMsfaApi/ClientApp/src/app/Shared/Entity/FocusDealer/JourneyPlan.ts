@@ -7,6 +7,8 @@ export class FocusDealer {
     public employeeRegId: string;
     public validFrom: string;
     public validTo: string;
+    public employeeName: string;
+    public dealerName: string;
 
     public validFromNgbDate: NgbDate
     public validToNgbDate: NgbDate

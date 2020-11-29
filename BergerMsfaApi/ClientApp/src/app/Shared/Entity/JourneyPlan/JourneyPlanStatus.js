@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JourneyPlanStatus = void 0;
-var status_1 = require("../../Enums/status");
+var PlanStatus_1 = require("../../Enums/PlanStatus");
 var JourneyPlanStatus = /** @class */ (function () {
     function JourneyPlanStatus() {
-        this.status = status_1.Status.Inactive;
+        this.status = PlanStatus_1.PlanStatus.Pending;
     }
     return JourneyPlanStatus;
 }());

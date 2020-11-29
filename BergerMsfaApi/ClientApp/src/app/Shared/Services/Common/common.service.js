@@ -58,6 +58,15 @@ var CommonService = /** @class */ (function () {
     CommonService.prototype.getRoleList = function () {
         return this.http.get(this.baseUrl + 'v1/Common/getRoleList');
     };
+    CommonService.prototype.getDepotList = function () {
+        return this.http.get(this.baseUrl + 'v1/Common/getDepotList');
+    };
+    CommonService.prototype.getUserInfoList = function () {
+        return this.http.get(this.baseUrl + 'v1/Common/getUserInfoList');
+    };
+    CommonService.prototype.getDealerList = function (userCategory, userCategoryIds) {
+        return this.http.get(this.baseUrl + ("v1/AppDealer/getDealerList?userCategory=" + userCategory + "&userCategoryIds=" + userCategoryIds));
+    };
     CommonService = __decorate([
         core_1.Injectable({
             providedIn: 'root'

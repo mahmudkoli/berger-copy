@@ -46,7 +46,7 @@ var SchemeService = /** @class */ (function () {
         return this.http.post(this.baseUrl + 'v1/SchemeDetail/createSchemeDetail', model);
     };
     SchemeService.prototype.updateSchemeDetail = function (model) {
-        return this.http.put(this.baseUrl + 'v1/SchemeMaster/updateSchemeDetail', model);
+        return this.http.put(this.baseUrl + 'v1/SchemeDetail/updateSchemeDetail', model);
     };
     SchemeService.prototype.deleteSchemeDetail = function (id) {
         return this.http.delete(this.baseUrl + 'v1/SchemeDetail/deleteSchemeDetail/' + id);

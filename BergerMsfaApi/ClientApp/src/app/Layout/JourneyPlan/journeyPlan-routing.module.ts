@@ -4,6 +4,7 @@ import { JourneyPlanListComponent } from './journey-plan-list/journey-plan-list.
 import { JourneyPlanAddComponent } from './journey-plan-add/journey-plan-add.component';
 import { JourneyPlanDetailComponent } from './journey-plan-detail/journey-plan-detail.component';
 import { JourneyPlanListLineManagerComponent } from './journey-plan-list-line-manager/journey-plan-list-line-manager.component';
+import { JouneryPlanLinemanagerDetailComponent } from './jounery-plan-linemanager-detail/jounery-plan-linemanager-detail.component';
 
 
 
@@ -16,7 +17,8 @@ const routes: Routes = [
             { path: 'add', component: JourneyPlanAddComponent, data: { permissionType: 'create', permissionGroup: 'product/product-list' } },
             { path: "add/:id", component: JourneyPlanAddComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } },
             { path: "detail/:id", component: JourneyPlanDetailComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } },
-            { path: "line-manager", component: JourneyPlanListLineManagerComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } }
+            { path: "line-manager", component: JourneyPlanListLineManagerComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } },
+            { path: "line-manager-detail/:id", component: JouneryPlanLinemanagerDetailComponent, data: { permissionType: 'update', permissionGroup: 'product/product-list' } }
         ]
     }
 ];

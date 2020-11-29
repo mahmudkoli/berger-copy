@@ -39,19 +39,19 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
 
-            if(model.CompetitionProductDisplayImageFile != null)
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
             {
-                dealerSalesCall.CompetitionProductDisplayImage = await SaveImageAsync(model.CompetitionProductDisplayImageFile,
-                                                                        model.CompetitionProductDisplayImageFile.FileName, 
-                                                                        FileUploadCode.DealerSalesCall);
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
 
-            if(model.CompetitionSchemeModalityImageFile != null)
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
             {
-                dealerSalesCall.CompetitionSchemeModalityImage = await SaveImageAsync(model.CompetitionSchemeModalityImageFile,
-                                                                        model.CompetitionSchemeModalityImageFile.FileName, 
-                                                                        FileUploadCode.DealerSalesCall);
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
+
+            dealerSalesCall.CreatedTime = DateTime.Now;
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             return result.Id;
@@ -74,6 +74,46 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return modelResult;
         }
 
+        public async Task<IList<DealerSalesCallModel>> GetAllByUserIdAsync(int userId)
+        {
+            var result = await _dealerSalesCallRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserId == userId,
+                                null,
+                                null,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<SaveDealerSalesCallModel> GetDealerSalesCallByDealerIdAsync(int id)
+        {
+            var result = (await _dealerSalesCallRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.DealerId == id,
+                                null,
+                                null,
+                                true
+                            )).OrderByDescending(x => x.CreatedTime).FirstOrDefault();
+
+            var modelResult = new SaveDealerSalesCallModel();
+            modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
+            modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
+
+            if(result != null)
+            {
+                modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
+                modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
+                modelResult.HasPainterInfluence = result.HasPainterInfluence;
+                modelResult.PainterInfluenceId = result.PainterInfluenceId;
+            }
+
+            return modelResult;
+        }
+
         public async Task<DealerSalesCallModel> GetByIdAsync(int id)
         {
             var result = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(
@@ -86,16 +126,6 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
 
             return modelResult;
-        }
-
-        private async Task<Attachment> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
-        {
-            var path = await _fileUploadService.SaveImageAsync(file, fileName, type);
-
-            var attachment = new Attachment(0, nameof(DSC.DealerSalesCall), path, fileName,
-                Path.GetExtension(file.FileName), file.Length);
-
-            return attachment;
         }
     }
 }

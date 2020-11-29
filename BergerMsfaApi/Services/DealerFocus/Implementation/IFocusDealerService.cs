@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.DealerFocus.Implementation
 {
     public interface IFocusDealerService
     {
-        Task<IEnumerable<FocusDealerModel>> GetFocusDealerList();
+        Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize,string searchDate);
         Task<FocusDealerModel> GetFocusDealerById(int id);
 
 

@@ -8,11 +8,11 @@
                 </div>
 
                 <div class="col-md-4 offset-md-4">
-                    <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
+                    <!--<button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>-->
                     <div>
                         <span class="p-input-icon-right m-2 pull-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()" [(ngModel)]="planDate" placeholder="Search (yyyy-m-d)" />
                         </span>
                     </div>
                 </div>
@@ -24,6 +24,7 @@
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="planDate">Plan Date <p-sortIcon field="planDate"></p-sortIcon></th>
+            <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
             <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
 
             <th>
@@ -34,22 +35,31 @@
     <ng-template pTemplate="body" let-jPlan>
         <tr>
             <td>{{jPlan.planDate| date }}</td>
+            <td>{{jPlan.employee.firstName }}</td>
             <td>
-                <div ngbDropdown class="d-inline-block">
-                    <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                        <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
+                {{ PlanStatusEnum[jPlan.planStatus]}}
+                <!--<div ngbDropdown class="d-inline-block">
+        <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+            <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
 
-                    </div>
-                </div>
+        </div>
+    </div>-->
             </td>
             <td>
-                <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
-                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>
+                <!--<i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
+                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>-->
                 <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="openModal(jPlan)">
                     View Detail
                 </button>
             </td>
         </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <p-paginator [rows]="rows"
+                     [totalRecords]="pagingConfig?.totalItemCount"
+                     [pageLinkSize]="pageSize"
+                     [rowsPerPageOptions]="[10,20]"
+                     (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>
 </p-table>
