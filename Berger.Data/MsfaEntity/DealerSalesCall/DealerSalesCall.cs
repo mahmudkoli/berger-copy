@@ -3,6 +3,7 @@ using Berger.Data.Common;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
     {
         public int DealerId { get; set; }
         public DealerInfo Dealer { get; set; }
-        public DateTime Date { get; set; }
+        public int UserId { get; set; }
+        public UserInfo User { get; set; }
+        //public DateTime Date { get; set; }
         public bool IsTargetPromotionCommunicated { get; set; }
         public bool IsTargetCommunicated { get; set; }
 
@@ -64,11 +67,13 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public string CompetitionServiceBetterThanBPBLRemarks { get; set; }
         public bool IsCompetitionProductDisplayBetterThanBPBL { get; set; }
         public string CompetitionProductDisplayBetterThanBPBLRemarks { get; set; }
-        public int? CompetitionProductDisplayImageId { get; set; }
-        public Attachment CompetitionProductDisplayImage { get; set; }
+        //public int? CompetitionProductDisplayImageId { get; set; }
+        //public Attachment CompetitionProductDisplayImage { get; set; }
+        public string CompetitionProductDisplayImageUrl { get; set; }
         public string CompetitionSchemeModalityComments { get; set; }
-        public int? CompetitionSchemeModalityImageId { get; set; }
-        public Attachment CompetitionSchemeModalityImage { get; set; }
+        //public int? CompetitionSchemeModalityImageId { get; set; }
+        //public Attachment CompetitionSchemeModalityImage { get; set; }
+        public string CompetitionSchemeModalityImageUrl { get; set; }
         public string CompetitionShopBoysComments { get; set; }
         public IList<DealerCompetitionSales> DealerCompetitionSales { get; set; }
 

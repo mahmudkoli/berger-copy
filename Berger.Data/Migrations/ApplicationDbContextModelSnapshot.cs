@@ -288,14 +288,14 @@ namespace Berger.Data.Migrations
                     b.Property<string>("CompetitionProductDisplayBetterThanBPBLRemarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompetitionProductDisplayImageId")
-                        .HasColumnType("int");
+                    b.Property<string>("CompetitionProductDisplayImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompetitionSchemeModalityComments")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompetitionSchemeModalityImageId")
-                        .HasColumnType("int");
+                    b.Property<string>("CompetitionSchemeModalityImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompetitionServiceBetterThanBPBLRemarks")
                         .HasColumnType("nvarchar(max)");
@@ -307,9 +307,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DealerId")
@@ -417,6 +414,9 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("SubDealerInfluenceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
 
@@ -424,10 +424,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompetitionProductDisplayImageId");
-
-                    b.HasIndex("CompetitionSchemeModalityImageId");
 
                     b.HasIndex("DealerId");
 
@@ -442,6 +438,8 @@ namespace Berger.Data.Migrations
                     b.HasIndex("SecondarySalesRatingsId");
 
                     b.HasIndex("SubDealerInfluenceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("DealerSalesCalls");
                 });
@@ -497,6 +495,361 @@ namespace Berger.Data.Migrations
                     b.HasIndex("PriorityId");
 
                     b.ToTable("DealerSalesIssues");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("BergerPremiumBrandSalesValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BergerValueSales")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompetitionValueSales")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsColorSchemeGiven")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProductSampling")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("NextVisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhotoCaptureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductSamplingBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductSourcing")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RemarksOrOutcome")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LeadBusinessAchievements");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ActualPaintJobCompletedExteriorPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualPaintJobCompletedInteriorPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ActualVisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ActualVolumeSoldExteriorGallon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualVolumeSoldExteriorKg")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualVolumeSoldInteriorGallon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualVolumeSoldInteriorKg")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualVolumeSoldTopCoatGallon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualVolumeSoldUnderCoatGallon")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BrandUsedExteriorBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BrandUsedInteriorBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BrandUsedTopCoatBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BrandUsedUnderCoatBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BusinessAchievementId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ExpectedMonthlyBusinessValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ExpectedMonthlyBusinessValueChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ExpectedValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ExpectedValueChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeyContactPersonMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeyContactPersonMobileChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeyContactPersonName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeyContactPersonNameChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastVisitedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LeadGenerationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextVisitDatePlan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfStoriedBuilding")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NumberOfStoriedBuildingChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaintContractorMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaintContractorMobileChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaintContractorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaintContractorNameChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectStatusLeadCompletedId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectStatusPartialBusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectStatusPartialBusinessPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectStatusTotalLossId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProjectStatusTotalLossRemarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SwappingCompetitionAnotherCompetitorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SwappingCompetitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPaintingAreaSqftExterior")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TotalPaintingAreaSqftExteriorChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalPaintingAreaSqftInterior")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TotalPaintingAreaSqftInteriorChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeOfClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpTradingFromBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpTradingToBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessAchievementId");
+
+                    b.HasIndex("LeadGenerationId");
+
+                    b.HasIndex("ProjectStatusId");
+
+                    b.HasIndex("ProjectStatusLeadCompletedId");
+
+                    b.HasIndex("ProjectStatusPartialBusinessId");
+
+                    b.HasIndex("ProjectStatusTotalLossId");
+
+                    b.HasIndex("SwappingCompetitionId");
+
+                    b.HasIndex("TypeOfClientId");
+
+                    b.ToTable("LeadFollowUps");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpectedDateOfPainting")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ExpectedMonthlyBusinessValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExpectedMonthlyBusinessValueChangeCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ExpectedValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExpectedValueChangeCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("KeyContactPersonMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeyContactPersonName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextFollowUpDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfStoriedBuilding")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaintContractorMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaintContractorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaintingStageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoCaptureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ProductSamplingRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProjectAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("RequirementOfColorScheme")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalPaintingAreaSqftExterior")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPaintingAreaSqftExteriorChangeCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPaintingAreaSqftInterior")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPaintingAreaSqftInteriorChangeCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TypeOfClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("VisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaintingStageId");
+
+                    b.HasIndex("TypeOfClientId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LeadGenerations");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Examples.Example", b =>
@@ -2620,14 +2973,6 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Attachment", "CompetitionProductDisplayImage")
-                        .WithMany()
-                        .HasForeignKey("CompetitionProductDisplayImageId");
-
-                    b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Attachment", "CompetitionSchemeModalityImage")
-                        .WithMany()
-                        .HasForeignKey("CompetitionSchemeModalityImageId");
-
                     b.HasOne("Berger.Data.MsfaEntity.SAPTables.DealerInfo", "Dealer")
                         .WithMany()
                         .HasForeignKey("DealerId")
@@ -2661,6 +3006,12 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "SubDealerInfluence")
                         .WithMany()
                         .HasForeignKey("SubDealerInfluenceId");
+
+                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesIssue", b =>
@@ -2684,6 +3035,72 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "Priority")
                         .WithMany()
                         .HasForeignKey("PriorityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", "BusinessAchievement")
+                        .WithMany()
+                        .HasForeignKey("BusinessAchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.DemandGeneration.LeadGeneration", "LeadGeneration")
+                        .WithMany("LeadFollowUps")
+                        .HasForeignKey("LeadGenerationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatus")
+                        .WithMany()
+                        .HasForeignKey("ProjectStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatusLeadCompleted")
+                        .WithMany()
+                        .HasForeignKey("ProjectStatusLeadCompletedId");
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatusPartialBusiness")
+                        .WithMany()
+                        .HasForeignKey("ProjectStatusPartialBusinessId");
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatusTotalLoss")
+                        .WithMany()
+                        .HasForeignKey("ProjectStatusTotalLossId");
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "SwappingCompetition")
+                        .WithMany()
+                        .HasForeignKey("SwappingCompetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "TypeOfClient")
+                        .WithMany()
+                        .HasForeignKey("TypeOfClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadGeneration", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "PaintingStage")
+                        .WithMany()
+                        .HasForeignKey("PaintingStageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "TypeOfClient")
+                        .WithMany()
+                        .HasForeignKey("TypeOfClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
