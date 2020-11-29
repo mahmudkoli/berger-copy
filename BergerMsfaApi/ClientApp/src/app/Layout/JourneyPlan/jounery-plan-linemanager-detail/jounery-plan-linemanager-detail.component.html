@@ -21,6 +21,7 @@
                 <div class="col-md-6">
                     <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
                     <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
+                    <p> <label>Comment: {{journeyPlan.comment}}</label> </p>
 
                 </div>
             </div>
@@ -29,8 +30,8 @@
     </div>
     <div class="row">
         <div class="col-md-3">
-            <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
-            <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-2">Rejected</button>
+            <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approve</button>
+            <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-2">Reject</button>
         </div>
         <div class="col-md-5">
             <textarea style="display:inline" *ngIf="showApprovedBtn || showRejectedBtn" [(ngModel)]="journeyPlanStatus.comment" placeholder="comment...." class="form-control"></textarea>

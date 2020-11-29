@@ -45,7 +45,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
             (result: any) => {
                 debugger;
                 this.journeyPlan = result.data;
-                this.journeyPlanStatus.comment = this.journeyPlan.comment;
+               // this.journeyPlanStatus.comment = this.journeyPlan.comment;
 
                 if (this.compareDate(this.journeyPlan.planDate)) {
                     this.showRejectedBtn = true;
@@ -116,13 +116,13 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
 
         this.alertService.confirm(`are you sure to change status?`, () => {
 
-            if (PlanStatus.Rejected == Number(mySelect)) {
-                alert("Rejected");
-            }
-            else if (PlanStatus.Approved == Number(mySelect)) {
-                alert("Approved");
-            }
-            else return;
+            //if (PlanStatus.Rejected == Number(mySelect)) {
+            //    alert("Rejected");
+            //}
+            //else if (PlanStatus.Approved == Number(mySelect)) {
+            //    alert("Approved");
+            //}
+            //else return;
 
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(

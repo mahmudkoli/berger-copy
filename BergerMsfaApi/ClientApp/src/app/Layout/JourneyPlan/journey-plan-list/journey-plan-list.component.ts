@@ -80,38 +80,38 @@ export class JourneyPlanListComponent implements OnInit {
     isFirstPage(): boolean {
         return this.journeyPlanList ? this.first === 1 : true;
     }
-    paginate(event) {
-     
-       // event.first == 0 ?  1 : event.first;
+    public paginate(event) {
         let first = Number(event.page) + 1;
         this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
+
+       // event.first == 0 ?  1 : event.first;
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-    onStatusChange(key, jPlan) {
+    //public onStatusChange(key, jPlan) {
 
-        //this.journeyPlanStatus.planId = jPlan.id;
-        //this.journeyPlanStatus.status = Number(key);
+    //    this.journeyPlanStatus.planId = jPlan.id;
+    //    this.journeyPlanStatus.status = Number(key);
   
-        //this.alertService.confirm(`Are you sure to change status?`, () => {
-        //    this.alertService.fnLoading(true);
-        //    this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
-        //        (res) => {
-        //            this.alertService.tosterSuccess(`Status Successfully.`);
-        //            // this.fnJourneyPlanList();
-        //            this.fnJourneyPlanListPaging(this.first, this.rows,  "");
-        //        },
-        //        (error) => {
-        //            console.log(error);
-        //        }
+    //    this.alertService.confirm(`Are you sure to change status?`, () => {
+    //        this.alertService.fnLoading(true);
+    //        this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
+    //            (res) => {
+    //                this.alertService.tosterSuccess(`Status Successfully.`);
+    //                // this.fnJourneyPlanList();
+    //                this.fnJourneyPlanListPaging(this.first, this.rows,  "");
+    //            },
+    //            (error) => {
+    //                console.log(error);
+    //            }
              
-        //    ).add(() => this.alertService.fnLoading(false));
-        //}, () => {
+    //        ).add(() => this.alertService.fnLoading(false));
+    //    }, () => {
 
-        //});
-    }
+    //    });
+    //}
 
     private _initPermissionGroup() {
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
@@ -156,12 +156,13 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     edit(jPlan) {
+
         debugger;
         if (this.compareDate(jPlan.planDate)) {
             console.log('edit plan', jPlan.id);
             this.router.navigate(['/journey-plan/add/' + jPlan.id]);
         }
-        this.alertService.alert("can not modify pervious plan");
+        else this.alertService.alert("can not modify pervious plan");
     }
 
     delete(jPlan) {
@@ -186,11 +187,10 @@ export class JourneyPlanListComponent implements OnInit {
 
             });
         }
-        this.alertService.alert("can not delete pervious plan");
+        else this.alertService.alert("can not delete pervious plan");
        
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {
