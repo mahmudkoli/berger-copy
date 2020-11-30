@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.JourneyPlan;
@@ -25,10 +26,11 @@ namespace BergerMsfaApi.Controllers.Journey
         //this method expose journey plan list by employeeId
 
         [HttpGet("GetJourneyPlanList/{employeeId}")]
-        public async Task<IActionResult> GetJourneyPlanList(string employeeId)
+        public async Task<IActionResult> GetJourneyPlanList([Required]string employeeId)
         {
             try
             {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _journeyService.AppGetJourneyPlanDetailList(employeeId);
                 return OkResult(result);
             }
@@ -56,7 +58,7 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpGet("CheckHasAlreadyPlan/{employeeId}/{visitDate}")]
-        public async Task<IActionResult> CheckHasAlreadyPlan(string employeeId, string visitDate)
+        public async Task<IActionResult> CheckHasAlreadyPlan([Required] string employeeId, [Required]  string visitDate)
         {
             try
             {
@@ -95,7 +97,7 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpDelete("DeleteJourneyPlan")]
-        public async Task<IActionResult> DeleteJourneyPlan(int PlanId)
+        public async Task<IActionResult> DeleteJourneyPlan([Required]int PlanId)
         {
             try
             {
@@ -110,7 +112,7 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpGet("GetJouneyPlanDealerList/{employeeId}")]
-        public async Task<IActionResult> GetJouneyPlanDealerList(string employeeId)
+        public async Task<IActionResult> GetJouneyPlanDealerList([Required]string employeeId)
         {
             try
             {

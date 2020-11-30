@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { APIResponse } from '../../Entity';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -71,8 +71,15 @@ export class CommonService {
     getUserInfoList() {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
     }
-    public getDealerList(userCategory, userCategoryIds) {
-        return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList?userCategory=${userCategory}&userCategoryIds=${userCategoryIds}`);
+    public getDealerList(userCategory: string, userCategoryIds: string[]) {
+        var params = new HttpParams();
+        params= params.append("userCategory", userCategory);
+        if (userCategoryIds)
+            userCategoryIds.forEach(v => {
+                params=params.append("userCategoryIds", v)
+            });
+    
+        return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, { params });
     }
 
 }

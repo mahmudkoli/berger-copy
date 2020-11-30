@@ -47,7 +47,8 @@ namespace BergerMsfaApi.Controllers.Users
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             //temporary
-            model.UserName = username;
+            //model.UserName = username;
+
             model.Password = password;
 
             var apiResult = new ApiResponse<IEnumerable<LoginModel>>

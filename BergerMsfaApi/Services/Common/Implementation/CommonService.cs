@@ -56,15 +56,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _depotSvc = depotSvc;
             _userInfosvc = userInfosvc;
         }
-        //this method expose dealer list by territory for App
+
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
         {
             var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
+
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
         {
-            var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeRegId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
+            var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
@@ -74,6 +75,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         }
         public async Task<IEnumerable<UserInfoModel>> GetUserInfoList()
         {
+         
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -81,9 +83,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             return await _saleGroupSvc.GetAllAsync();
         }
-        public async Task<IEnumerable<Depot>> GetDepotList()
+        public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
-            return await _depotSvc.GetAllAsync();
+            var result = await _depotSvc.GetAllAsync();
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = s.Name1 }).ToList();
         }
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
@@ -113,11 +116,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
                 [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.Area),
                 [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),
-                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.Zone)
+                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone)
             };
 
             var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
             return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
+    }
+    public class DepotModel
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
     }
 }

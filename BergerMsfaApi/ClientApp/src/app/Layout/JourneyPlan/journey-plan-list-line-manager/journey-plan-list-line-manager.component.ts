@@ -69,10 +69,9 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         return this.journeyPlanList ? this.first === 1 : true;
     }
     paginate(event) {
-
-        // event.first == 0 ?  1 : event.first;
         let first = Number(event.page) + 1;
         this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
+        // event.first == 0 ?  1 : event.first;
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
@@ -82,7 +81,6 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(key);
-
         this.alertService.confirm(`Are you sure to change status?`, () => {
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
@@ -101,6 +99,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
         });
     }
+
     private fnJourneyPlanListPaging(index, pageSize, planDate) {
 
         this.alertService.fnLoading(true);
@@ -182,7 +181,6 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         });
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {
