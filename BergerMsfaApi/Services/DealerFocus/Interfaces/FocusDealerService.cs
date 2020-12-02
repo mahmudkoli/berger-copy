@@ -37,7 +37,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                 on f.EmployeeId equals u.EmployeeId
                                 join d in _dealerInfo.GetAll()
                                 on f.Code equals d.Id
-                                orderby f.ValidTo.Date descending
+                                orderby f.ValidTo.Date   descending
                                 select new FocusDealerModel
                                 {
                                     Id = f.Id,
