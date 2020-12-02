@@ -1,5 +1,5 @@
 
-import { NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
@@ -7,17 +7,20 @@ import { Component, OnInit } from '@angular/core';
 import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
 import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPlanStatus';
 
+
 @Component({
   selector: 'app-jounery-plan-linemanager-detail',
   templateUrl: './jounery-plan-linemanager-detail.component.html',
   styleUrls: ['./jounery-plan-linemanager-detail.component.css']
 })
 export class JouneryPlanLinemanagerDetailComponent implements OnInit {
+
     PlanStatusEnum = PlanStatus;
     PlanStatusEnumNotEdited = PlanStatusNotEdited;
     statusKeys: any[] = [];
     journeyPlanStatus: JourneyPlanStatus = new JourneyPlanStatus();
     journeyPlan: any;
+
     constructor(
         public alertService: AlertService,
         public formatter: NgbDateParserFormatter,
@@ -34,24 +37,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         }
 
     }
-    //private getJourneyPlanById(id) {
-    //    this.alertService.fnLoading(true);
-    //    this.journeyPlanService.getJourneyPlanDetailById(id).subscribe(
-    //        (result: any) => {
-    //            debugger;
-    //            this.journeyPlan = result.data;
-    //            if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
-    //                this.showStatusBtn = false;
-    //            }
-    //            else
-    //                this.showStatusBtn = true;
-                
-    //        },
-    //        (err: any) => console.log(err),
-    //        () => this.alertService.fnLoading(false)
-    //    );
-    //};
-    //showStatusBtn: boolean;
+    
 
     private getJourneyPlanById(id) {
         this.alertService.fnLoading(true);
@@ -59,22 +45,33 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
             (result: any) => {
                 debugger;
                 this.journeyPlan = result.data;
-                if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Rejected) {
-                    this.showRejectedBtn = false;
-                    this.showApprovedBtn = true;
-                }
-                if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
-                    this.showStatusBtn = false;
-                    this.showRejectedBtn = true;
-                    this.showApprovedBtn = false;
-                }
-                else if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Edited || (this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Pending) {
-                    this.showRejectedBtn = true;
-                    this.showApprovedBtn = true;
-                }
-                else
-                    this.showStatusBtn = true;
+               // this.journeyPlanStatus.comment = this.journeyPlan.comment;
 
+                if (this.compareDate(this.journeyPlan.planDate)) {
+                    this.showRejectedBtn = true;
+                    this.showApprovedBtn = true;
+                    if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Rejected) {
+                        this.showRejectedBtn = false;
+                        this.showApprovedBtn = true;
+                    }
+                    if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
+                        this.showStatusBtn = false;
+                        this.showRejectedBtn = true;
+                        this.showApprovedBtn = false;
+                    }
+                    else if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Edited || (this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Pending) {
+                        this.showRejectedBtn = true;
+                        this.showApprovedBtn = true;
+                    }
+                    else
+                        this.showStatusBtn = true;
+                }
+                else {
+                    this.showRejectedBtn = false;
+                    this.showApprovedBtn = false;
+
+                }
+               
             },
             (err: any) => { this.displayError(err) },
             () => this.alertService.fnLoading(false)
@@ -87,25 +84,50 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
 
 
 
+    compareDate(pDate) {
+        let pd = new Date(Date.parse(pDate));
+        var planDate = pd.getFullYear() + "-" + (pd.getMonth() + 1) + "-" + pd.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var d = new Date();
+        var currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var planDateInMileSeconds = Date.parse(planDate);
+        var currentDateInMileScondes = Date.parse(currentDate);
+        if (planDateInMileSeconds >= currentDateInMileScondes) return true;
+        else return false
+    }
 
 
     back() {
         this.router.navigate(["/journey-plan/line-manager"]);
     }
+
     onStatusChange(mySelect, jPlan) {
 
         debugger;
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(mySelect);
-         
+      
+        if (this.journeyPlanStatus.status == PlanStatus.Rejected) {
+            if (!this.journeyPlanStatus.comment) {
+                this.alertService.alert("please leave a comment");
+                return;
+            }
+        }
+
 
         this.alertService.confirm(`are you sure to change status?`, () => {
+
+            //if (PlanStatus.Rejected == Number(mySelect)) {
+            //    alert("Rejected");
+            //}
+            //else if (PlanStatus.Approved == Number(mySelect)) {
+            //    alert("Approved");
+            //}
+            //else return;
+
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
-                    
-                    //  this.fnjourneyplanlist();
-                    // this.fnjourneyplanlistpaging(this.first, this.rows, this.pladate);
+                
                     this.router.navigate(["/journey-plan/line-manager"]).then(
                         () => {
                             this.alertService.tosterSuccess(`status successfully.`);
@@ -123,7 +145,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         });
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
+
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {

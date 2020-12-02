@@ -12,6 +12,7 @@ namespace BergerMsfaApi.Models.JourneyPlan
         public EmployeeModel  Employee{ get; set; }
         public DateTime PlanDate { get; set; }
         public Status Status { get; set; }
+        public string Comment { get; set; }
         public PlanStatus PlanStatus { get; set; }
         public List<DealerInfoModel> DealerInfoModels { get; set; }
   

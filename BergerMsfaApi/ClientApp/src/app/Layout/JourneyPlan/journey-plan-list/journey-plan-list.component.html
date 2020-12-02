@@ -1,11 +1,5 @@
-<!--[paginator]="true"
-       [showCurrentPageReport]="true"
-       [(first)]="first"
-       [rows]="rows"
-       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-       [rowsPerPageOptions]="[10,25,50]"-->
 
-<p-table #dt [value]="journeyPlanList"
+<p-table *ngIf="journeyPlanList!=null" #dt [value]="journeyPlanList"
          [globalFilterFields]="['planDate','status']">
     <ng-template pTemplate="caption">
         <div class="table-header">
@@ -33,7 +27,9 @@
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="planDate">Plan Date <p-sortIcon field="planDate"></p-sortIcon></th>
+            <th pSortableColumn="firstName">Employee <p-sortIcon field="firstName"></p-sortIcon></th>
             <th pSortableColumn="planStatus">Status <p-sortIcon field="planStatus"></p-sortIcon></th>
+            <th pSortableColumn="comment">Comment <p-sortIcon field="comment"></p-sortIcon></th>
 
             <th>
 
@@ -43,21 +39,12 @@
     <ng-template pTemplate="body" let-jPlan>
         <tr>
             <td>{{jPlan.planDate| date }}</td>
+            <td>{{jPlan.employee.firstName }}</td>
+            <td>{{PlanStatusEnum[jPlan.planStatus]}}</td>
+            <td>{{jPlan.comment }}</td>
             <td>
-
-                {{PlanStatusEnum[jPlan.planStatus]}}
-
-                <!--<div ngbDropdown class="d-inline-block">
-        <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
-        <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-            <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
-
-        </div>
-    </div>-->
-            </td>
-            <td>
-                <i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
-                <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>
+                <i class="fa fa-edit mr-2" (click)="edit(jPlan)"> </i>
+                <i class="fa fa-trash" (click)="delete(jPlan)"> </i>
                 <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="detail(jPlan)">
                     View Detail
                 </button>

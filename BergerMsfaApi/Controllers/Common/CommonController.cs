@@ -99,6 +99,7 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDepotList();
+                
                 return OkResult(result);
             }
             catch (Exception ex)

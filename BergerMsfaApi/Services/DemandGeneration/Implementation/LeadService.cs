@@ -133,7 +133,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             {
                 var leadFollowUp = result.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
                 modelResult.LastVisitedDate = leadFollowUp.ActualVisitDate;
-                //modelResult.NextVisitDatePlan = leadFollowUp.NextFollowUpDate;
+                modelResult.NextVisitDatePlan = leadFollowUp.NextVisitDatePlan;
                 modelResult.KeyContactPersonName = leadFollowUp.KeyContactPersonName;
                 modelResult.KeyContactPersonMobile = leadFollowUp.KeyContactPersonMobile;
                 modelResult.PaintContractorName = leadFollowUp.PaintContractorName;
