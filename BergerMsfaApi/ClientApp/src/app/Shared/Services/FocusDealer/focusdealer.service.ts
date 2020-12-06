@@ -17,6 +17,10 @@ export class FocusdealerService {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
     }
+ 
+    public getDealerList(index: number, pageSize: number, search: string) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/focusdealer/getDealerList?index=${index}&pageSize=${pageSize}&search=${search}`);
+    }
 
     public getFocusDealerList() {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/focusdealer/focusdealer');
@@ -38,4 +42,8 @@ export class FocusdealerService {
     public delete(id: number) {
         return this.http.delete<any>(this.baseUrl + 'v1/focusdealer/' + id);
     }
+    public updateDealerStatus(dealer) {
+        return this.http.put<any>(this.baseUrl + `v1/focusdealer/UpdateDealerStatus/`,dealer);
+    }
+  
 }

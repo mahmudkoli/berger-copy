@@ -2015,7 +2015,13 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsCBInstalled")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsExclusive")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedBy")
@@ -3224,7 +3230,7 @@ namespace Berger.Data.Migrations
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainter", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", "Painter")
-                        .WithMany("AttachedDealer")
+                        .WithMany("AttachedDealers")
                         .HasForeignKey("PainterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -2,6 +2,7 @@
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -77,5 +78,46 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             return result.ToMap<FocusDealer, FocusDealerModel>();
         }
 
+        public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
+        {
+
+
+            var dealers = _dealerInfo.GetAll().Select(s => new DealerModel
+            {
+                Id=s.Id,
+                CustomerName = s.CustomerName,
+                CustomerNo = s.CustomerNo,
+                Address = s.Address,
+                AccountGroup = s.AccountGroup,
+                ContactNo = s.ContactNo,
+                Area = s.Area,
+                CustZone=s.CustZone,
+                BusinessArea=s.BusinessArea,
+                IsExclusiveLabel=s.IsExclusive? "Exclusive": "Non Exclusive",
+                IsCBInstalledLabel=s.IsCBInstalled ? "Installed" : "Not Installed",
+                IsCBInstalled=s.IsCBInstalled,
+                IsExclusive = s.IsExclusive
+            });
+            if (!string.IsNullOrEmpty(search))
+            {
+                
+                var result = dealers.ToDictionary(s => s.Id, f => f.RowToString());
+                var Keys = (from r in result where r.Value.Contains(search) select r.Key).ToList();
+                dealers = dealers.Where(f => Keys.Contains(f.Id));
+            }
+
+
+            return dealers.OrderBy(o=>o.CustomerNo).ToPagedList(index,pazeSize);
+        }
+       
+        public async Task<bool> DealerStatusUpdate(DealerInfo dealer)
+        {
+            var find = await _dealerInfo.FindAsync(f => f.CustomerNo == dealer.CustomerNo);
+            if (find == null) return false;
+            find.IsCBInstalled = dealer.IsCBInstalled;
+            find.IsExclusive = dealer.IsExclusive;
+            await _dealerInfo.UpdateAsync(find);
+            return true;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
@@ -31,6 +32,11 @@ namespace BergerMsfaApi.Extensions
         {
             if (value == null) return defaultValue;
             return value.ToString().Trim();
+        }
+        public static string RowToString(this object obj)
+        {
+            return string.Join(" ",
+                obj.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(obj)?.ToString() ?? "").Values);
         }
     }
 }

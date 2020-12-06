@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BaseLayoutComponent } from './LayoutComponent/base-layout/base-layout.component';
 import { AuthGuard } from '../Shared/Guards/auth.guard';
+import { PermissionGuard } from '../Shared/Guards/permission.guard';
 
 const routes: Routes = [
     {
@@ -30,6 +31,8 @@ const routes: Routes = [
             { path: 'painter', loadChildren: () => import('./PainterRegis/painter-regis.module').then(m => m.PainterRegisModule) },
             { path: 'scheme', loadChildren: () => import('./Scheme/scheme.module').then(m => m.SchemeModule) },
             { path: 'tinting', loadChildren: () => import('./Tinting/tintingmachine.module').then(m => m.TintingmachineModule) },
+            { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
+
 
         ]
     }
