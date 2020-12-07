@@ -18,7 +18,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public string SaleGroup { get; set; }
         public string TerritoryNo { get; set; }
         public string ZoneNo { get; set; }
-        public string EmployeId { get; set; }
+        public string EmployeeId { get; set; }
         public List<DealerOpeningAttachmentModel> DealerOpeningAttachments { get; set; }
 
     }
