@@ -75,9 +75,26 @@ namespace BergerMsfaApi.Services.Common.Implementation
         }
         public async Task<IEnumerable<UserInfoModel>> GetUserInfoList()
         {
+           // var result1 = new List<UserInfoModel>();
+           // var u = _userInfosvc.GetAll().ToList();
+           //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
+        }
+        private List<UserInfoModel> Getuser( List<UserInfoModel> result ,string employeeId)
+        {
+       
+            foreach (var u in _userInfosvc.GetAll())
+            {
+                if (u.ManagerId == employeeId)
+                {
+                    result.Add(u.ToMap<UserInfo, UserInfoModel>());
+                    Getuser(result, u.ManagerId);
+                }
+               
+            }
+            return result;
         }
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {

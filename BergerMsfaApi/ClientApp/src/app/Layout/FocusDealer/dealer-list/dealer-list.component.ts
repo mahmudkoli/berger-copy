@@ -18,8 +18,7 @@ export class DealerListComponent implements OnInit {
     pageSize: number;
     search: string = "";
     dealerList: any[] = [];
-    @ViewChild("dt",{static:false}) table:Table;
-    @ViewChild("paging",{static:false}) paging:Paginator;
+    @ViewChild("paging", { static: false }) paging: Paginator;
 
     constructor(
         private dealerSvc: FocusdealerService,
@@ -37,16 +36,16 @@ export class DealerListComponent implements OnInit {
     }
     prev() {
         this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
-     this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+        this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
         this.reset();
         this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
-    reset() { 
-        this.paging.first=1;
-        this.pagingConfig=new APIModel(1,10);
-       // this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    reset() {
+        this.paging.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
+        // this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
 
     isLastPage(): boolean {
@@ -74,6 +73,7 @@ export class DealerListComponent implements OnInit {
             (res: any) => {
                 this.pagingConfig = res.data;
                 this.dealerList = this.pagingConfig.model;
+
             },
             (error) => { this.displayError(error) },
         ).add(() => this.alertSvc.fnLoading(false))
@@ -83,8 +83,8 @@ export class DealerListComponent implements OnInit {
         // if (property == 'isCBInstalled') dealer[property] = value;
         // if (property == 'isExclusive') dealer[property] = value;
         debugger;
-        
-           dealer[property] = value;
+
+        dealer[property] = value;
         this.alertSvc.fnLoading(true);
 
         this.dealerSvc.updateDealerStatus(dealer).subscribe(

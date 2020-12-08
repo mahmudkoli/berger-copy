@@ -4,6 +4,7 @@ using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
+using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Repositories;
@@ -84,7 +85,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             {
                 Id = s.Id,
                 EmployeeId = s.EmployeeId,
-                PlanDate = s.PlanDate,
+                PlanDate = s.PlanDate.ToShortDateString(),
                 Status = s.Status,
                 DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
                                     join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
@@ -103,61 +104,34 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
-        public async Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string planDate)
+        public async Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string search)
         {
 
             var employeeIds = _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
 
-            var plans = (from p in _journeyPlanMasterSvc.GetAll()
-                         join emp in employeeIds on p.EmployeeId equals emp.EmployeeId
-                         orderby p.PlanDate.Date descending
-                         select p);
+            var plans = (from plan in _journeyPlanMasterSvc.GetAll()
+                         join emp in employeeIds on plan.EmployeeId equals emp.EmployeeId
+                         orderby plan.PlanDate.Date descending
+                         select new { plan,emp});
 
-            if (!string.IsNullOrEmpty(planDate))
-                plans = plans.Where(f => f.PlanDate.Date == Convert.ToDateTime(planDate).Date);
 
-            var result = await plans.ToPagedListAsync(index, pageSize);
+            var final = plans.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.plan.Id,
+                EmployeeId = s.emp.EmployeeId,
+                Comment = s.plan.Comment,
+                PlanDate = s.plan.PlanDate.ToString("yyyy/MM/dd"),
+                Status = s.plan.Status,
+                PlanStatus = s.plan.PlanStatus,
+                PlanStatusInText = s.plan.PlanStatus.ToString(),
+                EmployeeName = $"{s.emp.FirstName} {s.emp.LastName}"
+            }).ToList();
 
-            var final = new PagedList<JourneyPlanDetailModel>(
-               result,
-               result.Select(s => new JourneyPlanDetailModel
-               {
-                   Id = s.Id,
-                   EmployeeId = s.EmployeeId,
-                   Comment = s.Comment,
-                   PlanDate = s.PlanDate,
-                   Status = s.Status,
-                   PlanStatus = s.PlanStatus,
-                   DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
-                                       join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
-                                       on dealer.Id equals planDetail.DealerId
-                                       join f in _focusDealerSvc.GetAll()
-                                       on planDetail.DealerId equals f.Code into focus
-                                       from fd in focus.DefaultIfEmpty()
-                                       select new DealerInfoModel
-                                       {
-                                           Id = dealer.Id,
-                                           CustomerName = dealer.CustomerName,
-                                           CustomerNo = dealer.CustomerNo,
-                                           Territory = dealer.Territory,
-                                           ContactNo = dealer.ContactNo,
-                                           Address = dealer.Address,
-                                           IsFocused = fd.Code > 0 ? true : false,
-                                           VisitDate = planDetail.VisitDate
-                                       }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
+            if (!string.IsNullOrEmpty(search))
+                final = final.Search(search);
 
-                   Employee = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId)
-                            .Select(s => new EmployeeModel
-                            {
-                                FirstName = $"{s.FirstName} {s.LastName}",
-                                Department = s.DepartMent,
-                                Designation = s.Designation,
-                                PhoneNumber = s.PhoneNumber
-
-                            }).FirstOrDefault()
-
-               }));
-            return final;
+            var result = await final.ToPagedListAsync(index, pageSize);
+            return result;
         }
         public async Task<JourneyPlanDetailModel> GetJourneyPlanDetailById(int PlanId)
         {
@@ -169,7 +143,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
                 Id = plan.Id,
                 EmployeeId = plan.EmployeeId,
-                PlanDate = plan.PlanDate,
+                PlanDate = plan.PlanDate.ToShortDateString(),
                 Status = plan.Status,
                 PlanStatus = plan.PlanStatus,
                 Comment = plan.Comment,
@@ -290,7 +264,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             {
                 Id = s.Id,
                 EmployeeId = s.EmployeeId,
-                PlanDate = s.PlanDate,
+                PlanDate = s.PlanDate.ToShortDateString(),
                 Status = s.Status,
                 DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
                                     join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id).DefaultIfEmpty()
@@ -308,7 +282,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
-        public async Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize, string planDate)
+        public async Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize, string search)
         {
             var plans = await _journeyPlanMasterSvc.GetAllIncludeAsync(
                 select => select,
@@ -317,54 +291,53 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 null,
                 true
                 );
-            var result = plans.ToPagedList<JourneyPlanMaster>(index, pageSize);
 
-            if (!string.IsNullOrEmpty(planDate))
-                result = plans.Where(f => f.PlanDate.Date == Convert.ToDateTime(planDate).Date).ToPagedList<JourneyPlanMaster>();
+            var result = plans.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.Id,
+                EmployeeId = s.EmployeeId,
+                Comment = s.Comment,
+                PlanDate = s.PlanDate.ToString("yyyy/MM/dd"),
+                Status = s.Status,
+                PlanStatus = s.PlanStatus,
+                PlanStatusInText = s.PlanStatus.ToString(),
+                EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FirstName} {s.LastName}").FirstOrDefault()
 
-            var final = new PagedList<JourneyPlanDetailModel>(
-               result,
-               result.Select(s => new JourneyPlanDetailModel
-               {
-                   Id = s.Id,
-                   EmployeeId = s.EmployeeId,
-                   Comment = s.Comment,
-                   PlanDate = s.PlanDate,
-                   Status = s.Status,
-                   PlanStatus = s.PlanStatus,
-                   DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
-                                       join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
-                                       on dealer.Id equals planDetail.DealerId
-                                       join f in _focusDealerSvc.GetAll()
-                                       on planDetail.DealerId equals f.Code into focus
-                                       from fd in focus.DefaultIfEmpty()
-                                       select new DealerInfoModel
-                                       {
-                                           Id = dealer.Id,
-                                           CustomerName = dealer.CustomerName,
-                                           CustomerNo = dealer.CustomerNo,
-                                           Territory = dealer.Territory,
-                                           ContactNo = dealer.ContactNo,
-                                           Address = dealer.Address,
-                                           IsFocused = fd.Code > 0 ? true : false,
-                                           VisitDate = planDetail.VisitDate
-                                       }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
+                //DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                //                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
+                //                    on dealer.Id equals planDetail.DealerId
+                //                    join f in _focusDealerSvc.GetAll()
+                //                    on planDetail.DealerId equals f.Code into focus
+                //                    from fd in focus.DefaultIfEmpty()
+                //                    select new DealerInfoModel
+                //                    {
+                //                        Id = dealer.Id,
+                //                        CustomerName = dealer.CustomerName,
+                //                        CustomerNo = dealer.CustomerNo,
+                //                        Territory = dealer.Territory,
+                //                        ContactNo = dealer.ContactNo,
+                //                        Address = dealer.Address,
+                //                        IsFocused = (fd.Code > 0) ? true : false,
+                //                        VisitDate = planDetail.VisitDate
+                //                    }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
 
-                   Employee = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId)
-                            .Select(s => new EmployeeModel
-                            {
-                                FirstName = $"{s.FirstName} {s.LastName}",
-                                Department = s.DepartMent,
-                                Designation = s.Designation,
-                                PhoneNumber = s.PhoneNumber
+                //Employee = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId)
+                //             .Select(s => new EmployeeModel
+                //             {
+                //                 FirstName = $"{s.FirstName} {s.LastName}",
+                //                 Department = s.DepartMent,
+                //                 Designation = s.Designation,
+                //                 PhoneNumber = s.PhoneNumber
 
-                            }).FirstOrDefault()
+                //             }).FirstOrDefault()
 
 
 
-               }));
+            }).ToList();
 
-            return final;
+            if (!string.IsNullOrEmpty(search)) result = result.Search(search);
+
+            return result.ToPagedList(index,pageSize);
 
         }
 

@@ -228,10 +228,10 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<DateTime>("ValidTo")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -1019,7 +1019,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("VisitDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -1072,7 +1072,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("PlanDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("PlanStatus")
                         .HasColumnType("int");

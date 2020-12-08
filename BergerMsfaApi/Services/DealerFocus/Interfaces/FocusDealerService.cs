@@ -30,7 +30,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _dealerInfo = dealerInfo;
         }
 
-        public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string searchDate)
+        public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string search)
 
         {
             var focusDealers = (from f in _focusDealer.GetAll()
@@ -46,13 +46,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                     Code = f.Code,
                                     DealerName = d.CustomerName,
                                     EmployeeId = f.EmployeeId,
-                                    ValidFrom = f.ValidFrom,
-                                    ValidTo = f.ValidTo
-                                });
+                                    ValidFrom = f.ValidFrom.ToString("yyyy/MM/dd"),
+                                    ValidTo = f.ValidTo.ToString("yyyy/MM/dd")
+                                }).ToList();
 
 
-            if (!string.IsNullOrEmpty(searchDate))
-                focusDealers = focusDealers.Where(f => f.ValidFrom.Date <= Convert.ToDateTime(searchDate).Date && f.ValidTo.Date >= Convert.ToDateTime(searchDate).Date);
+            if (!string.IsNullOrEmpty(search))
+                focusDealers = focusDealers.Search(search);
             var result = await focusDealers.ToPagedListAsync(index, pageSize);
             return result;
            
@@ -74,40 +74,35 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<bool> IsExistAsync(int id) => await _focusDealer.IsExistAsync(f => f.Id == id);
         public async Task<FocusDealerModel> GetFocusDealerById(int id)
         {
-            var result = await _focusDealer.FindAsync(f => f.Id == id);
-            return result.ToMap<FocusDealer, FocusDealerModel>();
+            var f = await _focusDealer.FindAsync(f => f.Id == id);
+            return new FocusDealerModel
+            {
+                Id = f.Id,
+                Code = f.Code,
+                EmployeeId = f.EmployeeId,
+                ValidFrom = f.ValidFrom.ToString("yyyy-MM-dd"),
+                ValidTo = f.ValidTo.ToString("yyyy-MM-dd")
+            };
+
         }
 
         public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
         {
 
-
             var dealers = _dealerInfo.GetAll().Select(s => new DealerModel
             {
-                Id=s.Id,
-                CustomerName = s.CustomerName,
-                CustomerNo = s.CustomerNo,
-                Address = s.Address,
-                AccountGroup = s.AccountGroup,
-                ContactNo = s.ContactNo,
-                Area = s.Area,
-                CustZone=s.CustZone,
-                BusinessArea=s.BusinessArea,
-                IsExclusiveLabel=s.IsExclusive? "Exclusive": "Non Exclusive",
-                IsCBInstalledLabel=s.IsCBInstalled ? "Installed" : "Not Installed",
-                IsCBInstalled=s.IsCBInstalled,
+                Id = s.Id, CustomerName = s.CustomerName,CustomerNo = s.CustomerNo, Address = s.Address,
+                AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.Area, CustZone = s.CustZone,
+                BusinessArea = s.BusinessArea,IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
+                IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed", IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive
-            });
-            if (!string.IsNullOrEmpty(search))
-            {
-                
-                var result = dealers.ToDictionary(s => s.Id, f => f.RowToString());
-                var Keys = (from r in result where r.Value.Contains(search) select r.Key).ToList();
-                dealers = dealers.Where(f => Keys.Contains(f.Id));
-            }
+            }).ToList();
 
+            if (!string.IsNullOrEmpty(search)) dealers = dealers.Search(search);
+          
 
-            return dealers.OrderBy(o=>o.CustomerNo).ToPagedList(index,pazeSize);
+            var result= dealers.OrderBy(o=>o.CustomerNo).ToPagedList(index,pazeSize);
+            return result;
         }
        
         public async Task<bool> DealerStatusUpdate(DealerInfo dealer)

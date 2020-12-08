@@ -26,7 +26,7 @@ namespace BergerMsfaApi.Controllers.Scheme
         {
             try
             {
-                var result = await _schemeService.PortalGetcShemeDetailWithMaster();
+                var result = await _schemeService.AppGetcShemeDetailWithMaster();
                 return OkResult(result);
             }
             catch (Exception ex)

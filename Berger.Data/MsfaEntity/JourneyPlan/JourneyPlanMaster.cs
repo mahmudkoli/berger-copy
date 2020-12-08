@@ -2,6 +2,8 @@
 using Berger.Data.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Berger.Data.MsfaEntity
 {
@@ -14,6 +16,8 @@ namespace Berger.Data.MsfaEntity
         }
         public string EmployeeId { get; set; }
         public string LineManagerId { get; set; }
+        [DataType(DataType.Date)]
+        [Column(TypeName = "Date")]
         public DateTime  PlanDate { get; set; }
         public string Comment { get; set; }
         public int ApprovedById { get; set; }

@@ -18,14 +18,14 @@ export class JourneyPlanService {
         this.baseUrl = baseUrl + 'api/';
     }
 
-    public getJourneyPlanListPaging(index: number, pageSize: number, planDate: string) {
-        return this.http.get<APIResponse>(this.baseUrl + `v1/journeyPlan/GetJourneyPlanListPaging/${index}/${pageSize}?planDate=${planDate}`);
+    public getJourneyPlanListPaging(index: number, pageSize: number, search: string) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/journeyPlan/GetJourneyPlanListPaging/${index}/${pageSize}?search=${search}`);
     }
     public getJourneyPlanList() {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/journeyPlan/GetJourneyPlanList');
     }
-    public getLinerManagerJourneyPlanList(index: number, pageSize: number, planDate: string) {
-        return this.http.get<APIResponse>(this.baseUrl + `v1/journeyPlan/GetLineManagerJourneyPlanDetail/${index}/${pageSize}?planDate=${planDate}`);
+    public getLinerManagerJourneyPlanList(index: number, pageSize: number, search: string) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/journeyPlan/GetLineManagerJourneyPlanDetail/${index}/${pageSize}?search=${search}`);
     }
     
     public getJourneyPlanDetailById(id) {
