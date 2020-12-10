@@ -13,12 +13,11 @@ namespace Berger.Data.MsfaEntity.DealerFocus
             DealerOpeningAttachments=new  List<DealerOpeningAttachment>();
         }
         public string BusinessArea { get; set; }
-        public string SaleOfficeCd { get; set; }
-        public string SaleGroupCd { get; set; }
-        public string  TerritoryNoCd { get; set; }
-        public string ZoneNoCd { get; set; }
-        public int EmployeId { get; set; }
-        public int? LineManagerId { get; set; }
+        public string SaleOffice { get; set; }
+        public string SaleGroup { get; set; }
+        public string  Territory { get; set; }
+        public string Zone { get; set; }
+        public string EmployeeId { get; set; }
         public List<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
     }
 }

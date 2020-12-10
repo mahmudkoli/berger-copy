@@ -73,12 +73,12 @@ namespace BergerMsfaApi.Controllers.Painter
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("CreatePainterCall/{painterCallId}")]
-        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int painterCallId)
+        [HttpGet("CreatePainterCall/{PainterId}")]
+        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int PainterId)
         {
             try
             {
-                var result = await _paintCallSvc.AppCreatePainterCallAsync(painterCallId);
+                var result = await _paintCallSvc.AppCreatePainterCallAsync(PainterId);
                 return OkResult(result);
             }
             catch (Exception ex)

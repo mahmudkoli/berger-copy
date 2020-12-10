@@ -3,7 +3,7 @@ import { APIResponse } from '../../Entity/Response/api-response';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DealeropeningService {
 
@@ -18,9 +18,11 @@ export class DealeropeningService {
         this.baseUrl = baseUrl + 'api/';
     }
 
-    public GetDealerOpeningList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/DealerOpening/GetDealerOpeningList');
+    public GetDealerOpeningList(index, pageSize, search) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningList/${index}/${pageSize}?search=${search}`);
     }
-  
-   
+    public GetDealerOpeningDetailById(id) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningDetailById/${id}`);
+    }
+
 }

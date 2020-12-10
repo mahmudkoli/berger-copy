@@ -30,7 +30,8 @@ export class DealerListComponent implements OnInit {
     ngOnInit() {
         this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
 
-    } next() {
+    } 
+    next() {
         this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
         this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }

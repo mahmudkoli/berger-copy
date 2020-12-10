@@ -18,12 +18,12 @@ export class PainterRegisService {
         this.baseUrl = baseUrl + 'api/';
     }
 
-    public GetPainterList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/AppPainterRegis/GetPainterList');
+    public GetPainterList(index,pageSize,search) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/PainterRegis/GetPainterList/${index}/${pageSize}?search=${search}`);
     }
     public GetRegisterPainterById(id) {
 
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/AppPainterRegis/GetPainterById/' + id);
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/PainterRegis/GetPainterById/' + id);
     }
    
 }

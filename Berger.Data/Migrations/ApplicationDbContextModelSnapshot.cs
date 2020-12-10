@@ -111,11 +111,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LineManagerId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -123,16 +120,16 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SaleGroupCd")
+                    b.Property<string>("SaleGroup")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaleOfficeCd")
+                    b.Property<string>("SaleOffice")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("TerritoryNoCd")
+                    b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WFStatus")
@@ -141,7 +138,7 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ZoneNoCd")
+                    b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

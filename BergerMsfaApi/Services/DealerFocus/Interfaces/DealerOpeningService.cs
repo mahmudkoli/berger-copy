@@ -1,19 +1,17 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerFocus;
-using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Controllers.DealerFocus;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 using Attachment = Berger.Data.MsfaEntity.PainterRegistration.Attachment;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
@@ -24,21 +22,29 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private IRepository<DealerOpeningAttachment> _dealerOpeningAttachmentSvc;
         private readonly IFileUploadService _fileUploadSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
+        private readonly IMapper _mapper;
+
 
         public DealerOpeningService(
-            IRepository<DealerOpening> dealerOpeningSvc,
-              IFileUploadService fileUploadSvc, IRepository<Attachment> attachmentSvc,
-              IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc
+              IRepository<DealerOpening> dealerOpeningSvc,
+              IFileUploadService fileUploadSvc, 
+              IRepository<Attachment> attachmentSvc,
+              IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
+              IMapper mapper
+            
             )
         {
             _fileUploadSvc = fileUploadSvc;
             _dealerOpeningSvc = dealerOpeningSvc;
             _dealerOpeningAttachmentSvc = dealerOpeningAttachmentSvc;
             _attachmentSvc = attachmentSvc;
+            _mapper=mapper;
+         
             
         }
         public async Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model,List<IFormFile> attachments)
         {
+         
             var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
             var result = await _dealerOpeningSvc.CreateAsync(_dealerOpening);
             var _dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
@@ -57,22 +63,36 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             return await _dealerOpeningSvc.DeleteAsync(f => f.Id == DealerId);
         }
 
-        public async Task<IEnumerable<DealerOpeningModel>> GetDealerOpeningListAsync()
+        public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningListAsync(int index,int pageSize,string search)
         {
-            var result = await _dealerOpeningSvc.GetAllAsync();
-            var dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
-            foreach (var item in dealerOpeningModel.ToList())
-            {
-                var attachment = await _attachmentSvc.FindAsync(f => f.ParentId == item.Id && f.TableName == nameof(DealerOpening));
-                if (attachment != null)
-                {
-                    var attachmentModel = attachment.ToMap<Attachment, AttachmentModel>();
-                   // item.Attachments.Add(attachmentModel);
-                }
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
+            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
+            //}).CreateMapper();
 
-            }
-            return dealerOpeningModel;
-       
+            var result = _mapper.Map<List<DealerOpeningModel>>((await _dealerOpeningSvc.GetAllAsync()).ToList());
+            if (!string.IsNullOrEmpty(search))
+                result= result.Search(search);
+
+
+            //    var result = _dealerOpeningSvc.GetAllInclude(f => f.DealerOpeningAttachments);
+            return result.ToPagedList(index, pageSize);
+           // return mapper.Map<List<DealerOpeningModel>>(result);
+            //var result = await _dealerOpeningSvc.GetAllAsync();
+            //var dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
+            //foreach (var item in dealerOpeningModel.ToList())
+            //{
+            //    var attachment = await _attachmentSvc.FindAsync(f => f.ParentId == item.Id && f.TableName == nameof(DealerOpening));
+            //    if (attachment != null)
+            //    {
+            //        var attachmentModel = attachment.ToMap<Attachment, AttachmentModel>();
+            //       // item.Attachments.Add(attachmentModel);
+            //    }
+
+            //}
+            //return dealerOpeningModel;
+
         }
 
         public async Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> attachments)
@@ -109,49 +129,82 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model)
         {
-            var mapper = new MapperConfiguration(cfg=> {
-                cfg.CreateMap<DealerOpeningAttachmentModel,DealerOpeningAttachment>().ReverseMap();
-                cfg.CreateMap<DealerOpeningModel,DealerOpening>().ReverseMap();
-            }).CreateMapper();
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
+            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
+            //}).CreateMapper();
 
-            var _dealerOpening = mapper.Map<DealerOpening>(model);
-            var result= await _dealerOpeningSvc.CreateAsync(_dealerOpening);
 
-            return mapper.Map<DealerOpeningModel>(result);
+
+            var dealerOpening = _mapper.Map<DealerOpening>(model);
+
+            foreach (var attach in dealerOpening.DealerOpeningAttachments)
+            {
+                if (!string.IsNullOrEmpty(attach.Path))
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(
+                        attach.Path,
+                        attach.Name, FileUploadCode.DealerOpening,
+                        300, 300);
+            }
+            var result= await _dealerOpeningSvc.CreateAsync(dealerOpening);
+
+            return _mapper.Map<DealerOpeningModel>(result);
 
         }
 
         public async Task<DealerOpeningModel> AppUpdateDealerOpeningAsync(DealerOpeningModel model)
         {
-            var mapper = new MapperConfiguration(cfg => {
-                cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
-                cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
-            }).CreateMapper();
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
+            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
+            //}).CreateMapper();
 
-            var _dealerOpening = mapper.Map<DealerOpening>(model);
+            var dealerOpening = _mapper.Map<DealerOpening>(model);
 
-            var _findPainter = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.DealerOpeningAttachments);
+            var findDealerOpening = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.DealerOpeningAttachments);
 
-            foreach (var item in _dealerOpening.DealerOpeningAttachments)
+            foreach (var item in findDealerOpening.DealerOpeningAttachments)
             {
                 await _fileUploadSvc.DeleteImageAsync(item.Path);
                 await _dealerOpeningAttachmentSvc.DeleteAsync(f => f.Id == item.Id);
             }
-            var result = await _dealerOpeningSvc.UpdateAsync(_dealerOpening);
+            foreach (var attach in dealerOpening.DealerOpeningAttachments)
+            {
+                if (!string.IsNullOrEmpty(attach.Path))
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(
+                        attach.Path,
+                        attach.Name, FileUploadCode.DealerOpening,
+                        300, 300);
+            }
+            var result = await _dealerOpeningSvc.UpdateAsync(dealerOpening);
 
 
-            return mapper.Map<DealerOpeningModel>(result);
+            return _mapper.Map<DealerOpeningModel>(result);
         }
 
         public async Task<IEnumerable<DealerOpeningModel>> AppGetDealerOpeningListAsync()
         {
-            var mapper = new MapperConfiguration(cfg => {
-                cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
-                cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
-            }).CreateMapper();
-            var result =  _dealerOpeningSvc.GetAllInclude(f => f.DealerOpeningAttachments);
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
+            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
+            //}).CreateMapper();
+            var result = await Task.Run(()=>  _dealerOpeningSvc.GetAllInclude(f => f.DealerOpeningAttachments));
+            return _mapper.Map<List<DealerOpeningModel>>(result);
+        }
+       public async Task<DealerOpeningModel> GetDealerOpeningDetailById(int id)
+        {
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
+            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
+            //}).CreateMapper();
 
-            return mapper.Map<List<DealerOpeningModel>>(result);
+            var result = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == id, f => f.DealerOpeningAttachments);
+            return _mapper.Map<DealerOpeningModel>(result); ;
+
         }
     }
 }

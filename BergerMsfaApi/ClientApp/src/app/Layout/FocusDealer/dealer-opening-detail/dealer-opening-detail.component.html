@@ -1,1 +1,44 @@
-<p>dealer-opening-detail works!</p>
+<p-table  [value]="dealerOpen.dealerOpeningAttachments">
+
+    <ng-template pTemplate="caption">
+        <div class="table-header">
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="col-md-6">
+
+                        <p> <label>Business Area :{{dealerOpen.businessArea}}</label> </p>
+                        <p> <label>Sale Office :{{dealerOpen.saleOffice}}</label> </p>
+                        <p> <label>Territory :{{dealerOpen.territoryNo}}</label> </p>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="name">Name</th>
+            <th pSortableColumn="path">Path</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-dealerOpen>
+        <tr>
+            <td>{{dealerOpen.name }}</td>
+            <td>
+                <strong>
+                    <a target="_blank" href="{{baseUrl}}\{{dealerOpen.path}}">{{dealerOpen.name}}</a>
+                </strong>
+            </td>
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
+    </ng-template>
+
+</p-table>
+{{dealerOpen|json}}
