@@ -4,6 +4,7 @@ using BergerMsfaApi.Services.Tintining.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Tintining
@@ -41,8 +42,24 @@ namespace BergerMsfaApi.Controllers.Tintining
             }
         }
 
+        [HttpGet("CreateTiningMachine")]
+        public async Task<IActionResult> CreateTiningMachine(string  employeeId, string territory="T000")
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _tintiningService.AppCreateTiningMachine(employeeId, territory);
+                return OkResult(result);
+            }
+            catch (System.Exception ex)
+            {
+
+                return ExceptionResult(ex); 
+            }
+        }
+
         [HttpPost("CreateTiningMachine")]
-        public async Task<IActionResult> CreateTiningMachine([FromBody] TintiningMachineModel model)
+        public async Task<IActionResult> CreateTiningMachine([FromBody] List<TintiningMachineModel> model)
         {
             try
             {
@@ -58,17 +75,17 @@ namespace BergerMsfaApi.Controllers.Tintining
         }
 
         [HttpPut("UpdateTitningMachine")]
-        public async Task<IActionResult> UpdateTitningMachine([FromBody] TintiningMachineModel model)
+        public async Task<IActionResult> UpdateTitningMachine([FromBody] List< TintiningMachineModel> model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
 
-                if (! await _tintiningService.IsTitiningMachineUpdatable(model))
-                {
-                    ModelState.AddModelError(nameof(model.CompanyId), "you have already excced update limt");
-                    return ValidationResult(ModelState);
-                }
+                //if (! await _tintiningService.IsTitiningMachineUpdatable(model))
+                //{
+                //    ModelState.AddModelError(nameof(model.CompanyId), "you have already excced update limt");
+                //    return ValidationResult(ModelState);
+                //}
                 var result = await _tintiningService.AppUpdateTitningMachine(model);
                 return OkResult(result);
             }
@@ -79,6 +96,23 @@ namespace BergerMsfaApi.Controllers.Tintining
             }
         }
 
+        [HttpPut("IsTitiningMachineUpdatable")]
+        public async Task<IActionResult> IsTitiningMachineUpdatable([FromBody] TintiningMachineModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+
+             var result=await _tintiningService.IsTitiningMachineUpdatable(model);
+              
+                return OkResult(result);
+            }
+            catch (System.Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
         [HttpDelete("DeleteTitningMachine/{Id}")]
         public async Task<IActionResult> DeleteTitningMachine([BindRequired]int Id )
         {
