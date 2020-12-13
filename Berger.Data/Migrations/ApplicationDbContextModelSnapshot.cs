@@ -251,7 +251,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("ActualAMDSales")
+                    b.Property<decimal>("ActualMTDSales")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("AverageMonthlySales")
@@ -381,6 +381,9 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("IsTargetPromotionCommunicated")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("JourneyPlanId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("MerchendisingId")
                         .HasColumnType("int");
 
@@ -428,6 +431,8 @@ namespace Berger.Data.Migrations
                     b.HasIndex("DealerId");
 
                     b.HasIndex("DealerSatisfactionId");
+
+                    b.HasIndex("JourneyPlanId");
 
                     b.HasIndex("MerchendisingId");
 
@@ -3139,6 +3144,10 @@ namespace Berger.Data.Migrations
                         .HasForeignKey("DealerSatisfactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.JourneyPlanMaster", "JourneyPlan")
+                        .WithMany()
+                        .HasForeignKey("JourneyPlanId");
 
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "Merchendising")
                         .WithMany()
