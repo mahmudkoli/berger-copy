@@ -2,7 +2,6 @@
 
 export class StatusTypes {
 
-
     public static statusType: MapObject[] = [
         { id: 0, label: "Inactive" },
         { id: 1, label: "Active" },
@@ -15,7 +14,11 @@ export class StatusTypes {
         { id: 8, label: "InPlace"},
         { id: 9, label: "NotInPlace"}
     ];
-
+    
+    public static actInStatusType: MapObject[] = [
+        { id: 0, label: "Inactive" },
+        { id: 1, label: "Active" }
+    ];
 
     constructor() {
 

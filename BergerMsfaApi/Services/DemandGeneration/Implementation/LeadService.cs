@@ -72,6 +72,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
+                                null,
                                 true
                             );
 
@@ -102,6 +103,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var result = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == id,
+                                null,
                                 x => x.Include(i => i.LeadFollowUps),
                                 true
                             );
@@ -166,6 +168,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var leadGen = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
                                                             x => x, 
                                                             x => x.Id == leadFollowUp.LeadGenerationId, 
+                                                            null,
                                                             null,
                                                             true);
 

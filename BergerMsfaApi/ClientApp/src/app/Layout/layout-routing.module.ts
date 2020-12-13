@@ -31,8 +31,8 @@ const routes: Routes = [
             { path: 'painter', loadChildren: () => import('./PainterRegis/painter-regis.module').then(m => m.PainterRegisModule) },
             { path: 'scheme', loadChildren: () => import('./Scheme/scheme.module').then(m => m.SchemeModule) },
             { path: 'tinting', loadChildren: () => import('./Tinting/tintingmachine.module').then(m => m.TintingmachineModule) },
+            { path: 'eLearning', loadChildren: () => import('./eLearning/eLearning.module').then(m => m.ELearningModule) },
             { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
-
 
         ]
     }

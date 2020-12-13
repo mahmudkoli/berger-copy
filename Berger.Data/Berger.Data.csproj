@@ -117,6 +117,8 @@
     <Compile Remove="Migrations\20201209060039_RemoveExtraDepotEntity.Designer.cs" />
     <Compile Remove="Migrations\20201209060357_RemoveExtraDepotEntity.cs" />
     <Compile Remove="Migrations\20201209060357_RemoveExtraDepotEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201210150637_ELearningAdded.cs" />
+    <Compile Remove="Migrations\20201210150637_ELearningAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -153,6 +155,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MsfaEntity\NewFolder\" />
   </ItemGroup>
 
 </Project>

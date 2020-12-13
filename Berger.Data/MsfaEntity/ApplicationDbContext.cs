@@ -5,6 +5,7 @@ using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
@@ -204,6 +205,11 @@ namespace Berger.Data.MsfaEntity
 
         #region Tinting
         public DbSet<TintiningMachine> TintiningMachines { get; set; }
+        #endregion
+
+        #region ELearning
+        public DbSet<ELearningDocument> ELearningDocuments { get; set; }
+        public DbSet<ELearningAttachment> ELearningAttachments { get; set; }
         #endregion
 
     }
