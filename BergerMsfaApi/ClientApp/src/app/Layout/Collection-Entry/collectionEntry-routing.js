@@ -14,9 +14,9 @@ var routes = [
     {
         path: '',
         children: [
-            { path: '', redirectTo: 'collection-list' },
+            { path: '', redirectTo: 'payment-list' },
             {
-                path: 'collection-list',
+                path: 'payment-list',
                 component: collection_entry_list_component_1.CollectionEntryListComponent,
             }
         ]

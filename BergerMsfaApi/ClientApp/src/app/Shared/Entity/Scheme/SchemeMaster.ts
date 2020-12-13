@@ -1,4 +1,5 @@
 ﻿import { Status } from '../../Enums/status';
+import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 
 
 export class SchemeMaster {
@@ -17,6 +18,7 @@ export class SchemeDetail {
     item: string;
     condition: string;
     date: string;
+    vDate: NgbDate
     benefit: string;
     targetVolume: string;
     schemeMasterId: number;

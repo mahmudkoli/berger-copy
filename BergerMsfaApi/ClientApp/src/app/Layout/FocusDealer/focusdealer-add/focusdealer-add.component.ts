@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FocusDealer } from '../../../Shared/Entity/FocusDealer/JourneyPlan';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
+import { CommonService } from '../../../Shared/Services/Common/common.service';
 
 @Component({
     selector: 'app-focusdealer-add',
@@ -15,14 +15,14 @@ export class FocusdealerAddComponent implements OnInit {
 
     focusDealerModel: FocusDealer = new FocusDealer();
     dealerList: any[] = [];
-    employeeRegList: any[] = [];
+    employeeList: any[] = [];
 
     constructor(
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
-        private dynamicDropdownService: DynamicDropdownService,
         private focusDealerService: FocusdealerService,
+        private commonSvc: CommonService,
         private router: Router
     ) { }
 
@@ -39,12 +39,12 @@ export class FocusdealerAddComponent implements OnInit {
         }
 
     }
+    private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 
     private getEmpList() {
-        //hard code param for temporary
-        this.dynamicDropdownService.GetDropdownByTypeCd("E01").subscribe(
+        this.commonSvc.getUserInfoList().subscribe(
             (result: any) => {
-                this.employeeRegList = result.data;
+                this.employeeList = result.data;
             },
             (err: any) => console.log(err)
         );
@@ -52,7 +52,7 @@ export class FocusdealerAddComponent implements OnInit {
 
 
     public fnRouteList() {
-        this.router.navigate(['/focus-dealer/list']);
+        this.router.navigate(['/dealer/focusdealer-list'])
     }
 
     public fnSave() {
@@ -73,7 +73,7 @@ export class FocusdealerAddComponent implements OnInit {
     private insert(focusDealer: FocusDealer) {
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
-            this.router.navigate(['/focus-dealer/list']).then(() => {
+            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been created successfully.");
             });
         },
@@ -86,7 +86,7 @@ export class FocusdealerAddComponent implements OnInit {
     private update(model: FocusDealer) {
         this.focusDealerService.update(model).subscribe(res => {
             console.log("focus update res: ", res);
-            this.router.navigate(['/focus-dealer/list']).then(() => {
+            this.router.navigate(['/dealer/focusdealer-list']).then(() => {
                 this.alertService.tosterSuccess("focus-dealer has been edited successfully.");
             });
         },
@@ -114,16 +114,19 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private getDealerList() {
-        //hard code param for temporary
-        this.dynamicDropdownService.GetDropdownByTypeCd("D01").subscribe(
-            (result: any) => {
-                this.dealerList = result.data;
-            },
-            (err: any) => console.log(err)
-        );
+        if (this._loggedUser) {
+            this.alertService.fnLoading(true);
+            this.commonSvc.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
+                (result: any) => {
+                    this.dealerList = result.data;
+                },
+                (err: any) => console.log(err)
+
+            ).add(() => this.alertService.fnLoading(false));
+        }
+
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {

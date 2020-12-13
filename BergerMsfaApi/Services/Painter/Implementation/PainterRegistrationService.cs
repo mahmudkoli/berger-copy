@@ -1,11 +1,16 @@
-﻿using Berger.Common.Enumerations;
+﻿using AutoMapper;
+using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Painter;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,16 +22,35 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
     {
         private readonly IRepository<Painter> _painterSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
+        private readonly IRepository<PainterAttachment> _painterAttachmentSvc;
         private readonly IFileUploadService _fileUploadSvc;
+        private readonly IRepository<SaleGroup> _saleGroupSvc;
+        private readonly IRepository<Zone> _zoneSvc;
+        private readonly IRepository<Territory> _territorySvc;
+        private readonly IRepository<Depot> _depotSvc;
+        private readonly IRepository<AttachedDealerPainter> _attachedDealerSvc;
         public PainterRegistrationService(
             IRepository<Painter> painterSvc,
+             IRepository<PainterAttachment> painterAttachmentSvc,
              IFileUploadService fileUploadSvc,
-             IRepository<Attachment> attachmentSvc
+             IRepository<Attachment> attachmentSvc,
+             IRepository<SaleGroup> saleGroupSvc,
+             IRepository<Zone> zoneSvc,
+             IRepository<Territory> territorySvc,
+             IRepository<Depot> depotSvc,
+             IRepository<AttachedDealerPainter> attachedDealerSvc
+
             )
         {
             _painterSvc = painterSvc;
             _fileUploadSvc = fileUploadSvc;
             _attachmentSvc = attachmentSvc;
+            _painterAttachmentSvc = painterAttachmentSvc;
+            _territorySvc = territorySvc;
+            _depotSvc = depotSvc;
+            _zoneSvc = zoneSvc;
+            _saleGroupSvc = saleGroupSvc;
+            _attachedDealerSvc = attachedDealerSvc;
 
         }
 
@@ -147,120 +171,189 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 var path = await _fileUploadSvc.SaveImageAsync(attach, attach.FileName, FileUploadCode.PainterRegistration);
                 var _newAttachment = new Attachment { Path = path, Name = attach.FileName, TableName = nameof(Painter), Format = Path.GetExtension(attach.FileName), Size = 1, ParentId = _painter.Id };
                 var attachment = await _attachmentSvc.CreateAsync(_newAttachment);
-                // painterModel.AttachmentModel.Add(attachment.ToMap<Attachment, AttachmentModel>());
             }
             return painterModel;
         }
-
-        public async Task<IEnumerable<PainterModel>> AppGetPainterListAsync()
+        #region App
+        public async Task<IEnumerable<PainterModel>> AppGetPainterListAsync(string employeeId)
         {
-            var _painters = await _painterSvc.GetAllAsync();
-            var result = _painters.ToMap<Painter, PainterModel>();
-          
-            foreach (var item in result.ToList())
+            var mapper = new MapperConfiguration(cfg =>
             {
-                var attachment = await _attachmentSvc.FindAsync(f => f.ParentId == item.Id && f.TableName == nameof(Painter));
-                if (attachment != null)
-                {
-                    //  var attachmentModel = attachment.ToMap<Attachment, AttachmentModel>();
-                    item.Attachments.Add(attachment.Path);
-                }
+                cfg.CreateMap<PainterAttachmentModel, PainterAttachment>()
+                .ReverseMap();
+                cfg.CreateMap<Painter, PainterModel>()
+               .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)))
+               .ReverseMap();
 
-            }
-            return result;
+            }).CreateMapper();
+           
+            var _painters = await _painterSvc.GetAllIncludeAsync(
+                s=>s,
+                f=>f.EmployeeId==employeeId,
+                null,
+                a=>a.Include(f=>f.AttachedDealers).Include(f=>f.Attachments),
+                false
+                );
+            return mapper.Map<List<PainterModel>>(_painters);
         }
 
+    
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
-            var _painter = model.ToMap<PainterModel, Painter>();
-            var _fileName = $"{_painter.PainterName}_{_painter.Phone}";
-            if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
-            {
-                _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.RegisterPainter, 300, 300);
-            }
-            await _painterSvc.CreateAsync(_painter);
-            if (model.Attachments.Count > 0)
-            {
-                await _attachmentSvc.CreateAsync(new Attachment { Path = _painter.PainterImageUrl, Name = _fileName, TableName = nameof(Painter), ParentId = _painter.Id });
-            }
-            var result = _painter.ToMap<Painter, PainterModel>();
-            return result;
+           
+                var mapper = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<PainterAttachmentModel, PainterAttachment>();
+                    cfg.CreateMap<PainterAttachment, PainterAttachmentModel>();
+                    cfg.CreateMap<PainterModel, Painter>();
+                    cfg.CreateMap<Painter, PainterModel>();
+
+                }).CreateMapper();
+
+
+                var _painter = mapper.Map<Painter>(model);
+                var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
+                if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
+                    _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync
+                        (
+                        _painter.PainterImageUrl,
+                        _painterImageFileName, FileUploadCode.RegisterPainter,
+                        300,  300
+                        );
+
+                foreach (var item in model.AttachedDealers)
+                    _painter.AttachedDealers.Add(new AttachedDealerPainter { Dealer = item});
+              
+                foreach (var attach in _painter.Attachments)
+                {
+                    if (!string.IsNullOrEmpty(attach.Path))
+                        attach.Path = await _fileUploadSvc.SaveImageAsync(
+                            attach.Path,
+                            attach.Name, FileUploadCode.RegisterPainter, 
+                            300, 300);
+                }
+
+                var result = await _painterSvc.CreateAsync(_painter);
+                return mapper.Map<PainterModel>(result);
+            
+           
+
         }
 
         public async Task<PainterModel> AppUpdateAsync(PainterModel model)
         {
-            var _painter = model.ToMap<PainterModel, Painter>();
-            var _fileName = $"{model.PainterName}_{model.Phone}";
-            var _findPainter = await _painterSvc.FindAsync(f => f.Id == model.Id);
-            if (!string.IsNullOrEmpty(_findPainter.PainterImageUrl))
+            var mapper = new MapperConfiguration(cfg =>
             {
-                await _fileUploadSvc.DeleteImageAsync(_findPainter.PainterImageUrl);
-                _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.RegisterPainter, 300, 300);
-            }
-            var existing = await _attachmentSvc.FindAllAsync(f => f.TableName == nameof(Painter) && f.ParentId == model.Id);
-            foreach (var item in existing)
+                cfg.CreateMap<PainterAttachmentModel, PainterAttachment>();
+                cfg.CreateMap<PainterAttachment, PainterAttachmentModel>();
+                cfg.CreateMap<PainterModel, Painter>();
+                cfg.CreateMap<Painter, PainterModel>();
+
+            }).CreateMapper();
+
+            var _painter = mapper.Map<Painter>(model);
+
+            var _fileName = $"{model.PainterName}_{model.Phone}";
+
+            var _findPainter = await _painterSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.Attachments);
+
+            if (!string.IsNullOrEmpty(_findPainter.PainterImageUrl)) await _fileUploadSvc.DeleteImageAsync(_findPainter.PainterImageUrl);
+
+            if (!string.IsNullOrEmpty(_painter.PainterImageUrl)) _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.RegisterPainter, 300, 300);
+
+            if (await _attachedDealerSvc.AnyAsync(f => f.PainterId == model.Id)) await _attachedDealerSvc.DeleteAsync(f => f.PainterId == model.Id);
+
+            foreach (var item in model.AttachedDealers) _painter.AttachedDealers.Add(new AttachedDealerPainter { Dealer = item });
+
+            foreach (var item in _findPainter.Attachments)
             {
                 await _fileUploadSvc.DeleteImageAsync(item.Path);
-                await _attachmentSvc.DeleteAsync(f => f.Id == item.Id && f.TableName == nameof(Painter));
+                await _painterAttachmentSvc.DeleteAsync(f => f.Id == item.Id);
             }
-            await _painterSvc.UpdateAsync(_painter);
-            var result = _painter.ToMap<Painter, PainterModel>();
-            if (model.Attachments.Count > 0)
-            {
-                var attachment = await _attachmentSvc.CreateAsync(new Attachment { Path = _painter.PainterImageUrl, Name = _fileName, TableName = nameof(Painter), ParentId = _painter.Id });
-                result.Attachments.Add(attachment.Path);
 
+            foreach (var attach in _painter.Attachments)
+            {
+                if (!string.IsNullOrEmpty(attach.Path))
+                {
+                    var path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = path;
+                }
             }
-            return result;
+            
+            var result = await _painterSvc.UpdateAsync(_painter);
+            return mapper.Map<PainterModel>(result);
         }
 
         public async Task<PainterModel> AppGetPainterByIdAsync(int Id)
         {
-            var _painter = await _painterSvc.FindAsync(f => f.Id == Id);
-            var result = _painter.ToMap<Painter, PainterModel>();
-            if (_painter==null) return result;
-            var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == _painter.Id && f.TableName == nameof(Painter));
-            foreach (var attachment in painterAttachments)
-                result.Attachments.Add(attachment.Path);
+            //var mapper = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<PainterAttachmentModel, PainterAttachment>();
+            //    cfg.CreateMap<PainterAttachment, PainterAttachmentModel>();
+            //    cfg.CreateMap<PainterModel, Painter>();
+            //    cfg.CreateMap<Painter, PainterModel>();
 
-            return result;
+            //}).CreateMapper();
+            var mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<PainterAttachmentModel, PainterAttachment>()
+                .ReverseMap();
+                cfg.CreateMap<Painter, PainterModel>()
+               .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)))
+               .ReverseMap();
+
+            }).CreateMapper();
+           // var _painter = await _painterSvc.FindIncludeAsync(f => f.Id == Id, f => f.Attachments);
+            var painter =( await _painterSvc.GetAllIncludeAsync(
+              s => s,
+              f => f.Id == Id,
+              null,
+              a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments),
+              false
+              )).FirstOrDefault();
+            return mapper.Map<PainterModel>(painter);
+
         }
 
         public async Task<bool> AppDeletePainterByIdAsync(int Id)
         {
-            
-                await _attachmentSvc.DeleteAsync(f => f.ParentId == Id && f.TableName == nameof(Painter));
-            return await _painterSvc.DeleteAsync(f => f.Id == Id) == 1 ? true : false;
-            
+            //await _painterAttachmentSvc.DeleteAsync(f => f.PainterId == Id);
+            //await _.DeleteAsync(f => f.PainterId == Id);
+            return await _painterSvc.DeleteAsync(f => f.Id == Id) == 1? true : false;
+
         }
 
         public async Task<PainterModel> AppGetPainterByPhonesync(string Phone)
         {
-            return new PainterModel
-            {
-                Id = 1,
-                Phone=Phone,
-                PainterName = "Painter",
-                SaleGroup = "SalesGroup",
-                SaleGroupCd = "SalesGroupCd",
-                Territroy = "Territroy",
-                TerritroyCd = "TerritroyCd",
-                Zone="Zone",
-                ZoneCd= "ZoneCd",
-                PainterCatId= 1,
-                PainterCat= "PainterCat",
-                AttachedDealer= "AttachedDealer",
-                AttachedDealerCd=1
+            
+            var result = (from p in _painterSvc.GetAll().Where(f => f.Phone == Phone)
+                          join sg in _saleGroupSvc.GetAll()
+                          on p.SaleGroup equals sg.Code into sgLeftJoin
+                          from saleGroup in sgLeftJoin.DefaultIfEmpty()
+                          join t in _territorySvc.GetAll()
+                          on p.Territory equals t.Code into terriyLeftjoin
+                          from territory in terriyLeftjoin.DefaultIfEmpty()
+                          join z in _zoneSvc.GetAll()
+                          on p.Zone equals z.Code into zLeftJoin
+                          from zone in zLeftJoin.DefaultIfEmpty()
+                          select new PainterModel
+                          {
+                              PainterName = p.PainterName,
+                              Phone = p.Phone,
+                              DepotName = null,
+                              SaleGroup = saleGroup != null ? saleGroup.Name : null,
+                              Zone = zone != null ? zone.Name : null,
+                              Territory = territory != null ? territory.Name : null,
+                              Loyality = p.Loyality,
+                              HasDbbl = p.HasDbbl,
+                          }).FirstOrDefault();
 
-
-            };
-            //var _painter = await _painterSvc.FindAsync(f => f.Phone == Phone);
-            //var result = _painter.ToMap<Painter, PainterModel>();
-            //var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == _painter.Id && f.TableName == nameof(Painter));
-            //foreach (var attachment in painterAttachments)
-            //    result.Attachments.Add(attachment.Path);
-
-            //return result;
+            return result;
+            
         }
+
+      
+        #endregion
+
     }
 }

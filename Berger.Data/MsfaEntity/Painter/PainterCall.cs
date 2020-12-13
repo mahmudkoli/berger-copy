@@ -6,6 +6,10 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 {
     public class PainterCall:AuditableEntity<int>
     {
+        public PainterCall()
+        {
+            PainterCompanyMTDValue = new List<PainterCompanyMTDValue>();
+        }
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
         public bool HasNewProBriefing { get; set; }
@@ -17,7 +21,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public int PainterId { get; set; }
         [ForeignKey("PainterId")]
         public Painter Painter { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public List<PainterCompanyMTDValue> PainterCompanyMTDValue { get; set; }
     }
 }

@@ -99,6 +99,36 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDepotList();
+                
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetRoleList")]
+        public async Task<IActionResult> GetRoleList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetRoleList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpGet("GetUserInfoList")]
+        public async Task<IActionResult> GetUserInfoList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoList();
                 return OkResult(result);
             }
             catch (Exception ex)

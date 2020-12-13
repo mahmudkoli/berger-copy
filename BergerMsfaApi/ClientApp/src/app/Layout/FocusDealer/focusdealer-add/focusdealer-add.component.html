@@ -1,53 +1,47 @@
 
 
 <div class="main-card mb-3 card">
+
     <div class="card-header sticky-card d-flex justify-content-between align-items-center">
         <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New Focus Dealer</div>
-        <div class="btn-actions-pane-right">
-
-        </div>
     </div>
+
     <div class="card-body">
         <form #focusDealerForm="ngForm" (submit)="fnSave()">
             <div class="form-row">
                 <div class="col-md-4">
+
                     <div class="position-relative form-group">
                         <label for="name">Dealer</label>
-                        <select required class="form-control" name="code" #code="ngModel" [(ngModel)]="focusDealerModel.code">
-                            <option *ngFor="let option of dealerList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
-                        </select>
+                        <ng-select [items]="dealerList"
+                                   bindLabel="customerName"
+                                   bindValue="id"
+                                   [multiple]="false"
+                                   [(ngModel)]="focusDealerModel.code"
+                                   name="code" #code="ngModel">
+                        </ng-select>
                     </div>
+
                 </div>
+
                 <div class="col-md-4">
+
                     <div class="position-relative form-group">
                         <label for="name">Employee</label>
-                        <select required class="form-control" name="employeeRegId" #employeeRegId="ngModel" [(ngModel)]="focusDealerModel.employeeRegId">
-                            <option *ngFor="let option of employeeRegList" [value]="option.id">{{option.typeCode}}-{{option.dropdownName}}</option>
-                        </select>
+
+                        <ng-select [items]="employeeList"
+                                   bindLabel="firstName"
+                                   bindValue="employeeId"
+                                   [multiple]="false"
+                                   [(ngModel)]="focusDealerModel.employeeId"
+                                   name="employeeId" #employeeId="ngModel">
+                        </ng-select>
+                   
                     </div>
                 </div>
-                <!--<div class="col-md-4">
-                    <div class="position-relative form-group">
-                        <label for="name">Valid From</label>
-                        <input required name="validFrom" #validFrom="ngModel"
-                               type="datetime" class="form-control"
-                               [ngClass]="{'is-valid':validFrom.valid,'is-invalid':validFrom.invalid && validFrom.touched }"
-                               [(ngModel)]="focusDealerModel.validFrom" />
-                        <small class="text-danger" [class.d-none]="validFrom.valid || validFrom.untouched">
-                            Valid From is required
-                        </small>
-                    </div>
-                </div>-->
+
                 <div class="col-md-4">
                     <div class="position-relative form-group">
-                        <!--<label for="name">Valid To</label>
-            <input required name="validFrom" #validTo="ngModel"
-                   type="datetime" class="form-control"
-                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
-                   [(ngModel)]="focusDealerModel.validTo" />
-            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
-                Valid From is required
-            </small>-->
 
                         <label for="name">Valid From</label>
                         <div class="input-group">
@@ -61,17 +55,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="position-relative form-group">
-                        <!--<label for="name">Valid To</label>
-            <input required name="validFrom" #validTo="ngModel"
-                   type="datetime" class="form-control"
-                   [ngClass]="{'is-valid':validTo.valid,'is-invalid':validTo.invalid && validTo.touched }"
-                   [(ngModel)]="focusDealerModel.validTo" />
-            <small class="text-danger" [class.d-none]="validTo.valid || validTo.untouched">
-                Valid From is required
-            </small>-->
-
+              
                         <label for="name">Valid To</label>
                         <div class="input-group">
                             <input class="form-control" placeholder="yyyy-mm-dd"
@@ -92,7 +79,5 @@
                 <button [disabled]="!focusDealerForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
             </div>
         </form>
-        {{focusDealerModel|json}}
     </div>
-
 </div>   

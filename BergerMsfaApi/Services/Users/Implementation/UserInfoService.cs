@@ -85,7 +85,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
             foreach (var p in model.plantIds)
             {
                 var u= new UserZoneAreaMapping();
-                u.PlanId = p;
+                u.PlantId = p;
                 u.UserInfoId = result.Id;
                 if (model.saleOfficeIds.Count == 0) { await _userZoneArea.CreateAsync(u); continue; };
         
@@ -93,14 +93,14 @@ namespace BergerMsfaApi.Services.Users.Implementation
                 {
                     var u1 = new UserZoneAreaMapping();
                     u1.SalesOfficeId = s;
-                    u1.PlanId = u.PlanId;
+                    u1.PlantId = u.PlantId;
                     u1.UserInfoId = result.Id;
                     if (model.areaIds.Count == 0) { await _userZoneArea.CreateAsync(u1); continue; };
                     foreach (var a in model.areaIds)
                     {
                         var u2 = new UserZoneAreaMapping();
                         u2.SalesOfficeId = u1.SalesOfficeId;
-                        u2.PlanId = u1.PlanId;
+                        u2.PlantId = u1.PlantId;
                         u2.UserInfoId = result.Id;
                         u2.AreaId = a;
                         if (model.territoryIds.Count == 0) { await _userZoneArea.CreateAsync(u2); continue; };
@@ -108,7 +108,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                         {
                             var u3 = new UserZoneAreaMapping();
                             u3.SalesOfficeId = u2.SalesOfficeId;
-                            u3.PlanId = u2.PlanId;
+                            u3.PlantId = u2.PlantId;
                             u3.UserInfoId = result.Id;
                             u3.AreaId = u2.AreaId;
                             u3.TerritoryId = t;
@@ -117,7 +117,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                             {
                                 var u4 = new UserZoneAreaMapping();
                                 u4.SalesOfficeId = u3.SalesOfficeId;
-                                u4.PlanId = u3.PlanId;
+                                u4.PlantId = u3.PlantId;
                                 u4.UserInfoId = result.Id;
                                 u4.AreaId = u3.AreaId;
                                 u4.TerritoryId =u3.TerritoryId;
@@ -283,7 +283,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
             
             var  result = await _user.FindAsync(s => s.Id == id);
             var areaZone =  await _userZoneArea.FindAllAsync(f => f.UserInfoId == id);
-            var plantIds = await (from p in areaZone select p.PlanId).Distinct().ToListAsync();
+            var plantIds = await (from p in areaZone select p.PlantId).Distinct().ToListAsync();
             var saleOfficeIds = await (from s in areaZone where s.SalesOfficeId != null select s.SalesOfficeId).Distinct().ToListAsync();
             var areaIds = await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
             var territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
@@ -316,7 +316,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
             
             var  result = await _user.FindAsync(s => s.UserName.Equals(username));
             var areaZone =  await _userZoneArea.FindAllAsync(f => f.UserInfoId == result.Id);
-            var plantIds = await (from p in areaZone select p.PlanId).Distinct().ToListAsync();
+            var plantIds = await (from p in areaZone select p.PlantId).Distinct().ToListAsync();
             var saleOfficeIds = await (from s in areaZone where s.SalesOfficeId != null select s.SalesOfficeId).Distinct().ToListAsync();
             var areaIds = await (from s in areaZone where s.AreaId != null select s.AreaId).Distinct().ToListAsync(); ;
             var territoryIds = await (from s in areaZone where s.TerritoryId != null select s.TerritoryId).Distinct().ToListAsync(); ;
@@ -346,10 +346,10 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
             var userRoleMapping = await _userRoleMapping.FindAsync(u => u.UserInfoId == result.Id);
 
-            //if (userRoleMapping != null)  
-            //{
-            //    finalResult.RoleId = userRoleMapping.RoleId;
-            //}
+            if (userRoleMapping != null)
+            {
+                finalResult.RoleId = userRoleMapping.RoleId;
+            }
             return finalResult;
         }
 
@@ -422,7 +422,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
             foreach (var p in model.plantIds)
             {
                 var u = new UserZoneAreaMapping();
-                u.PlanId = p;
+                u.PlantId = p;
                 u.UserInfoId = result.Id;
                 if (model.saleOfficeIds.Count == 0) { await _userZoneArea.CreateAsync(u); continue; };
 
@@ -430,14 +430,14 @@ namespace BergerMsfaApi.Services.Users.Implementation
                 {
                     var u1 = new UserZoneAreaMapping();
                     u1.SalesOfficeId = s;
-                    u1.PlanId = u.PlanId;
+                    u1.PlantId = u.PlantId;
                     u1.UserInfoId = result.Id;
                     if (model.areaIds.Count == 0) { await _userZoneArea.CreateAsync(u1); continue; };
                     foreach (var a in model.areaIds)
                     {
                         var u2 = new UserZoneAreaMapping();
                         u2.SalesOfficeId = u1.SalesOfficeId;
-                        u2.PlanId = u1.PlanId;
+                        u2.PlantId = u1.PlantId;
                         u2.UserInfoId = result.Id;
                         u2.AreaId = a;
                         if (model.territoryIds.Count == 0) { await _userZoneArea.CreateAsync(u2); continue; };
@@ -445,7 +445,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                         {
                             var u3 = new UserZoneAreaMapping();
                             u3.SalesOfficeId = u2.SalesOfficeId;
-                            u3.PlanId = u2.PlanId;
+                            u3.PlantId = u2.PlantId;
                             u3.UserInfoId = result.Id;
                             u3.AreaId = u2.AreaId;
                             u3.TerritoryId = t;
@@ -454,7 +454,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                             {
                                 var u4 = new UserZoneAreaMapping();
                                 u4.SalesOfficeId = u3.SalesOfficeId;
-                                u4.PlanId = u3.PlanId;
+                                u4.PlantId = u3.PlantId;
                                 u4.UserInfoId = result.Id;
                                 u4.AreaId = u3.AreaId;
                                 u4.TerritoryId = u3.TerritoryId;

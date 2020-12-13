@@ -7,6 +7,6 @@ namespace Berger.Worker.Services
 {
     public interface ICustomerService
     {
-         Task<int> getData();
+         Task<int> GetCustomerData();
     }
 }

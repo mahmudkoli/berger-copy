@@ -49,12 +49,33 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                
-                var result = await _commonSvc.AppGetDealerInfoList(EmployeeId);
+                var result = await _commonSvc.AppGetFocusDealerInfoList(EmployeeId);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
 
+                return ExceptionResult(ex);
+            }
+
+        }
+
+        [HttpGet("GetDealerList")]
+        public async Task<IActionResult> GetDealerList([FromQuery] string userCategory, [FromQuery] List<string> userCategoryIds)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userCategory))
+                {
+                    ModelState.AddModelError(nameof(userCategory), "User Category can not be null");
+                    return ValidationResult(ModelState);
+                }
+
+                var result = await _commonSvc.AppGetDealerInfoListByUserCategory(userCategory.Trim(), userCategoryIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
                 return ExceptionResult(ex);
             }
 

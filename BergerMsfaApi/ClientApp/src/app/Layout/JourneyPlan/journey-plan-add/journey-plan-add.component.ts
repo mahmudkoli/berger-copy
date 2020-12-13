@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
 import { NgbDateParserFormatter, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { CommonService } from '../../../Shared/Services/Common/common.service';
 
 @Component({
     selector: 'app-journey-plan-add',
@@ -19,6 +20,7 @@ export class JourneyPlanAddComponent implements OnInit {
     dealerList: any[] = [];
 
     constructor(
+        private commonSvc: CommonService,
         private calender: NgbCalendar,
         public formatter: NgbDateParserFormatter,
         private alertService: AlertService,
@@ -27,6 +29,7 @@ export class JourneyPlanAddComponent implements OnInit {
         private router: Router
     ) { }
 
+    private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
     ngOnInit() {
 
         this.getDealerList();
@@ -45,14 +48,17 @@ export class JourneyPlanAddComponent implements OnInit {
     }
     private getDealerList() {
 
-        this.alertService.fnLoading(true);
-        this.journeyPlanService.getDealerList().subscribe(
-            (result: any) => {
-                this.dealerList = result.data;
-            },
-            (err: any) => console.log(err),
-            () => this.alertService.fnLoading(false)
-        );
+        if (this._loggedUser) {
+            this.alertService.fnLoading(true);
+            this.commonSvc.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
+                (result: any) => {
+                    this.dealerList = result.data;
+                },
+                (err: any) => console.log(err)
+
+            ).add(() => this.alertService.fnLoading(false));
+        }
+        
 
     }
 
@@ -80,17 +86,19 @@ export class JourneyPlanAddComponent implements OnInit {
 
     private insert(journeyPlan: JourneyPlan) {
         this.alertService.fnLoading(true);
-        this.journeyPlanService.create(journeyPlan).subscribe(res => {
-            console.log("JourneyPlan res: ", res);
-            this.router.navigate(['/journey-plan/list']).then(() => {
-                this.alertService.tosterSuccess("JourneyPlan has been created successfully.");
-            });
-        },
+        this.journeyPlanService.create(journeyPlan).subscribe(
+            (res) => {
+                console.log("JourneyPlan res: ", res);
+                this.router.navigate(['/journey-plan/list']).then(
+                    () => {
+                        this.alertService.tosterSuccess("JourneyPlan has been created successfully.");
+                    });
+            },
             (error) => {
                 console.log(error);
                 this.displayError(error);
-            }, () => this.alertService.fnLoading(false)
-        );
+            },
+        ).add(() => this.alertService.fnLoading(false));
     }
 
     private update(model: JourneyPlan) {
@@ -104,8 +112,8 @@ export class JourneyPlanAddComponent implements OnInit {
             (error) => {
                 console.log(error);
                 this.displayError(error);
-            }, () => this.alertService.fnLoading(false)
-        );
+            }
+        ).add(() => this.alertService.fnLoading(false));;
     }
 
     private editForm(journeyPlan: JourneyPlan) {

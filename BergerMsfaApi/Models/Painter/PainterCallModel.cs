@@ -18,6 +18,6 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public bool HasDbblIssue { get; set; }
         public string Comment { get; set; }
         public int PainterId { get; set; }
-        public List<PainterCompanyMTDValueModel> PainterCompanyMTDValueModel { get; set; }
+        public List<PainterCompanyMTDValueModel> PainterCompanyMTDValue{ get; set; }
     }
 }

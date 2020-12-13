@@ -17,7 +17,7 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public decimal TotalDue { get; set; }
         public string CustomerName { get; set; }
         public string CustZone { get; set; }
-        public string BusinessArea { get; set; }
+        public string BusinessArea { get; set; } // Plant
         public string Address { get; set; }
         public string ContactNo { get; set; }
         public string AccountGroup { get; set; }
@@ -26,6 +26,13 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         private string CompoKey;
+
+        public string SalesOffice { get; set; }
+        public string Area { get; set; }
+        public string Zone { get; set; }
+        public bool IsExclusive { get; set; }
+        public bool IsCBInstalled { get; set; }
+
         [NotMapped] 
         public string CompositeKey
         {

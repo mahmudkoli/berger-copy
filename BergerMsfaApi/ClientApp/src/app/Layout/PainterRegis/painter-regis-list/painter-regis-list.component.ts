@@ -15,6 +15,9 @@ export class PainterRegisListComponent implements OnInit {
     permissionGroup: PermissionGroup = new PermissionGroup();
     public painterList: Painter[] = [];
     public baseUrl: string;
+    first = 0;
+
+    rows = 5;
     constructor(
         private router: Router,
         private activityPermissionService: ActivityPermissionService,

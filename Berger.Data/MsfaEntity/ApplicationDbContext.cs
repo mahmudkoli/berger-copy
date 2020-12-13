@@ -4,14 +4,18 @@ using Berger.Data.Common;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
+using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Berger.Data.MsfaEntity.WorkFlows;
 
@@ -33,6 +37,8 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -118,7 +124,10 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
 
-
+        #region Master
+        public DbSet<Depot> Depots { get; set; }
+        public DbSet<CustomerGroup> CustomerGroups { get; set; }
+        #endregion
 
 
         #region Users
@@ -150,7 +159,7 @@ namespace Berger.Data.MsfaEntity
 
         #region JourneyPlan&FocusDealer
         public DbSet<FocusDealer> FocusDealers { get; set; }
-
+        public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
         public DbSet<JourneyPlan> JourneyPlans { get; set; }
         public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
         public DbSet<JourneyPlanDetail> JourneyPlanDetails { get; set; }
@@ -160,6 +169,7 @@ namespace Berger.Data.MsfaEntity
         #region Painter
         public DbSet<PainterCompanyMTDValue> PainterCompanyMTDValues { get; set; }
         public DbSet<Painter> Painters { get; set; }
+        public DbSet<PainterAttachment> PainterAttachments { get; set; }
         public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         #endregion
@@ -180,11 +190,26 @@ namespace Berger.Data.MsfaEntity
 
         #endregion
         public DbSet<DealerOpening> DealerOpenings { get; set; }
-
+        public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
+        #endregion
+
+        #region Dealer Sales Call
+        public DbSet<LeadGeneration> LeadGenerations { get; set; }
+        public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
+        public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
+        #endregion
+
+        #region Tinting
+        public DbSet<TintiningMachine> TintiningMachines { get; set; }
+        #endregion
+
+        #region ELearning
+        public DbSet<ELearningDocument> ELearningDocuments { get; set; }
+        public DbSet<ELearningAttachment> ELearningAttachments { get; set; }
         #endregion
 
     }

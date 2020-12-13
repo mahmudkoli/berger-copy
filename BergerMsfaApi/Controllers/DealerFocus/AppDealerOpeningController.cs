@@ -30,7 +30,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         {
             try
             {
-                var result = await _dealerOpeningSvc.GetDealerOpeningListAsync();
+                var result = await _dealerOpeningSvc.AppGetDealerOpeningListAsync();
                 return OkResult(result);
 
             }
@@ -41,13 +41,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpPost("CreateDealerOpening")]
-        public async Task<IActionResult> CreateDealerOpeningAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] string model,List<IFormFile> attachments)
+        public async Task<IActionResult> CreateDealerOpeningAsync([FromBody] DealerOpeningModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var dealerOpen = JsonConvert.DeserializeObject<DealerOpeningModel>(model);
-                var result = await _dealerOpeningSvc.CreateDealerOpeningAsync(dealerOpen, attachments);
+                var result = await _dealerOpeningSvc.AppCreateDealerOpeningAsync(model);
                 return OkResult(result);
 
             }
@@ -58,13 +57,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpPut("UpdateDealerOpening")]
-        public async Task<IActionResult> UpdateDealerOpeningAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] string model, List<IFormFile> attachments)
+        public async Task<IActionResult> UpdateDealerOpeningAsync([FromBody] DealerOpeningModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var dealerOpen = JsonConvert.DeserializeObject<DealerOpeningModel>(model);
-                var result = await _dealerOpeningSvc.UpdateDealerOpeningAsync(dealerOpen, attachments);
+                var result = await _dealerOpeningSvc.AppUpdateDealerOpeningAsync(model);
                 return OkResult(result);
 
             }

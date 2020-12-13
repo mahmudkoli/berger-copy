@@ -5,6 +5,7 @@ using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.PainterRegistration1
@@ -30,12 +31,12 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             _uploadService = uploadService;
         }
 
-        [HttpGet("GetPainterList")]
-        public async Task<IActionResult> GetPainterList()
+        [HttpGet("GetPainterList/{employeeId}")]
+        public async Task<IActionResult> GetPainterList([BindRequired] string employeeId)
         {
             try
             {
-                var result = await _painterSvc.AppGetPainterListAsync();
+               var result = await _painterSvc.AppGetPainterListAsync(employeeId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -44,14 +45,12 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             }
         }
 
-
-
-
         [HttpPost("CreatePainter")]
-        public async Task<IActionResult> CreatePainter(PainterModel model)
+        public async Task<IActionResult> CreatePainter([FromBody]PainterModel model)
         {
             try
             {
+   
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _painterSvc.AppCreatePainterAsync(model);
                 return OkResult(result);
@@ -61,18 +60,12 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetPainterById/{Id}")]
-        //[HttpGet("GetPainterById/{Id}")]
-        public async Task<IActionResult> GetPainterById(int Id)
+        public async Task<IActionResult> GetPainterById([BindRequired] int Id)
         {
             try
             {
-                //if (!await _painterSvc.IsExistAsync(Id))
-                //{
-                //    //ModelState.AddModelError(nameof(Id), "Painter Not Found");
-                //    //return ValidationResult(ModelState);
-                //    return OkResult(new PainterModel());
-                //}
                 var result = await _painterSvc.AppGetPainterByIdAsync(Id);
                 return OkResult(result);
             }
@@ -81,18 +74,15 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetPainterByPhone/{Phone}")]
-        public async Task<IActionResult> GetPainterByIPhone(string Phone)
+        public async Task<IActionResult> GetPainterByIPhone([BindRequired] string Phone)
         {
             try
             {
-                //if (!string.IsNullOrEmpty(Phone))
-                //{
-                //    ModelState.AddModelError(nameof(Phone), "Phone Can not be null");
-                //    return ValidationResult(ModelState);
-                //}
-                
-                
+
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+
                 var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
                 return OkResult(result);
             }
@@ -103,12 +93,16 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
         }
 
         [HttpPut("UpdatePainter")]
-        public async Task<IActionResult> UpdatePainter(PainterModel model)
+        public async Task<IActionResult> UpdatePainter([FromBody]PainterModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (!await _painterSvc.IsExistAsync(model.Id)) return NotFound();
+                if (!await _painterSvc.IsExistAsync(model.Id))
+                {
+                    ModelState.AddModelError(nameof(model.Id), "painter  not found");
+                    return ValidationResult(ModelState);
+                }
                 var result = await _painterSvc.AppUpdateAsync(model);
                 return OkResult(result);
             }
@@ -121,13 +115,13 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
 
 
         [HttpDelete("DeletePainter/{Id}")]
-        public async Task<IActionResult> DeletePainter(int Id)
+        public async Task<IActionResult> DeletePainter([BindRequired]int Id)
         {
             try
             {
                 if (!await _painterSvc.IsExistAsync(Id))
                 {
-                    ModelState.AddModelError(nameof(Id), "Painter Not Found");
+                    ModelState.AddModelError(nameof(Id), "painter  not found");
                     return ValidationResult(ModelState);
                 }
 

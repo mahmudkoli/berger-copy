@@ -55,7 +55,7 @@ export class SchemeService {
 
     }
     public updateSchemeDetail(model) {
-        return this.http.put<APIResponse>(this.baseUrl + 'v1/SchemeMaster/updateSchemeDetail', model);
+        return this.http.put<APIResponse>(this.baseUrl + 'v1/SchemeDetail/updateSchemeDetail', model);
 
     }
 

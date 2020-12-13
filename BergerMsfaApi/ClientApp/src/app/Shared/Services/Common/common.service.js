@@ -11,6 +11,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonService = void 0;
 var core_1 = require("@angular/core");
+var http_1 = require("@angular/common/http");
 var CommonService = /** @class */ (function () {
     function CommonService(http, baseUrl) {
         this.http = http;
@@ -57,6 +58,21 @@ var CommonService = /** @class */ (function () {
     };
     CommonService.prototype.getRoleList = function () {
         return this.http.get(this.baseUrl + 'v1/Common/getRoleList');
+    };
+    CommonService.prototype.getDepotList = function () {
+        return this.http.get(this.baseUrl + 'v1/Common/getDepotList');
+    };
+    CommonService.prototype.getUserInfoList = function () {
+        return this.http.get(this.baseUrl + 'v1/Common/getUserInfoList');
+    };
+    CommonService.prototype.getDealerList = function (userCategory, userCategoryIds) {
+        var params = new http_1.HttpParams();
+        params = params.append("userCategory", userCategory);
+        if (userCategoryIds)
+            userCategoryIds.forEach(function (v) {
+                params = params.append("userCategoryIds", v);
+            });
+        return this.http.get(this.baseUrl + "v1/AppDealer/getDealerList", { params: params });
     };
     CommonService = __decorate([
         core_1.Injectable({

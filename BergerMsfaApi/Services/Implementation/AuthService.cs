@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Interfaces;
@@ -104,12 +105,59 @@ namespace BergerMsfaApi.Services.Implementation
                                     signingCredentials: cred
                                 );
 
+                #region user category
+                var userCat = string.Empty;
+                var userCatIds = new List<string>();
+
+                if (userInfo.zoneIds.Any())
+                {
+                    userCat = EnumUserCategory.Zone.ToString();
+                    userCatIds = userInfo.zoneIds;
+                } 
+                else if (userInfo.territoryIds.Any())
+                {
+                    userCat = EnumUserCategory.Territory.ToString();
+                    userCatIds = userInfo.territoryIds;
+                } 
+                else if (userInfo.areaIds.Any())
+                {
+                    userCat = EnumUserCategory.Area.ToString();
+                    userCatIds = userInfo.areaIds;
+                } 
+                else if (userInfo.saleOfficeIds.Any())
+                {
+                    userCat = EnumUserCategory.SalesOffice.ToString();
+                    userCatIds = userInfo.saleOfficeIds;
+                } 
+                else if (userInfo.plantIds.Any())
+                {
+                    userCat = EnumUserCategory.Plant.ToString();
+                    userCatIds = userInfo.plantIds.Select(x => x.ToString()).ToList();
+                }
+                #endregion
+
                 var results = new
                 {
-                    userId=AppIdentity.AppUser.UserId,
-                    fullName=AppIdentity.AppUser.FullName,
+                    //userId=AppIdentity.AppUser.UserId,
+                    //fullName=AppIdentity.AppUser.FullName,
+                    userId = userInfo.Id,
+                    fullName = $"{userInfo.FirstName} {userInfo.MiddleName} {userInfo.LastName}",
+                    planIds = userInfo.plantIds,
+                    planId = userInfo.plantIds.FirstOrDefault(),
+                    salesOfficeIds = userInfo.saleOfficeIds,
+                    salesOfficeId = userInfo.saleOfficeIds.FirstOrDefault()??"",
+                    areaIds = userInfo.areaIds,
+                    areaId = userInfo.areaIds.FirstOrDefault()??"",
+                    territoryIds = userInfo.territoryIds,
+                    territoryId = userInfo.territoryIds.FirstOrDefault()??"",
+                    zoneIds = userInfo.zoneIds,
+                    zoneId = userInfo.zoneIds.FirstOrDefault()??"",
+                    UserCategory = userCat,
+                    UserCategoryIds = userCatIds,
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
+                    roleId=userInfo.RoleId,
+                    employeeId = userInfo.EmployeeId,
                 };
 
                 return results;

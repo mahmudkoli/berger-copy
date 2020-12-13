@@ -140,7 +140,7 @@ var CollectionEntryListComponent = /** @class */ (function () {
             // enabledExcelDownload:true,
             // enabledPrint:true,
             // enabledColumnSetting:true,
-            enabledRecordCreateBtn: true,
+            enabledRecordCreateBtn: false,
         };
     };
     CollectionEntryListComponent = __decorate([
