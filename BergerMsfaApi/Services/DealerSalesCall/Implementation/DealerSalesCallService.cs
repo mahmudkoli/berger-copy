@@ -107,6 +107,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var modelResult = new SaveDealerSalesCallModel();
             modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
+            modelResult.DealerId = id;
 
             var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
 
@@ -128,6 +129,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.HasPainterInfluence = result.HasPainterInfluence;
                 modelResult.PainterInfluenceId = result.PainterInfluenceId;
 
+                modelResult.HasBPBLSales = result.HasBPBLSales;
+                modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
+                modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
+
                 if(result.DealerCompetitionSales != null)
                 {
                     foreach (var item in result.DealerCompetitionSales)
@@ -147,23 +152,25 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
         public async Task<IList<SaveDealerSalesCallModel>> GetDealerSalesCallListByDealerIdsAsync(IList<int> ids)
         {
-            var results = await _dealerSalesCallRepository.GetAllIncludeAsync(
-                                x => x,
-                                x => ids.Contains(x.DealerId),
-                                x => x.OrderByDescending(o => o.CreatedTime),
-                                x => x.Include(i => i.DealerCompetitionSales),
-                                true
-                            );
-
             var modelResults = new List<SaveDealerSalesCallModel>();
 
             var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
 
-            if(!results.Any())
+            foreach (var id in ids)
             {
+
+                var result = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(
+                                    x => x,
+                                    x => x.DealerId == id,
+                                    x => x.OrderByDescending(o => o.CreatedTime),
+                                    x => x.Include(i => i.DealerCompetitionSales),
+                                    true
+                                );
+
                 var modelResult = new SaveDealerSalesCallModel();
                 modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
                 modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
+                modelResult.DealerId = id;
 
                 foreach (var item in companyList)
                 {
@@ -176,40 +183,27 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                         );
                 }
 
-                modelResults.Add(modelResult);
-            }
-
-            foreach (var result in results)
-            {
-                var modelResult = new SaveDealerSalesCallModel();
-                modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
-                modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
-
-                foreach (var item in companyList)
+                if (result != null)
                 {
-                    modelResult.DealerCompetitionSales.Add(
-                            new SaveDealerCompetitionSalesModel
-                            {
-                                CompanyId = item.Id,
-                                CompanyName = item.DropdownName
-                            }
-                        );
-                }
+                    modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
+                    modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
+                    modelResult.HasPainterInfluence = result.HasPainterInfluence;
+                    modelResult.PainterInfluenceId = result.PainterInfluenceId;
 
-                modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
-                modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
-                modelResult.HasPainterInfluence = result.HasPainterInfluence;
-                modelResult.PainterInfluenceId = result.PainterInfluenceId;
+                    modelResult.HasBPBLSales = result.HasBPBLSales;
+                    modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
+                    modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
 
-                if (result.DealerCompetitionSales != null)
-                {
-                    foreach (var item in result.DealerCompetitionSales)
+                    if (result.DealerCompetitionSales != null)
                     {
-                        var dcs = modelResult.DealerCompetitionSales.FirstOrDefault(X => X.CompanyId == item.CompanyId);
-                        if (dcs != null)
+                        foreach (var item in result.DealerCompetitionSales)
                         {
-                            dcs.AverageMonthlySales = item.AverageMonthlySales;
-                            dcs.ActualMTDSales = item.ActualMTDSales;
+                            var dcs = modelResult.DealerCompetitionSales.FirstOrDefault(X => X.CompanyId == item.CompanyId);
+                            if (dcs != null)
+                            {
+                                dcs.AverageMonthlySales = item.AverageMonthlySales;
+                                dcs.ActualMTDSales = item.ActualMTDSales;
+                            }
                         }
                     }
                 }
