@@ -92,6 +92,6 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public bool IsSubDealerCall { get; set; }
         public bool HasBPBLSales { get; set; }
         public decimal BPBLAverageMonthlySales { get; set; }
-        public decimal BPBLActualAMDSales { get; set; }
+        public decimal BPBLActualMTDSales { get; set; }
     }
 }

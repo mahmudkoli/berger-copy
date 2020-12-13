@@ -279,7 +279,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("BPBLActualAMDSales")
+                    b.Property<decimal>("BPBLActualMTDSales")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("BPBLAverageMonthlySales")
