@@ -111,11 +111,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LineManagerId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -123,16 +120,16 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SaleGroupCd")
+                    b.Property<string>("SaleGroup")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaleOfficeCd")
+                    b.Property<string>("SaleOffice")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("TerritoryNoCd")
+                    b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WFStatus")
@@ -141,7 +138,7 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ZoneNoCd")
+                    b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -228,10 +225,10 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<DateTime>("ValidTo")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -279,7 +276,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("BPBLActualAMDSales")
+                    b.Property<decimal>("BPBLActualMTDSales")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("BPBLAverageMonthlySales")
@@ -1118,7 +1115,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("VisitDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("WFStatus")
                         .HasColumnType("int");
@@ -1171,7 +1168,7 @@ namespace Berger.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("PlanDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<int>("PlanStatus")
                         .HasColumnType("int");

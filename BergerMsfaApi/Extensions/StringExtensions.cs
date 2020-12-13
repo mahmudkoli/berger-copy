@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
@@ -38,5 +39,6 @@ namespace BergerMsfaApi.Extensions
             return string.Join(" ",
                 obj.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(obj)?.ToString() ?? "").Values);
         }
+     
     }
 }

@@ -8,7 +8,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
 {
     public interface IFocusDealerService
     {
-        Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize,string searchDate);
+        Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize,string search);
         Task<FocusDealerModel> GetFocusDealerById(int id);
         Task<FocusDealerModel> CreateAsync(FocusDealerModel model);
         Task<FocusDealerModel> UpdateAsync(FocusDealerModel model);

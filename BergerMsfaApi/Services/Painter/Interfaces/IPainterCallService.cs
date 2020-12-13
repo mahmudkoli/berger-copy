@@ -12,7 +12,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
         #region App
         Task<IEnumerable<PainterCallModel>> AppGetPainterCallListAsync(string employeeId);
         Task<PainterCallModel> AppGetPainterByIdAsync(int Id);
-        Task<PainterCallModel> AppGetPainterByPainterIdAsync(string employeeId,int PainterId);
+        Task<List<PainterCallModel>> AppGetPainterByPainterIdAsync(string employeeId,int PainterId);
         Task<PainterCallModel> AppCreatePainterCallAsync(int painterCallId);
         Task<PainterCallModel> AppCreatePainterCallAsync(string employeeId,PainterCallModel model);
         Task<PainterCallModel> AppUpdatePainterCallAsync(string employeeId,PainterCallModel model);

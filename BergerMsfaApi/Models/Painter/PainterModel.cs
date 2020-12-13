@@ -1,12 +1,27 @@
-﻿using Berger.Data.MsfaEntity.PainterRegistration;
+﻿using AutoMapper;
+using BergerMsfaApi.Mappings;
 using BergerMsfaApi.Models.Painter;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using System.Linq;
+using PNTR = Berger.Data.MsfaEntity.PainterRegistration;
 namespace BergerMsfaApi.Models.PainterRegistration
 {
-    public class PainterModel
+    public class PainterModel: IMapFrom<PNTR.Painter>
     {
+        public void Mapping(Profile profile)
+        {
+
+            profile.CreateMap<PainterAttachmentModel, PNTR.PainterAttachment>().ReverseMap();
+            
+            profile.CreateMap<PainterModel, PNTR.Painter>()
+                .ForMember(src => src.AttachedDealers, map => map.MapFrom(dest => dest.AttachedDealers.Select(dealer => new PNTR.AttachedDealerPainter { Dealer = dealer })));
+            
+            profile.CreateMap<PNTR.Painter, PainterModel>()
+                   .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)));
+           
+        }
+
         public PainterModel()
         {
             AttachedDealers = new List<int>();

@@ -82,7 +82,6 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             {
 
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-
                 var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
                 return OkResult(result);
             }
@@ -103,7 +102,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
                     ModelState.AddModelError(nameof(model.Id), "painter  not found");
                     return ValidationResult(ModelState);
                 }
-                var result = await _painterSvc.AppUpdateAsync(model);
+                var result = await _painterSvc.AppUpdatePainterAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)

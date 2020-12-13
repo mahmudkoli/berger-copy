@@ -25,12 +25,12 @@ namespace BergerMsfaApi.Controllers.Tintining
             _tintiningService = tintiningService;
             _logger = logger;
         }
-        [HttpGet("GetTintingMachinePagingList/{territory}")]
-        public async Task<IActionResult> GetTintingMachinePagingList(string territory,int index,int pageSize,string companyName)
+        [HttpGet("GetTintingMachinePagingList")]
+        public async Task<IActionResult> GetTintingMachinePagingList(int index,int pageSize,string search)
         {
             try
             {
-                var result = await _tintiningService.GetTintingMachinePagingList(territory,index,pageSize,companyName);
+                var result = await _tintiningService.GetTintingMachinePagingList(index,pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)

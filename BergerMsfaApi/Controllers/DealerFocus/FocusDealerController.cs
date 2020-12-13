@@ -22,11 +22,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
        
         [HttpGet("GetFocusdealerListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string searchDate)
+        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string search)
         {
             try
             {
-                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, searchDate);
+                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)

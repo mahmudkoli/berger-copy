@@ -19,10 +19,11 @@ export class SchemeService {
         this.baseUrl = baseUrl + 'api/';
     }
 
-    public getSchemeDetailWithMaster() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/SchemeDetail/getSchemeDetailWithMaster');
-    } public getSchemeMasterList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/SchemeMaster/getSchemeMasterList');
+    public getSchemeDetailWithMaster(index,pageSize,search="") {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/SchemeDetail/getSchemeDetailWithMaster/${index}/${pageSize}?search=${search}`);
+    } 
+    public getSchemeMasterList(index,pageSize,search="") {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/SchemeMaster/getSchemeMasterList/${index}/${pageSize}?search=${search}`);
     }
     public createSchemeMaster(model) {
         return this.http.post<APIResponse>(this.baseUrl + 'v1/SchemeMaster/createSchemeMaster', model);

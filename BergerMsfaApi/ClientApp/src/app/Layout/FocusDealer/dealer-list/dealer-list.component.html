@@ -29,8 +29,9 @@
             <th pSortableColumn="customerName">Customer Name <p-sortIcon field="customerName"></p-sortIcon></th>
             <th pSortableColumn="contactNo">ContactNo <p-sortIcon field="contactNo"></p-sortIcon></th>
             <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
-            <th></th>
-            <th></th>
+            <th pSortableColumn="isExclusiveLabel">Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon></th>
+            <th pSortableColumn="isCBInstalled">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
+    
 
         </tr>
     </ng-template>
@@ -41,10 +42,10 @@
             <td>{{dealer.contactNo}}</td>
             <td>{{dealer.address}}</td>
             <td>
-                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isExclusive')" onLabel="{{dealer.isExclusiveLabel}}" offLabel="Non Exclusive" [(ngModel)]="dealer.isExclusive"></p-toggleButton>
+                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isExclusive')" onLabel="{{dealer.isExclusiveLabel}}" offLabel="{{dealer.isExclusiveLabel}}" [(ngModel)]="dealer.isExclusive"></p-toggleButton>
             </td>
             <td>
-                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isCBInstalled')" onLabel="{{dealer.isCBInstalledLabel}}" offLabel="Non Installed" [(ngModel)]="dealer.isCBInstalled"></p-toggleButton>
+                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isCBInstalled')" onLabel="{{dealer.isCBInstalledLabel}}" offLabel="{{dealer.isCBInstalledLabel}}" [(ngModel)]="dealer.isCBInstalled"></p-toggleButton>
             </td>
 
 
@@ -52,6 +53,8 @@
     </ng-template>
      <ng-template pTemplate="summary">
         <p-paginator
+        
+                  
                      #paging
                      [rows]="rows"
                      [totalRecords]="pagingConfig?.totalItemCount"
@@ -60,4 +63,4 @@
                      (onPageChange)="paginate($event)"></p-paginator>
     </ng-template> 
 </p-table>
-<pre>{{pagingConfig|json}}</pre>
+<!-- <pre>{{pagingConfig|json}}</pre> -->
