@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public int CompanyId { get; set; }
         public DropdownModel Company { get; set; }
         public decimal AverageMonthlySales { get; set; }
-        public decimal ActualAMDSales { get; set; }
+        public decimal ActualMTDSales { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -37,8 +37,9 @@ namespace BergerMsfaApi.Models.DealerSalesCall
 
         public int CompanyId { get; set; }
         //public DropdownModel Company { get; set; }
+        public string CompanyName { get; set; }
         public decimal AverageMonthlySales { get; set; }
-        public decimal ActualAMDSales { get; set; }
+        public decimal ActualMTDSales { get; set; }
 
         public void Mapping(Profile profile)
         {

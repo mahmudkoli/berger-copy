@@ -89,6 +89,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
+                                null,
                                 true
                             );
 
