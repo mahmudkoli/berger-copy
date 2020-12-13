@@ -18,12 +18,12 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
             _painterSvc = painterSvc;
         }
 
-        [HttpGet("GetPainterList")]
-        public async Task<IActionResult> GetPainterList()
+        [HttpGet("GetPainterList/{index}/{pageSize}")]
+        public async Task<IActionResult> GetPainterList(int index, int pageSize, string search)
         {
             try
             {
-                var result = await _painterSvc.GetPainterListAsync();
+                var result = await _painterSvc.GetPainterListAsync(index,pageSize,search);
                 return OkResult(result);
             }
             catch (Exception ex)

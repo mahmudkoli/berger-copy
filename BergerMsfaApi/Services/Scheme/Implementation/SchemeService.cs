@@ -6,6 +6,7 @@ using BergerMsfaApi.Services.Scheme.interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.Scheme.Implementation
 {
@@ -20,6 +21,37 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         {
             _schemeMasterSvc = schemeMasterSvc;
             _schemeDetailSvc = schemeDetailSvc;
+        }
+
+        public async Task<IEnumerable<SchemeDetailModel>> AppGetcShemeDetailWithMaster()
+        {
+            var result = new List<SchemeDetailModel>();
+            var list = _schemeMasterSvc.GetAllInclude(f => f.SchemeDetail);
+            if (list.Count() > 0)
+            {
+                result = list
+                   .SelectMany(s => s.SchemeDetail.
+                    Select(d => new SchemeDetailModel
+                    {
+                        Id = d.Id,
+                        SchemeName = s.SchemeName,
+                        GlobalCondition = s.Condition,
+                        Code = d.Code,
+                        Slab = d.Slab,
+                        Condition = d.Condition,
+                        Item = d.Item,
+                        Date = d.Date,
+                        TargetVolume = d.TargetVolume,
+                        Benefit = d.Benefit
+                    })).ToList();
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<SchemeMasterModel>> AppGetSchemeMasters()
+        {
+            var result = await _schemeMasterSvc.GetAllAsync();
+            return result.ToMap<SchemeMaster, SchemeMasterModel>();
         }
 
         public async Task<bool> IsSchemeDetailAlreadyExist(int Id)
@@ -61,7 +93,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             return await _schemeMasterSvc.DeleteAsync(f => f.Id == Id);
         }
 
-        public async Task<IEnumerable<SchemeDetailModel>> PortalGetcShemeDetailWithMaster()
+        public async Task<IPagedList<SchemeDetailModel>> PortalGetcShemeDetailWithMaster(int index,int pageSize,string search)
         {
 
             var result = new List<SchemeDetailModel>();
@@ -84,7 +116,8 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                          Benefit = d.Benefit
                      })).ToList();
             }
-            return result;
+            if (!string.IsNullOrEmpty(search)) result = result.Search(search);
+            return result.ToPagedList(index,pageSize);
         }
 
         public async Task<IEnumerable<SchemeDetailModel>> PortalGetSchemeDelails()
@@ -99,10 +132,12 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             return result.ToMap<SchemeDetail, SchemeDetailModel>();
         }
 
-        public async Task<IEnumerable<SchemeMasterModel>> PortalGetSchemeMasters()
+        public async Task<IPagedList<SchemeMasterModel>> PortalGetSchemeMasters(int index, int pageSize, string search)
         {
-            var result = await _schemeMasterSvc.GetAllAsync();
-            return result.ToMap<SchemeMaster, SchemeMasterModel>();
+            var result = _schemeMasterSvc.GetAll().ToMap<SchemeMaster, SchemeMasterModel>();
+            if (!string.IsNullOrEmpty(search))
+                result = result.Search(search);
+            return result.ToPagedList(index,pageSize);
 
         }
 

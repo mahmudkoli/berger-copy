@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Berger.Common.Enumerations;
+using System;
 
 namespace BergerMsfaApi.Models.JourneyPlan
 {
@@ -6,7 +7,7 @@ namespace BergerMsfaApi.Models.JourneyPlan
     {
         public int Id { get; set; }
         public int[] Dealers { get; set; }
-        public string Status { get; set; }
+        public PlanStatus Status { get; set; }
         public DateTime VisitDate { get; set; }
     }
    

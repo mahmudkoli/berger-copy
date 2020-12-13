@@ -24,7 +24,7 @@ export class SchemedetailAddComponent implements OnInit {
         private schemeService: SchemeService) { }
 
     ngOnInit() {
-        this.getSchemeMasterList();
+        //this.getSchemeMasterList();
         console.log("param", this.route.snapshot.params, Object.keys(this.route.snapshot.params).length);
 
         if (Object.keys(this.route.snapshot.params).length !== 0 && this.route.snapshot.params.id !== 'undefined') {
@@ -53,12 +53,12 @@ export class SchemedetailAddComponent implements OnInit {
         this.schemeDetailModel = schemeDetail;
     }
 
-    getSchemeMasterList() {
-        this.alertService.fnLoading(true);
-        this.schemeService.getSchemeMasterList().subscribe((res) => {
-            this.schemeMasterList = res.data || [];
-        }, () => { }, () => this.alertService.fnLoading(false));
-    }
+    // getSchemeMasterList() {
+    //     this.alertService.fnLoading(true);
+    //     this.schemeService.getSchemeMasterList().subscribe((res) => {
+    //         this.schemeMasterList = res.data || [];
+    //     }, () => { }, () => this.alertService.fnLoading(false));
+    // }
     fnSave() {
         this.schemeDetailModel.date = this.schemeDetailModel.vDate.year.toString() + "-" + this.schemeDetailModel.vDate.month.toString() + "-" + this.schemeDetailModel.vDate.day.toString();
         this.schemeDetailModel.id == 0 ? this.insert(this.schemeDetailModel) : this.update(this.schemeDetailModel);

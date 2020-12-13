@@ -18,19 +18,19 @@ export class TintingService {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
     }
-    public getTintingMachinePagingList(territory: string, index, pageSize, companyName="") {
+    public getTintingMachinePagingList(index, pageSize, search) {
         return this.http.get<APIResponse>(this.baseUrl +
-            `v1/TintingMachine/getTintingMachinePagingList/${territory}?index=${index}&pageSize=${pageSize}&companyName=${companyName}`);
+            `v1/TintingMachine/getTintingMachinePagingList?index=${index}&pageSize=${pageSize}&search=${search}`);
     }
 
     public getTintingMachineById(id) {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/Tinting/getTintingMachineById/' + id);
     }
 
- 
 
 
-   
+
+
 
 
 }

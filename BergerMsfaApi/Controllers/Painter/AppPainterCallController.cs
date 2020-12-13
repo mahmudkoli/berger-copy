@@ -2,6 +2,7 @@
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -26,11 +27,12 @@ namespace BergerMsfaApi.Controllers.Painter
 
 
         [HttpGet("GetPainterCall")]
-        public async Task<IActionResult> GetPainterCallAsync()
+        public async Task<IActionResult> GetPainterCallAsync([BindRequired] string employeeId)
         {
             try
             {
-                var result = await _paintCallSvc.AppGetPainterCallListAsync();
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _paintCallSvc.AppGetPainterCallListAsync(employeeId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -39,6 +41,8 @@ namespace BergerMsfaApi.Controllers.Painter
                 return ExceptionResult(ex);
             }
         }
+
+
         [HttpGet("GetPainterCallById/{Id}")]
         public async Task<IActionResult> GetPainterCallByIdAsync(int Id)
         {
@@ -54,12 +58,13 @@ namespace BergerMsfaApi.Controllers.Painter
             }
         }
 
-        [HttpGet("GetPainterCallByPainterId/{PainterId}")]
-        public async Task<IActionResult> GetPainterCallByPainterId(int PainterId)
+        [HttpGet("GetPainterCallByPainterId/{employeeId}/{PainterId}")]
+        public async Task<IActionResult> GetPainterCallByPainterId([BindRequired] string employeeId,int PainterId)
         {
             try
             {
-                var result = await _paintCallSvc.AppGetPainterByPainterIdAsync(PainterId);
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _paintCallSvc.AppGetPainterByPainterIdAsync(employeeId,PainterId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -68,13 +73,25 @@ namespace BergerMsfaApi.Controllers.Painter
                 return ExceptionResult(ex);
             }
         }
-
-        [HttpPost("CreatePainterCall")]
-        public async Task<IActionResult> CreatePainterCallAysnc([FromBody] PainterCallModel model)
+        [HttpGet("CreatePainterCall/{PainterId}")]
+        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int PainterId)
         {
             try
             {
-                var result = await _paintCallSvc.AppCreatePainterCallAsync(model);
+                var result = await _paintCallSvc.AppCreatePainterCallAsync(PainterId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpPost("CreatePainterCall/{employeeId}")]
+        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired]string employeeId,[FromBody] PainterCallModel model)
+        {
+            try
+            {
+                var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId,model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -84,7 +101,7 @@ namespace BergerMsfaApi.Controllers.Painter
         }
 
         [HttpPut("UpdatePainterCall")]
-        public async Task<IActionResult> UpdatePainterCallAysnc([FromBody] PainterCallModel model)
+        public async Task<IActionResult> UpdatePainterCallAysnc([BindRequired] string employeeId,[FromBody] PainterCallModel model)
         {
             try
             {
@@ -93,7 +110,7 @@ namespace BergerMsfaApi.Controllers.Painter
                     ModelState.AddModelError(nameof(model.Id), "Painter Call Not Found");
                     return ValidationResult(ModelState);
                 }
-                var result = await _paintCallSvc.AppUpdatePainterCallAsync(model);
+                var result = await _paintCallSvc.AppUpdatePainterCallAsync(employeeId,model);
                 return OkResult(result);
             }
             catch (Exception ex)

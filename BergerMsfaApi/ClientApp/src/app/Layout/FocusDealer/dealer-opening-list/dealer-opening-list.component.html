@@ -13,7 +13,8 @@
                     <div>
                         <span class="p-input-icon-right m-2 pull-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                            [(ngModel)]="search" placeholder="Search" />
                         </span>
                     </div>
                 </div>
@@ -45,6 +46,16 @@
             </td>
         </tr>
     </ng-template>
+    <ng-template pTemplate="summary">
+        <p-paginator
+        
+                     #paginator
+                     [rows]="rows"
+                     [totalRecords]="pagingConfig?.totalItemCount"
+                     [pageLinkSize]="10"
+                     [rowsPerPageOptions]="[10,20]"
+                     (onPageChange)="paginate($event)"></p-paginator>
+    </ng-template> 
 </p-table>
 
 

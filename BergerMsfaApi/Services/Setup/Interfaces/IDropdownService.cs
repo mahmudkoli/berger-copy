@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Setup;
 using X.PagedList;
 
@@ -8,7 +9,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
 {
     public interface IDropdownService
     {
-      
+        Task<IEnumerable<PainterCompanyMTDValueModel>> GetCompanyList(int PainterCallId);
         Task<IEnumerable<DropdownModel>> GetDropdownList();
         Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index,int pageSize);
         Task<DropdownModel> GetDropdownById(int id);

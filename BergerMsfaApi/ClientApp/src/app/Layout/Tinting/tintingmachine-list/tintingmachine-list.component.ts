@@ -1,67 +1,67 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TintingService } from '../../../Shared/Services/Tinting/TintingService';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { CommonService } from '../../../Shared/Services/Common/common.service';
+import { APIModel } from 'src/app/Shared/Entity/Response';
+import { Paginator } from 'primeng/paginator';
 
 @Component({
-  selector: 'app-tintingmachine-list',
-  templateUrl: './tintingmachine-list.component.html',
-  styleUrls: ['./tintingmachine-list.component.css']
+    selector: 'app-tintingmachine-list',
+    templateUrl: './tintingmachine-list.component.html',
+    styleUrls: ['./tintingmachine-list.component.css']
 })
 export class TintingmachineListComponent implements OnInit {
-
-    tintingMachineList: any[] = [];
-    constructor(
-        private alertService: AlertService,
-        private commonSvc: CommonService,
-        private tintingMachineSvc: TintingService) { }
-
-    ngOnInit() {
-        // this.getTintingMachineList();
-        this.getTintingMachinePagingList(this.first, this.pageSize, this.searchCompany);
-    }
-
     first = 1;
     rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
+    pagingConfig: APIModel;
     pageSize: number;
-    searchCompany: string="";
-    private get _LoggedUser() { return this.commonSvc.getUserInfoFromLocalStorage() }
-  
-    getTintingMachinePagingList(index, pageSize, companyName) {
-        if (this._LoggedUser && this._LoggedUser.userCategory=="Terriotry") {
-
-            this.alertService.fnLoading(true);
-            this.tintingMachineSvc.getTintingMachinePagingList(this._LoggedUser.userCategoryIds, index, pageSize, companyName)
-                .subscribe(
-                    (res) => {
-                        this.pagingConfig = res.data;
-                        this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
-                        this.tintingMachineList = this.pagingConfig.model as [] || []
-                    },
-                    (error) => { this.displayError(error) }
-
-                ).add(() => this.alertService.fnLoading(false));
-        }
-       
+    search: string = "";
+    tintingMachineList: any[] = [];
+    @ViewChild("paging", { static: false }) paging: Paginator;
+    constructor(
+        private alertService: AlertService,
+        private tintingMachineSvc: TintingService) {
+        this.pagingConfig = new APIModel(1, 10);
     }
+
+    ngOnInit() {
+        this.onLoadTintingMachines(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
+
+
+
+
+    onLoadTintingMachines(index, pageSize, search = "") {
+
+        this.alertService.fnLoading(true);
+        this.tintingMachineSvc.getTintingMachinePagingList(index, pageSize, search)
+            .subscribe(
+                (res) => {
+                    this.pagingConfig = res.data;
+                    this.tintingMachineList = this.pagingConfig.model;
+                },
+                (error) => { this.displayError(error) }
+
+            ).add(() => this.alertService.fnLoading(false));
+    }
+
+
     next() {
-        this.first = this.first + this.rows;
-        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.onLoadTintingMachines(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
 
     prev() {
-        this.first = this.first - this.rows;
-        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.onLoadTintingMachines(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
+        this.reset();
+        this.onLoadTintingMachines(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
 
-        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
     }
     reset() {
-        this.first = 1;
-        this.getTintingMachinePagingList(this.first, this.rows, this.searchCompany);
+        this.paging.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
     }
 
     isLastPage(): boolean {
@@ -70,13 +70,14 @@ export class TintingmachineListComponent implements OnInit {
     }
 
     isFirstPage(): boolean {
-        return this.tintingMachineList ? this.first === 1 : true;
+        return this.tintingMachineList ? this.first === (this.tintingMachineList.length - this.rows) : true;
     }
     paginate(event) {
 
         // event.first == 0 ?  1 : event.first;
-        let first = Number(event.first) + 1;
-        this.getTintingMachinePagingList(first, event.rows, this.searchCompany);
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
+        this.onLoadTintingMachines(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page

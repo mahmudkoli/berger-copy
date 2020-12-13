@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Http;
@@ -39,12 +40,27 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("GetDealerOpening/{DealerOpeningId}")]
+        public async Task<IActionResult> GetDealerOpeningListAsync(int DealerOpeningId)
+        {
+            try
+            {
+                var result = await _dealerOpeningSvc.GetDealerOpeningDetailById(DealerOpeningId);
+                return OkResult(result);
 
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
         [HttpPost("CreateDealerOpening")]
+        //[RequestSizeLimit(40000000)]
         public async Task<IActionResult> CreateDealerOpeningAsync([FromBody] DealerOpeningModel model)
         {
             try
             {
+
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _dealerOpeningSvc.AppCreateDealerOpeningAsync(model);
                 return OkResult(result);
@@ -52,6 +68,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
             catch (Exception ex)
             {
+                ex.ToWriteLog();
                 return ExceptionResult(ex);
             }
         }

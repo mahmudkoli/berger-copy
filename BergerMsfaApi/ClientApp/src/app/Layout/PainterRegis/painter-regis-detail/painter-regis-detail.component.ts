@@ -13,14 +13,14 @@ import { Observable } from 'rxjs';
 })
 export class PainterRegisDetailComponent implements OnInit {
     public baseUrl: string;
-    painter:any;
+    painter: any;
     constructor(
 
         private alertService: AlertService,
         private route: ActivatedRoute,
         private painterRegisSvc: PainterRegisService,
         private router: Router,
-        @Inject('BASE_URL') baseUrl: string) { this.baseUrl = baseUrl;}
+        @Inject('BASE_URL') baseUrl: string) { this.baseUrl = baseUrl; }
 
     ngOnInit() {
         if (Object.keys(this.route.snapshot.params).length !== 0 && this.route.snapshot.params.id !== 'undefined') {
