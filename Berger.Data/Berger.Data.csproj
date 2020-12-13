@@ -113,10 +113,7 @@
     <Compile Remove="Migrations\20201115054618_modifiedDealerInfo.Designer.cs" />
     <Compile Remove="Migrations\20201123104654_addedTintingEntity.cs" />
     <Compile Remove="Migrations\20201123104654_addedTintingEntity.Designer.cs" />
-    <Compile Remove="Migrations\20201209060039_RemoveExtraDepotEntity.cs" />
-    <Compile Remove="Migrations\20201209060039_RemoveExtraDepotEntity.Designer.cs" />
-    <Compile Remove="Migrations\20201209060357_RemoveExtraDepotEntity.cs" />
-    <Compile Remove="Migrations\20201209060357_RemoveExtraDepotEntity.Designer.cs" />
+
   </ItemGroup>
 
   <ItemGroup>
