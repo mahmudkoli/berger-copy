@@ -53,6 +53,20 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             }
         }
 
+        [HttpGet("GetDealerSalesCallListByDealerIds")]
+        public async Task<IActionResult> GetDealerSalesCallListByDealerIds([FromQuery] IList<int> ids)
+        {
+            try
+            {
+                var result = await _dealerSalesCallService.GetDealerSalesCallListByDealerIdsAsync(ids);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpPost("CreateDealerSalesCall")]
         public async Task<IActionResult> CreateDealerSalesCall([FromBody] SaveDealerSalesCallModel model)
         {
