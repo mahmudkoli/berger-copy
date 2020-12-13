@@ -7,7 +7,7 @@ import { TintingmachineListComponent } from './tintingmachine-list/tintingmachin
 
 const routes: Routes = [
     { path: 'tinting-machine-list',
-     canActivate:[PermissionGuard],
+    
     component: TintingmachineListComponent },
     //{ path: '/', redirectTo: "tinting-machine-list" },
     //{ path: 'tinting-machine-list', component: TintingmachineListComponent },

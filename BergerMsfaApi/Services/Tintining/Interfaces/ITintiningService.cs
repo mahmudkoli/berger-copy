@@ -10,9 +10,10 @@ namespace BergerMsfaApi.Services.Tintining.Interfaces
     public interface ITintiningService
     {
         #region App
+        Task<List<TintiningMachineModel>> AppCreateTiningMachine(string employeeId,string territory);
         Task<IEnumerable< dynamic>> AppGetTintingMachineList(string territory);
-        Task<TintiningMachineModel> AppCreateTiningMachine(TintiningMachineModel model);
-        Task<TintiningMachineModel> AppUpdateTitningMachine(TintiningMachineModel model);
+        Task<bool> AppCreateTiningMachine(List<TintiningMachineModel> model);
+        Task<bool> AppUpdateTitningMachine(List<TintiningMachineModel> model);
         #endregion
 
         #region Common
@@ -22,7 +23,7 @@ namespace BergerMsfaApi.Services.Tintining.Interfaces
         #endregion
 
         #region Portal
-        Task<IPagedList<TintiningMachineModel>> GetTintingMachinePagingList(string territory, int index, int pageSize, string companyName);
+        Task<IPagedList<TintiningMachineModel>> GetTintingMachinePagingList(int index, int pageSize, string search);
         #endregion
 
 

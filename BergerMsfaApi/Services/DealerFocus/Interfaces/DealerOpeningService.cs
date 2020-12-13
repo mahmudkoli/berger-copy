@@ -141,11 +141,16 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             foreach (var attach in dealerOpening.DealerOpeningAttachments)
             {
+                attach.Name = attach.Name.Replace(" ", "_");
                 if (!string.IsNullOrEmpty(attach.Path))
+                {
+                  
                     attach.Path = await _fileUploadSvc.SaveImageAsync(
                         attach.Path,
                         attach.Name, FileUploadCode.DealerOpening,
                         300, 300);
+                }
+                    
             }
             var result= await _dealerOpeningSvc.CreateAsync(dealerOpening);
 
@@ -172,6 +177,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             foreach (var attach in dealerOpening.DealerOpeningAttachments)
             {
+                attach.Name = attach.Name.Replace(" ", "_");
                 if (!string.IsNullOrEmpty(attach.Path))
                     attach.Path = await _fileUploadSvc.SaveImageAsync(
                         attach.Path,

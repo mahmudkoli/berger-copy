@@ -303,35 +303,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 PlanStatusInText = s.PlanStatus.ToString(),
                 EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FirstName} {s.LastName}").FirstOrDefault()
 
-                //DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
-                //                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
-                //                    on dealer.Id equals planDetail.DealerId
-                //                    join f in _focusDealerSvc.GetAll()
-                //                    on planDetail.DealerId equals f.Code into focus
-                //                    from fd in focus.DefaultIfEmpty()
-                //                    select new DealerInfoModel
-                //                    {
-                //                        Id = dealer.Id,
-                //                        CustomerName = dealer.CustomerName,
-                //                        CustomerNo = dealer.CustomerNo,
-                //                        Territory = dealer.Territory,
-                //                        ContactNo = dealer.ContactNo,
-                //                        Address = dealer.Address,
-                //                        IsFocused = (fd.Code > 0) ? true : false,
-                //                        VisitDate = planDetail.VisitDate
-                //                    }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
-
-                //Employee = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId)
-                //             .Select(s => new EmployeeModel
-                //             {
-                //                 FirstName = $"{s.FirstName} {s.LastName}",
-                //                 Department = s.DepartMent,
-                //                 Designation = s.Designation,
-                //                 PhoneNumber = s.PhoneNumber
-
-                //             }).FirstOrDefault()
-
-
+              
 
             }).ToList();
 

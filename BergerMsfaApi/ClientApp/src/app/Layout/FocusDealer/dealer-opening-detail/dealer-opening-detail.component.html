@@ -29,9 +29,13 @@
         <tr>
             <td>{{dealerOpen.name }}</td>
             <td>
-                <strong>
-                    <a target="_blank" href="{{baseUrl}}\{{dealerOpen.path}}">{{dealerOpen.name}}</a>
-                </strong>
+                <!-- <img [alt]="dealerOpen.name" src="{{baseUrl}}/{{dealerOpen.path}}" width="60"
+                style="vertical-align: middle; border-radius: 50%;" /> -->
+                <span class="">
+                    <strong>
+                        <a target="_blank" href="{{baseUrl}}/{{dealerOpen.path}}">{{dealerOpen.name}}</a>
+                    </strong>
+                </span>
             </td>
 
         </tr>
