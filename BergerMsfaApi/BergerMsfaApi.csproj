@@ -117,6 +117,7 @@
     <Folder Include="Models\Organizations\" />
     <Folder Include="Logs\" />
     <Folder Include="Services\Examples\" />
+    <Folder Include="wwwroot\Logs\" />
     <Folder Include="wwwroot\uploads\images\POSMProducts\" />
   </ItemGroup>
 
