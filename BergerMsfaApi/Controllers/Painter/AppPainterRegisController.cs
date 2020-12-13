@@ -82,7 +82,6 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             {
 
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-
                 var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
                 return OkResult(result);
             }
