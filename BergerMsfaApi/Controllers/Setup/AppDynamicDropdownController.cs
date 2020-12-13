@@ -62,5 +62,20 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("CompanyList/{painterCallId}")]
+        public async Task<IActionResult> CompanyList(int painterCallId)
+        {
+
+            try
+            {
+
+                var result = await _dropdownService.GetCompanyList(painterCallId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

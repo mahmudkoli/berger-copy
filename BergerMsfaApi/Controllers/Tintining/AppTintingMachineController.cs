@@ -2,6 +2,7 @@
 using BergerMsfaApi.Models.Tintining;
 using BergerMsfaApi.Services.Tintining.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -25,11 +26,12 @@ namespace BergerMsfaApi.Controllers.Tintining
         }
       
         [HttpGet("GetTininingMachineList/{territory}")]
-        public async Task< IActionResult> GetTininingMachineList(string territory)
+        public async Task< IActionResult> GetTininingMachineList([BindRequired]string territory)
         {
             try
             {
-                var result = await _tintiningService.AppGetTintingMachineList(territory);
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                 var result = await _tintiningService.AppGetTintingMachineList(territory);
                 return OkResult(result);
             }
             catch (System.Exception ex)
@@ -78,7 +80,7 @@ namespace BergerMsfaApi.Controllers.Tintining
         }
 
         [HttpDelete("DeleteTitningMachine/{Id}")]
-        public async Task<IActionResult> DeleteTitningMachine(int Id )
+        public async Task<IActionResult> DeleteTitningMachine([BindRequired]int Id )
         {
             try
             {

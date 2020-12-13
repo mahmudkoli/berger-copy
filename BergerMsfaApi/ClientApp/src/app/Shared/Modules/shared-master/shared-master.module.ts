@@ -6,6 +6,7 @@ import { AlertModule } from '../alert/alert.module';
 import { PTableModule } from '../p-table/p-table.module';
 import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
 //import { TableModule } from 'primeng-lts/table'
+import {ToggleButtonModule} from 'primeng/togglebutton';
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng-lts/button'
 import { PaginatorModule } from 'primeng/paginator';
@@ -21,7 +22,8 @@ import { PaginatorModule } from 'primeng/paginator';
         PTableModule,
         TableModule,
         PaginatorModule,
-        ButtonModule
+        ButtonModule,
+        ToggleButtonModule
     ],
     exports: [PageTitleComponent,
         ImageUploaderComponent,
@@ -30,6 +32,7 @@ import { PaginatorModule } from 'primeng/paginator';
         PaginatorModule,
         ButtonModule,
         TableModule,
+        ToggleButtonModule
     ]
 })
 export class SharedMasterModule { }

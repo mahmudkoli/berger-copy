@@ -1191,6 +1191,17 @@ namespace Berger.Data.Migrations
                     b.ToTable("JourneyPlanMasters");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CustomerGroup", b =>
+                {
+                    b.Property<string>("CustomerAccountGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("CustomerGroups");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Master.Depot", b =>
                 {
                     b.Property<string>("Achvm")
@@ -1691,6 +1702,47 @@ namespace Berger.Data.Migrations
                     b.ToTable("OrganizationUserRoles");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Dealer")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PainterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PainterId");
+
+                    b.ToTable("AttachedDealerPainters");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Attachment", b =>
                 {
                     b.Property<int>("Id")
@@ -1773,11 +1825,11 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DepotName")
+                    b.Property<string>("Depot")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasDbbl")
                         .HasColumnType("bit");
@@ -1818,13 +1870,13 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Remark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaleGroupCd")
+                    b.Property<string>("SaleGroup")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("TerritroyCd")
+                    b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WFStatus")
@@ -1833,7 +1885,7 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ZoneCd")
+                    b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1907,8 +1959,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasAppUsage")
                         .HasColumnType("bit");
@@ -2057,7 +2109,13 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsCBInstalled")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsExclusive")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedBy")
@@ -3277,6 +3335,15 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainter", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", "Painter")
+                        .WithMany("AttachedDealers")
+                        .HasForeignKey("PainterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

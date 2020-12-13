@@ -5,6 +5,7 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BergerMsfaApi.Controllers.Journey
 {
@@ -35,7 +36,7 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetJourneyPlanListPaging([Required] int index, int pageSize, string planDate)
+        public async Task<IActionResult> GetJourneyPlanListPaging([BindRequired] int index, int pageSize, string planDate)
         {
             try
             {

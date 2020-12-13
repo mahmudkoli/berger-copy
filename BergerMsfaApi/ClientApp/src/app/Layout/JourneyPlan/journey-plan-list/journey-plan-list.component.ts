@@ -90,29 +90,7 @@ export class JourneyPlanListComponent implements OnInit {
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-    //public onStatusChange(key, jPlan) {
-
-    //    this.journeyPlanStatus.planId = jPlan.id;
-    //    this.journeyPlanStatus.status = Number(key);
-  
-    //    this.alertService.confirm(`Are you sure to change status?`, () => {
-    //        this.alertService.fnLoading(true);
-    //        this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
-    //            (res) => {
-    //                this.alertService.tosterSuccess(`Status Successfully.`);
-    //                // this.fnJourneyPlanList();
-    //                this.fnJourneyPlanListPaging(this.first, this.rows,  "");
-    //            },
-    //            (error) => {
-    //                console.log(error);
-    //            }
-             
-    //        ).add(() => this.alertService.fnLoading(false));
-    //    }, () => {
-
-    //    });
-    //}
-
+   
     private _initPermissionGroup() {
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
     }

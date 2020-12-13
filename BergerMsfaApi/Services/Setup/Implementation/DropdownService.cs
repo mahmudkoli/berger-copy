@@ -1,5 +1,7 @@
-﻿using Berger.Data.MsfaEntity.Setup;
+﻿using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Setup;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
@@ -14,14 +16,17 @@ namespace BergerMsfaApi.Services.Setup.Implementation
     {
         private readonly IRepository<DropdownDetail> _dropdownDetail;
         private readonly IRepository<DropdownType> _dropdownType;
+        private readonly IRepository<PainterCompanyMTDValue> _painterCompanyMTDsvc;
 
         public DropdownService(
             IRepository<DropdownDetail> dropdownDetail,
-            IRepository<DropdownType> dropdownType
+            IRepository<DropdownType> dropdownType,
+            IRepository<PainterCompanyMTDValue> painterCompanyMTDsvc
             )
         {
             _dropdownDetail = dropdownDetail;
             _dropdownType = dropdownType;
+            _painterCompanyMTDsvc = painterCompanyMTDsvc;
         }
 
 
@@ -144,6 +149,38 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Description = s.Description,
                 Sequence = s.Sequence
             }).ToList();
+
+
+        }
+        public async Task<IEnumerable<PainterCompanyMTDValueModel>> GetCompanyList(int PainterCallId)
+        {
+            //TypeId will change
+            var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
+            var company = (from c in result
+                          join m in _painterCompanyMTDsvc.GetAll()
+                          on new { a=c.Id,b= PainterCallId } equals new { a=m.CompanyId,b=m.PainterCallId} into comLeftJoin
+                          from coms in comLeftJoin.DefaultIfEmpty()
+                          select new PainterCompanyMTDValueModel
+                          { 
+                              CompanyId=c.Id,
+                              CompanyName=c.DropdownName,
+                              Value=coms.Value,
+                              CountInPercent=coms!=null?coms.CountInPercent:0,
+                              CumelativeInPercent= coms != null ? coms.CountInPercent:0
+                              
+
+                          }).ToList();
+            return company;
+            //return result.Select(s => new DropdownModel()
+            //{
+            //    Id = s.Id,
+            //    TypeId = s.TypeId,
+            //    TypeCode = s.DropdownType.TypeCode,
+            //    TypeName = s.DropdownType.TypeName,
+            //    DropdownName = s.DropdownName,
+            //    Description = s.Description,
+            //    Sequence = s.Sequence
+            //}).ToList();
 
 
         }

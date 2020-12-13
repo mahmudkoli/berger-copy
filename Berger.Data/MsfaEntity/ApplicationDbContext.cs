@@ -38,6 +38,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
             modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
+            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -125,6 +126,7 @@ namespace Berger.Data.MsfaEntity
 
         #region Master
         public DbSet<Depot> Depots { get; set; }
+        public DbSet<CustomerGroup> CustomerGroups { get; set; }
         #endregion
 
 
@@ -188,7 +190,7 @@ namespace Berger.Data.MsfaEntity
 
         #endregion
         public DbSet<DealerOpening> DealerOpenings { get; set; }
-
+        public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }

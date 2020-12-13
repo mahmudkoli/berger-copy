@@ -1,4 +1,6 @@
-﻿using BergerMsfaApi.Models.FocusDealer;
+﻿using Berger.Data.MsfaEntity.SAPTables;
+using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.FocusDealer;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -12,6 +14,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         Task<FocusDealerModel> UpdateAsync(FocusDealerModel model);
         Task<int> DeleteAsync(int id);
         Task<bool> IsExistAsync(int id);
+
+        #region Dealer
+        public Task<bool> DealerStatusUpdate( DealerInfo dealer);
+        public Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search);
+        #endregion
 
     }
 }
