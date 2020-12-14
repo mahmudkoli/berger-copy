@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
@@ -102,6 +103,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public decimal BPBLAverageMonthlySales { get; set; }
         public decimal BPBLActualMTDSales { get; set; }
 
+        public DealerSalesCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<DSC.DealerSalesCall, DealerSalesCallModel>();
@@ -195,9 +201,15 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public decimal BPBLAverageMonthlySales { get; set; }
         public decimal BPBLActualMTDSales { get; set; }
 
+        public SaveDealerSalesCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<DSC.DealerSalesCall, SaveDealerSalesCallModel>();
+                //.AddTransform<string>(s => s ?? string.Empty);
             profile.CreateMap<SaveDealerSalesCallModel, DSC.DealerSalesCall>();
         }
     }
