@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Mappings;
@@ -34,6 +35,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public DropdownModel CBMachineMantainance { get; set; }
         public string CBMachineMantainanceRegularReason { get; set; }
 
+        public DealerSalesIssueModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<DealerSalesIssue, DealerSalesIssueModel>();
@@ -64,6 +70,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public int? CBMachineMantainanceId { get; set; }
         //public DropdownModel CBMachineMantainance { get; set; }
         public string CBMachineMantainanceRegularReason { get; set; }
+
+        public SaveDealerSalesIssueModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
 
         public void Mapping(Profile profile)
         {
