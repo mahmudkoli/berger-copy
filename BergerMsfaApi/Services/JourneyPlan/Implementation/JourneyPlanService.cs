@@ -11,7 +11,6 @@ using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -59,7 +58,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     find.ApprovedDate = DateTime.Now;
                     find.ApprovedById = AppIdentity.AppUser.UserId;
                 }
-                if (PlanStatus.Rejected == (PlanStatus)model.Status)
+                else if (PlanStatus.Rejected == (PlanStatus)model.Status)
                 {
                     find.RejectedDate = DateTime.Now;
                     find.RejectedBy = AppIdentity.AppUser.UserId;
@@ -173,7 +172,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Territory = dealer.Territory,
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
-                                        IsFocused = fd.Code > 0 ? true : false,
+                                        IsFocused = (fd.Code > 0 && fd.ValidTo.Date>=DateTime.Now.Date)  ? true : false,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
 
@@ -374,7 +373,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                     join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
                                     on dealer.Id equals planDetail.DealerId
 
-                                    join f in _focusDealerSvc.GetAll() on planDetail.DealerId equals f.Code into leftJoin
+                                    join f in _focusDealerSvc.GetAll() on  new { a = planDetail.DealerId, b = employeeId } equals new { a = f.Code, b = f.EmployeeId }  into leftJoin
                                     from fd in leftJoin.DefaultIfEmpty()
 
                                     join cg in _customerGroupSvc.GetAll().Where(f => f.Description.StartsWith("Subdealer"))
@@ -389,7 +388,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Territory = dealer.Territory,
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
-                                        IsFocused = fd != null ? ((fd.Code > 0) ? true : false) : false,
+                                        IsFocused = fd != null ? ((fd.Code > 0) && fd.ValidTo.Date>=DateTime.Now.Date ? true : false) : false,
                                         VisitDate = s.PlanDate.Date,
                                         IsSubdealer = custGroup.Description != null ? true : false,
                                         PlandId=planDetail.PlanId
