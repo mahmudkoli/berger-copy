@@ -16,7 +16,9 @@ namespace BergerMsfaApi.Models.Dealer
         public string Address { get; set; }
         public bool IsFocused { get; set; }
         public bool IsSubdealer { get; set; }
+        
         public DateTime VisitDate { get; set; }
+        public string PlanDate { get; set; }
 
     }
 
