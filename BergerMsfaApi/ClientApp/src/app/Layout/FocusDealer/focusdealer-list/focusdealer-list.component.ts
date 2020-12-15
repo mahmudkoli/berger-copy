@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ActivityPermissionService, PermissionGroup } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
 import { FocusDealer } from '../../../Shared/Entity/FocusDealer/JourneyPlan';
+import { APIModel } from '../../../Shared/Entity';
+import { Paginator } from 'primeng/paginator';
 
 @Component({
-  selector: 'app-focusdealer-list',
-  templateUrl: './focusdealer-list.component.html',
-  styleUrls: ['./focusdealer-list.component.css']
+    selector: 'app-focusdealer-list',
+    templateUrl: './focusdealer-list.component.html',
+    styleUrls: ['./focusdealer-list.component.css']
 })
 export class FocusdealerListComponent implements OnInit {
 
@@ -26,26 +28,27 @@ export class FocusdealerListComponent implements OnInit {
     }
     first = 1;
     rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
+    pagingConfig: APIModel;
     pageSize: number;
-    searchDate: string;
+    search: string;
+    @ViewChild("paginator", { static: false }) paginator: Paginator;
     ngOnInit() {
-        // this.fnFocusDealerList();
-        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+       
+        this.pagingConfig = new APIModel(1, 10);
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
 
     }
 
-    private getFocusdealerListPaging(index, pageSize, searchDate="") {
+    private OnLoadFocusDealer(index, pageSize, search) {
 
         this.alertService.fnLoading(true);
 
-        this.focusDealerService.getFocusdealerListPaging(index, pageSize, this.searchDate="")
+        this.focusDealerService.getFocusdealerListPaging(index, pageSize, search)
             .subscribe(
                 (res) => {
                     debugger;
                     this.pagingConfig = res.data;
-                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                   // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.focusDealerList = this.pagingConfig.model as [] || []
                 },
                 (error) => console.log(error)
@@ -53,20 +56,22 @@ export class FocusdealerListComponent implements OnInit {
             ).add(() => this.alertService.fnLoading(false));
     }
     next() {
-        this.first = this.first + this.rows;
-        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
 
     prev() {
-        this.first = this.first - this.rows;
-        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
-        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+        this.reset();
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     reset() {
-        this.first = 1;
-        this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+        this.paginator.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
 
     isLastPage(): boolean {
@@ -78,21 +83,22 @@ export class FocusdealerListComponent implements OnInit {
         return this.focusDealerList ? this.first === 1 : true;
     }
     paginate(event) {
-
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
         // event.first == 0 ?  1 : event.first;
-        let first = Number(event.page) + 1;
-        this.getFocusdealerListPaging(first, event.rows);
+      //  let first = Number(event.page) + 1;
+        this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-     fnFocusDealerList() {
+    fnFocusDealerList() {
         this.alertService.fnLoading(true);
 
         this.focusDealerService.getFocusDealerList().subscribe(
             (res) => {
-                           this.focusDealerList = res.data || [];;
+                this.focusDealerList = res.data || [];;
             },
             (error) => {
                 console.log(error);
@@ -129,7 +135,7 @@ export class FocusdealerListComponent implements OnInit {
                     console.log('res from del func', res);
                     this.alertService.tosterSuccess("dropdown has been deleted successfully.");
                     //this.fnFocusDealerList();
-                    this.getFocusdealerListPaging(this.first, this.rows, this.searchDate);
+                    this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },
                 (error) => {
                     console.log(error);
@@ -147,44 +153,11 @@ export class FocusdealerListComponent implements OnInit {
         //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
         //this.ptableSettings.enabledDeleteBtn = this.permissionGroup.canDelete;
 
-        this.ptableSettings.enabledRecordCreateBtn = true;
-        this.ptableSettings.enabledEditBtn = true;
-        this.ptableSettings.enabledDeleteBtn = true;
+        //this.ptableSettings.enabledRecordCreateBtn = true;
+        //this.ptableSettings.enabledEditBtn = true;
+        //this.ptableSettings.enabledDeleteBtn = true;
 
 
     }
-    public ptableSettings = {
-        tableID: "Focus-Dealer",
-        tableClass: "table table-border ",
-        tableName: 'Focus Dealer List',
-        tableRowIDInternalName: "Id",
-        tableColDef: [
 
-            { headerName: 'Dealer ', width: '10%', internalName: 'dealerName', sort: true, type: "" },
-            { headerName: 'Employee', width: '30%', internalName: 'employeeName', sort: true, type: "" },
-            { headerName: 'Valid From', width: '30%', internalName: 'validFrom', sort: true, type: "" },
-            { headerName: 'Valid To', width: '20%', internalName: 'validTo', sort: true, type: "" },
-
-
-        ],
-        enabledSearch: true,
-        enabledSerialNo: true,
-        pageSize: 10,
-        enabledPagination: true,
-        //enabledAutoScrolled:true,
-        enabledDeleteBtn: true,
-        enabledEditBtn: true,
-        // enabledCellClick: true,
-        enabledColumnFilter: true,
-        // enabledDataLength:true,
-        // enabledColumnResize:true,
-        // enabledReflow:true,
-        // enabledPdfDownload:true,
-        // enabledExcelDownload:true,
-        // enabledPrint:true,
-        // enabledColumnSetting:true,
-        enabledRecordCreateBtn: true,
-        // enabledTotal:true,
-
-    };
 }

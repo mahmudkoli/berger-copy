@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
 {
@@ -11,11 +12,11 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
 
         #region App
 
-        Task<IEnumerable<PainterModel>> AppGetPainterListAsync();
+        Task<IEnumerable<PainterModel>> AppGetPainterListAsync(string employeeId);
         Task<PainterModel> AppCreatePainterAsync(PainterModel model);
-        Task<PainterModel> AppUpdateAsync(PainterModel model);
+        Task<PainterModel> AppUpdatePainterAsync(PainterModel model);
         Task<PainterModel> AppGetPainterByIdAsync(int Id);
-        Task<dynamic> AppGetPainterByPhonesync(string Phone);
+        Task<PainterModel> AppGetPainterByPhonesync(string Phone);
         Task<bool> AppDeletePainterByIdAsync(int Id);
 
 
@@ -23,7 +24,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
         #endregion
 
         #region Portal
-        Task<IEnumerable<PainterModel>> GetPainterListAsync();
+        Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search);
         Task<PainterModel> CreatePainterAsync(PainterModel model);
         Task<PainterModel> CreatePainterAsync(PainterModel model, IFormFile profile, List<IFormFile> attachments);
 

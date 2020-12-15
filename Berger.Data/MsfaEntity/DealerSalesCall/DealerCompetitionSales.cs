@@ -16,6 +16,6 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public int CompanyId { get; set; }
         public DropdownDetail Company { get; set; }
         public decimal AverageMonthlySales { get; set; }
-        public decimal ActualAMDSales { get; set; }
+        public decimal ActualMTDSales { get; set; }
     }
 }

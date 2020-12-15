@@ -156,7 +156,8 @@ namespace BergerMsfaApi.Services.Implementation
                     UserCategoryIds = userCatIds,
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
-                    roleId=userInfo.RoleId
+                    roleId=userInfo.RoleId,
+                    employeeId = userInfo.EmployeeId,
                 };
 
                 return results;

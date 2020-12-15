@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -21,11 +22,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
        
         [HttpGet("GetFocusdealerListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string searchDate)
+        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string search)
         {
             try
             {
-                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, searchDate);
+                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -107,5 +108,35 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetDealerList")]
+        public async Task<IActionResult> GetDealerList(int index,int pageSize,string search)
+        {
+            try
+            {
+                
+                var result = await _focusDealerService.GetDalerListPaging(index,pageSize,search);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpPut("UpdateDealerStatus")]
+        public async Task<IActionResult> DealerStatusUpdate([FromBody]DealerInfo dealer)
+        {
+            try
+            {
+               
+                var result = await _focusDealerService.DealerStatusUpdate(dealer);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }

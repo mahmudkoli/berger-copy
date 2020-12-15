@@ -22,21 +22,36 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
 
-        [HttpGet("GetDealerOpeningList")]
-        public async Task<IActionResult> GetDealerOpeningListAsync()
+        [HttpGet("GetDealerOpeningList/{index}/{pageSize}")]
+        public async Task<IActionResult> GetDealerOpeningListAsync(int index, int pageSize, string search)
         {
             try
             {
-                var result = await _dealerOpeningSvc.GetDealerOpeningListAsync();
+                var result = await _dealerOpeningSvc.GetDealerOpeningListAsync(index, pageSize, search);
                 return OkResult(result);
 
             }
             catch (Exception ex)
-            {  
+            {
+                return ExceptionResult(ex);
+            }
+
+        }
+        [HttpGet("GetDealerOpeningDetailById/{id}")]
+        public async Task<IActionResult> GetDealerOpeningDetailById(int id)
+        {
+            try
+            {
+                var result = await _dealerOpeningSvc.GetDealerOpeningDetailById(id);
+                return OkResult(result);
+
+            }
+            catch (Exception ex)
+            {
                 return ExceptionResult(ex);
             }
         }
-        
+
 
     }
 }

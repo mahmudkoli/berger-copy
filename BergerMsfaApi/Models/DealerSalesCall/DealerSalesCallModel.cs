@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Mappings;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Setup;
+using BergerMsfaApi.Models.Users;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -22,7 +25,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
     {
         public int DealerId { get; set; }
         public DealerInfoModel Dealer { get; set; }
-        public DateTime Date { get; set; }
+        public int UserId { get; set; }
+        public UserInfoModel User { get; set; }
+        public int? JourneyPlanId { get; set; }
+        //public JourneyPlanDetailModel JourneyPlan { get; set; }
+        //public DateTime Date { get; set; }
         public bool IsTargetPromotionCommunicated { get; set; }
         public bool IsTargetCommunicated { get; set; }
 
@@ -71,11 +78,13 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public string CompetitionServiceBetterThanBPBLRemarks { get; set; }
         public bool IsCompetitionProductDisplayBetterThanBPBL { get; set; }
         public string CompetitionProductDisplayBetterThanBPBLRemarks { get; set; }
-        public int? CompetitionProductDisplayImageId { get; set; }
-        public AttachmentModel CompetitionProductDisplayImage { get; set; }
+        //public int? CompetitionProductDisplayImageId { get; set; }
+        //public AttachmentModel CompetitionProductDisplayImage { get; set; }
+        public string CompetitionProductDisplayImageUrl { get; set; }
         public string CompetitionSchemeModalityComments { get; set; }
-        public int? CompetitionSchemeModalityImageId { get; set; }
-        public AttachmentModel CompetitionSchemeModalityImage { get; set; }
+        //public int? CompetitionSchemeModalityImageId { get; set; }
+        //public AttachmentModel CompetitionSchemeModalityImage { get; set; }
+        public string CompetitionSchemeModalityImageUrl { get; set; }
         public string CompetitionShopBoysComments { get; set; }
         public IList<DealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
 
@@ -92,7 +101,12 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public bool IsSubDealerCall { get; set; }
         public bool HasBPBLSales { get; set; }
         public decimal BPBLAverageMonthlySales { get; set; }
-        public decimal BPBLActualAMDSales { get; set; }
+        public decimal BPBLActualMTDSales { get; set; }
+
+        public DealerSalesCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
 
         public void Mapping(Profile profile)
         {
@@ -107,7 +121,11 @@ namespace BergerMsfaApi.Models.DealerSalesCall
     {
         public int DealerId { get; set; }
         //public DealerInfo Dealer { get; set; }
-        public DateTime Date { get; set; }
+        public int UserId { get; set; }
+        //public UserInfo User { get; set; }
+        public int? JourneyPlanId { get; set; }
+        //public JourneyPlanMaster JourneyPlan { get; set; }
+        //public DateTime Date { get; set; }
         public bool IsTargetPromotionCommunicated { get; set; }
         public bool IsTargetCommunicated { get; set; }
 
@@ -158,11 +176,13 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public string CompetitionProductDisplayBetterThanBPBLRemarks { get; set; }
         //public int? CompetitionProductDisplayImageId { get; set; }
         //public Attachment CompetitionProductDisplayImage { get; set; }
-        public IFormFile CompetitionProductDisplayImageFile { get; set; }
+        //public IFormFile CompetitionProductDisplayImageFile { get; set; }
+        public string CompetitionProductDisplayImageUrl { get; set; }
         public string CompetitionSchemeModalityComments { get; set; }
         //public int? CompetitionSchemeModalityImageId { get; set; }
         //public Attachment CompetitionSchemeModalityImage { get; set; }
-        public IFormFile CompetitionSchemeModalityImageFile { get; set; }
+        //public IFormFile CompetitionSchemeModalityImageFile { get; set; }
+        public string CompetitionSchemeModalityImageUrl { get; set; }
         public string CompetitionShopBoysComments { get; set; }
         public IList<SaveDealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
 
@@ -179,11 +199,17 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         public bool IsSubDealerCall { get; set; }
         public bool HasBPBLSales { get; set; }
         public decimal BPBLAverageMonthlySales { get; set; }
-        public decimal BPBLActualAMDSales { get; set; }
+        public decimal BPBLActualMTDSales { get; set; }
+
+        public SaveDealerSalesCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<DSC.DealerSalesCall, SaveDealerSalesCallModel>();
+                //.AddTransform<string>(s => s ?? string.Empty);
             profile.CreateMap<SaveDealerSalesCallModel, DSC.DealerSalesCall>();
         }
     }

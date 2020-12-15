@@ -244,7 +244,8 @@ export class UserInfoEditComponent implements OnInit {
     populateDropdwonDataList() {
 
         forkJoin(
-            this.dropdownService.GetDropdownByTypeCd('P01'),
+            // this.dropdownService.GetDropdownByTypeCd('P01'),
+            this.commonSvc.getDepotList(),
             this.commonSvc.getSaleOfficeList(),
             this.commonSvc.getSaleGroupList(),
             this.commonSvc.getTerritoryList(),
@@ -257,6 +258,7 @@ export class UserInfoEditComponent implements OnInit {
             //this.dropdownService.GetDropdownByTypeCd('T01'),
             //this.dropdownService.GetDropdownByTypeCd('Role'),
         ).subscribe(res => {
+            debugger;
             this.plants = res[0].data;
             this.saleOffices = res[1].data;
             this.areaGroups = res[2].data;

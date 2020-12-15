@@ -9,11 +9,12 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public Painter()
         {
             Attachments = new List<PainterAttachment>();
+            AttachedDealers = new List<AttachedDealerPainter>();
         }
-        public string DepotName { get; set; }
-        public string SaleGroupCd { get; set; }
-        public string TerritroyCd { get; set; }
-        public string ZoneCd { get; set; }
+        public string Depot { get; set; }
+        public string SaleGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public int PainterCatId { get; set; }
         public string PainterName { get; set; }
         public string Address { get; set; }
@@ -31,29 +32,24 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string Remark { get; set; }
         public decimal AvgMonthlyVal { get; set; }
         public float Loyality { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
 
-       public List<PainterAttachment> Attachments { get; set; } 
+        public List<AttachedDealerPainter> AttachedDealers { get; set; } 
+        public List<PainterAttachment> Attachments { get; set; } 
 
-        //[ForeignKey("SaleGroupCd")]
-        //public SaleGroup SaleGroup { get; set; }
-
-        //[ForeignKey("TerritroyCd")]
-        //public Territory Territory { get; set; }
-
-        //[ForeignKey("ZoneCd")]
-        //public Zone Zone { get; set; }
-
-        //[ForeignKey("PainterCatId")]
-        // public DropdownDetail PainterCategory { get; set; }
-        //[ForeignKey("AttachedDealerCd")]
-        //   public DropdownDetail Dealer { get; set; }
-
-       // public List<Attachment> Attachments { get; set; }
+     
 
     }
 
-  
+    public class AttachedDealerPainter: AuditableEntity<int>
+    {
+        public int Dealer { get; set; }
+        public int PainterId { get; set; }
+
+        [ForeignKey("PainterId")]
+        public Painter Painter { get; set; }
+
+    }
 
 
 

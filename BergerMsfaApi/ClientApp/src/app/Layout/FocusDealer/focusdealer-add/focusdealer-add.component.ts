@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FocusDealer } from '../../../Shared/Entity/FocusDealer/JourneyPlan';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
@@ -16,13 +15,12 @@ export class FocusdealerAddComponent implements OnInit {
 
     focusDealerModel: FocusDealer = new FocusDealer();
     dealerList: any[] = [];
-    employeeRegList: any[] = [];
+    employeeList: any[] = [];
 
     constructor(
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
-        private dynamicDropdownService: DynamicDropdownService,
         private focusDealerService: FocusdealerService,
         private commonSvc: CommonService,
         private router: Router
@@ -42,11 +40,11 @@ export class FocusdealerAddComponent implements OnInit {
 
     }
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
+
     private getEmpList() {
-        //hard code param for temporary
         this.commonSvc.getUserInfoList().subscribe(
             (result: any) => {
-                this.employeeRegList = result.data;
+                this.employeeList = result.data;
             },
             (err: any) => console.log(err)
         );
@@ -55,11 +53,10 @@ export class FocusdealerAddComponent implements OnInit {
 
     public fnRouteList() {
         this.router.navigate(['/dealer/focusdealer-list'])
-      //  this.router.navigate(['/focus-dealer/list']);
     }
 
     public fnSave() {
-
+        debugger;
         this.focusDealerModel.validFrom = this.focusDealerModel.validFromNgbDate.year.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.month.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.day.toString();
@@ -74,6 +71,7 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private insert(focusDealer: FocusDealer) {
+
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
             this.router.navigate(['/dealer/focusdealer-list']).then(() => {
@@ -117,10 +115,8 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private getDealerList() {
-        //hard code param for temporary
         if (this._loggedUser) {
             this.alertService.fnLoading(true);
-
             this.commonSvc.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
                 (result: any) => {
                     this.dealerList = result.data;
@@ -129,10 +125,9 @@ export class FocusdealerAddComponent implements OnInit {
 
             ).add(() => this.alertService.fnLoading(false));
         }
-      
+
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {

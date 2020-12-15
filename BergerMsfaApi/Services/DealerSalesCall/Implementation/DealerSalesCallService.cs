@@ -6,7 +6,9 @@ using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
+using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -21,16 +23,19 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
     public class DealerSalesCallService : IDealerSalesCallService
     {
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IDropdownService _dropdownService;
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
 
         public DealerSalesCallService(
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
+                IDropdownService dropdownService,
                 IFileUploadService fileUploadService,
                 IMapper mapper
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
+            this._dropdownService = dropdownService;
             this._fileUploadService = fileUploadService;
             this._mapper = mapper;
         }
@@ -39,19 +44,19 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
 
-            if(model.CompetitionProductDisplayImageFile != null)
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
             {
-                dealerSalesCall.CompetitionProductDisplayImage = await SaveImageAsync(model.CompetitionProductDisplayImageFile,
-                                                                        model.CompetitionProductDisplayImageFile.FileName, 
-                                                                        FileUploadCode.DealerSalesCall);
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
 
-            if(model.CompetitionSchemeModalityImageFile != null)
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
             {
-                dealerSalesCall.CompetitionSchemeModalityImage = await SaveImageAsync(model.CompetitionSchemeModalityImageFile,
-                                                                        model.CompetitionSchemeModalityImageFile.FileName, 
-                                                                        FileUploadCode.DealerSalesCall);
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
+
+            dealerSalesCall.CreatedTime = DateTime.Now;
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             return result.Id;
@@ -74,11 +79,147 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return modelResult;
         }
 
+        public async Task<IList<DealerSalesCallModel>> GetAllByUserIdAsync(int userId)
+        {
+            var result = await _dealerSalesCallRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserId == userId,
+                                null,
+                                null,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<SaveDealerSalesCallModel> GetDealerSalesCallByDealerIdAsync(int id)
+        {
+            var result = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(
+                                x => x,
+                                x => x.DealerId == id,
+                                x => x.OrderByDescending(o => o.CreatedTime),
+                                x => x.Include(i => i.DealerCompetitionSales),
+                                true
+                            );
+
+            var modelResult = new SaveDealerSalesCallModel();
+            modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
+            modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
+            modelResult.DealerId = id;
+
+            var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
+
+            foreach (var item in companyList)
+            {
+                modelResult.DealerCompetitionSales.Add(
+                        new SaveDealerCompetitionSalesModel 
+                        { 
+                            CompanyId = item.Id, 
+                            CompanyName = item.DropdownName 
+                        }
+                    );
+            }
+
+            if(result != null)
+            {
+                modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
+                modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
+                modelResult.HasPainterInfluence = result.HasPainterInfluence;
+                modelResult.PainterInfluenceId = result.PainterInfluenceId;
+
+                modelResult.HasBPBLSales = result.HasBPBLSales;
+                modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
+                modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
+
+                if(result.DealerCompetitionSales != null)
+                {
+                    foreach (var item in result.DealerCompetitionSales)
+                    {
+                        var dcs = modelResult.DealerCompetitionSales.FirstOrDefault(X => X.CompanyId == item.CompanyId);
+                        if(dcs != null)
+                        {
+                            dcs.AverageMonthlySales = item.AverageMonthlySales;
+                            dcs.ActualMTDSales = item.ActualMTDSales;
+                        }
+                    }
+                }
+            }
+
+            return modelResult;
+        }
+
+        public async Task<IList<SaveDealerSalesCallModel>> GetDealerSalesCallListByDealerIdsAsync(IList<int> ids)
+        {
+            var modelResults = new List<SaveDealerSalesCallModel>();
+
+            var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
+
+            foreach (var id in ids)
+            {
+
+                var result = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(
+                                    x => x,
+                                    x => x.DealerId == id,
+                                    x => x.OrderByDescending(o => o.CreatedTime),
+                                    x => x.Include(i => i.DealerCompetitionSales),
+                                    true
+                                );
+
+                var modelResult = new SaveDealerSalesCallModel();
+                modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
+                modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
+                modelResult.DealerId = id;
+
+                foreach (var item in companyList)
+                {
+                    modelResult.DealerCompetitionSales.Add(
+                            new SaveDealerCompetitionSalesModel
+                            {
+                                CompanyId = item.Id,
+                                CompanyName = item.DropdownName
+                            }
+                        );
+                }
+
+                if (result != null)
+                {
+                    modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
+                    modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
+                    modelResult.HasPainterInfluence = result.HasPainterInfluence;
+                    modelResult.PainterInfluenceId = result.PainterInfluenceId;
+
+                    modelResult.HasBPBLSales = result.HasBPBLSales;
+                    modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
+                    modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
+
+                    if (result.DealerCompetitionSales != null)
+                    {
+                        foreach (var item in result.DealerCompetitionSales)
+                        {
+                            var dcs = modelResult.DealerCompetitionSales.FirstOrDefault(X => X.CompanyId == item.CompanyId);
+                            if (dcs != null)
+                            {
+                                dcs.AverageMonthlySales = item.AverageMonthlySales;
+                                dcs.ActualMTDSales = item.ActualMTDSales;
+                            }
+                        }
+                    }
+                }
+
+                modelResults.Add(modelResult);
+            }
+
+            return modelResults;
+        }
+
         public async Task<DealerSalesCallModel> GetByIdAsync(int id)
         {
             var result = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == id,
+                                null,
                                 null,
                                 true
                             );
@@ -86,16 +227,6 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
 
             return modelResult;
-        }
-
-        private async Task<Attachment> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
-        {
-            var path = await _fileUploadService.SaveImageAsync(file, fileName, type);
-
-            var attachment = new Attachment(0, nameof(DSC.DealerSalesCall), path, fileName,
-                Path.GetExtension(file.FileName), file.Length);
-
-            return attachment;
         }
     }
 }

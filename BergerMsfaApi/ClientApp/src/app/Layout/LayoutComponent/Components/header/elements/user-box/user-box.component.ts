@@ -17,6 +17,7 @@ export class UserBoxComponent implements OnInit {
     adguid: any;
   isIframe = false;
   loggedIn = false;
+  production = false;
   constructor(
     public globals: ThemeOptions, public commonService: CommonService , public route : Router
       

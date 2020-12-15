@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.DealerFocus.Implementation
 {
@@ -16,8 +17,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         #endregion
 
         #region Portal
-        Task<IEnumerable<DealerOpeningModel>> GetDealerOpeningListAsync();
-     
+        Task<IPagedList<DealerOpeningModel>> GetDealerOpeningListAsync(int index,int pageSize,string search);
+        Task<DealerOpeningModel> GetDealerOpeningDetailById(int id);
+
         Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<int> DeleteDealerOpeningAsync(int DealerId);

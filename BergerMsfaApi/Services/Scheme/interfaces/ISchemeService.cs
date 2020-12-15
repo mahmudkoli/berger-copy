@@ -1,19 +1,22 @@
 ﻿using BergerMsfaApi.Models.Scheme;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.Scheme.interfaces
 {
     public interface ISchemeService
     {
-        Task<IEnumerable<SchemeMasterModel>> PortalGetSchemeMasters( );
-   
+        Task<IPagedList<SchemeMasterModel>> PortalGetSchemeMasters(int index, int pageSize, string search);
+        Task<IEnumerable<SchemeMasterModel>> AppGetSchemeMasters();
+
         Task<SchemeMasterModel> PortalGetSchemeMastersById(int Id );
         Task<SchemeMasterModel> PortalCreateSchemeMasters(SchemeMasterModel model);
         Task<SchemeMasterModel> PortalUpdateSchemeMasters(SchemeMasterModel model);
         Task<int> PortalDeleteSchemeMasters(int Id);
 
-        Task<IEnumerable<SchemeDetailModel>> PortalGetcShemeDetailWithMaster();
+        Task<IPagedList<SchemeDetailModel>> PortalGetcShemeDetailWithMaster(int index, int pageSize, string search);
+        Task<IEnumerable<SchemeDetailModel>> AppGetcShemeDetailWithMaster();
 
         Task<IEnumerable<SchemeDetailModel>> PortalGetSchemeDelails();
         Task<SchemeDetailModel> PortalGetSchemeDetailById(int Id);

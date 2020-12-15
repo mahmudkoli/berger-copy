@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BergerMsfaApi.Controllers.Journey
 {
@@ -34,12 +36,12 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetJourneyPlanListPaging(int index,int pageSize,string planDate)
+        public async Task<IActionResult> GetJourneyPlanListPaging([BindRequired] int index, int pageSize, string search)
         {
             try
             {
                 var user = AppIdentity.AppUser;
-                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize, planDate);
+                var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -50,11 +52,11 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpGet("GetLineManagerJourneyPlanDetail/{index}/{pageSize}")]
-        public async Task<IActionResult> GetJourneyPlanDetailForLineManager(int index,int pageSize,string planDate)
+        public async Task<IActionResult> GetJourneyPlanDetailForLineManager(int index,int pageSize,string search)
         {
             try
             {
-                var result = await _journeyService.GetJourneyPlanDetailForLineManager( index,  pageSize, planDate);
+                var result = await _journeyService.GetJourneyPlanDetailForLineManager( index,  pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)

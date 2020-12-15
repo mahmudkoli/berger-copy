@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { JourneyPlan } from '../../../Shared/Entity/JourneyPlan/JourneyPlan';
@@ -6,6 +6,8 @@ import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
 import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPlanStatus';
 import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
+import { APIModel } from '../../../Shared/Entity';
+import { Paginator } from 'primeng/paginator';
 
 
 @Component({
@@ -22,9 +24,12 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
     statusKeys: any[] = [];
     first = 1;
     rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
-    pageSize: number;
+    search: string = "";
+    pagingConfig: APIModel;
+
+
+    @ViewChild("paginator", { static: false }) paginator: Paginator;
+
     constructor(
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
@@ -32,32 +37,29 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         private alertService: AlertService,
         private journeyPlanService: JourneyPlanService
     ) {
+        this.pagingConfig = new APIModel(1, 10);
         this._initPermissionGroup();
     }
 
     ngOnInit() {
-       // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-       // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
-      //  this.fnJourneyPlanList();
-
+        this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     next() {
-        this.first = this.first + this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
 
     prev() {
-        this.first = this.first - this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
-
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.reset();
+        this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     reset() {
-        this.first = 1;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.paginator.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
     }
 
     isLastPage(): boolean {
@@ -70,26 +72,22 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
     }
     paginate(event) {
 
-        // event.first == 0 ?  1 : event.first;
-        let first = Number(event.page) + 1;
-        this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
-        //event.first = Index of the first record
-        //event.rows = Number of rows to display in new page
-        //event.page = Index of the new page
-        //event.pageCount = Total number of pages
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
+        this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+
     }
     onStatusChange(key, jPlan) {
 
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(key);
-
         this.alertService.confirm(`Are you sure to change status?`, () => {
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
                     this.alertService.tosterSuccess(`Status Successfully.`);
                   //  this.fnJourneyPlanList();
-                    this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+                    this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },
                 (error) => {
                     console.log(error);
@@ -101,15 +99,16 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
         });
     }
-    private fnJourneyPlanListPaging(index, pageSize, planDate) {
+
+    private onLoadLinemanagerJourneyPlans(index, pageSize, search) {
 
         this.alertService.fnLoading(true);
 
-        this.journeyPlanService.getLinerManagerJourneyPlanList(index, pageSize, planDate)
+        this.journeyPlanService.getLinerManagerJourneyPlanList(index, pageSize, search)
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                   // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                 },
                 (error) => {
@@ -133,22 +132,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
     }
 
-    //private fnJourneyPlanList() {
-
-    //    this.alertService.fnLoading(true);
-    //    this.journeyPlanService.getLinerManagerJourneyPlanList()
-    //        .subscribe(
-    //            (res) => {
-    //                this.journeyPlanList = res.data as [] || [];
-
-    //            },
-    //            (error) => {
-    //                console.log(error);
-    //            }
-    //        ).add(() => this.alertService.fnLoading(false));
-    //}
-
-    openModal(plan) {
+    onDetail(plan) {
         this.router.navigate(["/journey-plan/line-manager-detail/", plan.id]);
     }
     
@@ -169,8 +153,8 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 (res: any) => {
                     console.log('res from del func', res);
                     this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                  //  this.fnJourneyPlanList();
-                    this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+               
+                    this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },
                 (error) => {
                     console.log(error);
@@ -182,7 +166,6 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         });
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {

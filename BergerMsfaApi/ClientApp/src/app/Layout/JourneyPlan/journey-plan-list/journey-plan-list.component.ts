@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
@@ -6,6 +6,8 @@ import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey
 import { JourneyPlan } from '../../../Shared/Entity/JourneyPlan/JourneyPlan';
 import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPlanStatus';
 import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
+import { APIModel } from '../../../Shared/Entity';
+import { Paginator } from 'primeng/paginator';
 
 
 
@@ -24,9 +26,10 @@ export class JourneyPlanListComponent implements OnInit {
     statusKeys: any[] = [];
     first = 1;
     rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
+    search: string = "";
+    pagingConfig: APIModel;
     pageSize: number;
+    @ViewChild("paginator", { static: false }) paginator: Paginator;
     constructor(
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
@@ -34,33 +37,43 @@ export class JourneyPlanListComponent implements OnInit {
         private alertService: AlertService,
         private journeyPlanService: JourneyPlanService
     ) {
+        this.pagingConfig = new APIModel(1, 10);
         this._initPermissionGroup();
     }
 
     ngOnInit() {
       // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-        //this.fnJourneyPlanList();
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.onLoadJourneyPlans(this.first, this.rows, this.search);
 
     }
-
+    compareDate(pDate) {
+        let pd = new Date(Date.parse(pDate));
+        var planDate = pd.getFullYear() + "-" + (pd.getMonth() + 1) + "-" + pd.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var d = new Date();
+        var currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var planDateInMileSeconds = Date.parse(planDate);
+        var currentDateInMileScondes = Date.parse(currentDate);
+        if (planDateInMileSeconds >= currentDateInMileScondes) return true;
+        else return false
+    }
 
     next() {
-        this.first = this.first + this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.onLoadJourneyPlans(this.first, this.rows, this.search);
     }
 
     prev() {
-        this.first = this.first - this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
-
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.reset();
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     reset() {
-        this.first = 1;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.paginator.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
+      
     }
 
     isLastPage(): boolean {
@@ -69,68 +82,36 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     isFirstPage(): boolean {
-        return this.journeyPlanList ? this.first === 1 : true;
+        return this.journeyPlanList ? this.pagingConfig.pageNumber === 1 : true;
     }
-    paginate(event) {
-     
+    public paginate(event) {
+
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
+
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+
        // event.first == 0 ?  1 : event.first;
-        let first = Number(event.page) + 1;
-        this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-    onStatusChange(key, jPlan) {
-
-        //this.journeyPlanStatus.planId = jPlan.id;
-        //this.journeyPlanStatus.status = Number(key);
-  
-        //this.alertService.confirm(`Are you sure to change status?`, () => {
-        //    this.alertService.fnLoading(true);
-        //    this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
-        //        (res) => {
-        //            this.alertService.tosterSuccess(`Status Successfully.`);
-        //            // this.fnJourneyPlanList();
-        //            this.fnJourneyPlanListPaging(this.first, this.rows,  "");
-        //        },
-        //        (error) => {
-        //            console.log(error);
-        //        }
-             
-        //    ).add(() => this.alertService.fnLoading(false));
-        //}, () => {
-
-        //});
-    }
-
+   
     private _initPermissionGroup() {
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
     }
 
-    private fnJourneyPlanList() {
 
-        this.alertService.fnLoading(true);
-        this.journeyPlanService.getJourneyPlanList()
-            .subscribe(
-                (res) => {
-                    this.journeyPlanList = res.data as [] || [];
-                },
-                (error) => {
-                    console.log(error);
-                    this.displayError(error);
-                }
-            ).add(()=> this.alertService.fnLoading(false))
-    }
-    private fnJourneyPlanListPaging(index, pageSize,planDate) {
+    private onLoadJourneyPlans(index, pageSize,search) {
 
         this.alertService.fnLoading(true);
 
-        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize, planDate)
+        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize, search)
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                  //  this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                 },
                 (error) => this.displayError(error)
@@ -146,33 +127,42 @@ export class JourneyPlanListComponent implements OnInit {
         this.router.navigate(['/journey-plan/add']);
     }
 
-    edit(id: number) {
-        console.log('edit plan', id);
-        this.router.navigate(['/journey-plan/add/' + id]);
+    edit(jPlan) {
+
+        debugger;
+        if (this.compareDate(jPlan.planDate)) {
+            console.log('edit plan', jPlan.id);
+            this.router.navigate(['/journey-plan/add/' + jPlan.id]);
+        }
+        else this.alertService.alert("can not modify pervious plan");
     }
 
-    delete(id: number) {
-        console.log("Id:", id);
-        this.alertService.confirm("Are you sure you want to delete this item?", () => {
-            this.alertService.fnLoading(true);
-            this.journeyPlanService.delete(id).subscribe(
-                (res: any) => {
-                    console.log('res from del func', res);
-                    this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                  //  this.fnJourneyPlanList();
-                    this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
-                },
-                (error) => {
-                    console.log(error);
-                    this.displayError(error);
-                }
-            ).add(() => this.alertService.fnLoading(false));;
-        }, () => {
+    delete(jPlan) {
+        console.log("Id:", jPlan.id);
 
-        });
+        if (this.compareDate(jPlan.planDate)) {
+            this.alertService.confirm("Are you sure you want to delete this item?", () => {
+                this.alertService.fnLoading(true);
+                this.journeyPlanService.delete(jPlan.id).subscribe(
+                    (res: any) => {
+                        console.log('res from del func', res);
+                        this.alertService.tosterSuccess("journey plan has been deleted successfully.");
+                     
+                        this.onLoadJourneyPlans(this.first, this.rows, this.search);
+                    },
+                    (error) => {
+                        console.log(error);
+                        this.displayError(error);
+                    }
+                ).add(() => this.alertService.fnLoading(false));;
+            }, () => {
+
+            });
+        }
+        else this.alertService.alert("can not delete pervious plan");
+       
     }
     private displayError(errorDetails: any) {
-        // this.alertService.fnLoading(false);
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {

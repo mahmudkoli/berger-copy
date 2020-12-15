@@ -2,6 +2,7 @@
 using BergerMsfaApi.Models.Dealer;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BergerMsfaApi.Models.JourneyPlan
 {
@@ -9,9 +10,13 @@ namespace BergerMsfaApi.Models.JourneyPlan
     {
         public int Id { get; set; }
         public string EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
+        public string PlanStatusInText { get; set; }
         public EmployeeModel  Employee{ get; set; }
-        public DateTime PlanDate { get; set; }
+
+        public string PlanDate { get; set; }
         public Status Status { get; set; }
+        public string Comment { get; set; }
         public PlanStatus PlanStatus { get; set; }
         public List<DealerInfoModel> DealerInfoModels { get; set; }
   

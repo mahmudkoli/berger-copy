@@ -21,12 +21,12 @@ namespace BergerMsfaApi.Controllers.Scheme
         }
 
 
-        [HttpGet("GetSchemeMasterList")]
-        public async Task<IActionResult> GetSchemeMasterList()
+        [HttpGet("GetSchemeMasterList/{index}/{pageSize}")]
+        public async Task<IActionResult> GetSchemeMasterList(int index,int pageSize,string search)
         {
             try
             {
-              var result=  await _schemeService.PortalGetSchemeMasters();
+              var result=  await _schemeService.PortalGetSchemeMasters(index,pageSize,search);
                 return OkResult(result);
             }
             catch (Exception ex)

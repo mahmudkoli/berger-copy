@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Painter } from '../../../Shared/Entity/Painter/Painter';
-import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { Router } from '@angular/router';
 import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/painterRegister.service';
+import { APIModel } from 'src/app/Shared/Entity';
+import { Paginator } from 'primeng/paginator';
 
 @Component({
     selector: 'app-painter-regis-list',
@@ -12,34 +13,76 @@ import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/pain
     styleUrls: ['./painter-regis-list.component.css']
 })
 export class PainterRegisListComponent implements OnInit {
-    permissionGroup: PermissionGroup = new PermissionGroup();
+
     public painterList: Painter[] = [];
     public baseUrl: string;
-    first = 0;
 
-    rows = 5;
+    first = 1;
+    rows = 10;
+    pagingConfig: APIModel;
+    search: string = "";
+ @ViewChild("paging", { static: false }) paging: Paginator;
     constructor(
+        @Inject('BASE_URL') baseUrl: string,
         private router: Router,
-        private activityPermissionService: ActivityPermissionService,
         private painterRegisSvc: PainterRegisService,
-        private alertService: AlertService,
-        @Inject('BASE_URL') baseUrl: string) { this.fnPainterList(); this.baseUrl = baseUrl; }
+        private alertService: AlertService
+    ) {
+        this.baseUrl = baseUrl;
+        this.pagingConfig = new APIModel(1, 10);
+    }
 
     ngOnInit() {
+        this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
+    next() {
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
+    prev() {
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
+    onSearch() {
+        this.reset();
+        this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
+    reset() {
+        this.paging.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
+        // this.OnLoadDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+    }
 
-        this._initPermissionGroup();
-       
+    isLastPage(): boolean {
+
+        return this.painterList ? this.first === (this.painterList.length - this.rows) : true;
+    }
+
+    isFirstPage(): boolean {
+        return this.painterList ? this.pagingConfig.pageNumber === 1 : true;
+    }
+    public paginate(event) {
+        //let first = Number(event.page) + 1;
+        //this.OnLoadDealer(first, event.rows, this.search);
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
+        this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+        // event.first == 0 ?  1 : event.first;
+        //event.first = Index of the first record
+        //event.rows = Number of rows to display in new page
+        //event.page = Index of the new page
+        //event.pageCount = Total number of pages
     }
     detail(id) {
-
         this.router.navigate(['/painter/detail/' + id]);
     }
-    private fnPainterList() {
+    onLoadPainters(index,pageSize,search="") {
         this.alertService.fnLoading(true);
 
-        this.painterRegisSvc.GetPainterList().subscribe(
+        this.painterRegisSvc.GetPainterList(index,pageSize,search).subscribe(
             (res) => {
-                this.painterList = res.data || [];;
+                this.pagingConfig=res.data;
+                this.painterList = this.pagingConfig.model;
             },
             (error) => {
                 console.log(error);
@@ -47,49 +90,6 @@ export class PainterRegisListComponent implements OnInit {
             () => this.alertService.fnLoading(false)
         );
     }
-    private _initPermissionGroup() {
-
-        //this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
-        console.log(this.permissionGroup);
-        //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
-        //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
-        //this.ptableSettings.enabledDeleteBtn = this.permissionGroup.canDelete;
-
-        this.ptableSettings.enabledRecordCreateBtn = true;
-        this.ptableSettings.enabledEditBtn = true;
-        this.ptableSettings.enabledDeleteBtn = true;
 
 
-    }
-    public ptableSettings = {
-        tableID: "Painter-List",
-        tableClass: "table table-border ",
-        tableName: 'Painter List',
-        tableRowIDInternalName: "Id",
-        tableColDef: [
-            { headerName: 'Name ', width: '10%', internalName: 'name', sort: true, type: "" },
-            { headerName: 'Address', width: '30%', internalName: 'address', sort: true, type: "" },
-            { headerName: 'Phone', width: '30%', internalName: 'phone', sort: true, type: "" },
-            { headerName: 'DepotName', width: '20%', internalName: 'depotName', sort: true, type: "" },
-        ],
-        enabledSearch: true,
-        enabledSerialNo: true,
-        pageSize: 10,
-        enabledPagination: true,
-        //enabledAutoScrolled:true,
-        enabledDeleteBtn: true,
-        enabledEditBtn: true,
-        // enabledCellClick: true,
-        enabledColumnFilter: true,
-        // enabledDataLength:true,
-        // enabledColumnResize:true,
-        // enabledReflow:true,
-        // enabledPdfDownload:true,
-        // enabledExcelDownload:true,
-        // enabledPrint:true,
-        // enabledColumnSetting:true,
-        enabledRecordCreateBtn: true,
-        // enabledTotal:true,
-
-    };
 }
