@@ -8,8 +8,8 @@ import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPla
 import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
 import { APIModel } from '../../../Shared/Entity';
 import { Paginator } from 'primeng/paginator';
-
-
+import { CalendarOptions, DateSelectArg } from '@fullcalendar/angular';
+import { FullCalendar } from 'primeng-lts/fullcalendar';
 
 
 @Component({
@@ -19,9 +19,12 @@ import { Paginator } from 'primeng/paginator';
 
 export class JourneyPlanListComponent implements OnInit {
 
+
+    calendarOptions: CalendarOptions = {};
+
     permissionGroup: PermissionGroup = new PermissionGroup();
     journeyPlanStatus: JourneyPlanStatus = new JourneyPlanStatus();
-    public journeyPlanList: JourneyPlan[] = [];
+    public journeyPlanList: any[] = [];
     PlanStatusEnum = PlanStatus;
     statusKeys: any[] = [];
     first = 1;
@@ -30,7 +33,10 @@ export class JourneyPlanListComponent implements OnInit {
     pagingConfig: APIModel;
     pageSize: number;
     @ViewChild("paginator", { static: false }) paginator: Paginator;
+    @ViewChild('fc', { static: false }) fc: FullCalendar;
+
     constructor(
+
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
@@ -42,8 +48,138 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     ngOnInit() {
-      // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
+
+        this.calendarOptions = {
+            headerToolbar: {
+                left: 'prev,next,today ,new',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            initialView: 'dayGridMonth',
+            dateClick: this.handleDateClick.bind(this),
+            //select: this.handleDateSelect.bind(this),
+            //  eventClick: this.handleEventClick.bind(this),
+            // eventsSet: this.handleEvents.bind(this),
+            dayCellDidMount: function (info) {
+
+                //     let view=document.createElement('button');
+                //     view.className="btn btn-sm btn-primary";
+                //     view.textContent="View";
+                //     info.el.appendChild(view);
+
+
+
+                //     let del=document.createElement('button');
+                //     del.textContent="Delete";
+                //     del.className="btn btn-sm btn-primary";
+                //     info.el.appendChild(del);
+                //     del.addEventListener("click",function(){
+                //         alert("Delete");
+                //     })
+                //     // info.el.innerHTML=`<button class='btn btn-sm btn-primary'>View</button>`;
+                //     // info.el.innerHTML=`<button class='btn btn-sm btn-primary'>Delete</button>`;
+                //    return info.el;
+
+            },
+            //eventColor: '#378006',
+            eventOrder: ['id'],
+            eventContent: function (arg) {
+                // debugger;
+
+                // let italicEl = document.createElement('i')
+
+                // if (arg.event.extendedProps.isUrgent) {
+                //     italicEl.innerHTML = 'urgent event'
+                // } else {
+                //     italicEl.innerHTML = 'normal event'
+                // }
+
+                // let arrayOfDomNodes = [italicEl]
+                // return { domNodes: arrayOfDomNodes }
+            },
+            eventClick: this.handleEventClick.bind(this),
+            // select: this.handleDateSelect.bind(this),
+            //sevents: this.eventPlans,
+            // initialEvents:this.journeyPlanList.map((f:any)=>({title:f.employeeName,date:f.planDate}))
+
+            selectable: true,
+
+
+
+
+
+
+            // eventClick: this.handleEventClick.bind(this),
+            //  eventsSet: this.handleEvents.bind(this)
+            //eventClick:this.handleEventClick.bind(this)
+            customButtons: {
+                'new': {
+                    text: 'New Record',
+                    click: this.add.bind(this)
+                }
+
+            }
+
+
+        }
+        // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
         this.onLoadJourneyPlans(this.first, this.rows, this.search);
+        // this.calendarOptions.customButtons={
+        //     new:{
+        //         text:"New Record",
+        //         click:function(){ 
+        //             alert("Call");
+        //           return  this.router.navigate(['/journey-plan/add']);
+        //         }
+        //     }
+        // }
+
+
+    }
+    handleEvents(arg) {
+        debugger;
+        alert('Set click! ' + arg.dateStr)
+    }
+    handleEventClick(info) {
+        debugger;
+        let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
+        // this.detail(find);
+        // alert('Cell');
+        if (info.event.title == "Delete") {
+            this.delete(find);
+        }
+        else if (info.event.title == "Edit") {
+            this.edit(find);
+        }
+        else if (info.event.title == "View") {
+            this.detail(find)
+        }
+       
+
+        // alert('Event: ' + info.event.startStr);
+        // alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        // alert('View: ' + info.view.type);
+        // let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
+        // this.detail(find);
+        // change the border color just for fun
+        //info.el.style.borderColor = 'red';
+        //  alert('event click! ' + arg.dateStr)
+    }
+    handleDateClick(arg) {
+        debugger;
+        var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
+        if (arg.dateStr >= utc) {
+            this.add(arg.dateStr);
+        }
+        // let find = this.journeyPlanList.find(f => f.planDate == arg.dateStr);
+        // this.edit(find);
+    }
+    handleDateSelect(selectInfo: DateSelectArg) {
+        debugger;
+        let eventDate = selectInfo.view.currentStart;
+        let find = this.journeyPlanList.find(f => f.planDate == eventDate);
+        this.detail(find);
+
 
     }
     compareDate(pDate) {
@@ -73,7 +209,7 @@ export class JourneyPlanListComponent implements OnInit {
     reset() {
         this.paginator.first = 1;
         this.pagingConfig = new APIModel(1, 10);
-      
+
     }
 
     isLastPage(): boolean {
@@ -91,19 +227,19 @@ export class JourneyPlanListComponent implements OnInit {
 
         this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
 
-       // event.first == 0 ?  1 : event.first;
+        // event.first == 0 ?  1 : event.first;
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-   
+
     private _initPermissionGroup() {
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
     }
 
 
-    private onLoadJourneyPlans(index, pageSize,search) {
+    private onLoadJourneyPlans(index, pageSize, search) {
 
         this.alertService.fnLoading(true);
 
@@ -111,8 +247,42 @@ export class JourneyPlanListComponent implements OnInit {
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                  //  this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                    //  this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
+                    let events = [];
+                    this.journeyPlanList.forEach(plan => {
+                        debugger;
+                        //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
+                        events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
+                        events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
+                        events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
+                    });
+                    events.sort()
+                    this.calendarOptions.events = [...events];
+                    // this.eventPlans=[...events];
+                    // this.calendarOptions = {
+                    //     headerToolbar: {
+                    //         left: 'prev,next today',
+                    //         center: 'title',
+                    //         right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    //     },
+                    //     initialView: 'dayGridMonth',
+                    //     // dateClick: this.handleDateClick.bind(this), 
+                    //     select: this.handleDateSelect.bind(this),
+                    //     //sevents: this.eventPlans,
+                    //    // initialEvents:this.journeyPlanList.map((f:any)=>({title:f.employeeName,date:f.planDate}))
+
+
+
+                    // }
+
+                    // this.calendarOptions.customButtons = {
+                    //     new: {
+                    //         text: "New Record",
+                    //         click:this.add.bind(this)
+                    //     }
+                    // }
                 },
                 (error) => this.displayError(error)
 
@@ -123,8 +293,8 @@ export class JourneyPlanListComponent implements OnInit {
         this.router.navigate(["/journey-plan/detail", plan.id]);
     }
 
-    add() {
-        this.router.navigate(['/journey-plan/add']);
+    add(date) {
+        this.router.navigate(['/journey-plan/add',date]);
     }
 
     edit(jPlan) {
@@ -132,7 +302,7 @@ export class JourneyPlanListComponent implements OnInit {
         debugger;
         if (this.compareDate(jPlan.planDate)) {
             console.log('edit plan', jPlan.id);
-            this.router.navigate(['/journey-plan/add/' + jPlan.id]);
+            this.router.navigate(['/journey-plan/add/' + jPlan.planDate]);
         }
         else this.alertService.alert("can not modify pervious plan");
     }
@@ -147,7 +317,7 @@ export class JourneyPlanListComponent implements OnInit {
                     (res: any) => {
                         console.log('res from del func', res);
                         this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                     
+
                         this.onLoadJourneyPlans(this.first, this.rows, this.search);
                     },
                     (error) => {
@@ -160,7 +330,7 @@ export class JourneyPlanListComponent implements OnInit {
             });
         }
         else this.alertService.alert("can not delete pervious plan");
-       
+
     }
     private displayError(errorDetails: any) {
         console.log("error", errorDetails);

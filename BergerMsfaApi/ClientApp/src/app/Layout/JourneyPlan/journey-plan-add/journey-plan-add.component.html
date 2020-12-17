@@ -1,5 +1,3 @@
-
-
 <div class="main-card mb-3 card">
     <div class="card-header sticky-card d-flex justify-content-between align-items-center">
         <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create New Journey Plan</div>
@@ -13,19 +11,14 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label for="name">Dealer</label>
-                     
 
-                        <ng-select [items]="dealerList"
-                                   bindLabel="customerName"
-                                   bindValue="id"
-                                   [multiple]="true"
-                                   [(ngModel)]="journeyPlanModel.dealers"
-                                   name="dealers" #dealers="ngModel"
-                                  >
+
+                        <ng-select [items]="dealerList" bindLabel="customerName" bindValue="id" [multiple]="true"
+                            [(ngModel)]="journeyPlanModel.dealers" name="dealers" #dealers="ngModel">
                         </ng-select>
                     </div>
                 </div>
-              
+
                 <div class="col-md-6">
                     <!--<div class="position-relative form-group">
                         <label for="name">Visit Date</label>
@@ -39,8 +32,8 @@
                     </div>-->
                     <label for="name">Visit Date</label>
                     <div class="input-group">
-                        <input class="form-control" placeholder="yyyy-mm-dd"
-                               name="visitDate" [(ngModel)]="journeyPlanModel.visitDDate" ngbDatepicker #d="ngbDatepicker">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="visitDate"
+                        [readonly]="readonly"  [(ngModel)]="journeyPlanModel.visitDDate" ngbDatepicker #d="ngbDatepicker">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button">
                                 <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
@@ -54,11 +47,15 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
-                <button [disabled]="!dropdownForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i
+                        class="pe-7s-back pr-1"></i> Back </button>
+                <button [disabled]="!dropdownForm.valid" type="submit" class="mb-2 btn btn-primary"><i
+                        class="fa fa-save pr-1"></i> Save </button>
+                <!-- <button *ngIf="readonly" type="button" class="mb-2 ml-2 btn-hover-shine btn btn-danger"
+                    (click)="delete(journeyPlanModel)"><i class="pe-7s-remove pr-1"></i> Delete </button> -->
             </div>
         </form>
         {{journeyPlanModel|json}}
     </div>
 
-</div>   
+</div>        
