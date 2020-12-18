@@ -33,7 +33,7 @@ namespace Berger.Odata.Services
             try
             {
                 string fullUrl =
-                    $"{OdataUrlBuilder.SalesUrl}?$format=json&$filter=kunrg eq '24' and fkdat gt datetime%272011-09-01T00:00:00%27 and fkdat lt datetime%272011-09-08T00:00:00%27";
+                    $"{OdataUrlBuilder.SalesUrl}&$filter=kunrg eq '24' and fkdat gt datetime%272011-09-01T00:00:00%27 and fkdat lt datetime%272011-09-08T00:00:00%27";
 
                 var responseBody = _httpClient.GetHttpResponse(fullUrl, OdataUrlBuilder.userName,
                        OdataUrlBuilder.password);

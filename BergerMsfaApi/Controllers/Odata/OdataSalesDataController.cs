@@ -25,5 +25,7 @@ namespace BergerMsfaApi.Controllers.Odata
            var x =  _saledata.GetSalesData();
            return View();
         }
+
+        
     }
 }
