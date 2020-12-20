@@ -51,7 +51,7 @@ export class JourneyPlanListComponent implements OnInit {
 
         this.calendarOptions = {
             headerToolbar: {
-                left: 'prev,next,today ,new',
+                left: 'prev,next,today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
@@ -112,13 +112,13 @@ export class JourneyPlanListComponent implements OnInit {
             // eventClick: this.handleEventClick.bind(this),
             //  eventsSet: this.handleEvents.bind(this)
             //eventClick:this.handleEventClick.bind(this)
-            customButtons: {
-                'new': {
-                    text: 'New Record',
-                    click: this.add.bind(this)
-                }
+            // customButtons: {
+            //     'new': {
+            //         text: 'New Record',
+            //         click: this.add.bind(this)
+            //     }
 
-            }
+            // }
 
 
         }

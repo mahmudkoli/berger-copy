@@ -13,9 +13,9 @@ import { FullCalendar } from 'primeng-lts/fullcalendar';
 
 
 @Component({
-  selector: 'app-journey-plan-list-line-manager',
-  templateUrl: './journey-plan-list-line-manager.component.html',
-  styleUrls: ['./journey-plan-list-line-manager.component.css']
+    selector: 'app-journey-plan-list-line-manager',
+    templateUrl: './journey-plan-list-line-manager.component.html',
+    styleUrls: ['./journey-plan-list-line-manager.component.css']
 })
 export class JourneyPlanListLineManagerComponent implements OnInit {
 
@@ -52,9 +52,9 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             initialView: 'dayGridMonth',
-           // dateClick: this.handleDateClick.bind(this),
-           // select: this.handleDateSelect.bind(this),
-              eventClick: this.handleEventClick.bind(this),
+            // dateClick: this.handleDateClick.bind(this),
+            // select: this.handleDateSelect.bind(this),
+            eventClick: this.handleEventClick.bind(this),
             // eventsSet: this.handleEvents.bind(this),
             dayCellDidMount: function (info) {
 
@@ -77,7 +77,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                 //    return info.el;
 
             },
-            
+
             eventContent: function (arg) {
                 // debugger;
 
@@ -107,10 +107,10 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             // eventClick: this.handleEventClick.bind(this),
             //  eventsSet: this.handleEvents.bind(this)
             //eventClick:this.handleEventClick.bind(this)
-            
-            
-            }
-          
+
+
+        }
+
 
 
 
@@ -123,8 +123,13 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         // alert('Event: ' + info.event.startStr);
         // alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
         // alert('View: ' + info.view.type);
-        let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
-        this.onDetail(find);
+       // let eve=(this.calendarOptions.events as []).find(f => f.date == info.event.startStr);
+       if (info.event.title == "View") {
+           alert(info.event.id);
+           let find = this.journeyPlanList.find(f => f.id==info.event.id && f.planDate == info.event.startStr);
+           this.onDetail(find);
+       }
+        
         // change the border color just for fun
         //info.el.style.borderColor = 'red';
         //  alert('event click! ' + arg.dateStr)
@@ -171,7 +176,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
                     this.alertService.tosterSuccess(`Status Successfully.`);
-                  //  this.fnJourneyPlanList();
+                    //  this.fnJourneyPlanList();
                     this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },
                 (error) => {
@@ -193,20 +198,27 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                   // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                    // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                     let events = [];
                     this.journeyPlanList.forEach(plan => {
                         debugger;
                         //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
-                        events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
-                        events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
+                        events.push({ id: plan.id, title: `${plan.employeeName}(${plan.planStatusInText})`, date: plan.planDate,employeeId:plan.employeeId });
+                       // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        events.push({ id: plan.id, title: 'View', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#ce42f5' });
+
+                        // events.push({ id: plan.id, title: `${plan.employeeName}(${plan.planStatusInText})`, date: plan.planDate });
+                        // // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        //  events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
+      
                         // events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
                         // events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
-                       // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                     });
+
                     this.calendarOptions.events = [...events];
-               
+
                 },
                 (error) => {
                     this.displayError(error);
@@ -232,25 +244,25 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
     onDetail(plan) {
         this.router.navigate(["/journey-plan/line-manager-detail/", plan.id]);
     }
-    
-     add() {
+
+    add() {
         this.router.navigate(['/journey-plan/add']);
     }
 
-     edit(id: number) {
+    edit(id: number) {
         console.log('edit plan', id);
         this.router.navigate(['/journey-plan/add/' + id]);
     }
 
-     delete(id: number) {
+    delete(id: number) {
         console.log("Id:", id);
-         this.alertService.confirm("Are you sure you want to delete this item?", () => {
-             this.alertService.fnLoading(true);
+        this.alertService.confirm("Are you sure you want to delete this item?", () => {
+            this.alertService.fnLoading(true);
             this.journeyPlanService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);
                     this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-               
+
                     this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },
                 (error) => {
