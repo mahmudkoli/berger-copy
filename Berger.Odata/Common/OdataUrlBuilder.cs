@@ -12,9 +12,9 @@ namespace Berger.Odata.Common
         public static string userName = $"DEV_ODATA";
         public static string password = $"Sword@Fish2020";
 
-        public static string GetInvoiceHistoryUri()
-        {
+        //public static string GetInvoiceHistoryUri()
+        //{
 
-        }
+        //}
     }
 }

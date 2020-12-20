@@ -8,6 +8,6 @@ namespace Berger.Odata.Services
 {
     public interface ISalesData
     {
-        Task<IEnumerable<SalesDataModel>> GetSalesData();
+        Task<IEnumerable<SalesDataModel>> GetInvoiceHistory(SalesDataSearchModel model);
     }
 }

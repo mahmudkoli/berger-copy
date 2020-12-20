@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Odata.Model;
 using Berger.Odata.Services;
 
 namespace BergerMsfaApi.Controllers.Odata
@@ -19,11 +20,11 @@ namespace BergerMsfaApi.Controllers.Odata
             _saledata = saledata;
         }
 
-        [HttpGet("getsalesdata")]
-        public async Task<IActionResult> Index()
+        [HttpGet("invoicesummary")]
+        public async Task<IActionResult> GetInvoiceHistory(SalesDataSearchModel model)
         {
-           var x =  _saledata.GetSalesData();
-           return View();
+           var x =  _saledata.GetInvoiceHistory(model);
+           return Ok();
         }
 
         
