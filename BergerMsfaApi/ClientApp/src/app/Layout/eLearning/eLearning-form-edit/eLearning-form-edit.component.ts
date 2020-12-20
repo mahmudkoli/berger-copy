@@ -12,13 +12,14 @@ import { DynamicDropdownService } from 'src/app/Shared/Entity/Setup/dynamic-drop
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { FileUpload } from 'primeng/fileupload';
+import { ELearningAttachment } from 'src/app/Shared/Entity/ELearning/eLearningAttachment';
 
 @Component({
-	selector: 'app-eLearning-form-new',
-	templateUrl: './eLearning-form-new.component.html',
-	styleUrls: ['./eLearning-form-new.component.css']
+	selector: 'app-eLearning-form-edit',
+	templateUrl: './eLearning-form-edit.component.html',
+	styleUrls: ['./eLearning-form-edit.component.css']
 })
-export class ELearningFormNewComponent implements OnInit, OnDestroy {
+export class ELearningFormEditComponent implements OnInit, OnDestroy {
 
 	eLearningDocument: ELearningDocument;
 	eLearningDocumentForm: FormGroup;
@@ -27,6 +28,8 @@ export class ELearningFormNewComponent implements OnInit, OnDestroy {
 	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
 	attachmentLinkUrls: string[] = [];
 	attachmentFiles: File[] = [];
+	eLearningAttachmentLinkUrls: ELearningAttachment[] = [];
+	eLearningAttachmentFiles: ELearningAttachment[] = [];
 	
 	private subscriptions: Subscription[] = [];
 
@@ -54,6 +57,10 @@ export class ELearningFormNewComponent implements OnInit, OnDestroy {
 					.subscribe(res => {
 						if (res) {
 							this.eLearningDocument = res.data as ELearningDocument;
+							if(this.eLearningDocument.eLearningAttachments){
+								this.eLearningAttachmentFiles = this.eLearningDocument.eLearningAttachments.filter(x=>x.type==1);
+								this.eLearningAttachmentLinkUrls = this.eLearningDocument.eLearningAttachments.filter(x=>x.type==2);
+							}
 							this.initELearningDocuments();
 						}
 					});
@@ -133,6 +140,11 @@ export class ELearningFormNewComponent implements OnInit, OnDestroy {
 			_eLearningDocument.eLearningAttachmentFiles = this.attachmentFiles;
 		if(this.attachmentLinkUrls && this.attachmentLinkUrls.length > 0)
 			_eLearningDocument.eLearningAttachmentUrls = this.attachmentLinkUrls;
+
+		if(this.eLearningAttachmentFiles && this.eLearningAttachmentFiles.length > 0)
+			_eLearningDocument.eLearningAttachments = [..._eLearningDocument.eLearningAttachments,...this.eLearningAttachmentFiles];
+		if(this.eLearningAttachmentLinkUrls && this.eLearningAttachmentLinkUrls.length > 0)
+			_eLearningDocument.eLearningAttachments = [..._eLearningDocument.eLearningAttachments,...this.eLearningAttachmentLinkUrls];
 			
 		return _eLearningDocument;
 	}
@@ -177,12 +189,31 @@ export class ELearningFormNewComponent implements OnInit, OnDestroy {
 	}
 
 	addAttachmentLinkUrls(value) {
+		value = value.trim();
 		if(value)
 			this.attachmentLinkUrls.push(value);
 	}
 
 	removeAttachmentLinkUrls(index) {
 		this.attachmentLinkUrls.splice(index, 1);
+	}
+
+	changeStatusPreviousAttachmentFiles(index) {
+		const status = this.eLearningAttachmentFiles[index].status;
+		this.eLearningAttachmentFiles[index].status = status == 0 ? 1 : 0;
+	}
+
+	removePreviousAttachmentFiles(index) {
+		this.eLearningAttachmentFiles.splice(index, 1);
+	}
+
+	changeStatusPreviousAttachmentLinkUrls(index) {
+		const status = this.eLearningAttachmentLinkUrls[index].status;
+		this.eLearningAttachmentLinkUrls[index].status = status == 0 ? 1 : 0;
+	}
+
+	removePreviousAttachmentLinkUrls(index) {
+		this.eLearningAttachmentLinkUrls.splice(index, 1);
 	}
 
 	getComponentTitle() {
