@@ -1,4 +1,4 @@
-
+<!-- 
 <p-table *ngIf="journeyPlanList!=null" #dt [value]="journeyPlanList"
          [globalFilterFields]="['planDate','status']">
     <ng-template pTemplate="caption">
@@ -59,4 +59,6 @@
                      [rowsPerPageOptions]="[10,20]"
                      (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>
-</p-table>
+</p-table> -->
+
+<full-calendar #fc [options]="calendarOptions"></full-calendar>

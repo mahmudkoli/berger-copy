@@ -1,4 +1,4 @@
-<p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
+<!-- <p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
     
     <ng-template pTemplate="caption">
         <div class="table-header">
@@ -33,11 +33,11 @@
             <td>{{jPlan.planDate }}</td>
             <td>{{jPlan.employeeName }}</td>
             <td>{{jPlan.planStatusInText }}</td>
-            <!-- <td>{{ PlanStatusEnum[jPlan.planStatus]}}</td> -->
+        
             <td>{{jPlan.comment}}</td>
             <td> <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="onDetail(jPlan)">View Detail</button></td>
         </tr>
-    </ng-template>
+    </ng-template> 
 
     <ng-template pTemplate="summary">
         <p-paginator
@@ -50,4 +50,5 @@
 
         </p-paginator>
     </ng-template>
-</p-table>
+</p-table> -->
+<full-calendar #fc [options]="calendarOptions"></full-calendar>
