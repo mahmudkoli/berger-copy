@@ -16,13 +16,30 @@ export class CommonService {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
     }
+  
+  toQueryString(obj) {
+    let parts = [];
+    for (const property in obj) {
+      const value = obj[property];
+      if (value != null && value !== undefined) {
+        parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
+      }
+    }
+
+    return parts.join('&');
+  }
 
   toFormData(obj) {
     let formData = new FormData();
     for (const property in obj) {
       const value = obj[property];
       if (value != null && value !== undefined) {
-        formData.append(property, value);
+        if(value && Array.isArray(value)) {
+          value.forEach(element => {
+            formData.append(property, element);
+          });
+        } else
+          formData.append(property, value);
       }
     }
 

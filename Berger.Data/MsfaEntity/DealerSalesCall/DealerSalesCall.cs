@@ -18,6 +18,8 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public DealerInfo Dealer { get; set; }
         public int UserId { get; set; }
         public UserInfo User { get; set; }
+        public int? JourneyPlanId { get; set; }
+        public JourneyPlanMaster JourneyPlan { get; set; }
         //public DateTime Date { get; set; }
         public bool IsTargetPromotionCommunicated { get; set; }
         public bool IsTargetCommunicated { get; set; }
@@ -90,6 +92,6 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public bool IsSubDealerCall { get; set; }
         public bool HasBPBLSales { get; set; }
         public decimal BPBLAverageMonthlySales { get; set; }
-        public decimal BPBLActualAMDSales { get; set; }
+        public decimal BPBLActualMTDSales { get; set; }
     }
 }
