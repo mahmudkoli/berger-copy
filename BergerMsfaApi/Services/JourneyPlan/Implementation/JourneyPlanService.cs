@@ -64,6 +64,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     find.RejectedBy = AppIdentity.AppUser.UserId;
                 }
                 find.Comment = model.Comment;
+                
                 await _journeyPlanMasterSvc.UpdateAsync(find);
                 return true;
             }
@@ -119,7 +120,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Id = s.plan.Id,
                 EmployeeId = s.emp.EmployeeId,
                 Comment = s.plan.Comment,
-                PlanDate = s.plan.PlanDate.ToString("yyyy/MM/dd"),
+                PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.plan.Status,
                 PlanStatus = s.plan.PlanStatus,
                 PlanStatusInText = s.plan.PlanStatus.ToString(),
@@ -221,7 +222,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
             await _journeyPlanDetailSvc.DeleteAsync(f => f.PlanId == findPlan.Id);
             findPlan.PlanStatus = PlanStatus.Edited;
-            findPlan.PlanDate = model.VisitDate;
+            findPlan.PlanDate = findPlan.PlanDate;
             await _journeyPlanMasterSvc.UpdateAsync(findPlan);
             foreach (var id in model.Dealers)
             {
@@ -241,11 +242,12 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
-        public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id)
+        public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(string date)
         {
   
             PortalCreateJouneryModel result = new PortalCreateJouneryModel();
-            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == Id && f.EmployeeId == AppIdentity.AppUser.EmployeeId);
+            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.PlanDate == DateTime.Parse(date).Date && f.EmployeeId == AppIdentity.AppUser.EmployeeId);
+            if (find == null) return null;
             result.Id = find.Id;
             result.Dealers = _journeyPlanDetailSvc.FindAll(s => s.PlanId == find.Id).Select(s => s.DealerId).ToArray();
             result.VisitDate = find.PlanDate;
@@ -297,13 +299,11 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Id = s.Id,
                 EmployeeId = s.EmployeeId,
                 Comment = s.Comment,
-                PlanDate = s.PlanDate.ToString("yyyy/MM/dd"),
+                PlanDate = s.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.Status,
                 PlanStatus = s.PlanStatus,
                 PlanStatusInText = s.PlanStatus.ToString(),
                 EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FirstName} {s.LastName}").FirstOrDefault()
-
-              
 
             }).ToList();
 
