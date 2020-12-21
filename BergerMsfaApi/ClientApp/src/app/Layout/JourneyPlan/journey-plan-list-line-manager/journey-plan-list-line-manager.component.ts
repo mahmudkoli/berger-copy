@@ -125,7 +125,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         // alert('View: ' + info.view.type);
        // let eve=(this.calendarOptions.events as []).find(f => f.date == info.event.startStr);
        if (info.event.title == "View") {
-           alert(info.event.id);
+        
            let find = this.journeyPlanList.find(f => f.id==info.event.id && f.planDate == info.event.startStr);
            this.onDetail(find);
        }
@@ -198,23 +198,13 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                    // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                     let events = [];
                     this.journeyPlanList.forEach(plan => {
-                        debugger;
-                        //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
-                        events.push({ id: plan.id, title: `${plan.employeeName}(${plan.planStatusInText})`, date: plan.planDate,employeeId:plan.employeeId });
-                       // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        events.push({ id: plan.id, title: `${plan.employeeName}`, date: plan.planDate, employeeId: plan.employeeId, backgroundColor: '#f58442' });
+                        events.push({ id: plan.id, title: `${plan.planStatusInText}`, date: plan.planDate, employeeId: plan.employeeId });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#ce42f5' });
 
-                        // events.push({ id: plan.id, title: `${plan.employeeName}(${plan.planStatusInText})`, date: plan.planDate });
-                        // // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
-                        //  events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
-      
-                        // events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
-                        // events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
-                        // events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                     });
 
                     this.calendarOptions.events = [...events];
