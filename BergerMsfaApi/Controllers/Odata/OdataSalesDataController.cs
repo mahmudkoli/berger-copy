@@ -20,11 +20,11 @@ namespace BergerMsfaApi.Controllers.Odata
             _saledata = saledata;
         }
 
-        [HttpGet("invoicesummary")]
+        [HttpPost("invoicesummary")]
         public async Task<IActionResult> GetInvoiceHistory(SalesDataSearchModel model)
         {
            var x =  _saledata.GetInvoiceHistory(model);
-           return Ok();
+           return Ok(x);
         }
 
         

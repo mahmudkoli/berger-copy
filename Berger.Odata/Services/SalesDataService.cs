@@ -60,7 +60,7 @@ namespace Berger.Odata.Services
                 VolumeUnit = a.Voleh,
                 Territory = a.Territory,
                 Zone =  a.Szone,
-                CustomerNaem = a.Cname,
+                CustomerName = a.Cname,
                 MobileNo = a.MobileNo,
                 DivisionName = a.SpartText,//
                 NetAmount = a.Revenue,
@@ -91,7 +91,7 @@ namespace Berger.Odata.Services
         public async Task<IEnumerable<SalesDataModel>> GetInvoiceHistory(SalesDataSearchModel model)
         {
             model.FromDate = "2011-09-01T00:00:00";
-            model.ToDate = "2011-09-08T00:00:00";
+            model.ToDate = "2011-10-01T00:00:00";
             //model.FromDate = DateTime.Now.ToString("s");
             //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
             model.CustomerNo = 24;
@@ -105,29 +105,44 @@ namespace Berger.Odata.Services
             var data = await GetSalesData(filterQuery);
 
             data = data.Select(a => new SalesDataModel{InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount});
-            
+            await GetInvoiceDetails(new SalesDataSearchModel());
             return data;
 
         }
         public async Task<IEnumerable<SalesDataModel>> GetInvoiceDetails(SalesDataSearchModel model)
         {
             model.FromDate = "2011-09-01T00:00:00";
-            model.ToDate = "2011-09-08T00:00:00";
+            model.ToDate = "2011-10-08T00:00:00";
             //model.FromDate = DateTime.Now.ToString("s");
             //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
             model.CustomerNo = 24;
             model.Division = 10;
+            model.InvoiceNo = "30199128";
             var filterQuery =
                 $"&$filter={DataColumnDef.CustomerNoSold} eq '{model.CustomerNo}' " +
-                $"and {DataColumnDef.Division} eq '{model.Division}' " +
+                //$"and {DataColumnDef.Division} eq '{model.Division}' " +
                 $"and {DataColumnDef.Date} gt datetime'{model.FromDate}' " +
                 $"and {DataColumnDef.Date} lt datetime'{model.ToDate}' " +
                 $"and {DataColumnDef.InvoiceNo} eq '{model.InvoiceNo}'";
 
             var data = await GetSalesData(filterQuery);
 
-            data = data.Select(a => new SalesDataModel { InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount });
+            var firstView = data.Select(a => new SalesDataModel { InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount });
+            var headerView = data.Select(a => new SalesDataModel
+            {
+                CustomerName = a.CustomerName,
+                DivisionName = a.DivisionName,
+                Date = a.Date,
+                NetAmount = data.Sum(b=> Convert.ToDecimal(b.NetAmount)).ToString(),
+            });
 
+            var itemDetails = data.Select(a => new
+            {
+                Matarial = a.MatarialBrand, 
+                MatarialDesc = a.MatarialName,
+                Quantity = a.Quantity,
+                NetAmount = a.NetAmount
+            });
             return data;
 
         }

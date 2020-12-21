@@ -33,7 +33,7 @@ namespace Berger.Odata.Model
         public string VolumeUnit { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
-        public string CustomerNaem { get; set; }
+        public string CustomerName { get; set; }
         public string MobileNo { get; set; }
         public string DivisionName { get; set; }
         public string NetAmount { get; set; }
