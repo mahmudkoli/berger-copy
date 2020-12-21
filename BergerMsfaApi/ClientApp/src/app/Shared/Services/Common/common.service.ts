@@ -35,15 +35,39 @@ export class CommonService {
       const value = obj[property];
       if (value != null && value !== undefined) {
         if(value && Array.isArray(value)) {
-          value.forEach(element => {
-            formData.append(property, element);
+          value.forEach((element, index) => {
+            this.appendFormDataNestedObject(formData, element, property, index);
           });
-        } else
-          formData.append(property, value);
+        } else {
+            this.appendFormDataNestedObject(formData, value, property, null);
+        }
       }
     }
 
     return formData;
+  }
+
+  objectToJson(value) {
+    if (typeof(value) === 'object' && !(value instanceof File)) {
+      return JSON.stringify(value);
+    }
+    else
+      return value;
+  }
+
+  jsonToObject(value) {
+      return JSON.parse(value);;
+  }
+
+  private appendFormDataNestedObject(formData, value, property, index: null | number) {
+    if(typeof(value) === 'object' && !(value instanceof File)) {
+      for (let subKey in value) {
+        formData.append(`${property}${index===null?'':'['+index+']'}[${subKey}]`, value[subKey]);
+      }
+    }
+    else {
+      formData.append(property, value);
+    }
   }
 
   setUserInfoToLocalStorage(value) {

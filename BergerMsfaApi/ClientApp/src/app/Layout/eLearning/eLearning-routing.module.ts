@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from 'src/app/Shared/Guards/auth.guard';
 import { PermissionGuard } from 'src/app/Shared/Guards/permission.guard';
-import { ELearningFormComponent } from './eLearning-form/eLearning-form.component';
+import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form-edit.component';
+import { ELearningFormNewComponent } from './eLearning-form-new/eLearning-form-new.component';
 import { ELearningListComponent } from './eLearning-list/eLearning-list.component';
 import { ELearningComponent } from './eLearning.component';
 
@@ -26,13 +27,13 @@ const routes: Routes = [
       },
       {
         path: 'new',
-        component: ELearningFormComponent,
+        component: ELearningFormNewComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'New ELearning', },
       },
       {
         path: 'edit/:id',
-        component: ELearningFormComponent,
+        component: ELearningFormEditComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Edit ELearning', },
       },

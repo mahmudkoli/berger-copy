@@ -4,6 +4,8 @@ using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Setup
@@ -25,13 +27,9 @@ namespace BergerMsfaApi.Controllers.Setup
             _dropdownService = dropdownService;
         }
 
-
-       
-
         [HttpGet("GetDropdownByTypeCd/{typeCode}")]
         public async Task<IActionResult> GetDropdownByTypeCd(string typeCode)
         {
-
             try
             {
                 if(string.IsNullOrEmpty(typeCode))
@@ -47,13 +45,31 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetDropdownByTypeCd")]
+        public async Task<IActionResult> GetDropdownByTypeCd([FromQuery] IList<string> typeCodes)
+        {
+            try
+            {
+                if (!typeCodes.Any())
+                {
+                    ModelState.AddModelError(nameof(typeCodes), "TypeCode Can Not Be Empty");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _dropdownService.GetDropdownByTypeCd(typeCodes);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("GetDropdownByTypeId/{typeId}")]
         public async Task<IActionResult> GetDropdownByTypeId(int typeId)
         {
-
             try
             {
-              
                 var result = await _dropdownService.GetDropdownByTypeId(typeId);
                 return OkResult(result);
             }
@@ -62,13 +78,12 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("CompanyList/{painterCallId}")]
         public async Task<IActionResult> CompanyList(int painterCallId)
         {
-
             try
             {
-
                 var result = await _dropdownService.GetCompanyList(painterCallId);
                 return OkResult(result);
             }

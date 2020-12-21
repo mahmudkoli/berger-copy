@@ -34,6 +34,7 @@ export class SaveELearningDocument {
     status: number;
     eLearningAttachmentFiles: File[];
     eLearningAttachmentUrls: string[];
+    eLearningAttachments: ELearningAttachment[];
     
     constructor(init?: Partial<SaveELearningDocument>) {
         Object.assign(this, init);
@@ -46,6 +47,7 @@ export class SaveELearningDocument {
         this.status = null;
         this.eLearningAttachmentFiles = [];
         this.eLearningAttachmentUrls = [];
+        this.eLearningAttachments = [];
     }
 }
 
