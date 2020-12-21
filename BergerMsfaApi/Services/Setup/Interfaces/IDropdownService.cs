@@ -14,6 +14,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
         Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index,int pageSize);
         Task<DropdownModel> GetDropdownById(int id);
         Task<IEnumerable<DropdownModel>> GetDropdownByTypeCd(string typeCode);
+        Task<IEnumerable<DropdownModel>> GetDropdownByTypeCd(IList<string> typeCodes);
         Task<IEnumerable<DropdownModel>> GetDropdownByTypeId(int typeId);
         Task<int> GetLastSquence(int id,int typeId);
         Task<IEnumerable<DropdownType>> GetDropdownTypeList();
