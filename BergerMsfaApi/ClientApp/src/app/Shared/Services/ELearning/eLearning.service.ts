@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../Common/common.service';
 import { APIResponse } from '../../Entity/Response/api-response';
 import { SaveELearningDocument } from '../../Entity/ELearning/eLearningDocument';
+import { SaveELearningAttachment } from '../../Entity/ELearning/eLearningAttachment';
 
 @Injectable({
     providedIn: 'root'
@@ -40,8 +41,20 @@ export class ELearningService {
     delete(id) {
       return this.http.delete<APIResponse>(`${this.ELearningsEndpoint}/${id}`);
     }
-  
-    activeInactive(id) {
-      return this.http.post<APIResponse>(`${this.ELearningsEndpoint}/activeInactive/${id}`, null);
+
+    addAttachmentFile(eLearning: SaveELearningAttachment) {
+      return this.http.post<APIResponse>(`${this.ELearningsEndpoint}/AddAttachmentFile`, this.commonService.toFormData(eLearning));
     }
+
+    addAttachmentLink(eLearning: SaveELearningAttachment) {
+      return this.http.post<APIResponse>(`${this.ELearningsEndpoint}/AddAttachmentLink`, eLearning);
+    }
+
+    deleteAttachment(id) {
+      return this.http.delete<APIResponse>(`${this.ELearningsEndpoint}/DeleteAttachment/id`);
+    }
+  
+    // activeInactive(id) {
+    //   return this.http.post<APIResponse>(`${this.ELearningsEndpoint}/activeInactive/${id}`, null);
+    // }
 }

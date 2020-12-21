@@ -1,0 +1,7 @@
+.strikeout {
+    text-decoration: line-through;
+}
+
+.non-strikeout {
+    text-decoration: none;
+}

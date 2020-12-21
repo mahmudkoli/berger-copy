@@ -39,5 +39,6 @@ namespace BergerMsfaApi.Models.ELearning
         public Status Status { get; set; }
         public IList<IFormFile> ELearningAttachmentFiles { get; set; }
         public IList<string> ELearningAttachmentUrls { get; set; }
+        public IList<ELearningAttachmentModel> ELearningAttachments { get; set; }
     }
 }
