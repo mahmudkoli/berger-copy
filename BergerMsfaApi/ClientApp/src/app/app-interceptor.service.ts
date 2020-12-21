@@ -47,7 +47,7 @@ export class AppInterceptorService implements HttpInterceptor {
         this.alertService.fnLoading(true);
         console.log('processing request', request);
         console.log('url', request.url);
-        debugger;
+        // debugger;
         let token = localStorage.getItem('bergermsfa');
 
         // local storege for ad
