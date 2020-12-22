@@ -27,6 +27,20 @@ namespace BergerMsfaApi.Controllers.Odata
            return Ok(x);
         }
 
-        
+        [HttpPost("invoicedetails")]
+        public async Task<IActionResult> GetInvoiceDetails(SalesDataSearchModel model)
+        {
+            var x = _saledata.GetInvoiceDetails(model);
+            return Ok(x);
+        }
+
+        [HttpPost("invoiceitemdetails")]
+        public async Task<IActionResult> GetInvoiceItemDetails(SalesDataSearchModel model)
+        {
+            var x = _saledata.GetInvoiceItemDetails(model);
+            return Ok(x);
+        }
+
+
     }
 }

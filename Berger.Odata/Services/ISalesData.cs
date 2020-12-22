@@ -9,5 +9,7 @@ namespace Berger.Odata.Services
     public interface ISalesData
     {
         Task<IEnumerable<SalesDataModel>> GetInvoiceHistory(SalesDataSearchModel model);
+        Task<dynamic> GetInvoiceDetails(SalesDataSearchModel model);
+        Task<dynamic> GetInvoiceItemDetails(SalesDataSearchModel model);
     }
 }

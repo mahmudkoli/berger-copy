@@ -105,11 +105,11 @@ namespace Berger.Odata.Services
             var data = await GetSalesData(filterQuery);
 
             data = data.Select(a => new SalesDataModel{InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount});
-            await GetInvoiceDetails(new SalesDataSearchModel());
+            //return  await GetInvoiceDetails(new SalesDataSearchModel());
             return data;
 
         }
-        public async Task<IEnumerable<SalesDataModel>> GetInvoiceDetails(SalesDataSearchModel model)
+        public async Task<dynamic> GetInvoiceDetails(SalesDataSearchModel model)
         {
             model.FromDate = "2011-09-01T00:00:00";
             model.ToDate = "2011-10-08T00:00:00";
@@ -143,8 +143,36 @@ namespace Berger.Odata.Services
                 Quantity = a.Quantity,
                 NetAmount = a.NetAmount
             });
-            return data;
+            return headerView;
 
+        }
+
+        public async Task<dynamic> GetInvoiceItemDetails(SalesDataSearchModel model)
+        {
+            model.FromDate = "2011-09-01T00:00:00";
+            model.ToDate = "2011-10-08T00:00:00";
+            //model.FromDate = DateTime.Now.ToString("s");
+            //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
+            model.CustomerNo = 24;
+            model.Division = 10;
+            model.InvoiceNo = "30199128";
+            var filterQuery =
+                $"&$filter={DataColumnDef.CustomerNoSold} eq '{model.CustomerNo}' " +
+                //$"and {DataColumnDef.Division} eq '{model.Division}' " +
+                $"and {DataColumnDef.Date} gt datetime'{model.FromDate}' " +
+                $"and {DataColumnDef.Date} lt datetime'{model.ToDate}' " +
+                $"and {DataColumnDef.InvoiceNo} eq '{model.InvoiceNo}'";
+
+            var data = await GetSalesData(filterQuery);
+
+            var itemDetails = data.Select(a => new
+            {
+                Matarial = a.MatarialBrand,
+                MatarialDesc = a.MatarialName,
+                Quantity = a.Quantity,
+                NetAmount = a.NetAmount
+            });
+            return itemDetails;
         }
     }
 }
