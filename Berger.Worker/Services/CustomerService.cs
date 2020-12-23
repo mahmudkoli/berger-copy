@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.HttpClient;
+using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
-using Berger.Worker.JSONParser;
 using Berger.Worker.Query;
 using Berger.Worker.ViewModel;
 using BergerMsfaApi.Extensions;
@@ -40,8 +41,10 @@ namespace Berger.Worker.Services
             {
                 
                 string url = _query.GetAllCustomer();
+                string username = "DEV_ODATA";
+                string password = "Missi@n2020";
                 _logger.LogInformation($"{DateTime.Now} URL Building Successful... {url}");
-                var responseBody = _httpService.GetHttpResponse(url);
+                var responseBody = _httpService.GetHttpResponse(url, username, password);
 
                 _logger.LogInformation($"Got http response.. Parsing Started");
                 var parsedDataFromApi = Parser<CustomerModel>.ParseJson(responseBody);

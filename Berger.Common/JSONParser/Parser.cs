@@ -1,12 +1,8 @@
-﻿
-using System.Collections.Generic;
-using System.IO;
-using Berger.Worker.ViewModel;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-
-namespace Berger.Worker.JSONParser
+namespace Berger.Common.JSONParser
 {
     public static  class Parser<TEntity> where TEntity : class
     {
