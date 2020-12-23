@@ -72,12 +72,12 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	toggleActiveInactive(id) {
-		const actInSubscription = this.eLearningDocumentService.activeInactive(id).subscribe(res => {
-			this.loadELearningDocumentsPage();
-		});
-		this.subscriptions.push(actInSubscription);
-	}
+	// toggleActiveInactive(id) {
+	// 	const actInSubscription = this.eLearningDocumentService.activeInactive(id).subscribe(res => {
+	// 		this.loadELearningDocumentsPage();
+	// 	});
+	// 	this.subscriptions.push(actInSubscription);
+	// }
 
 	editELearningDocument(id) {
 		this.router.navigate(['/eLearning/edit', id]);

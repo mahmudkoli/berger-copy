@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http;
-using System.Text;
-using Microsoft.Extensions.Logging;
 
-namespace Berger.Worker.Common
+namespace Berger.Common.HttpClient
 {
     public class HttpClientService:IHttpClientService
     {
@@ -15,12 +13,12 @@ namespace Berger.Worker.Common
             _logger = logger;
         }
 
-        public string GetHttpResponse(string url)
+        public string GetHttpResponse(string url, string username, string password)
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var RequestMessage = HttpClientAuthentication.Authenticate(url);
+                System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+                var RequestMessage = HttpClientAuthentication.Authenticate(url,username, password);
                 _logger.LogInformation($"Http request started with authentication");
                 var task = client.SendAsync(RequestMessage);
                 var response = task.Result;
