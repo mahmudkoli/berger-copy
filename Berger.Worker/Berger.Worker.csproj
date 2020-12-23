@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
     <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="JSONParser\" />
+  </ItemGroup>
 </Project>
