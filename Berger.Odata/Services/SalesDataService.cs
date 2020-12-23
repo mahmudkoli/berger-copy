@@ -127,7 +127,6 @@ namespace Berger.Odata.Services
 
             var data = await GetSalesData(filterQuery);
 
-            var firstView = data.Select(a => new SalesDataModel { InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount });
             var headerView = data.Select(a => new SalesDataModel
             {
                 CustomerName = a.CustomerName,
@@ -136,13 +135,6 @@ namespace Berger.Odata.Services
                 NetAmount = data.Sum(b=> Convert.ToDecimal(b.NetAmount)).ToString(),
             });
 
-            var itemDetails = data.Select(a => new
-            {
-                Matarial = a.MatarialBrand, 
-                MatarialDesc = a.MatarialName,
-                Quantity = a.Quantity,
-                NetAmount = a.NetAmount
-            });
             return headerView;
 
         }
