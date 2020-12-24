@@ -1404,6 +1404,17 @@ namespace Berger.Data.Migrations
                     b.ToTable("Depots");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.Division", b =>
+                {
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("DivisionCode")
+                        .HasColumnType("float");
+
+                    b.ToTable("Divisions");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
                 {
                     b.Property<int>("Id")

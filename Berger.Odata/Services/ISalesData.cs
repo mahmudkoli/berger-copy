@@ -11,5 +11,8 @@ namespace Berger.Odata.Services
         Task<IEnumerable<SalesDataModel>> GetInvoiceHistory(SalesDataSearchModel model);
         Task<dynamic> GetInvoiceDetails(SalesDataSearchModel model);
         Task<dynamic> GetInvoiceItemDetails(SalesDataSearchModel model);
+        Task<dynamic> GetBrandWiseMTDDetails(SalesDataSearchModel model);
+
+
     }
 }

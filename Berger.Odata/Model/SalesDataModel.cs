@@ -57,6 +57,7 @@ namespace Berger.Odata.Model
         public string SalesOrderNo { get; set; }
         public string ItemCategory { get; set; }
         public string DistributionChannel { get; set; }
-        
+        public string Brand { get; set; }
+
     }
 }

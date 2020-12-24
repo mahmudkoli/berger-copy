@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Odata.Common;
 using Berger.Odata.Model;
-using ODataHttpClient;
-using ODataHttpClient.Models;
 
 namespace Berger.Odata.Services
 {
@@ -25,7 +20,7 @@ namespace Berger.Odata.Services
 
         public async Task<IEnumerable<SalesDataModel>> GetSalesData(string filter)
         {
-            
+
             string fullUrl =
                 $"{OdataUrlBuilder.SalesUrl}{filter}";
 
@@ -37,29 +32,29 @@ namespace Berger.Odata.Services
                 CompanyCode = a.Bukrs,
                 Division = a.Spart,
                 MatarialBrand = a.Matkl,
-                MatrialCode =  a.Matnr,
+                MatrialCode = a.Matnr,
                 UnitOfMeasurement = a.Gk,
-                SalesOrg =  a.Vkorg,
-                CustomerNoSold =  a.Kunrg,
+                SalesOrg = a.Vkorg,
+                CustomerNoSold = a.Kunrg,
                 CancelledInvoiceNo = a.Sfakn,
                 CustomerNoShip = a.Kunnr_Sh,
-                EmployeeNumber =  a.PayerBp,//
+                EmployeeNumber = a.PayerBp,//
                 InvoiceNo = a.Vbeln,
                 DealerOrSubDealer = a.PayResponsible,//
                 PriceGroup = a.Konda,
                 CustomerGroup = a.Kdgrp,
-                SalesDistrict =  a.Bzirk,
+                SalesDistrict = a.Bzirk,
                 SalesOffice = a.VkburC,//
-                SalesGroup =  a.VkgrpC,//
+                SalesGroup = a.VkgrpC,//
                 CustomerClassification = a.Kukla,
-                BillingType =  a.Fkart,
+                BillingType = a.Fkart,
                 CustomerNumber = a.Payer,
-                Date =a.Fkdat,
+                Date = a.Fkdat,
                 LineNumber = a.Posnr,
                 UnitOfMeasure = a.Meins,
                 VolumeUnit = a.Voleh,
                 Territory = a.Territory,
-                Zone =  a.Szone,
+                Zone = a.Szone,
                 CustomerName = a.Cname,
                 MobileNo = a.MobileNo,
                 DivisionName = a.SpartText,//
@@ -82,7 +77,8 @@ namespace Berger.Odata.Services
                 OutboundDeliveryDocNo = a.Vgbel,
                 SalesOrderNo = a.Aubel,
                 ItemCategory = a.Pstyv,
-                DistributionChannel = a.Vtweg
+                DistributionChannel = a.Vtweg,
+                Brand = a.Wgbez
             });
 
             return data;
@@ -104,7 +100,7 @@ namespace Berger.Odata.Services
 
             var data = await GetSalesData(filterQuery);
 
-            data = data.Select(a => new SalesDataModel{InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount});
+            data = data.Select(a => new SalesDataModel { InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount });
             //return  await GetInvoiceDetails(new SalesDataSearchModel());
             return data;
 
@@ -132,7 +128,7 @@ namespace Berger.Odata.Services
                 CustomerName = a.CustomerName,
                 DivisionName = a.DivisionName,
                 Date = a.Date,
-                NetAmount = data.Sum(b=> Convert.ToDecimal(b.NetAmount)).ToString(),
+                NetAmount = data.Sum(b => Convert.ToDecimal(b.NetAmount)).ToString(),
             });
 
             return headerView;
@@ -166,5 +162,66 @@ namespace Berger.Odata.Services
             });
             return itemDetails;
         }
+
+        public async Task<dynamic> GetBrandWiseMTDDetails(SalesDataSearchModel model)
+        {
+
+
+
+            var currentDate = new DateTime(2011 , 02 ,10);
+
+            var filterQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
+                                           + $"&$top={10}";
+
+            var data = await GetSalesData(filterQuery);
+           
+            var result = data
+                .GroupBy(g => g.Brand)
+                .Select(s =>
+                {
+
+                    var LYMTD = s
+                            //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetLYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetLYLD().Date)
+                            .Sum(s => Convert.ToDouble(s.Volume));
+
+                    var CYMTD = s
+                            //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetCYLD().Date)
+                            .Sum(s => Convert.ToDouble(s.Volume));
+
+                    var GROWTH = (LYMTD - CYMTD);
+
+                    return new Dictionary<string, object>
+                    {
+                        //{ "Brand", s.Key },
+                        //{ "LY MTD",LYMTD},
+                        //{ "CY MTD", CYMTD},
+                        //{ "Growth%",GROWTH},
+                        //{
+                        //    currentDate.GetMonthName(-1),
+                        //     s
+                        //    // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-1).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-1).GetCYLD().Date)
+                        //     .Sum(s => Convert.ToDouble(s.Volume))
+                        //},
+                        //{    currentDate.GetMonthName(-2),
+                        //     s
+                        // //    .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-2).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-2).GetCYLD().Date)
+                        //    .Sum(s => Convert.ToDouble(s.Volume))
+                        //},
+                        //{   currentDate.GetMonthName(-3),
+                        //    s
+                        //   // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-3).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-3).GetCYLD().Date)
+                        //    .Sum(s => Convert.ToDouble(s.Volume))
+                        //},
+                        //{ "Date",s.FirstOrDefault(f => f.Brand == s.Key).Date},
+                    };
+
+
+                });
+
+
+            return result.ToList();
+        }
     }
+
 }
+

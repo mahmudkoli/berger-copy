@@ -41,6 +41,12 @@ namespace BergerMsfaApi.Controllers.Odata
             return Ok(x);
         }
 
-
+        [HttpPost("brandwisemtddetails")]
+        public async Task<IActionResult> GetBrandwiseMTDetails(SalesDataSearchModel model)
+        {
+            
+            var x = _saledata.GetBrandWiseMTDDetails(model);
+            return Ok(x);
+        }
     }
 }
