@@ -54,7 +54,7 @@ export class UserBoxComponent implements OnInit {
 
   logout() {
     localStorage.clear();
-    this.route.navigate['/login/loginboxed'];
+    this.route.navigate(['/login/loginboxed']);
   }
 
  

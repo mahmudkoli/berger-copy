@@ -11,7 +11,6 @@ using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -59,12 +58,13 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                     find.ApprovedDate = DateTime.Now;
                     find.ApprovedById = AppIdentity.AppUser.UserId;
                 }
-                if (PlanStatus.Rejected == (PlanStatus)model.Status)
+                else if (PlanStatus.Rejected == (PlanStatus)model.Status)
                 {
                     find.RejectedDate = DateTime.Now;
                     find.RejectedBy = AppIdentity.AppUser.UserId;
                 }
                 find.Comment = model.Comment;
+                
                 await _journeyPlanMasterSvc.UpdateAsync(find);
                 return true;
             }
@@ -120,7 +120,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Id = s.plan.Id,
                 EmployeeId = s.emp.EmployeeId,
                 Comment = s.plan.Comment,
-                PlanDate = s.plan.PlanDate.ToString("yyyy/MM/dd"),
+                PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.plan.Status,
                 PlanStatus = s.plan.PlanStatus,
                 PlanStatusInText = s.plan.PlanStatus.ToString(),
@@ -173,7 +173,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Territory = dealer.Territory,
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
-                                        IsFocused = fd.Code > 0 ? true : false,
+                                        IsFocused = (fd.Code > 0 && fd.ValidTo.Date>=DateTime.Now.Date)  ? true : false,
                                         VisitDate = planDetail.VisitDate
                                     }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
 
@@ -222,7 +222,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
             await _journeyPlanDetailSvc.DeleteAsync(f => f.PlanId == findPlan.Id);
             findPlan.PlanStatus = PlanStatus.Edited;
-            findPlan.PlanDate = model.VisitDate;
+            findPlan.PlanDate = findPlan.PlanDate;
             await _journeyPlanMasterSvc.UpdateAsync(findPlan);
             foreach (var id in model.Dealers)
             {
@@ -242,10 +242,12 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             return result;
 
         }
-        public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id)
+        public async Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(string date)
         {
+  
             PortalCreateJouneryModel result = new PortalCreateJouneryModel();
-            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == Id && f.EmployeeId == AppIdentity.AppUser.EmployeeId);
+            var find = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.PlanDate == DateTime.Parse(date).Date && f.EmployeeId == AppIdentity.AppUser.EmployeeId);
+            if (find == null) return null;
             result.Id = find.Id;
             result.Dealers = _journeyPlanDetailSvc.FindAll(s => s.PlanId == find.Id).Select(s => s.DealerId).ToArray();
             result.VisitDate = find.PlanDate;
@@ -297,13 +299,11 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Id = s.Id,
                 EmployeeId = s.EmployeeId,
                 Comment = s.Comment,
-                PlanDate = s.PlanDate.ToString("yyyy/MM/dd"),
+                PlanDate = s.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.Status,
                 PlanStatus = s.PlanStatus,
                 PlanStatusInText = s.PlanStatus.ToString(),
                 EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FirstName} {s.LastName}").FirstOrDefault()
-
-              
 
             }).ToList();
 
@@ -324,7 +324,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         public async Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId)
         {
             var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >= DateTime.Now.Date);
-
+            var d = _customerGroupSvc.FindAll(f => f.Description.StartsWith("Subdealer"));
             var result = (from plan in planList
                           join planDetail in _journeyPlanDetailSvc.GetAll() on plan.Id equals planDetail.PlanId
                           join dealer in _dealerInforSvc.GetAll()
@@ -333,7 +333,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                           join f in _focusDealerSvc.GetAll() on planDetail.DealerId equals f.Code into leftJoin
                           from fd in leftJoin.DefaultIfEmpty()
 
-                          join cg in _customerGroupSvc.GetAll().Where(f => f.Description.StartsWith("Subdealer"))
+                          join cg in _customerGroupSvc.FindAll(f => f.Description.StartsWith("Subdealer"))
                           on dealer.AccountGroup equals cg.CustomerAccountGroup into custGroups
                           from custGroup in custGroups.DefaultIfEmpty()
 
@@ -345,9 +345,11 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                               Territory = dealer.Territory,
                               ContactNo = dealer.ContactNo,
                               Address = dealer.Address,
-                              IsFocused = fd != null ? ((fd.Code > 0) ? true : false) : false,
-                              VisitDate = plan.PlanDate.Date,
-                              IsSubdealer = custGroup.Description != null ? true : false,
+                              IsFocused = fd != null ? ((fd.Code > 0) && fd.ValidTo.Date >= DateTime.Now.Date ? true : false) : false,
+                              PlanDate = plan.PlanDate.Date.ToString("yyyy-MM-dd"),
+                              IsSubdealer = custGroup?.Description != null ? true : false,
+                              
+                              
 
                           })
                           .GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList();
@@ -368,18 +370,20 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             {
                 Id = s.Id,
                 EmployeeId = s.EmployeeId,
-                PlanDate = s.PlanDate,
+                PlanDate = s.PlanDate.Date.ToString("yyyy-MM-dd"),
                 PlanStatus = s.PlanStatus,
                 DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
                                     join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == s.Id)
                                     on dealer.Id equals planDetail.DealerId
 
-                                    join f in _focusDealerSvc.GetAll() on planDetail.DealerId equals f.Code into leftJoin
+                                    join f in _focusDealerSvc.GetAll().Where(f=>f.ValidTo.Date >=DateTime.Now.Date) on  new { a = planDetail.DealerId, b = employeeId } equals new { a = f.Code, b = f.EmployeeId }  into leftJoin
+                                    
                                     from fd in leftJoin.DefaultIfEmpty()
-
+                                    
                                     join cg in _customerGroupSvc.GetAll().Where(f => f.Description.StartsWith("Subdealer"))
                                     on dealer.AccountGroup equals cg.CustomerAccountGroup into custGroups
                                     from custGroup in custGroups.DefaultIfEmpty()
+                                  
 
                                     select new AppDealerInfoModel
                                     {
@@ -389,8 +393,8 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         Territory = dealer.Territory,
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
-                                        IsFocused = fd != null ? ((fd.Code > 0) ? true : false) : false,
-                                        VisitDate = s.PlanDate.Date,
+                                        IsFocused = fd != null ? ((fd.Code > 0) && fd.ValidTo.Date>=DateTime.Now.Date ? true : false) : false,
+                                        PlanDate = s.PlanDate.Date.ToString("yyyy-MM-dd"),
                                         IsSubdealer = custGroup.Description != null ? true : false,
                                         PlandId=planDetail.PlanId
                                     }).ToList()

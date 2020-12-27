@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -137,5 +138,21 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("GetDivisionList")]
+        public async Task<IActionResult> GetDivisionList()
+        {
+            try
+            {
+               
+                var result = await _commonSvc.GetDivisionList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
+       
     }
 }

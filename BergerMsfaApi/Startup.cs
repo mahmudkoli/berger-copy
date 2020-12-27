@@ -25,6 +25,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.AutoRegisterDi;
 using AutoMapper;
+using Berger.Common.HttpClient;
+using Berger.Odata.Services;
 
 namespace BergerMsfaApi
 {
@@ -73,6 +75,8 @@ namespace BergerMsfaApi
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
+            services.AddScoped<ISalesData, SalesDataService>();
+            services.AddScoped<IHttpClientService, HttpClientService>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Repository"))
