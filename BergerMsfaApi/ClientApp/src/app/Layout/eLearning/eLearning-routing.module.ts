@@ -6,6 +6,8 @@ import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form
 import { ELearningFormNewComponent } from './eLearning-form-new/eLearning-form-new.component';
 import { ELearningListComponent } from './eLearning-list/eLearning-list.component';
 import { ELearningComponent } from './eLearning.component';
+import { QuestionFormComponent } from './question-form/question-form.component';
+import { QuestionListComponent } from './question-list/question-list.component';
 
 
 const routes: Routes = [
@@ -36,6 +38,24 @@ const routes: Routes = [
         component: ELearningFormEditComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Edit ELearning', },
+      },
+      {
+        path: 'question/list',
+        component: QuestionListComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Question', },
+      },
+      {
+        path: 'question/new',
+        component: QuestionFormComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'New Question', },
+      },
+      {
+        path: 'question/edit/:id',
+        component: QuestionFormComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Edit Question', },
       },
     ],
 

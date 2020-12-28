@@ -12,13 +12,19 @@ import { ELearningRoutingModule } from './eLearning-routing.module';
 import { FileUploadModule } from 'primeng/fileupload';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form-edit.component';
+import { QuestionListComponent } from './question-list/question-list.component';
+import { QuestionFormComponent } from './question-form/question-form.component';
+import { ModalQuestionOptionFormComponent } from './modal-question-option-form/modal-question-option-form.component';
 
 @NgModule({
   declarations: [
     ELearningListComponent,
     ELearningFormNewComponent,
     ELearningFormEditComponent,
-    ELearningComponent
+    QuestionListComponent,
+    QuestionFormComponent,
+    ELearningComponent,
+    ModalQuestionOptionFormComponent
   ],
   imports: [
     CommonModule,
@@ -32,6 +38,7 @@ import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form
     FileUploadModule
   ],
   entryComponents: [
+    ModalQuestionOptionFormComponent
   ]
 })
 export class ELearningModule { }
