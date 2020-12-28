@@ -12,21 +12,28 @@
   background: url('./assets/images/logo.png') no-repeat;
 }
 
-.app-login-box {
-  .app-logo {
-    margin-bottom: $layout-spacer-lg;
+.app-login {
+  width: 500px;
+  padding: 50px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.1);
+  .login-title {
+    display: block;
+    font-size: 30px;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 30px;
   }
-
-  h4 {
-    margin-bottom: $layout-spacer-x;
-    font-weight: normal;
-    background: #2bbbad;
-    color: #fff;
-    padding: 15px;
-    border-radius: 5px;
-
-    span {
-      font-size: $font-size-lg;
-    }
+  .form-control-login{
+    height: 68px;
+  }
+  .btn-login{
+    height: 68px;
+    background-color: #4272d7;
+    padding: 20px;
+  }
+  .not-account{
+    color: #999999;
   }
 }
