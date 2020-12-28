@@ -19,5 +19,6 @@ namespace Berger.Odata.Common
         public static string InvoiceNo = "vbeln";
         public static string DealerOrSubDealer = "pay_responsible";
         public static string Date = "fkdat";
+        public static string Brand = "Wgbez";
     }
 }
