@@ -18,10 +18,10 @@
     top: 6px;
 }
 .notification-details .sidebar-list .list-item:hover{
-    color: #2bbbad;
+    color: #4272d7;
 }
 .notification-details .sidebar-list .list-item.active{
-    color: #2bbbad;
+    color: #4272d7;
 }
 .notification-details .noti-content{
     flex: 1;
