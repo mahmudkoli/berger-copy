@@ -44,8 +44,14 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreditControllAreaId")
+                    b.Property<int>("CreditControlAreaId")
                         .HasColumnType("int");
+
+                    b.Property<int>("CustomerTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ManualNumber")
                         .HasColumnType("nvarchar(max)");
@@ -63,9 +69,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentFrom")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PaymentMethodId")
@@ -88,7 +91,9 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreditControllAreaId");
+                    b.HasIndex("CreditControlAreaId");
+
+                    b.HasIndex("CustomerTypeId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -1191,6 +1196,19 @@ namespace Berger.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("JourneyPlanMasters");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CreditControlArea", b =>
+                {
+                    b.Property<int>("CreditControlAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CreditControlAreaId");
+
+                    b.ToTable("CreditControlAreas");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CustomerGroup", b =>
@@ -3104,9 +3122,15 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.CollectionEntry.Payment", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "CreditControllArea")
+                    b.HasOne("Berger.Data.MsfaEntity.Master.CreditControlArea", "CreditControlArea")
                         .WithMany()
-                        .HasForeignKey("CreditControllAreaId")
+                        .HasForeignKey("CreditControlAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "CustomerType")
+                        .WithMany()
+                        .HasForeignKey("CustomerTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
