@@ -1,97 +1,97 @@
 
-<div *ngIf="journeyPlan" class="container bootstrap snippet">
-    <div class="row">
-        <div class="col-sm-10">
-            Plan Date : {{journeyPlan?.planDate|date}}
-            <div class="row">
-                <div class="col-md-6">
-                    <p>Employee Name: {{journeyPlan.employee.firstName}}</p>
-                    <p>Phone: {{journeyPlan.employee.PhoneNumber}}</p>
-                    <p>Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
-
-                    <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
-                    <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->
-                    <!--<div>
-                        Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
-                            <option [value]="-1">Select Status</option>
-                            <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
-                        </select>
-                    </div>-->
-                </div>
-                <div class="col-md-6">
-                    <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
-                    <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
-                    <p> <label>Comment: {{journeyPlan.comment}}</label> </p>
-
+    <div *ngIf="journeyPlan" class="container bootstrap snippet">
+        <div class="row">
+            <div class="col-sm-10">
+                Plan Date : {{journeyPlan?.planDate|date}}
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Employee Name: {{journeyPlan.employee.firstName}}</p>
+                        <p>Phone: {{journeyPlan.employee.PhoneNumber}}</p>
+                        <p>Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
+    
+                        <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
+                        <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->
+                        <!--<div>
+                            Change Status : <select #mySelect class="form-control d-inline-block" (change)="onStatusChange(mySelect,journeyPlan)">
+                                <option [value]="-1">Select Status</option>
+                                <option *ngFor="let key of statusKeys" [value]="key">{{ PlanStatusEnumNotEdited[key] }}</option>
+                            </select>
+                        </div>-->
+                    </div>
+                    <div class="col-md-6">
+                        <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
+                        <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
+                        <p> <label>Comment: {{journeyPlan.comment}}</label> </p>
+    
+                    </div>
                 </div>
             </div>
+    
         </div>
-
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approve</button>
-            <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-2">Reject</button>
+        <div class="row">
+            <div class="col-md-3">
+                <button *ngIf="showApprovedBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approve</button>
+                <button *ngIf="showRejectedBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-danger ml-2">Reject</button>
+            </div>
+            <div class="col-md-5">
+                <textarea style="display:inline" *ngIf="showApprovedBtn || showRejectedBtn" [(ngModel)]="journeyPlanStatus.comment" placeholder="comment...." class="form-control"></textarea>
+            </div>
+    
         </div>
-        <div class="col-md-5">
-            <textarea style="display:inline" *ngIf="showApprovedBtn || showRejectedBtn" [(ngModel)]="journeyPlanStatus.comment" placeholder="comment...." class="form-control"></textarea>
-        </div>
-
-    </div>
-    <br />
-    <div class="row">
-
-        <p-table #dt [value]="journeyPlan?.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','visitDate']">
-            <ng-template pTemplate="caption">
-                <div class="table-header">
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            Journey Plan Dealer List
-                        </div>
-
-                        <div class="col-md-4 offset-md-4">
-
-                            <div>
-                                <span class="p-input-icon-right m-2 pull-right">
-                                    <i class="pi pi-search"></i>
-                                    <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
-                                </span>
+        <br />
+        <div class="row">
+    
+            <p-table #dt [value]="journeyPlan?.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','visitDate']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header">
+    
+                        <div class="row">
+                            <div class="col-md-4">
+                                Journey Plan Dealer List
+                            </div>
+    
+                            <div class="col-md-4 offset-md-4">
+    
+                                <div>
+                                    <span class="p-input-icon-right m-2 pull-right">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                                    </span>
+                                </div>
                             </div>
                         </div>
+    
+    
                     </div>
-
-
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-
-                    <th pSortableColumn="'customerNo'">Customer No <p-sortIcon field="'customerNo'"></p-sortIcon></th>
-                    <th pSortableColumn="'customerName'">Customer Name <p-sortIcon field="'customerName'"></p-sortIcon></th>
-                    <th pSortableColumn="'contactNo'">Contact No <p-sortIcon field="'contactNo'"></p-sortIcon></th>
-                    <th pSortableColumn="'address'">Address <p-sortIcon field="'address'"></p-sortIcon></th>
-                    <th pSortableColumn="territory">Territory<p-sortIcon field="territory"></p-sortIcon></th>
-
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-jplan>
-                <tr>
-
-                    <td>{{jplan.customerNo}}</td>
-                    <td>{{jplan.customerName}} <span class="badge badge-pill badge-primary">{{jplan.isFocused?"Focused":""}}</span></td>
-                    <td>{{jplan.contactNo}}</td>
-                    <td>{{jplan.address}}</td>
-                    <td>{{jplan.territory}}</td>
-
-
-                </tr>
-            </ng-template>
-            <br />
-            <ng-template pTemplate="footer">
-                <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To Calender</button>
-            </ng-template>
-        </p-table>
-
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+    
+                        <th pSortableColumn="'customerNo'">Customer No <p-sortIcon field="'customerNo'"></p-sortIcon></th>
+                        <th pSortableColumn="'customerName'">Customer Name <p-sortIcon field="'customerName'"></p-sortIcon></th>
+                        <th pSortableColumn="'contactNo'">Contact No <p-sortIcon field="'contactNo'"></p-sortIcon></th>
+                        <th pSortableColumn="'address'">Address <p-sortIcon field="'address'"></p-sortIcon></th>
+                        <th pSortableColumn="territory">Territory<p-sortIcon field="territory"></p-sortIcon></th>
+    
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-jplan>
+                    <tr>
+    
+                        <td>{{jplan.customerNo}}</td>
+                        <td>{{jplan.customerName}} <span class="badge badge-pill badge-primary">{{jplan.isFocused?"Focused":""}}</span></td>
+                        <td>{{jplan.contactNo}}</td>
+                        <td>{{jplan.address}}</td>
+                        <td>{{jplan.territory}}</td>
+    
+    
+                    </tr>
+                </ng-template>
+                <br />
+                <ng-template pTemplate="footer">
+                    <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To Calender</button>
+                </ng-template>
+            </p-table>
+    
+        </div>
     </div>
-</div>

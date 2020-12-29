@@ -190,3 +190,35 @@
     -moz-appearance: none;
     -webkit-appearance:none;
 }
+.p-datatable .p-datatable-thead > tr > th {
+  font-size: 14px;
+  border: 1px solid #2196F3;
+  color: #fff;
+  background: #2196F3;
+  padding: 12px;
+}
+.p-datatable .p-sortable-column .p-sortable-column-icon {
+  color: #ffffff;
+}
+.p-datatable .p-sortable-column:not(.p-highlight):hover .p-sortable-column-icon {
+  color: #ffffff;
+}
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+  color: #ffffff;
+}
+.p-datatable .p-sortable-column:not(.p-highlight):hover {
+  border: 1px solid #2196F3;
+  color: #fff;
+  background: #2196F3;
+}
+.p-datatable .p-sortable-column.p-highlight {
+  background: #2196F3;
+  color: #ffffff;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  font-size: 14px;
+  padding: 5px 8px;
+}
+.p-datatable .p-datatable-footer{
+  padding:0;
+}

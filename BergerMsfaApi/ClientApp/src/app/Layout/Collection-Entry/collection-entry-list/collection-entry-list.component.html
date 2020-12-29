@@ -1,16 +1,15 @@
-
 <div class="col col-lg-12">
-
-    <div class="col-md-4">
-        <div class="position-relative form-group">
-            <label for="name">Payment From</label>
-            <select required class="form-control" [ngModel]="selectedType" (ngModelChange)="onChange($event)" >
-                <option *ngFor="let option of customerTypeList" [value]="option.key">{{option.key}}-{{option.type}}</option>
-            </select>
+    <div class="p-3 bg-white mb-3 rounded">
+        <div class="col-md-4 pl-0">
+            <div class="position-relative form-group mb-0">
+                <label class="fw-500" for="name">Payment From</label>
+                <select required class="form-control" [ngModel]="selectedType" (ngModelChange)="onChange($event)">
+                    <option *ngFor="let option of customerTypeList" [value]="option.key">{{option.key}}-{{option.type}}
+                    </option>
+                </select>
+            </div>
         </div>
     </div>
-   
-    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="gridDataSource"
-                 >
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="gridDataSource">
     </app-p-table>
 </div>
