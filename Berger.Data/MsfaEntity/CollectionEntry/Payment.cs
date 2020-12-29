@@ -1,5 +1,6 @@
 ﻿
 using Berger.Data.Common;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,8 +8,11 @@ namespace Berger.Data.MsfaEntity.CollectionEntry
 {
     public class Payment:AuditableEntity<int>
     {
+        public int CustomerTypeId { get; set; }
 
-        public string PaymentFrom { get; set; }
+        [ForeignKey("CustomerTypeId")]
+        public DropdownDetail CustomerType { get; set; }
+      
         public string Code { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
@@ -25,10 +29,10 @@ namespace Berger.Data.MsfaEntity.CollectionEntry
 
         [ForeignKey("PaymentMethodId")]
         public DropdownDetail PaymentMethod{ get; set; }
-        public int CreditControllAreaId { get; set; }
-
-        [ForeignKey("CreditControllAreaId")]
-        public DropdownDetail  CreditControllArea { get; set; }
+        public int CreditControlAreaId { get; set; }
+        [ForeignKey("CreditControlAreaId")]
+        public CreditControlArea CreditControlArea { get; set; }
+        public string EmployeeId { get; set; }
     }
 
 }

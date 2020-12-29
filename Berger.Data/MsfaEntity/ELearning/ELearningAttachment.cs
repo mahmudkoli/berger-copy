@@ -9,7 +9,7 @@ namespace Berger.Data.MsfaEntity.ELearning
         public string Path { get; set; }
         public long Size { get; set; }
         public string Format { get; set; }
-        public AttachmentType Type { get; set; }
+        public EnumAttachmentType Type { get; set; }
         public int ELearningDocumentId { get; set; }
         public ELearningDocument ELearningDocument { get; set; }
 
@@ -18,7 +18,7 @@ namespace Berger.Data.MsfaEntity.ELearning
 
         }
 
-        public ELearningAttachment(string name, string path, long size, string format, AttachmentType type)
+        public ELearningAttachment(string name, string path, long size, string format, EnumAttachmentType type)
         {
             Name = name;
             Path = path;
@@ -27,14 +27,14 @@ namespace Berger.Data.MsfaEntity.ELearning
             Type = type;
         }
 
-        public ELearningAttachment(string name, string path, AttachmentType type)
+        public ELearningAttachment(string name, string path, EnumAttachmentType type)
         {
             Name = name;
             Path = path;
             Type = type;
         }
 
-        public ELearningAttachment(string path, AttachmentType type)
+        public ELearningAttachment(string path, EnumAttachmentType type)
         {
             Path = path;
             Type = type;

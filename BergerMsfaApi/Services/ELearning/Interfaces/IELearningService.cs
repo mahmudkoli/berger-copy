@@ -15,6 +15,7 @@ namespace BergerMsfaApi.Services.ELearning.Interfaces
         Task<ELearningDocumentModel> GetByIdAsync(int id);
         Task<IList<ELearningDocumentModel>> GetAllAsync(int pageIndex, int pageSize);
         Task<int> DeleteAsync(int eLearningDocumentId);
+        Task<object> GetAllForSelectAsync();
         Task<ELearningAttachmentModel> AddAttachmentAsync(int eLearningDocumentId, IFormFile file);
         Task<ELearningAttachmentModel> AddAttachmentAsync(int eLearningDocumentId, string link);
         Task<int> DeleteAttachmentAsync(int eLearningAttachmentId);
