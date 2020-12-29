@@ -2,7 +2,6 @@
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -42,21 +41,17 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             }
         }
 
-        [HttpGet("GetCollectionByType/{paymentFrom}")]
-        public async Task<IActionResult> GetCollectionByType(string paymentFrom)
+        [HttpGet("GetCollectionByType/{CustomerTypeId}")]
+        public async Task<IActionResult> GetCollectionByType(int CustomerTypeId)
         {
 
             try
             {
-                if (string.IsNullOrEmpty(paymentFrom))
-                {
-                    ModelState.AddModelError(nameof(paymentFrom), "PaymentFrom Can Not Be Empty");
-                    return ValidationResult(null);
-                }
-                var result = await _paymentService.GetCollectionByType(paymentFrom.Trim());
+               
+                var result = await _paymentService.GetCollectionByType(CustomerTypeId);
                 if (result.Count() == 0)
                 {
-                    ModelState.AddModelError(nameof(paymentFrom), "Collection Not Found");
+                    ModelState.AddModelError(nameof(CustomerTypeId), "Collection Not Found");
                     return ValidationResult(ModelState);
                 }
                 return OkResult(result);
@@ -119,6 +114,21 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             }
             catch (Exception ex)
             {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetCreditControlArea")]
+        public async Task<IActionResult> GetCreditControlArea()
+        {
+            try
+            {
+                var result = await _paymentService.GetCreditControlAreaList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
                 return ExceptionResult(ex);
             }
         }

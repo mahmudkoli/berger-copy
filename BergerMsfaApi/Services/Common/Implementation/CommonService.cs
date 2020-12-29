@@ -30,6 +30,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<SaleOffice> _saleOfficeSvc;
         private readonly IRepository<FocusDealer> _focusDealerSvc;
         private readonly IRepository<UserInfo> _userInfosvc;
+        private readonly IRepository<Division> _divisionSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
 
@@ -41,7 +42,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<JourneyPlanDetail> journeyPlanDetailSvc,
             IRepository<Depot> depotSvc,
             IRepository<FocusDealer> focusDealerSvc,
-            IRepository<UserInfo> userInfosvc
+            IRepository<UserInfo> userInfosvc,
+            IRepository<Division> divisionSvc
 
             )
         {
@@ -55,6 +57,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
             _depotSvc = depotSvc;
             _userInfosvc = userInfosvc;
+            _divisionSvc = divisionSvc;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -81,6 +84,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
          
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
+        }
+        public async Task<IEnumerable<Division>> GetDivisionList()
+        {
+            // var result1 = new List<UserInfoModel>();
+            // var u = _userInfosvc.GetAll().ToList();
+            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
+
+            return await _divisionSvc.GetAllAsync();
+
+
         }
         private List<UserInfoModel> Getuser( List<UserInfoModel> result ,string employeeId)
         {

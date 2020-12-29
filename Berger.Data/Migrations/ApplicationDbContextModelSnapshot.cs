@@ -44,8 +44,14 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreditControllAreaId")
+                    b.Property<int>("CreditControlAreaId")
                         .HasColumnType("int");
+
+                    b.Property<int>("CustomerTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ManualNumber")
                         .HasColumnType("nvarchar(max)");
@@ -63,9 +69,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentFrom")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PaymentMethodId")
@@ -88,7 +91,9 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreditControllAreaId");
+                    b.HasIndex("CreditControlAreaId");
+
+                    b.HasIndex("CustomerTypeId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -948,6 +953,94 @@ namespace Berger.Data.Migrations
                     b.ToTable("ELearningDocuments");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ELearningDocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ELearningDocumentId");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.QuestionOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WFStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkflowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("QuestionOptions");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Examples.Example", b =>
                 {
                     b.Property<int>("Id")
@@ -1193,6 +1286,19 @@ namespace Berger.Data.Migrations
                     b.ToTable("JourneyPlanMasters");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CreditControlArea", b =>
+                {
+                    b.Property<int>("CreditControlAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CreditControlAreaId");
+
+                    b.ToTable("CreditControlAreas");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CustomerGroup", b =>
                 {
                     b.Property<string>("CustomerAccountGroup")
@@ -1402,6 +1508,17 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Depots");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Master.Division", b =>
+                {
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("DivisionCode")
+                        .HasColumnType("float");
+
+                    b.ToTable("Divisions");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Menus.Menu", b =>
@@ -3093,9 +3210,15 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.CollectionEntry.Payment", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "CreditControllArea")
+                    b.HasOne("Berger.Data.MsfaEntity.Master.CreditControlArea", "CreditControlArea")
                         .WithMany()
-                        .HasForeignKey("CreditControllAreaId")
+                        .HasForeignKey("CreditControlAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "CustomerType")
+                        .WithMany()
+                        .HasForeignKey("CustomerTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3280,6 +3403,24 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.Question", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.ELearning.ELearningDocument", "ELearningDocument")
+                        .WithMany()
+                        .HasForeignKey("ELearningDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.QuestionOption", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.ELearning.Question", "Question")
+                        .WithMany("QuestionOptions")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

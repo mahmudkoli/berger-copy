@@ -26,17 +26,14 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             _paymentService = paymentService;
         }
 
-        [HttpGet("GetCollectionByType/{paymentFrom}")]
-        public async Task<IActionResult> GetCollectionByType(string paymentFrom)
+        [HttpGet("GetCollectionByType/{CustomerTypeId}")]
+        public async Task<IActionResult> GetCollectionByType(int CustomerTypeId)
         {
 
             try
             {
-                if (string.IsNullOrEmpty(paymentFrom)) {
-                    ModelState.AddModelError(nameof(paymentFrom), "Payment Can Not Be Empty");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _paymentService.GetCollectionByType(paymentFrom.Trim());
+               
+                var result = await _paymentService.GetCollectionByType(CustomerTypeId);
                 return OkResult(result);
             }
             catch (Exception ex)

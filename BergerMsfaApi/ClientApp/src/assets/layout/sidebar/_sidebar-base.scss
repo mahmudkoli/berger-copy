@@ -88,9 +88,13 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
 }
 
 .logo-src {
-  height: $logo-height;
-  width: $logo-width;
-  background: url('/assets/images/logo.svg') no-repeat;
+  img{
+    width: 135px;
+    height: 45px;
+  }
+}
+.closed-sidebar .logo-src img{
+  display: none;
 }
 
 // Sidebar Menu

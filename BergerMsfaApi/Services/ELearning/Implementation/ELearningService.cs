@@ -47,7 +47,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 foreach (var item in model.ELearningAttachmentFiles)
                 {
                     var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
-                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, AttachmentType.File);
+                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
                     eLearningDocument.ELearningAttachments.Add(attachment);
                 }
             }
@@ -59,7 +59,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
                 foreach (var item in model.ELearningAttachmentUrls)
                 {
-                    var attachment = new ELearningAttachment(item, AttachmentType.Link);
+                    var attachment = new ELearningAttachment(item, EnumAttachmentType.Link);
                     eLearningDocument.ELearningAttachments.Add(attachment);
                 }
             }
@@ -154,7 +154,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 foreach (var item in model.ELearningAttachmentFiles)
                 {
                     var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
-                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, AttachmentType.File);
+                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
                     attachment.ELearningDocumentId = eLearningDocument.Id;
                     newAttachments.Add(attachment);
                 }
@@ -164,7 +164,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             {
                 foreach (var item in model.ELearningAttachmentUrls)
                 {
-                    var attachment = new ELearningAttachment(item, AttachmentType.Link);
+                    var attachment = new ELearningAttachment(item, EnumAttachmentType.Link);
                     attachment.ELearningDocumentId = eLearningDocument.Id;
                     newAttachments.Add(attachment);
                 }
@@ -183,10 +183,23 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             return result;
         }
 
+        public async Task<object> GetAllForSelectAsync()
+        {
+            var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
+                                x => new { x.Id, Label = x.Title },
+                                x => x.Status == Status.Active,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result;
+        }
+
         public async Task<ELearningAttachmentModel> AddAttachmentAsync(int eLearningDocumentId, IFormFile file)
         {
             var fileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}";
-            var attachment = await SaveFileAsync(file, fileName, FileUploadCode.ELearning, AttachmentType.File);
+            var attachment = await SaveFileAsync(file, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
 
             var eLearningAttachment = await _eLearningAttachmentRepository.CreateAsync(attachment);
 
@@ -205,7 +218,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<ELearningAttachmentModel> AddAttachmentAsync(int eLearningDocumentId, string link)
         {
-            var attachment = new ELearningAttachment(link, AttachmentType.Link);
+            var attachment = new ELearningAttachment(link, EnumAttachmentType.Link);
 
             var eLearningAttachment = await _eLearningAttachmentRepository.CreateAsync(attachment);
 
@@ -234,13 +247,13 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
             var result = await _eLearningAttachmentRepository.DeleteAsync(x => x.Id == eLearningAttachmentId);
 
-            if (eLearningAttachment != null && eLearningAttachment.Type == AttachmentType.File)
+            if (eLearningAttachment != null && eLearningAttachment.Type == EnumAttachmentType.File)
                 await _fileUploadService.DeleteFileAsync(eLearningAttachment.Path);
 
             return result;
         }
 
-        private async Task<ELearningAttachment> SaveFileAsync(IFormFile file, string fileName, FileUploadCode fileUploadCode, AttachmentType attachmentType)
+        private async Task<ELearningAttachment> SaveFileAsync(IFormFile file, string fileName, FileUploadCode fileUploadCode, EnumAttachmentType attachmentType)
         {
             var path = await _fileUploadService.SaveFileAsync(file, fileName, fileUploadCode);
 

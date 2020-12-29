@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -117,6 +118,10 @@
 
     <Compile Remove="Migrations\20201210150637_ELearningAdded.cs" />
     <Compile Remove="Migrations\20201210150637_ELearningAdded.Designer.cs" />
+    <Compile Remove="Migrations\20201229072211_ModifyPaymentEntity.cs" />
+    <Compile Remove="Migrations\20201229072211_ModifyPaymentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20201228081204_QuestionAdded.cs" />
+    <Compile Remove="Migrations\20201228081204_QuestionAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,53 @@
+<form [formGroup]="questionOptionForm" (ngSubmit)="onSubmit()">
+    <div class="modal-header">
+        <h4 class="modal-title">{{getComponentTitle()}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="position-relative form-group">
+                    <label class="required">Title</label>
+                    <input type="text" class="form-control" formControlName="title"
+                            [ngClass]="{'is-valid':formControls.title.touched && !formControls.title.errors,
+                            'is-invalid':formControls.title.touched && formControls.title.errors }" />
+                    <small class="text-danger" *ngIf="formControls.title.touched && formControls.title.errors">
+                        <span *ngIf="formControls.title.errors.required">Title is <strong>required</strong></span>
+                        <span *ngIf="formControls.title.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Sequence</label>
+                    <input type="number" class="form-control" formControlName="sequence"
+                            [ngClass]="{'is-valid':formControls.sequence.touched && !formControls.sequence.errors,
+                            'is-invalid':formControls.sequence.touched && formControls.sequence.errors }" />
+                    <small class="text-danger" *ngIf="formControls.sequence.touched && formControls.sequence.errors">
+                        <span *ngIf="formControls.sequence.errors.required">Sequence is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Status</label>
+                    <ng-select formControlName="status">
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                        <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+        <button type="submit" class="btn btn-primary" [disabled]="questionOptionForm.invalid">Save</button>
+    </div>
+</form>

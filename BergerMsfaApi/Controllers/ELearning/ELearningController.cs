@@ -103,6 +103,20 @@ namespace BergerMsfaApi.Controllers.ELearning
             }
         }
 
+        [HttpGet("select")]
+        public async Task<IActionResult> GetAllForSelect()
+        {
+            try
+            {
+                var result = await _eLearningService.GetAllForSelectAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpPost("AddAttachmentFile")]
         public async Task<IActionResult> AddAttachmentFile([FromForm] SaveELearningAttachmentModel model)
         {

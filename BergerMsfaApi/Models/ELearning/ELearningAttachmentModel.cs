@@ -17,7 +17,7 @@ namespace BergerMsfaApi.Models.ELearning
         public string Path { get; set; }
         public long Size { get; set; }
         public string Format { get; set; }
-        public AttachmentType Type { get; set; }
+        public EnumAttachmentType Type { get; set; }
         public Status Status { get; set; }
     }
 

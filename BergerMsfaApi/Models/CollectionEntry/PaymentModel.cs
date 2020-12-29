@@ -6,7 +6,7 @@ namespace BergerMsfaApi.Models.CollectionEntry
     {
         public int Id { get; set; }
         [Required]
-        public string PaymentFrom { get; set; }
+        public int CustomerTypeId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
@@ -22,7 +22,8 @@ namespace BergerMsfaApi.Models.CollectionEntry
         public int PaymentMethodId { get; set; }
         public string PaymentMethodName { get; set; }
 
-        public int CreditControllAreaId { get; set; }
-        public string CreditControllAreaName { get; set; }
+        public int CreditControlAreaId { get; set; }
+        public string CreditControlAreaName { get; set; }
+        public string EmployeeId { get; set; }
     }
 }
