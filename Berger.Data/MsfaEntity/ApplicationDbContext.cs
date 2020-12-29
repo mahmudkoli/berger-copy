@@ -199,7 +199,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
         #endregion
 
-        #region Dealer Sales Call
+        #region Demand Generation
         public DbSet<LeadGeneration> LeadGenerations { get; set; }
         public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
         public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
@@ -212,6 +212,11 @@ namespace Berger.Data.MsfaEntity
         #region ELearning
         public DbSet<ELearningDocument> ELearningDocuments { get; set; }
         public DbSet<ELearningAttachment> ELearningAttachments { get; set; }
+        #endregion
+
+        #region Question
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOption> QuestionOptions { get; set; }
         #endregion
 
     }

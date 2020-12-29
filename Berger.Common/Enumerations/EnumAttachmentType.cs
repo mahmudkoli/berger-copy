@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Berger.Common.Enumerations
 {
-    public enum AttachmentType
+    public enum EnumAttachmentType
     {
         File=1,
         Link=2,

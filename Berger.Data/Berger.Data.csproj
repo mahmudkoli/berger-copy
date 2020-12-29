@@ -118,6 +118,8 @@
 
     <Compile Remove="Migrations\20201210150637_ELearningAdded.cs" />
     <Compile Remove="Migrations\20201210150637_ELearningAdded.Designer.cs" />
+    <Compile Remove="Migrations\20201228081204_QuestionAdded.cs" />
+    <Compile Remove="Migrations\20201228081204_QuestionAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -41,6 +41,10 @@ export class ELearningService {
     delete(id) {
       return this.http.delete<APIResponse>(`${this.ELearningsEndpoint}/${id}`);
     }
+  
+    getAllForSelect() {
+      return this.http.get<APIResponse>(`${this.ELearningsEndpoint}/select`);
+    }
 
     addAttachmentFile(eLearning: SaveELearningAttachment) {
       return this.http.post<APIResponse>(`${this.ELearningsEndpoint}/AddAttachmentFile`, this.commonService.toFormData(eLearning));
