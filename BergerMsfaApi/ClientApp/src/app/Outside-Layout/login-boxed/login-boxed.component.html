@@ -1,15 +1,16 @@
-
 <div class="login-page d-flex h-100 justify-content-center align-items-center bg-plum-plate bg-animation">
   <div class="app-login mx-auto">
+    <img class="mb-2 mx-auto d-block" src="./assets/images/logo.png" alt="logo">
     <h4 class="login-title">Account Login</h4>
-    <div id="exampleInputGroup1" role="group" aria-describedby="exampleInputGroup1__BV_description_" class="form-group mb-0 ">
-        <input id="exampleInput1" type="text" placeholder="Enter UserName..." [(ngModel)]="UserName"
-          required="required" aria-required="true" class="form-control form-control-login rounded-0 border-bottom-0"
-          aria-describedby="exampleInputGroup1__BV_description_">
+    <div id="exampleInputGroup1" role="group" aria-describedby="exampleInputGroup1__BV_description_"
+      class="form-group mb-0 ">
+      <input id="exampleInput1" type="text" placeholder="Enter email" [(ngModel)]="UserName" required="required"
+        aria-required="true" class="form-control form-control-login rounded-0 border-bottom-0"
+        aria-describedby="exampleInputGroup1__BV_description_">
     </div>
     <div id="exampleInputGroup2" role="group" class="form-group">
-        <input id="exampleInput2" type="password" placeholder="Enter password..." [(ngModel)]="Password"
-          required="required" aria-required="true" class="form-control form-control-login rounded-0">
+      <input id="exampleInput2" type="password" placeholder="Enter password" [(ngModel)]="Password" required="required"
+        aria-required="true" class="form-control form-control-login rounded-0">
     </div>
     <button type="button" (click)="onLogin()" class="btn btn-primary btn-login d-block rounded-0 w-100">LOGIN</button>
     <div class="custom-control custom-checkbox my-1">
@@ -19,15 +20,11 @@
       </label>
     </div>
     <div class="not-account text-center my-3">
-
       <h6 class="mb-0">
         Create an account?
         <a [routerLink]="" class="text-primary">Sign Up</a>
       </h6>
       <div>Forgot <a [routerLink]="" class="btn-link">Password?</a></div>
-    </div>
-    <div class="copyright text-center text-white opacity-8 mt-3">
-      Copyright © JTI
     </div>
   </div>
 </div>
