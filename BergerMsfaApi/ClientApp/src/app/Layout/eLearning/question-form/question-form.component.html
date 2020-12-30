@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">ELearning Document</label>
                         <ng-select formControlName="eLearningDocumentId">
@@ -47,6 +47,17 @@
                         </ng-select>
                         <small class="text-danger" *ngIf="formControls.type.touched && formControls.type.errors">
                             <span *ngIf="formControls.type.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Mark</label>
+                        <input type="number" class="form-control" formControlName="mark"
+                                [ngClass]="{'is-valid':formControls.mark.touched && !formControls.mark.errors,
+                                'is-invalid':formControls.mark.touched && formControls.mark.errors }" />
+                        <small class="text-danger" *ngIf="formControls.mark.touched && formControls.mark.errors">
+                            <span *ngIf="formControls.mark.errors.required">Mark is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>

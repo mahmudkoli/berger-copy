@@ -3,18 +3,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { finalize } from 'rxjs/operators';
-import { Dropdown } from 'src/app/Shared/Entity/Setup/dropdown';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { DynamicDropdownService } from 'src/app/Shared/Entity/Setup/dynamic-dropdown.service';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
-import { FileUpload } from 'primeng/fileupload';
-import { Question, SaveQuestion } from 'src/app/Shared/Entity/ELearning/question';
-import { QuestionService } from 'src/app/Shared/Services/ELearning/question.service';
-import { ELearningService } from 'src/app/Shared/Services/ELearning/eLearning.service';
 import { QuestionOption } from 'src/app/Shared/Entity/ELearning/questionOption';
-import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { NgbActiveModal, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -37,11 +29,8 @@ export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
 		private promotionalBannerFB: FormBuilder,
 		private alertService: AlertService,
 		private commonService: CommonService,
-		private dynamicDropdownService: DynamicDropdownService,
 		private modalService: NgbModal,
-		private activeModal: NgbActiveModal,
-		private eLearningService: ELearningService,
-		private questionService: QuestionService) { }
+		private activeModal: NgbActiveModal) { }
 
 	ngOnInit() {
 		this.initQuestions();
@@ -59,6 +48,7 @@ export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
 		this.questionOptionForm = this.promotionalBannerFB.group({
 			title: [this.questionOption.title, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
 			sequence: [this.questionOption.sequence, [Validators.required]],
+			isCorrectAnswer: [this.questionOption.isCorrectAnswer, [Validators.required]],
 			status: [this.questionOption.status, [Validators.required]]
 		});
 	}
@@ -89,6 +79,7 @@ export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
 		_questionOption.editDeleteId = this.questionOption.editDeleteId;
 		_questionOption.title = controls['title'].value;
 		_questionOption.sequence = controls['sequence'].value;
+		_questionOption.isCorrectAnswer = controls['isCorrectAnswer'].value;
 		_questionOption.status = controls['status'].value;
 			
 		return _questionOption;

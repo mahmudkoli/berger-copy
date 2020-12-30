@@ -49,7 +49,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 x => x,
                                 null,
                                 null,
-                                null,
+                                x => x.Include(i => i.ELearningDocument),
                                 pageIndex,
                                 pageSize,
                                 true
@@ -90,6 +90,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             eLearningDocument.Title = model.Title;
             eLearningDocument.ELearningDocumentId = model.ELearningDocumentId;
             eLearningDocument.Type = model.Type;
+            eLearningDocument.Mark = model.Mark;
             eLearningDocument.Status = model.Status;
             eLearningDocument.ModifiedTime = DateTime.Now;
 
@@ -112,6 +113,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 var attachment = model.QuestionOptions.FirstOrDefault(x => x.Id == item.Id);
                 item.Title = attachment.Title;
                 item.Sequence = attachment.Sequence;
+                item.IsCorrectAnswer = attachment.IsCorrectAnswer;
                 item.Status = attachment.Status;
             }
 

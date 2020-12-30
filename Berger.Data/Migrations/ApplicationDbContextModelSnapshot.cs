@@ -964,6 +964,9 @@ namespace Berger.Data.Migrations
                     b.Property<int>("ELearningDocumentId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Mark")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
@@ -1004,6 +1007,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCorrectAnswer")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");

@@ -15,6 +15,7 @@ namespace BergerMsfaApi.Models.ELearning
         public int Id { get; set; }
         public string Title { get; set; }
         public int Sequence { get; set; }
+        public bool IsCorrectAnswer { get; set; }
         public int QuestionId { get; set; }
         public QuestionModel Question { get; set; }
         public Status Status { get; set; }

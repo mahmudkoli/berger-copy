@@ -114,8 +114,10 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 		tableName: 'Question List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Title', width: '60%', internalName: 'title', sort: true, type: "" },
-			{ headerName: 'Type', width: '30%', internalName: 'typeText', sort: false, type: "" },
+			{ headerName: 'Title', width: '40%', internalName: 'title', sort: true, type: "" },
+			{ headerName: 'ELearning Document', width: '25%', internalName: 'eLearningDocumentText', sort: true, type: "" },
+			{ headerName: 'Type', width: '15%', internalName: 'typeText', sort: false, type: "" },
+			{ headerName: 'Mark', width: '10%', internalName: 'mark', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: true, type: "" },
 		],
 		enabledSearch: true,

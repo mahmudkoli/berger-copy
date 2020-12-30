@@ -15,6 +15,7 @@ namespace BergerMsfaApi.Models.ELearning
         public int Id { get; set; }
         public string Title { get; set; }
         public EnumQuestionType Type { get; set; }
+        public int Mark { get; set; }
         public int ELearningDocumentId { get; set; }
         public ELearningDocumentModel ELearningDocument { get; set; }
         public IList<QuestionOptionModel> QuestionOptions { get; set; }
@@ -32,6 +33,7 @@ namespace BergerMsfaApi.Models.ELearning
         public int Id { get; set; }
         public string Title { get; set; }
         public EnumQuestionType Type { get; set; }
+        public int Mark { get; set; }
         public int ELearningDocumentId { get; set; }
         public IList<QuestionOptionModel> QuestionOptions { get; set; }
         public Status Status { get; set; }
