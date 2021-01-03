@@ -48,7 +48,7 @@ export class ModalQuestionSetOptionFormComponent implements OnInit, OnDestroy {
 	createForm() {
 		this.questionSetOptionForm = this.promotionalBannerFB.group({
 			mark: [this.questionSetOption.mark, [Validators.required]],
-			// status: [this.questionSetOption.status, [Validators.required]]
+			status: [this.questionSetOption.status, [Validators.required]]
 		});
 	}
 
@@ -77,7 +77,7 @@ export class ModalQuestionSetOptionFormComponent implements OnInit, OnDestroy {
 		_questionOption.id = this.questionSetOption.id;
 		_questionOption.editDeleteId = this.questionSetOption.editDeleteId;
 		_questionOption.mark = controls['mark'].value;
-		// _questionOption.status = controls['status'].value;
+		_questionOption.status = controls['status'].value;
 			
 		return _questionOption;
 	}
@@ -92,8 +92,7 @@ export class ModalQuestionSetOptionFormComponent implements OnInit, OnDestroy {
 		// 	return result;
 		// }
 
-		// result = `Edit Question Set Option - ${this.questionSetOption.questionTitle}`;
-		result = `Edit Question Mark - ${this.questionSetOption.questionTitle}`;
+		result = `Edit Question Set Option - ${this.questionSetOption.questionTitle}`;
 		return result;
 	}
 

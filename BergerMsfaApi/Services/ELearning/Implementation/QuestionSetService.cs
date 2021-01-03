@@ -95,6 +95,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
             eLearningDocument.Title = model.Title;
             eLearningDocument.Level = model.Level;
+            eLearningDocument.ELearningDocumentId = model.ELearningDocumentId;
             eLearningDocument.TotalMark = model.TotalMark;
             eLearningDocument.PassMark = model.PassMark;
             eLearningDocument.Status = model.Status;
@@ -103,45 +104,43 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             var result = await _questionSetRepository.UpdateAsync(eLearningDocument);
 
             #region delete and update previous attachment
-            //var previousAttachments = await _questionOptionRepository.GetAllIncludeAsync(
-            //                    x => x,
-            //                    x => x.QuestionId == model.Id,
-            //                    null,
-            //                    null,
-            //                    true
-            //                );
+            var previousAttachments = await _questionSetCollectionRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.QuestionSetId == model.Id,
+                                null,
+                                null,
+                                true
+                            );
 
-            //var updateAttachments = previousAttachments.Where(x => model.QuestionOptions.Any(y => y.Id == x.Id)).ToList();
-            //var deleteAttachments = previousAttachments.Except(updateAttachments).ToList();
+            var updateAttachments = previousAttachments.Where(x => model.QuestionSetCollections.Any(y => y.Id == x.Id)).ToList();
+            var deleteAttachments = previousAttachments.Except(updateAttachments).ToList();
 
-            //foreach (var item in updateAttachments)
-            //{
-            //    var attachment = model.QuestionOptions.FirstOrDefault(x => x.Id == item.Id);
-            //    item.Title = attachment.Title;
-            //    item.Sequence = attachment.Sequence;
-            //    item.IsCorrectAnswer = attachment.IsCorrectAnswer;
-            //    item.Status = attachment.Status;
-            //}
+            foreach (var item in updateAttachments)
+            {
+                var attachment = model.QuestionSetCollections.FirstOrDefault(x => x.Id == item.Id);
+                item.Mark = attachment.Mark;
+                item.Status = attachment.Status;
+            }
 
-            //if (deleteAttachments.Any())
-            //    await _questionOptionRepository.DeleteListAsync(deleteAttachments);
+            if (deleteAttachments.Any())
+                await _questionSetCollectionRepository.DeleteListAsync(deleteAttachments);
 
-            //if (updateAttachments.Any())
-            //    await _questionOptionRepository.UpdateListAsync(updateAttachments);
+            if (updateAttachments.Any())
+                await _questionSetCollectionRepository.UpdateListAsync(updateAttachments);
             #endregion
 
             #region new attachment added
-            //var newAttachments = model.QuestionOptions.Where(x => x.Id <= 0).ToList();
+            var newAttachments = model.QuestionSetCollections.Where(x => x.Id <= 0).ToList();
 
-            //foreach (var item in newAttachments)
-            //{
-            //    item.QuestionId = eLearningDocument.Id;
-            //}
+            foreach (var item in newAttachments)
+            {
+                item.QuestionSetId = eLearningDocument.Id;
+            }
 
-            //var newAttachmentss = _mapper.Map<List<QuestionOption>>(newAttachments);
+            var newAttachmentss = _mapper.Map<List<QuestionSetCollection>>(newAttachments);
 
-            //if (newAttachmentss.Any())
-            //    await _questionOptionRepository.CreateListAsync(newAttachmentss);
+            if (newAttachmentss.Any())
+                await _questionSetCollectionRepository.CreateListAsync(newAttachmentss);
             #endregion
 
             return result.Id;

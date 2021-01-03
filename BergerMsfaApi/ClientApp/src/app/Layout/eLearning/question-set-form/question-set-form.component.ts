@@ -63,12 +63,13 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 					.subscribe(res => {
 						if (res) {
 							this.questionSet = res.data as QuestionSet;
-							if(this.questionSet.questionSetCollections && this.questionSet.questionSetCollections.length > 0) {
-								this.questionSetCollections = this.questionSet.questionSetCollections;
-								this.questionSetCollections.forEach((element, index) => {
-									element.statusText = element.status == 0 ? 'Inactive' : 'Active';
-								});
-							}
+							// if(this.questionSet.questionSetCollections && this.questionSet.questionSetCollections.length > 0) {
+							// 	this.questionSetCollections = this.questionSet.questionSetCollections;
+							// 	this.questionSetCollections.forEach((element, index) => {
+							// 		element.statusText = element.status == 0 ? 'Inactive' : 'Active';
+							// 	});
+							// }
+							this.populateQuestionSetCollection(this.questionSet.eLearningDocumentId, true);
 							this.initQuestionSets();
 						}
 					});
@@ -101,41 +102,58 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 	onChangeELearningDocument() {
 		var elId = this.questionSetForm.get('eLearningDocumentId').value;
 		if (elId) {
-			this.alertService.fnLoading(true);
-			const categorySubscription = this.questionService.getQuestionsByELearningDocumentId(elId)
-				.pipe(finalize(() => this.alertService.fnLoading(false)))
-				.subscribe(res => {
-					let data = (res.data as Question[]);
-					let edId = 100;
-					if (data && data.length > 0) {
-						this.questionSetCollections = data.map(x => {
-							let d: QuestionSetCollection = new QuestionSetCollection();
-								d.clear();
-								d.questionId = x.id;
-								d.questionTitle = x.title;
-								d.mark = x.mark;
-								d.status = x.status;
-								d.editDeleteId = edId++;
-								d.questionTypeText = x.type == 1 ? 'Single Choice' : 'Multiple Choice';
-								d.statusText = x.status == 0 ? 'Inactive' : 'Active';
-							return d;
-						});
-					} else {
-						this.questionSetCollections = []
-					}
-
-					this.updateTotalMark();
-				},
-				error => {
-					this.throwError(error);
-					this.questionSetCollections = [];
-					this.updateTotalMark();
-				});
-			this.subscriptions.push(categorySubscription);
+			this.populateQuestionSetCollection(elId, false);
 		} else {
 			this.questionSetCollections = [];
 			this.updateTotalMark();
 		}
+	}
+
+	populateQuestionSetCollection(elId:any, isEdit: boolean) {
+		this.alertService.fnLoading(true);
+		const categorySubscription = this.questionService.getQuestionsByELearningDocumentId(elId)
+			.pipe(finalize(() => this.alertService.fnLoading(false)))
+			.subscribe(res => {
+				let qsData = (res.data as Question[]);
+				let edId = 100;
+				if (qsData && qsData.length > 0) {
+					this.questionSetCollections = qsData.map(x => {
+						let qsc: QuestionSetCollection = new QuestionSetCollection();
+							qsc.clear();
+							qsc.questionId = x.id;
+							qsc.questionTitle = x.title;
+							qsc.mark = x.mark;
+							qsc.status = x.status;
+							qsc.editDeleteId = edId++;
+							qsc.questionTypeText = x.type == 1 ? 'Single Choice' : 'Multiple Choice';
+							qsc.statusText = x.status == 0 ? 'Inactive' : 'Active';
+						return qsc;
+					});
+
+					// for edit
+					if(isEdit && this.questionSet.questionSetCollections && this.questionSet.questionSetCollections.length > 0) {
+						this.questionSetCollections.forEach(qsc => {
+							let existQsc = this.questionSet.questionSetCollections.find(x => x.questionId == qsc.questionId);
+							if(existQsc) {
+								qsc.id = existQsc.id;
+								qsc.isSelected = true;
+								qsc.mark = existQsc.mark;
+								qsc.status = existQsc.status;
+								qsc.statusText = existQsc.status == 0 ? 'Inactive' : 'Active';
+							}
+						});
+					}
+				} else {
+					this.questionSetCollections = []
+				}
+				this.updateTotalMark();
+			},
+			error => {
+				this.throwError(error);
+				this.questionSetCollections = [];
+				this.updateTotalMark();
+			});
+		this.subscriptions.push(categorySubscription);
 	}
 
 	initQuestionSets() {
@@ -257,7 +275,7 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 		let ngbModalOptions: NgbModalOptions = {
 		  backdrop: "static",
 		  keyboard: false,
-		  size: "sm",
+		  size: "lg",
 		};
 		const modalRef = this.modalService.open(
 		  ModalQuestionSetOptionFormComponent,
@@ -268,10 +286,9 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 		modalRef.result.then(
 		  	(result: QuestionSetCollection) => {
 				console.log(result);
-
 				let obj = this.questionSetCollections.find(x => x.editDeleteId==result.editDeleteId);
-				// obj.status = result.status;
-				// obj.statusText = result.status == 0 ? 'Inactive' : 'Active';
+				obj.status = result.status;
+				obj.statusText = result.status == 0 ? 'Inactive' : 'Active';
 				obj.mark = result.mark;
 
 				this.updateTotalMark();
