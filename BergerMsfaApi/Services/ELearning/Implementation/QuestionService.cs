@@ -59,6 +59,21 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
             return modelResult;
         }
+        
+        public async Task<IList<QuestionModel>> GetAllGetByELearningDocumentIdAsync(int id)
+        {
+            var result = await _questionRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.ELearningDocumentId == id,
+                                null,
+                                null,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<QuestionModel>>(result);
+
+            return modelResult;
+        }
 
         public async Task<QuestionModel> GetByIdAsync(int id)
         {
