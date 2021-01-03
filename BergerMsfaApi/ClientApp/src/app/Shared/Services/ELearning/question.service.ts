@@ -24,6 +24,10 @@ export class QuestionService {
       return this.http.get<APIResponse>(`${this.QuestionsEndpoint}/${id}`);
     }
   
+    getQuestionsByELearningDocumentId(id) {
+      return this.http.get<APIResponse>(`${this.QuestionsEndpoint}/GetByELearningDocumentId/${id}`);
+    }
+  
     getQuestions(filter?) {
       return this.http.get<APIResponse>(`${this.QuestionsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }

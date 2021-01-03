@@ -1,0 +1,38 @@
+<form [formGroup]="questionSetOptionForm" (ngSubmit)="onSubmit()">
+    <div class="modal-header">
+        <h5 class="modal-title">{{getComponentTitle()}}</h5>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Mark</label>
+                    <input type="number" class="form-control" formControlName="mark"
+                            [ngClass]="{'is-valid':formControls.mark.touched && !formControls.mark.errors,
+                            'is-invalid':formControls.mark.touched && formControls.mark.errors }" />
+                    <small class="text-danger" *ngIf="formControls.mark.touched && formControls.mark.errors">
+                        <span *ngIf="formControls.mark.errors.required">Mark is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Status</label>
+                    <ng-select formControlName="status">
+                        <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                        <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+        <button type="submit" class="btn btn-primary" [disabled]="questionSetOptionForm.invalid">Save</button>
+    </div>
+</form>

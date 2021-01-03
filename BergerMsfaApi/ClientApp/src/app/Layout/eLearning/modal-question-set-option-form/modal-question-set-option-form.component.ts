@@ -8,16 +8,17 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { QuestionOption } from 'src/app/Shared/Entity/ELearning/questionOption';
 import { NgbActiveModal, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { QuestionSetCollection } from 'src/app/Shared/Entity/ELearning/questionSetCollection';
 
 @Component({
-	selector: 'app-modal-question-option-form',
-	templateUrl: './modal-question-option-form.component.html',
-	styleUrls: ['./modal-question-option-form.component.css']
+	selector: 'app-modal-question-set-option-form',
+	templateUrl: './modal-question-set-option-form.component.html',
+	styleUrls: ['./modal-question-set-option-form.component.css']
 })
-export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
+export class ModalQuestionSetOptionFormComponent implements OnInit, OnDestroy {
 
-	@Input() questionOption: QuestionOption;
-	questionOptionForm: FormGroup;
+	@Input() questionSetOption: QuestionSetCollection;
+	questionSetOptionForm: FormGroup;
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
 	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
 	
@@ -45,57 +46,53 @@ export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
 	}
 
 	createForm() {
-		this.questionOptionForm = this.promotionalBannerFB.group({
-			title: [this.questionOption.title, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
-			sequence: [this.questionOption.sequence, [Validators.required]],
-			isCorrectAnswer: [this.questionOption.isCorrectAnswer, [Validators.required]],
-			status: [this.questionOption.status, [Validators.required]]
+		this.questionSetOptionForm = this.promotionalBannerFB.group({
+			mark: [this.questionSetOption.mark, [Validators.required]],
+			status: [this.questionSetOption.status, [Validators.required]]
 		});
 	}
 
-	get formControls() { return this.questionOptionForm.controls; }
+	get formControls() { return this.questionSetOptionForm.controls; }
 
 	onSubmit() {
 
-		const controls = this.questionOptionForm.controls;
+		const controls = this.questionSetOptionForm.controls;
 
-		if (this.questionOptionForm.invalid) {
+		if (this.questionSetOptionForm.invalid) {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
 			return;
 		}
 
-		const editedQuestions = this.prepareQuestionOption();
-		this.submitQuestionOption(editedQuestions);
+		const editedQuestions = this.prepareQuestionSetOption();
+		this.submitQuestionSetOption(editedQuestions);
 	}
 
-	prepareQuestionOption(): QuestionOption {
-		const controls = this.questionOptionForm.controls;
+	prepareQuestionSetOption(): QuestionSetCollection {
+		const controls = this.questionSetOptionForm.controls;
 
-		const _questionOption = new QuestionOption();
+		const _questionOption = new QuestionSetCollection();
 		_questionOption.clear();
-		_questionOption.id = this.questionOption.id;
-		_questionOption.editDeleteId = this.questionOption.editDeleteId;
-		_questionOption.title = controls['title'].value;
-		_questionOption.sequence = controls['sequence'].value;
-		_questionOption.isCorrectAnswer = controls['isCorrectAnswer'].value;
+		_questionOption.id = this.questionSetOption.id;
+		_questionOption.editDeleteId = this.questionSetOption.editDeleteId;
+		_questionOption.mark = controls['mark'].value;
 		_questionOption.status = controls['status'].value;
 			
 		return _questionOption;
 	}
 
-	submitQuestionOption(_questionOption: QuestionOption) {
+	submitQuestionSetOption(_questionOption: QuestionSetCollection) {
         this.activeModal.close(_questionOption);
 	}
 
 	getComponentTitle() {
-		let result = 'Create Question Option';
-		if (!this.questionOption || !this.questionOption.id) {
-			return result;
-		}
+		let result = 'Create Question Set Option';
+		// if (!this.questionSetOption || !this.questionSetOption.id) {
+		// 	return result;
+		// }
 
-		result = `Edit Question Option - ${this.questionOption.title}`;
+		result = `Edit Question Set Option - ${this.questionSetOption.questionTitle}`;
 		return result;
 	}
 

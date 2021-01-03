@@ -10,6 +10,7 @@ export class Question {
     eLearningDocumentId: number;
     eLearningDocument: ELearningDocument;
     type: EnumQuestionType;
+    mark: number;
     status: number;
     questionOptions: QuestionOption[];
 
@@ -26,6 +27,7 @@ export class Question {
         this.title = '';
         this.eLearningDocumentId = null;
         this.type = null;
+        this.mark = null;
         this.status = null;
         this.questionOptions = [];
         this.statusText = '';
@@ -39,6 +41,7 @@ export class SaveQuestion {
     title: string;
     eLearningDocumentId: number;
     type: EnumQuestionType;
+    mark: number;
     status: number;
     questionOptions: QuestionOption[];
     
@@ -51,6 +54,7 @@ export class SaveQuestion {
         this.title = '';
         this.eLearningDocumentId = null;
         this.type = null;
+        this.mark = null;
         this.status = null;
         this.questionOptions = [];
     }

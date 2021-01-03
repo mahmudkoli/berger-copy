@@ -8,6 +8,8 @@ import { ELearningListComponent } from './eLearning-list/eLearning-list.componen
 import { ELearningComponent } from './eLearning.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { QuestionListComponent } from './question-list/question-list.component';
+import { QuestionSetFormComponent } from './question-set-form/question-set-form.component';
+import { QuestionSetListComponent } from './question-set-list/question-set-list.component';
 
 
 const routes: Routes = [
@@ -56,6 +58,24 @@ const routes: Routes = [
         component: QuestionFormComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Edit Question', },
+      },
+      {
+        path: 'questionSet/list',
+        component: QuestionSetListComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Question Set', },
+      },
+      {
+        path: 'questionSet/new',
+        component: QuestionSetFormComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'New Question Set', },
+      },
+      {
+        path: 'questionSet/edit/:id',
+        component: QuestionSetFormComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Edit Question Set', },
       },
     ],
 
