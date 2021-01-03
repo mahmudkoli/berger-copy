@@ -2,6 +2,8 @@
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Berger.Data.MsfaEntity.CollectionEntry
@@ -12,7 +14,9 @@ namespace Berger.Data.MsfaEntity.CollectionEntry
 
         [ForeignKey("CustomerTypeId")]
         public DropdownDetail CustomerType { get; set; }
-      
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime CollectionDate { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }

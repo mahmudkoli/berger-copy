@@ -46,7 +46,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                 Address = s.Address,
                 BankName = s.BankName,
                 Code = s.Code,
-                CreditControlAreaId = Convert.ToInt32( s.CreditControlArea.CreditControlAreaId),
+                CreditControlAreaId = Convert.ToInt32(s.CreditControlArea.CreditControlAreaId),
                 CreditControlAreaName = s.CreditControlArea.Description,
                 ManualNumber = s.ManualNumber,
                 MobileNumber = s.MobileNumber,
@@ -54,11 +54,13 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                 Number = s.Number,
                 CustomerTypeId = s.CustomerType.Id,
                 PaymentMethodId = s.PaymentMethod.Id,
-                PaymentMethodName=s.PaymentMethod.DropdownName,
+                PaymentMethodName = s.PaymentMethod.DropdownName,
                 Remarks = s.Remarks,
                 SapId = s.SapId,
-                EmployeeId=s.EmployeeId
-                
+                EmployeeId = s.EmployeeId,
+                CollectionDate = s.CollectionDate.ToString("yyyy-MM-dd")
+
+
 
             }).ToList();
         }
@@ -86,7 +88,8 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                     PaymentMethodName = s.PaymentMethod.DropdownName,
                     Remarks = s.Remarks,
                     SapId = s.SapId,
-                    EmployeeId = s.EmployeeId
+                    EmployeeId = s.EmployeeId,
+                    CollectionDate=s.CollectionDate.ToString("yyyy-MM-dd")
 
                 }).ToList();
             }
@@ -110,6 +113,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
         {
             var mapModel = model.ToMap<PaymentModel, Payment>();
             var result = await _payment.UpdateAsync(mapModel);
+  
             return result.ToMap<Payment, PaymentModel>();
         }
     }
