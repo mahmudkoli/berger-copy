@@ -67,6 +67,12 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         {
             try
             {
+                if (!DateTime.TryParse(model.CollectionDate, out DateTime date))
+                {
+                    ModelState.AddModelError(nameof(model.CollectionDate), "collection date not valid format");
+                    return ValidationResult(ModelState);
+                }
+                    
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _paymentService.CreateAsync(model);
                 return OkResult(result);

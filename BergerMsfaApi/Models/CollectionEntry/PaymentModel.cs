@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BergerMsfaApi.Models.CollectionEntry
 {
@@ -6,6 +7,9 @@ namespace BergerMsfaApi.Models.CollectionEntry
     {
         public int Id { get; set; }
         [Required]
+
+
+        public string CollectionDate { get; set; }
         public int CustomerTypeId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }

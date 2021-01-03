@@ -216,6 +216,7 @@ span.sort-icon {
 
 .p-table thead tr th {
     position: relative;
+    font-size: 14px;
 }
 
 span.p-table-column-resizer {

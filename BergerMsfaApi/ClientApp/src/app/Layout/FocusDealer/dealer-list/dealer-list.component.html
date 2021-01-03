@@ -1,66 +1,68 @@
-<p-table #dt [value]="dealerList">
-    <ng-template pTemplate="caption">
-        <div class="table-header">
-
-            <div class="row">
-                <div class="col-md-4">
-                    Dealer List
-                </div>
-
-                <div class="col-md-4 offset-md-4">
-                    <!-- <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button> -->
-                    <div>
-                        <span class="p-input-icon-right m-2 pull-right">
-                            <i class="pi pi-search" (click)="onSearch()"></i>
-                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
-                                [(ngModel)]="search" placeholder="Search" />
-
-                        </span>
+<div class="p-3 mb-3 bg-white">
+    <p-table #dt [value]="dealerList">
+        <ng-template class="adfs" pTemplate="caption">
+            <div class="table-header">
+    
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        Dealer List
+                    </div>
+    
+                    <div class="col-md-4 offset-md-4">
+                        <!-- <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button> -->
+                        <div>
+                            <span class="p-input-icon-right m-2 pull-right">
+                                <i class="pi pi-search" (click)="onSearch()"></i>
+                                <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                                    [(ngModel)]="search" placeholder="Search" />
+    
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-
-        </div>
-    </ng-template>
-    <ng-template pTemplate="header">
-        <tr>
-            <th pSortableColumn="customerNo">Customer No<p-sortIcon field="customerNo"></p-sortIcon></th>
-            <th pSortableColumn="customerName">Customer Name <p-sortIcon field="customerName"></p-sortIcon></th>
-            <th pSortableColumn="contactNo">ContactNo <p-sortIcon field="contactNo"></p-sortIcon></th>
-            <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
-            <th pSortableColumn="isExclusiveLabel">Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon></th>
-            <th pSortableColumn="isCBInstalled">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
     
-
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-dealer>
-        <tr>
-            <td>{{dealer.customerNo }}</td>
-            <td>{{dealer.customerName}}</td>
-            <td>{{dealer.contactNo}}</td>
-            <td>{{dealer.address}}</td>
-            <td>
-                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isExclusive')" onLabel="{{dealer.isExclusiveLabel}}" offLabel="{{dealer.isExclusiveLabel}}" [(ngModel)]="dealer.isExclusive"></p-toggleButton>
-            </td>
-            <td>
-                <p-toggleButton (ngModelChange)="onChange($event,dealer,'isCBInstalled')" onLabel="{{dealer.isCBInstalledLabel}}" offLabel="{{dealer.isCBInstalledLabel}}" [(ngModel)]="dealer.isCBInstalled"></p-toggleButton>
-            </td>
-
-
-        </tr>
-    </ng-template>
-     <ng-template pTemplate="summary">
-        <p-paginator
+    
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="customerNo">Customer No<p-sortIcon field="customerNo"></p-sortIcon></th>
+                <th pSortableColumn="customerName">Customer Name <p-sortIcon field="customerName"></p-sortIcon></th>
+                <th pSortableColumn="contactNo">ContactNo <p-sortIcon field="contactNo"></p-sortIcon></th>
+                <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
+                <th pSortableColumn="isExclusiveLabel">Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon></th>
+                <th pSortableColumn="isCBInstalled">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
         
-                  
-                     #paging
-                     [rows]="rows"
-                     [totalRecords]="pagingConfig?.totalItemCount"
-                     [pageLinkSize]="10"
-                     [rowsPerPageOptions]="[10,20]"
-                     (onPageChange)="paginate($event)"></p-paginator>
-    </ng-template> 
-</p-table>
+    
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-dealer>
+            <tr>
+                <td>{{dealer.customerNo }}</td>
+                <td>{{dealer.customerName}}</td>
+                <td>{{dealer.contactNo}}</td>
+                <td>{{dealer.address}}</td>
+                <td>
+                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isExclusive')" onLabel="{{dealer.isExclusiveLabel}}" offLabel="{{dealer.isExclusiveLabel}}" [(ngModel)]="dealer.isExclusive"></p-toggleButton>
+                </td>
+                <td>
+                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isCBInstalled')" onLabel="{{dealer.isCBInstalledLabel}}" offLabel="{{dealer.isCBInstalledLabel}}" [(ngModel)]="dealer.isCBInstalled"></p-toggleButton>
+                </td>
+    
+    
+            </tr>
+        </ng-template>
+         <ng-template pTemplate="summary">
+            <p-paginator
+            
+                      
+                         #paging
+                         [rows]="rows"
+                         [totalRecords]="pagingConfig?.totalItemCount"
+                         [pageLinkSize]="10"
+                         [rowsPerPageOptions]="[10,20]"
+                         (onPageChange)="paginate($event)"></p-paginator>
+        </ng-template> 
+    </p-table>
+</div>
 <!-- <pre>{{pagingConfig|json}}</pre> -->
