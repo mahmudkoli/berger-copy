@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Odata.Common;
+using Berger.Odata.Extensions;
 using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
@@ -165,61 +166,110 @@ namespace Berger.Odata.Services
 
         public async Task<dynamic> GetBrandWiseMTDDetails(SalesDataSearchModel model)
         {
+            var currendate = new DateTime(2011, 09, 01);
+
+            var cyfd = currendate.GetCYFD().DateFormat();
+            var cyld = currendate.GetCYLCD().DateFormat();
+
+            var lyfd = currendate.GetLYFD().DateFormat();
+            var lyld = currendate.GetLYLCD().DateFormat();
+            var dic = new Dictionary<string, IEnumerable<SalesDataModel>>();
+
+            var filterCyQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
+                                           + $"and {DataColumnDef.Date} ge datetime'{cyfd}' "
+                                           + $"and {DataColumnDef.Date} le datetime'{cyld}' "
+                                           + $"&$top=10";
+
+            
+            var dataCy = await GetSalesData(filterCyQuery);
 
 
+            var filterLyQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
+                                         + $"and {DataColumnDef.Date} ge datetime'{lyfd}' "
+                                         + $"and {DataColumnDef.Date} le datetime'{lyld}' "
+                                         + $"&$top=10";
 
-            var currentDate = new DateTime(2011 , 02 ,10);
+            var dataLy= await GetSalesData(filterLyQuery);
 
-            var filterQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
-                                           + $"&$top={10}";
-
-            var data = await GetSalesData(filterQuery);
            
-            var result = data
-                .GroupBy(g => g.Brand)
-                .Select(s =>
-                {
 
-                    var LYMTD = s
-                            //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetLYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetLYLD().Date)
-                            .Sum(s => Convert.ToDouble(s.Volume));
+            for (var i = 1; i <= 3; i++)
+            {
+                int number = int.Parse($"-{i}");
+                var monthQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
+                                     + $"and {DataColumnDef.Date} ge datetime'{currendate.GetMonthDate(number).GetCYFD().DateFormat()}' "
+                                     + $"and {DataColumnDef.Date} le datetime'{currendate.GetMonthDate(number).GetCYLD().DateFormat()}' "
+                                     + $"&$top=10";
+                dic.Add(currendate.GetMonthName(number), await GetSalesData(monthQuery));
+            }
 
-                    var CYMTD = s
-                            //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetCYLD().Date)
-                            .Sum(s => Convert.ToDouble(s.Volume));
+         
 
-                    var GROWTH = (LYMTD - CYMTD);
+       
+         
+             
+            //{
+            //    var sum = f.Value.GroupBy(g => g.Brand).Select(s=>s.Sum(s=>Convert.ToDouble(s.Volume)));
+            //    return new { f.Key, sum };
 
-                    return new Dictionary<string, object>
-                    {
-                        //{ "Brand", s.Key },
-                        //{ "LY MTD",LYMTD},
-                        //{ "CY MTD", CYMTD},
-                        //{ "Growth%",GROWTH},
-                        //{
-                        //    currentDate.GetMonthName(-1),
-                        //     s
-                        //    // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-1).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-1).GetCYLD().Date)
-                        //     .Sum(s => Convert.ToDouble(s.Volume))
-                        //},
-                        //{    currentDate.GetMonthName(-2),
-                        //     s
-                        // //    .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-2).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-2).GetCYLD().Date)
-                        //    .Sum(s => Convert.ToDouble(s.Volume))
-                        //},
-                        //{   currentDate.GetMonthName(-3),
-                        //    s
-                        //   // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-3).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-3).GetCYLD().Date)
-                        //    .Sum(s => Convert.ToDouble(s.Volume))
-                        //},
-                        //{ "Date",s.FirstOrDefault(f => f.Brand == s.Key).Date},
-                    };
+            //});
+                
+            // var  result = dic.ToList();
+
+            //var result = dataLyQuery
+            //    .GroupBy(g => g.Brand)
+            //    .Select(s =>
+            //    {
+
+            //        //var LYMTD = s
+            //        //        //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetLYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetLYLD().Date)
+            //        //        .Sum(s => Convert.ToDouble(s.Volume));
+
+            //        //var CYMTD = s
+            //        //        //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetCYLD().Date)
+            //        //        .Sum(s => Convert.ToDouble(s.Volume));
+
+            //        //var GROWTH = (LYMTD - CYMTD);
+
+            //        return new Dictionary<string, object>
+            //        {
+            //            //{ "Brand", s.Key },
+            //            //{ "LY MTD",LYMTD},
+            //            //{ "CY MTD", CYMTD},
+            //            //{ "Growth%",GROWTH},
+            //            //{
+            //            //    currentDate.GetMonthName(-1),
+            //            //     s
+            //            //    // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-1).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-1).GetCYLD().Date)
+            //            //     .Sum(s => Convert.ToDouble(s.Volume))
+            //            //},
+            //            //{    currentDate.GetMonthName(-2),
+            //            //     s
+            //            // //    .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-2).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-2).GetCYLD().Date)
+            //            //    .Sum(s => Convert.ToDouble(s.Volume))
+            //            //},
+            //            //{   currentDate.GetMonthName(-3),
+            //            //    s
+            //            //   // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-3).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-3).GetCYLD().Date)
+            //            //    .Sum(s => Convert.ToDouble(s.Volume))
+            //            //},
+            //            //{ "Date",s.FirstOrDefault(f => f.Brand == s.Key).Date},
+            //        };
 
 
-                });
+            //    });
 
 
-            return result.ToList();
+            return dic.ToList();
+        }
+
+        private async Task<Dictionary<string, IEnumerable<SalesDataModel>>> GetDataByFilterQueryAsync(string key, string query)
+        {
+            var result = new Dictionary<string, IEnumerable<SalesDataModel>>();
+            var data = await GetSalesData(query);
+            result.Add(key, data);
+            return result;
+
         }
     }
 

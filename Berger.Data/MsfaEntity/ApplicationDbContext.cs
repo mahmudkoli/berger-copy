@@ -40,6 +40,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
             modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
+          //  modelBuilder.Entity<CreditControlArea>(e => { e.HasNoKey(); });
 
         }
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -149,6 +150,7 @@ namespace Berger.Data.MsfaEntity
         #endregion
         #region CollectionEntry
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<CreditControlArea> CreditControlAreas { get; set; }
         #endregion
         #region WorkFlows
         public DbSet<WorkFlow> WorkFlows { get; set; }
