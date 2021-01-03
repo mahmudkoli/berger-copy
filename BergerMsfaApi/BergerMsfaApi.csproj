@@ -117,12 +117,14 @@
     <Folder Include="Models\Organizations\" />
     <Folder Include="Logs\" />
     <Folder Include="Services\Examples\" />
+    <Folder Include="wwwroot\Logs\" />
     <Folder Include="wwwroot\uploads\images\POSMProducts\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
     <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
+    <ProjectReference Include="..\Berger.Odata\Berger.Odata.csproj" />
   </ItemGroup>
 
   <ItemGroup>

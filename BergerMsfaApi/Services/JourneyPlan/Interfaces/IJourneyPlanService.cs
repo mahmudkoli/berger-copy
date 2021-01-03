@@ -13,10 +13,10 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
     {
         //portal
         //  Task<IEnumerable<JourneyPlanDetailModel>> PortalGetJourneyPlanDetailPage(int index, int pageSize);
-        Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize, string planDate );
+        Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize, string search );
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetail();
-        Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string planDate);
-        Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(int Id);
+        Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string search);
+        Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(string date);
 
         Task<PortalPlanDetailModel> PortalCreateJourneyPlan(PortalCreateJouneryModel model);
         Task<PortalPlanDetailModel> PortalUpdateJourneyPlan(PortalCreateJouneryModel model);
@@ -34,9 +34,9 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
         //App
         Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId);
         Task<bool> AppCheckAlreadyTodayPlan(string employeeId, DateTime visitDate);
-        Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanDetailList(string employeeId);
-        Task<List<AppCreateJourneyModel>> AppCreateJourneyPlan(List<AppCreateJourneyModel> model);
-        Task<List<AppCreateJourneyModel>> AppUpdateJourneyPlan(List<AppCreateJourneyModel> model);
+        Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanList(string employeeId);
+        Task<List<AppCreateJourneyModel>> AppCreateJourneyPlan(string employeeId,List<AppCreateJourneyModel> model);
+        Task<List<AppCreateJourneyModel>> AppUpdateJourneyPlan(string employeeId,List<AppCreateJourneyModel> model);
 
         //common
         Task<int> DeleteJourneyAsync(int id);

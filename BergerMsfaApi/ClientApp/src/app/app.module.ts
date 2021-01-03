@@ -27,8 +27,6 @@ import { AuthGuard } from './Shared/Guards/auth.guard';
 import { PermissionGuard } from './Shared/Guards/permission.guard';
 
 
-
-
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
 };
@@ -53,7 +51,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         LoadingBarRouterModule,
 
         // Angular Bootstrap Components
-
         PerfectScrollbarModule,
         NgbModule,
         AngularFontAwesomeModule,

@@ -6,13 +6,28 @@ import { AlertModule } from '../alert/alert.module';
 import { PTableModule } from '../p-table/p-table.module';
 import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
 //import { TableModule } from 'primeng-lts/table'
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng-lts/button'
 import { PaginatorModule } from 'primeng/paginator';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
+FullCalendarModule.registerPlugins([
+    dayGridPlugin,
+    timeGridPlugin,
+    interactionPlugin
+  ])
+  
+
+
 @NgModule({
     declarations: [
         PageTitleComponent,
-        ImageUploaderComponent
+        ImageUploaderComponent,
+   
     ],
     imports: [
         CommonModule,
@@ -21,15 +36,20 @@ import { PaginatorModule } from 'primeng/paginator';
         PTableModule,
         TableModule,
         PaginatorModule,
-        ButtonModule
+        ButtonModule,
+        ToggleButtonModule,
+        FullCalendarModule
     ],
     exports: [PageTitleComponent,
         ImageUploaderComponent,
+
         AlertModule,
         PTableModule,
         PaginatorModule,
         ButtonModule,
         TableModule,
+        ToggleButtonModule,
+        FullCalendarModule
     ]
 })
 export class SharedMasterModule { }

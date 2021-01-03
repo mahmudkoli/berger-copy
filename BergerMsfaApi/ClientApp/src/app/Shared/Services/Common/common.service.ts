@@ -16,17 +16,58 @@ export class CommonService {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
     }
+  
+  toQueryString(obj) {
+    let parts = [];
+    for (const property in obj) {
+      const value = obj[property];
+      if (value != null && value !== undefined) {
+        parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
+      }
+    }
+
+    return parts.join('&');
+  }
 
   toFormData(obj) {
     let formData = new FormData();
     for (const property in obj) {
       const value = obj[property];
       if (value != null && value !== undefined) {
-        formData.append(property, value);
+        if(value && Array.isArray(value)) {
+          value.forEach((element, index) => {
+            this.appendFormDataNestedObject(formData, element, property, index);
+          });
+        } else {
+            this.appendFormDataNestedObject(formData, value, property, null);
+        }
       }
     }
 
     return formData;
+  }
+
+  objectToJson(value) {
+    if (typeof(value) === 'object' && !(value instanceof File)) {
+      return JSON.stringify(value);
+    }
+    else
+      return value;
+  }
+
+  jsonToObject(value) {
+      return JSON.parse(value);;
+  }
+
+  private appendFormDataNestedObject(formData, value, property, index: null | number) {
+    if(typeof(value) === 'object' && !(value instanceof File)) {
+      for (let subKey in value) {
+        formData.append(`${property}${index===null?'':'['+index+']'}[${subKey}]`, value[subKey]);
+      }
+    }
+    else {
+      formData.append(property, value);
+    }
   }
 
   setUserInfoToLocalStorage(value) {

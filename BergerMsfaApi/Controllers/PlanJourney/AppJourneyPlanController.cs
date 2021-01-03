@@ -6,6 +6,7 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BergerMsfaApi.Controllers.Journey
 {
@@ -17,21 +18,20 @@ namespace BergerMsfaApi.Controllers.Journey
     {
         private readonly IJourneyPlanService _journeyService;
 
-        public AppJourneyPlanController(IJourneyPlanService journeyService)
-        {
-            _journeyService = journeyService;
-
-        }
+        public AppJourneyPlanController
+            (
+            IJourneyPlanService journeyService
+            )=> _journeyService = journeyService;
 
         //this method expose journey plan list by employeeId
 
         [HttpGet("GetJourneyPlanList/{employeeId}")]
-        public async Task<IActionResult> GetJourneyPlanList([Required]string employeeId)
+        public async Task<IActionResult> GetJourneyPlanList([BindRequired]string employeeId)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.AppGetJourneyPlanDetailList(employeeId);
+                var result = await _journeyService.AppGetJourneyPlanList(employeeId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -40,15 +40,14 @@ namespace BergerMsfaApi.Controllers.Journey
             }
         }
 
-        [HttpPost("CreateJourneyPlan")]
-        public async Task<IActionResult>CreateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
+        [HttpPost("CreateJourneyPlan/{employeeId}")]
+        public async Task<IActionResult>CreateJourneyPlan([BindRequired] string employeeId,[FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
                 //have to check from app if there is any existing plan create same date and login employee;
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-
-                var result = await _journeyService.AppCreateJourneyPlan(model);
+                var result = await _journeyService.AppCreateJourneyPlan(employeeId,model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -58,18 +57,11 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpGet("CheckHasAlreadyPlan/{employeeId}/{visitDate}")]
-        public async Task<IActionResult> CheckHasAlreadyPlan([Required] string employeeId, [Required]  string visitDate)
+        public async Task<IActionResult> CheckHasAlreadyPlan([BindRequired] string employeeId, [DataType(DataType.Date)] DateTime visitDate)
         {
-            try
-            {
-                DateTime _visitDate;
-                if (!DateTime.TryParse(visitDate, out _visitDate))
-                {
-                    ModelState.AddModelError(nameof(visitDate), "input visitDate correct format (yyyy-mm-dd)");
-                    return ValidationResult(ModelState);
-                }
-                  
-                return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId, _visitDate));
+            try { 
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId,visitDate));
             }
             catch (Exception ex)
             {
@@ -80,13 +72,13 @@ namespace BergerMsfaApi.Controllers.Journey
 
         }
 
-        [HttpPost("UpdateJourneyPlan")]
-        public async Task<IActionResult> UpdateJourneyPlan([FromBody] List<AppCreateJourneyModel> model)
+        [HttpPost("UpdateJourneyPlan/{employeeId}")]
+        public async Task<IActionResult> UpdateJourneyPlan([BindRequired]string employeeId, [FromBody] List<AppCreateJourneyModel> model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.AppUpdateJourneyPlan(model);
+                var result = await _journeyService.AppUpdateJourneyPlan(employeeId, model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -97,7 +89,7 @@ namespace BergerMsfaApi.Controllers.Journey
 
 
         [HttpDelete("DeleteJourneyPlan")]
-        public async Task<IActionResult> DeleteJourneyPlan([Required]int PlanId)
+        public async Task<IActionResult> DeleteJourneyPlan([BindRequired]int PlanId)
         {
             try
             {
@@ -112,10 +104,11 @@ namespace BergerMsfaApi.Controllers.Journey
         }
 
         [HttpGet("GetJouneyPlanDealerList/{employeeId}")]
-        public async Task<IActionResult> GetJouneyPlanDealerList([Required]string employeeId)
+        public async Task<IActionResult> GetJouneyPlanDealerList([BindRequired] string employeeId)
         {
             try
             {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _journeyService.AppGetJourneyPlanDealerList(employeeId);
                 return OkResult(result);
 

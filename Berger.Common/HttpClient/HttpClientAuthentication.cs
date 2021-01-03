@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 
-namespace Berger.Worker.Common
+namespace Berger.Common.HttpClient
 {
     public static class HttpClientAuthentication
     {
-        public static HttpRequestMessage Authenticate(string url)
+        public static HttpRequestMessage Authenticate(string url, string username, string password)
         {
             
-            string userName = "Bpbldev1";
-            string pass = "Bpbldev2017";
-            var authenticationString = $"{userName}:{pass}";
+            var authenticationString = $"{username}:{password}";
             var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);

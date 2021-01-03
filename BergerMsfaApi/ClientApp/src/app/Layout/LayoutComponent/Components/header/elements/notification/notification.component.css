@@ -65,10 +65,10 @@
     border-radius: 5px;
 }
 .notification-body .message-list.approve{
-    background-color: #d1f3ff;
+    background-color:#4272d740;
 }
 .notification-body .message-list:hover{
-    background: #d1f3ff;
+    background: #4272d740;
     cursor: pointer;
 }
 .notification-body .message-list .text-ellipsis{

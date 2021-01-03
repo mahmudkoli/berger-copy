@@ -1,67 +1,56 @@
-<p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
+<!-- <p-table #dt [value]="journeyPlanList" [globalFilterFields]="['planDate','status']">
+    
     <ng-template pTemplate="caption">
         <div class="table-header">
-
             <div class="row">
                 <div class="col-md-4">
                     Journey Plan List
                 </div>
-
                 <div class="col-md-4 offset-md-4">
-                    <!--<button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>-->
                     <div>
                         <span class="p-input-icon-right m-2 pull-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()" [(ngModel)]="planDate" placeholder="Search (yyyy-m-d)" />
+                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()" [(ngModel)]="search" placeholder="Search" />
                         </span>
                     </div>
                 </div>
             </div>
-
-
         </div>
     </ng-template>
+
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="planDate">Plan Date <p-sortIcon field="planDate"></p-sortIcon></th>
-            <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
-            <th pSortableColumn="comment">Comment <p-sortIcon field="comment"></p-sortIcon></th>
-            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-
-            <th>
-
-            </th>
+            <th pSortableColumn="employeeName">Employee</th>
+            <th pSortableColumn="status">Status</th>
+            <th pSortableColumn="comment">Comment</th>
+            <th></th>
         </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-jPlan>
         <tr>
-            <td>{{jPlan.planDate| date }}</td>
-            <td>{{jPlan.employee.firstName }}</td>
-            <td>
-                {{ PlanStatusEnum[jPlan.planStatus]}}
-                <!--<div ngbDropdown class="d-inline-block">
-            <button class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle> {{jPlan.status|msfaStatus}}</button>
-            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
-                <button ngbDropdownItem *ngFor="let key of statusKeys" (click)="onStatusChange(key,jPlan)">{{changeStatus[key]}}</button>
-
-            </div>
-        </div>-->
-            </td>
+            <td>{{jPlan.planDate }}</td>
+            <td>{{jPlan.employeeName }}</td>
+            <td>{{jPlan.planStatusInText }}</td>
+        
             <td>{{jPlan.comment}}</td>
-            <td>
-                <!--<i class="fa fa-edit mr-2" (click)="edit(jPlan.id)"> </i>
-        <i class="fa fa-trash" (click)="delete(jPlan.id)"> </i>-->
-                <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="openModal(jPlan)">
-                    View Detail
-                </button>
-            </td>
+            <td> <button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="onDetail(jPlan)">View Detail</button></td>
         </tr>
-    </ng-template>
+    </ng-template> 
+
     <ng-template pTemplate="summary">
-        <p-paginator [rows]="rows"
+        <p-paginator
+                     #paginator
+                     [rows]="rows"
                      [totalRecords]="pagingConfig?.totalItemCount"
-                     [pageLinkSize]="pageSize"
+                     [pageLinkSize]="10"
                      [rowsPerPageOptions]="[10,20]"
-                     (onPageChange)="paginate($event)"></p-paginator>
+                     (onPageChange)="paginate($event)">
+
+        </p-paginator>
     </ng-template>
-</p-table>
+</p-table> -->
+<div class="p-3 bg-white mb-3">
+    <full-calendar #fc [options]="calendarOptions"></full-calendar>
+</div>

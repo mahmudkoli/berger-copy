@@ -56,7 +56,7 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     public fnSave() {
-
+        debugger;
         this.focusDealerModel.validFrom = this.focusDealerModel.validFromNgbDate.year.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.month.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.day.toString();
@@ -71,6 +71,7 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     private insert(focusDealer: FocusDealer) {
+
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
             this.router.navigate(['/dealer/focusdealer-list']).then(() => {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.HttpClient;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity;
 using Berger.Worker.Common;

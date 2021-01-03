@@ -1,0 +1,91 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <!-- <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>
+        </div> -->
+    </div>
+    <div class="card-body">
+        <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <div class="position-relative form-group">
+                        <label class="required">Title</label>
+                        <input type="text" class="form-control" formControlName="title"
+                               [ngClass]="{'is-valid':formControls.title.touched && !formControls.title.errors,
+                               'is-invalid':formControls.title.touched && formControls.title.errors }" />
+                        <small class="text-danger" *ngIf="formControls.title.touched && formControls.title.errors">
+                            <span *ngIf="formControls.title.errors.required">Title is <strong>required</strong></span>
+                            <span *ngIf="formControls.title.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">ELearning Document</label>
+                        <ng-select formControlName="eLearningDocumentId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of eLearningDocuments;" [value]="ur.id">{{ur.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.eLearningDocumentId.touched && formControls.eLearningDocumentId.errors">
+                            <span *ngIf="formControls.eLearningDocumentId.errors.required">ELearning Document is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Question Type</label>
+                        <ng-select formControlName="type">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of questionTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.type.touched && formControls.type.errors">
+                            <span *ngIf="formControls.type.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Mark</label>
+                        <input type="number" class="form-control" formControlName="mark"
+                                [ngClass]="{'is-valid':formControls.mark.touched && !formControls.mark.errors,
+                                'is-invalid':formControls.mark.touched && formControls.mark.errors }" />
+                        <small class="text-danger" *ngIf="formControls.mark.touched && formControls.mark.errors">
+                            <span *ngIf="formControls.mark.errors.required">Mark is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12">
+                    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="questionOptions"
+                        (customActivityOnRecord)="fnCustomTrigger($event)">
+                    </app-p-table>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="questionForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

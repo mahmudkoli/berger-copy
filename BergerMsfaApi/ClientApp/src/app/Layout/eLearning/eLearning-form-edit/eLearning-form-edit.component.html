@@ -1,0 +1,141 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <!-- <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>
+        </div> -->
+    </div>
+    <div class="card-body">
+        <form [formGroup]="eLearningDocumentForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <div class="position-relative form-group">
+                        <label class="required">Title</label>
+                        <input type="text" class="form-control" formControlName="title"
+                               [ngClass]="{'is-valid':formControls.title.touched && !formControls.title.errors,
+                               'is-invalid':formControls.title.touched && formControls.title.errors }" />
+                        <small class="text-danger" *ngIf="formControls.title.touched && formControls.title.errors">
+                            <span *ngIf="formControls.title.errors.required">Title is <strong>required</strong></span>
+                            <span *ngIf="formControls.title.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Category</label>
+                        <ng-select formControlName="categoryId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of categories;" [value]="ur.id">{{ur.dropdownName}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.categoryId.touched && formControls.categoryId.errors">
+                            <span *ngIf="formControls.categoryId.errors.required">Category is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">File Upload</label>
+                        <!-- <p-fileUpload #fileInput name="files[]" [showUploadButton]="false" [showCancelButton]="false" 
+                            multiple="multiple"  accept=".csv,.xml,.doc,.docx,.pdf">
+                        </p-fileUpload> -->
+                        <div class="card">
+                            <div class="card-header" style="background-color: #f8f9fa;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input #inputFile type="file" multiple="multiple" id="inputFile" style="display: none;"  
+                                            (change)="onChangeInputFile($event)" accept=".csv,.xml,.doc,.docx,.pdf" />
+                                        <button type="button" class="btn btn-primary" (click)="inputFile.click()">
+                                            <i class="fa fa-plus" style="margin-right: 0.5rem;"></i>Add File
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul>
+                                    <li *ngFor="let file of eLearningAttachmentFiles;let i=index" style="width:100%; display: flex; align-items: center; padding: 5px 0;">
+                                        <div [ngClass]="{'strikeout':file.status==0,'non-strikeout':file.status==1}">{{file.name+file.format}}</div>
+                                        <div [ngClass]="{'strikeout':file.status==0,'non-strikeout':file.status==1}">{{(file.size/1024) | number : '1.3-3'}} KB</div>
+                                        <div>
+                                            <a [href]="file.path" class="text-primary pl-2" style="cursor: pointer;" title="Download"><i class="fa fa-download" ></i></a> 
+                                            <span (click)="changeStatusPreviousAttachmentFiles(i)" class="text-info pl-2" style="cursor: pointer;" title="Active/Inactive"><i class="fa " [ngClass]="{'fa-toggle-off':file.status==0,'fa-toggle-on':file.status==1}"></i></span> 
+                                            <span (click)="removePreviousAttachmentFiles(i)" class="text-danger pl-2" style="cursor: pointer;" title="Delete"><i class="fa fa-times" ></i></span> 
+                                        </div>
+                                    </li>
+                                    <li *ngFor="let file of attachmentFiles;let i=index" style="width:100%; display: flex; align-items: center; padding: 5px 0;">
+                                        <div>{{file.name}}</div>
+                                        <div>{{(file.size/1024) | number : '1.3-3'}} KB</div>
+                                        <div>
+                                            <span (click)="removeAttachmentFiles(i)" class="text-danger pl-2" style="cursor: pointer;"><i class="fa fa-times" ></i></span> 
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Link Upload</label>
+                        <div class="card">
+                            <div class="card-header" style="background-color: #f8f9fa;">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <input #linkInput type="text" class="form-control" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-primary" (click)="addAttachmentLinkUrls(linkInput.value);linkInput.value='';">
+                                            <i class="fa fa-plus" style="margin-right: 0.5rem;"></i>Add Link
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul>
+                                    <li *ngFor="let file of eLearningAttachmentLinkUrls;let i=index" style="width:100%; display: flex; align-items: center; padding: 5px 0;">
+                                        <div [ngClass]="{'strikeout':file.status==0,'non-strikeout':file.status==1}">{{file.path}}</div>
+                                        <div>
+                                            <a [href]="file.path" target="_blank" class="text-primary pl-2" style="cursor: pointer;" title="View"><i class="fa fa-eye" ></i></a> 
+                                            <span (click)="changeStatusPreviousAttachmentLinkUrls(i)" class="text-info pl-2" style="cursor: pointer;" title="Active/Inactive"><i class="fa " [ngClass]="{'fa-toggle-off':file.status==0,'fa-toggle-on':file.status==1}"></i></span> 
+                                            <span (click)="removePreviousAttachmentLinkUrls(i)" class="text-danger pl-2" style="cursor: pointer;" title="Delete"><i class="fa fa-times" ></i></span> 
+                                        </div>
+                                    </li>
+                                    <li *ngFor="let link of attachmentLinkUrls;let i=index" style="width:100%; display: flex; align-items: center; padding: 5px 0;">
+                                        <div>{{link}}</div>
+                                        <div>
+                                            <span (click)="removeAttachmentLinkUrls(i)" class="text-danger pl-2" style="cursor: pointer;"><i class="fa fa-times" ></i></span> 
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="eLearningDocumentForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,4 +1,6 @@
-﻿namespace BergerMsfaApi.Models.Dealer
+﻿using System;
+
+namespace BergerMsfaApi.Models.Dealer
 {
     public class AppDealerInfoModel
     {
@@ -8,7 +10,9 @@
         public string Address { get; set; }
         public string ContactNo { get; set; }
         public string Territory { get; set; } 
-        public string VisitDate { get; set; }
+        public string PlanDate { get; set; }
+        public bool IsFocused { get; set; }
+        public bool IsSubdealer { get; set; }
         public int PlandId { get; set; }
 
 

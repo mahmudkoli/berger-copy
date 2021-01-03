@@ -1,12 +1,5 @@
 
-<p-table #dt [value]="tintingMachineList"
-         [paginator]="true"
-         [showCurrentPageReport]="true"
-         [(first)]="first"
-         [rows]="rows"
-         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-         [rowsPerPageOptions]="[10,25,50]"
-         [globalFilterFields]="['Territory','Company','No']">
+<p-table #dt [value]="tintingMachineList">
     <ng-template pTemplate="caption">
         <div class="table-header">
 
@@ -16,9 +9,11 @@
                 </div>
 
                 <div class="col-md-4 offset-md-4">
-                    <span class="p-input-icon-right  pull-right">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" class="form-control" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                    <span class="p-input-icon-right m-2 pull-right">
+                        <i class="pi pi-search" (click)="onSearch()"></i>
+                        <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                            [(ngModel)]="search" placeholder="Search" />
+
                     </span>
 
                 </div>
@@ -33,6 +28,7 @@
             <th pSortableColumn="Company">Company<p-sortIcon field="Company"></p-sortIcon></th>
             <th pSortableColumn="No">No <p-sortIcon field="No"></p-sortIcon></th>
             <th pSortableColumn="Cont">Cont(%) <p-sortIcon field="Cont"></p-sortIcon></th>
+   
 
             <th>
 
@@ -41,13 +37,13 @@
     </ng-template>
     <ng-template pTemplate="body" let-tinting>
         <tr>
-            <td>{{tinting.Territory}}</td>
-            <td>{{tinting.Company }}</td>
+            <td>{{tinting.territoryCd}}</td>
+            <td>{{tinting.companyName }}</td>
             <td>
-                {{tinting.No}}
+                {{tinting.no}}
             </td>
             <td>
-                {{tinting.Cont}}
+                {{tinting.cont}}
             </td>
             
             <td>
@@ -59,5 +55,15 @@
             </td>
         </tr>
     </ng-template>
-
+    <ng-template pTemplate="summary">
+        <p-paginator
+        
+                  
+                     #paging
+                     [rows]="rows"
+                     [totalRecords]="pagingConfig?.totalItemCount"
+                     [pageLinkSize]="10"
+                     [rowsPerPageOptions]="[10,20]"
+                     (onPageChange)="paginate($event)"></p-paginator>
+    </ng-template> 
 </p-table>

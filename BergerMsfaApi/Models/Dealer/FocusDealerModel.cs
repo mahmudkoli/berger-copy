@@ -14,8 +14,8 @@ namespace BergerMsfaApi.Models.FocusDealer
         public string EmployeeName { get; set; }
         public string EmployeeId { get; set; }
 
-        public DateTime ValidFrom { get; set; }
+        public string ValidFrom { get; set; }
        
-        public DateTime ValidTo { get; set; }
+        public string ValidTo { get; set; }
     }
 }

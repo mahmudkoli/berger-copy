@@ -19,9 +19,27 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             _host = host;
         }
 
+        public async Task<string> SaveFileAsync(IFormFile file, string fileName, FileUploadCode type)
+        {
+            string filePath = this.GetFileFolderPath(type);
+
+            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
+                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
+
+            fileName += Path.GetExtension(file.FileName);
+            filePath = Path.Combine(filePath, fileName);
+
+            using (var stream = new FileStream(Path.Combine(_host.WebRootPath, filePath), FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return filePath;
+        }
+
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
         {
-            string filePath = this.GetFolderPath(type);
+            string filePath = this.GetImageFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -39,7 +57,7 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetFolderPath(type);
+            string filePath = this.GetImageFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -60,9 +78,30 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             return filePath;
         }
 
+        public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type)
+        {
+            string filePath = this.GetImageFolderPath(type);
+
+            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
+                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
+
+            fileName += ".jpg";
+            filePath = Path.Combine(filePath, fileName);
+
+            byte[] bytes = Convert.FromBase64String(base64String);
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                Image image = Image.FromStream(ms);
+                Image newImage = image;
+                newImage.Save(Path.Combine(_host.WebRootPath, filePath));
+            }
+
+            return filePath;
+        }
+
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetFolderPath(type);
+            string filePath = this.GetImageFolderPath(type);
 
             if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
                 Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
@@ -101,7 +140,13 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 File.Delete(Path.Combine(_host.WebRootPath, filePath));
         }
 
-        private string GetFolderPath(FileUploadCode type)
+        public async Task DeleteFileAsync(string filePath)
+        {
+            if (!string.IsNullOrWhiteSpace(filePath) && File.Exists(Path.Combine(_host.WebRootPath, filePath)))
+                File.Delete(Path.Combine(_host.WebRootPath, filePath));
+        }
+
+        private string GetImageFolderPath(FileUploadCode type)
         {
             string filePath = Path.Combine("uploads", "images");
             switch (type)
@@ -120,6 +165,23 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                     break;
                 case FileUploadCode.LeadGeneration:
                     filePath = Path.Combine(filePath, "LeadGeneration");
+                    break;
+                case FileUploadCode.ELearning:
+                    filePath = Path.Combine(filePath, "ELearning");
+                    break;
+                default:
+                    break;
+            }
+            return filePath;
+        }
+
+        private string GetFileFolderPath(FileUploadCode type)
+        {
+            string filePath = Path.Combine("uploads", "files");
+            switch (type)
+            {
+                case FileUploadCode.ELearning:
+                    filePath = Path.Combine(filePath, "ELearning");
                     break;
                 default:
                     break;

@@ -1,5 +1,5 @@
 .p-table thead {
-    background-color: #2bbbad;
+    background-color: #4272d7;
 }
 
 .p-table-header,
@@ -21,7 +21,7 @@
     padding-bottom: 15px;
     background: #fff;
     margin-bottom: 20px;
-    border-top: 5px solid #2bbbad;
+    border-top: 5px solid #4272d7;
     border-radius: 5px;
 }
 
@@ -79,13 +79,13 @@
 }
 
 .p-table-column-up-arrow {
-    color: #2bbbad!important;
+    color: #4272d7!important;
     font-size: 16px;
     cursor: pointer;
 }
 
 .p-table-column-down-arrow {
-    color: #2bbbad;
+    color: #4272d7;
     font-size: 1px;
     cursor: pointer;
 }
@@ -103,15 +103,15 @@
 .btn-column-setting {
     background-color: transparent;
     cursor: pointer;
-    border: 1px solid #2bbbad;
+    border: 1px solid #4272d7;
     margin-right: 5px;
     border-radius: 5px;
-    color: #2bbbad;
+    color: #4272d7;
     transition:all 0.3s;
 }
 
 .btn-column-setting:hover {
-    background: #2bbbad;
+    background: #4272d7;
     color: #fff;
 }
 
@@ -160,7 +160,7 @@ span.sort-icon {
 /*p-table header default color set*/
 
 .p-table-body .p-table thead th {
-    background: #2bbbad;
+    background: #4272d7;
     color: #fff;
     border: none;
     padding: 0px;
@@ -216,6 +216,7 @@ span.sort-icon {
 
 .p-table thead tr th {
     position: relative;
+    font-size: 14px;
 }
 
 span.p-table-column-resizer {
@@ -299,7 +300,7 @@ li.dragable {
 }
 
 li.dragable:hover {
-    color: #2bbbad;
+    color: #4272d7;
 }
 
 div.dragable-content {
@@ -365,7 +366,7 @@ ul.ul-dragable {
 }
 
 .reflow-icon {
-    color: #2bbbad;
+    color: #4272d7;
     font-weight: bold;
 }
 
@@ -524,9 +525,9 @@ ul.ul-dragable {
 }
 
 select {
-    background: #2bbbad;
+    background: #4272d7;
     color: #fff;
-    border: 1px solid #2bbbad;
+    border: 1px solid #4272d7;
 }
 
 @media only screen and (max-width: 576px) {
@@ -552,12 +553,12 @@ select {
     border: 1px solid #ffffff;
 }
 .p-table-footer .page-item.active .page-link {
-    background-color: #2bbbad;
-    border-color: #2bbbad;
+    background-color: #4272d7;
+    border-color: #4272d7;
 }
 .filter-button{
     border-radius: 0;
     padding: 3px 10px;
-    border: 1px solid #2bbbad;
-    color: #2bbbad;
+    border: 1px solid #4272d7;
+    color: #4272d7;
 }

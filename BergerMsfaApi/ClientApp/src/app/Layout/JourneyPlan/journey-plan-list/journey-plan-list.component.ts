@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PermissionGroup, ActivityPermissionService } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
@@ -6,8 +6,10 @@ import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey
 import { JourneyPlan } from '../../../Shared/Entity/JourneyPlan/JourneyPlan';
 import { JourneyPlanStatus } from '../../../Shared/Entity/JourneyPlan/JourneyPlanStatus';
 import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
-
-
+import { APIModel } from '../../../Shared/Entity';
+import { Paginator } from 'primeng/paginator';
+import { CalendarOptions, DateSelectArg } from '@fullcalendar/angular';
+import { FullCalendar } from 'primeng-lts/fullcalendar';
 
 
 @Component({
@@ -17,30 +19,167 @@ import { PlanStatus } from '../../../Shared/Enums/PlanStatus';
 
 export class JourneyPlanListComponent implements OnInit {
 
+
+    calendarOptions: CalendarOptions = {};
+
     permissionGroup: PermissionGroup = new PermissionGroup();
     journeyPlanStatus: JourneyPlanStatus = new JourneyPlanStatus();
-    public journeyPlanList: JourneyPlan[] = [];
+    public journeyPlanList: any[] = [];
     PlanStatusEnum = PlanStatus;
     statusKeys: any[] = [];
     first = 1;
     rows = 10;
-    planDate: string = "";
-    pagingConfig: any;
+    search: string = "";
+    pagingConfig: APIModel;
     pageSize: number;
+    @ViewChild("paginator", { static: false }) paginator: Paginator;
+    @ViewChild('fc', { static: false }) fc: FullCalendar;
+
     constructor(
+
         private activityPermissionService: ActivityPermissionService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private alertService: AlertService,
         private journeyPlanService: JourneyPlanService
     ) {
+        this.pagingConfig = new APIModel(1, 10);
         this._initPermissionGroup();
     }
 
     ngOnInit() {
-      // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
-        //this.fnJourneyPlanList();
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+
+        this.calendarOptions = {
+            headerToolbar: {
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            initialView: 'dayGridMonth',
+            dateClick: this.handleDateClick.bind(this),
+            //select: this.handleDateSelect.bind(this),
+            //  eventClick: this.handleEventClick.bind(this),
+            // eventsSet: this.handleEvents.bind(this),
+            dayCellDidMount: function (info) {
+
+                //     let view=document.createElement('button');
+                //     view.className="btn btn-sm btn-primary";
+                //     view.textContent="View";
+                //     info.el.appendChild(view);
+
+
+
+                //     let del=document.createElement('button');
+                //     del.textContent="Delete";
+                //     del.className="btn btn-sm btn-primary";
+                //     info.el.appendChild(del);
+                //     del.addEventListener("click",function(){
+                //         alert("Delete");
+                //     })
+                //     // info.el.innerHTML=`<button class='btn btn-sm btn-primary'>View</button>`;
+                //     // info.el.innerHTML=`<button class='btn btn-sm btn-primary'>Delete</button>`;
+                //    return info.el;
+
+            },
+            //eventColor: '#378006',
+            eventOrder: ['id'],
+            eventContent: function (arg) {
+                // debugger;
+
+                // let italicEl = document.createElement('i')
+
+                // if (arg.event.extendedProps.isUrgent) {
+                //     italicEl.innerHTML = 'urgent event'
+                // } else {
+                //     italicEl.innerHTML = 'normal event'
+                // }
+
+                // let arrayOfDomNodes = [italicEl]
+                // return { domNodes: arrayOfDomNodes }
+            },
+            eventClick: this.handleEventClick.bind(this),
+            // select: this.handleDateSelect.bind(this),
+            //sevents: this.eventPlans,
+            // initialEvents:this.journeyPlanList.map((f:any)=>({title:f.employeeName,date:f.planDate}))
+
+            selectable: true,
+
+
+
+
+
+
+            // eventClick: this.handleEventClick.bind(this),
+            //  eventsSet: this.handleEvents.bind(this)
+            //eventClick:this.handleEventClick.bind(this)
+            // customButtons: {
+            //     'new': {
+            //         text: 'New Record',
+            //         click: this.add.bind(this)
+            //     }
+
+            // }
+
+
+        }
+        // this.statusKeys = Object.keys(this.changeStatus).filter(k => !isNaN(Number(k)));
+        this.onLoadJourneyPlans(this.first, this.rows, this.search);
+        // this.calendarOptions.customButtons={
+        //     new:{
+        //         text:"New Record",
+        //         click:function(){ 
+        //             alert("Call");
+        //           return  this.router.navigate(['/journey-plan/add']);
+        //         }
+        //     }
+        // }
+
+
+    }
+    handleEvents(arg) {
+        debugger;
+        alert('Set click! ' + arg.dateStr)
+    }
+    handleEventClick(info) {
+        debugger;
+        let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
+        // this.detail(find);
+        // alert('Cell');
+        if (info.event.title == "Delete") {
+            this.delete(find);
+        }
+        else if (info.event.title == "Edit") {
+            this.edit(find);
+        }
+        else if (info.event.title == "View") {
+            this.detail(find)
+        }
+       
+
+        // alert('Event: ' + info.event.startStr);
+        // alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        // alert('View: ' + info.view.type);
+        // let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
+        // this.detail(find);
+        // change the border color just for fun
+        //info.el.style.borderColor = 'red';
+        //  alert('event click! ' + arg.dateStr)
+    }
+    handleDateClick(arg) {
+        debugger;
+        var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
+        if (arg.dateStr >= utc) {
+            this.add(arg.dateStr);
+        }
+        // let find = this.journeyPlanList.find(f => f.planDate == arg.dateStr);
+        // this.edit(find);
+    }
+    handleDateSelect(selectInfo: DateSelectArg) {
+        debugger;
+        let eventDate = selectInfo.view.currentStart;
+        let find = this.journeyPlanList.find(f => f.planDate == eventDate);
+        this.detail(find);
+
 
     }
     compareDate(pDate) {
@@ -55,21 +194,22 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     next() {
-        this.first = this.first + this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber + this.pagingConfig.pageSize;
+        this.onLoadJourneyPlans(this.first, this.rows, this.search);
     }
 
     prev() {
-        this.first = this.first - this.rows;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.pagingConfig.pageNumber = this.pagingConfig.pageNumber - this.pagingConfig.pageSize;
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     onSearch() {
-
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.reset();
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
     }
     reset() {
-        this.first = 1;
-        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+        this.paginator.first = 1;
+        this.pagingConfig = new APIModel(1, 10);
+
     }
 
     isLastPage(): boolean {
@@ -78,69 +218,71 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     isFirstPage(): boolean {
-        return this.journeyPlanList ? this.first === 1 : true;
+        return this.journeyPlanList ? this.pagingConfig.pageNumber === 1 : true;
     }
     public paginate(event) {
-        let first = Number(event.page) + 1;
-        this.fnJourneyPlanListPaging(first, event.rows, this.planDate);
 
-       // event.first == 0 ?  1 : event.first;
+        this.pagingConfig.pageNumber = Number(event.page) + 1;
+        this.pagingConfig.pageSize = Number(event.rows);
+
+        this.onLoadJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+
+        // event.first == 0 ?  1 : event.first;
         //event.first = Index of the first record
         //event.rows = Number of rows to display in new page
         //event.page = Index of the new page
         //event.pageCount = Total number of pages
     }
-    //public onStatusChange(key, jPlan) {
-
-    //    this.journeyPlanStatus.planId = jPlan.id;
-    //    this.journeyPlanStatus.status = Number(key);
-  
-    //    this.alertService.confirm(`Are you sure to change status?`, () => {
-    //        this.alertService.fnLoading(true);
-    //        this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
-    //            (res) => {
-    //                this.alertService.tosterSuccess(`Status Successfully.`);
-    //                // this.fnJourneyPlanList();
-    //                this.fnJourneyPlanListPaging(this.first, this.rows,  "");
-    //            },
-    //            (error) => {
-    //                console.log(error);
-    //            }
-             
-    //        ).add(() => this.alertService.fnLoading(false));
-    //    }, () => {
-
-    //    });
-    //}
 
     private _initPermissionGroup() {
         this.permissionGroup = this.activityPermissionService.getPermission(this.activatedRoute.snapshot.data.permissionGroup);
     }
 
-    private fnJourneyPlanList() {
 
-        this.alertService.fnLoading(true);
-        this.journeyPlanService.getJourneyPlanList()
-            .subscribe(
-                (res) => {
-                    this.journeyPlanList = res.data as [] || [];
-                },
-                (error) => {
-                    console.log(error);
-                    this.displayError(error);
-                }
-            ).add(()=> this.alertService.fnLoading(false))
-    }
-    private fnJourneyPlanListPaging(index, pageSize,planDate) {
+    private onLoadJourneyPlans(index, pageSize, search) {
 
         this.alertService.fnLoading(true);
 
-        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize, planDate)
+        this.journeyPlanService.getJourneyPlanListPaging(index, pageSize, search)
             .subscribe(
                 (res) => {
                     this.pagingConfig = res.data;
-                    this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
+                    //  this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.journeyPlanList = this.pagingConfig.model as [] || []
+                    let events = [];
+                    this.journeyPlanList.forEach(plan => {
+                        debugger;
+                        //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
+                        events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
+                        events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
+                        events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
+                        events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
+                    });
+                    events.sort()
+                    this.calendarOptions.events = [...events];
+                    // this.eventPlans=[...events];
+                    // this.calendarOptions = {
+                    //     headerToolbar: {
+                    //         left: 'prev,next today',
+                    //         center: 'title',
+                    //         right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    //     },
+                    //     initialView: 'dayGridMonth',
+                    //     // dateClick: this.handleDateClick.bind(this), 
+                    //     select: this.handleDateSelect.bind(this),
+                    //     //sevents: this.eventPlans,
+                    //    // initialEvents:this.journeyPlanList.map((f:any)=>({title:f.employeeName,date:f.planDate}))
+
+
+
+                    // }
+
+                    // this.calendarOptions.customButtons = {
+                    //     new: {
+                    //         text: "New Record",
+                    //         click:this.add.bind(this)
+                    //     }
+                    // }
                 },
                 (error) => this.displayError(error)
 
@@ -151,8 +293,8 @@ export class JourneyPlanListComponent implements OnInit {
         this.router.navigate(["/journey-plan/detail", plan.id]);
     }
 
-    add() {
-        this.router.navigate(['/journey-plan/add']);
+    add(date) {
+        this.router.navigate(['/journey-plan/add',date]);
     }
 
     edit(jPlan) {
@@ -160,7 +302,7 @@ export class JourneyPlanListComponent implements OnInit {
         debugger;
         if (this.compareDate(jPlan.planDate)) {
             console.log('edit plan', jPlan.id);
-            this.router.navigate(['/journey-plan/add/' + jPlan.id]);
+            this.router.navigate(['/journey-plan/add/' + jPlan.planDate]);
         }
         else this.alertService.alert("can not modify pervious plan");
     }
@@ -175,8 +317,8 @@ export class JourneyPlanListComponent implements OnInit {
                     (res: any) => {
                         console.log('res from del func', res);
                         this.alertService.tosterSuccess("journey plan has been deleted successfully.");
-                        //  this.fnJourneyPlanList();
-                        this.fnJourneyPlanListPaging(this.first, this.rows, this.planDate);
+
+                        this.onLoadJourneyPlans(this.first, this.rows, this.search);
                     },
                     (error) => {
                         console.log(error);
@@ -188,7 +330,7 @@ export class JourneyPlanListComponent implements OnInit {
             });
         }
         else this.alertService.alert("can not delete pervious plan");
-       
+
     }
     private displayError(errorDetails: any) {
         console.log("error", errorDetails);
