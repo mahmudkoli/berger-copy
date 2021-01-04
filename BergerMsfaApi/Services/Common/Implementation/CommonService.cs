@@ -21,6 +21,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
     public class CommonService : ICommonService
     {
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<CustomerGroup> _customerGroupSvc;
         private readonly IRepository<Depot> _depotSvc;
         private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailSvc;
         private readonly IRepository<Zone> _zoneSvc;
@@ -33,7 +34,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<Division> _divisionSvc;
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
-
+            IRepository<CustomerGroup> customerGroupSvc,
             IRepository<Zone> zoneSvc,
             IRepository<Territory> territorySvc,
             IRepository<SaleGroup> saleGroupSvc,
@@ -49,6 +50,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
+            this._customerGroupSvc = customerGroupSvc;
             _zoneSvc = zoneSvc;
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
@@ -149,8 +151,23 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone)
             };
 
-            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
-            return result.ToMap<DealerInfo, AppDealerInfoModel>();
+            //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
+            var result = from dealer in (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory]))
+                         join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
+                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup 
+                         into cust from cu in cust.DefaultIfEmpty()
+                         select new AppDealerInfoModel
+                         { // result selector 
+                             Id = dealer.Id,
+                             CustomerNo = dealer.CustomerNo,
+                             CustomerName = dealer.CustomerName,
+                             Address = dealer.Address,
+                             ContactNo = dealer.ContactNo,
+                             Territory = dealer.Territory,
+                             IsSubdealer = cu != null ? cu.CustomerAccountGroup.StartsWith("Subdealer") : false
+                         };
+
+            return result;
         }
     }
     public class DepotModel
