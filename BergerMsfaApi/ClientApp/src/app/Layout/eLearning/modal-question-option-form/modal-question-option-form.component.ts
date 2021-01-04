@@ -30,7 +30,7 @@ export class ModalQuestionOptionFormComponent implements OnInit, OnDestroy {
 		private alertService: AlertService,
 		private commonService: CommonService,
 		private modalService: NgbModal,
-		private activeModal: NgbActiveModal) { }
+		public activeModal: NgbActiveModal) { }
 
 	ngOnInit() {
 		this.initQuestions();
