@@ -12,15 +12,15 @@ namespace BergerMsfaApi.Controllers.Question
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class QuestionController : BaseController
+    public class QuestionSetController : BaseController
     {
-        private readonly IQuestionService _questionService;
+        private readonly IQuestionSetService _questionSetService;
 
-        public QuestionController(
-                IQuestionService questionService
+        public QuestionSetController(
+                IQuestionSetService questionSetService
             )
         {
-            this._questionService = questionService;
+            this._questionSetService = questionSetService;
         }
 
         [HttpGet]
@@ -28,21 +28,7 @@ namespace BergerMsfaApi.Controllers.Question
         {
             try
             {
-                var result = await _questionService.GetAllAsync(1, int.MaxValue);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetByELearningDocumentId/{id}")]
-        public async Task<IActionResult> GetByELearningDocumentId(int id)
-        {
-            try
-            {
-                var result = await _questionService.GetAllGetByELearningDocumentIdAsync(id);
+                var result = await _questionSetService.GetAllAsync(1, int.MaxValue);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -56,7 +42,7 @@ namespace BergerMsfaApi.Controllers.Question
         {
             try
             {
-                var result = await _questionService.GetByIdAsync(id);
+                var result = await _questionSetService.GetByIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -66,7 +52,7 @@ namespace BergerMsfaApi.Controllers.Question
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SaveQuestionModel model)
+        public async Task<IActionResult> Create([FromBody] SaveQuestionSetModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -75,7 +61,7 @@ namespace BergerMsfaApi.Controllers.Question
 
             try
             {
-                var result = await _questionService.AddAsync(model);
+                var result = await _questionSetService.AddAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -85,7 +71,7 @@ namespace BergerMsfaApi.Controllers.Question
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SaveQuestionModel model)
+        public async Task<IActionResult> Update(int id, [FromBody] SaveQuestionSetModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +80,7 @@ namespace BergerMsfaApi.Controllers.Question
 
             try
             {
-                var result = await _questionService.UpdateAsync(model);
+                var result = await _questionSetService.UpdateAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -108,7 +94,7 @@ namespace BergerMsfaApi.Controllers.Question
         {
             try
             {
-                var result = await _questionService.DeleteAsync(id);
+                var result = await _questionSetService.DeleteAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)

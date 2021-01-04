@@ -14,6 +14,7 @@ namespace BergerMsfaApi.Services.ELearning.Interfaces
         Task<int> UpdateAsync(SaveQuestionModel model);
         Task<QuestionModel> GetByIdAsync(int id);
         Task<IList<QuestionModel>> GetAllAsync(int pageIndex, int pageSize);
+        Task<IList<QuestionModel>> GetAllGetByELearningDocumentIdAsync(int id);
         Task<int> DeleteAsync(int eLearningDocumentId);
     }
 }

@@ -65,8 +65,9 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 							if(this.question.questionOptions && this.question.questionOptions.length > 0) {
 								this.questionOptions = this.question.questionOptions;
 								this.questionOptions.forEach((element, index) => {
-									element.statusText = element.status == 1 ? 'Active' : 'Inactive';
-									element.editDeleteId = index;
+									element.statusText = element.status == 0 ? 'Inactive' : 'Active';
+									element.isCorrectAnswerText = element.isCorrectAnswer ? 'YES' : 'NO';
+									element.editDeleteId = index+1;
 								});
 							}
 							this.initQuestions();
@@ -107,6 +108,7 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 			title: [this.question.title, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
 			eLearningDocumentId: [this.question.eLearningDocumentId, [Validators.required]],
 			type: [this.question.type, [Validators.required]],
+			mark: [this.question.mark, [Validators.required]],
 			status: [this.question.status, [Validators.required]]
 		});
 	}
@@ -142,6 +144,7 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 		_question.title = controls['title'].value;
 		_question.eLearningDocumentId = controls['eLearningDocumentId'].value;
 		_question.type = controls['type'].value;
+		_question.mark = controls['mark'].value;
 		_question.status = controls['status'].value;
 		if(this.questionOptions && this.questionOptions.length > 0)
 			_question.questionOptions = this.questionOptions;
@@ -183,8 +186,9 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 		tableName: 'Question Options',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Title', width: '60%', internalName: 'title', sort: true, type: "" },
-			{ headerName: 'Sequence', width: '30%', internalName: 'sequence', sort: true, type: "" },
+			{ headerName: 'Title', width: '50%', internalName: 'title', sort: true, type: "" },
+			{ headerName: 'Sequence', width: '20%', internalName: 'sequence', sort: true, type: "" },
+			{ headerName: 'Is Correct Answer', width: '20%', internalName: 'isCorrectAnswerText', sort: true, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: true, type: "" },
 		],
 		enabledSearch: false,
@@ -247,11 +251,14 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 					let obj = this.questionOptions.find(x => x.editDeleteId==result.editDeleteId);
 					obj.title = result.title;
 					obj.sequence = result.sequence;
+					obj.isCorrectAnswer = result.isCorrectAnswer;
 					obj.status = result.status;
-					obj.statusText = result.status == 1 ? 'Active' : 'Inactive';
+					obj.statusText = result.status == 0 ? 'Inactive' : 'Active';
+					obj.isCorrectAnswerText = result.isCorrectAnswer ? 'YES' : 'NO';
 				} else {
 					result.editDeleteId = this.questionOptions.length+1;
-					result.statusText = result.status == 1 ? 'Active' : 'Inactive';
+					result.statusText = result.status == 0 ? 'Inactive' : 'Active';
+					result.isCorrectAnswerText = result.isCorrectAnswer ? 'YES' : 'NO';
 					this.questionOptions.push(result);
 				}
 		  	},

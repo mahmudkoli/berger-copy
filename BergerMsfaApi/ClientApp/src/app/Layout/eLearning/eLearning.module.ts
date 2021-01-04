@@ -15,6 +15,9 @@ import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form
 import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { ModalQuestionOptionFormComponent } from './modal-question-option-form/modal-question-option-form.component';
+import { QuestionSetListComponent } from './question-set-list/question-set-list.component';
+import { QuestionSetFormComponent } from './question-set-form/question-set-form.component';
+import { ModalQuestionSetOptionFormComponent } from './modal-question-set-option-form/modal-question-set-option-form.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,10 @@ import { ModalQuestionOptionFormComponent } from './modal-question-option-form/m
     QuestionListComponent,
     QuestionFormComponent,
     ELearningComponent,
-    ModalQuestionOptionFormComponent
+    ModalQuestionOptionFormComponent,
+    QuestionSetListComponent,
+    QuestionSetFormComponent,
+    ModalQuestionSetOptionFormComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +44,8 @@ import { ModalQuestionOptionFormComponent } from './modal-question-option-form/m
     FileUploadModule
   ],
   entryComponents: [
-    ModalQuestionOptionFormComponent
+    ModalQuestionOptionFormComponent,
+    ModalQuestionSetOptionFormComponent,
   ]
 })
 export class ELearningModule { }

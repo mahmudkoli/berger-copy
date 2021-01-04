@@ -16,83 +16,74 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.ELearning.Implementation
 {
-    public class QuestionService : IQuestionService
+    public class QuestionSetService : IQuestionSetService
     {
         private readonly IRepository<Question> _questionRepository;
         private readonly IRepository<QuestionOption> _questionOptionRepository;
+        private readonly IRepository<QuestionSet> _questionSetRepository;
+        private readonly IRepository<QuestionSetCollection> _questionSetCollectionRepository;
         private readonly IMapper _mapper;
 
-        public QuestionService(
+        public QuestionSetService(
                 IRepository<Question> questionRepository,
                 IRepository<QuestionOption> questionOptionRepository,
+                IRepository<QuestionSet> questionSetRepository,
+                IRepository<QuestionSetCollection> questionSetCollectionRepository,
                 IMapper mapper
             )
         {
             this._questionRepository = questionRepository;
             this._questionOptionRepository = questionOptionRepository;
+            this._questionSetRepository = questionSetRepository;
+            this._questionSetCollectionRepository = questionSetCollectionRepository;
             this._mapper = mapper;
         }
 
-        public async Task<int> AddAsync(SaveQuestionModel model)
+        public async Task<int> AddAsync(SaveQuestionSetModel model)
         {
-            var eLearningDocument = _mapper.Map<Question>(model);
+            var eLearningDocument = _mapper.Map<QuestionSet>(model);
 
             eLearningDocument.CreatedTime = DateTime.Now;
 
-            var result = await _questionRepository.CreateAsync(eLearningDocument);
+            var result = await _questionSetRepository.CreateAsync(eLearningDocument);
             return result.Id;
         }
 
-        public async Task<IList<QuestionModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<IList<QuestionSetModel>> GetAllAsync(int pageIndex, int pageSize)
         {
-            var result = await _questionRepository.GetAllIncludeAsync(
+            var result = await _questionSetRepository.GetAllIncludeAsync(
                                 x => x,
                                 null,
                                 null,
-                                x => x.Include(i => i.ELearningDocument),
+                                null,
                                 pageIndex,
                                 pageSize,
                                 true
                             );
 
-            var modelResult = _mapper.Map<IList<QuestionModel>>(result.Items);
-
-            return modelResult;
-        }
-        
-        public async Task<IList<QuestionModel>> GetAllGetByELearningDocumentIdAsync(int id)
-        {
-            var result = await _questionRepository.GetAllIncludeAsync(
-                                x => x,
-                                x => x.ELearningDocumentId == id,
-                                null,
-                                null,
-                                true
-                            );
-
-            var modelResult = _mapper.Map<IList<QuestionModel>>(result);
+            var modelResult = _mapper.Map<IList<QuestionSetModel>>(result.Items);
 
             return modelResult;
         }
 
-        public async Task<QuestionModel> GetByIdAsync(int id)
+        public async Task<QuestionSetModel> GetByIdAsync(int id)
         {
-            var result = await _questionRepository.GetFirstOrDefaultIncludeAsync(
+            var result = await _questionSetRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                x => x.Include(i => i.ELearningDocument).Include(i => i.QuestionOptions),
+                                x => x.Include(i => i.QuestionSetCollections),
                                 true
                             );
 
-            var modelResult = _mapper.Map<QuestionModel>(result);
+            var modelResult = _mapper.Map<QuestionSetModel>(result);
 
             return modelResult;
         }
 
-        public async Task<int> UpdateAsync(SaveQuestionModel model)
+        public async Task<int> UpdateAsync(SaveQuestionSetModel model)
         {
-            var eLearningDocument = await _questionRepository.GetFirstOrDefaultIncludeAsync(
+            var eLearningDocument = await _questionSetRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == model.Id,
                                 null,
@@ -103,54 +94,53 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             if (eLearningDocument == null) throw new Exception();
 
             eLearningDocument.Title = model.Title;
+            eLearningDocument.Level = model.Level;
             eLearningDocument.ELearningDocumentId = model.ELearningDocumentId;
-            eLearningDocument.Type = model.Type;
-            eLearningDocument.Mark = model.Mark;
+            eLearningDocument.TotalMark = model.TotalMark;
+            eLearningDocument.PassMark = model.PassMark;
             eLearningDocument.Status = model.Status;
             eLearningDocument.ModifiedTime = DateTime.Now;
 
-            var result = await _questionRepository.UpdateAsync(eLearningDocument);
+            var result = await _questionSetRepository.UpdateAsync(eLearningDocument);
 
             #region delete and update previous attachment
-            var previousAttachments = await _questionOptionRepository.GetAllIncludeAsync(
+            var previousAttachments = await _questionSetCollectionRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => x.QuestionId == model.Id,
+                                x => x.QuestionSetId == model.Id,
                                 null,
                                 null,
                                 true
                             );
 
-            var updateAttachments = previousAttachments.Where(x => model.QuestionOptions.Any(y => y.Id == x.Id)).ToList();
+            var updateAttachments = previousAttachments.Where(x => model.QuestionSetCollections.Any(y => y.Id == x.Id)).ToList();
             var deleteAttachments = previousAttachments.Except(updateAttachments).ToList();
 
             foreach (var item in updateAttachments)
             {
-                var attachment = model.QuestionOptions.FirstOrDefault(x => x.Id == item.Id);
-                item.Title = attachment.Title;
-                item.Sequence = attachment.Sequence;
-                item.IsCorrectAnswer = attachment.IsCorrectAnswer;
+                var attachment = model.QuestionSetCollections.FirstOrDefault(x => x.Id == item.Id);
+                item.Mark = attachment.Mark;
                 item.Status = attachment.Status;
             }
 
             if (deleteAttachments.Any())
-                await _questionOptionRepository.DeleteListAsync(deleteAttachments);
+                await _questionSetCollectionRepository.DeleteListAsync(deleteAttachments);
 
             if (updateAttachments.Any())
-                await _questionOptionRepository.UpdateListAsync(updateAttachments);
+                await _questionSetCollectionRepository.UpdateListAsync(updateAttachments);
             #endregion
 
             #region new attachment added
-            var newAttachments = model.QuestionOptions.Where(x => x.Id <= 0).ToList();
+            var newAttachments = model.QuestionSetCollections.Where(x => x.Id <= 0).ToList();
 
             foreach (var item in newAttachments)
             {
-                item.QuestionId = eLearningDocument.Id;
+                item.QuestionSetId = eLearningDocument.Id;
             }
 
-            var newAttachmentss = _mapper.Map<List<QuestionOption>>(newAttachments);
+            var newAttachmentss = _mapper.Map<List<QuestionSetCollection>>(newAttachments);
 
             if (newAttachmentss.Any())
-                await _questionOptionRepository.CreateListAsync(newAttachmentss);
+                await _questionSetCollectionRepository.CreateListAsync(newAttachmentss);
             #endregion
 
             return result.Id;
@@ -158,7 +148,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<int> DeleteAsync(int eLearningDocumentId)
         {
-            var result = await _questionRepository.DeleteAsync(x => x.Id == eLearningDocumentId);
+            var result = await _questionSetRepository.DeleteAsync(x => x.Id == eLearningDocumentId);
             return result;
         }
     }
