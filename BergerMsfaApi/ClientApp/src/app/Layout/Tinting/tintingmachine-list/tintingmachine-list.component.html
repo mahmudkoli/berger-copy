@@ -3,20 +3,18 @@
     <p-table #dt [value]="tintingMachineList">
         <ng-template pTemplate="caption">
             <div class="table-header">
+                <h5 class="mb-3">
+                    Tinting Machine List
+                </h5>
     
                 <div class="row">
-                    <div class="col-md-4">
-                       Tinting Machine List
-                    </div>
-    
-                    <div class="col-md-4 offset-md-4">
-                        <span class="p-input-icon-right m-2 pull-right">
+                    <div class="col-md-6">
+                        <span class="p-input-icon-right">
                             <i class="pi pi-search" (click)="onSearch()"></i>
-                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                            <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
                                 [(ngModel)]="search" placeholder="Search" />
     
                         </span>
-    
                     </div>
                 </div>
     

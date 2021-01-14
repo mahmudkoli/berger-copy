@@ -3,18 +3,13 @@
     
         <ng-template pTemplate="caption">
             <div class="table-header">
-    
+                <h5 class="mb-3"> Dealer Opening List</h5>
                 <div class="row">
-                    <div class="col-md-4">
-                        Dealer Opening List
-                    </div>
-    
-                    <div class="col-md-4 offset-md-4">
-                      
+                    <div class="col-md-6">
                         <div>
-                            <span class="p-input-icon-right m-2 pull-right">
+                            <span class="p-input-icon-right">
                                 <i class="pi pi-search"></i>
-                                <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                                <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
                                 [(ngModel)]="search" placeholder="Search" />
                             </span>
                         </div>

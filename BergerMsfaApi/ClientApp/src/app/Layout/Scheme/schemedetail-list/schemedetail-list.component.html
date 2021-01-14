@@ -4,37 +4,30 @@
              [globalFilterFields]="['schemeName','condition','code']">
         <ng-template pTemplate="caption">
             <div class="table-header">
-    
+                <h5 class="mb-3">Scheme Detail List</h5>
                 <div class="row">
-                    <div class="col-md-4">
-                        Scheme Detail List
-                    </div>
-    
-                    <div class="col-md-4 offset-md-4">
-                        <button class="btn btn-sm btn-primary ml-2 pull-right" (click)="add()">New Record</button>
-                        <span class="p-input-icon-right  pull-right">
+                    <div class="col-md-6">
+                        <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                            <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
                             [(ngModel)]="search" placeholder="Search" />
                         </span>
-    
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-sm btn-primary ml-2 pull-right" (click)="add()">New Record</button>
                     </div>
                 </div>
-    
-    
             </div>
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="schemeName">Scheme Name<p-sortIcon field="schemeName"></p-sortIcon></th>
                 <th pSortableColumn="item">Item<p-sortIcon field="item"></p-sortIcon></th>
-    
                 <th pSortableColumn="globalCondition">G.Condition <p-sortIcon field="globalCondition"></p-sortIcon></th>
                 <th pSortableColumn="condition">Condition <p-sortIcon field="condition"></p-sortIcon></th>
                 <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
                 <th pSortableColumn="benefit">Benefit<p-sortIcon field="benefit"></p-sortIcon></th>
                 <th>
-    
                 </th>
             </tr>
         </ng-template>
