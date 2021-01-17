@@ -221,6 +221,8 @@ namespace Berger.Data.MsfaEntity
         public DbSet<QuestionOption> QuestionOptions { get; set; }
         public DbSet<QuestionSet> QuestionSets { get; set; }
         public DbSet<QuestionSetCollection> QuestionSetCollections { get; set; }
+        public DbSet<UserQuestionAnswer> UserQuestionAnswers { get; set; }
+        public DbSet<UserQuestionAnswerCollection> UserQuestionAnswerCollections { get; set; }
         #endregion
 
     }
