@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BergerMsfaApi.Controllers.Question
+namespace BergerMsfaApi.Controllers.ELearning
 {
     [ApiController]
     [ApiVersion("1")]
@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Controllers.Question
         {
             try
             {
-                var result = await _questionService.GetAllGetByELearningDocumentIdAsync(id);
+                var result = await _questionService.GetAllByELearningDocumentIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
