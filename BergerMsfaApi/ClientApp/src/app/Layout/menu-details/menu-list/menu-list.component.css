@@ -1,8 +1,8 @@
 
 .menu-list-area .custom-control-input ~ .custom-control-label::before {
     color: #fff;
-    border-color: #007bff;
-    background:#007bff;
+    border-color: #3ab4e5;
+    background:#3ab4e5;
 }
 .menu-list-area .role-dropdown-item .custom-control-input ~ .custom-control-label::after {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23fff' stroke='%23fff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' class='feather feather-plus'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3C/svg%3E");

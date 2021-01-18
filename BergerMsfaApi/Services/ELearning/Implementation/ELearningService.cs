@@ -76,13 +76,43 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 x => x,
                                 null,
                                 null,
-                                x => x.Include(i => i.Category).Include(i => i.ELearningAttachments),
+                                x => x.Include(i => i.Category),
                                 pageIndex,
                                 pageSize,
                                 true
                             );
 
             var modelResult = _mapper.Map<IList<ELearningDocumentModel>>(result.Items);
+
+            return modelResult;
+        }
+
+        public async Task<IList<ELearningDocumentModel>> GetAllActiveByCategoryIdAsync(int categoryId)
+        {
+            var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.Status == Status.Active && x.CategoryId == categoryId,
+                                null,
+                                x => x.Include(i => i.Category),
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<ELearningDocumentModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<IList<ELearningDocumentModel>> GetAllActiveAsync()
+        {
+            var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.Status == Status.Active,
+                                null,
+                                x => x.Include(i => i.Category),
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<ELearningDocumentModel>>(result);
 
             return modelResult;
         }

@@ -18,6 +18,7 @@ import { ModalQuestionOptionFormComponent } from './modal-question-option-form/m
 import { QuestionSetListComponent } from './question-set-list/question-set-list.component';
 import { QuestionSetFormComponent } from './question-set-form/question-set-form.component';
 import { ModalQuestionSetOptionFormComponent } from './modal-question-set-option-form/modal-question-set-option-form.component';
+import { ExamReportListComponent } from './exam-report-list/exam-report-list.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ModalQuestionSetOptionFormComponent } from './modal-question-set-option
     QuestionSetListComponent,
     QuestionSetFormComponent,
     ModalQuestionSetOptionFormComponent,
+    ExamReportListComponent
   ],
   imports: [
     CommonModule,

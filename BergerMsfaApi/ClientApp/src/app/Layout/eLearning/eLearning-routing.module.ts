@@ -6,6 +6,7 @@ import { ELearningFormEditComponent } from './eLearning-form-edit/eLearning-form
 import { ELearningFormNewComponent } from './eLearning-form-new/eLearning-form-new.component';
 import { ELearningListComponent } from './eLearning-list/eLearning-list.component';
 import { ELearningComponent } from './eLearning.component';
+import { ExamReportListComponent } from './exam-report-list/exam-report-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionSetFormComponent } from './question-set-form/question-set-form.component';
@@ -76,6 +77,12 @@ const routes: Routes = [
         component: QuestionSetFormComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Edit Question Set', },
+      },
+      {
+        path: 'exam-report',
+        component: ExamReportListComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Exam Report', },
       },
     ],
 
