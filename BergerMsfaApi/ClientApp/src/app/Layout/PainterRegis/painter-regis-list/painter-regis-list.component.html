@@ -5,74 +5,58 @@
     </app-p-table>
 </div>-->
 
+<div class="p-3 mb-3 bg-white">
+    <p-table [value]="painterList">
 
-<p-table [value]="painterList">
-
-    <ng-template pTemplate="caption">
-        <div class="table-header">
-
-            <div class="row">
-                <div class="col-md-4">
-                    Painter List
-                </div>
-
-                <div class="col-md-4 offset-md-4">
-                    <div>
-                        <span class="p-input-icon-right m-2 pull-right">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
-                                [(ngModel)]="search" placeholder="Search" />
-                        </span>
+        <ng-template pTemplate="caption">
+            <div class="table-header">
+                <h5 class="mb-3">Painter List</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div>
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
+                                    [(ngModel)]="search" placeholder="Search" />
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="'painterName'">Painter Name <p-sortIcon field="'painterName'"></p-sortIcon>
+                </th>
+                <th pSortableColumn="'painterImageUrl'">Image <p-sortIcon field="'painterImageUrl'"></p-sortIcon>
+                </th>
+                <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon>
+                </th>
+                <th pSortableColumn="depotName">Depot Name <p-sortIcon field="depotName"></p-sortIcon>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-painter>
+            <tr>
+                <td>{{painter.painterName}}</td>
+                <td>
+                    <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImageUrl}}" width="60"
+                        style="vertical-align: middle; border-radius: 50%;" />
+                </td>
+                <td>{{painter.phone}}</td>
+                <td>{{painter.depotName }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View
+                        Detail</button>
+                </td>
+            </tr>
+        </ng-template>
 
-
-        </div>
-    </ng-template>
-    <ng-template pTemplate="header">
-        <tr>
-
-            <th pSortableColumn="'painterName'">Painter Name <p-sortIcon field="'painterName'"></p-sortIcon>
-            </th>
-            <th pSortableColumn="'painterImageUrl'">Image <p-sortIcon field="'painterImageUrl'"></p-sortIcon>
-            </th>
-            <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon>
-            </th>
-            <th pSortableColumn="depotName">Depot Name <p-sortIcon field="depotName"></p-sortIcon>
-            </th>
-
-
-            <th>
-
-            </th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-painter>
-        <tr>
-
-            <td>{{painter.painterName}}</td>
-            <td>
-
-
-                <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImageUrl}}" width="60"
-                    style="vertical-align: middle; border-radius: 50%;" />
-
-
-
-            </td>
-            <td>{{painter.phone}}</td>
-            <td>{{painter.depotName }}</td>
-
-            <td>
-                <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View Detail</button>
-
-            </td>
-        </tr>
-    </ng-template>
-
-    <ng-template pTemplate="summary">
-        <p-paginator #paging [rows]="rows" [totalRecords]="pagingConfig?.totalItemCount" [pageLinkSize]="10"
-            [rowsPerPageOptions]="[10,20]" (onPageChange)="paginate($event)"></p-paginator>
-    </ng-template>
-</p-table>
+        <ng-template pTemplate="summary">
+            <p-paginator #paging [rows]="rows" [totalRecords]="pagingConfig?.totalItemCount" [pageLinkSize]="10"
+                [rowsPerPageOptions]="[10,20]" (onPageChange)="paginate($event)"></p-paginator>
+        </ng-template>
+    </p-table>
+</div>

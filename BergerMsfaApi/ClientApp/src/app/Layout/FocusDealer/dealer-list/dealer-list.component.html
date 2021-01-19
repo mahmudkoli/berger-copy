@@ -2,26 +2,18 @@
     <p-table #dt [value]="dealerList">
         <ng-template class="adfs" pTemplate="caption">
             <div class="table-header">
-    
+                <h5 class="mb-3">Dealer List</h5>
                 <div class="row align-items-center">
-                    <div class="col-md-4">
-                        Dealer List
-                    </div>
-    
-                    <div class="col-md-4 offset-md-4">
-                        <!-- <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button> -->
+                    <div class="col-md-6">
                         <div>
-                            <span class="p-input-icon-right m-2 pull-right">
+                            <span class="p-input-icon-right">
                                 <i class="pi pi-search" (click)="onSearch()"></i>
-                                <input pInputText type="text" class="form-control" (keyup.enter)="onSearch()"
+                                <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
                                     [(ngModel)]="search" placeholder="Search" />
-    
                             </span>
                         </div>
                     </div>
                 </div>
-    
-    
             </div>
         </ng-template>
         <ng-template pTemplate="header">
@@ -32,8 +24,6 @@
                 <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
                 <th pSortableColumn="isExclusiveLabel">Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon></th>
                 <th pSortableColumn="isCBInstalled">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
-        
-    
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dealer>

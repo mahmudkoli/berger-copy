@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BergerMsfaApi.Controllers.Question
+namespace BergerMsfaApi.Controllers.ELearning
 {
     [ApiController]
     [ApiVersion("1")]

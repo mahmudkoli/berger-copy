@@ -1,4 +1,5 @@
-﻿using Berger.Data.MsfaEntity.PainterRegistration;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.PainterRegistration;
@@ -168,8 +169,13 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         public async Task<IEnumerable<PainterCompanyMTDValueModel>> GetCompanyList(int PainterCallId)
         {
+            var result = from dt in _dropdownType.GetAll()
+                         join dd in _dropdownDetail.GetAll()
+                         on dt.Id equals dd.TypeId
+                         where dt.TypeCode == DynamicTypeCode.SwappingCompetition
+                         select dd;
             //TypeId will change
-            var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
+           // var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
             var company = (from c in result
                           join m in _painterCompanyMTDsvc.GetAll()
                           on new { a=c.Id,b= PainterCallId } equals new { a=m.CompanyId,b=m.PainterCallId} into comLeftJoin
@@ -186,16 +192,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                           }).ToList();
 
             return company;
-            //return result.Select(s => new DropdownModel()
-            //{
-            //    Id = s.Id,
-            //    TypeId = s.TypeId,
-            //    TypeCode = s.DropdownType.TypeCode,
-            //    TypeName = s.DropdownType.TypeName,
-            //    DropdownName = s.DropdownName,
-            //    Description = s.Description,
-            //    Sequence = s.Sequence
-            //}).ToList();
+          
         }
     }
 }
