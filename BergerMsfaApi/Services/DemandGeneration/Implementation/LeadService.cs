@@ -51,17 +51,54 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return modelResult;
         }
 
-        public async Task<IList<LeadGenerationModel>> GetAllByUserIdAsync(int userId)
+        public async Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId)
         {
-            var result = await _leadGenerationRepository.GetAllIncludeAsync(
-                                x => x,
-                                x => x.UserId == userId,
-                                null,
-                                null,
-                                true
-                            );
+            //var result = await _leadGenerationRepository.GetAllIncludeAsync(
+            //                    x => x,
+            //                    x => x.UserId == userId,
+            //                    null,
+            //                    null,
+            //                    true
+            //                );
 
-            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
+            //var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
+
+            //return modelResult; 
+            
+            var result = await _leadGenerationRepository.GetAllIncludeAsync(
+                                 x => x,
+                                 x => x.UserId == userId,
+                                 null,
+                                 x => x.Include(i => i.LeadFollowUps),
+                                 true
+                             );
+
+            var modelResult = new List<AppLeadGenerationModel>();
+
+            foreach (var res in result)
+            {
+                var modelRes = new AppLeadGenerationModel();
+                modelRes.Id = res.Id;
+                modelRes.UserId = res.UserId;
+                modelRes.Depot = res.Depot;
+                modelRes.Territory = res.Territory;
+                modelRes.Zone = res.Zone;
+                modelRes.LastVisitedDate = res.VisitDate;
+                modelRes.NextVisitDatePlan = res.NextFollowUpDate;
+                modelRes.KeyContactPersonName = res.KeyContactPersonName;
+                modelRes.KeyContactPersonMobile = res.KeyContactPersonMobile;
+
+                if (res.LeadFollowUps.Any())
+                {
+                    var leadFollowUp = res.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
+                    modelRes.LastVisitedDate = leadFollowUp.ActualVisitDate;
+                    modelRes.NextVisitDatePlan = leadFollowUp.NextVisitDatePlan;
+                    modelRes.KeyContactPersonName = leadFollowUp.KeyContactPersonName;
+                    modelRes.KeyContactPersonMobile = leadFollowUp.KeyContactPersonMobile;
+                }
+
+                modelResult.Add(modelRes);
+            }
 
             return modelResult;
         }
@@ -91,6 +128,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
             }
 
+            leadGeneration.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
             leadGeneration.CreatedTime = DateTime.Now;
 
             var result = await _leadGenerationRepository.CreateAsync(leadGeneration);
