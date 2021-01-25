@@ -75,7 +75,7 @@ namespace BergerMsfaApi
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
-            services.AddScoped<ISalesData, SalesDataService>();
+            services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IHttpClientService, HttpClientService>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))

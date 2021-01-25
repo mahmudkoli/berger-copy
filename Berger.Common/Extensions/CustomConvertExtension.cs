@@ -19,5 +19,17 @@ namespace Berger.Common.Extensions
                     property.SetValue(parameterObject, string.Empty);
             }
         }
+
+        public static double ObjectToDouble(object value)
+        {
+            if (value == null) return 0.0;
+            return double.TryParse(value.ToString(), out double result) ? result : 0.0;
+        }
+
+        public static decimal ObjectToDecimal(object value)
+        {
+            if (value == null) return decimal.Zero;
+            return decimal.TryParse(value.ToString(), out decimal result) ? result : decimal.Zero;
+        }
     }
 }

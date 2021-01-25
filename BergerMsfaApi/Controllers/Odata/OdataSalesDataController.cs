@@ -5,48 +5,62 @@ using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
+using BergerMsfaApi.Controllers.Common;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class OdataSalesDataController : Controller
+    public class OdataSalesDataController : BaseController
     {
-        private readonly ISalesData _saledata;
+        private readonly ISalesDataService _saledata;
 
-        public OdataSalesDataController(ISalesData saledata)
+        public OdataSalesDataController(ISalesDataService saledata)
         {
             _saledata = saledata;
         }
 
-        [HttpPost("invoicesummary")]
-        public async Task<IActionResult> GetInvoiceHistory(SalesDataSearchModel model)
+        [HttpGet("InvoiceHistory")]
+        public async Task<IActionResult> GetInvoiceHistory([FromQuery] InvoiceHistorySearchModel model)
         {
-           var x =  _saledata.GetInvoiceHistory(model);
-           return Ok(x);
+            try
+            {
+                var data = await _saledata.GetInvoiceHistory(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
 
-        [HttpPost("invoicedetails")]
-        public async Task<IActionResult> GetInvoiceDetails(SalesDataSearchModel model)
+        [HttpGet("InvoiceItemDetails")]
+        public async Task<IActionResult> GetInvoiceItemDetails([FromQuery] InvoiceItemDetailsSearchModel model)
         {
-            var x = _saledata.GetInvoiceDetails(model);
-            return Ok(x);
+            try
+            {
+                var data = await _saledata.GetInvoiceItemDetails(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
 
-        [HttpPost("invoiceitemdetails")]
-        public async Task<IActionResult> GetInvoiceItemDetails(SalesDataSearchModel model)
+        [HttpGet("BrandWiseMTDDetails")]
+        public async Task<IActionResult> GetBrandWiseMTDDetails([FromQuery] BrandWiseMTDSearchModel model)
         {
-            var x = _saledata.GetInvoiceItemDetails(model);
-            return Ok(x);
-        }
-
-        [HttpPost("brandwisemtddetails")]
-        public async Task<IActionResult> GetBrandwiseMTDetails(SalesDataSearchModel model)
-        {
-            
-            var x = _saledata.GetBrandWiseMTDDetails(model);
-            return Ok(x);
+            try
+            {
+                var data = await _saledata.GetBrandWiseMTDDetails(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
     }
 }

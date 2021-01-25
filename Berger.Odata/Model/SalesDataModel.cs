@@ -6,58 +6,57 @@ namespace Berger.Odata.Model
 {
     public class SalesDataModel
     {
-        public string CompanyCode { get; set; }
-        public string Division { get; set; }
-        public string MatarialBrand { get; set; }
-        public string MatrialCode { get; set; }
-        public string UnitOfMeasurement { get; set; }
-        public string SalesOrg { get; set; }
-        public string CustomerNoSold { get; set; }
-        public string CancelledInvoiceNo { get; set; }
-        public string CustomerNoShip { get; set; }
-        public string EmployeeNumber { get; set; }
-        public string InvoiceNo { get; set; }
-        public string DealerOrSubDealer { get; set; }
-        public string PriceGroup { get; set; }
-        public string CustomerGroup { get; set; }
-        public string SalesDistrict { get; set; }
-        public string SalesOffice { get; set; }
-        public string SalesGroup { get; set; }
-        public string CustomerClassification { get; set; }
-        public string BillingType { get; set; }
-        public string CustomerNumber { get; set; }
-        public string Date { get; set; }
-        public string LineNumber { get; set; }
-        public string MatarialName { get; set; }
-        public string UnitOfMeasure { get; set; }
-        public string VolumeUnit { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
-        public string CustomerName { get; set; }
-        public string MobileNo { get; set; }
-        public string DivisionName { get; set; }
-        public string NetAmount { get; set; }
-        public string VATAmount { get; set; }
-        public string Currency { get; set; }
-        public string Discount { get; set; }
-        public string MRP { get; set; }
-        public string DefaultDiscount { get; set; }
-        public string AdditionalDiscount { get; set; }
-        public string SchemeBenefit { get; set; }
-        public string PlantOrBusinessArea { get; set; }
-        public string CollectionTax { get; set; }
-        public string Quantity { get; set; }
-        public string Volume { get; set; }
-        public string CustomerAccountGroup { get; set; }
-        public string PackSize { get; set; }
-        public string InvoiceCreateBy { get; set; }
-        public string SDDocCategory { get; set; }
-        public string NoOfDocCondition { get; set; }
-        public string OutboundDeliveryDocNo { get; set; }
-        public string SalesOrderNo { get; set; }
-        public string ItemCategory { get; set; }
-        public string DistributionChannel { get; set; }
-        public string Brand { get; set; }
-
+        public string CompanyCode { get; internal set; }
+        public string Division { get; internal set; }
+        public string MatarialGroupOrBrand { get; internal set; }
+        public string MatrialCode { get; internal set; }
+        public string UnitOfMeasurement { get; internal set; }
+        public string SalesOrgranization { get; internal set; }
+        public string CustomerNoOrSoldToParty { get; internal set; }
+        public string CancelledInvoiceNumber { get; internal set; }
+        public string CustomerNoOrShipToParty { get; internal set; }
+        public string CustomerNo { get; internal set; }
+        public string EmployeeNumber { get; internal set; }
+        public string InvoiceNoOrBillNo { get; internal set; }
+        public string DealerOrSubDealer { get; internal set; }
+        public string PriceGroupCashOrCredit { get; internal set; }
+        public string CustomerGroup { get; internal set; }
+        public string SalesDistrict { get; internal set; }
+        public string SalesOffice { get; internal set; }
+        public string SalesGroup { get; internal set; }
+        public string CustomerClassification { get; internal set; }
+        public string BillingType { get; internal set; }
+        public string CustomerNumber { get; internal set; }
+        public string Date { get; internal set; }
+        public string LineNumber { get; internal set; }
+        public string MatarialDescription { get; internal set; }
+        public string UnitOfMeasure { get; internal set; }
+        public string VolumeUnit { get; internal set; }
+        public string Territory { get; internal set; }
+        public string Zone { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string MobileNo { get; internal set; }
+        public string DivisionName { get; internal set; }
+        public string NetAmount { get; internal set; }
+        public string VATAmount { get; internal set; }
+        public string Currency { get; internal set; }
+        public string Discount { get; internal set; }
+        public string MRP { get; internal set; }
+        public string DefaultDiscountOrInitialDiscount { get; internal set; }
+        public string AdditionalDiscount { get; internal set; }
+        public string SchemeBenefit { get; internal set; }
+        public string PlantOrBusinessArea { get; internal set; }
+        public string CollectionTax { get; internal set; }
+        public string Quantity { get; internal set; }
+        public string SDDocumentCategory { get; internal set; }
+        public string InvoiceCreateBy { get; internal set; }
+        public string PackSize { get; internal set; }
+        public string CustomerAccountGroup { get; internal set; }
+        public string Volume { get; internal set; }
+        public string NumberOfDocumentCondition { get; internal set; }
+        public string OutboundDeliveryDocumentNumber { get; internal set; }
+        public string SalesOrderNumber { get; internal set; }
+        public string ItemCategory { get; internal set; }
+        public string DistributionChannel { get; internal set; }
     }
 }
