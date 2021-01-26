@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Odata.Common;
@@ -10,268 +12,265 @@ using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
 {
-    public class SalesDataService : ISalesData
+    public class SalesDataService : ISalesDataService
     {
-        private readonly IHttpClientService _httpClient;
+        private readonly IHttpClientService _httpClientService;
 
-        public SalesDataService(IHttpClientService httpClient)
+        public SalesDataService(IHttpClientService httpClientService)
         {
-            _httpClient = httpClient;
+            _httpClientService = httpClientService;
         }
 
-        public async Task<IEnumerable<SalesDataModel>> GetSalesData(string filter)
+        private async Task<IList<SalesDataModel>> GetSalesData(string query)
         {
+            string fullUrl = $"{OdataUrlBuilder.SalesUrl}{query}";
 
-            string fullUrl =
-                $"{OdataUrlBuilder.SalesUrl}{filter}";
-
-            var responseBody = _httpClient.GetHttpResponse(fullUrl, OdataUrlBuilder.userName,
-                OdataUrlBuilder.password);
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, OdataUrlBuilder.UserName, OdataUrlBuilder.Password);
             var parsedData = Parser<SalesDataRootModel>.ParseJson(responseBody);
-            var data = parsedData.results.Select(a => new SalesDataModel()
-            {
-                CompanyCode = a.Bukrs,
-                Division = a.Spart,
-                MatarialBrand = a.Matkl,
-                MatrialCode = a.Matnr,
-                UnitOfMeasurement = a.Gk,
-                SalesOrg = a.Vkorg,
-                CustomerNoSold = a.Kunrg,
-                CancelledInvoiceNo = a.Sfakn,
-                CustomerNoShip = a.Kunnr_Sh,
-                EmployeeNumber = a.PayerBp,//
-                InvoiceNo = a.Vbeln,
-                DealerOrSubDealer = a.PayResponsible,//
-                PriceGroup = a.Konda,
-                CustomerGroup = a.Kdgrp,
-                SalesDistrict = a.Bzirk,
-                SalesOffice = a.VkburC,//
-                SalesGroup = a.VkgrpC,//
-                CustomerClassification = a.Kukla,
-                BillingType = a.Fkart,
-                CustomerNumber = a.Payer,
-                Date = a.Fkdat,
-                LineNumber = a.Posnr,
-                UnitOfMeasure = a.Meins,
-                VolumeUnit = a.Voleh,
-                Territory = a.Territory,
-                Zone = a.Szone,
-                CustomerName = a.Cname,
-                MobileNo = a.MobileNo,
-                DivisionName = a.SpartText,//
-                NetAmount = a.Revenue,
-                VATAmount = a.Mwas,
-                Currency = a.Zsdx,
-                MRP = a.Zmrp,
-                DefaultDiscount = a.Zdis,
-                AdditionalDiscount = a.Zdit,
-                SchemeBenefit = a.Yfg3,
-                PlantOrBusinessArea = a.Gsber,
-                CollectionTax = a.Zcol,
-                Quantity = a.Fkimg,
-                Volume = a.Volum,
-                CustomerAccountGroup = a.Ktokd,
-                PackSize = a.Groes,
-                InvoiceCreateBy = a.Ernam,
-                SDDocCategory = a.Vbtyp,
-                NoOfDocCondition = a.Knumv,
-                OutboundDeliveryDocNo = a.Vgbel,
-                SalesOrderNo = a.Aubel,
-                ItemCategory = a.Pstyv,
-                DistributionChannel = a.Vtweg,
-                Brand = a.Wgbez
-            });
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
 
             return data;
         }
 
-        public async Task<IEnumerable<SalesDataModel>> GetInvoiceHistory(SalesDataSearchModel model)
+        public async Task<object> GetInvoiceHistory(InvoiceHistorySearchModel model)
         {
-            model.FromDate = "2011-09-01T00:00:00";
-            model.ToDate = "2011-10-01T00:00:00";
-            //model.FromDate = DateTime.Now.ToString("s");
-            //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
-            model.CustomerNo = 24;
-            model.Division = 10;
-            var filterQuery =
-                $"&$filter={DataColumnDef.CustomerNoSold} eq '{model.CustomerNo}' " +
-                $"and {DataColumnDef.Division} eq '{model.Division}' " +
-                $"and {DataColumnDef.Date} gt datetime'{model.FromDate}' " +
-                $"and {DataColumnDef.Date} lt datetime'{model.ToDate}'";
+            //model.FromDate = "2011.09.01";//(new DateTime(2011, 09, 01)).DateFormat()
+            //model.ToDate = "2011.10.01";//(new DateTime(2011, 10, 01)).DateFormat()
+            //model.CustomerNo = "24";
+            //model.Division = "10";
 
-            var data = await GetSalesData(filterQuery);
+            var fromDate = model.FromDate.DateFormat();
+            var toDate = model.ToDate.DateFormat();
 
-            data = data.Select(a => new SalesDataModel { InvoiceNo = a.InvoiceNo, Date = a.Date, NetAmount = a.NetAmount });
-            //return  await GetInvoiceDetails(new SalesDataSearchModel());
-            return data;
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, model.CustomerNo)
+                                .And()
+                                .Equal(DataColumnDef.Division, model.Division)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(DataColumnDef.Date, fromDate)
+                                .And()
+                                .LessThanOrEqual(DataColumnDef.Date, toDate)
+                                .EndGroup();
 
-        }
-        public async Task<dynamic> GetInvoiceDetails(SalesDataSearchModel model)
-        {
-            model.FromDate = "2011-09-01T00:00:00";
-            model.ToDate = "2011-10-08T00:00:00";
-            //model.FromDate = DateTime.Now.ToString("s");
-            //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
-            model.CustomerNo = 24;
-            model.Division = 10;
-            model.InvoiceNo = "30199128";
-            var filterQuery =
-                $"&$filter={DataColumnDef.CustomerNoSold} eq '{model.CustomerNo}' " +
-                //$"and {DataColumnDef.Division} eq '{model.Division}' " +
-                $"and {DataColumnDef.Date} gt datetime'{model.FromDate}' " +
-                $"and {DataColumnDef.Date} lt datetime'{model.ToDate}' " +
-                $"and {DataColumnDef.InvoiceNo} eq '{model.InvoiceNo}'";
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.CustomerNo)
+                                .AddProperty(DataColumnDef.Division)
+                                .AddProperty(DataColumnDef.DivisionName)
+                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.NetAmount);
 
-            var data = await GetSalesData(filterQuery);
+            //var topQuery = $"$top=5";
 
-            var headerView = data.Select(a => new SalesDataModel
-            {
-                CustomerName = a.CustomerName,
-                DivisionName = a.DivisionName,
-                Date = a.Date,
-                NetAmount = data.Sum(b => Convert.ToDecimal(b.NetAmount)).ToString(),
-            });
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
 
-            return headerView;
+            var data = await GetSalesData(queryBuilder.Query);
 
-        }
+            var result = data.Select(x => 
+                                new InvoiceHistoryResultModel()
+                                {
+                                    CustomerNoOrSoldToParty = x.CustomerNoOrSoldToParty,
+                                    CustomerNo = x.CustomerNo,
+                                    Division = x.Division,
+                                    DivisionName = x.DivisionName,
+                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
+                                    Date = x.Date,
+                                    NetAmount = x.NetAmount }
+                                ).ToList();
 
-        public async Task<dynamic> GetInvoiceItemDetails(SalesDataSearchModel model)
-        {
-            model.FromDate = "2011-09-01T00:00:00";
-            model.ToDate = "2011-10-08T00:00:00";
-            //model.FromDate = DateTime.Now.ToString("s");
-            //model.ToDate = DateTime.Now.AddMonths(-1).ToString("s");
-            model.CustomerNo = 24;
-            model.Division = 10;
-            model.InvoiceNo = "30199128";
-            var filterQuery =
-                $"&$filter={DataColumnDef.CustomerNoSold} eq '{model.CustomerNo}' " +
-                //$"and {DataColumnDef.Division} eq '{model.Division}' " +
-                $"and {DataColumnDef.Date} gt datetime'{model.FromDate}' " +
-                $"and {DataColumnDef.Date} lt datetime'{model.ToDate}' " +
-                $"and {DataColumnDef.InvoiceNo} eq '{model.InvoiceNo}'";
-
-            var data = await GetSalesData(filterQuery);
-
-            var itemDetails = data.Select(a => new
-            {
-                Matarial = a.MatarialBrand,
-                MatarialDesc = a.MatarialName,
-                Quantity = a.Quantity,
-                NetAmount = a.NetAmount
-            });
-            return itemDetails;
+            return result;
         }
 
-        public async Task<dynamic> GetBrandWiseMTDDetails(SalesDataSearchModel model)
+        public async Task<object> GetInvoiceItemDetails(InvoiceItemDetailsSearchModel model)
         {
-            var currendate = new DateTime(2011, 09, 01);
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(DataColumnDef.InvoiceNoOrBillNo, model.InvoiceNo);
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.NetAmount)
+                                .AddProperty(DataColumnDef.Quantity)
+                                .AddProperty(DataColumnDef.MatrialCode)
+                                .AddProperty(DataColumnDef.MatarialDescription);
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = await GetSalesData(queryBuilder.Query);
+
+            var result = data.Select(x => new InvoiceItemDetailsResultModel()
+                                            {
+                                                NetAmount = x.NetAmount,
+                                                Quantity = x.Quantity,
+                                                MatrialCode = x.MatrialCode,
+                                                MatarialDescription = x.MatarialDescription,
+                                            }
+                                            ).ToList();
+
+            return result;
+        }
+
+        public async Task<object> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
+        {
+            //var currendate = new DateTime(2011, 09, 21);
+            var currendate = model.Date;
+            var previousMonthCount = 3;
 
             var cyfd = currendate.GetCYFD().DateFormat();
-            var cyld = currendate.GetCYLCD().DateFormat();
+            var cylcd = currendate.GetCYLCD().DateFormat();
 
             var lyfd = currendate.GetLYFD().DateFormat();
-            var lyld = currendate.GetLYLCD().DateFormat();
-            var dic = new Dictionary<string, IEnumerable<SalesDataModel>>();
+            var lylcd = currendate.GetLYLCD().DateFormat();
 
-            var filterCyQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
-                                           + $"and {DataColumnDef.Date} ge datetime'{cyfd}' "
-                                           + $"and {DataColumnDef.Date} le datetime'{cyld}' "
-                                           + $"&$top=10";
+            var dataLy = new List<SalesDataModel>();
+            var dataCy = new List<SalesDataModel>();
+            var previousMonthDict = new Dictionary<string, IList<SalesDataModel>>();
 
-            
-            var dataCy = await GetSalesData(filterCyQuery);
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.CustomerNo)
+                                .AddProperty(DataColumnDef.Division)
+                                .AddProperty(DataColumnDef.DivisionName)
+                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.NetAmount)
+                                //.AddProperty(DataColumnDef.Volume)
+                                //.AddProperty(DataColumnDef.VolumeUnit)
+                                .AddProperty(DataColumnDef.MatrialCode)
+                                .AddProperty(DataColumnDef.MatarialDescription);
 
+            var topQuery = $"$top=5";
 
-            var filterLyQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
-                                         + $"and {DataColumnDef.Date} ge datetime'{lyfd}' "
-                                         + $"and {DataColumnDef.Date} le datetime'{lyld}' "
-                                         + $"&$top=10";
+            #region Last Year MTD
+            var filterLyQueryBuilder = new FilterQueryOptionBuilder();
+            filterLyQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, model.CustomerNo)
+                                .And()
+                                .Equal(DataColumnDef.Division, model.Division)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(DataColumnDef.Date, lyfd)
+                                .And()
+                                .LessThanOrEqual(DataColumnDef.Date, lylcd)
+                                .EndGroup();
 
-            var dataLy= await GetSalesData(filterLyQuery);
+            var queryLyBuilder = new QueryOptionBuilder();
+            queryLyBuilder.AppendQuery(filterLyQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
 
-           
+            dataLy = (await GetSalesData(queryLyBuilder.Query)).ToList();
+            #endregion
 
-            for (var i = 1; i <= 3; i++)
+            #region Current Year MTD
+            var filterCyQueryBuilder = new FilterQueryOptionBuilder();
+            filterCyQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, model.CustomerNo)
+                                .And()
+                                .Equal(DataColumnDef.Division, model.Division)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(DataColumnDef.Date, cyfd)
+                                .And()
+                                .LessThanOrEqual(DataColumnDef.Date, cylcd)
+                                .EndGroup();
+
+            var queryCyBuilder = new QueryOptionBuilder();
+            queryCyBuilder.AppendQuery(filterCyQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            dataCy = (await GetSalesData(queryCyBuilder.Query)).ToList();
+            #endregion
+
+            #region Previous Month Data
+            for (var i = 1; i <= previousMonthCount; i++)
             {
-                int number = int.Parse($"-{i}");
-                var monthQuery = $"&$filter=" + $"{DataColumnDef.Division} eq '{model.Division}' "
-                                     + $"and {DataColumnDef.Date} ge datetime'{currendate.GetMonthDate(number).GetCYFD().DateFormat()}' "
-                                     + $"and {DataColumnDef.Date} le datetime'{currendate.GetMonthDate(number).GetCYLD().DateFormat()}' "
-                                     + $"&$top=10";
-                dic.Add(currendate.GetMonthName(number), await GetSalesData(monthQuery));
+                int number = i * -1;
+                var monthFilterQueryBuilder = new FilterQueryOptionBuilder();
+                monthFilterQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, model.CustomerNo)
+                                    .And()
+                                    .Equal(DataColumnDef.Division, model.Division)
+                                    .And()
+                                    .StartGroup()
+                                    .GreaterThanOrEqual(DataColumnDef.Date, currendate.GetMonthDate(number).GetCYFD().DateFormat())
+                                    .And()
+                                    .LessThanOrEqual(DataColumnDef.Date, currendate.GetMonthDate(number).GetCYLD().DateFormat())
+                                    .EndGroup();
+
+                var queryBuilder = new QueryOptionBuilder();
+                queryBuilder.AppendQuery(monthFilterQueryBuilder.Filter)
+                            //.AppendQuery(topQuery)
+                            .AppendQuery(selectQueryBuilder.Select);
+
+                var monthName = currendate.GetMonthName(number);
+                var data = await GetSalesData(queryBuilder.Query);
+
+                previousMonthDict.Add(monthName, data);
+            }
+            #endregion
+
+            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+            var result = new List<BrandWiseMTDResultModel>();
+
+            var brandCodes = dataLy.Select(x => x.MatrialCode)
+                                .Concat(dataCy.Select(x => x.MatrialCode))
+                                    .Concat(previousMonthDict.Values.SelectMany(x => x).Select(x => x.MatrialCode))
+                                        .Distinct().ToList();
+
+            foreach (var brandCode in brandCodes)
+            {
+                var res = new BrandWiseMTDResultModel();
+                res.PreviousMonthData = new Dictionary<string, decimal>();
+
+                if (dataLy.Any(x => x.MatrialCode == brandCode))
+                {
+                    var mtdAmtLy = dataLy.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
+                    var brandNameLy = dataLy.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+
+                    res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandNameLy : res.BrandName;
+                    res.LYMTD = mtdAmtLy;
+                }
+
+                if (dataCy.Any(x => x.MatrialCode == brandCode))
+                {
+                    var mtdAmtCy = dataCy.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
+                    var brandNameCy = dataCy.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+
+                    res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandNameCy : res.BrandName;
+                    res.CYMTD = mtdAmtCy;
+                }
+
+                for (var i = 1; i <= previousMonthCount; i++)
+                {
+                    int number = i * -1;
+                    var monthName = currendate.GetMonthName(number);
+                    var dictData = previousMonthDict[monthName].ToList();
+                    var mtdAmt = decimal.Zero;
+
+                    if (dictData.Any(x => x.MatrialCode == brandCode))
+                    {
+                        mtdAmt = dictData.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
+                        var brandName = dictData.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+
+                        res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandName : res.BrandName;
+                    }
+
+                    res.PreviousMonthData.Add(monthName, mtdAmt);
+                }
+
+                res.Growth =  res.LYMTD > 0 ? ((res.CYMTD - res.LYMTD) * 100) / res.LYMTD : decimal.Zero;
+                result.Add(res);
             }
 
-         
-
-       
-         
-             
-            //{
-            //    var sum = f.Value.GroupBy(g => g.Brand).Select(s=>s.Sum(s=>Convert.ToDouble(s.Volume)));
-            //    return new { f.Key, sum };
-
-            //});
-                
-            // var  result = dic.ToList();
-
-            //var result = dataLyQuery
-            //    .GroupBy(g => g.Brand)
-            //    .Select(s =>
-            //    {
-
-            //        //var LYMTD = s
-            //        //        //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetLYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetLYLD().Date)
-            //        //        .Sum(s => Convert.ToDouble(s.Volume));
-
-            //        //var CYMTD = s
-            //        //        //.Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetCYLD().Date)
-            //        //        .Sum(s => Convert.ToDouble(s.Volume));
-
-            //        //var GROWTH = (LYMTD - CYMTD);
-
-            //        return new Dictionary<string, object>
-            //        {
-            //            //{ "Brand", s.Key },
-            //            //{ "LY MTD",LYMTD},
-            //            //{ "CY MTD", CYMTD},
-            //            //{ "Growth%",GROWTH},
-            //            //{
-            //            //    currentDate.GetMonthName(-1),
-            //            //     s
-            //            //    // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-1).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-1).GetCYLD().Date)
-            //            //     .Sum(s => Convert.ToDouble(s.Volume))
-            //            //},
-            //            //{    currentDate.GetMonthName(-2),
-            //            //     s
-            //            // //    .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-2).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-2).GetCYLD().Date)
-            //            //    .Sum(s => Convert.ToDouble(s.Volume))
-            //            //},
-            //            //{   currentDate.GetMonthName(-3),
-            //            //    s
-            //            //   // .Where(f => Convert.ToDateTime(f.Date).Date <= currentDate.GetMonthDate(-3).GetCYFD().Date && Convert.ToDateTime(f.Date) >= currentDate.GetMonthDate(-3).GetCYLD().Date)
-            //            //    .Sum(s => Convert.ToDouble(s.Volume))
-            //            //},
-            //            //{ "Date",s.FirstOrDefault(f => f.Brand == s.Key).Date},
-            //        };
-
-
-            //    });
-
-
-            return dic.ToList();
-        }
-
-        private async Task<Dictionary<string, IEnumerable<SalesDataModel>>> GetDataByFilterQueryAsync(string key, string query)
-        {
-            var result = new Dictionary<string, IEnumerable<SalesDataModel>>();
-            var data = await GetSalesData(query);
-            result.Add(key, data);
             return result;
-
         }
     }
-
 }
 

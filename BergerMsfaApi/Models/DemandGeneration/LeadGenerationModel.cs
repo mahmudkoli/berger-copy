@@ -61,6 +61,27 @@ namespace BergerMsfaApi.Models.DemandGeneration
         }
     }
     
+    public class AppLeadGenerationModel : IMapFrom<LeadGeneration>
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string Code { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string ProjectName { get; set; }
+        public string ProjectAddress { get; set; }
+        public string KeyContactPersonName { get; set; }
+        public string KeyContactPersonMobile { get; set; }
+        public DateTime LastVisitedDate { get; set; }
+        public DateTime NextVisitDatePlan { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<LeadGeneration, AppLeadGenerationModel>();
+        }
+    }
+    
     public class SaveLeadGenerationModel : IMapFrom<LeadGeneration>
     {
         //public int Id { get; set; }

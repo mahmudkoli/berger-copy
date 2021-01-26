@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Models.ELearning;
+﻿using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.ELearning;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace BergerMsfaApi.Services.ELearning.Interfaces
         Task<int> AddAsync(SaveQuestionModel model);
         Task<int> UpdateAsync(SaveQuestionModel model);
         Task<QuestionModel> GetByIdAsync(int id);
-        Task<IList<QuestionModel>> GetAllAsync(int pageIndex, int pageSize);
+        Task<QueryResultModel<QuestionModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<QuestionModel>> GetAllByELearningDocumentIdAsync(int id);
         Task<int> DeleteAsync(int eLearningDocumentId);
     }

@@ -8,22 +8,22 @@ namespace Berger.Common.JSONParser
     {
         public class Data
         {
-            public List<TEntity> results { get; set; }
+            public IList<TEntity> Results { get; set; }
         }
           
         public static Data ParseJson(string json)
         {
-            Data dataObj = new Data();
+            Data data = new Data();
+            JObject jObject = JObject.Parse(json);
 
-            JObject data = JObject.Parse(json);
-            if (data.HasValues)
+            if (jObject.HasValues)
             {
-                if (data.First?.First != null)
+                if (jObject.First?.First != null)
                 {
                     JsonSerializerSettings settings = new JsonSerializerSettings();
                     settings.MissingMemberHandling = MissingMemberHandling.Ignore;
-                    dataObj = JsonConvert.DeserializeObject<Data>(data.First.First.ToString(),settings);
-                            
+
+                    data = JsonConvert.DeserializeObject<Data>(jObject.First.First.ToString(), settings);   
                 }
             }
             else
@@ -31,9 +31,7 @@ namespace Berger.Common.JSONParser
                 return new Data();
             }
 
-            return dataObj;
+            return data;
         }
-
     }
-    
 }

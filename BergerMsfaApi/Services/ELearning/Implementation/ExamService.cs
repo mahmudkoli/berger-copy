@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.ELearning;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.ELearning.Interfaces;
@@ -45,21 +48,36 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             this._mapper = mapper;
         }
 
-        public async Task<IList<UserQuestionAnswerModel>> GetAllExamReportAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<UserQuestionAnswerModel>> GetAllExamReportAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<UserQuestionAnswer, object>>>()
+            {
+                ["userFullName"] = v => v.UserInfo.FirstName,
+                ["questionSetTitle"] = v => v.QuestionSet.Title,
+                ["questionSetLevel"] = v => v.QuestionSet.Level,
+                ["questionSetTotalMark"] = v => v.QuestionSet.TotalMark,
+                ["totalMark"] = v => v.TotalMark,
+                ["passedText"] = v => v.Passed,
+            };
+
             var result = await _userQuestionAnswerRepository.GetAllIncludeAsync(
                                 x => x,
-                                null,
-                                null,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FirstName.Contains(query.GlobalSearchValue) || x.QuestionSet.Title.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.UserInfo).Include(i => i.QuestionSet),
-                                pageIndex,
-                                pageSize,
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
             var modelResult = _mapper.Map<IList<UserQuestionAnswerModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<UserQuestionAnswerModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<AppQuestionSetModel>> GetAllQuestionSetAsync()
