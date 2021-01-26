@@ -49,8 +49,8 @@ namespace Berger.Worker.Services
                 _logger.LogInformation($"Got http response.. Parsing Started");
                 var parsedDataFromApi = Parser<CustomerModel>.ParseJson(responseBody);
 
-                _logger.LogInformation($"Parsing completed successfully. Total {parsedDataFromApi.results.Count} record parsed!!");
-                var mappedDataFromApi = parsedDataFromApi.results.ToMap<CustomerModel, DealerInfo>();
+                _logger.LogInformation($"Parsing completed successfully. Total {parsedDataFromApi.Results.Count} record parsed!!");
+                var mappedDataFromApi = parsedDataFromApi.Results.ToMap<CustomerModel, DealerInfo>();
 
                 _logger.LogInformation($"Fetching existing data from database....");
                 var dataFromDatabase = await _repo.FindAllAsync(x=>x.IsDeleted ==false);

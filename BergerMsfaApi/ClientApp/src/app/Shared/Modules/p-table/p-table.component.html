@@ -10,9 +10,9 @@
                     <div class="">
                         <div class="d-flex pr-2">
                             <div *ngIf="pTableSetting.enabledRecordCreateBtn==true">
-                                <button type="button" class="btn-column-setting" title="Print"
-                                    (click)="fnCreateNewRecord()"> <i class="fa fa-plus"></i> New
-                                    Record
+                                <button type="button" class="btn-column-setting" [title]="pTableSetting.newRecordButtonText||'New Record'"
+                                    (click)="fnCreateNewRecord()"> <i class="fa fa-plus"></i> 
+                                    {{pTableSetting.newRecordButtonText||'New Record'}}
                                 </button>
                             </div>
 
@@ -407,30 +407,30 @@
                                     <ul *ngIf="pager.pages && pager.pages.length && enabledPagination"
                                         class="pagination hidden-xs pull-right">
                                         <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
-                                            <a class="page-link" (click)="setPage(1)">
+                                            <a class="page-link" (click)="setPage(1, true)">
                                                 <!-- <span class="glyphicon glyphicon-chevron-left">  </span><span class="glyphicon glyphicon-chevron-left p-table-aro-first"></span> -->
                                                 <i class="fa fa-angle-double-left" style="font-size:16px"></i>
                                             </a>
                                         </li>
                                         <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}"
                                             [attr.disabled]="pager.currentPage == 1 ? true : null">
-                                            <a class="page-link" (click)="setPage(pager.currentPage - 1)">
+                                            <a class="page-link" (click)="setPage(pager.currentPage - 1, true)">
                                                 <i class="fa fa-angle-left" style="font-size:16px"></i>
                                             </a>
                                         </li>
                                         <li *ngFor="let page of pager.pages" class="page-item"
                                             [ngClass]="{active:pager.currentPage === page}">
-                                            <a class="page-link" (click)="setPage(page)">{{page}}</a>
+                                            <a class="page-link" (click)="setPage(page, true)">{{page}}</a>
                                         </li>
                                         <li class="page-item"
                                             [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-                                            <a class="page-link" (click)="setPage(pager.currentPage + 1)">
+                                            <a class="page-link" (click)="setPage(pager.currentPage + 1, true)">
                                                 <i class="fa fa-angle-right" style="font-size:16px"></i>
                                             </a>
                                         </li>
                                         <li class="page-item"
                                             [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-                                            <a class="page-link" (click)="setPage(pager.totalPages)">
+                                            <a class="page-link" (click)="setPage(pager.totalPages, true)">
                                                 <!-- <span class="glyphicon glyphicon-chevron-right p-table-aro-last"></span><span class="glyphicon glyphicon-chevron-right"></span> -->
                                                 <i class="fa fa-angle-double-right" style="font-size:16px"></i>
                                             </a>

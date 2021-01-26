@@ -1,3 +1,4 @@
+import { QueryObject } from '../Common/query-object';
 import { UserInfo } from '../Users/userInfo';
 import { QuestionSet } from './questionSet';
 import { UserQuestionAnswerCollection } from './userQuestionAnswerCollection';
@@ -47,14 +48,17 @@ export class UserQuestionAnswer {
     }
 }
 
-export class UserQuestionAnswerQuery {
-    name: string;
+export class UserQuestionAnswerQuery extends QueryObject  {
+    userFullName: string;
+    questionSetTitle: string;
     
     constructor(init?: Partial<UserQuestionAnswerQuery>) {
+        super();
         Object.assign(this, init);
     }
 
     clear() {
-        this.name = '';
+        this.userFullName = '';
+        this.questionSetTitle = '';
     }
 }

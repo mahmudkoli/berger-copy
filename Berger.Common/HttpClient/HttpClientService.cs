@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Net.Http;
+using HTTP = System.Net.Http;
 
 namespace Berger.Common.HttpClient
 {
@@ -17,12 +17,16 @@ namespace Berger.Common.HttpClient
         {
             try
             {
-                System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+                HTTP.HttpClientHandler clientHandler = new HTTP.HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+                HTTP.HttpClient client = new HTTP.HttpClient(clientHandler);
                 var RequestMessage = HttpClientAuthentication.Authenticate(url,username, password);
+
                 _logger.LogInformation($"Http request started with authentication");
                 var task = client.SendAsync(RequestMessage);
                 var response = task.Result;
                 response.EnsureSuccessStatusCode();
+
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = response.Content.ReadAsStringAsync().Result;
@@ -35,7 +39,7 @@ namespace Berger.Common.HttpClient
                 }
                 
             }
-            catch (HttpRequestException httpEx)
+            catch (HTTP.HttpRequestException httpEx)
             {
                 _logger.LogCritical(httpEx.Message);
                 throw;
@@ -46,6 +50,5 @@ namespace Berger.Common.HttpClient
                 throw;
             }
         }
-
     }
 }

@@ -5,13 +5,23 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class SalesDataSearchModel
+    public class InvoiceHistorySearchModel
+    {
+        public string CustomerNo { get; set; }
+        public string Division { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+    }
+
+    public class InvoiceItemDetailsSearchModel
     {
         public string InvoiceNo { get; set; }
-        public int Division { get; set; }
-        public string FromDate { get; set; }
-        public string ToDate { get; set; }
-        public string ViewType { get; set; }
-        public int CustomerNo { get; set; }
+    }
+
+    public class BrandWiseMTDSearchModel
+    {
+        public string CustomerNo { get; set; }
+        public string Division { get; set; }
+        public DateTime Date { get; set; }
     }
 }

@@ -4,6 +4,8 @@ import { PagerService } from './p-table-pagger';
 import { PDFService } from './service/pdf.service';
 import { ExcelService } from './service/excel.service';
 import { PrintService } from './service/print.service';
+import { IPTableSetting, IPTableServerQueryObj, ptableStyle } from './p-table';
+import { HttpClient } from '@angular/common/http';
 declare var jQuery: any;
 @Component({
   selector: 'app-p-table',
@@ -17,13 +19,15 @@ declare var jQuery: any;
 export class PTableComponent implements OnInit, DoCheck {
   @Input() pTableSetting: IPTableSetting;
   @Input() pTableMasterData: any[];
+  @Input() pTableTotalDataLength: number = 0; // for server side paggination
+  @Input() pTableTotalFilterDataLength: number = 0; // for server side paggination
   @Output() checkboxCallbackFn: EventEmitter<any> = new EventEmitter<any>() || null;
   @Output() customActivityOnRecord: EventEmitter<any> = new EventEmitter<any>() || null;
   @Output() callbackFnOnPageChange: EventEmitter<any> = new EventEmitter<any>() || null;
   @Output() radioButtonCallbackFn: EventEmitter<any> = new EventEmitter<any>() || null;
   @Output() cellClickCallbackFn: EventEmitter<any> = new EventEmitter<any>() || null;
   @Output() customReflowFn: EventEmitter<any> = new EventEmitter<any>() || null;
-  @Output() serverSiteCallbackFn: EventEmitter<any> = new EventEmitter<any>() || null;
+  @Output() serverSiteCallbackFn: EventEmitter<IPTableServerQueryObj> = new EventEmitter<IPTableServerQueryObj>() || null;
   Math: any;
   public editUpdateColumn: boolean = true;
   public noRecord = true;
@@ -39,6 +43,8 @@ export class PTableComponent implements OnInit, DoCheck {
   public rowLimitArray: any[] = [10, 20, 50, 100, 200, 500, 1000];
   public enabledPagination: boolean = true;
   public globalSearchValue: string = "";
+  public orderBy: string = "";
+  public isOrderAsc: boolean | true;
 
   //for table smart filter
   public filterCustomColumnName: string;
@@ -63,7 +69,7 @@ export class PTableComponent implements OnInit, DoCheck {
   };
   pager: any = {};
   pagedItems: any[];
-  constructor(private pagerService: PagerService, private differs: KeyValueDiffers, public renderer: Renderer2, private pdfService: PDFService, private excelService: ExcelService, private printService: PrintService) {
+  constructor(private pagerService: PagerService, private differs: KeyValueDiffers, public renderer: Renderer2, private pdfService: PDFService, private excelService: ExcelService, private printService: PrintService, private http: HttpClient) {
     this.Math = Math;
     this.differ = differs.find({}).create();
   }
@@ -129,7 +135,11 @@ export class PTableComponent implements OnInit, DoCheck {
     var changes = this.differ.diff(this.pTableMasterData);
     if (changes) {
       this.pTableData = this.pTableMasterData || [];
-      this.pTableDatalength = this.pTableData.length || 0;
+      if(this.pTableSetting.enabledServerSitePaggination) {
+        this.pTableDatalength = this.pTableTotalFilterDataLength;
+      } else {
+        this.pTableDatalength = this.pTableData.length || 0;
+      }
       this.selectedCheckedItems=[];
 
       if (this.pTableSetting.disabledTableReset) {
@@ -143,11 +153,15 @@ export class PTableComponent implements OnInit, DoCheck {
         jQuery("#" + this.pTableSetting["tableID"] + " .column-filter-active").css('color', 'white');
       }
 
-      //set page state
-      if (this.pTableSetting.enabledStaySelectedPage && this.pageNo > 0) {
+      if (this.pTableSetting.enabledServerSitePaggination) {
         this.setPage(this.pageNo);
       } else {
-        this.setPage(1);
+        //set page state
+        if (this.pTableSetting.enabledStaySelectedPage && this.pageNo > 0) {
+          this.setPage(this.pageNo);
+        } else {
+          this.setPage(1);
+        }
       }
 
     }
@@ -177,9 +191,11 @@ export class PTableComponent implements OnInit, DoCheck {
   async fnFilterPTable(args: any, executionType: boolean = false) {
     let execution = false;
     args = args.trim();
-       
+
     if (this.pTableSetting.enabledServerSitePaggination) {
-      this.serverSiteCallbackFn.emit({ searchVal: args, pageNo: this.pageNo });
+      this.pageNo = 1;
+      const queryObj: IPTableServerQueryObj = {searchVal: args, pageNo: this.pageNo, pageSize: this.pageSize, orderBy: this.orderBy, isOrderAsc: this.isOrderAsc};
+      this.serverSiteCallbackFn.emit(queryObj);
     } else {
       //this.pTableData=JSON.parse( JSON.stringify( this.pTableMasterData))||[];    
       if (args && this.pTableMasterData.length > 0) {
@@ -220,9 +236,13 @@ export class PTableComponent implements OnInit, DoCheck {
   }
 
 
-  setPage(page: number) {
+  setPage(page: number, isPageChanged: boolean = false) {
     this.pageNo = page;
-    this.pager = this.pagerService.getPager(this.pTableData.length, page, this.pageSize, this.maximumPaggingDisplay);
+    if (this.pTableSetting.enabledServerSitePaggination) {
+      this.pager = this.pagerService.getPager(this.pTableTotalFilterDataLength, page, this.pageSize, this.maximumPaggingDisplay);
+    } else {
+      this.pager = this.pagerService.getPager(this.pTableData.length, page, this.pageSize, this.maximumPaggingDisplay);
+    }
     if (page < 1 || page > this.pager.totalPages) {
       if (page - 1 <= this.pager.totalPages && this.pager.totalPages != 0) {
         if (page <= 0) {
@@ -234,34 +254,66 @@ export class PTableComponent implements OnInit, DoCheck {
       }
     }
     //this.pager = this.pagerService.getPager(this.pTableData.length, page, this.pageSize, this.maximumPaggingDisplay);
-    if (this.pTableData.length == 0) {
-      this.pagedItems = [];
+    if (this.pTableSetting.enabledServerSitePaggination) {
+      if (this.pTableData.length == 0) {
+        this.pagedItems = [];
+      } else {
+        this.pagedItems = this.pTableData;
+      }
+
+      this.pTableDatalength = this.pTableTotalFilterDataLength;
+      //showing page number
+      this.startPageNo = (this.pager.currentPage - 1) * this.pager.pageSize + 1;
+      let endPageNo = 0;
+      if (this.pTableTotalFilterDataLength == 0) {
+        this.startPageNo = 0;
+      }
+
+      if ((this.pager.currentPage) * this.pager.pageSize < this.pTableTotalFilterDataLength) {
+        endPageNo = (this.pager.currentPage) * this.pager.pageSize;
+      } else {
+        endPageNo = this.pTableTotalFilterDataLength;
+      }
+
+      if (this.pTableTotalFilterDataLength == this.pTableTotalDataLength) {
+        this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableTotalFilterDataLength + ' records';
+      } else {
+        this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableTotalFilterDataLength + ' records (filtered from ' + this.pTableTotalDataLength + ' total records)';
+      }
     } else {
-      this.pagedItems = this.pTableData.slice(this.pager.startIndex, this.pager.endIndex + 1);
-    }
+      if (this.pTableData.length == 0) {
+        this.pagedItems = [];
+      } else {
+        this.pagedItems = this.pTableData.slice(this.pager.startIndex, this.pager.endIndex + 1);
+      }
 
-    this.pTableDatalength = this.pTableData.length;
-    //showing page number
-    this.startPageNo = (this.pager.currentPage - 1) * this.pager.pageSize + 1;
-    let endPageNo = 0;
-    if (this.pTableData.length == 0) {
-      this.startPageNo = 0;
-    }
+      this.pTableDatalength = this.pTableData.length;
+      //showing page number
+      this.startPageNo = (this.pager.currentPage - 1) * this.pager.pageSize + 1;
+      let endPageNo = 0;
+      if (this.pTableData.length == 0) {
+        this.startPageNo = 0;
+      }
 
-    if ((this.pager.currentPage) * this.pager.pageSize < this.pTableData.length) {
-      endPageNo = (this.pager.currentPage) * this.pager.pageSize;
-    } else {
-      endPageNo = this.pTableData.length;
-    }
+      if ((this.pager.currentPage) * this.pager.pageSize < this.pTableData.length) {
+        endPageNo = (this.pager.currentPage) * this.pager.pageSize;
+      } else {
+        endPageNo = this.pTableData.length;
+      }
 
-    if (this.pTableData.length == this.pTableMasterData.length) {
-      this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableData.length + ' records';
-    } else {
-      this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableData.length + ' records (filtered from ' + this.pTableMasterData.length + ' total records)';
+      if (this.pTableData.length == this.pTableMasterData.length) {
+        this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableData.length + ' records';
+      } else {
+        this.showingPageDetails = 'Showing ' + this.startPageNo + ' to ' + endPageNo + ' of ' + this.pTableData.length + ' records (filtered from ' + this.pTableMasterData.length + ' total records)';
+      }
     }
-
     //call the function after the page changes
     this.callbackFnOnPageChange.emit({ pageNo: page });
+
+    if (this.pTableSetting.enabledServerSitePaggination && isPageChanged) {
+      const queryObj: IPTableServerQueryObj = {searchVal: this.globalSearchValue, pageNo: page, pageSize: this.pageSize, orderBy: this.orderBy, isOrderAsc: this.isOrderAsc};
+      this.serverSiteCallbackFn.emit(queryObj);
+    }
 
   }
 
@@ -307,8 +359,14 @@ export class PTableComponent implements OnInit, DoCheck {
   }
   
   public fnChangePTableRowLength(records: number) {
-    this.pageSize = records;
-    this.setPage(1);
+    this.pageSize = +records;
+    if (this.pTableSetting.enabledServerSitePaggination) {
+      this.pageNo = 1;
+      const queryObj: IPTableServerQueryObj = {searchVal: this.globalSearchValue, pageNo: this.pageNo, pageSize: this.pageSize, orderBy: this.orderBy, isOrderAsc: this.isOrderAsc};
+      this.serverSiteCallbackFn.emit(queryObj);
+    } else {
+      this.setPage(1);
+    }
   }
 
   public fnChangePTableDataLength(event: any) {
@@ -347,34 +405,60 @@ export class PTableComponent implements OnInit, DoCheck {
 
   //#region  sorting & searching
   public fnColumnSorting(colName: any, pTableID: any, isSorting: boolean = true) {
-    if (!isSorting || this.pTableMasterData.length < 1) {
-      return;
+    if (this.pTableSetting.enabledServerSitePaggination) {
+      if (!isSorting || this.pTableTotalFilterDataLength < 1) {
+        return;
+      }
+
+      let isOrderAsc = true;
+      
+      if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting")) {
+        jQuery("#" + pTableID + " thead th.sorting-active").addClass("sorting").removeClass("sorting-down").removeClass("sorting-up");
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting");
+        isOrderAsc = true;
+      } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-up")) {
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-down").removeClass("sorting-up");
+        isOrderAsc = false;
+      } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-down")) {
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting-down");
+        isOrderAsc = true;
+      }
+
+      this.orderBy = colName;
+      this.isOrderAsc = isOrderAsc;
+      this.pageNo = 1;
+      const queryObj: IPTableServerQueryObj = {searchVal: this.globalSearchValue, pageNo: this.pageNo, pageSize: this.pageSize, orderBy: this.orderBy, isOrderAsc: this.isOrderAsc};
+      this.serverSiteCallbackFn.emit(queryObj);
+    } else {
+      if (!isSorting || this.pTableMasterData.length < 1) {
+        return;
+      }
+      
+      if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting")) {
+        jQuery("#" + pTableID + " thead th.sorting-active").addClass("sorting").removeClass("sorting-down").removeClass("sorting-up");
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting");
+        this.pTableData = this.pTableData.sort((n1, n2) => {
+          if (n1[colName] > n2[colName]) { return 1; }
+          if (n1[colName] < n2[colName]) { return -1; }
+          return 0;
+        });
+      } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-up")) {
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-down").removeClass("sorting-up");
+        this.pTableData = this.pTableData.sort((n1, n2) => {
+          if (n1[colName] < n2[colName]) { return 1; }
+          if (n1[colName] > n2[colName]) { return -1; }
+          return 0;
+        });
+      } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-down")) {
+        jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting-down");
+        this.pTableData = this.pTableData.sort((n1, n2) => {
+          if (n1[colName] > n2[colName]) { return 1; }
+          if (n1[colName] < n2[colName]) { return -1; }
+          return 0;
+        });
+      }
+      this.setPage(1);
     }
-    
-    if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting")) {
-      jQuery("#" + pTableID + " thead th.sorting-active").addClass("sorting").removeClass("sorting-down").removeClass("sorting-up");
-      jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting");
-      this.pTableData = this.pTableData.sort((n1, n2) => {
-        if (n1[colName] > n2[colName]) { return 1; }
-        if (n1[colName] < n2[colName]) { return -1; }
-        return 0;
-      });
-    } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-up")) {
-      jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-down").removeClass("sorting-up");
-      this.pTableData = this.pTableData.sort((n1, n2) => {
-        if (n1[colName] < n2[colName]) { return 1; }
-        if (n1[colName] > n2[colName]) { return -1; }
-        return 0;
-      });
-    } else if (jQuery("#" + pTableID + " thead th." + colName).hasClass("sorting-down")) {
-      jQuery("#" + pTableID + " thead th." + colName).addClass("sorting-up").removeClass("sorting-down");
-      this.pTableData = this.pTableData.sort((n1, n2) => {
-        if (n1[colName] > n2[colName]) { return 1; }
-        if (n1[colName] < n2[colName]) { return -1; }
-        return 0;
-      });
-    }
-    this.setPage(1);
   }
 
   public fnIndividualColumnFilterContext(columnDef: any, event: any) {
@@ -633,15 +717,54 @@ export class PTableComponent implements OnInit, DoCheck {
   }
 
  public fnDownloadPDF() {
-    this.printService.printContent(this.pTableSetting, this.pTableData);
+    if (this.pTableSetting.enabledServerSitePaggination && this.pTableSetting.downloadDataApiUrl) {
+      this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`)
+        .subscribe(
+          res => {
+            let data = res as any[];
+            this.printService.printContent(this.pTableSetting, data);
+          }, 
+          err => {
+            console.error(err);
+          });
+    }
+    else {
+      this.printService.printContent(this.pTableSetting, this.pTableData);
+    }
   }
 
   public fnPrintPTable() {
-    this.printService.printContent(this.pTableSetting, this.pTableData);
+    if (this.pTableSetting.enabledServerSitePaggination && this.pTableSetting.downloadDataApiUrl) {
+      this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`)
+        .subscribe(
+          res => {
+            let data = res as any[];
+            this.printService.printContent(this.pTableSetting, data);
+          }, 
+          err => {
+            console.error(err);
+          });
+    }
+    else {
+      this.printService.printContent(this.pTableSetting, this.pTableData);
+    }
   }
 
   public fnExeclDownload() {
-    this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+    if (this.pTableSetting.enabledServerSitePaggination && this.pTableSetting.downloadDataApiUrl) {
+      this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`)
+        .subscribe(
+          res => {
+            let data = res as any[];
+            this.excelService.exportAsExcelFile(data, this.pTableSetting);
+          }, 
+          err => {
+            console.error(err);
+          });
+    }
+    else {
+      this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+    }
   }
 
   onScroll(event, doc) {
@@ -674,72 +797,3 @@ export class PTableComponent implements OnInit, DoCheck {
 
 }
 
-
-export interface IPTableSetting {
-  tableID?: string | 'P-table-001',
-  tableClass?: string | "table table-border",
-  tableName?: string | "p-table-name",
-  enabledSerialNo?: boolean | false,
-  tableRowIDInternalName?: string | "Id",
-  tableColDef?: colDef[],
-  enabledSearch?: boolean | true,
-  enabledCheckbox?: boolean | false,
-  enabledEditDeleteBtn?: boolean | false,
-  enabledEditBtn?: boolean | false,
-  enabledDeleteBtn?: boolean | false,
-  enabledRecordCreateBtn?: boolean | false,
-  enabledRadioBtn?: boolean | false,
-  enabledDataLength?: boolean | false,
-  enabledPagination?: boolean | true,
-  enabledCellClick?: boolean | false,
-  enabledColumnResize?: boolean | false,
-  enabledStaySelectedPage?: boolean | false,
-  enabledColumnFilter?: boolean | false,
-  disabledTableReset?: boolean | false
-  pageSize?: number | 10,
-  displayPaggingSize?: number | 10,
-  checkboxColumnHeader?: boolean | string | 'Select';
-  radioBtnColumnHeader?: string | 'Select',
-  checkboxCallbackFn?: boolean | null,
-  columnNameSetAsClass?: boolean | null,
-  enabledColumnSetting?: boolean | false,
-  enabledReordering?: boolean | false,
-  tableHeaderVisibility?: boolean | true,
-  tableFooterVisibility?:boolean|true,
-  pTableStyle?: ptableStyle,
-  enabledCustomReflow?: boolean | false,
-  enabledReflow?: boolean | false,
-  enabledAutoScrolled?: boolean | false,
-  enabledPdfDownload?: boolean | false,
-  enabledExcelDownload?: boolean | false,
-  enabledPrint?: boolean | false,
-  enabledTotal?: boolean | false,
-  totalTitle?: string | 'Total',
-  enabledServerSitePaggination?: boolean | false,
-}
-
-export interface colDef {
-  headerName?: string | "",
-  width?: string | "",
-  internalName?: string,
-  className?: string,
-  sort?: Boolean | false,
-  type?: string,
-  displayType?:string,
-  onClick?: string | "",
-  applyColFilter?: string | "Apply",
-  visible?: boolean | true,
-  alwaysVisible?: boolean | false,
-  btnTitle?: string | '',
-  showTotal?: boolean | false,
-  innerBtnIcon?:string|''
-}
-
-export interface ptableStyle {
-  tableOverflow?: boolean | false,
-  tableOverflowX?: boolean | false,
-  tableOverflowY?: boolean | false,
-  overflowContentWidth?: string | '',
-  overflowContentHeight?: string | null,
-
-}
