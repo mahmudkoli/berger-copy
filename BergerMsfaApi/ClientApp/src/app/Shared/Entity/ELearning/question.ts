@@ -1,4 +1,5 @@
 import { EnumQuestionType } from '../../Enums/question-type';
+import { QueryObject } from '../Common/query-object';
 import { Dropdown } from '../Setup/dropdown';
 import { ELearningAttachment } from './eLearningAttachment';
 import { ELearningDocument } from './eLearningDocument';
@@ -60,14 +61,15 @@ export class SaveQuestion {
     }
 }
 
-export class QuestionQuery {
-    name: string;
+export class QuestionQuery extends QueryObject  {
+    title: string;
     
     constructor(init?: Partial<QuestionQuery>) {
+        super();
         Object.assign(this, init);
     }
 
     clear() {
-        this.name = '';
+        this.title = '';
     }
 }

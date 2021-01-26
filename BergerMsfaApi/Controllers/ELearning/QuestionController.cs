@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,11 @@ namespace BergerMsfaApi.Controllers.ELearning
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] QueryObjectModel query)
         {
             try
             {
-                var result = await _questionService.GetAllAsync(1, int.MaxValue);
+                var result = await _questionService.GetAllAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)

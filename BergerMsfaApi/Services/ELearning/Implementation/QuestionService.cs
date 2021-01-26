@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.ELearning;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.ELearning.Interfaces;
@@ -43,21 +46,34 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             return result.Id;
         }
 
-        public async Task<IList<QuestionModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<QuestionModel>> GetAllAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<Question, object>>>()
+            {
+                ["title"] = v => v.Title,
+                ["eLearningDocumentText"] = v => v.ELearningDocument.Title,
+                ["typeText"] = v => v.Type,
+                ["mark"] = v => v.Mark,
+            };
+
             var result = await _questionRepository.GetAllIncludeAsync(
                                 x => x,
-                                null,
-                                null,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.Title.Contains(query.GlobalSearchValue) || x.ELearningDocument.Title.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.ELearningDocument),
-                                pageIndex,
-                                pageSize,
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
             var modelResult = _mapper.Map<IList<QuestionModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<QuestionModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
         
         public async Task<IList<QuestionModel>> GetAllByELearningDocumentIdAsync(int id)

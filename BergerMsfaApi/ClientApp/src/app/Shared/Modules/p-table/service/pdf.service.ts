@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IPTableSetting } from "../p-table.component";
+import { IPTableSetting } from "../p-table";
 declare var jsPDF: any;
 @Injectable()
 export class PDFService {

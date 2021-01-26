@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { finalize, take, delay } from 'rxjs/operators';
 import { Subscription, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -19,6 +19,8 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 	query: ELearningDocumentQuery;
 	PAGE_SIZE: number;
 	eLearningDocuments: ELearningDocument[];
+	totalDataLength: number = 0; // for server side paggination
+	totalFilterDataLength: number = 0; // for server side paggination
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -29,10 +31,17 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		private eLearningDocumentService: ELearningService,
 		private modalService: NgbModal,
 		private commonService: CommonService) {
-		this.PAGE_SIZE = 5000;//commonService.PAGE_SIZE;
+			// this.PAGE_SIZE = 5000;
+			// this.ptableSettings.pageSize = 10;
+			// this.ptableSettings.enabledServerSitePaggination = false;
+			// server side paggination
+			this.PAGE_SIZE = commonService.PAGE_SIZE;
+			this.ptableSettings.pageSize = this.PAGE_SIZE;
+			this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
+		this.searchConfiguration();
 		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 			this.loadELearningDocumentsPage();
 		});
@@ -43,14 +52,16 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 	}
 
 	loadELearningDocumentsPage() {
-		this.searchConfiguration();
+		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
 		const eLearningDocumentsSubscription = this.eLearningDocumentService.getELearnings(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
-					this.eLearningDocuments = res.data;
+					this.eLearningDocuments = res.data.items;
+					this.totalDataLength = res.data.total;
+					this.totalFilterDataLength = res.data.totalFilter;
 					this.eLearningDocuments.forEach(obj => {
 						obj.statusText = obj.status == 0 ? 'Inactive' : 'Active';
 						obj.categoryText = obj.category != null ? obj.category.dropdownName : '';
@@ -64,11 +75,11 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 
 	searchConfiguration() {
 		this.query = new ELearningDocumentQuery({
-			// page: 1,
-			// pageSize: this.PAGE_SIZE,
-			// sortBy: 'name',
-			// isSortAscending: true,
-			// name: '',
+			page: 1,
+			pageSize: this.PAGE_SIZE,
+			sortBy: 'title',
+			isSortAscending: true,
+			globalSearchValue: ''
 		});
 	}
 
@@ -114,19 +125,19 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Title', width: '40%', internalName: 'title', sort: true, type: "" },
-			{ headerName: 'Category', width: '45%', internalName: 'categoryText', sort: false, type: "" },
-			{ headerName: 'Status', width: '15%', internalName: 'statusText', sort: true, type: "" },
+			{ headerName: 'Category', width: '45%', internalName: 'categoryText', sort: true, type: "" },
+			{ headerName: 'Status', width: '15%', internalName: 'statusText', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
-		pageSize: 10,
+		// pageSize: 10,
 		enabledPagination: true,
 		enabledDeleteBtn: true,
 		enabledEditBtn: true,
-		enabledColumnFilter: true,
-		enabledRadioBtn: false,
+		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
-		// newRecordButtonText: 'New Promotional Banner'
+		enabledDataLength: true,
+		newRecordButtonText: 'New ELearning'
 	};
 
 	public fnCustomTrigger(event) {
@@ -141,5 +152,17 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		else if (event.action == "delete-item") {
 			this.deleteELearningDocument(event.record.id);
 		}
+	}
+	
+	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
+		console.log('server site : ', queryObj);
+		this.query = new ELearningDocumentQuery({
+			page: queryObj.pageNo,
+			pageSize: queryObj.pageSize,
+			sortBy: queryObj.orderBy,
+			isSortAscending: queryObj.isOrderAsc,
+			globalSearchValue: queryObj.searchVal
+		});
+		this.loadELearningDocumentsPage();
 	}
 }

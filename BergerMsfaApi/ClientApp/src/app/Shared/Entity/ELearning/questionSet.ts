@@ -1,3 +1,4 @@
+import { QueryObject } from '../Common/query-object';
 import { ELearningDocument } from './eLearningDocument';
 import { QuestionSetCollection } from './questionSetCollection';
 
@@ -57,14 +58,15 @@ export class SaveQuestionSet {
     }
 }
 
-export class QuestionSetQuery {
-    name: string;
+export class QuestionSetQuery extends QueryObject  {
+    title: string;
     
     constructor(init?: Partial<QuestionSetQuery>) {
+        super();
         Object.assign(this, init);
     }
 
     clear() {
-        this.name = '';
+        this.title = '';
     }
 }

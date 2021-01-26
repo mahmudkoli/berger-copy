@@ -7,6 +7,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 })
 export class CommonService {
 
+  public PAGE_SIZE: number = 10;
+
     public baseUrl: string;
     constructor(
         private http: HttpClient,

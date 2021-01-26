@@ -1,3 +1,4 @@
+import { QueryObject } from '../Common/query-object';
 import { Dropdown } from '../Setup/dropdown';
 import { ELearningAttachment } from './eLearningAttachment';
 
@@ -51,14 +52,15 @@ export class SaveELearningDocument {
     }
 }
 
-export class ELearningDocumentQuery {
-    name: string;
+export class ELearningDocumentQuery extends QueryObject {
+    title: string;
     
     constructor(init?: Partial<ELearningDocumentQuery>) {
+        super();
         Object.assign(this, init);
     }
 
     clear() {
-        this.name = '';
+        this.title = '';
     }
 }

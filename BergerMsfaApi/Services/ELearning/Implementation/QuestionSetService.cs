@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.ELearning;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.ELearning.Interfaces;
@@ -49,21 +52,33 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             return result.Id;
         }
 
-        public async Task<IList<QuestionSetModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<QuestionSetModel>> GetAllAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<QuestionSet, object>>>()
+            {
+                ["title"] = v => v.Title,
+                ["level"] = v => v.Level,
+                ["totalMark"] = v => v.TotalMark,
+            };
+
             var result = await _questionSetRepository.GetAllIncludeAsync(
                                 x => x,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.Title.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,
-                                null,
-                                null,
-                                pageIndex,
-                                pageSize,
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
             var modelResult = _mapper.Map<IList<QuestionSetModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<QuestionSetModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<QuestionSetModel> GetByIdAsync(int id)

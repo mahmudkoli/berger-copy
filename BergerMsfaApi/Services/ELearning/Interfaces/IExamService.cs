@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Models.ELearning;
+﻿using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.ELearning;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace BergerMsfaApi.Services.ELearning.Interfaces
 {
     public interface IExamService
     {
-        Task<IList<UserQuestionAnswerModel>> GetAllExamReportAsync(int pageIndex, int pageSize);
+        Task<QueryResultModel<UserQuestionAnswerModel>> GetAllExamReportAsync(QueryObjectModel query);
         Task<IList<AppQuestionSetModel>> GetAllQuestionSetAsync();
         Task<AppQuestionSetModel> GetAllQuestionByQuestionSetIdAsync(int id);
         Task<AppQuestionAnswerResultModel> SaveQuestionAnswerAsync(AppQuestionSetModel model);
