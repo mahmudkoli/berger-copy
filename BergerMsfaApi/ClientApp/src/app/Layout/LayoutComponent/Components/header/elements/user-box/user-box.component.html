@@ -14,10 +14,10 @@
                         <div ngbDropdownMenu>
                            <!-- <button mat-raised-button *ngIf="!loggedIn" (click)="login()">Login</button>  -->
 
-                            <h6 class="dropdown-header">{{profile?.fullName}}</h6>
+                            <h6 class="dropdown-header">{{user?.fullName}}</h6>
                             <!-- <button class="dropdown-item">Actions</button> -->
-                            <div *ngIf="!production" class="dropdown-divider"></div>
-                            <button *ngIf="!production" class="mb-2 mr-2 btn btn-warning ml-4 " (click)="logout()">Logout</button>
+                            <div class="dropdown-divider"></div>
+                            <button class="mb-2 mr-2 btn btn-warning ml-4 " (click)="logout()">Logout</button>
                         </div>
                     </div>
                 </div>

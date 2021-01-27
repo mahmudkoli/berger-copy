@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AlertService } from '../Modules/alert/alert.service';
 import { ActivityPermissionService } from '../Services/Activity-Permission/activity-permission.service';
-import { CommonService } from '../Services/Common/common.service';
+import { AuthService } from '../Services/Users';
 
 @Injectable({
   providedIn: 'root'
@@ -11,35 +10,30 @@ import { CommonService } from '../Services/Common/common.service';
 export class PermissionGuard implements CanActivate {
   
   constructor(
-    private router: Router, private alertService: AlertService,
+    private router: Router,
     private activityPermissionService: ActivityPermissionService,
-    private commonService: CommonService
+    private authService: AuthService
   ) { }
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      debugger;
       const permissionType = next.data.permissionType || '';
       const permissionGroup = next.data.permissionGroup || '';
-      const hasPermission = this.activityPermissionService.hasPermission(permissionType, permissionGroup);
-      debugger;
-       if (!hasPermission) {
+      const isLoggedIn = this.authService.isLoggedIn && !this.authService.isTokenExpired;
+      if (isLoggedIn) {
+        if (this.authService.currentUserValue.roleName == 'Admin' && (permissionGroup.startsWith('/menu') || permissionGroup.startsWith('menu'))) return true;
 
-         const user = this.commonService.getUserInfoFromLocalStorage();
-         if(user && user.roleName == 'Admin' && (permissionGroup.startsWith('/menu') || permissionGroup.startsWith('menu'))) return true;
-
-         const errorMsg = this.getErrorMsg(permissionType);
-         this.alertService.titleTosterDanger(errorMsg);
-
-        this.router.navigate(['/access-denied/access-denied']);
-
-         // setTimeout(() => {
-         //     this.alertService.fnLoading(false);
-         // }, 1000);
-       }
-
-      return true;
+        if (permissionGroup && permissionType && !this.activityPermissionService.hasPermission(permissionType, permissionGroup)) {
+          this.router.navigate(['/access-denied/access-denied']);
+          return false;
+        }
+        
+        return true;
+      }
+      
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
+      return false;
   }
 
   getErrorMsg(value) : string {
