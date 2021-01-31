@@ -42,6 +42,11 @@ namespace BergerMsfaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
+            services.Configure<AppTokensSettingsModel>(options => Configuration.GetSection("Tokens").Bind(options));
+
+            var appTokensSettings = Configuration.GetSection("Tokens").Get<AppTokensSettingsModel>();
+
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
 
             services.AddAuthentication(opt =>
@@ -54,16 +59,14 @@ namespace BergerMsfaApi
                 {
                     cfg.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidIssuer = Configuration["Tokens:Issuer"],
-                        ValidAudience = Configuration["Tokens:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:key"])),
+                        ValidIssuer = appTokensSettings.Issuer,
+                        ValidAudience = appTokensSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appTokensSettings.Key)),
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = false,
                     };
-
-
                 });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -109,7 +112,6 @@ namespace BergerMsfaApi
             });
             //services.AddSignalR();
 
-
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -120,6 +122,7 @@ namespace BergerMsfaApi
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
             services.Configure<AppSettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
             services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
 
@@ -129,8 +132,6 @@ namespace BergerMsfaApi
 
             services.GenericServicesSimpleSetup<ApplicationDbContext>(Assembly.GetAssembly(typeof(QuickCrudModel)));
 
-
-
             services.AddSwaggerGen(swagger =>
             {
                 //This is to generate the Default UI of Swagger Documentation  
@@ -138,7 +139,7 @@ namespace BergerMsfaApi
                 {
                     Version = "v1",
                     Title = "Berger MSFA Portal",
-                    Description = "Berger MSFA SWAGGER"
+                    //Description = "Berger MSFA SWAGGER"
                 });
                 // To Enable authorization using Swagger (JWT)  
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -162,7 +163,6 @@ namespace BergerMsfaApi
                             }
                         },
                         new string[] {}
-
                     }
                 });
             });
@@ -181,13 +181,16 @@ namespace BergerMsfaApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             HttpHelper.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
             }
+
             app.UseAuthentication();
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -198,8 +201,8 @@ namespace BergerMsfaApi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Berger MSFA V1");
                 c.RoutePrefix = "msfa";
-                
             });
+
             app.UseRouting();
             app.UseAuthorization();
             app.UseRequestLocalization();

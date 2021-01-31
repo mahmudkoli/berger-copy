@@ -12,56 +12,40 @@ namespace BergerMsfaApi.Repositories
     public interface IRepository<TEntity> : IDisposable where TEntity : class
     {
         #region CONFIG
-
         bool ShareContext { get; set; }
-
         #endregion
 
         #region LINQ
         IQueryable<TEntity> GetAll();
-
         IQueryable<TEntity> GetAllInclude(params Expression<Func<TEntity, object>>[] includeProperties);
-
         IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>> predicate);
-
         IQueryable<TEntity> FindAllInclude(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties);
-
-        TEntity FindInclude
-        (Expression<Func<TEntity, bool>> predicate,
+        TEntity FindInclude(
+            Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties);
-
         TEntity Find(Expression<Func<TEntity, bool>> predicate);
         bool IsExist(Expression<Func<TEntity, bool>> predicate);
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
-
         string CreateId(Expression<Func<TEntity, string>> predicate, string prefix, Expression<Func<TEntity, bool>> where = null,
             int returnLength = 9, char fillValue = '0');
-
         #endregion
 
         #region SQL
-
         Task<IEnumerable<T>> ExecuteQueryAsyc<T>(string sqlQuery, params object[] parameters) where T : class;
         Task<int> ExecuteSqlCommandAsync(string sqlCommand, params object[] parameters);
-
         IEnumerable<dynamic> DynamicListFromSql(string Sql, Dictionary<string, object> Params, bool isStoredProcedure = false);
-
         (IList<T> Items, int Total, int TotalFilter) GetDataBySP<T>(string sql, IList<(string Key, object Value, bool IsOut)> parameters);
-
         #endregion
 
         #region LINQ ASYNC
-
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize);
         Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IPagedList<TEntity>> FindAllPagedAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber, int pageSize);
-
         Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> FindIncludeAsync
-        (Expression<Func<TEntity, bool>> predicate,
+        Task<TEntity> FindIncludeAsync(
+            Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties);
-
         Task<TEntity> CreateAsync(TEntity entity);
         Task<List<TEntity>> CreateListAsync(List<TEntity> items);
         Task<List<TEntity>> UpdateListAsync(List<TEntity> items);
@@ -104,11 +88,8 @@ namespace BergerMsfaApi.Repositories
         #endregion
 
         #region SaveChange
-
         int SaveChanges();
-
         Task<int> SaveChangesAsync();
-
         #endregion
 
         IQueryable<TEntity> GetAllIncludeStrFormat(Expression<Func<TEntity, bool>> filter = null,
@@ -116,8 +97,6 @@ namespace BergerMsfaApi.Repositories
                                                             string includeProperties = null,
                                                             int? skip = null,
                                                             int? take = null);
-        
-        IList<UserInfo> GetNodeWiseUsersByUserId(int userId, bool isOnlyLastNodeUser = false);
     }
 }
 

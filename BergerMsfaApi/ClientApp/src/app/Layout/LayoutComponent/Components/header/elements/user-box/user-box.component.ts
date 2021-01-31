@@ -1,62 +1,31 @@
 import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
-import { Route } from 'src/app/Shared/Entity';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { IAuthUser } from 'src/app/Shared/Entity/Users/auth';
+import { AuthService } from 'src/app/Shared/Services/Users';
 import {ThemeOptions} from '../../../../../../theme-options';
-
-  const requestObj = {
-    scopes: ['user.read']
-  };
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user-box',
   templateUrl: './user-box.component.html',
 })
 export class UserBoxComponent implements OnInit {
-    profile;
-    adguid: any;
-  isIframe = false;
-  loggedIn = false;
-  production = false;
+  user: IAuthUser;
+  // production = false;
+
   constructor(
-    public globals: ThemeOptions, public commonService: CommonService , public route : Router
-      
-      
-     ) { }
+    public globals: ThemeOptions,
+    private authService: AuthService,
+    private router: Router) { 
+  }
 
   ngOnInit() {
-    //this.isIframe = window !== window.parent && !window.opener;
-    //// this.login();
-    // this.checkoutAccount();
-
-    //   this.broadcastService.subscribe('msal:loginSuccess', () => {
-    //     this.checkoutAccount();               
-    //   });
-      this.getProfile();  
+    // this.production = environment.production;
+    this.authService.currentUser.subscribe(user => this.user = user);
   }
-
- 
-  //login() {
-  //  const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
-
-  //  if (!isIE) {
-  //    this.authService.loginRedirect();
-  //  } else {
-  //    this.authService.loginRedirect();
-  //  }
-  //}
-
-    getProfile() {
-     this.profile = this.commonService.getUserInfoFromLocalStorage();
-     console.log("Profile View", this.profile);
-    }
-
 
   logout() {
-    localStorage.clear();
-    this.route.navigate(['/login/loginboxed']);
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
-
- 
-
 }

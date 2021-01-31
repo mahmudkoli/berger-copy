@@ -11,7 +11,7 @@ import { RegisterBoxedComponent } from './register-boxed/register-boxed.componen
 import { PagesLayoutComponent } from './pages-layout.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { LoginComponent } from './login/login.component';
+// import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -20,14 +20,15 @@ import { LoginComponent } from './login/login.component';
     LoginBoxedComponent,
     RegisterBoxedComponent,
     UnauthorizedComponent,
-    LoginComponent,
+    // LoginComponent,
   ],
   imports: [
     CommonModule,
     OutsideLayoutRoutingModule,
     LoadingBarRouterModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    ReactiveFormsModule,
   ]
 })
 export class OutsideLayoutModule { }

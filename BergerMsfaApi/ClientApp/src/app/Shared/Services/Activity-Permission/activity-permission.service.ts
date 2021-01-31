@@ -38,10 +38,10 @@ export class ActivityPermissionService {
     }
 
     getActivityPermissionFromSession(): any[] {
-        if(!this.commonService.getActivityPermissionToSessionStorage()) {
+        if(!this.commonService.getActivityPermissionFromSessionStorage()) {
             this.setActivityPermissionToSession();
         }
-        const sessionStorageActPer = this.commonService.getActivityPermissionToSessionStorage();
+        const sessionStorageActPer = this.commonService.getActivityPermissionFromSessionStorage();
         const activityPermission = sessionStorageActPer ? sessionStorageActPer as any[] : [];
         return activityPermission;
     }

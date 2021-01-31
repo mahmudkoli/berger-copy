@@ -1,86 +1,138 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NgForm } from '@angular/forms';
-import { LoginService } from 'src/app/Shared/Services/Users/login.service';
-import { FormsModule } from '@angular/forms';
-import { CommonService } from '../../Shared/Services/Common/common.service';
-
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { AuthService } from 'src/app/Shared/Services/Users';
+import { Login } from 'src/app/Shared/Entity/Users/auth';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-boxed',
   templateUrl: './login-boxed.component.html',
   styles: []
 })
-export class LoginBoxedComponent implements OnInit {
-    invalidLogin: boolean;
-     UserName:string;
-     Password:string;
+export class LoginBoxedComponent implements OnInit, OnDestroy {
+	// Public properties
+	// login: LoginUser;
+    loginForm: FormGroup;
+    errorMessage: string;
+    passwordTextType: boolean = false;
+    isLoading: boolean = false;
+// 	hasFormErrors: boolean = false;
+// 	errors: any[];
+// 	// Private properties
+	private subscriptions: Subscription[] = [];
 
-    constructor(private router: Router, private loginService: LoginService, private commonSvc: CommonService) {
 
+	constructor(private activatedRoute: ActivatedRoute,
+		private router: Router,
+		private loginFB: FormBuilder,
+		private alertService: AlertService,
+		private authService: AuthService) { }
+
+	ngOnInit() {
+        this.initLogin();
+	}
+
+ 	ngOnDestroy() {
+		this.subscriptions.forEach(sb => sb.unsubscribe());
+	}
+
+	initLogin() {
+		this.createForm();
+	}
+
+// 	resetErrors() {
+// 		this.hasFormErrors = false;
+// 		this.errors = [];
+// 	}
+
+	createForm() {
+		this.loginForm = this.loginFB.group({
+			userName: ['', [Validators.required]],
+			password: ['', Validators.required],
+			rememberMe: [false],
+		});
+	} 
+	
+	get ufControls() { return this.loginForm.controls; }
+
+// 	resetAll() {
+// 		this.user = Object.assign({}, this.oldUser);
+// 		this.createForm();
+// 		this.resetErrors();
+// 		this.userForm.markAsPristine();
+// 		this.userForm.markAsUntouched();
+// 		this.userForm.updateValueAndValidity();
+// 	}
+
+	onSubmit() {
+		// this.resetErrors();
+		const controls = this.loginForm.controls;
+		
+		if (this.loginForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			// this.hasFormErrors = true;
+			// this.selectedTab = 0;
+			return;
+		}
+
+		const login = this.prepareLogin();
+        this.login(login);
+	}
+
+	prepareLogin(): Login {
+		const controls = this.loginForm.controls;
+		const _login = new Login();
+		_login.clear();
+		_login.userName = controls['userName'].value;
+		_login.password = controls['password'].value;
+		_login.rememberMe = controls['rememberMe'].value;
+		return _login;
+	}
+
+	login(_login: Login) {
+        this.alertService.fnLoading(true);
+        this.isLoading = true;
+		const createSubscription = this.authService.login(_login)
+			.pipe(finalize(() => {this.alertService.fnLoading(false); this.isLoading = false;}))
+			.subscribe(res => {
+				// this.alertService.tosterSuccess(`New user successfully has been added.`);
+				this.goHome();
+			},
+			error => {
+				this.throwError(error);
+			});
+		this.subscriptions.push(createSubscription);
+	}
+	
+	goHome() {
+		this.router.navigate([`/`], { relativeTo: this.activatedRoute });
+	}
+    
+    togglePasswordTextType(){
+        this.passwordTextType = !this.passwordTextType;
     }
 
-  ngOnInit() {
+// 	onAlertClose($event) {
+// 		this.resetErrors();
+// 	}
+
+    private throwError(errorDetails: any) {
+        // this.alertService.fnLoading(false);
+        console.log("error", errorDetails);
+        let errList = errorDetails.error.errors;
+        if (errList.length) {
+            console.log("error", errList, errList[0].errorList[0]);
+            // this.alertService.tosterDanger(errList[0].errorList[0]);
+            this.errorMessage = errList[0].errorList[0];
+        } else {
+            // this.alertService.tosterDanger(errorDetails.error.message);
+            this.errorMessage = errorDetails.error.message;
+        }
     }
-
-
-    public login = (form: NgForm) => {
-        let credentials = JSON.stringify(form.value);
-        this.loginService.postLoginData(credentials).subscribe(response=>
-            {
-                let token = (<any>response).token;
-                localStorage.setItem("Fm-App-Token", token);
-                this.loginService.getExampleData(token).subscribe(res=>
-                    {
-                        console.log(res);
-                    })
-                //this.router.navigate(["/"]);
-
-            });
-        // this.http.post("http://localhost:40875/Auth/Login", credentials, {
-        //     headers: new HttpHeaders({
-        //         "Content-Type": "application/json"
-        //     })
-        // }).subscribe(response => {
-        //     let token = (<any>response).token;
-        //     localStorage.setItem("jwt", token);
-        //     this.http.post("http://localhost:40785/Auth/Getuser", token, {
-        //         headers: new HttpHeaders({
-        //             "Content-Type": "application/json"
-        //         })
-        //     }).subscribe(response => {
-        //         let userId = (<any>response);
-        //     })
-
-        //     this.invalidLogin = false;
-        //     this.router.navigate(["/"]);
-        // }, err => {
-        //     this.invalidLogin = true;
-        // });
-    }
-
-
-    onLogin() {
-        let loginModel = '{ "UserName" : "' + this.UserName + '" , "Password": "' + this.Password +'" }';
-        let credentials = loginModel;
-        this.loginService.postLoginData(credentials).subscribe(response=>
-        {
-            debugger;
-            let tokens =<any>response;        
-            let token = tokens.data.token;
-            localStorage.setItem("bergermsfa", token);
-            this.commonSvc.setUserInfoToLocalStorage(tokens.data);
-            // this.loginService.getExampleData(token).subscribe(res =>
-            // {
-            //    console.log(res);
-            // })
-            this.router.navigate(["/"]);
-  
-        });
-      
-      }
-
-
-
 }

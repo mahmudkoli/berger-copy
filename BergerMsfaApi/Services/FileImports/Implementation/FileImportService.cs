@@ -14,16 +14,13 @@ namespace BergerMsfaApi.Services.FileImports.Implementation
     public class FileImportService : IFileImportService
     {
         private readonly IWebHostEnvironment _host;
-        private readonly ICMUserService _userService;
 
-        public FileImportService(IWebHostEnvironment host,
-            ICMUserService userService)
+        public FileImportService(IWebHostEnvironment host)
         {
             _host = host;
-            _userService = userService;
         }
 
-        public async Task<(IEnumerable<UserViewModel> Data, string Message)> ExcelImportCAUserAsync(IFormFile file)
+        public async Task<(IEnumerable<object> Data, string Message)> ExcelImportUserAsync(IFormFile file)
         {
             using (var stream = file.OpenReadStream())
             {
@@ -44,7 +41,8 @@ namespace BergerMsfaApi.Services.FileImports.Implementation
                         dataColumn.ColumnName = Regex.Replace(dataColumn.ColumnName, @"\s+", "").ToUpper();
                     }
 
-                    return await _userService.ExcelSaveToDatabaseAsync(datatable);
+                    //return await _userService.ExcelSaveToDatabaseAsync(datatable);
+                    return (null, null);
                 }
             }
         }

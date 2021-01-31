@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                 select new FocusDealerModel
                                 {
                                     Id = f.Id,
-                                    EmployeeName = $"{u.FirstName},{u.LastName}",
+                                    EmployeeName = $"{u.FullName}",
                                     Code = f.Code,
                                     DealerName = d.CustomerName,
                                     EmployeeId = f.EmployeeId,
