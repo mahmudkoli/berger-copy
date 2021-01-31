@@ -7,6 +7,6 @@ namespace BergerMsfaApi.Services.FileImports.Interfaces
 {
     public interface IFileImportService
     {
-        Task<(IEnumerable<UserViewModel> Data, string Message)> ExcelImportCAUserAsync(IFormFile file);
+        Task<(IEnumerable<object> Data, string Message)> ExcelImportUserAsync(IFormFile file);
     }
 }

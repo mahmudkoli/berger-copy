@@ -12,11 +12,13 @@ namespace BergerMsfaApi.Controllers.Common
     public class CommonController : BaseController
     {
         private readonly ICommonService _commonSvc;
+
         public CommonController(
             ICommonService commonSvc)
         {
             _commonSvc = commonSvc;
         }
+
         [HttpGet("GetDealList")]
         public async Task<IActionResult> GetDealerList()
         {
@@ -27,10 +29,10 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetSaleOfficeList")]
         public async Task<IActionResult> GetSaleOfficeList()
         {
@@ -41,10 +43,8 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
-            
         }
 
         [HttpGet("GetSaleGroupList")]
@@ -57,10 +57,8 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
-
         }
 
         [HttpGet("GetTerritoryList")]
@@ -73,10 +71,8 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
-
         }
 
         [HttpGet("GetZoneList")]
@@ -89,23 +85,20 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
-
         }
+
         [HttpGet("GetDepotList")]
         public async Task<IActionResult> GetDepotList()
         {
             try
             {
                 var result = await _commonSvc.GetDepotList();
-                
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
@@ -120,10 +113,10 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetUserInfoList")]
         public async Task<IActionResult> GetUserInfoList()
         {
@@ -134,25 +127,22 @@ namespace BergerMsfaApi.Controllers.Common
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetDivisionList")]
         public async Task<IActionResult> GetDivisionList()
         {
             try
             {
-               
                 var result = await _commonSvc.GetDivisionList();
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-       
     }
 }

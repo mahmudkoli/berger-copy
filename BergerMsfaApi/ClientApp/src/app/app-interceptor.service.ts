@@ -7,32 +7,34 @@ import { ActivityPermissionService } from './Shared/Services/Activity-Permission
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbPaginationNext } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from "./Shared/Services/Users";
 
 @Injectable({ providedIn: 'root' })
 export class AppInterceptorService implements HttpInterceptor {
-    /**
-     *
-     */
+    
     constructor(private alertService: AlertService,
-        private activityPermissionService: ActivityPermissionService, private activatedRoute: ActivatedRoute,
-        ) { }
+        private activityPermissionService: ActivityPermissionService, 
+        private activatedRoute: ActivatedRoute,
+        private authService: AuthService) { 
+    }
+
     handleError = (error: HttpErrorResponse, request?, next?) => {
         console.log("api error:", error);
         setTimeout(() => {
             //this.alertService.fnLoading(false);   
             let statusCode = error.status;
-            let errorMsg = error.error.msg || "";
+            let errorMsg = (error.error == null ? error.message : error.error.message) || "Something went wrong.";
             if (statusCode == 0) {
-                errorMsg = "You may have internet connection problem. Check your network and try again";
+                errorMsg = "You may have internet connection problem. Check your network and try again.";
             } else if (statusCode == 404) {
                 errorMsg = "You may have application issues. Please contact with system admin.";
             }
-            else if (error.url.indexOf('graph.microsoft.com') > -1 && error.status == 401) {
-                
-            }
-            else if (statusCode == 401) {
-
+            else if (statusCode == 401 || statusCode == 403) {
                 errorMsg = "You are not authorized. Please contact with system admin.";
+            }
+            else if (statusCode == 400) {
+                errorMsg = "Validation failed for " + error.error.errors[0].propertyName + ". " 
+                + error.error.errors[0].errorList[0];
             }
 
             //showing message            
@@ -43,28 +45,18 @@ export class AppInterceptorService implements HttpInterceptor {
 
         return throwError(error)
     }
+
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.alertService.fnLoading(true);
         console.log('processing request', request);
         console.log('url', request.url);
-        // debugger;
-        let token = localStorage.getItem('bergermsfa');
 
-        // local storege for ad
-        //if (request.url.indexOf('graph.microsoft.com') > -1) {
-        //    console.log('add request');
-
-        //    token = localStorage.getItem('adtoken');
-        //} else {
-        //    token = localStorage.getItem('bergermsfa');
-        //}
+        const token = this.authService.currentUserToken;
 
         if (request.method === 'POST' || request.method === 'PUT') {
             this.shiftDates(request.body);
         }
-
-
-
+        
         if (request.method == "DELETE") {
             let activityPermission = this.activityPermissionService.getActivityPermissionFromSession();
             let hasPermission = false;
@@ -131,6 +123,6 @@ export class AppInterceptorService implements HttpInterceptor {
                 this.shiftDates(value);
             }
         }
-      }
+    }
 
 }

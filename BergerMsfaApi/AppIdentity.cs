@@ -6,7 +6,6 @@ namespace BergerMsfaApi
 {
     public static class AppIdentity
     {
-
         public static AppUserPrincipal AppUser
         {
             get
@@ -22,8 +21,8 @@ namespace BergerMsfaApi
                 return user ?? ClaimExtension.EmptyAppUser;
             }
             set { ClaimExtension.EmptyAppUser = value; }
-
         }
+
         public static string UserAgentInfo
         {
             get
@@ -40,6 +39,7 @@ namespace BergerMsfaApi
             }
 
         }
+
         public static string UserIP
         {
             get

@@ -32,6 +32,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<FocusDealer> _focusDealerSvc;
         private readonly IRepository<UserInfo> _userInfosvc;
         private readonly IRepository<Division> _divisionSvc;
+
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
             IRepository<CustomerGroup> customerGroupSvc,
@@ -44,13 +45,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Depot> depotSvc,
             IRepository<FocusDealer> focusDealerSvc,
             IRepository<UserInfo> userInfosvc,
-            IRepository<Division> divisionSvc
-
-            )
+            IRepository<Division> divisionSvc)
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
-            this._customerGroupSvc = customerGroupSvc;
+            _customerGroupSvc = customerGroupSvc;
             _zoneSvc = zoneSvc;
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
@@ -64,8 +63,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
         {
-            var result = await _dealerInfoSvc.FindAllAsync(f=>f.Territory== territory);
-           return result.ToMap<DealerInfo, AppDealerInfoModel>();
+            var result = await _dealerInfoSvc.FindAllAsync(f => f.Territory == territory);
+            return result.ToMap<DealerInfo, AppDealerInfoModel>();
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId)
@@ -73,11 +72,13 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _focusDealerSvc.FindAllAsync(f => f.EmployeeId == EmployeeId && f.ValidFrom < DateTime.Now.Date);
             throw new NotImplementedException();
         }
+
         public async Task<IEnumerable<DealerInfoModel>> GetDealerInfoList()
         {
             var result = await _dealerInfoSvc.GetAllAsync();
             return result.ToMap<DealerInfo, DealerInfoModel>();
         }
+
         public async Task<IEnumerable<UserInfoModel>> GetUserInfoList()
         {
            // var result1 = new List<UserInfoModel>();
@@ -87,6 +88,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
+
         public async Task<IEnumerable<Division>> GetDivisionList()
         {
             // var result1 = new List<UserInfoModel>();
@@ -94,12 +96,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
 
             return await _divisionSvc.GetAllAsync();
-
-
         }
-        private List<UserInfoModel> Getuser( List<UserInfoModel> result ,string employeeId)
+
+        private List<UserInfoModel> Getuser(List<UserInfoModel> result, string employeeId)
         {
-       
             foreach (var u in _userInfosvc.GetAll())
             {
                 if (u.ManagerId == employeeId)
@@ -107,19 +107,22 @@ namespace BergerMsfaApi.Services.Common.Implementation
                     result.Add(u.ToMap<UserInfo, UserInfoModel>());
                     Getuser(result, u.ManagerId);
                 }
-               
             }
+
             return result;
         }
+
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
             return await _saleGroupSvc.GetAllAsync();
         }
+
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
             var result = await _depotSvc.GetAllAsync();
             return result.Select(s => new DepotModel  { Code = s.Werks, Name = s.Name1 }).ToList();
         }
+
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             return await _saleOfficeSvc.GetAllAsync();
@@ -134,6 +137,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             return await _zoneSvc.GetAllAsync();
         }
+
         public async Task<IEnumerable<RoleModel>> GetRoleList()
         {
             var result= await _roleSvc.GetAllAsync();
@@ -170,6 +174,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
     }
+
     public class DepotModel
     {
         public string Code { get; set; }

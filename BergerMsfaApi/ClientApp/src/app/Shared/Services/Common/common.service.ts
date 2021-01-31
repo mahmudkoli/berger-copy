@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { APIResponse } from '../../Entity';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { IAuthUser } from '../../Entity/Users/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -8,23 +9,29 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export class CommonService {
 
   public PAGE_SIZE: number = 10;
+  public baseUrl: string;
+  private readonly localStorageCurrentUserKey: string = 'currentUser';
+  private readonly localStorageActivityPermissionKey: string = 'activityPermission';
 
-    public baseUrl: string;
-    constructor(
-        private http: HttpClient,
-        @Inject('BASE_URL') baseUrl: string
-    ) {
-
-        console.log("baseUrl: ", baseUrl);
-        this.baseUrl = baseUrl + 'api/';
-    }
+  constructor(
+    private http: HttpClient,
+    @Inject('BASE_URL') baseUrl: string) {
+      console.log("baseUrl: ", baseUrl);
+      this.baseUrl = baseUrl + 'api/';
+  }
   
   toQueryString(obj) {
     let parts = [];
     for (const property in obj) {
       const value = obj[property];
       if (value != null && value !== undefined) {
-        parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
+        if (Array.isArray(value)) {
+          value.forEach((val, index) => {
+            parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(val));
+          });
+        } else {
+          parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
+        }
       }
     }
 
@@ -72,57 +79,61 @@ export class CommonService {
     }
   }
 
-  setUserInfoToLocalStorage(value) {
-    localStorage.setItem('userinfo', JSON.stringify(value));
-  }
+  // setUserInfoToLocalStorage(value: IAuthUser) {
+  //   localStorage.setItem(this.localStorageCurrentUserKey, JSON.stringify(value));
+  // }
 
-  getUserInfoFromLocalStorage(): any {
-    if(!localStorage.getItem('userinfo')) return null;
-    return JSON.parse(localStorage.getItem('userinfo'));
+  getUserInfoFromLocalStorage(): IAuthUser | null {
+    if(!localStorage.getItem(this.localStorageCurrentUserKey)) return null;
+    return JSON.parse(localStorage.getItem(this.localStorageCurrentUserKey)) as IAuthUser;
   }
 
   setActivityPermissionToSessionStorage(value) {
-    localStorage.setItem('activitypermission', JSON.stringify(value));
+    localStorage.setItem(this.localStorageActivityPermissionKey, JSON.stringify(value));
   }
 
-  getActivityPermissionToSessionStorage(): any {
-    if(!localStorage.getItem('activitypermission')) return null;
-    return JSON.parse(localStorage.getItem('activitypermission'));
+  getActivityPermissionFromSessionStorage(): any | null {
+    if(!localStorage.getItem(this.localStorageActivityPermissionKey)) return null;
+    return JSON.parse(localStorage.getItem(this.localStorageActivityPermissionKey));
+  }
+
+  getSaleOfficeList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleOfficeList');
+  }
+
+  getSaleGroupList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleGroupList');
+  }
+
+  getTerritoryList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getTerritoryList');
+  }
+
+  getZoneList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getZoneList');
+  }
+
+  getRoleList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getRoleList');
+  }
+
+  getDepotList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
+  }
+
+  getUserInfoList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
+  }
+
+  public getDealerList(userCategory: string, userCategoryIds: string[]) {
+    var params = new HttpParams();
+    params = params.append("userCategory", userCategory);
+    if (userCategoryIds) {
+        userCategoryIds.forEach(v => {
+            params = params.append("userCategoryIds", v)
+        });
     }
 
-    getSaleOfficeList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleOfficeList');
-    }
-    getSaleGroupList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getSaleGroupList');
-    }
-
-    getTerritoryList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getTerritoryList');
-    }
-
-    getZoneList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getZoneList');
-    }
-    getRoleList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getRoleList');
-    }
-
-    getDepotList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
-    }
-    getUserInfoList() {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
-    }
-    public getDealerList(userCategory: string, userCategoryIds: string[]) {
-        var params = new HttpParams();
-        params= params.append("userCategory", userCategory);
-        if (userCategoryIds)
-            userCategoryIds.forEach(v => {
-                params=params.append("userCategoryIds", v)
-            });
-    
-        return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, { params });
-    }
-
+    return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, { params });
+  }
 }

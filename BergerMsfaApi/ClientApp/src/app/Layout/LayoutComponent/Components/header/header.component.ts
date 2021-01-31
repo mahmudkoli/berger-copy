@@ -10,13 +10,13 @@ import { UserInfo } from '../../../../Shared/Entity';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent implements OnInit {
-    userName: string;
-    constructor(public globals: ThemeOptions, private commonSvc: CommonService) {
-    }
-    ngOnInit() {
-        let user = this.commonSvc.getUserInfoFromLocalStorage();
-        if (user) this.userName = `${user.fullName}_${user.employeeId}_${user.managerId}`
-    }
+  
+  constructor(public globals: ThemeOptions) {
+  }
+
+  ngOnInit() {
+  }
+
   @HostBinding('class.isActive')
   get isActiveAsGetter() {
     return this.isActive;
