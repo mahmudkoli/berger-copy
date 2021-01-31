@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Berger.Worker.ViewModel;
 
 namespace Berger.Worker
 {
@@ -53,10 +54,13 @@ namespace Berger.Worker
                 //.UseConsoleLifetime()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.Configure<WorkerSettingsModel>(options => hostContext.Configuration.GetSection("WorkerSettings").Bind(options));
+
                     services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext))));
 
                     services.AddScoped<DbContext, ApplicationDbContext>();
                     services.AddScoped<ICustomerService, CustomerService>();
+                    services.AddScoped<IBrandService, BrandService>();
                     services.AddScoped<IHttpClientService, HttpClientService>();
                     services.AddScoped(typeof(IDataEqualityComparer<>), typeof(DataEqualityComparer<>));
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

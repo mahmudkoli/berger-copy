@@ -8,7 +8,8 @@ namespace Berger.Worker.Query
     {
         static BaseData()
         {
-            BaseAddress = $"http://bpblecchd.bergerbd.com:8001/sap/opu/odata/sap/";
+            //BaseAddress = $"http://bpblecchd.bergerbd.com:8001/sap/opu/odata/sap/";
+            BaseAddress = $"http://bpblbgd.bergerbd.com:8000/sap/opu/odata/sap/";
         }
         public static string BaseAddress { get; set; }
     }

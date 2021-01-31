@@ -123,6 +123,9 @@ namespace BergerMsfaApi
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<AppSettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
+            services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );

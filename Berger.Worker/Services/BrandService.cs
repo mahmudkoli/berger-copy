@@ -15,18 +15,18 @@ using Microsoft.Extensions.Options;
 
 namespace Berger.Worker.Services
 {
-    public class CustomerService : ICustomerService
+    public class BrandService : IBrandService
     {
-
+        
         private readonly WorkerSettingsModel _appSettings;
-        private readonly IRepository<DealerInfo> _repo;
+        private readonly IRepository<BrandInfo> _repo;
         private readonly IHttpClientService _httpService;
-        private readonly IDataEqualityComparer<DealerInfo> _dataComparer;
-        private readonly ILogger<DealerInfo> _logger;
+        private readonly IDataEqualityComparer<BrandInfo> _dataComparer;
+        private readonly ILogger<BrandInfo> _logger;
 
 
 
-        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer,ILogger<DealerInfo> logger, IOptions<WorkerSettingsModel> appSettings)
+        public BrandService(IRepository<BrandInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandInfo> comparer,ILogger<BrandInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
             _appSettings = appSettings.Value;
             _repo = repo;
@@ -36,28 +36,29 @@ namespace Berger.Worker.Services
 
         }
 
-        public async Task<int> GetCustomerData()
+        public async Task<int> GetBrandData()
         {
             try
             {
-
-                string url = $"{_appSettings.BaseAddress}{_appSettings.CustomerUrl}";
+                
+                string url = $"{_appSettings.BaseAddress}{_appSettings.BrandUrl}";
                 string username = _appSettings.UserName;
                 string password = _appSettings.Password;
                 _logger.LogInformation($"{DateTime.Now} URL Building Successful... {url}");
                 var responseBody = _httpService.GetHttpResponse(url, username, password);
 
                 _logger.LogInformation($"Got http response.. Parsing Started");
-                var parsedDataFromApi = Parser<CustomerModel>.ParseJson(responseBody);
+                var parsedDataFromApi = Parser<BrandRootModel>.ParseJson(responseBody);
 
                 _logger.LogInformation($"Parsing completed successfully. Total {parsedDataFromApi.Results.Count} record parsed!!");
-                var mappedDataFromApi = parsedDataFromApi.Results.ToMap<CustomerModel, DealerInfo>();
+                var modelData = parsedDataFromApi.Results.Select(x => x.ToModel()).ToList();
+                var mappedDataFromApi = modelData.ToMap<BrandModel, BrandInfo>();
 
                 _logger.LogInformation($"Fetching existing data from database....");
                 var dataFromDatabase = await _repo.FindAllAsync(x=>x.IsDeleted ==false);
                 if (dataFromDatabase != null)
                 {
-                    IEnumerable<DealerInfo> dealerInfos = dataFromDatabase.ToList();
+                    IEnumerable<BrandInfo> dealerInfos = dataFromDatabase.ToList();
                     _logger.LogInformation($"Total data fetched from database is {dealerInfos.Count()}");
 
                     var fromDatabase = dealerInfos.ToList();
@@ -97,7 +98,7 @@ namespace Berger.Worker.Services
                         {
                             var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CompositeKey))
                                 .ToList();
-                            if (updatedData.Any())
+                            if(updatedData.Any())
                             {
                                 var updateres = await _repo.UpdateListAsync(updatedData);
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
@@ -132,14 +133,14 @@ namespace Berger.Worker.Services
             return 1;
         }
 
-        //private async Task<List<int>> InsertNewDataList(List<DealerInfo> mappedDataFromApi, DealerInfo[] fromDatabase, List<int> insertDeleteKeys)
+        //private async Task<List<int>> InsertNewDataList(List<Brand> mappedDataFromApi, Brand[] fromDatabase, List<int> insertDeleteKeys)
         //{
-        //    var newKeyInApiList = mappedDataFromApi.Select(s => s.CustomerNo)
-        //        .Except(fromDatabase.Select(s => s.CustomerNo)).ToList();
+        //    var newKeyInApiList = mappedDataFromApi.Select(s => s.BrandNo)
+        //        .Except(fromDatabase.Select(s => s.BrandNo)).ToList();
         //    insertDeleteKeys.AddRange(newKeyInApiList);
 
-        //    var newDataFromApi = mappedDataFromApi.Where(a => newKeyInApiList.Contains(a.CustomerNo)).Distinct().ToList();
-        //    newDataFromApi = newDataFromApi.GroupBy(x => x.CustomerNo).Select(y => y.FirstOrDefault()).ToList();
+        //    var newDataFromApi = mappedDataFromApi.Where(a => newKeyInApiList.Contains(a.BrandNo)).Distinct().ToList();
+        //    newDataFromApi = newDataFromApi.GroupBy(x => x.BrandNo).Select(y => y.FirstOrDefault()).ToList();
         //    await _repo.CreateListAsync(newDataFromApi);
         //    return newKeyInApiList;
         //}
