@@ -1,68 +1,106 @@
-﻿export class UserInfo {
+﻿import { QueryObject } from "../Common/query-object";
+
+export class UserInfo {
     public id: number;
-    public name: string;
-    public designation: string;
+    public fullName: string;
+    public userName: string;
+    public email: string;
     public phoneNumber: string;
     public code: string;
-    public status: number;
-    public statusText: string;
     public employeeId: string;
-    public salesPointId: number;
-    public nationalNodeId: number;
-    public regionNodeId: number;
-    public areaNodeId: number;
-    public terrNodeId: number;
-    public nationalNodeIds: number[];
-    public territoryNodeIds: number[];
-    public areaNodeIds: number[];
-    public regionNodeIds: number[];
-    public email: string;
-    public adGuid: string;
-    public groups: string;
-    public roleId: number;
-    public roleIds: number[];
-    public nodeId: number;
-    public city: string;
-    public country: string;
-    public company: string;
+    public designation: string;
     public department: string;
-    public extension: string;
-    public fax: string;
-    public firstName: string;
-    public lastName: string;
-    public loginName: string;
-    public userName: string;
-    public loginNameWithDomain: string;
-    public manager: string;
     public managerName: string;
     public managerId: string;
-    public middleName: string;
-    public postalCode: string;
-    public state: string;
-    public streetAddress: string;
-    public title: string;
- 
 
-    public hierarchyId: number;
+    public gender: string;
+    public address: string;
+    public dateOfBirth?: Date;
+    // public imageUrl: string;
 
+    public status: number;
+    public roleId: number;
+    public roleName: string;
+
+    public roleIds: number[];
     public plantIds: any[] = [];
     public areaIds: string[] = [];
     public saleOfficeIds: string[] = [];
     public territoryIds: string[] = [];
     public zoneIds: string[] = [];
 
-    constructor() {
-       // this.status = 1;
-        this.nationalNodeIds = [];
-        this.regionNodeIds = [];
-        this.areaNodeIds = [];
-        this.territoryNodeIds = [];
+    public statusText: string;
+
+    constructor(init?: Partial<UserInfo>) {
         this.roleIds = [];
         this.plantIds = [];
         this.zoneIds = [];
         this.areaIds = [];
         this.saleOfficeIds = [];
         this.plantIds = [];
+        Object.assign(this, init);
+    }
 
+    clear() {
+        this.id = null;
+    }
+}
+
+export class SaveUserInfo {
+    public id: number;
+    public fullName: string;
+    public userName: string;
+    public email: string;
+    public phoneNumber: string;
+    public code: string;
+    public employeeId: string;
+    public designation: string;
+    public department: string;
+    public managerName: string;
+    public managerId: string;
+
+    public gender: string;
+    public address: string;
+    public dateOfBirth?: Date;
+    // public imageUrl: string;
+
+    public status: number;
+    public roleId: number;
+    public roleName: string;
+
+    public roleIds: number[];
+    public plantIds: any[] = [];
+    public areaIds: string[] = [];
+    public saleOfficeIds: string[] = [];
+    public territoryIds: string[] = [];
+    public zoneIds: string[] = [];
+
+    public statusText: string;
+
+    constructor(init?: Partial<UserInfo>) {
+        this.roleIds = [];
+        this.plantIds = [];
+        this.zoneIds = [];
+        this.areaIds = [];
+        this.saleOfficeIds = [];
+        this.plantIds = [];
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.id = null;
+    }
+}
+
+export class UserInfoQuery extends QueryObject {
+    title: string;
+    
+    constructor(init?: Partial<UserInfoQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.title = '';
     }
 }

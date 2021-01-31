@@ -43,7 +43,7 @@ namespace BergerMsfaApi.Services.Implementation
                     ActiveRoleId = userInfo.RoleId,
                     RoleIdList = userInfo.RoleIds,
                     Avatar = "/img/user.png",
-                    FullName = $"{userInfo.FirstName} {userInfo.MiddleName} {userInfo.LastName}",
+                    FullName = $"{userInfo.FullName}",
                     EmployeeId = userInfo.EmployeeId,
                     Phone = userInfo.PhoneNumber,
                     UserAgentInfo = "127.0.0.1",
@@ -81,30 +81,30 @@ namespace BergerMsfaApi.Services.Implementation
                 var userCat = string.Empty;
                 var userCatIds = new List<string>();
 
-                if (userInfo.zoneIds.Any())
+                if (userInfo.ZoneIds.Any())
                 {
                     userCat = EnumUserCategory.Zone.ToString();
-                    userCatIds = userInfo.zoneIds;
+                    userCatIds = userInfo.ZoneIds;
                 } 
-                else if (userInfo.territoryIds.Any())
+                else if (userInfo.TerritoryIds.Any())
                 {
                     userCat = EnumUserCategory.Territory.ToString();
-                    userCatIds = userInfo.territoryIds;
+                    userCatIds = userInfo.TerritoryIds;
                 } 
-                else if (userInfo.areaIds.Any())
+                else if (userInfo.AreaIds.Any())
                 {
                     userCat = EnumUserCategory.Area.ToString();
-                    userCatIds = userInfo.areaIds;
+                    userCatIds = userInfo.AreaIds;
                 } 
-                else if (userInfo.saleOfficeIds.Any())
+                else if (userInfo.SaleOfficeIds.Any())
                 {
                     userCat = EnumUserCategory.SalesOffice.ToString();
-                    userCatIds = userInfo.saleOfficeIds;
+                    userCatIds = userInfo.SaleOfficeIds;
                 } 
-                else if (userInfo.plantIds.Any())
+                else if (userInfo.PlantIds.Any())
                 {
                     userCat = EnumUserCategory.Plant.ToString();
-                    userCatIds = userInfo.plantIds.Select(x => x.ToString()).ToList();
+                    userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
                 }
                 #endregion
 
@@ -113,17 +113,17 @@ namespace BergerMsfaApi.Services.Implementation
                     //userId=AppIdentity.AppUser.UserId,
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
-                    FullName = $"{userInfo.FirstName} {userInfo.MiddleName} {userInfo.LastName}",
-                    PlanIds = userInfo.plantIds,
-                    PlanId = userInfo.plantIds.FirstOrDefault(),
-                    SalesOfficeIds = userInfo.saleOfficeIds,
-                    SalesOfficeId = userInfo.saleOfficeIds.FirstOrDefault()??"",
-                    AreaIds = userInfo.areaIds,
-                    AreaId = userInfo.areaIds.FirstOrDefault()??"",
-                    TerritoryIds = userInfo.territoryIds,
-                    TerritoryId = userInfo.territoryIds.FirstOrDefault()??"",
-                    ZoneIds = userInfo.zoneIds,
-                    ZoneId = userInfo.zoneIds.FirstOrDefault()??"",
+                    FullName = $"{userInfo.FullName}",
+                    PlanIds = userInfo.PlantIds,
+                    PlanId = userInfo.PlantIds.FirstOrDefault(),
+                    SalesOfficeIds = userInfo.SaleOfficeIds,
+                    SalesOfficeId = userInfo.SaleOfficeIds.FirstOrDefault()??"",
+                    AreaIds = userInfo.AreaIds,
+                    AreaId = userInfo.AreaIds.FirstOrDefault()??"",
+                    TerritoryIds = userInfo.TerritoryIds,
+                    TerritoryId = userInfo.TerritoryIds.FirstOrDefault()??"",
+                    ZoneIds = userInfo.ZoneIds,
+                    ZoneId = userInfo.ZoneIds.FirstOrDefault()??"",
                     UserCategory = userCat,
                     UserCategoryIds = userCatIds,
                     RoleId=userInfo.RoleId,

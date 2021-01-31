@@ -124,7 +124,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Status = s.plan.Status,
                 PlanStatus = s.plan.PlanStatus,
                 PlanStatusInText = s.plan.PlanStatus.ToString(),
-                EmployeeName = $"{s.emp.FirstName} {s.emp.LastName}"
+                EmployeeName = $"{s.emp.FullName}"
             }).ToList();
 
             if (!string.IsNullOrEmpty(search))
@@ -151,8 +151,8 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Employee = _userInfoSvc.Where(f => f.EmployeeId == plan.EmployeeId)
                              .Select(s => new EmployeeModel
                              {
-                                 FirstName = $"{s.FirstName} {s.LastName}",
-                                 Department = s.DepartMent,
+                                 FirstName = $"{s.FullName}",
+                                 Department = s.Department,
                                  Designation = s.Designation,
                                  PhoneNumber = s.PhoneNumber
 
@@ -303,7 +303,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Status = s.Status,
                 PlanStatus = s.PlanStatus,
                 PlanStatusInText = s.PlanStatus.ToString(),
-                EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FirstName} {s.LastName}").FirstOrDefault()
+                EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FullName}").FirstOrDefault()
 
             }).ToList();
 

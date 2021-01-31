@@ -1,0 +1,289 @@
+<div class="main-card mb-3 card" *ngIf="!(this.user && this.user.id)">
+    <div class="input-group card-body mt-3 w-50">
+        <input type="text" class="form-control" placeholder="Enter username" name="adUserName" #adUserName />
+        <div class="input-group-append">
+            <button (click)="onADUserSearch(adUserName.value)" type="submit" class="btn btn-primary ">
+                <i class="fa fa-search"></i> Get User
+            </button>
+        </div>
+    </div>
+    <!-- <div class="position-relative form-group">
+        <small class="text-danger">
+            {{this.adError}}
+        </small>
+    </div> -->
+</div>
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <div class="btn-actions-pane-right">
+            <!--<button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>-->
+        </div>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">User Name</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="userName" readonly="readonly"
+                               [ngClass]="{'is-valid':ufControls.userName.touched && !ufControls.userName.errors,
+                               'is-invalid':ufControls.userName.touched && ufControls.userName.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.userName.touched && ufControls.userName.errors">
+                            <span *ngIf="ufControls.userName.errors.required">User Name is <strong>required</strong></span>
+                            <span *ngIf="ufControls.userName.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Full Name</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="fullName"
+                               [ngClass]="{'is-valid':ufControls.fullName.touched && !ufControls.fullName.errors,
+                               'is-invalid':ufControls.fullName.touched && ufControls.fullName.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.fullName.touched && ufControls.fullName.errors">
+                            <span *ngIf="ufControls.fullName.errors.required">Name is <strong>required</strong></span>
+                            <span *ngIf="ufControls.fullName.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Email</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="email"
+                               [ngClass]="{'is-valid':ufControls.email.touched && !ufControls.email.errors,
+                               'is-invalid':ufControls.email.touched && ufControls.email.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.email.touched && ufControls.email.errors">
+                            <span *ngIf="ufControls.email.errors.required">Email is <strong>required</strong></span>
+                            <span *ngIf="ufControls.email.errors.email">Please, Enter valid email</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Phone Number</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="phoneNumber"
+                               [ngClass]="{'is-valid':ufControls.phoneNumber.touched && !ufControls.phoneNumber.errors,
+                               'is-invalid':ufControls.phoneNumber.touched && ufControls.phoneNumber.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.phoneNumber.touched && ufControls.phoneNumber.errors">
+                            <span *ngIf="ufControls.phoneNumber.errors.required">Phone Number is <strong>required</strong></span>
+                            <!-- <span *ngIf="ufControls.phoneNumber.errors.pattern">Please, Enter 11 digit phone number</span> -->
+                            <span *ngIf="ufControls.phoneNumber.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Code</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="code"
+                               [ngClass]="{'is-valid':ufControls.code.touched && !ufControls.code.errors,
+                               'is-invalid':ufControls.code.touched && ufControls.code.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.code.touched && ufControls.code.errors">
+                            <span *ngIf="ufControls.code.errors.required">Code is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Employee Id</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="employeeId"
+                               [ngClass]="{'is-valid':ufControls.employeeId.touched && !ufControls.employeeId.errors,
+                               'is-invalid':ufControls.employeeId.touched && ufControls.employeeId.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.employeeId.touched && ufControls.employeeId.errors">
+                            <span *ngIf="ufControls.employeeId.errors.required">Employee Id is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Designation</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="designation"
+                               [ngClass]="{'is-valid':ufControls.designation.touched && !ufControls.designation.errors,
+                               'is-invalid':ufControls.designation.touched && ufControls.designation.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.designation.touched && ufControls.designation.errors">
+                            <span *ngIf="ufControls.designation.errors.required">Designation is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Department</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="department"
+                               [ngClass]="{'is-valid':ufControls.department.touched && !ufControls.department.errors,
+                               'is-invalid':ufControls.department.touched && ufControls.department.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.department.touched && ufControls.department.errors">
+                            <span *ngIf="ufControls.department.errors.required">Department is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Manager Id</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="managerId"
+                               [ngClass]="{'is-valid':ufControls.managerId.touched && !ufControls.managerId.errors,
+                               'is-invalid':ufControls.managerId.touched && ufControls.managerId.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.managerId.touched && ufControls.managerId.errors">
+                            <span *ngIf="ufControls.managerId.errors.required">Manager Id is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Manager Name</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="managerName"
+                               [ngClass]="{'is-valid':ufControls.managerName.touched && !ufControls.managerName.errors,
+                               'is-invalid':ufControls.managerName.touched && ufControls.managerName.errors }" />
+                        <small class="text-danger" *ngIf="ufControls.managerName.touched && ufControls.managerName.errors">
+                            <span *ngIf="ufControls.managerName.errors.required">Manager Name is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">User Role</label>
+                        <ng-select formControlName="roleIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of roles;" [value]="ur.id">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.roleIds.touched && ufControls.roleIds.errors">
+                            <span *ngIf="ufControls.roleIds.errors.required">Role is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Plant</label>
+                        <ng-select formControlName="plantIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.plantIds.touched && ufControls.plantIds.errors">
+                            <span *ngIf="ufControls.plantIds.errors.required">Plant is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Sale Office</label>
+                        <ng-select formControlName="saleOfficeIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of saleOffices;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.saleOfficeIds.touched && ufControls.saleOfficeIds.errors">
+                            <span *ngIf="ufControls.saleOfficeIds.errors.required">Sale Office is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Area Group</label>
+                        <ng-select formControlName="areaIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of areaGroups;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.areaIds.touched && ufControls.areaIds.errors">
+                            <span *ngIf="ufControls.areaIds.errors.required">Area Group is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select formControlName="territoryIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.territoryIds.touched && ufControls.territoryIds.errors">
+                            <span *ngIf="ufControls.territoryIds.errors.required">Territory is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Zone</label>
+                        <ng-select formControlName="zoneIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of zones;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.zoneIds.touched && ufControls.zoneIds.errors">
+                            <span *ngIf="ufControls.zoneIds.errors.required">Zone is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="position-relative form-group">
+                        <label class="">Address</label>
+                        <textarea autocomplete="off" class="form-control" formControlName="address"
+                               [ngClass]="{'is-valid':ufControls.address.touched && !ufControls.address.errors,
+                               'is-invalid':ufControls.address.touched && ufControls.address.errors }"></textarea>
+                        <small class="text-danger" *ngIf="ufControls.address.touched && ufControls.address.errors">
+                            <span *ngIf="ufControls.address.errors.required">Address is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Gender</label>
+                        <ng-select formControlName="gender">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option value="Male">Male</ng-option>
+                            <ng-option value="Female">Female</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.gender.touched && ufControls.gender.errors">
+                            <span *ngIf="ufControls.gender.errors.required">Gender is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Date Of Birth</label>
+                        <div class="input-group w-100">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="dateOfBirth" 
+                                ngbDatepicker #d="ngbDatepicker" [startDate]="{month: 1, year: 1990}" [minDate]="{year: 1970, month: 1, day: 1}"
+                                [maxDate]="{year: 2040, month: 12, day: 31}" [placement]="'bottom'">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                            </div>
+                        </div>
+                        <small class="text-danger" *ngIf="ufControls.dateOfBirth.touched && ufControls.dateOfBirth.errors">
+                            <span *ngIf="ufControls.dateOfBirth.errors.required">Date Of Birth is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.status.touched && ufControls.status.errors">
+                            <span *ngIf="ufControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="userForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

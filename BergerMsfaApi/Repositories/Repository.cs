@@ -11,9 +11,7 @@ using Berger.Common.Enumerations;
 using Berger.Data;
 using Berger.Data.Attributes;
 using Berger.Data.Common;
-using Berger.Data.MsfaEntity.Organizations;
 using Berger.Data.MsfaEntity.Users;
-using Berger.Data.MsfaEntity.WorkFlows;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -37,8 +35,6 @@ namespace BergerMsfaApi.Repositories
             set { _shareContext = value; }
         }
 
-
-
         public Repository(DbContext context, IUnitOfWork uow)
         {
             _context = context;
@@ -58,12 +54,9 @@ namespace BergerMsfaApi.Repositories
                 value = _context.Set<TEntity>();
             }
         }
-
-
         #endregion
 
         #region Disposed
-
         ~Repository()
         {
             Dispose(false);
@@ -77,6 +70,7 @@ namespace BergerMsfaApi.Repositories
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (ShareContext || _context == null) return;
@@ -93,34 +87,31 @@ namespace BergerMsfaApi.Repositories
             }
             _disposed = true;
         }
-
         #endregion
 
         #region LINQ
-
         public IQueryable<TEntity> GetAll()
         {
             return DbSet.AsNoTracking().AsQueryable();
-
         }
 
-        public IQueryable<TEntity> FindAllInclude
-        (Expression<Func<TEntity, bool>> predicate,
+        public IQueryable<TEntity> FindAllInclude(
+            Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return includeProperties.Aggregate
                 (DbSet.AsNoTracking().AsQueryable().Where(predicate), (current, includeProperty) => current.Include(includeProperty));
         }
 
-        public IQueryable<TEntity> GetAllInclude
-            (params Expression<Func<TEntity, object>>[] includeProperties)
+        public IQueryable<TEntity> GetAllInclude(
+            params Expression<Func<TEntity, object>>[] includeProperties)
         {
-
             return includeProperties.Aggregate
                 (DbSet.AsNoTracking().AsQueryable(), (current, includeProperty) => current.Include(includeProperty));
         }
-        public TEntity FindInclude
-        (Expression<Func<TEntity, bool>> predicate,
+
+        public TEntity FindInclude(
+            Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return includeProperties.Aggregate
@@ -132,7 +123,6 @@ namespace BergerMsfaApi.Repositories
             return DbSet.AsNoTracking().FirstOrDefault(predicate);
         }
 
-
         public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
         {
             return DbSet.Where(predicate);
@@ -142,7 +132,6 @@ namespace BergerMsfaApi.Repositories
         {
             return DbSet.Where(predicate).AsNoTracking().AsQueryable();
         }
-
 
         public bool IsExist(Expression<Func<TEntity, bool>> predicate)
         {
@@ -156,7 +145,6 @@ namespace BergerMsfaApi.Repositories
             return where != null ? DbSet.Where(where).AsNoTracking().Max(predicate).MakeId(prefix, returnLength, fillValue)
                 : DbSet.AsNoTracking().Max(predicate).MakeId(prefix, returnLength, fillValue);
         }
-
         #endregion
 
         #region SQL
@@ -164,6 +152,7 @@ namespace BergerMsfaApi.Repositories
         {
             return await _context.SqlQueryAsync<T>(sqlQuery, parameters);
         }
+
         public async Task<int> ExecuteSqlCommandAsync(string sqlCommand, params object[] parameters)
         {
             return await _context.Database.ExecuteSqlCommandAsync(sqlCommand, parameters);
@@ -254,12 +243,9 @@ namespace BergerMsfaApi.Repositories
 
             return (items, totalCount ?? 0, filteredCount ?? 0);
         }
-
-
         #endregion
 
         #region LINQ ASYNC
-
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await DbSet.AsNoTracking().ToListAsync();
@@ -268,20 +254,20 @@ namespace BergerMsfaApi.Repositories
         public async Task<IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
         {
             return await DbSet.AsNoTracking().AsQueryable().ToPagedListAsync(pageNumber, pageSize);
-
         }
+
         public async Task<IPagedList<TEntity>> FindAllPagedAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber, int pageSize)
         {
             return await DbSet.Where(predicate).AsNoTracking().AsQueryable().ToPagedListAsync(pageNumber, pageSize);
-
         }
+
         public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
         }
 
-        public async Task<TEntity> FindIncludeAsync
-        (Expression<Func<TEntity, bool>> predicate,
+        public async Task<TEntity> FindIncludeAsync(
+            Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return await includeProperties.Aggregate
@@ -292,38 +278,21 @@ namespace BergerMsfaApi.Repositories
         {
             return await DbSet.Where(predicate).AsNoTracking().ToListAsync();
         }
+
         public async Task<TEntity> CreateAsync(TEntity item)
         {
-            string tableName = GetTableName();
-            var IsWorkFlowAvailalbe = await IsWfEnabledForEntityGetWf(tableName);
-            if (IsWorkFlowAvailalbe != null)
-            {
-                item.GetType().GetProperty("WorkflowId")?.SetValue(item, IsWorkFlowAvailalbe.Id);
-                item.GetType().GetProperty("WFStatus")?.SetValue(item, WorkflowStatus.Pending);
-                DbSet.Add(item);
-                await SaveChangesAsync();
-                //Workflow Log Entry
-                var insertedId = item.GetType().GetProperty("Id").GetValue(item);
-                var workFlowId = IsWorkFlowAvailalbe.Id;
-
-                int rowId = (int?) insertedId ?? 0;
-                await InsertIntoWorkFlowLogTable(rowId, workFlowId, tableName);
-            }
-            else
-            {
-                DbSet.Add(item);
-            }
-
-
+            DbSet.Add(item);
             await SaveChangesAsync();
             return item;
         }
+
         public async Task<List<TEntity>> CreateListAsync(List<TEntity> items)
         {
             DbSet.AddRange(items);
             await SaveChangesAsync();
             return items;
         }
+
         public async Task<List<TEntity>> UpdateListAsync(List<TEntity> items)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
@@ -340,8 +309,7 @@ namespace BergerMsfaApi.Repositories
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
         }
 
@@ -350,11 +318,9 @@ namespace BergerMsfaApi.Repositories
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
-
                 foreach (var record in items)
                 {
                     DbSet.Attach(record);
-
                 }
                 DbSet.RemoveRange(items);
                 var result = await SaveChangesAsync();
@@ -362,7 +328,7 @@ namespace BergerMsfaApi.Repositories
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 
@@ -378,6 +344,7 @@ namespace BergerMsfaApi.Repositories
          //  _uow.Commit();
            return item;
         }
+
         public async Task<TEntity> CreateOrUpdateAsync(TEntity item)
         {            
             var pi = item.GetType().GetProperty("Id");
@@ -387,27 +354,7 @@ namespace BergerMsfaApi.Repositories
             var record = await DbSet.FindAsync(keyFieldId);
             if (record == null)
             {
-                string tableName = GetTableName();
-                var IsWorkFlowAvailalbe = await IsWfEnabledForEntityGetWf(tableName);
-                if (IsWorkFlowAvailalbe != null)
-                {
-                    item.GetType().GetProperty("WorkflowId").SetValue(item, IsWorkFlowAvailalbe.Id);
-                    item.GetType().GetProperty("WFStatus").SetValue(item, WorkflowStatus.Pending);
-                    DbSet.Add(item);
-                    await SaveChangesAsync();
-                    //Workflow Log Entry
-                    var insertedId = item.GetType().GetProperty("Id").GetValue(item);
-                    var workFlowId = IsWorkFlowAvailalbe.Id;
-
-                    int rowId = insertedId != null ? (int)insertedId : 0;
-                    await InsertIntoWorkFlowLogTable(rowId, workFlowId, tableName);
-                }
-                else
-                {
-                    DbSet.Add(item);
-                }
-
-
+                DbSet.Add(item);
             }
             else
             {
@@ -417,164 +364,7 @@ namespace BergerMsfaApi.Repositories
             var result = !ShareContext ? await SaveChangesAsync() : 0;
             return result > 0 ? item : null;
         }
-        #region Workflow
-        private async Task<int> InsertIntoWorkFlowLogTable(int rowId, int workflowId, string tableName)
-        {
-            //---Agenda 1: First Collect All User and insert each user into workflow for
 
-            int result = 0;
-            //Context
-
-            var wfConfigContext = _context.Set<WorkFlowConfiguration>();
-            var wfOrgUserRoleContext = _context.Set<OrganizationUserRole>();
-            var wfOrgRoleContext = _context.Set<OrganizationRole>();
-            var userTerrContext = _context.Set<UserTerritoryMapping>();
-
-
-            //get initial role from wfConfig
-
-            var wfConfigdata = await wfConfigContext.Include(i => i.OrganizationRole).OrderBy(a => a.sequence).FirstOrDefaultAsync(o => o.MasterWorkFlowId == workflowId);
-
-            if (wfConfigdata != null)
-            {
-                //get orgRoleDetail With Current Position
-                var orgRole = wfConfigdata.OrganizationRole;
-                //get all user of that organization role
-                var orgRoleUsers = await wfOrgUserRoleContext.OrderBy(s => s.UserSequence)
-                    .Where(a => a.OrgRoleId == wfConfigdata.OrgRoleId).Select(a => a.UserId).ToListAsync();
-
-
-                //---------------------------------
-                //Current User details, becuase current user parent will receive wf. Which parent? it will determine by his/her org role designation
-
-                var userTerrNodeIds = await userTerrContext.Where(a => a.UserInfoId == AppIdentity.AppUser.UserId).Select(a => a.NodeId).ToListAsync();
-
-
-                List<int> currentUserParentId = await GetCurrentUserParentByNode(userTerrContext, orgRole, userTerrNodeIds);
-                if (currentUserParentId.Count > 0)
-                 orgRoleUsers.AddRange(currentUserParentId);
-
-
-                //var userData = await wfOrgUserRoleContext.OrderBy(s=> s.UserSequence).Where(a => a.OrgRoleId == wfConfigdata.OrgRoleId).ToListAsync();
-
-                if (orgRoleUsers.Count > 0)
-                {
-                    foreach (var item in orgRoleUsers)
-                    {
-                        var wfLog = new WorkflowLog
-                        {
-                            RowId = rowId,
-                            MasterWorkFlowId = workflowId,
-                            WorkflowStatus = (int)WorkflowStatus.Pending,
-                            WorkFlowFor = item,
-                            TableName = tableName,
-                            OrgRoleId = orgRole.Id
-
-                        };
-                        var wfLogContext = _context.Set<WorkflowLog>();
-                        wfLogContext.Add(wfLog);
-                    }
-                    result = await SaveChangesAsync();
-
-                }
-                else
-                {
-                    result = -1;
-                }
-            }
-
-            return result;
-        }
-
-        private async Task<List<int>> GetCurrentUserParentByNode(DbSet<UserTerritoryMapping> userTerrContext, OrganizationRole orgRole, List<int> nodeIds)
-        {
-            List<int> userId = new List<int>();
-
-            foreach (var item in nodeIds)
-            {
-                Dictionary<string, int> allParentOfCurrentUserNode = await GetUserIdByParentNode(item, new Dictionary<string, int>());
-
-                int parentNodeOfCurrentUserBasedOnOrgRole = 0;
-
-                if (orgRole.DesignationId == (int)OrgRoleDesignation.Area)
-                {
-                    parentNodeOfCurrentUserBasedOnOrgRole = allParentOfCurrentUserNode.FirstOrDefault(x => x.Key.StartsWith("A")).Value;
-                }
-                else if (orgRole.DesignationId == (int)OrgRoleDesignation.Region)
-                {
-                    parentNodeOfCurrentUserBasedOnOrgRole = allParentOfCurrentUserNode.FirstOrDefault(x => x.Key.StartsWith("R")).Value;
-                }
-                else if (orgRole.DesignationId == (int)OrgRoleDesignation.National)
-                {
-                    parentNodeOfCurrentUserBasedOnOrgRole = allParentOfCurrentUserNode.FirstOrDefault(x => x.Key.StartsWith("N")).Value;
-                }
-                else if (orgRole.DesignationId == (int)OrgRoleDesignation.Territory)
-                {
-                    parentNodeOfCurrentUserBasedOnOrgRole = allParentOfCurrentUserNode.FirstOrDefault(x => x.Key.StartsWith("T")).Value;
-                }
-                else
-                {
-
-                }
-                if (parentNodeOfCurrentUserBasedOnOrgRole > 0)
-                {
-                    var getUserFromUserTerrUsingNode = await userTerrContext.FirstOrDefaultAsync(a => a.NodeId == parentNodeOfCurrentUserBasedOnOrgRole);
-                    if (getUserFromUserTerrUsingNode != null)
-                        userId.Add(getUserFromUserTerrUsingNode.UserInfoId);
-                }
-            }          
-            
-            return userId;
-        }
-
-        public async Task<Dictionary<string, int>> GetUserIdByParentNode(int nodeid, Dictionary<string, int> dict) 
-        {
-        //    var nodeContext = _context.Set<Node>();
-            
-            
-        //    var checkTerrNode = await nodeContext.FirstOrDefaultAsync(a => a.NodeId == nodeid);
-            
-        //    if (checkTerrNode != null)
-        //    {
-        //        dict.Add(checkTerrNode.Code, nodeid);
-        //        if (checkTerrNode.ParentId != null)
-        //        {                   
-        //           await GetUserIdByParentNode(checkTerrNode.ParentId??0, dict);
-        //        }
-        //    }
-        //    else
-        //    {
-
-        //    }
-                return new Dictionary<string, int>();
-        }
-
-        public async Task<WorkFlow> IsWfEnabledForEntityGetWf(string tableName)
-        {
-            //Checking table Availble in WorkflowType
-            var contextforWorkflowType = _context.Set<WorkFlowType>();
-            var isWorkflowAvailable = await contextforWorkflowType.FirstOrDefaultAsync(a => a.DbTableName.ToUpper() == tableName.ToUpper() && a.IsWorkflowConfigAvailable == true && a.IsWorkflowDefAvailable == true);
-            if (isWorkflowAvailable != null)
-            {
-                //get workflow data
-                var contextForWorkflow = _context.Set<WorkFlow>();
-                var data = await contextForWorkflow.FirstOrDefaultAsync(a => a.WorkflowType == isWorkflowAvailable.Id);
-                return data;
-            }
-            else
-            {
-                return null;
-            }
-
-        }
-
-        public async Task<bool> CheckWfEnabledForEntity(string tableName)
-        {
-            var contextforWorkflowType = _context.Set<WorkFlowType>();
-            var isWorkflowAvailable = await contextforWorkflowType.AnyAsync(a => a.DbTableName.ToUpper() == tableName.ToUpper() && a.IsWorkflowConfigAvailable == true && a.IsWorkflowDefAvailable == true);
-            return isWorkflowAvailable;
-        }
-        #endregion
         public async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
         {
             var records = await DbSet.Where(predicate).ToListAsync();
@@ -589,23 +379,26 @@ namespace BergerMsfaApi.Repositories
             return await SaveChangesAsync();
         }
 
-
         public async Task<int> CountAsync()
         {
             return await DbSet.CountAsync();
         }
+
         public async Task<long> LongCountAsync()
         {
             return await DbSet.LongCountAsync();
         }
+
         public async Task<int> CountFuncAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await DbSet.CountAsync(predicate);
         }
+
         public async Task<long> LongCountFuncAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await DbSet.LongCountAsync(predicate);
         }
+
         public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await DbSet.FirstOrDefaultAsync(predicate);
@@ -615,23 +408,28 @@ namespace BergerMsfaApi.Repositories
         {
             return await DbSet.MaxAsync(predicate);
         }
+
         public async Task<string> MaxFuncAsync(Expression<Func<TEntity, string>> predicate, Expression<Func<TEntity, bool>> where)
         {
             return await DbSet.Where(where).AsNoTracking().MaxAsync(predicate);
         }
+
         public async Task<string> MinAsync(Expression<Func<TEntity, string>> predicate)
         {
             return await DbSet.AsNoTracking().MinAsync(predicate);
         }
+
         public async Task<string> MinFuncAsync(Expression<Func<TEntity, string>> predicate, Expression<Func<TEntity, bool>> where)
         {
             return await DbSet.Where(where).AsNoTracking().MinAsync(predicate);
         }
+
         public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate)
         {
             var count = await DbSet.CountAsync(predicate);
             return count > 0;
         }
+
         public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await DbSet.AnyAsync(predicate);
@@ -694,7 +492,6 @@ namespace BergerMsfaApi.Repositories
             return (result, total, totalFilter);
         }
 
-
         public virtual async Task<TResult> GetFirstOrDefaultIncludeAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
                             Expression<Func<TEntity, bool>> predicate = null,
                             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
@@ -719,11 +516,9 @@ namespace BergerMsfaApi.Repositories
 
             return result;
         }
-
         #endregion
 
         #region SaveChange
-
         public int SaveChanges()
         {
             try
@@ -735,7 +530,6 @@ namespace BergerMsfaApi.Repositories
                 using (var scope = new TransactionScope())
                 {
                     bool saveFailed;
-
                     do
                     {
                         try
@@ -757,8 +551,6 @@ namespace BergerMsfaApi.Repositories
                                         entry.OriginalValues.SetValues(entry.GetDatabaseValues());
                                     });
                             }
-
-
                         }
                     } while (saveFailed);
 
@@ -776,13 +568,12 @@ namespace BergerMsfaApi.Repositories
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
         public async Task<int> SaveChangesAsync()
         {
-
             try
             {
                 int resultLog;
@@ -813,7 +604,6 @@ namespace BergerMsfaApi.Repositories
                                         entry.OriginalValues.SetValues(entry.GetDatabaseValues());
                                     });
                             }
-
                         }
                     } while (saveFailed);
                     scope.Complete();
@@ -828,7 +618,7 @@ namespace BergerMsfaApi.Repositories
             //}
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 
@@ -844,13 +634,11 @@ namespace BergerMsfaApi.Repositories
                 {
                     if (!(entry.Entity is IAuditableEntity addAudit)) continue;
 
-
                     addAudit.CreatedBy = userId;
                     addAudit.CreatedTime = time;
                     addAudit.ModifiedBy = userId;
                     addAudit.ModifiedTime = time;
                 }
-
             }
 
             var modifiedEntries = _context.ChangeTracker.Entries().Where(e => e.State == EntityState.Modified).ToList();
@@ -863,7 +651,6 @@ namespace BergerMsfaApi.Repositories
                     {
                         modifyAudit.ModifiedBy = userId;
                         modifyAudit.ModifiedTime = time;
-
                     }
 
                     var properties = typeof(TEntity).GetProperties()
@@ -887,7 +674,6 @@ namespace BergerMsfaApi.Repositories
                     {
                         deleteAudit.ModifiedBy = userId;
                         deleteAudit.ModifiedTime = DateTime.Now;
-
                     }
 
                     var properties = typeof(TEntity).GetProperties()
@@ -899,8 +685,6 @@ namespace BergerMsfaApi.Repositories
                         entry.Property(property).IsModified = false;
                     }
                 }
-
-
             }
 
             if (addedEntries.Count <= 0 && modifiedEntries.Count <= 0 && deleteEntries.Count <= 0) return 0;
@@ -936,7 +720,6 @@ namespace BergerMsfaApi.Repositories
         //    // Throw a new DbEntityValidationException with the improved exception message.
         //    return exceptionMessage;
         //}
-
         #endregion
 
         public string GetTableName()
@@ -984,11 +767,6 @@ namespace BergerMsfaApi.Repositories
             }
 
             return query;
-        }
-
-        public IList<UserInfo> GetNodeWiseUsersByUserId(int userId, bool isOnlyLastNodeUser = false)
-        {
-            throw new NotImplementedException();
         }
     }
 }

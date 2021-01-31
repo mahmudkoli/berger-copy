@@ -1,100 +1,90 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.Users;
+using BergerMsfaApi.Mappings;
 
 namespace BergerMsfaApi.Models.Users
 {
-    public class UserInfoModel
+    public class UserInfoModel : IMapFrom<UserInfo>
     {
-        public UserInfoModel()
-        {
-            this.TerritoryNodeIds = new List<int>();
-            this.AreaNodeIds = new List<int>();
-            this.RegionNodeIds = new List<int>();
-            this.NationalNodeIds = new List<int>();
-
-            plantIds = new List<string>();
-            RoleIds = new List<int>();
-            areaIds = new List<string>();
-            zoneIds = new List<string>();
-            saleOfficeIds = new List<string>();
-            territoryIds = new List<string>();
-
-
-
-
-        }
-
         public int Id { get; set; }
-
-        //  [Required]
-        [StringLength(128)]
-        public string EmployeeId { get; set; }
-
-        // [Required]
-        [StringLength(128)]
-        public string Code { get; set; }
-
-        // [Required]
-        [StringLength(256)]
-        public string Name { get; set; }
-
-        // [Required]
-        [StringLength(256)]
+        public string FullName { get; set; }
         public string UserName { get; set; }
-
-
-        [StringLength(128)]
+        public string Email { get; set; }
         public string PhoneNumber { get; set; }
-
-
-        [StringLength(256)]
-        public string Designation { get; set; }// Is it int or string
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-        [StringLength(128)]
-        public string MiddleName { get; set; }
+        public string Code { get; set; }
+        public string EmployeeId { get; set; }
+        public string Department { get; set; }
+        public string Designation { get; set; }
         public string ManagerName { get; set; }
         public string ManagerId { get; set; }
-        public string LoginName { get; set; }
-        public string LoginNameWithDomain { get; set; }
-        public string PostalCode { get; set; }
-        public string City { get; set; }
-        public string Department { get; set; }
-        public string StreetAddress { get; set; }
-        public string Extension { get; set; }
-        public string Fax { get; set; }
-        public string StatusText { get; set; }
 
-        public string State { get; set; }
-        public int HierarchyId { get; set; }
-        public int RoleId { get; set; }
+        public string Address { get; set; }
+        public string Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string ImageUrl { get; set; }
+
         public List<int> RoleIds { get; set; }
-        public List<int> NationalNodeIds { get; set; }
-        public List<int> TerritoryNodeIds { get; set; }
-        public List<int> AreaNodeIds { get; set; }
-        public List<int> RegionNodeIds { get; set; }
-        public List<string> plantIds { get; set; }
-        public List<string> areaIds { get; set; }
-        public List<string> zoneIds { get; set; }
-        public List<string> saleOfficeIds { get; set; }
-        public List<string> territoryIds { get; set; }
+        public List<string> PlantIds { get; set; }
+        public List<string> AreaIds { get; set; }
+        public List<string> ZoneIds { get; set; }
+        public List<string> SaleOfficeIds { get; set; }
+        public List<string> TerritoryIds { get; set; }
         public Status Status { get; set; }
-
-        public int MyProperty { get; set; }
-        public int NodeId { get; set; }
-
-        public string Company { get; set; }
-        public string Title { get; set; }
-
-        [StringLength(128)]
-        public string Email { get; set; }
-        [StringLength(128)]
-        public string Groups { get; set; }
-
-        public string AdGuid { get; set; }
+        public int RoleId { get; set; }
         public string RoleName { get; set; }
+
+        public UserInfoModel()
+        {
+            RoleIds = new List<int>();
+            PlantIds = new List<string>();
+            AreaIds = new List<string>();
+            ZoneIds = new List<string>();
+            SaleOfficeIds = new List<string>();
+            TerritoryIds = new List<string>();
+        }
+    }
+
+    public class SaveUserInfoModel : IMapFrom<UserInfo>
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Code { get; set; }
+        public string EmployeeId { get; set; }
+        public string Department { get; set; }
+        public string Designation { get; set; }
+        public string ManagerName { get; set; }
+        public string ManagerId { get; set; }
+
+        public string Address { get; set; }
+        public string Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string ImageUrl { get; set; }
+
+        public List<int> RoleIds { get; set; }
+        public List<string> PlantIds { get; set; }
+        public List<string> AreaIds { get; set; }
+        public List<string> ZoneIds { get; set; }
+        public List<string> SaleOfficeIds { get; set; }
+        public List<string> TerritoryIds { get; set; }
+        public Status Status { get; set; }
+        public int RoleId { get; set; }
+        public string RoleName { get; set; }
+
+        public SaveUserInfoModel()
+        {
+            RoleIds = new List<int>();
+            PlantIds = new List<string>();
+            AreaIds = new List<string>();
+            ZoneIds = new List<string>();
+            SaleOfficeIds = new List<string>();
+            TerritoryIds = new List<string>();
+        }
     }
 }
 

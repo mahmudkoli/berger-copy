@@ -16,15 +16,15 @@ export class AuthService {
   public authEndpoint: string;
   private currentUserSubject: BehaviorSubject<IAuthUser>;
   public currentUser: Observable<IAuthUser>;
+  private readonly localStorageCurrentUserKey: string = 'currentUser';
 
   constructor(private http: HttpClient,
     private jwtHelper: JwtHelperService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl + "api/";
     this.authEndpoint = this.baseUrl + 'v1/auth';
-    this.currentUserSubject = new BehaviorSubject<IAuthUser>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUserSubject = new BehaviorSubject<IAuthUser>(JSON.parse(localStorage.getItem(this.localStorageCurrentUserKey)));
     this.currentUser = this.currentUserSubject.asObservable();
   }
-
   
   public get currentUserValue(): IAuthUser {
     return this.currentUserSubject.value;
@@ -67,7 +67,7 @@ export class AuthService {
         .pipe(map((res: APIResponse) => {
             const authUser = res && res.data;
             if (authUser && authUser.token) {
-                localStorage.setItem('currentUser', JSON.stringify(authUser));
+                localStorage.setItem(this.localStorageCurrentUserKey, JSON.stringify(authUser));
                 this.currentUserSubject.next(authUser);
                 // this.ngxPermissionsService.loadPermissions(this.getPermissions);
             }
@@ -84,11 +84,10 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem(this.localStorageCurrentUserKey);
     this.currentUserSubject.next(null);
     // this.ngxPermissionsService.flushPermissions();
   }
-
 }
 
 

@@ -6,9 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { UserInfoRoutingModule } from './user-info-routing.module';
-import { UserInfoInsertComponent } from './user-info-insert/user-info-insert.component';
+import { UserInfoFormComponent } from './user-info-form/user-info-form.component';
 import { UserInfoListComponent } from './user-info-list/user-info-list.component';
-import { UserInfoEditComponent } from './user-info-edit/user-info-edit.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 
@@ -16,9 +15,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 @NgModule({
     declarations:
         [
-            UserInfoInsertComponent,
+            UserInfoFormComponent,
             UserInfoListComponent,
-            UserInfoEditComponent
         ],
     imports: [
         CommonModule,
