@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Berger.Worker.ViewModel
+namespace Berger.Worker.Model
 {
     class BrandModel
     {
