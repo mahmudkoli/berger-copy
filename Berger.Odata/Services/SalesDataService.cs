@@ -9,23 +9,26 @@ using Berger.Common.JSONParser;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
+using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
 {
     public class SalesDataService : ISalesDataService
     {
         private readonly IHttpClientService _httpClientService;
+        private readonly ODataSettingsModel _appSettings;
 
-        public SalesDataService(IHttpClientService httpClientService)
+        public SalesDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings)
         {
             _httpClientService = httpClientService;
+            _appSettings = appSettings.Value;
         }
 
         private async Task<IList<SalesDataModel>> GetSalesData(string query)
         {
-            string fullUrl = $"{OdataUrlBuilder.SalesUrl}{query}";
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.SalesUrl}{query}";
 
-            var responseBody = _httpClientService.GetHttpResponse(fullUrl, OdataUrlBuilder.UserName, OdataUrlBuilder.Password);
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
             var parsedData = Parser<SalesDataRootModel>.ParseJson(responseBody);
             var data = parsedData.Results.Select(x => x.ToModel()).ToList();
 

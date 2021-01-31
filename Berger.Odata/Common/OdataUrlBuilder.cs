@@ -10,6 +10,8 @@ namespace Berger.Odata.Common
         //public static string UserName = $"DEV_ODATA";
         //public static string Password = $"Sword@Fish2020";
         public static string SalesUrl = $@"https://bpblbgd.bergerbd.com:44300/sap/opu/odata/sap/ZCDS_VBRK_VBRP_ODATA_CDS/ZCDS_VBRK_VBRP_ODATA/?$format=json";
+        public static string DriverUrl = $@"http://bpblbgd.bergerbd.com:8000/sap/opu/odata/sap/ZVIEW_CARRYING_CDS/ZVIEW_CARRYING/?$format=json";
+        public static string MTSUrl = $@"http://bpblbgd.bergerbd.com:8000/sap/opu/odata/sap/ZV_MTS_CDS/ZV_MTS?$format=json";
         public static string UserName = $"Bpbldev1";
         public static string Password = $"Bpbldev2020";
     }

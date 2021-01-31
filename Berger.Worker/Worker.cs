@@ -14,6 +14,7 @@ namespace Berger.Worker
     {
         private readonly ILogger<Worker> _logger;
         private  ICustomerService _customerService;
+        private  IBrandService _brandService;
         private readonly IServiceProvider _serviceProvider;
 /*
         private readonly Timer _timer;
@@ -53,8 +54,10 @@ namespace Berger.Worker
                     Stopwatch st = new Stopwatch();
                     st.Start();
                     _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                    _brandService = scope.ServiceProvider.GetRequiredService<IBrandService>();
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                     await _customerService.GetCustomerData();
+                    await _brandService.GetBrandData();
                     st.Stop();
 
                     TimeSpan actualTime = TimeSpan.FromHours(24)- st.Elapsed;
