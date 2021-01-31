@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Berger.Worker.ViewModel
+namespace Berger.Worker.Model
 {
     public class WorkerSettingsModel
     {

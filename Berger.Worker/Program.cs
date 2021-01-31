@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Berger.Worker.ViewModel;
+using Berger.Worker.Model;
 
 namespace Berger.Worker
 {

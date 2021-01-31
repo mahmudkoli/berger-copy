@@ -1,4 +1,4 @@
-﻿namespace Berger.Worker.ViewModel
+﻿namespace Berger.Worker.Model
 {
     class CustomerModel
     {
