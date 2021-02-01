@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Common
 {
-    public class AppActiveDirectorySettingsModel
+    public class ActiveDirectorySettingsModel
     {
         public string Domain { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
     }
 
-    public class AppTokensSettingsModel
+    public class TokensSettingsModel
     {
         public string Key { get; set; }
         public string Issuer { get; set; }

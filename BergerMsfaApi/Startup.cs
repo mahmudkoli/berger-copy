@@ -42,10 +42,11 @@ namespace BergerMsfaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<AppActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
-            services.Configure<AppTokensSettingsModel>(options => Configuration.GetSection("Tokens").Bind(options));
+            services.Configure<ActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectorySettings").Bind(options));
+            services.Configure<TokensSettingsModel>(options => Configuration.GetSection("TokensSettings").Bind(options));
+            services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
 
-            var appTokensSettings = Configuration.GetSection("Tokens").Get<AppTokensSettingsModel>();
+            var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
 
@@ -122,9 +123,6 @@ namespace BergerMsfaApi
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-
-            services.Configure<AppSettingsModel>(options => Configuration.GetSection("ActiveDirectory").Bind(options));
-            services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

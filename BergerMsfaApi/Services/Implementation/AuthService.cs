@@ -19,11 +19,11 @@ namespace BergerMsfaApi.Services.Implementation
 {
     public class AuthService : IAuthService
     {
-        private readonly AppTokensSettingsModel _settings;
+        private readonly TokensSettingsModel _settings;
         private readonly IUserInfoService _userService;
 
         public AuthService(
-            IOptions<AppTokensSettingsModel> settings, 
+            IOptions<TokensSettingsModel> settings, 
             IUserInfoService user)
         {
             _settings = settings.Value;

@@ -5,8 +5,6 @@ import { catchError, map, finalize } from "rxjs/operators"
 import { AlertService } from './Shared/Modules/alert/alert.service';
 import { ActivityPermissionService } from './Shared/Services/Activity-Permission/activity-permission.service';
 import { ActivatedRoute } from '@angular/router';
-
-import { NgbPaginationNext } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from "./Shared/Services/Users";
 
 @Injectable({ providedIn: 'root' })
