@@ -52,7 +52,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<UserQuestionAnswer, object>>>()
             {
-                ["userFullName"] = v => v.UserInfo.FirstName,
+                ["userFullName"] = v => v.UserInfo.FullName,
                 ["questionSetTitle"] = v => v.QuestionSet.Title,
                 ["questionSetLevel"] = v => v.QuestionSet.Level,
                 ["questionSetTotalMark"] = v => v.QuestionSet.TotalMark,
@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
             var result = await _userQuestionAnswerRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FirstName.Contains(query.GlobalSearchValue) || x.QuestionSet.Title.Contains(query.GlobalSearchValue)),
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.QuestionSet.Title.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.UserInfo).Include(i => i.QuestionSet),
                                 query.Page,

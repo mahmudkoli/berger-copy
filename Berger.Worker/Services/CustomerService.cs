@@ -6,18 +6,18 @@ using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
-using Berger.Worker.Query;
-using Berger.Worker.ViewModel;
+using Berger.Worker.Model;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Berger.Worker.Services
 {
     public class CustomerService : ICustomerService
     {
-        
-        private readonly CustomerQuery _query;
+
+        private readonly WorkerSettingsModel _appSettings;
         private readonly IRepository<DealerInfo> _repo;
         private readonly IHttpClientService _httpService;
         private readonly IDataEqualityComparer<DealerInfo> _dataComparer;
@@ -25,9 +25,9 @@ namespace Berger.Worker.Services
 
 
 
-        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer,ILogger<DealerInfo> logger)
+        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer,ILogger<DealerInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
-            _query = new CustomerQuery();
+            _appSettings = appSettings.Value;
             _repo = repo;
             _httpService = httpClientService;
             _dataComparer = comparer;
@@ -39,10 +39,10 @@ namespace Berger.Worker.Services
         {
             try
             {
-                
-                string url = _query.GetAllCustomer();
-                string username = "DEV_ODATA";
-                string password = "Missi@n2020";
+
+                string url = $"{_appSettings.BaseAddress}{_appSettings.CustomerUrl}";
+                string username = _appSettings.UserName;
+                string password = _appSettings.Password;
                 _logger.LogInformation($"{DateTime.Now} URL Building Successful... {url}");
                 var responseBody = _httpService.GetHttpResponse(url, username, password);
 
@@ -96,8 +96,11 @@ namespace Berger.Worker.Services
                         {
                             var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CompositeKey))
                                 .ToList();
-                            var updateres = await _repo.UpdateListAsync(updatedData);
-                            _logger.LogInformation($"Total record updated form api: {updateres.Count}");
+                            if (updatedData.Any())
+                            {
+                                var updateres = await _repo.UpdateListAsync(updatedData);
+                                _logger.LogInformation($"Total record updated form api: {updateres.Count}");
+                            }
                         }
                     }
                     else

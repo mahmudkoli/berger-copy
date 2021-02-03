@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MsfaEntity\NewFolder\**" />
+    <EmbeddedResource Remove="MsfaEntity\NewFolder\**" />
+    <None Remove="MsfaEntity\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20201011120744_PainterEntity.cs" />
     <Compile Remove="Migrations\20201011120744_PainterEntity.Designer.cs" />
     <Compile Remove="Migrations\20201011121353_PainterEntity.cs" />
@@ -162,10 +168,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MsfaEntity\NewFolder\" />
   </ItemGroup>
 
 </Project>

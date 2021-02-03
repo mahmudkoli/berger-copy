@@ -24,18 +24,16 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IConfiguration _config;
         private readonly IAuthService authService;
         private readonly IUserInfoService _userService;
-        private readonly ICMUserService _cmuserservice;
         private readonly IActiveDirectoryServices _adservice;
 
 
 
         public AppLoginController(IConfiguration config, IAuthService service, 
-            IUserInfoService user, ICMUserService userService, IActiveDirectoryServices adservice)
+            IUserInfoService user, IActiveDirectoryServices adservice)
         {
             _config = config;
             authService = service;
             _userService = user;
-            _cmuserservice = userService;
             _adservice = adservice;
         }
 

@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Models.ELearning
         {
             profile.CreateMap<UserQuestionAnswer, UserQuestionAnswerModel>()
                 .ForMember(dest => dest.UserFullName, 
-                    opt => opt.MapFrom(src => src.UserInfo != null ? $"{src.UserInfo.FirstName} {src.UserInfo.MiddleName} {src.UserInfo.LastName}".Replace("  ", " ") : string.Empty));
+                    opt => opt.MapFrom(src => src.UserInfo != null ? $"{src.UserInfo.FullName}" : string.Empty));
         }
     }
 }

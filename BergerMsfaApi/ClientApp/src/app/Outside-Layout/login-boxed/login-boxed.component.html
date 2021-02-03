@@ -1,30 +1,56 @@
 <div class="login-page d-flex h-100 justify-content-center align-items-center bg-plum-plate bg-animation">
-  <div class="app-login mx-auto">
-    <img class="mb-2 mx-auto d-block" src="./assets/images/logo.png" alt="logo">
-    <h4 class="login-title">Account Login</h4>
-    <div id="exampleInputGroup1" role="group" aria-describedby="exampleInputGroup1__BV_description_"
-      class="form-group mb-0 ">
-      <input id="exampleInput1" type="text" placeholder="Enter email" [(ngModel)]="UserName" required="required"
-        aria-required="true" class="form-control form-control-login rounded-0 border-bottom-0"
-        aria-describedby="exampleInputGroup1__BV_description_">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="app-login mx-auto">
+      <img class="mb-2 mx-auto d-block" src="./assets/images/logo.png" alt="logo">
+      <h4 class="login-title">Account Login</h4>
+      <div *ngIf="errorMessage" class="text-danger font-weight-bold">{{errorMessage}}</div>
+      <div class="position-relative form-group mb-0">
+        <!-- <label class="required mb-0">UserName</label> -->
+        <input type="text" autocomplete="off" class="form-control form-control-login rounded-0" formControlName="userName" placeholder="Enter your username"
+            [ngClass]="{'is-valid':ufControls.userName.touched && !ufControls.userName.errors,
+            'is-invalid':ufControls.userName.touched && ufControls.userName.errors }" />
+        <!-- <small class="text-danger" *ngIf="ufControls.userName.touched && ufControls.userName.errors">
+            <span *ngIf="ufControls.userName.errors.required">UserName is <strong>required</strong></span> -->
+            <!-- <span *ngIf="ufControls.email.errors.email"><strong>Invalid</strong> email</span> -->
+        <!-- </small> -->
+      </div>
+      <div class="position-relative form-group">
+        <!-- <label class="required mb-0">Password</label> -->
+        <div class="input-group">
+          <input [type]="passwordTextType ? 'text' : 'password'" autocomplete="off" class="form-control form-control-login rounded-0" formControlName="password" placeholder="Enter your password"
+              [ngClass]="{'is-valid':ufControls.password.touched && !ufControls.password.errors,
+              'is-invalid':ufControls.password.touched && ufControls.password.errors }" />
+            <!-- <div class="input-group-append" (click)="togglePasswordTextType()">
+                <span class="input-group-text">
+                    <i class="fa" [ngClass]="{ 'fa-eye-slash': !passwordTextType, 'fa-eye': passwordTextType }"></i>
+                </span>
+            </div> -->
+        </div>
+        <!-- <small class="text-danger" *ngIf="ufControls.password.touched && ufControls.password.errors">
+            <span *ngIf="ufControls.password.errors.required">Password is <strong>required</strong></span>
+        </small> -->
+      </div>
+
+      <!-- <div class="d-flex justify-content-between">
+        <div class="position-relative form-group form-group-berger">
+          <div class="custom-checkbox custom-control custom-control-inline">
+              <input type="checkbox" id="rememberMe" formControlName="rememberMe" class="custom-control-input" />
+              <label for="rememberMe" class="custom-control-label login-checkbox">
+                Keep me logged in
+              </label>
+          </div>
+        </div>
+      
+      </div> -->
+      <div class="text-center my-3">
+        <button type="submit" [disabled]="isLoading || loginForm.invalid" class="btn btn-primary btn-login d-block rounded-0 w-100">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+          {{isLoading?'Loading...':'Login To Dashboard'}}
+        </button>
+      </div>
+      <!-- <div class="text-center">
+        <a [routerLink]="['/auth/forgot-password']" class="btn btn-recover">Recover Password?</a>
+      </div> -->
     </div>
-    <div id="exampleInputGroup2" role="group" class="form-group">
-      <input id="exampleInput2" type="password" placeholder="Enter password" [(ngModel)]="Password" required="required"
-        aria-required="true" class="form-control form-control-login rounded-0">
-    </div>
-    <button type="button" (click)="onLogin()" class="btn btn-primary btn-login d-block rounded-0 w-100">LOGIN</button>
-    <div class="custom-control custom-checkbox my-1">
-      <input id="exampleCheck" type="checkbox" name="check" autocomplete="off" class="custom-control-input"
-        value="true"><label for="exampleCheck" class="custom-control-label">
-        Keep me logged in
-      </label>
-    </div>
-    <div class="not-account text-center my-3">
-      <h6 class="mb-0">
-        Create an account?
-        <a [routerLink]="" class="text-primary">Sign Up</a>
-      </h6>
-      <div>Forgot <a [routerLink]="" class="btn-link">Password?</a></div>
-    </div>
-  </div>
+  </form>
 </div>

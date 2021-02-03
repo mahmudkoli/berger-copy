@@ -21,6 +21,7 @@ namespace BergerMsfaApi.Extensions
         {
             IEnumerable<Claim> userClaimes;
             ClaimsIdentity claimsIdentity;
+
             if (user != null)
             {
                 claimsIdentity = (ClaimsIdentity)user;
@@ -36,6 +37,7 @@ namespace BergerMsfaApi.Extensions
                     return EmptyAppUser;
                 }
             }
+
             if (claimsIdentity == null)
             {
                 return EmptyAppUser;
@@ -44,11 +46,14 @@ namespace BergerMsfaApi.Extensions
             {
                 userClaimes = claimsIdentity.Claims;
             }
+
             return userClaimes.ToAppUser();
         }
+
         public static AppUserPrincipal ToAppUser(this ClaimsPrincipal user)
         {
             IEnumerable<Claim> userClaimes;
+
             if (user != null)
             {
                 userClaimes = user.Claims;
@@ -66,7 +71,6 @@ namespace BergerMsfaApi.Extensions
             }
 
             return userClaimes.ToAppUser();
-
         }
 
         public static AppUserPrincipal ToAppUser(this IIdentity user)
@@ -75,24 +79,24 @@ namespace BergerMsfaApi.Extensions
             {
                 return EmptyAppUser;
             }
-            return ((ClaimsIdentity)user)
-               .Claims.ToAppUser();
+
+            return ((ClaimsIdentity)user).Claims.ToAppUser();
         }
+
         public static AppUserPrincipal ToAppUser(this IEnumerable<Claim> claims)
         {
-           
             if (claims == null)
             {
                 return EmptyAppUser;
             }
+
             var claimItems = claims
-               .Where(s => !s.Type.Contains("schemas.microsoft.com") && !s.Type.Contains("schemas.xmlsoap.org"))
-               .Select(x => new { Key = x.Type, x.Value })
-               .ToDictionary(t => t.Key, t => t.Value);
+                               .Where(s => !s.Type.Contains("schemas.microsoft.com") && !s.Type.Contains("schemas.xmlsoap.org"))
+                               .Select(x => new { Key = x.Type, x.Value })
+                               .ToDictionary(t => t.Key, t => t.Value);
 
             return AppUser(claimItems) ?? EmptyAppUser;
         }
-
 
         private static AppUserPrincipal AppUser(Dictionary<string, string> claims)
         {
@@ -100,6 +104,7 @@ namespace BergerMsfaApi.Extensions
             {
                 return EmptyAppUser;
             }
+
             return new AppUserPrincipal(claims["UserName"])
             {
                 UserId = Convert.ToInt32(claims["UserId"]),
@@ -114,7 +119,5 @@ namespace BergerMsfaApi.Extensions
                 ActiveRoleName = claims["ActiveRoleName"],
             };
         }
-
-
     }
 }

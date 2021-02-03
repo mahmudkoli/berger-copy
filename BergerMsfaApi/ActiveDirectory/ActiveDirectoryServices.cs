@@ -10,9 +10,9 @@ namespace BergerMsfaApi.ActiveDirectory
     public class ActiveDirectoryServices: IActiveDirectoryServices
     {
         private DirectoryEntry _directoryEntry;
-        private readonly IOptions<AppSettingsModel> _settings;
+        private readonly IOptions<ActiveDirectorySettingsModel> _settings;
 
-        public ActiveDirectoryServices(IOptions<AppSettingsModel> settings)
+        public ActiveDirectoryServices(IOptions<ActiveDirectorySettingsModel> settings)
         {
             _settings = settings;
 
