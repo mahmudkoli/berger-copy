@@ -8,6 +8,7 @@ import { PermissionGroup, ActivityPermissionService } from 'src/app/Shared/Servi
 import { of, Subscription } from 'rxjs';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
+import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 
 @Component({
     selector: 'app-user-info-list',
@@ -78,6 +79,7 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 					this.totalFilterDataLength = res.data.totalFilter;
 					this.userInfos.forEach(obj => {
 						obj.statusText = obj.status == 0 ? 'Inactive' : 'Active';
+						obj.employeeRoleText = EnumEmployeeRole[obj.employeeRole];
 					});
 				},
 				(error) => {
@@ -137,9 +139,11 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 		tableName: 'User List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Full Name', width: '40%', internalName: 'fullName', sort: true, type: "" },
-			{ headerName: 'Department', width: '25%', internalName: 'department', sort: true, type: "" },
-			{ headerName: 'Designation', width: '25%', internalName: 'designation', sort: true, type: "" },
+			{ headerName: 'Full Name', width: '20%', internalName: 'fullName', sort: true, type: "" },
+			{ headerName: 'Department', width: '20%', internalName: 'department', sort: true, type: "" },
+			{ headerName: 'Designation', width: '20%', internalName: 'designation', sort: true, type: "" },
+			{ headerName: 'Application Role', width: '15%', internalName: 'roleNames', sort: false, type: "" },
+			{ headerName: 'Employee Role', width: '15%', internalName: 'employeeRoleText', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
 		],
 		enabledSearch: true,
