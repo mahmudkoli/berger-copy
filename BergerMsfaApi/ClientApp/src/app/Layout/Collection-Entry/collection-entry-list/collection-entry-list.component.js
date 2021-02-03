@@ -25,10 +25,10 @@ var CollectionEntryListComponent = /** @class */ (function () {
         this.router = router;
         this.permissionGroup = new activity_permission_service_1.PermissionGroup();
         this.customerTypeList = [
-            { key: 1, type: 'Dealer' },
-            { key: 2, type: 'Sub Dealer' },
-            { key: 3, type: 'Project' },
-            { key: 4, type: 'Customer' },
+            { key: 1, type: "Dealer" },
+            { key: 2, type: "Sub Dealer" },
+            { key: 3, type: "Project" },
+            { key: 4, type: "Customer" },
         ];
         this.ptableSettings = null;
         this.gridDataSource = [];
@@ -61,57 +61,57 @@ var CollectionEntryListComponent = /** @class */ (function () {
         if (CustomerTypeEnum.Dealer == selected) {
             tableName = "Dealer Collection";
             tableColDef = [
-                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
-                { headerName: 'Dealer ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
-                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
-                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
-                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
-                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+                { headerName: "Code  ", width: "10%", internalName: "code", sort: true, type: "" },
+                { headerName: "Dealer ", width: "10%", internalName: "name", sort: true, type: "" },
+                { headerName: "Mobile Number ", width: "10%", internalName: "mobileNumber", sort: true, type: "" },
+                { headerName: "Payment Method", width: "5%", internalName: "paymentMethodName", sort: true, type: "" },
+                { headerName: "Area", width: "15%", internalName: "creditControllAreaName", sort: true, type: "" },
+                { headerName: "Bank Name", width: "15%", internalName: "bankName", sort: true, type: "" },
+                { headerName: "Number(Account)", width: "15%", internalName: "number", sort: true, type: "" },
+                { headerName: "Amount", width: "10%", internalName: "number", sort: true, type: "" },
+                { headerName: "Number(Manual)", width: "10%", internalName: "manualNumber", sort: true, type: "" },
             ];
         }
         else if (CustomerTypeEnum.SubDealer == selected) {
             tableName = "Sub Dealer Collection";
             tableColDef = [
-                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
-                { headerName: 'Sub Dealer ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
-                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
-                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
-                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
-                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+                { headerName: "Code  ", width: "10%", internalName: "code", sort: true, type: "" },
+                { headerName: "Sub Dealer ", width: "10%", internalName: "name", sort: true, type: "" },
+                { headerName: "Mobile Number ", width: "10%", internalName: "mobileNumber", sort: true, type: "" },
+                { headerName: "Payment Method", width: "5%", internalName: "paymentMethodName", sort: true, type: "" },
+                { headerName: "Area", width: "15%", internalName: "creditControllAreaName", sort: true, type: "" },
+                { headerName: "Bank Name", width: "15%", internalName: "bankName", sort: true, type: "" },
+                { headerName: "Number(Account)", width: "15%", internalName: "number", sort: true, type: "" },
+                { headerName: "Amount", width: "10%", internalName: "number", sort: true, type: "" },
+                { headerName: "Number(Manual)", width: "10%", internalName: "manualNumber", sort: true, type: "" },
             ];
         }
         else if (CustomerTypeEnum.Project == selected) {
             tableName = "Project Collection";
             tableColDef = [
-                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
-                { headerName: 'Project ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
-                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
-                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
-                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
-                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+                { headerName: "Code  ", width: "10%", internalName: "code", sort: true, type: "" },
+                { headerName: "Project ", width: "10%", internalName: "name", sort: true, type: "" },
+                { headerName: "Mobile Number ", width: "10%", internalName: "mobileNumber", sort: true, type: "" },
+                { headerName: "Payment Method", width: "5%", internalName: "paymentMethodName", sort: true, type: "" },
+                { headerName: "Area", width: "15%", internalName: "creditControllAreaName", sort: true, type: "" },
+                { headerName: "Bank Name", width: "15%", internalName: "bankName", sort: true, type: "" },
+                { headerName: "Number(Account)", width: "15%", internalName: "number", sort: true, type: "" },
+                { headerName: "Amount", width: "10%", internalName: "number", sort: true, type: "" },
+                { headerName: "Number(Manual)", width: "10%", internalName: "manualNumber", sort: true, type: "" },
             ];
         }
         else if (CustomerTypeEnum.Customer == selected) {
             tableName = "Cutomer Collection";
             tableColDef = [
-                { headerName: 'Code  ', width: '10%', internalName: 'code', sort: true, type: "" },
-                { headerName: 'Customer ', width: '10%', internalName: 'name', sort: true, type: "" },
-                { headerName: 'Mobile Number ', width: '10%', internalName: 'mobileNumber', sort: true, type: "" },
-                { headerName: 'Payment Method', width: '5%', internalName: 'paymentMethodName', sort: true, type: "" },
-                { headerName: 'Area', width: '15%', internalName: 'creditControllAreaName', sort: true, type: "" },
-                { headerName: 'Bank Name', width: '15%', internalName: 'bankName', sort: true, type: "" },
-                { headerName: 'Number(Account)', width: '15%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Amount', width: '10%', internalName: 'number', sort: true, type: "" },
-                { headerName: 'Number(Manual)', width: '10%', internalName: 'manualNumber', sort: true, type: "" },
+                { headerName: "Code  ", width: "10%", internalName: "code", sort: true, type: "" },
+                { headerName: "Customer ", width: "10%", internalName: "name", sort: true, type: "" },
+                { headerName: "Mobile Number ", width: "10%", internalName: "mobileNumber", sort: true, type: "" },
+                { headerName: "Payment Method", width: "5%", internalName: "paymentMethodName", sort: true, type: "" },
+                { headerName: "Area", width: "15%", internalName: "creditControllAreaName", sort: true, type: "" },
+                { headerName: "Bank Name", width: "15%", internalName: "bankName", sort: true, type: "" },
+                { headerName: "Number(Account)", width: "15%", internalName: "number", sort: true, type: "" },
+                { headerName: "Amount", width: "10%", internalName: "number", sort: true, type: "" },
+                { headerName: "Number(Manual)", width: "10%", internalName: "manualNumber", sort: true, type: "" },
             ];
         }
         this.getCustomerDetails(CustomerTypeEnum[selected]);
@@ -145,9 +145,9 @@ var CollectionEntryListComponent = /** @class */ (function () {
     };
     CollectionEntryListComponent = __decorate([
         core_1.Component({
-            selector: 'app-collection-entry-list',
-            templateUrl: './collection-entry-list.component.html',
-            styleUrls: ['./collection-entry-list.component.css']
+            selector: "app-collection-entry-list",
+            templateUrl: "./collection-entry-list.component.html",
+            styleUrls: ["./collection-entry-list.component.css"]
         })
     ], CollectionEntryListComponent);
     return CollectionEntryListComponent;
