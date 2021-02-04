@@ -9,6 +9,7 @@ using Berger.Common.Enumerations;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
+using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -21,13 +22,16 @@ namespace BergerMsfaApi.Services.Implementation
     {
         private readonly TokensSettingsModel _settings;
         private readonly IUserInfoService _userService;
+        private readonly ICommonService _commonService;
 
         public AuthService(
             IOptions<TokensSettingsModel> settings, 
-            IUserInfoService user)
+            IUserInfoService user,
+            ICommonService commonService)
         {
             _settings = settings.Value;
             _userService = user;
+            _commonService = commonService;
         }
 
         public async Task<AuthenticateUserModel> GetJWTTokenByUserNameAsync(string userName)
@@ -81,32 +85,48 @@ namespace BergerMsfaApi.Services.Implementation
                 var userCat = string.Empty;
                 var userCatIds = new List<string>();
 
-                if (userInfo.ZoneIds.Any())
+                switch (userInfo.EmployeeRole)
                 {
-                    userCat = EnumUserCategory.Zone.ToString();
-                    userCatIds = userInfo.ZoneIds;
-                } 
-                else if (userInfo.TerritoryIds.Any())
-                {
-                    userCat = EnumUserCategory.Territory.ToString();
-                    userCatIds = userInfo.TerritoryIds;
-                } 
-                else if (userInfo.AreaIds.Any())
-                {
-                    userCat = EnumUserCategory.Area.ToString();
-                    userCatIds = userInfo.AreaIds;
-                } 
-                else if (userInfo.SaleOfficeIds.Any())
-                {
-                    userCat = EnumUserCategory.SalesOffice.ToString();
-                    userCatIds = userInfo.SaleOfficeIds;
-                } 
-                else if (userInfo.PlantIds.Any())
-                {
-                    userCat = EnumUserCategory.Plant.ToString();
-                    userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
+                    case EnumEmployeeRole.DIC:
+                        userCat = EnumUserCategory.Plant.ToString();
+                        userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
+                        break;
+                    case EnumEmployeeRole.BIC:
+                        userCat = EnumUserCategory.SalesOffice.ToString();
+                        userCatIds = userInfo.SaleOfficeIds.Select(x => x.ToString()).ToList();
+                        break;
+                    case EnumEmployeeRole.AM:
+                        userCat = EnumUserCategory.Area.ToString();
+                        userCatIds = userInfo.AreaIds.Select(x => x.ToString()).ToList();
+                        break;
+                    case EnumEmployeeRole.TM_TO:
+                        userCat = EnumUserCategory.Territory.ToString();
+                        userCatIds = userInfo.TerritoryIds.Select(x => x.ToString()).ToList();
+                        break;
+                    case EnumEmployeeRole.ZO:
+                        userCat = EnumUserCategory.Zone.ToString();
+                        userCatIds = userInfo.ZoneIds.Select(x => x.ToString()).ToList();
+                        break;
+                    default:
+                        break;
                 }
                 #endregion
+
+                var plants = (await _commonService.GetUserZoneAreaMappingsAsync(EnumUserCategory.Plant.ToString(), userInfo.PlantIds.Select(x => x.ToString()).ToList()))
+                                    .Select(x => new NameIdModel() { Id = x.PlantId, Name = x.Name }).ToList();
+                var territories = (await _commonService.GetUserZoneAreaMappingsAsync(EnumUserCategory.Territory.ToString(), userInfo.TerritoryIds.Select(x => x.ToString()).ToList()))
+                                    .Select(x => new NameIdModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).ToList();
+                var zones = (await _commonService.GetUserZoneAreaMappingsAsync(EnumUserCategory.Zone.ToString(), userInfo.ZoneIds.Select(x => x.ToString()).ToList()))
+                                    .Select(x => new NameIdModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
+
+                foreach (var plant in plants)
+                {
+                    plant.Chilldren = territories.Where(x => x.ParentId == plant.Id).ToList();
+                    foreach (var territory in plant.Chilldren)
+                    {
+                        territory.Chilldren = zones.Where(x => x.ParentId == territory.Id).ToList();
+                    }
+                }
 
                 var results = new AuthenticateUserModel()
                 {
@@ -114,8 +134,9 @@ namespace BergerMsfaApi.Services.Implementation
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
                     FullName = $"{userInfo.FullName}",
-                    PlanIds = userInfo.PlantIds,
-                    PlanId = userInfo.PlantIds.FirstOrDefault(),
+                    Plants = plants,
+                    PlantIds = userInfo.PlantIds,
+                    PlantId = userInfo.PlantIds.FirstOrDefault(),
                     SalesOfficeIds = userInfo.SaleOfficeIds,
                     SalesOfficeId = userInfo.SaleOfficeIds.FirstOrDefault()??"",
                     AreaIds = userInfo.AreaIds,
