@@ -13,6 +13,7 @@ import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { finalize } from 'rxjs/operators';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
+import { EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 
 @Component({
     selector: 'app-user-info-form',
@@ -35,6 +36,7 @@ export class UserInfoFormComponent implements OnInit {
     territories:any[]=[]
 
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
+	employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
 
 // 	// Private properties
     private subscriptions: Subscription[] = [];
@@ -147,14 +149,15 @@ export class UserInfoFormComponent implements OnInit {
            address: [this.user.address],
            gender: [this.user.gender],
            dateOfBirth: [],
-           code: [this.user.code, Validators.required],
-           employeeId: [this.user.employeeId],
+           code: [this.user.code,  [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
+           employeeId: [this.user.employeeId,  [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
+           employeeRole: [this.user.employeeRole, Validators.required],
            designation: [this.user.designation],
            department: [this.user.department],
-           managerId: [this.user.managerId],
+           managerId: [this.user.managerId, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
            managerName: [this.user.managerName],
-           status: [this.user.status],
-           roleIds: [this.user.roleIds],
+           status: [this.user.status, Validators.required],
+           roleIds: [this.user.roleIds, Validators.required],
            plantIds: [this.user.plantIds],
            saleOfficeIds: [this.user.saleOfficeIds],
            areaIds: [this.user.areaIds],
@@ -220,6 +223,7 @@ export class UserInfoFormComponent implements OnInit {
        _user.phoneNumber = controls['phoneNumber'].value;
        _user.code = controls['code'].value;
        _user.employeeId = controls['employeeId'].value;
+       _user.employeeRole = controls['employeeRole'].value;
        _user.designation = controls['designation'].value;
        _user.department = controls['department'].value;
        _user.managerId = controls['managerId'].value;

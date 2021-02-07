@@ -86,13 +86,14 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         }
 
+        #region Dealer
         public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
         {
 
             var dealers = _dealerInfo.GetAll().Select(s => new DealerModel
             {
                 Id = s.Id, CustomerName = s.CustomerName,CustomerNo = s.CustomerNo, Address = s.Address,
-                AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.Area, CustZone = s.CustZone,
+                AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.SalesGroup, CustZone = s.CustZone,
                 BusinessArea = s.BusinessArea,IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
                 IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed", IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive
@@ -114,5 +115,6 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             await _dealerInfo.UpdateAsync(find);
             return true;
         }
+        #endregion
     }
 }

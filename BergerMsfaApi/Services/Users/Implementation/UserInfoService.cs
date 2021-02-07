@@ -11,6 +11,7 @@ using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Users.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 
 namespace BergerMsfaApi.Services.Users.Implementation
@@ -244,7 +245,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
                                 x => x,
                                 x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.FullName.Contains(query.GlobalSearchValue) || x.Department.Contains(query.GlobalSearchValue) || x.Designation.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
-                                null,
+                                x => x.Include(i => i.Roles).ThenInclude(i => i.Role),
                                 query.Page,
                                 query.PageSize,
                                 true
@@ -354,6 +355,11 @@ namespace BergerMsfaApi.Services.Users.Implementation
                 }
             }
 
+
+            any = await _userRoleMappingRepo.AnyAsync(f => f.UserInfoId == result.Id);
+            if (any)
+                await _userRoleMappingRepo.DeleteAsync(f => f.UserInfoId == model.Id);
+
             foreach (var role in model.RoleIds)
             {
                 UserRoleMappingModel roleMappingModel = new UserRoleMappingModel
@@ -362,19 +368,19 @@ namespace BergerMsfaApi.Services.Users.Implementation
                     UserInfoId = result.Id
                 };
 
-                var userRoleMappingData = await GetUserRoleMappingByUserInfoIdAsync(result.Id);
-                if (userRoleMappingData != null)
-                {
-                    if (userRoleMappingData.RoleId != model.RoleId)
-                    {
-                        await DeleteUserRoleMappingAsync(result.Id);
-                        await CreateRoleLinkWithUserAsync(roleMappingModel);
-                    }
-                }
-                else
-                {
+                //var userRoleMappingData = await GetUserRoleMappingByUserInfoIdAsync(result.Id);
+                //if (userRoleMappingData != null)
+                //{
+                //    if (userRoleMappingData.RoleId != model.RoleId)
+                //    {
+                //        await DeleteUserRoleMappingAsync(result.Id);
+                //        await CreateRoleLinkWithUserAsync(roleMappingModel);
+                //    }
+                //}
+                //else
+                //{
                     await CreateRoleLinkWithUserAsync(roleMappingModel);
-                }
+                //}
             }
 
             return result.ToMap<UserInfo, UserInfoModel>();

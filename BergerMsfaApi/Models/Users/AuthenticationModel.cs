@@ -10,8 +10,9 @@ namespace BergerMsfaApi.Models.Users
     {
         public int UserId { get; set; }
         public string FullName { get; set; }
-        public List<string> PlanIds { get; set; }
-        public string PlanId { get; set; }
+        public IList<KeyValuePairModel> Plants { get; set; }
+        public List<string> PlantIds { get; set; }
+        public string PlantId { get; set; }
         public List<string> SalesOfficeIds { get; set; }
         public string SalesOfficeId { get; set; }
         public List<string> AreaIds { get; set; }
@@ -27,5 +28,23 @@ namespace BergerMsfaApi.Models.Users
         public List<string> UserCategoryIds { get; set; }
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
+
+        public AuthenticateUserModel()
+        {
+            this.Plants = new List<KeyValuePairModel>();
+        }
+    }
+
+    public class KeyValuePairModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string ParentId { get; set; }
+        public IList<KeyValuePairModel> Chilldren { get; set; }
+
+        public KeyValuePairModel()
+        {
+            this.Chilldren = new List<KeyValuePairModel>();
+        }
     }
 }
