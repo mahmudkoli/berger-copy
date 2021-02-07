@@ -88,6 +88,19 @@
                                'is-invalid':ufControls.code.touched && ufControls.code.errors }" />
                         <small class="text-danger" *ngIf="ufControls.code.touched && ufControls.code.errors">
                             <span *ngIf="ufControls.code.errors.required">Code is <strong>required</strong></span>
+                            <span *ngIf="ufControls.code.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Application Role</label>
+                        <ng-select formControlName="roleIds" multiple="multiple">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of roles;" [value]="ur.id">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.roleIds.touched && ufControls.roleIds.errors">
+                            <span *ngIf="ufControls.roleIds.errors.required">Application Role is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>
@@ -99,6 +112,19 @@
                                'is-invalid':ufControls.employeeId.touched && ufControls.employeeId.errors }" />
                         <small class="text-danger" *ngIf="ufControls.employeeId.touched && ufControls.employeeId.errors">
                             <span *ngIf="ufControls.employeeId.errors.required">Employee Id is <strong>required</strong></span>
+                            <span *ngIf="ufControls.employeeId.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Employee Role</label>
+                        <ng-select formControlName="employeeRole">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of employeeRoles;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="ufControls.employeeRole.touched && ufControls.employeeRole.errors">
+                            <span *ngIf="ufControls.employeeRole.errors.required">Employee Role is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>
@@ -136,6 +162,7 @@
                                'is-invalid':ufControls.managerId.touched && ufControls.managerId.errors }" />
                         <small class="text-danger" *ngIf="ufControls.managerId.touched && ufControls.managerId.errors">
                             <span *ngIf="ufControls.managerId.errors.required">Manager Id is <strong>required</strong></span>
+                            <span *ngIf="ufControls.managerId.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
                     </div>
                 </div>
@@ -152,18 +179,6 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">User Role</label>
-                        <ng-select formControlName="roleIds" multiple="multiple">
-                            <!-- <ng-option>--Select--</ng-option> -->
-                            <ng-option *ngFor="let ur of roles;" [value]="ur.id">{{ur.name}}</ng-option>
-                        </ng-select>
-                        <small class="text-danger" *ngIf="ufControls.roleIds.touched && ufControls.roleIds.errors">
-                            <span *ngIf="ufControls.roleIds.errors.required">Role is <strong>required</strong></span>
-                        </small>
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Plant</label>
@@ -224,19 +239,6 @@
                         </small>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="position-relative form-group">
-                        <label class="">Address</label>
-                        <textarea autocomplete="off" class="form-control" formControlName="address"
-                               [ngClass]="{'is-valid':ufControls.address.touched && !ufControls.address.errors,
-                               'is-invalid':ufControls.address.touched && ufControls.address.errors }"></textarea>
-                        <small class="text-danger" *ngIf="ufControls.address.touched && ufControls.address.errors">
-                            <span *ngIf="ufControls.address.errors.required">Address is <strong>required</strong></span>
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="">Gender</label>
@@ -250,6 +252,19 @@
                         </small>
                     </div>
                 </div>
+                <div class="col-md-12">
+                    <div class="position-relative form-group">
+                        <label class="">Address</label>
+                        <textarea autocomplete="off" class="form-control" formControlName="address"
+                               [ngClass]="{'is-valid':ufControls.address.touched && !ufControls.address.errors,
+                               'is-invalid':ufControls.address.touched && ufControls.address.errors }"></textarea>
+                        <small class="text-danger" *ngIf="ufControls.address.touched && ufControls.address.errors">
+                            <span *ngIf="ufControls.address.errors.required">Address is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="">Date Of Birth</label>
