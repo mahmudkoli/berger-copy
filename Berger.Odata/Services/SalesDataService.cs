@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -17,11 +18,13 @@ namespace Berger.Odata.Services
     {
         private readonly IHttpClientService _httpClientService;
         private readonly ODataSettingsModel _appSettings;
+        private readonly IDriverDataService _driverDataService;
 
-        public SalesDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings)
+        public SalesDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings, IDriverDataService driverDataService)
         {
             _httpClientService = httpClientService;
             _appSettings = appSettings.Value;
+            _driverDataService = driverDataService;
         }
 
         private async Task<IList<SalesDataModel>> GetSalesData(string query)
@@ -83,8 +86,51 @@ namespace Berger.Odata.Services
                                     DivisionName = x.DivisionName,
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
                                     Date = x.Date,
-                                    NetAmount = x.NetAmount }
+                                    NetAmount = x.NetAmount 
+                                }
                                 ).ToList();
+
+            #region get driver data
+            if(result.Any())
+            {
+                //Stopwatch st = new Stopwatch();
+                //st.Start();
+                //foreach (var item in result)
+                //{
+                //    var driverFilterQueryBuilder = new FilterQueryOptionBuilder();
+                //    driverFilterQueryBuilder.Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, item.InvoiceNoOrBillNo); 
+                //    var driverDatas = (await _driverDataService.GetDriverData(driverFilterQueryBuilder));
+                //    var driverData = driverDatas.FirstOrDefault();
+                //    if (driverData != null)
+                //    {
+                //        item.DriverName = driverData.DRIVERNAME;
+                //    }
+                //}
+                //st.Stop();
+                //var time = TimeSpan.FromMilliseconds(st.ElapsedMilliseconds).Seconds;
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                var allInvoiceNo = result.Select(x => x.InvoiceNoOrBillNo).Distinct();
+
+                var driverFilterQueryBuilder = new FilterQueryOptionBuilder();
+                driverFilterQueryBuilder.Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, allInvoiceNo.FirstOrDefault());
+
+                foreach (var invoiceNo in allInvoiceNo.Skip(1))
+                {
+                    driverFilterQueryBuilder.Or().Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNo);
+                }
+
+                var allDriverData = await _driverDataService.GetDriverData(driverFilterQueryBuilder);
+
+                foreach (var item in result)
+                {
+                    var driverData = allDriverData.FirstOrDefault(x => x.InvoiceNoOrBillNo == item.InvoiceNoOrBillNo);
+                    if (driverData != null)
+                    {
+                        item.DriverName = driverData.DRIVERNAME;
+                    }
+                }
+            }
+            #endregion
 
             return result;
         }

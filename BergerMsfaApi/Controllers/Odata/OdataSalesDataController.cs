@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Services.OData.Interfaces;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
@@ -15,10 +16,15 @@ namespace BergerMsfaApi.Controllers.Odata
     public class OdataSalesDataController : BaseController
     {
         private readonly ISalesDataService _saledata;
+        private readonly IODataService _odataService;
 
-        public OdataSalesDataController(ISalesDataService saledata)
+        public OdataSalesDataController(
+            ISalesDataService saledata,
+            IODataService odataService
+            )
         {
             _saledata = saledata;
+            _odataService = odataService;
         }
 
         [HttpGet("InvoiceHistory")]
@@ -55,6 +61,20 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _saledata.GetBrandWiseMTDDetails(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("MTSBrandsVolume")]
+        public async Task<IActionResult> GetMTSBrandsVolume([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _odataService.GetMTSBrandsVolumeAsync(model);
                 return OkResult(data);
             }
             catch (Exception ex)
