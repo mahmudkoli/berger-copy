@@ -9,6 +9,8 @@ namespace Berger.Odata.Model
     {
         public string DealerCode { get; internal set; }
         public string DealerName { get; internal set; }
+        public string DriverName { get; internal set; }
+        public string DriverMobileNo { get; internal set; }
         public string CustomerNoOrSoldToParty { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string Division { get; internal set; }
@@ -28,10 +30,10 @@ namespace Berger.Odata.Model
 
     public class BrandWiseMTDResultModel
     {
-        public string BrandName { get; set; }
-        public decimal LYMTD { get; set; }
-        public decimal CYMTD { get; set; }
-        public decimal Growth { get; set; }
-        public IDictionary<string, decimal> PreviousMonthData { get; set; }
+        public string BrandName { get; internal set; }
+        public decimal LYMTD { get; internal set; }
+        public decimal CYMTD { get; internal set; }
+        public decimal Growth { get; internal set; }
+        public IDictionary<string, decimal> PreviousMonthData { get; internal set; }
     }
 }

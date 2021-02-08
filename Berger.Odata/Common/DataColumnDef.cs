@@ -6,6 +6,7 @@ namespace Berger.Odata.Common
 {
     public static class DataColumnDef
     {
+        // Sales Data
         public static string CompanyCode = "bukrs";
         public static string Division = "spart";
         public static string MatarialGroupOrBrand = "matkl";
@@ -62,5 +63,33 @@ namespace Berger.Odata.Common
         public static string SalesOrderNumber = "aubel";
         public static string ItemCategory = "pstyv";
         public static string DistributionChannel = "vtweg";
+
+        // Driver Data
+        public static string Driver_BILLSL = "BILLSL";
+        public static string Driver_WERKS = "WERKS";
+        public static string Driver_InvoiceNoOrBillNo = "VBELN";
+        public static string Driver_Date = "fkdat";
+        public static string Driver_DRIVERNAME = "DRIVERNAME";
+        public static string Driver_VEHICLE = "VEHICLE";
+
+        // MTS Data
+        public static string MTS_period = "period";
+        public static string MTS_pernr = "pernr";
+        public static string MTS_RPMKR = "RPMKR";
+        public static string MTS_regiogroup = "regiogroup";
+        public static string MTS_CustomerGroup = "kdgrp";
+        public static string MTS_UnitOfMeasure = "meins";
+        public static string MTS_CustomerName = "cname";
+        public static string MTS_asp = "asp";
+        public static string MTS_tarvol = "tarvol";
+        public static string MTS_tarval = "tarval";
+        public static string MTS_CustomerAccountGroup = "ktokd";
+        public static string MTS_PlantOrBusinessArea = "gsber";
+        public static string MTS_SalesOffice = "vkbur";
+        public static string MTS_SalesGroup = "vkgrp";
+        public static string MTS_CustomerNo = "kunnr";
+        public static string MTS_DistributionChannel = "vtweg";
+        public static string MTS_Division = "spart";
+        public static string MTS_MatarialGroupOrBrand = "matkl";
     }
 }
