@@ -30,6 +30,7 @@ const routes: Routes = [
             { path: 'scheme', loadChildren: () => import('./Scheme/scheme.module').then(m => m.SchemeModule) },
             { path: 'tinting', loadChildren: () => import('./Tinting/tintingmachine.module').then(m => m.TintingmachineModule) },
             { path: 'eLearning', loadChildren: () => import('./eLearning/eLearning.module').then(m => m.ELearningModule) },
+            { path: 'brand', loadChildren: () => import('./brand/brand.module').then(m => m.BrandModule) },
             { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
 
         ]
