@@ -80,6 +80,8 @@ namespace BergerMsfaApi
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
             services.AddScoped<ISalesDataService, SalesDataService>();
+            services.AddScoped<IDriverDataService, DriverDataService>();
+            services.AddScoped<IMTSDataService, MTSDataService>();
             services.AddScoped<IHttpClientService, HttpClientService>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
