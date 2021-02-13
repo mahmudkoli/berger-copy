@@ -168,8 +168,43 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Address = dealer.Address,
                              ContactNo = dealer.ContactNo,
                              Territory = dealer.Territory,
-                             IsSubdealer = cu != null ? cu.CustomerAccountGroup.StartsWith("Subdealer") : false
+                             IsSubdealer = cu.IsSubdealer()
                          };
+
+            return result;
+        }
+
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(EnumDealerCategory dealerCategory, int pageNo =  1, int pageSize = int.MaxValue)
+        {
+            //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
+            var result = (from dealer in _dealerInfoSvc.GetAll()
+                         join custGrp in _customerGroupSvc.GetAll()
+                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                         into cust
+                         from cu in cust.DefaultIfEmpty()
+
+                         join focusDealer in _focusDealerSvc.GetAll()
+                         on dealer.Id equals focusDealer.Code
+                         into focus
+                         from fd in focus.DefaultIfEmpty()
+
+                         where (EnumDealerCategory.All == dealerCategory) ||
+                         (EnumDealerCategory.Top == dealerCategory) ||
+                         //(EnumDealerCategory.Focus == dealerCategory && fd.IsFocused())
+                         (EnumDealerCategory.Focus == dealerCategory && fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date)
+
+                         select new AppDealerInfoModel
+                         { // result selector 
+                             Id = dealer.Id,
+                             CustomerNo = dealer.CustomerNo,
+                             CustomerName = dealer.CustomerName,
+                             Address = dealer.Address,
+                             ContactNo = dealer.ContactNo,
+                             Territory = dealer.Territory,
+                             IsSubdealer = cu.IsSubdealer(),
+                             //IsFocused = fd.IsFocused(),
+                             IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                         }).Skip((pageNo-1)* pageSize).Take(pageSize).ToList();
 
             return result;
         }
