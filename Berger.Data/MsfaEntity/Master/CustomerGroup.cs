@@ -7,5 +7,10 @@ namespace Berger.Data.MsfaEntity.Master
     {
         public string CustomerAccountGroup { get; set; }
         public string Description { get; set; }
+
+        public bool IsSubdealer()
+        {
+            return this != null && !string.IsNullOrEmpty(this.Description) && this.Description.StartsWith("Subdealer");
+        }
     }
 }
