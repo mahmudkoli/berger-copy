@@ -6,12 +6,12 @@ namespace Berger.Worker.Model
     {
         public string MatrialCode { get; set; } // matnr
         public string MatarialDescription { get; set; } // maktx
-        public string mtart { get; set; } // mtart
+        public string mtart { get; set; } // mtart // Material Type
         public string MatarialGroupOrBrand { get; set; } // matkl
         public string PackSize { get; set; } // groes
         public string Division { get; set; } // spart
-        public string ersda { get; set; } // ersda
-        public string laeda { get; set; } // laeda
+        public string ersda { get; set; } // ersda // Create Date
+        public string laeda { get; set; } // laeda // Update Date
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
 
