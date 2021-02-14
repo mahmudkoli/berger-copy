@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.OData.Edm;
+using Berger.Common.Extensions;
 
 namespace Berger.Odata.Model
 {
@@ -13,5 +14,10 @@ namespace Berger.Odata.Model
         public decimal TargetVolume { get; internal set; }
         public decimal ActualVolume { get; internal set; }
         public decimal DifferenceVolume { get; internal set; }
+
+        public MTSResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
     }
 }

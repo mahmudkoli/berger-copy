@@ -38,7 +38,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<object> GetInvoiceHistory(InvoiceHistorySearchModel model)
+        public async Task<IList<InvoiceHistoryResultModel>> GetInvoiceHistory(InvoiceHistorySearchModel model)
         {
             //model.FromDate = "2011.09.01";//(new DateTime(2011, 09, 01)).DateFormat()
             //model.ToDate = "2011.10.01";//(new DateTime(2011, 10, 01)).DateFormat()
@@ -61,7 +61,7 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerNo)
+                                .AddProperty(DataColumnDef.CustomerName)
                                 .AddProperty(DataColumnDef.Division)
                                 .AddProperty(DataColumnDef.DivisionName)
                                 .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
@@ -80,8 +80,8 @@ namespace Berger.Odata.Services
             var result = data.Select(x => 
                                 new InvoiceHistoryResultModel()
                                 {
-                                    CustomerNoOrSoldToParty = x.CustomerNoOrSoldToParty,
                                     CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
                                     Division = x.Division,
                                     DivisionName = x.DivisionName,
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
@@ -126,7 +126,7 @@ namespace Berger.Odata.Services
                     var driverData = allDriverData.FirstOrDefault(x => x.InvoiceNoOrBillNo == item.InvoiceNoOrBillNo);
                     if (driverData != null)
                     {
-                        item.DriverName = driverData.DRIVERNAME;
+                        item.DriverName = driverData.DriverName;
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<object> GetInvoiceItemDetails(InvoiceItemDetailsSearchModel model)
+        public async Task<IList<InvoiceItemDetailsResultModel>> GetInvoiceItemDetails(InvoiceItemDetailsSearchModel model)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.InvoiceNoOrBillNo, model.InvoiceNo);
@@ -167,7 +167,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<object> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
+        public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
         {
             //var currendate = new DateTime(2011, 09, 21);
             var currendate = model.Date;
@@ -185,16 +185,11 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerNo)
                                 .AddProperty(DataColumnDef.Division)
-                                .AddProperty(DataColumnDef.DivisionName)
                                 .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
                                 .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount)
-                                //.AddProperty(DataColumnDef.Volume)
-                                //.AddProperty(DataColumnDef.VolumeUnit)
-                                .AddProperty(DataColumnDef.MatrialCode)
-                                .AddProperty(DataColumnDef.MatarialDescription);
+                                .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
             var topQuery = $"$top=5";
 
@@ -268,9 +263,9 @@ namespace Berger.Odata.Services
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
             var result = new List<BrandWiseMTDResultModel>();
 
-            var brandCodes = dataLy.Select(x => x.MatrialCode)
-                                .Concat(dataCy.Select(x => x.MatrialCode))
-                                    .Concat(previousMonthDict.Values.SelectMany(x => x).Select(x => x.MatrialCode))
+            var brandCodes = dataLy.Select(x => x.MatarialGroupOrBrand)
+                                .Concat(dataCy.Select(x => x.MatarialGroupOrBrand))
+                                    .Concat(previousMonthDict.Values.SelectMany(x => x).Select(x => x.MatarialGroupOrBrand))
                                         .Distinct().ToList();
 
             foreach (var brandCode in brandCodes)
@@ -278,21 +273,21 @@ namespace Berger.Odata.Services
                 var res = new BrandWiseMTDResultModel();
                 res.PreviousMonthData = new Dictionary<string, decimal>();
 
-                if (dataLy.Any(x => x.MatrialCode == brandCode))
+                if (dataLy.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
-                    var mtdAmtLy = dataLy.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
-                    var brandNameLy = dataLy.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+                    var mtdAmtLy = dataLy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(calcFunc);
+                    var brandNameLy = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
 
-                    res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandNameLy : res.BrandName;
+                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameLy : res.MatarialGroupOrBrand;
                     res.LYMTD = mtdAmtLy;
                 }
 
-                if (dataCy.Any(x => x.MatrialCode == brandCode))
+                if (dataCy.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
-                    var mtdAmtCy = dataCy.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
-                    var brandNameCy = dataCy.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+                    var mtdAmtCy = dataCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(calcFunc);
+                    var brandNameCy = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
 
-                    res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandNameCy : res.BrandName;
+                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameCy : res.MatarialGroupOrBrand;
                     res.CYMTD = mtdAmtCy;
                 }
 
@@ -303,18 +298,20 @@ namespace Berger.Odata.Services
                     var dictData = previousMonthDict[monthName].ToList();
                     var mtdAmt = decimal.Zero;
 
-                    if (dictData.Any(x => x.MatrialCode == brandCode))
+                    if (dictData.Any(x => x.MatarialGroupOrBrand == brandCode))
                     {
-                        mtdAmt = dictData.Where(x => x.MatrialCode == brandCode).Sum(calcFunc);
-                        var brandName = dictData.FirstOrDefault(x => x.MatrialCode == brandCode).MatarialDescription;
+                        mtdAmt = dictData.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(calcFunc);
+                        var brandName = dictData.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
 
-                        res.BrandName = string.IsNullOrEmpty(res.BrandName) ? brandName : res.BrandName;
+                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandName : res.MatarialGroupOrBrand;
                     }
 
                     res.PreviousMonthData.Add(monthName, mtdAmt);
                 }
 
-                res.Growth =  res.LYMTD > 0 ? ((res.CYMTD - res.LYMTD) * 100) / res.LYMTD : decimal.Zero;
+                res.Growth =  res.LYMTD > 0 && res.CYMTD > 0 ? ((res.CYMTD - res.LYMTD) * 100) / res.LYMTD : 
+                                res.LYMTD <= 0 && res.CYMTD > 0 ? decimal.Parse("100") : 
+                                    decimal.Zero;
                 result.Add(res);
             }
 

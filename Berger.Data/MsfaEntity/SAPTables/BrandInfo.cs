@@ -11,13 +11,13 @@ namespace Berger.Data.MsfaEntity.SAPTables
     public class BrandInfo : AuditableEntity<int>
     {
         public string MatrialCode { get; set; } // matnr
-        public string MatarialDescription { get; set; } // maktx - not specific
-        public string mtart { get; set; } // mtart
+        public string MatarialDescription { get; set; } // maktx
+        public string MaterialType { get; set; } // mtart
         public string MatarialGroupOrBrand { get; set; } // matkl
         public string PackSize { get; set; } // groes
         public string Division { get; set; } // spart
-        public string ersda { get; set; } // ersda
-        public string laeda { get; set; } // laeda
+        public string CreatedDate { get; set; } // ersda
+        public string UpdatedDate { get; set; } // laeda
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public bool IsCBInstalled { get; set; }

@@ -5,12 +5,12 @@ export class Brand {
     id: number;
     matrialCode: string;
     matarialDescription: string;
-    mtart: string;
+    materialType: string;
     matarialGroupOrBrand: string;
     packSize: string;
     division: string;
-    ersda: string;
-    laeda: string;
+    createdDate: string;
+    updatedDate: string;
     isCBInstalled: boolean;
     isMTS: boolean;
     isPremium: boolean;

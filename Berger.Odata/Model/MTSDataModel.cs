@@ -6,16 +6,16 @@ namespace Berger.Odata.Model
 {
     public class MTSDataModel
     {
-        public string period { get; internal set; }
-        public string pernr { get; internal set; }
-        public string RPMKR { get; internal set; }
-        public string regiogroup { get; internal set; }
+        public string Date { get; internal set; }
+        public string EmployeeNo { get; internal set; }
+        public string Territory { get; internal set; }
+        public string Zone { get; internal set; }
         public string CustomerGroup { get; internal set; }
         public string UnitOfMeasure { get; internal set; }
         public string CustomerName { get; internal set; }
-        public string asp { get; internal set; }
-        public string tarvol { get; internal set; }
-        public string tarval { get; internal set; }
+        public string AverageSalesPrice { get; internal set; }
+        public string TargetVolume { get; internal set; }
+        public string TargetValue { get; internal set; }
         public string CustomerAccountGroup { get; internal set; }
         public string PlantOrBusinessArea { get; internal set; }
         public string SalesOffice { get; internal set; }

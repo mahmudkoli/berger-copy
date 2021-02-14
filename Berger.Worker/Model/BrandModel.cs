@@ -6,12 +6,12 @@ namespace Berger.Worker.Model
     {
         public string MatrialCode { get; set; } // matnr
         public string MatarialDescription { get; set; } // maktx
-        public string mtart { get; set; } // mtart // Material Type
+        public string MaterialType { get; set; } // mtart 
         public string MatarialGroupOrBrand { get; set; } // matkl
         public string PackSize { get; set; } // groes
         public string Division { get; set; } // spart
-        public string ersda { get; set; } // ersda // Create Date
-        public string laeda { get; set; } // laeda // Update Date
+        public string CreatedDate { get; set; } // ersda 
+        public string UpdatedDate { get; set; } // laeda 
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
 
@@ -40,12 +40,12 @@ namespace Berger.Worker.Model
             var model = new BrandModel();
             model.MatrialCode = this.matnr;
             model.MatarialDescription = this.maktx;
-            model.mtart = this.mtart;
+            model.MaterialType = this.mtart;
             model.MatarialGroupOrBrand = this.matkl;
             model.PackSize = this.groes;
             model.Division = this.spart;
-            model.ersda = this.ersda;
-            model.laeda = this.laeda;
+            model.CreatedDate = this.ersda;
+            model.UpdatedDate = this.laeda;
             return model;
         }
     }

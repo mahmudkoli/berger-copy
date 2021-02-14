@@ -51,7 +51,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             foreach (var item in result)
             {
-                item.MatarialGroupOrBrand = string.Join(", ", brands.Where(x => x.MatarialGroupOrBrand.ToLower() == item.MatarialGroupOrBrand.ToLower()).Select(x => x.mtart).Distinct().ToList());
+                item.MatarialGroupOrBrand = string.Join(", ", brands.Where(x => x.MatarialGroupOrBrand.ToLower() == item.MatarialGroupOrBrand.ToLower()).Select(x => x.MatarialGroupOrBrand).Distinct().ToList());
             }
 
             return result;

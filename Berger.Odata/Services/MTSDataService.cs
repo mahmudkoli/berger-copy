@@ -37,24 +37,19 @@ namespace Berger.Odata.Services
 
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
         {
-            var fromDate = model.FromDate.DateFormat();
-            var toDate = model.ToDate.DateFormat();
+            var date = $"{string.Format("{0:000}", model.Month)}{string.Format("{0:0000}", model.Year)}"; ;
 
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo);
                                 //.And()
-                                //.StartGroup()
-                                //.GreaterThanOrEqual(DataColumnDef.MTS_period, fromDate)
-                                //.And()
-                                //.LessThanOrEqual(DataColumnDef.MTS_period, toDate)
-                                //.EndGroup();
+                                //.Equal(DataColumnDef.MTS_Date, date);
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
                                 .AddProperty(DataColumnDef.MTS_CustomerName)
                                 .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.MTS_tarvol)
-                                .AddProperty(DataColumnDef.MTS_asp);
+                                .AddProperty(DataColumnDef.MTS_TargetVolume)
+                                .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
             //var topQuery = $"$top=5";
 
@@ -65,26 +60,15 @@ namespace Berger.Odata.Services
 
             var data = await GetMTSData(queryBuilder.Query);
 
-            //var result = data.Select(x =>
-            //                    new MTSResultModel()
-            //                    {
-            //                        CustomerNo = x.CustomerNo,
-            //                        CustomerName = x.CustomerName,
-            //                        MatarialGroupOrBrand = x.MatarialGroupOrBrand,
-            //                        TargetVolume = CustomConvertExtension.ObjectToDecimal(x.tarvol),
-            //                        ActualVolume = CustomConvertExtension.ObjectToDecimal(x.asp),
-            //                        DifferenceVolume = CustomConvertExtension.ObjectToDecimal(x.tarvol) - CustomConvertExtension.ObjectToDecimal(x.asp)
-            //                    }).ToList();
-
-            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
+            var result = data.Select(x =>
                                 new MTSResultModel()
                                 {
-                                    CustomerNo = x.FirstOrDefault().CustomerNo,
-                                    CustomerName = x.FirstOrDefault().CustomerName,
-                                    MatarialGroupOrBrand = x.FirstOrDefault().MatarialGroupOrBrand,
-                                    TargetVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.tarvol)),
-                                    ActualVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.asp)),
-                                    DifferenceVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.tarvol)) - x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.asp))
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    MatarialGroupOrBrand = x.MatarialGroupOrBrand,
+                                    TargetVolume = CustomConvertExtension.ObjectToDecimal(x.TargetVolume),
+                                    ActualVolume = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
+                                    DifferenceVolume = CustomConvertExtension.ObjectToDecimal(x.TargetVolume) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
                                 }).ToList();
 
             return result;
