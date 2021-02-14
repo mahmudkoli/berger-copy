@@ -122,10 +122,10 @@ namespace BergerMsfaApi.Services.Implementation
 
                 foreach (var plant in plants)
                 {
-                    plant.Chilldren = territories.Where(x => x.ParentId == plant.Id).ToList();
-                    foreach (var territory in plant.Chilldren)
+                    plant.Children = territories.Where(x => x.ParentId == plant.Id).ToList();
+                    foreach (var territory in plant.Children)
                     {
-                        territory.Chilldren = zones.Where(x => x.ParentId == territory.Id).ToList();
+                        territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
                     }
                 }
                 #endregion
