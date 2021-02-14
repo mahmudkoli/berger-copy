@@ -9,7 +9,6 @@ namespace Berger.Common.Enumerations
     public enum EnumDealerCategory
     {
         All=1,
-        Top=2,
-        Focus=3,
+        Focus=2,
     }
 }

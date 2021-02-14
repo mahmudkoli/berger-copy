@@ -40,11 +40,11 @@ namespace BergerMsfaApi.Models.Users
         public string Id { get; set; }
         public string Name { get; set; }
         public string ParentId { get; set; }
-        public IList<KeyValuePairModel> Chilldren { get; set; }
+        public IList<KeyValuePairModel> Children { get; set; }
 
         public KeyValuePairModel()
         {
-            this.Chilldren = new List<KeyValuePairModel>();
+            this.Children = new List<KeyValuePairModel>();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -83,11 +84,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpGet("GetDealerListByCategory")]
-        public async Task<IActionResult> GetDealerListByCategory([FromQuery] EnumDealerCategory? dealerCategory, [FromQuery] int? pageNo, [FromQuery] int? pageSize)
+        public async Task<IActionResult> GetDealerListByCategory([FromQuery] AppDealerSearchModel model)
         {
             try
             {
-                var result = await _commonSvc.AppGetDealerInfoListByDealerCategory(dealerCategory??EnumDealerCategory.All, pageNo??1,pageSize??int.MaxValue);
+                var result = await _commonSvc.AppGetDealerInfoListByDealerCategory(model);
                 return OkResult(result);
             }
             catch (Exception ex)

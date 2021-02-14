@@ -7,7 +7,7 @@ namespace Berger.Odata.Model
     public class DriverDataRootModel
     {
         public string BILLSL { get; set; }
-        public string WERKS { get; set; }
+        public string WERKS { get; set; } // Business Area
         public string VBELN { get; set; }
         public string fkdat { get; set; }
         public string DRIVERNAME { get; set; }

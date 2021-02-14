@@ -174,10 +174,24 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
-        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(EnumDealerCategory dealerCategory, int pageNo =  1, int pageSize = int.MaxValue)
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(AppDealerSearchModel model)
         {
+            model.PageNo = model.PageNo ?? 1;
+            model.PageSize = model.PageSize ?? int.MaxValue;
+            model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
+            model.DealerName = model.DealerName ?? string.Empty;
+            var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+            {
+                [EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
+                [EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
+                [EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
+                [EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
+                [EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
+            };
+
             //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
-            var result = (from dealer in _dealerInfoSvc.GetAll()
+            //var result = (from dealer in _dealerInfoSvc.GetAll()
+            var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
                          join custGrp in _customerGroupSvc.GetAll()
                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
                          into cust
@@ -188,10 +202,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          into focus
                          from fd in focus.DefaultIfEmpty()
 
-                         where (EnumDealerCategory.All == dealerCategory) ||
-                         (EnumDealerCategory.Top == dealerCategory) ||
-                         //(EnumDealerCategory.Focus == dealerCategory && fd.IsFocused())
-                         (EnumDealerCategory.Focus == dealerCategory && fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date)
+                         where ((EnumDealerCategory.All == model.DealerCategory) ||
+                         //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
+                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                         && (dealer.CustomerName.Contains(model.DealerName))
 
                          select new AppDealerInfoModel
                          { // result selector 
@@ -204,7 +218,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              IsSubdealer = cu.IsSubdealer(),
                              //IsFocused = fd.IsFocused(),
                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
-                         }).Skip((pageNo-1)* pageSize).Take(pageSize).ToList();
+                         }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
         }
