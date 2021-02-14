@@ -47,14 +47,14 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, object>>>()
             {
-                ["matrialCode"] = v => v.MatrialCode,
-                ["matarialDescription"] = v => v.MatarialDescription,
-                ["matarialGroupOrBrand"] = v => v.MatarialGroupOrBrand,
+                ["materialCode"] = v => v.MaterialCode,
+                ["materialDescription"] = v => v.MaterialDescription,
+                ["materialGroupOrBrand"] = v => v.MaterialGroupOrBrand,
             };
 
             var result = await _brandInfoRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.MatarialGroupOrBrand.Contains(query.GlobalSearchValue) || x.MatrialCode.Contains(query.GlobalSearchValue) || x.MatarialDescription.Contains(query.GlobalSearchValue)),
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.MaterialGroupOrBrand.Contains(query.GlobalSearchValue) || x.MaterialCode.Contains(query.GlobalSearchValue) || x.MaterialDescription.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,
                                 query.Page,
@@ -74,7 +74,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
        
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
-            var find = await _brandInfoRepository.FindAsync(f => f.MatrialCode.ToLower() == brandStatus.MaterialCode.ToLower());
+            var find = await _brandInfoRepository.FindAsync(f => f.MaterialCode.ToLower() == brandStatus.MaterialCode.ToLower());
             if (find == null) return false;
 
             switch (brandStatus.PropertyName)

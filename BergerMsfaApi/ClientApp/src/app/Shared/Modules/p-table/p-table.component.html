@@ -264,7 +264,7 @@
                                                 (click)="fnClickPTableCell($event,pTableSetting.enabledCellClick,'p-table-select-all',head.onClick,head)" />{{head.headerName}}
                                         </div>
                                         <div
-                                            *ngIf="head.type=='checkbox-switch'|| head.type=='battery-level'|| head.type=='button' || head.type=='custom-button' || head.type=='hrefLink'">
+                                            *ngIf="head.type=='checkbox-switch'|| head.type=='battery-level'|| head.type=='button' || head.type=='custom-button' || head.type=='dynamic-button' || head.type=='hrefLink'">
                                             {{head.headerName}}</div>
                                         <!-- </div> -->
                                     </th>
@@ -346,6 +346,12 @@
                                                 class="btn btn-outline-success p-table-custom-button"
                                                 (click)="fnClickPTableCell($event,pTableSetting.enabledCellClick,dispCol.internalName,dispCol.onClick,body)">
                                                 {{dispCol.btnTitle}}
+                                            </button>
+                                        </div>
+                                        <div *ngIf="dispCol.type=='dynamic-button'" style="text-align:center;">
+                                            <button class="{{(body[dispCol.className]||'')!=''?body[dispCol.className]:'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center'}}"
+                                                (click)="fnClickPTableCell($event,pTableSetting.enabledCellClick,dispCol.internalName,dispCol.onClick,body)">
+                                                <i class="pr-2 {{body[dispCol.innerBtnIcon]}}" *ngIf="(body[dispCol.innerBtnIcon]||'')!=''"> </i> {{body[dispCol.internalName]}}
                                             </button>
                                         </div>
                                         <div *ngIf="dispCol.type=='hyperlink'"><a class="p-table-hyperlink"
