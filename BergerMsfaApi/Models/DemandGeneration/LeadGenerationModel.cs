@@ -122,8 +122,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LeadGeneration, LeadGenerationModel>();
-            profile.CreateMap<LeadGenerationModel, LeadGeneration>();
+            profile.CreateMap<LeadGeneration, SaveLeadGenerationModel>();
+            profile.CreateMap<SaveLeadGenerationModel, LeadGeneration>();
         }
     }
 }

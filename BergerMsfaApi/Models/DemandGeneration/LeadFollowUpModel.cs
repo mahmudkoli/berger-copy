@@ -96,6 +96,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string Depot { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
+        public string ProjectName { get; set; }
+        public string ProjectAddress { get; set; }
         public DateTime LastVisitedDate { get; set; }
         public DateTime NextVisitDatePlan { get; set; }
         public DateTime ActualVisitDate { get; set; }

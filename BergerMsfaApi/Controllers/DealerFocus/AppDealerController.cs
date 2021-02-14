@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -72,6 +74,21 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 }
 
                 var result = await _commonSvc.AppGetDealerInfoListByUserCategory(userCategory.Trim(), userCategoryIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+
+        }
+
+        [HttpGet("GetDealerListByCategory")]
+        public async Task<IActionResult> GetDealerListByCategory([FromQuery] AppDealerSearchModel model)
+        {
+            try
+            {
+                var result = await _commonSvc.AppGetDealerInfoListByDealerCategory(model);
                 return OkResult(result);
             }
             catch (Exception ex)

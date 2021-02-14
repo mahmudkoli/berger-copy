@@ -396,7 +396,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         IsFocused = fd != null ? ((fd.Code > 0) && fd.ValidTo.Date>=DateTime.Now.Date ? true : false) : false,
                                         PlanDate = s.PlanDate.Date.ToString("yyyy-MM-dd"),
                                         IsSubdealer = custGroup.Description != null ? true : false,
-                                        PlandId=planDetail.PlanId
+                                        PlanId=planDetail.PlanId
                                     }).ToList()
             }).ToList();
 
