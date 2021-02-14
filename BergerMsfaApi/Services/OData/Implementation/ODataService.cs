@@ -47,11 +47,11 @@ namespace BergerMsfaApi.Services.OData.Implementation
         {
             var result = await _mTSDataService.GetMTSBrandsVolume(model);
             var matGroups = result.Select(y => y.MatarialGroupOrBrand).ToList();
-            var brands = (await _brandInfoRepository.FindAllAsync(x => matGroups.Contains(x.MatarialGroupOrBrand))).ToList();
+            var brands = (await _brandInfoRepository.FindAllAsync(x => matGroups.Contains(x.MaterialGroupOrBrand))).ToList();
 
             foreach (var item in result)
             {
-                item.MatarialGroupOrBrand = string.Join(", ", brands.Where(x => x.MatarialGroupOrBrand.ToLower() == item.MatarialGroupOrBrand.ToLower()).Select(x => x.mtart).Distinct().ToList());
+                item.MatarialGroupOrBrand = string.Join(", ", brands.Where(x => x.MaterialGroupOrBrand.ToLower() == item.MatarialGroupOrBrand.ToLower()).Select(x => x.MaterialGroupOrBrand).Distinct().ToList());
             }
 
             return result;

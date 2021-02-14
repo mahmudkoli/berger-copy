@@ -3,20 +3,29 @@ import { Dropdown } from '../Setup/dropdown';
 
 export class Brand {
     id: number;
-    matrialCode: string;
-    matarialDescription: string;
-    mtart: string;
-    matarialGroupOrBrand: string;
+    materialCode: string;
+    materialDescription: string;
+    materialType: string;
+    materialGroupOrBrand: string;
     packSize: string;
     division: string;
-    ersda: string;
-    laeda: string;
+    createdDate: string;
+    updatedDate: string;
     isCBInstalled: boolean;
     isMTS: boolean;
     isPremium: boolean;
+
     isCBInstalledText: string;
     isMTSText: string;
     isPremiumText: string;
+    
+    isCBInstalledBtnClass: string;
+    isMTSBtnClass: string;
+    isPremiumBtnClass: string;
+    
+    isCBInstalledBtnIcon: string;
+    isMTSBtnIcon: string;
+    isPremiumBtnIcon: string;
     
     constructor(init?: Partial<Brand>) {
         Object.assign(this, init);

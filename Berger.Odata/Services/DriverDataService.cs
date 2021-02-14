@@ -39,7 +39,7 @@ namespace Berger.Odata.Services
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.Driver_InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Driver_DRIVERNAME);
+                                .AddProperty(DataColumnDef.Driver_DriverName);
 
             //var topQuery = $"$top=5";
 

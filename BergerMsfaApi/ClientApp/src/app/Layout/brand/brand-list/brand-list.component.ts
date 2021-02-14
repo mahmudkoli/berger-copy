@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { Brand, BrandQuery } from 'src/app/Shared/Entity/Brand/brand';
+import { Brand, BrandQuery, BrandStatus } from 'src/app/Shared/Entity/Brand/brand';
 import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
 
 @Component({
@@ -66,9 +66,19 @@ export class BrandListComponent implements OnInit, OnDestroy {
 					this.brands = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
-					// this.brands.forEach(obj => {
-					// 	obj.statusText = obj.status == 0 ? 'Inactive' : 'Active';
-					// });
+					this.brands.forEach(obj => {
+						obj.isCBInstalledText = obj.isCBInstalled ? 'CB Installed' : 'CB Not Installed';
+						obj.isCBInstalledBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isCBInstalled ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isCBInstalledBtnIcon = 'fa fa-' + (obj.isCBInstalled ? 'check' : 'ban');
+
+						obj.isMTSText = obj.isMTS ? 'MTS' : 'Non MTS';
+						obj.isMTSBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isMTS ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isMTSBtnIcon = 'fa fa-' + (obj.isMTS ? 'check' : 'ban');
+
+						obj.isPremiumText = obj.isPremium ? 'Premium' : 'Non Premium';
+						obj.isPremiumBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isPremium ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isPremiumBtnIcon = 'fa fa-' + (obj.isPremium ? 'check' : 'ban');
+					});
 				},
 				(error) => {
 					console.log(error);
@@ -99,14 +109,14 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		tableName: 'Brand List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Matrial Code', width: '15%', internalName: 'matrialCode', sort: true, type: "" },
-			{ headerName: 'Matarial Description', width: '20%', internalName: 'matarialDescription', sort: true, type: "" },
-			{ headerName: 'Matarial Group/Brand', width: '15%', internalName: 'matarialGroupOrBrand', sort: true, type: "" },
-			{ headerName: 'Pack Size', width: '10%', internalName: 'packSize', sort: false, type: "" },
-			{ headerName: 'Division', width: '10%', internalName: 'division', sort: false, type: "" },
-			{ headerName: 'Is CB Installed', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "" },
-			{ headerName: 'Is MTS', width: '10%', internalName: 'isMTSText', sort: false, type: "" },
-			{ headerName: 'Is Premium', width: '10%', internalName: 'isPremiumText', sort: false, type: "" },
+			{ headerName: 'Material Code', width: '15%', internalName: 'materialCode', sort: true, type: "" },
+			{ headerName: 'Material Description', width: '30%', internalName: 'materialDescription', sort: true, type: "" },
+			{ headerName: 'Material Group/Brand', width: '10%', internalName: 'materialGroupOrBrand', sort: true, type: "" },
+			{ headerName: 'Pack Size', width: '8%', internalName: 'packSize', sort: false, type: "" },
+			{ headerName: 'Division', width: '7%', internalName: 'division', sort: false, type: "" },
+			{ headerName: 'Is CB Installed', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isCBInstalledBtnClass', innerBtnIcon: 'isCBInstalledBtnIcon' },
+			{ headerName: 'Is MTS', width: '10%', internalName: 'isMTSText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isMTSBtnClass', innerBtnIcon: 'isMTSBtnIcon' },
+			{ headerName: 'Is Premium', width: '10%', internalName: 'isPremiumText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isPremiumBtnClass', innerBtnIcon: 'isPremiumBtnIcon' },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -114,6 +124,7 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		enabledPagination: true,
 		// enabledDeleteBtn: true,
 		// enabledEditBtn: true,
+		enabledCellClick: true,
 		enabledColumnFilter: false,
 		// enabledRecordCreateBtn: true,
 		enabledDataLength: true,
@@ -130,5 +141,39 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			globalSearchValue: queryObj.searchVal
 		});
 		this.loadBrandsPage();
+	}
+
+	public cellClickCallbackFn(event) {
+		console.log("cell click: ", event);
+
+		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText") {
+			let brandStatus = new BrandStatus();
+			brandStatus.clear();
+			brandStatus.materialCode = event.record.materialCode;
+	
+			if (event.cellName == "isCBInstalledText")
+				brandStatus.propertyName = 'IsCBInstalled';
+			else if (event.cellName == "isMTSText")
+				brandStatus.propertyName = 'IsMTS';
+			else if (event.cellName == "isPremiumText")
+				brandStatus.propertyName = 'IsPremium';
+
+			this.updateBrandStatus(brandStatus);
+		}
+	}
+
+	updateBrandStatus(brandStatus) {
+		this.alertService.fnLoading(true);
+		const brandsSubscription = this.brandService.updateBrandStatus(brandStatus)
+			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+			.subscribe(
+				(res) => {
+					console.log("res.data", res.data);
+					this.loadBrandsPage();
+				},
+				(error) => {
+					console.log(error);
+				});
+		this.subscriptions.push(brandsSubscription);
 	}
 }
