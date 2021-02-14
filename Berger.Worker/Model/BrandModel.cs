@@ -4,10 +4,10 @@ namespace Berger.Worker.Model
 {
     class BrandModel
     {
-        public string MatrialCode { get; set; } // matnr
-        public string MatarialDescription { get; set; } // maktx
+        public string MaterialCode { get; set; } // matnr
+        public string MaterialDescription { get; set; } // maktx
         public string MaterialType { get; set; } // mtart 
-        public string MatarialGroupOrBrand { get; set; } // matkl
+        public string MaterialGroupOrBrand { get; set; } // matkl
         public string PackSize { get; set; } // groes
         public string Division { get; set; } // spart
         public string CreatedDate { get; set; } // ersda 
@@ -19,7 +19,7 @@ namespace Berger.Worker.Model
         [NotMapped]
         public string CompositeKey
         {
-            get => MatrialCode;
+            get => MaterialCode;
             set => compositeKey = value;
         }
     }
@@ -38,10 +38,10 @@ namespace Berger.Worker.Model
         public BrandModel ToModel()
         {
             var model = new BrandModel();
-            model.MatrialCode = this.matnr;
-            model.MatarialDescription = this.maktx;
+            model.MaterialCode = this.matnr;
+            model.MaterialDescription = this.maktx;
             model.MaterialType = this.mtart;
-            model.MatarialGroupOrBrand = this.matkl;
+            model.MaterialGroupOrBrand = this.matkl;
             model.PackSize = this.groes;
             model.Division = this.spart;
             model.CreatedDate = this.ersda;
