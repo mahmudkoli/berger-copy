@@ -11,6 +11,6 @@ namespace BergerMsfaApi.Services.OData.Interfaces
 {
     public interface IODataService
     {
-        Task<IList<MTSResultModel>> GetMTSBrandsVolumeAsync(MTSSearchModel model);
+
     }
 }

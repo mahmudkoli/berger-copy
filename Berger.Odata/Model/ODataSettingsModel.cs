@@ -14,5 +14,6 @@ namespace Berger.Odata.Model
         public string SalesUrl { get; set; }
         public string DriverUrl { get; set; }
         public string MTSUrl { get; set; }
+        public string BrandFamilyUrl { get; set; }
     }
 }

@@ -16,15 +16,15 @@ namespace BergerMsfaApi.Controllers.Odata
     public class OdataSalesDataController : BaseController
     {
         private readonly ISalesDataService _saledata;
-        private readonly IODataService _odataService;
+        private readonly IMTSDataService _mtsdataService;
 
         public OdataSalesDataController(
             ISalesDataService saledata,
-            IODataService odataService
+            IMTSDataService mtsdataService
             )
         {
             _saledata = saledata;
-            _odataService = odataService;
+            _mtsdataService = mtsdataService;
         }
 
         [HttpGet("InvoiceHistory")]
@@ -74,7 +74,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var data = await _odataService.GetMTSBrandsVolumeAsync(model);
+                var data = await _mtsdataService.GetMTSBrandsVolume(model);
                 return OkResult(data);
             }
             catch (Exception ex)

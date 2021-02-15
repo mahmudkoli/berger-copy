@@ -19,12 +19,14 @@ namespace Berger.Odata.Services
         private readonly IHttpClientService _httpClientService;
         private readonly ODataSettingsModel _appSettings;
         private readonly IDriverDataService _driverDataService;
+        private readonly IBrandFamilyDataService _brandFamilyDataService;
 
-        public SalesDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings, IDriverDataService driverDataService)
+        public SalesDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings, IDriverDataService driverDataService, IBrandFamilyDataService brandFamilyDataService)
         {
             _httpClientService = httpClientService;
             _appSettings = appSettings.Value;
             _driverDataService = driverDataService;
+            _brandFamilyDataService = brandFamilyDataService;
         }
 
         private async Task<IList<SalesDataModel>> GetSalesData(string query)
@@ -127,6 +129,7 @@ namespace Berger.Odata.Services
                     if (driverData != null)
                     {
                         item.DriverName = driverData.DriverName;
+                        item.DriverMobileNo = driverData.DriverMobileNo;
                     }
                 }
             }
@@ -314,6 +317,32 @@ namespace Berger.Odata.Services
                                     decimal.Zero;
                 result.Add(res);
             }
+
+            #region get brand data
+            if (result.Any())
+            {
+                var allMaterialBrand = result.Select(x => x.MatarialGroupOrBrand).Distinct();
+
+                var brandFamilyFilterQueryBuilder = new FilterQueryOptionBuilder();
+                brandFamilyFilterQueryBuilder.Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrand, allMaterialBrand.FirstOrDefault());
+
+                foreach (var matBrand in allMaterialBrand.Skip(1))
+                {
+                    brandFamilyFilterQueryBuilder.Or().Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrand, matBrand);
+                }
+
+                var allBrandFamilyData = await _brandFamilyDataService.GetBrandFamilyData(brandFamilyFilterQueryBuilder);
+
+                foreach (var item in result)
+                {
+                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand);
+                    if (brandFamilyData != null)
+                    {
+                        item.MatarialGroupOrBrand = brandFamilyData.MatarialGroupOrBrandName;
+                    }
+                }
+            }
+            #endregion
 
             return result;
         }

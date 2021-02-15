@@ -11,6 +11,7 @@ namespace Berger.Odata.Model
         public string VBELN { get; set; }
         public string fkdat { get; set; }
         public string DRIVERNAME { get; set; }
+        public string TELF1 { get; set; }
         public string VEHICLE { get; set; }
 
         public DriverDataModel ToModel()
@@ -21,6 +22,7 @@ namespace Berger.Odata.Model
             model.InvoiceNoOrBillNo = this.VBELN;
             model.Date = this.fkdat;
             model.DriverName = this.DRIVERNAME;
+            model.DriverMobileNo = this.TELF1;
             model.Vehicle = this.VEHICLE;
             return model;
         }

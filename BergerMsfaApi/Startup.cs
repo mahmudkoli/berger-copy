@@ -81,6 +81,7 @@ namespace BergerMsfaApi
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
             services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IDriverDataService, DriverDataService>();
+            services.AddScoped<IBrandFamilyDataService, BrandFamilyDataService>();
             services.AddScoped<IMTSDataService, MTSDataService>();
             services.AddScoped<IHttpClientService, HttpClientService>();
 

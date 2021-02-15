@@ -70,6 +70,7 @@ namespace Berger.Odata.Common
         public static string Driver_InvoiceNoOrBillNo = "VBELN";
         public static string Driver_Date = "fkdat";
         public static string Driver_DriverName = "DRIVERNAME";
+        public static string Driver_DriverMobileNo = "TELF1";
         public static string Driver_Vehicle = "VEHICLE";
 
         // MTS Data
@@ -91,5 +92,10 @@ namespace Berger.Odata.Common
         public static string MTS_DistributionChannel = "vtweg";
         public static string MTS_Division = "spart";
         public static string MTS_MatarialGroupOrBrand = "matkl";
+
+        // Brand Family Data
+        public static string BrandFamily_MatarialGroupOrBrandFamily = "MATKL_MTS";
+        public static string BrandFamily_MatarialGroupOrBrand = "MATKL";
+        public static string BrandFamily_MatarialGroupOrBrandName = "WGBEZ";
     }
 }

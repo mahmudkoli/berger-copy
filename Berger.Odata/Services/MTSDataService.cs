@@ -16,11 +16,13 @@ namespace Berger.Odata.Services
     public class MTSDataService : IMTSDataService
     {
         private readonly IHttpClientService _httpClientService;
+        private readonly IBrandFamilyDataService _brandFamilyDataService;
         private readonly ODataSettingsModel _appSettings;
 
-        public MTSDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings)
+        public MTSDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings, IBrandFamilyDataService brandFamilyDataService)
         {
             _httpClientService = httpClientService;
+            _brandFamilyDataService = brandFamilyDataService;
             _appSettings = appSettings.Value;
         }
 
@@ -37,12 +39,12 @@ namespace Berger.Odata.Services
 
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
         {
-            var date = $"{string.Format("{0:000}", model.Month)}{string.Format("{0:0000}", model.Year)}"; ;
+            var date = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
 
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo);
-                                //.And()
-                                //.Equal(DataColumnDef.MTS_Date, date);
+            filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo)
+                                .And()
+                                .Equal(DataColumnDef.MTS_Date, date);
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
@@ -70,6 +72,33 @@ namespace Berger.Odata.Services
                                     ActualVolume = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
                                     DifferenceVolume = CustomConvertExtension.ObjectToDecimal(x.TargetVolume) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
                                 }).ToList();
+
+            #region get brand data
+            if (result.Any())
+            {
+                var allMaterialBrand = result.Select(x => x.MatarialGroupOrBrand).Distinct();
+
+                var brandFamilyFilterQueryBuilder = new FilterQueryOptionBuilder();
+                brandFamilyFilterQueryBuilder.Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, allMaterialBrand.FirstOrDefault());
+
+                foreach (var matBrand in allMaterialBrand.Skip(1))
+                {
+                    brandFamilyFilterQueryBuilder.Or().Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, matBrand);
+                }
+
+                var allBrandFamilyData = (await _brandFamilyDataService.GetBrandFamilyData(brandFamilyFilterQueryBuilder))
+                                            .GroupBy(x => x.MatarialGroupOrBrandFamily).ToList();
+
+                foreach (var item in result)
+                {
+                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.Key == item.MatarialGroupOrBrand);
+                    if (brandFamilyData != null)
+                    {
+                        item.MatarialGroupOrBrand = string.Join(", ", brandFamilyData.Select(x => x.MatarialGroupOrBrandName));
+                    }
+                }
+            }
+            #endregion
 
             return result;
         }
