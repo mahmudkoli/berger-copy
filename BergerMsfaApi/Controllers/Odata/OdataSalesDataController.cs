@@ -82,5 +82,33 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("PremiumBrandPerformance")]
+        public async Task<IActionResult> GetPremiumBrandPerformance([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _mtsdataService.GetPremiumBrandPerformance(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("ValueTarget")]
+        public async Task<IActionResult> GetValueTarget([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _mtsdataService.GetValueTarget(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

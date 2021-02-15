@@ -172,15 +172,15 @@ namespace Berger.Odata.Services
 
         public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
         {
-            //var currendate = new DateTime(2011, 09, 21);
-            var currendate = model.Date;
+            //var currentdate = new DateTime(2011, 09, 21);
+            var currentdate = model.Date;
             var previousMonthCount = 3;
 
-            var cyfd = currendate.GetCYFD().DateFormat();
-            var cylcd = currendate.GetCYLCD().DateFormat();
+            var cyfd = currentdate.GetCYFD().DateFormat();
+            var cylcd = currentdate.GetCYLCD().DateFormat();
 
-            var lyfd = currendate.GetLYFD().DateFormat();
-            var lylcd = currendate.GetLYLCD().DateFormat();
+            var lyfd = currentdate.GetLYFD().DateFormat();
+            var lylcd = currentdate.GetLYLCD().DateFormat();
 
             var dataLy = new List<SalesDataModel>();
             var dataCy = new List<SalesDataModel>();
@@ -246,9 +246,9 @@ namespace Berger.Odata.Services
                                     .Equal(DataColumnDef.Division, model.Division)
                                     .And()
                                     .StartGroup()
-                                    .GreaterThanOrEqual(DataColumnDef.Date, currendate.GetMonthDate(number).GetCYFD().DateFormat())
+                                    .GreaterThanOrEqual(DataColumnDef.Date, currentdate.GetMonthDate(number).GetCYFD().DateFormat())
                                     .And()
-                                    .LessThanOrEqual(DataColumnDef.Date, currendate.GetMonthDate(number).GetCYLD().DateFormat())
+                                    .LessThanOrEqual(DataColumnDef.Date, currentdate.GetMonthDate(number).GetCYLD().DateFormat())
                                     .EndGroup();
 
                 var queryBuilder = new QueryOptionBuilder();
@@ -256,7 +256,7 @@ namespace Berger.Odata.Services
                             //.AppendQuery(topQuery)
                             .AppendQuery(selectQueryBuilder.Select);
 
-                var monthName = currendate.GetMonthName(number);
+                var monthName = currentdate.GetMonthName(number);
                 var data = await GetSalesData(queryBuilder.Query);
 
                 previousMonthDict.Add(monthName, data);
@@ -297,7 +297,7 @@ namespace Berger.Odata.Services
                 for (var i = 1; i <= previousMonthCount; i++)
                 {
                     int number = i * -1;
-                    var monthName = currendate.GetMonthName(number);
+                    var monthName = currentdate.GetMonthName(number);
                     var dictData = previousMonthDict[monthName].ToList();
                     var mtdAmt = decimal.Zero;
 

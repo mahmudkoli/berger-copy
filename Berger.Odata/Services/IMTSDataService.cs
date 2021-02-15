@@ -10,5 +10,7 @@ namespace Berger.Odata.Services
     public interface IMTSDataService
     {
         Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model);
+        Task<IList<PerformanceResultModel>> GetPremiumBrandPerformance(MTSSearchModel model);
+        Task<IList<ValueTargetResultModel>> GetValueTarget(MTSSearchModel model);
     }
 }
