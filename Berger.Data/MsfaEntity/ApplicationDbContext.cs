@@ -177,7 +177,7 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         #region Tinting
-        public DbSet<TintiningMachine> TintiningMachines { get; set; }
+        public DbSet<TintingMachine> TintingMachines { get; set; }
         #endregion
 
         #region ELearning
