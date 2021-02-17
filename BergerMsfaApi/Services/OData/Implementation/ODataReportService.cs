@@ -20,7 +20,7 @@ using Berger.Odata.Model;
 
 namespace BergerMsfaApi.Services.OData.Implementation
 {
-    public class ODataService : IODataService
+    public class ODataReportService : IODataReportService
     {
         private readonly IRepository<BrandInfo> _brandInfoRepository;
         private readonly IRepository<UserInfo> _userInfoRepository;
@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly IMTSDataService _mTSDataService;
         private readonly IMapper _mapper;
 
-        public ODataService(
+        public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
             IRepository<UserInfo> userInfoRepository,
             IRepository<DealerInfo> dealerInfoRepository,

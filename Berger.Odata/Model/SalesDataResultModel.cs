@@ -50,4 +50,21 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class BrandOrDivisionWiseMTDResultModel
+    {
+        public string MatarialGroupOrBrandOrDivision { get; internal set; }
+        public decimal LYSM { get; internal set; }
+        public decimal LYMTD { get; internal set; }
+        public decimal LYYTD { get; internal set; }
+        public decimal CYMTD { get; internal set; }
+        public decimal CYYTD { get; internal set; }
+        public decimal GrowthMTD { get; internal set; }
+        public decimal GrowthYTD { get; internal set; }
+
+        public BrandOrDivisionWiseMTDResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

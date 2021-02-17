@@ -15,36 +15,18 @@ namespace Berger.Odata.Services
 {
     public class MTSDataService : IMTSDataService
     {
-        private readonly IHttpClientService _httpClientService;
-        private readonly IBrandFamilyDataService _brandFamilyDataService;
-        private readonly ODataSettingsModel _appSettings;
+        private readonly IODataService _odataService;
 
-        public MTSDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings, IBrandFamilyDataService brandFamilyDataService)
+        public MTSDataService(
+            IODataService odataService
+            )
         {
-            _httpClientService = httpClientService;
-            _brandFamilyDataService = brandFamilyDataService;
-            _appSettings = appSettings.Value;
-        }
-
-        private async Task<IList<MTSDataModel>> GetMTSData(string query)
-        {
-            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.MTSUrl}{query}";
-
-            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
-            var parsedData = Parser<MTSDataRootModel>.ParseJson(responseBody);
-            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
-
-            return data;
+            _odataService = odataService;
         }
 
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
         {
             var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
-
-            var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo)
-                                .And()
-                                .Equal(DataColumnDef.MTS_Date, currentdate);
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
@@ -53,14 +35,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_TargetVolume)
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            //var topQuery = $"$top=5";
-
-            var queryBuilder = new QueryOptionBuilder();
-            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
-                        //.AppendQuery(topQuery)
-                        .AppendQuery(selectQueryBuilder.Select);
-
-            var data = await GetMTSData(queryBuilder.Query);
+            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
 
             var result = data.Select(x =>
                                 new MTSResultModel()
@@ -76,17 +51,9 @@ namespace Berger.Odata.Services
             #region get brand data
             if (result.Any())
             {
-                var allMaterialBrand = result.Select(x => x.MatarialGroupOrBrand).Distinct();
+                var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
 
-                var brandFamilyFilterQueryBuilder = new FilterQueryOptionBuilder();
-                brandFamilyFilterQueryBuilder.Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, allMaterialBrand.FirstOrDefault());
-
-                foreach (var matBrand in allMaterialBrand.Skip(1))
-                {
-                    brandFamilyFilterQueryBuilder.Or().Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, matBrand);
-                }
-
-                var allBrandFamilyData = (await _brandFamilyDataService.GetBrandFamilyData(brandFamilyFilterQueryBuilder))
+                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands, true))
                                             .GroupBy(x => x.MatarialGroupOrBrandFamily).ToList();
 
                 foreach (var item in result)
@@ -106,8 +73,8 @@ namespace Berger.Odata.Services
         public async Task<IList<PerformanceResultModel>> GetPremiumBrandPerformance(MTSSearchModel model)
         {
             var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
-            var previousDate = (new DateTime(model.Year, model.Month, 01)).GetLYFD();
-            var lysmDate =  $"{string.Format("{0:0000}", previousDate.Year)}.{string.Format("{0:00}", previousDate.Month)}";
+            var lyDate = (new DateTime(model.Year, model.Month, 01)).GetLYFD();
+            var lysmDate =  $"{string.Format("{0:0000}", lyDate.Year)}.{string.Format("{0:00}", lyDate.Month)}";
 
             var dataLy = new List<MTSDataModel>();
             var dataCy = new List<MTSDataModel>();
@@ -119,36 +86,10 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_TargetVolume)
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            //var topQuery = $"$top=5";
+            dataLy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, lysmDate)).ToList();
 
-            #region Last Year Volume
-            var filterLyQueryBuilder = new FilterQueryOptionBuilder();
-            filterLyQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo)
-                                .And()
-                                .Equal(DataColumnDef.MTS_Date, lysmDate);
-
-            var queryLyBuilder = new QueryOptionBuilder();
-            queryLyBuilder.AppendQuery(filterLyQueryBuilder.Filter)
-                        //.AppendQuery(topQuery)
-                        .AppendQuery(selectQueryBuilder.Select);
-
-            dataLy = (await GetMTSData(queryLyBuilder.Query)).ToList();
-            #endregion
-
-            #region Current Year Volume
-            var filterCyQueryBuilder = new FilterQueryOptionBuilder();
-            filterCyQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo)
-                                .And()
-                                .Equal(DataColumnDef.MTS_Date, currentdate);
-
-            var queryCyBuilder = new QueryOptionBuilder();
-            queryCyBuilder.AppendQuery(filterCyQueryBuilder.Filter)
-                        //.AppendQuery(topQuery)
-                        .AppendQuery(selectQueryBuilder.Select);
-
-            dataCy = (await GetMTSData(queryCyBuilder.Query)).ToList();
-            #endregion
-
+            dataCy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
+            
             Func<MTSDataModel, decimal> actVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice);
             Func<MTSDataModel, decimal> tarVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume);
             var result = new List<PerformanceResultModel>();
@@ -198,17 +139,9 @@ namespace Berger.Odata.Services
             #region get brand data
             if (result.Any())
             {
-                var allMaterialBrand = result.Select(x => x.MatarialGroupOrBrand).Distinct();
+                var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
 
-                var brandFamilyFilterQueryBuilder = new FilterQueryOptionBuilder();
-                brandFamilyFilterQueryBuilder.Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrand, allMaterialBrand.FirstOrDefault());
-
-                foreach (var matBrand in allMaterialBrand.Skip(1))
-                {
-                    brandFamilyFilterQueryBuilder.Or().Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrand, matBrand);
-                }
-
-                var allBrandFamilyData = (await _brandFamilyDataService.GetBrandFamilyData(brandFamilyFilterQueryBuilder)).ToList();
+                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands)).ToList();
 
                 foreach (var item in result)
                 {
@@ -224,14 +157,9 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ValueTargetResultModel>> GetValueTarget(MTSSearchModel model)
+        public async Task<IList<ValueTargetResultModel>> GetMonthlyValueTarget(MTSSearchModel model)
         {
             var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
-
-            var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo)
-                                .And()
-                                .Equal(DataColumnDef.MTS_Date, currentdate);
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
@@ -240,14 +168,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_TargetValue)
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            //var topQuery = $"$top=5";
-
-            var queryBuilder = new QueryOptionBuilder();
-            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
-                        //.AppendQuery(topQuery)
-                        .AppendQuery(selectQueryBuilder.Select);
-
-            var data = await GetMTSData(queryBuilder.Query);
+            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
 
             var result = data.Select(x =>
                                 new ValueTargetResultModel()
@@ -259,32 +180,6 @@ namespace Berger.Odata.Services
                                     ActualValue = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
                                     DifferenceValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
                                 }).ToList();
-
-            #region get brand data
-            //if (result.Any())
-            //{
-            //    var allMaterialBrand = result.Select(x => x.MatarialGroupOrBrand).Distinct();
-
-            //    var brandFamilyFilterQueryBuilder = new FilterQueryOptionBuilder();
-            //    brandFamilyFilterQueryBuilder.Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, allMaterialBrand.FirstOrDefault());
-
-            //    foreach (var matBrand in allMaterialBrand.Skip(1))
-            //    {
-            //        brandFamilyFilterQueryBuilder.Or().Equal(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily, matBrand);
-            //    }
-
-            //    var allBrandFamilyData = (await _brandFamilyDataService.GetBrandFamilyData(brandFamilyFilterQueryBuilder)).ToList();
-
-            //    foreach (var item in result)
-            //    {
-            //        var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand);
-            //        if (brandFamilyData != null)
-            //        {
-            //            item.MatarialGroupOrBrand = brandFamilyData.MatarialGroupOrBrandName;
-            //        }
-            //    }
-            //}
-            #endregion
 
             var returnResult = new List<ValueTargetResultModel>();
             if(result.Any())

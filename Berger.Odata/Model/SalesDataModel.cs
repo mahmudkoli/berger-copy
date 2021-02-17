@@ -9,6 +9,7 @@ namespace Berger.Odata.Model
         public string CompanyCode { get; internal set; }
         public string Division { get; internal set; }
         public string MatarialGroupOrBrand { get; internal set; }
+        public string MatarialGroupOrBrandName { get; internal set; }
         public string MatrialCode { get; internal set; }
         public string UnitOfMeasurement { get; internal set; }
         public string SalesOrgranization { get; internal set; }

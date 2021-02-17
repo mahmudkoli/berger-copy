@@ -11,6 +11,6 @@ namespace Berger.Odata.Services
     {
         Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model);
         Task<IList<PerformanceResultModel>> GetPremiumBrandPerformance(MTSSearchModel model);
-        Task<IList<ValueTargetResultModel>> GetValueTarget(MTSSearchModel model);
+        Task<IList<ValueTargetResultModel>> GetMonthlyValueTarget(MTSSearchModel model);
     }
 }

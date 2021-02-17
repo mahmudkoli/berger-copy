@@ -7,6 +7,7 @@ namespace Berger.Odata.Model
     public class BrandFamilyDataRootModel
     {
         public string MATKL_MTS { get; set; }
+        public string WGBEZMTS { get; set; }
         public string MATKL { get; set; }
         public string WGBEZ { get; set; }
 
@@ -14,6 +15,7 @@ namespace Berger.Odata.Model
         {
             var model = new BrandFamilyDataModel();
             model.MatarialGroupOrBrandFamily = this.MATKL_MTS;
+            model.MatarialGroupOrBrandFamilyName = this.WGBEZMTS;
             model.MatarialGroupOrBrand = this.MATKL;
             model.MatarialGroupOrBrandName = this.WGBEZ;
             return model;

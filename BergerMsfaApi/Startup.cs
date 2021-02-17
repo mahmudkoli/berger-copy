@@ -79,11 +79,10 @@ namespace BergerMsfaApi
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
-            services.AddScoped<ISalesDataService, SalesDataService>();
-            services.AddScoped<IDriverDataService, DriverDataService>();
-            services.AddScoped<IBrandFamilyDataService, BrandFamilyDataService>();
-            services.AddScoped<IMTSDataService, MTSDataService>();
             services.AddScoped<IHttpClientService, HttpClientService>();
+            services.AddScoped<IODataService, ODataService>();
+            services.AddScoped<ISalesDataService, SalesDataService>();
+            services.AddScoped<IMTSDataService, MTSDataService>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Repository"))

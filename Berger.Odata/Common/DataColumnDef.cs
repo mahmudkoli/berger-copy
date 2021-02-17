@@ -10,6 +10,7 @@ namespace Berger.Odata.Common
         public static string CompanyCode = "bukrs";
         public static string Division = "spart";
         public static string MatarialGroupOrBrand = "matkl";
+        public static string MatarialGroupOrBrandName = "wgbez";
         public static string MatrialCode = "matnr";
         public static string UnitOfMeasurement = "gk";
         public static string SalesOrgranization = "vkorg";
@@ -95,6 +96,7 @@ namespace Berger.Odata.Common
 
         // Brand Family Data
         public static string BrandFamily_MatarialGroupOrBrandFamily = "MATKL_MTS";
+        public static string BrandFamily_MatarialGroupOrBrandFamilyName = "WGBEZMTS";
         public static string BrandFamily_MatarialGroupOrBrand = "MATKL";
         public static string BrandFamily_MatarialGroupOrBrandName = "WGBEZ";
     }
