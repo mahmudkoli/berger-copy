@@ -55,30 +55,30 @@ export class AppInterceptorService implements HttpInterceptor {
             this.shiftDates(request.body);
         }
         
-        if (request.method == "DELETE") {
-            let activityPermission = this.activityPermissionService.getActivityPermissionFromSession();
-            let hasPermission = false;
-            const reqUrl = window.location.href; //request.url
-            console.log(activityPermission);
-            if (activityPermission && activityPermission.length > 0) {
-                const filterActPer = activityPermission.filter(x => reqUrl.indexOf(x.url) > -1);
-                console.log(filterActPer);
-                if (filterActPer && filterActPer.length > 0) {
-                    if (request.method == "DELETE" && filterActPer[0].canDelete) {
-                        hasPermission = true;
-                    }
-                }
-            }
+        // if (request.method == "DELETE") {
+        //     let activityPermission = this.activityPermissionService.getActivityPermissionFromSession();
+        //     let hasPermission = false;
+        //     const reqUrl = window.location.href; //request.url
+        //     console.log(activityPermission);
+        //     if (activityPermission && activityPermission.length > 0) {
+        //         const filterActPer = activityPermission.filter(x => reqUrl.indexOf(x.url) > -1);
+        //         console.log(filterActPer);
+        //         if (filterActPer && filterActPer.length > 0) {
+        //             if (request.method == "DELETE" && filterActPer[0].canDelete) {
+        //                 hasPermission = true;
+        //             }
+        //         }
+        //     }
 
-            if (!hasPermission) {
-                let errorMsg = "You don't have permission to delete.";
-                this.alertService.titleTosterDanger(errorMsg);
-                setTimeout(() => {
-                    this.alertService.fnLoading(false);
-                }, 1000);
-                return; //next.handle(request);
-            }
-        }
+        //     if (!hasPermission) {
+        //         let errorMsg = "You don't have permission to delete.";
+        //         this.alertService.titleTosterDanger(errorMsg);
+        //         setTimeout(() => {
+        //             this.alertService.fnLoading(false);
+        //         }, 1000);
+        //         return; //next.handle(request);
+        //     }
+        // }
 
         // console.log("token: ", token);
         const headers = new HttpHeaders({
