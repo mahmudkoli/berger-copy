@@ -20,7 +20,7 @@ using Berger.Odata.Model;
 
 namespace BergerMsfaApi.Services.OData.Implementation
 {
-    public class ODataService : IODataService
+    public class ODataReportService : IODataReportService
     {
         private readonly IRepository<BrandInfo> _brandInfoRepository;
         private readonly IRepository<UserInfo> _userInfoRepository;
@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly IMTSDataService _mTSDataService;
         private readonly IMapper _mapper;
 
-        public ODataService(
+        public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
             IRepository<UserInfo> userInfoRepository,
             IRepository<DealerInfo> dealerInfoRepository,
@@ -41,20 +41,6 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _dealerInfoRepository = dealerInfoRepository;
             _mTSDataService = mTSDataService;
             _mapper = mapper;
-        }
-
-        public async Task<IList<MTSResultModel>> GetMTSBrandsVolumeAsync(MTSSearchModel model)
-        {
-            var result = await _mTSDataService.GetMTSBrandsVolume(model);
-            var matGroups = result.Select(y => y.MatarialGroupOrBrand).ToList();
-            var brands = (await _brandInfoRepository.FindAllAsync(x => matGroups.Contains(x.MaterialGroupOrBrand))).ToList();
-
-            foreach (var item in result)
-            {
-                item.MatarialGroupOrBrand = string.Join(", ", brands.Where(x => x.MaterialGroupOrBrand.ToLower() == item.MatarialGroupOrBrand.ToLower()).Select(x => x.MaterialGroupOrBrand).Distinct().ToList());
-            }
-
-            return result;
         }
     }
 }

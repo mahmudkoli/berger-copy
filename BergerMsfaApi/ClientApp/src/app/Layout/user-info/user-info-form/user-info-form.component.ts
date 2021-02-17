@@ -119,9 +119,10 @@ export class UserInfoFormComponent implements OnInit {
         const department= data.department;
         const title= data.title;
         const managerName= data.managerName;
-        const managerId= data.managerId;
+        let managerId= data.managerId;
         let fullName = data.firstName + data.middleName + data.lastName;
         fullName = fullName.replace('  ', ' ');
+        managerId = managerId.toString().indexOf('E') > -1 ? managerId.replace('E', '') : managerId;
 
         this.userForm.controls.userName.setValue(userName);
         this.userForm.controls.fullName.setValue(fullName);
