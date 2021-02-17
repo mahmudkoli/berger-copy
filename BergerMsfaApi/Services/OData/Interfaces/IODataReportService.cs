@@ -9,8 +9,8 @@ using Berger.Odata.Model;
 
 namespace BergerMsfaApi.Services.OData.Interfaces
 {
-    public interface IODataService
+    public interface IODataReportService
     {
-        Task<IList<MTSResultModel>> GetMTSBrandsVolumeAsync(MTSSearchModel model);
+
     }
 }

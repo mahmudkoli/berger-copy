@@ -11,10 +11,18 @@ const routes: Routes = [
         path: '',
         children: [
             { path: '', redirectTo: 'role-list' },
-            { path: 'role-list', component: RoleListComponent, canActivate: [PermissionGuard], data: { extraParameter: 'role', permissionType: 'view', permissionGroup: 'role/role-list' } },
-            { path: 'role-add', component: RoleAddComponent, canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'role/role-list' } },
-            { path: "role-add/:id", component: RoleAddComponent, canActivate: [PermissionGuard], data: { permissionType: 'update', permissionGroup: 'role/role-list' } },
-            { path: 'role-link-with-user', component: RoleLinkWithUserComponent, canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'role/role-list' } }
+            { path: 'role-list', component: RoleListComponent, 
+            // canActivate: [PermissionGuard], data: { extraParameter: 'role', permissionType: 'view', permissionGroup: 'role/role-list' } 
+        },
+            { path: 'role-add', component: RoleAddComponent, 
+            // canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'role/role-list' } 
+        },
+            { path: "role-add/:id", component: RoleAddComponent, 
+            // canActivate: [PermissionGuard], data: { permissionType: 'update', permissionGroup: 'role/role-list' } 
+        },
+            { path: 'role-link-with-user', component: RoleLinkWithUserComponent, 
+            // canActivate: [PermissionGuard], data: { permissionType: 'create', permissionGroup: 'role/role-list' } 
+        }
         ]
     }
 ];

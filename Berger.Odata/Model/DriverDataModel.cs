@@ -11,6 +11,7 @@ namespace Berger.Odata.Model
         public string InvoiceNoOrBillNo { get; internal set; }
         public string Date { get; internal set; }
         public string DriverName { get; internal set; }
+        public string DriverMobileNo { get; internal set; }
         public string Vehicle { get; internal set; }
     }
 }

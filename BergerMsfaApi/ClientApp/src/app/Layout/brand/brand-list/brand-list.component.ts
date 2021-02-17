@@ -67,7 +67,7 @@ export class BrandListComponent implements OnInit, OnDestroy {
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
 					this.brands.forEach(obj => {
-						obj.isCBInstalledText = obj.isCBInstalled ? 'CB Installed' : 'CB Not Installed';
+						obj.isCBInstalledText = obj.isCBInstalled ? 'CB' : 'Non CB';
 						obj.isCBInstalledBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isCBInstalled ? 'primary' : 'warning') + ' d-flex align-items-center';
 						obj.isCBInstalledBtnIcon = 'fa fa-' + (obj.isCBInstalled ? 'check' : 'ban');
 
@@ -114,7 +114,7 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Material Group/Brand', width: '10%', internalName: 'materialGroupOrBrand', sort: true, type: "" },
 			{ headerName: 'Pack Size', width: '8%', internalName: 'packSize', sort: false, type: "" },
 			{ headerName: 'Division', width: '7%', internalName: 'division', sort: false, type: "" },
-			{ headerName: 'Is CB Installed', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isCBInstalledBtnClass', innerBtnIcon: 'isCBInstalledBtnIcon' },
+			{ headerName: 'Is CB', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isCBInstalledBtnClass', innerBtnIcon: 'isCBInstalledBtnIcon' },
 			{ headerName: 'Is MTS', width: '10%', internalName: 'isMTSText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isMTSBtnClass', innerBtnIcon: 'isMTSBtnIcon' },
 			{ headerName: 'Is Premium', width: '10%', internalName: 'isPremiumText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isPremiumBtnClass', innerBtnIcon: 'isPremiumBtnIcon' },
 		],

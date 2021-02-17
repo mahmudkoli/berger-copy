@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210217075109_TintingUpdated2")]
+    partial class TintingUpdated2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2685,7 +2687,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserInfoId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("WFStatus")
@@ -2698,7 +2700,7 @@ namespace Berger.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("UserInfoId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TintingMachines");
                 });
@@ -3300,9 +3302,9 @@ namespace Berger.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "UserInfo")
+                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
                         .WithMany()
-                        .HasForeignKey("UserInfoId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

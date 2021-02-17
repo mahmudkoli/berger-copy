@@ -23,35 +23,45 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
+                <th pSortableColumn="UserFullName">User Full Name<p-sortIcon field="UserFullName"></p-sortIcon></th>
                 <th pSortableColumn="Territory">Territory<p-sortIcon field="Territory"></p-sortIcon></th>
-                <th pSortableColumn="Company">Company<p-sortIcon field="Company"></p-sortIcon></th>
+                <th pSortableColumn="CompanyName">Company Name<p-sortIcon field="CompanyName"></p-sortIcon></th>
+                <th pSortableColumn="NoOfActiveMachine"> Active Machine No <p-sortIcon field="NoOfActiveMachine"></p-sortIcon></th>
+                <th pSortableColumn="NoOfInactiveMachine">InactiveMachine No <p-sortIcon field="NoOfInactiveMachine"></p-sortIcon></th>
                 <th pSortableColumn="No">No <p-sortIcon field="No"></p-sortIcon></th>
-                <th pSortableColumn="Cont">Cont(%) <p-sortIcon field="Cont"></p-sortIcon></th>
+                <th pSortableColumn="Contribution">Cont(%) <p-sortIcon field="Contribution"></p-sortIcon></th>
        
     
-                <th>
+                <!-- <th>
     
-                </th>
+                </th> -->
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-tinting>
             <tr>
-                <td>{{tinting.territoryCd}}</td>
+                <td>{{tinting.userFullName}}</td>
+                <td>{{tinting.territory}}</td>
                 <td>{{tinting.companyName }}</td>
+                <td>
+                    {{tinting.noOfActiveMachine}}
+                </td>
+                <td>
+                    {{tinting.noOfInactiveMachine}}
+                </td>
                 <td>
                     {{tinting.no}}
                 </td>
                 <td>
-                    {{tinting.cont}}
+                    {{tinting.contribution}}
                 </td>
                 
-                <td>
+                <!-- <td> -->
                     <!--<i class="fa fa-edit mr-2" (click)="edit(tinting.id)"> </i>
                     <i class="fa fa-trash" (click)="delete(tinting.id)"> </i>-->
                     <!--<button class="mb-2 ml-2 mr-2 border-0 btn-transition btn btn-success" (click)="detail(scheme)">
                         View Detail
                     </button>-->
-                </td>
+                <!-- </td> -->
             </tr>
         </ng-template>
         <ng-template pTemplate="summary">

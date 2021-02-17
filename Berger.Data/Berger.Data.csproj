@@ -132,6 +132,10 @@
     <Compile Remove="Migrations\20210103090256_addCollectionDate.Designer.cs" />
     <Compile Remove="Migrations\20210103090419_addCollectionDateNullable.cs" />
     <Compile Remove="Migrations\20210103090419_addCollectionDateNullable.Designer.cs" />
+    <Compile Remove="Migrations\20210217074234_TintingUpdated2.cs" />
+    <Compile Remove="Migrations\20210217074234_TintingUpdated2.Designer.cs" />
+    <Compile Remove="Migrations\20210217074602_TintingUpdated2.cs" />
+    <Compile Remove="Migrations\20210217074602_TintingUpdated2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

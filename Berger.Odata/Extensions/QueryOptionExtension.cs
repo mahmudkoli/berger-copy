@@ -120,17 +120,19 @@ namespace Berger.Odata.Extensions
 
     public class QueryOptionBuilder
     {
-        public string Query { get { return $"{this._query}"; } }
+        public string Query { get { return $"{this._query}{string.Join("&", this._queries)}"; } }
         private string _query;
+        private IList<string> _queries;
 
         public QueryOptionBuilder()
         {
-            this._query = $"";
+            this._queries = new List<string>();
+            this._query = $"&";
         }
 
         public QueryOptionBuilder AppendQuery(string query)
         {
-            this._query += $"&{query}";
+            this._queries.Add(query);
             return this;
         }
     }

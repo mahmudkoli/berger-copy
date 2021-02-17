@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.Tintining.Interfaces;
+using BergerMsfaApi.Services.Tinting.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace BergerMsfaApi.Controllers.Tintining
+namespace BergerMsfaApi.Controllers.Tinting
 {
     [ApiController]
     [ApiVersion("1")]
@@ -25,17 +25,17 @@ namespace BergerMsfaApi.Controllers.Tintining
             _tintiningService = tintiningService;
             _logger = logger;
         }
+
         [HttpGet("GetTintingMachinePagingList")]
-        public async Task<IActionResult> GetTintingMachinePagingList(int index,int pageSize,string search)
+        public async Task<IActionResult> GetTintingMachinePagingList(int index, int pageSize, string search)
         {
             try
             {
-                var result = await _tintiningService.GetTintingMachinePagingList(index,pageSize, search);
+                var result = await _tintiningService.GetTintingMachinePagingList(index, pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
 
