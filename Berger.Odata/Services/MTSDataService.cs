@@ -27,6 +27,7 @@ namespace Berger.Odata.Services
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
         {
             var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
+            var mtsBrandCodes = new List<string>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
@@ -35,7 +36,9 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_TargetVolume)
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
+            //TODO: get MTS brand codes and add to list
+
+            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate, mtsBrandCodes)).ToList();
 
             var result = data.Select(x =>
                                 new MTSResultModel()
@@ -75,6 +78,7 @@ namespace Berger.Odata.Services
             var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
             var lyDate = (new DateTime(model.Year, model.Month, 01)).GetLYFD();
             var lysmDate =  $"{string.Format("{0:0000}", lyDate.Year)}.{string.Format("{0:00}", lyDate.Month)}";
+            var premiumBrandCodes = new List<string>();
 
             var dataLy = new List<MTSDataModel>();
             var dataCy = new List<MTSDataModel>();
@@ -86,9 +90,11 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_TargetVolume)
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            dataLy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, lysmDate)).ToList();
+            //TODO: get premiumB brand codes and add to list
 
-            dataCy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
+            dataLy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, lysmDate, premiumBrandCodes)).ToList();
+
+            dataCy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate, premiumBrandCodes)).ToList();
             
             Func<MTSDataModel, decimal> actVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice);
             Func<MTSDataModel, decimal> tarVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume);

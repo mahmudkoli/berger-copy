@@ -18,11 +18,11 @@ namespace Berger.Odata.Services
 
         #region get selectable data
         Task<IList<DriverDataModel>> GetDriverDataByInvoiceNos(List<string> invoiceNos);
-        Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands, bool isFamily = false);
+        Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands = null, bool isFamily = false);
         Task<IList<SalesDataModel>> GetSalesDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startDate, string endDate, string division = "-1");
+            string customerNo, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null);
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string date);
+            string customerNo, string date, List<string> brands = null);
         #endregion
     }
 }

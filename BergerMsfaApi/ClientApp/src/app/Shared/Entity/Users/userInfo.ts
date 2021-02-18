@@ -8,7 +8,7 @@ export class UserInfo {
     public userName: string;
     public email: string;
     public phoneNumber: string;
-    public code: string;
+    // public code: string;
     public employeeId: string;
     public employeeRole: EnumEmployeeRole;
     public designation: string;
@@ -59,7 +59,7 @@ export class SaveUserInfo {
     public userName: string;
     public email: string;
     public phoneNumber: string;
-    public code: string;
+    // public code: string;
     public employeeId: string;
     public employeeRole: EnumEmployeeRole;
     public designation: string;
