@@ -150,7 +150,7 @@ export class UserInfoFormComponent implements OnInit {
            address: [this.user.address],
            gender: [this.user.gender],
            dateOfBirth: [],
-           code: [this.user.code,  [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
+        //    code: [this.user.code,  [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
            employeeId: [this.user.employeeId,  [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
            employeeRole: [this.user.employeeRole, Validators.required],
            designation: [this.user.designation],
@@ -222,7 +222,7 @@ export class UserInfoFormComponent implements OnInit {
        _user.gender = controls['gender'].value;
        _user.address = controls['address'].value;
        _user.phoneNumber = controls['phoneNumber'].value;
-       _user.code = controls['code'].value;
+    //    _user.code = controls['code'].value;
        _user.employeeId = controls['employeeId'].value;
        _user.employeeRole = controls['employeeRole'].value;
        _user.designation = controls['designation'].value;
