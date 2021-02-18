@@ -1,0 +1,131 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { Subscription, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Lead, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
+import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.service';
+
+@Component({
+	selector: 'app-lead-list',
+	templateUrl: './lead-list.component.html',
+	styleUrls: ['./lead-list.component.css']
+})
+export class LeadListComponent implements OnInit, OnDestroy {
+
+	query: LeadQuery;
+	PAGE_SIZE: number;
+	leads: Lead[];
+	totalDataLength: number = 0; // for server side paggination
+	totalFilterDataLength: number = 0; // for server side paggination
+
+	// Subscriptions
+	private subscriptions: Subscription[] = [];
+
+	constructor(
+		private router: Router,
+		private alertService: AlertService,
+		private leadService: LeadService,
+		private modalService: NgbModal,
+		private commonService: CommonService) {
+			// this.PAGE_SIZE = 5000;
+			// this.ptableSettings.pageSize = 10;
+			// this.ptableSettings.enabledServerSitePaggination = false;
+			// server side paggination
+			this.PAGE_SIZE = commonService.PAGE_SIZE;
+			this.ptableSettings.pageSize = this.PAGE_SIZE;
+			this.ptableSettings.enabledServerSitePaggination = true;
+	}
+
+	ngOnInit() {
+		this.searchConfiguration();
+		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+			this.loadLeadsPage();
+		});
+	}
+
+	ngOnDestroy() {
+		this.subscriptions.forEach(el => el.unsubscribe());
+	}
+
+	loadLeadsPage() {
+		// this.searchConfiguration();
+		this.alertService.fnLoading(true);
+		const leadsSubscription = this.leadService.getLeads(this.query)
+			.pipe(
+				finalize(() => { this.alertService.fnLoading(false); }),
+				// debounceTime(1000),
+				// distinctUntilChanged()
+			)
+			.subscribe(
+				(res) => {
+					console.log("res.data", res.data);
+					this.leads = res.data.items;
+					this.totalDataLength = res.data.total;
+					this.totalFilterDataLength = res.data.totalFilter;
+				},
+				(error) => {
+					console.log(error);
+				});
+		this.subscriptions.push(leadsSubscription);
+	}
+
+	searchConfiguration() {
+		this.query = new LeadQuery({
+			page: 1,
+			pageSize: this.PAGE_SIZE,
+			sortBy: 'userFullName',
+			isSortAscending: true,
+			globalSearchValue: ''
+		});
+	}
+
+	// toggleActiveInactive(id) {
+	// 	const actInSubscription = this.leadService.activeInactive(id).subscribe(res => {
+	// 		this.loadLeadsPage();
+	// 	});
+	// 	this.subscriptions.push(actInSubscription);
+	// }
+
+	public ptableSettings: IPTableSetting = {
+		tableID: "leads-table",
+		tableClass: "table table-border ",
+		tableName: 'Lead List',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+			{ headerName: 'User Full Name', width: '20%', internalName: 'userFullName', sort: true, type: "" },
+			{ headerName: 'Depot', width: '10%', internalName: 'depot', sort: false, type: "" },
+			{ headerName: 'Territory', width: '10%', internalName: 'territory', sort: false, type: "" },
+			{ headerName: 'Zone', width: '10%', internalName: 'zone', sort: false, type: "" },
+			{ headerName: 'Code', width: '10%', internalName: 'code', sort: false, type: "" },
+			{ headerName: 'Project Name', width: '15%', internalName: 'projectName', sort: false, type: "" },
+			{ headerName: 'Project Address', width: '15%', internalName: 'projectAddress', sort: false, type: "" },
+		],
+		enabledSearch: true,
+		enabledSerialNo: true,
+		// pageSize: 10,
+		enabledPagination: true,
+		// enabledDeleteBtn: true,
+		// enabledEditBtn: true,
+		enabledCellClick: true,
+		enabledColumnFilter: false,
+		// enabledRecordCreateBtn: true,
+		enabledDataLength: true,
+		// newRecordButtonText: 'New ELearning'
+	};
+	
+	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
+		console.log('server site : ', queryObj);
+		this.query = new LeadQuery({
+			page: queryObj.pageNo,
+			pageSize: queryObj.pageSize,
+			sortBy: queryObj.orderBy,
+			isSortAscending: queryObj.isOrderAsc,
+			globalSearchValue: queryObj.searchVal
+		});
+		this.loadLeadsPage();
+	}
+}
