@@ -111,11 +111,12 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
+        public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model, bool isOnlyCBMaterial = false)
         {
             //var currentdate = new DateTime(2011, 09, 21);
             var currentdate = model.Date;
             var previousMonthCount = 3;
+            var cbMaterialCodes = new List<string>();
 
             var cyfd = currentdate.GetCYFD().DateFormat();
             var cylcd = currentdate.GetCYLCD().DateFormat();
@@ -136,9 +137,14 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
 
-            dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division)).ToList();
+            if(isOnlyCBMaterial)
+            {
+                //TODO: get CB material codes and add to list
+            }
+
+            dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, cbMaterialCodes)).ToList();
             
-            dataCy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division)).ToList();
+            dataCy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, cbMaterialCodes)).ToList();
             
             for (var i = 1; i <= previousMonthCount; i++)
             {
@@ -146,7 +152,7 @@ namespace Berger.Odata.Services
                 var startDate = currentdate.GetMonthDate(number).GetCYFD().DateFormat();
                 var endDate = currentdate.GetMonthDate(number).GetCYLD().DateFormat();
 
-                var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, startDate, endDate, model.Division)).ToList();
+                var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, startDate, endDate, model.Division, cbMaterialCodes)).ToList();
                 var monthName = currentdate.GetMonthName(number);
 
                 previousMonthDict.Add(monthName, data);
@@ -215,6 +221,7 @@ namespace Berger.Odata.Services
             //var currentdate = new DateTime(2011, 09, 21);
             var firstMonthInYear = 4;
             var currentdate = model.Date;
+            var mtsBrandCodes = new List<string>();
 
             var cyfd = currentdate.GetCYFD().DateFormat();
             var cylcd = currentdate.GetCYLCD().DateFormat();
@@ -249,15 +256,17 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
 
-            dataLySm = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld, model.Division)).ToList();
-            
-            dataLyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division)).ToList();
-            
-            dataCyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division)).ToList();
+            //TODO: get MTS brand codes and add to list
 
-            dataLyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lfyfd, lfylcd, model.Division)).ToList();
+            dataLySm = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld, model.Division, brands: mtsBrandCodes)).ToList();
+            
+            dataLyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, brands: mtsBrandCodes)).ToList();
+            
+            dataCyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, brands: mtsBrandCodes)).ToList();
 
-            dataCyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cfyfd, cfylcd, model.Division)).ToList();
+            dataLyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lfyfd, lfylcd, model.Division, brands: mtsBrandCodes)).ToList();
+
+            dataCyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cfyfd, cfylcd, model.Division, brands: mtsBrandCodes)).ToList();
             
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(
                                                             model.VolumeOrValue == EnumVolumeOrValue.Value ? x.NetAmount : x.Volume);

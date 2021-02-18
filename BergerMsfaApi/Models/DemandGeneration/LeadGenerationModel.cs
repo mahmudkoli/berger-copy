@@ -19,6 +19,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int Id { get; set; }
         public int UserId { get; set; }
         public UserInfoModel User { get; set; }
+        public string UserFullName { get; set; }
         public string Code { get; set; }
         public string Depot { get; set; }
         public string Territory { get; set; }
@@ -54,7 +55,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LeadGeneration, LeadGenerationModel>();
+            profile.CreateMap<LeadGeneration, LeadGenerationModel>()
+                .ForMember(dest => dest.UserFullName,
+                    opt => opt.MapFrom(src => src.User != null ? $"{src.User.FullName}" : string.Empty));
             profile.CreateMap<LeadGenerationModel, LeadGeneration>();
             profile.CreateMap<DropdownDetail, DropdownModel>();
             profile.CreateMap<DropdownModel, DropdownDetail>();

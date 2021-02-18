@@ -25,8 +25,10 @@ namespace BergerMsfaApi.Models.DealerSalesCall
     {
         public int DealerId { get; set; }
         public DealerInfoModel Dealer { get; set; }
+        public string DealerName { get; set; }
         public int UserId { get; set; }
         public UserInfoModel User { get; set; }
+        public string UserFullName { get; set; }
         public int? JourneyPlanId { get; set; }
         //public JourneyPlanDetailModel JourneyPlan { get; set; }
         //public DateTime Date { get; set; }
@@ -110,8 +112,110 @@ namespace BergerMsfaApi.Models.DealerSalesCall
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<DSC.DealerSalesCall, DealerSalesCallModel>();
+            profile.CreateMap<DSC.DealerSalesCall, DealerSalesCallModel>()
+                .ForMember(dest => dest.UserFullName,
+                    opt => opt.MapFrom(src => src.User != null ? $"{src.User.FullName}" : string.Empty))
+                .ForMember(dest => dest.DealerName,
+                    opt => opt.MapFrom(src => src.Dealer != null ? $"{src.Dealer.CustomerName}" : string.Empty));
             profile.CreateMap<DealerSalesCallModel, DSC.DealerSalesCall>();
+            profile.CreateMap<DropdownDetail, DropdownModel>();
+            profile.CreateMap<DropdownModel, DropdownDetail>();
+            profile.CreateMap<DealerInfo, DealerInfoModel>();
+            profile.CreateMap<DealerInfoModel, DealerInfo>();
+        }
+    }
+
+    public class AppDealerSalesCallModel : IMapFrom<DSC.DealerSalesCall>
+    {
+        public int DealerId { get; set; }
+        public DealerInfoModel Dealer { get; set; }
+        public int UserId { get; set; }
+        public UserInfoModel User { get; set; }
+        public int? JourneyPlanId { get; set; }
+        //public JourneyPlanDetailModel JourneyPlan { get; set; }
+        //public DateTime Date { get; set; }
+        public bool IsTargetPromotionCommunicated { get; set; }
+        public bool IsTargetCommunicated { get; set; }
+
+        //public EnumRatings SecondarySalesRatings { get; set; }
+        public int SecondarySalesRatingsId { get; set; }
+        public DropdownModel SecondarySalesRatings { get; set; }
+        public string SecondarySalesReasonTitle { get; set; }
+        public string SecondarySalesReasonRemarks { get; set; }
+
+        public bool HasOS { get; set; }
+        public bool IsOSCommunicated { get; set; }
+        public bool HasSlippage { get; set; }
+        public bool IsSlippageCommunicated { get; set; }
+
+        public bool IsPremiumProductCommunicated { get; set; }
+        public bool IsPremiumProductLifting { get; set; }
+        //public EnumProductLifting? PremiumProductLifting { get; set; }
+        public int? PremiumProductLiftingId { get; set; }
+        public DropdownModel PremiumProductLifting { get; set; }
+        public string PremiumProductLiftingOthers { get; set; }
+
+        public bool IsCBInstalled { get; set; }
+        public bool IsCBProductivityCommunicated { get; set; }
+
+        //public bool IsMerchendisingPlanogramFollowed { get; set; }
+        public int? MerchendisingId { get; set; }
+        public DropdownModel Merchendising { get; set; }
+
+        public bool HasSubDealerInfluence { get; set; }
+        //public EnumSubDealerInfluence? SubDealerInfluence { get; set; }
+        public int? SubDealerInfluenceId { get; set; }
+        public DropdownModel SubDealerInfluence { get; set; }
+
+        public bool HasPainterInfluence { get; set; }
+        //public EnumPainterInfluence? PainterInfluence { get; set; }
+        public int? PainterInfluenceId { get; set; }
+        public DropdownModel PainterInfluence { get; set; }
+
+        public bool IsShopManProductKnowledgeDiscussed { get; set; }
+        public bool IsShopManSalesTechniquesDiscussed { get; set; }
+        public bool IsShopManMerchendizingImprovementDiscussed { get; set; }
+
+        public bool HasCompetitionPresence { get; set; }
+        //public EnumCompetitionPresence? CompetitionPresence { get; set; }
+        public bool IsCompetitionServiceBetterThanBPBL { get; set; }
+        public string CompetitionServiceBetterThanBPBLRemarks { get; set; }
+        public bool IsCompetitionProductDisplayBetterThanBPBL { get; set; }
+        public string CompetitionProductDisplayBetterThanBPBLRemarks { get; set; }
+        //public int? CompetitionProductDisplayImageId { get; set; }
+        //public AttachmentModel CompetitionProductDisplayImage { get; set; }
+        public string CompetitionProductDisplayImageUrl { get; set; }
+        public string CompetitionSchemeModalityComments { get; set; }
+        //public int? CompetitionSchemeModalityImageId { get; set; }
+        //public AttachmentModel CompetitionSchemeModalityImage { get; set; }
+        public string CompetitionSchemeModalityImageUrl { get; set; }
+        public string CompetitionShopBoysComments { get; set; }
+        public IList<DealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
+
+        public bool HasDealerSalesIssue { get; set; }
+        //public EnumDealerSalesIssue? EnumDealerSalesIssue { get; set; }
+        public IList<DealerSalesIssueModel> DealerSalesIssues { get; set; }
+
+        //public EnumSatisfaction DealerSatisfaction { get; set; }
+        public int DealerSatisfactionId { get; set; }
+        public DropdownModel DealerSatisfaction { get; set; }
+        public string DealerSatisfactionReason { get; set; }
+
+        // for sub dealer
+        public bool IsSubDealerCall { get; set; }
+        public bool HasBPBLSales { get; set; }
+        public decimal BPBLAverageMonthlySales { get; set; }
+        public decimal BPBLActualMTDSales { get; set; }
+
+        public AppDealerSalesCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<DSC.DealerSalesCall, AppDealerSalesCallModel>();
+            profile.CreateMap<AppDealerSalesCallModel, DSC.DealerSalesCall>();
             profile.CreateMap<DropdownDetail, DropdownModel>();
             profile.CreateMap<DropdownModel, DropdownDetail>();
         }

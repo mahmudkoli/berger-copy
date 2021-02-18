@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,21 +37,31 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             this._mapper = mapper;
         }
 
-        public async Task<IList<LeadGenerationModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
+            {
+                ["userFullName"] = v => v.User.FullName,
+            };
+
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                 x => x,
-                                null,
-                                null,
-                                null,
-                                pageIndex,
-                                pageSize,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                x => x.Include(i => i.User),
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
-            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
+            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<LeadGenerationModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId)

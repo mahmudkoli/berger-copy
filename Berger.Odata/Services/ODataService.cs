@@ -86,8 +86,6 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.Driver_DriverName)
                                 .AddProperty(DataColumnDef.Driver_DriverMobileNo);
 
-            //var topQuery = $"$top=5";
-
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNos.FirstOrDefault());
 
@@ -95,6 +93,8 @@ namespace Berger.Odata.Services
             {
                 filterQueryBuilder.Or().Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNo);
             }
+
+            //var topQuery = $"$top=5";
 
             var queryBuilder = new QueryOptionBuilder();
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
@@ -106,7 +106,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands, bool isFamily = false)
+        public async Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands = null, bool isFamily = false)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily)
@@ -114,17 +114,21 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.BrandFamily_MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.BrandFamily_MatarialGroupOrBrandName);
 
-            //var topQuery = $"$top=5";
-
-            var colName = isFamily ? DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily : DataColumnDef.BrandFamily_MatarialGroupOrBrand;
-
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(colName, brands.FirstOrDefault());
 
-            foreach (var brand in brands.Skip(1))
+            if (brands != null && brands.Any())
             {
-                filterQueryBuilder.Or().Equal(colName, brand);
+                var colName = isFamily ? DataColumnDef.BrandFamily_MatarialGroupOrBrandFamily : DataColumnDef.BrandFamily_MatarialGroupOrBrand;
+
+                filterQueryBuilder.Equal(colName, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(colName, brand);
+                }
             }
+
+            //var topQuery = $"$top=5";
 
             var queryBuilder = new QueryOptionBuilder();
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
@@ -137,7 +141,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startDate, string endDate, string division = "-1")
+            string customerNo, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, customerNo)
@@ -153,6 +157,30 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
             }
 
+            if (materialCodes != null && materialCodes.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MatrialCode, materialCodes.FirstOrDefault());
+
+                foreach (var materialCode in materialCodes.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MatrialCode, materialCode);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
             //var topQuery = $"$top=5";
 
             var queryBuilder = new QueryOptionBuilder();
@@ -166,12 +194,24 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string date)
+            string customerNo, string date, List<string> brands = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, customerNo)
                                 .And()
                                 .Equal(DataColumnDef.MTS_Date, date);
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
 
             //var topQuery = $"$top=5";
 
