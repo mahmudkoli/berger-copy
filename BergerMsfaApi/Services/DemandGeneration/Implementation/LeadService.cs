@@ -124,7 +124,14 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                null,
+                                x => x.Include(i => i.User).Include(i => i.TypeOfClient).Include(i => i.PaintingStage)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.TypeOfClient)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusTotalLoss)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusPartialBusiness)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement),
                                 true
                             );
 

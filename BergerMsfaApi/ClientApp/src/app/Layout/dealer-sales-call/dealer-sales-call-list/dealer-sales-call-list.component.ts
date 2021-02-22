@@ -66,6 +66,13 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
 					this.dealerSalesCalls = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
+					this.dealerSalesCalls.forEach(obj => {
+						this.commonService.booleanToText(obj);
+					});
+					this.dealerSalesCalls.forEach((x) => {
+						x.detailsBtnText = "View Sales Call";
+					});
+					console.log("dealer sales call data", this.dealerSalesCalls);
 				},
 				(error) => {
 					console.log(error);
@@ -98,13 +105,13 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
 		tableColDef: [
 			{ headerName: 'User Full Name', width: '15%', internalName: 'userFullName', sort: true, type: "" },
 			{ headerName: 'Dealer Name', width: '15%', internalName: 'dealerName', sort: true, type: "" },
-			{ headerName: 'Is Target Promotion Communicated', width: '10%', internalName: 'isTargetPromotionCommunicated', sort: false, type: "" },
-			{ headerName: 'Is Target Communicated', width: '10%', internalName: 'isTargetCommunicated', sort: false, type: "" },
-			{ headerName: 'Is OS Communicated', width: '10%', internalName: 'isOSCommunicated', sort: false, type: "" },
-			{ headerName: 'Is Slippage Communicated', width: '10%', internalName: 'isSlippageCommunicated', sort: false, type: "" },
-			{ headerName: 'Is PremiumProduct Communicated', width: '10%', internalName: 'isPremiumProductCommunicated', sort: false, type: "" },
-			{ headerName: 'Is CB Installed', width: '10%', internalName: 'isCBInstalled', sort: false, type: "" },
-			{ headerName: 'Is CB Productivity Communicated', width: '10%', internalName: 'isCBProductivityCommunicated', sort: false, type: "" },
+			{ headerName: 'Is Target Communicated', width: '10%', internalName: 'isTargetCommunicatedText', sort: false, type: "" },
+			{ headerName: 'Has OS', width: '10%', internalName: 'hasOSText', sort: false, type: "" },
+			{ headerName: 'Has Slippage', width: '10%', internalName: 'hasSlippageText', sort: false, type: "" },
+			{ headerName: 'Is CB Installed', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "" },
+			{ headerName: 'Has Sub Dealer Influence', width: '10%', internalName: 'hasSubDealerInfluenceText', sort: false, type: "" },
+			{ headerName: 'Has Painter Influence', width: '10%', internalName: 'hasPainterInfluenceText', sort: false, type: "" },
+			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" }
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -129,5 +136,19 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
 			globalSearchValue: queryObj.searchVal
 		});
 		this.loadDealerSalesCallsPage();
+	}
+
+	public cellClickCallbackFn(event: any) {
+		console.log(event);
+		let id = event.record.id;
+		let cellName = event.cellName;
+
+		if (cellName == "detailsBtnText") {
+			this.detailsDealerSalesCall(id);
+		}
+	}
+
+	public detailsDealerSalesCall(id) {
+		this.router.navigate([`/dealer-sales-call/details/${id}`]);
 	}
 }

@@ -233,7 +233,14 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                null,
+                                x => x.Include(i => i.User).Include(i => i.Dealer)
+                                        .Include(i => i.SecondarySalesRatings).Include(i => i.PremiumProductLifting)
+                                        .Include(i => i.Merchendising).Include(i => i.SubDealerInfluence)
+                                        .Include(i => i.PainterInfluence).Include(i => i.DealerSatisfaction)
+                                        .Include(i => i.DealerCompetitionSales).ThenInclude(i => i.Company)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.DealerSalesIssueCategory)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.Priority)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.CBMachineMantainance),
                                 true
                             );
 

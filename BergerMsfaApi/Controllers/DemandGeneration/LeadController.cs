@@ -38,5 +38,19 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var result = await _leadService.GetByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

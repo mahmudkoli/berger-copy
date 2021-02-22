@@ -9,10 +9,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DealerSalesCallRoutingModule } from './dealer-sales-call-routing.module';
 import { DealerSalesCallComponent } from './dealer-sales-call.component';
 import { DealerSalesCallListComponent } from './dealer-sales-call-list/dealer-sales-call-list.component';
+import { DealerSalesCallDetailsComponent } from './dealer-sales-call-details/dealer-sales-call-details.component';
 
 @NgModule({
   declarations: [
     DealerSalesCallListComponent,
+    DealerSalesCallDetailsComponent,
     DealerSalesCallComponent,
   ],
   imports: [
