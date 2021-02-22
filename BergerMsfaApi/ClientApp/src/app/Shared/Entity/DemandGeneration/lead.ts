@@ -26,6 +26,7 @@ export class LeadGeneration {
     visitDate: Date;
     visitDateText: string;
     expectedDateOfPainting: Date;
+    expectedDateOfPaintingText: string;
     numberOfStoriedBuilding: number;
     totalPaintingAreaSqftInterior: number;
     totalPaintingAreaSqftInteriorChangeCount: number;
