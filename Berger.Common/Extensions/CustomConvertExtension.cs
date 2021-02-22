@@ -8,6 +8,8 @@ namespace Berger.Common.Extensions
 {
     public static class CustomConvertExtension
     {
+        private const string _dateTimeStringFormat = "yyyy-MM-dd";
+
         public static void NullToEmptyString(object parameterObject)
         {
             if (parameterObject == null) return;
@@ -30,6 +32,17 @@ namespace Berger.Common.Extensions
         {
             if (value == null) return decimal.Zero;
             return decimal.TryParse(value.ToString(), out decimal result) ? result : decimal.Zero;
+        }
+
+        public static string ObjectToDateString(object value)
+        {
+            if (value == null) return string.Empty;
+            return DateTime.TryParse(value.ToString(), out DateTime result) ? result.ToString(_dateTimeStringFormat) : string.Empty;
+        }
+
+        public static string ObjectToDateString(DateTime? value)
+        {
+            return value.HasValue ? value.Value.ToString(_dateTimeStringFormat) : string.Empty;
         }
     }
 }

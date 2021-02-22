@@ -1,0 +1,249 @@
+
+    <div class="modal-header">
+        <h5 class="modal-title">Lead FollowUp Details</h5>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Last Visited Date:</strong></span> {{leadFollowUp.lastVisitedDateText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Next Visit Date Plan:</strong></span> {{leadFollowUp.nextVisitDatePlanText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Actual Visit Date:</strong></span> {{leadFollowUp.actualVisitDateText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Type Of Client:</strong></span> {{leadFollowUp.typeOfClientText}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Key Contact Person:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Name:</strong></span> {{leadFollowUp.keyContactPersonName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Change Reason:</strong></span> {{leadFollowUp.keyContactPersonNameChangeReason}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Mobile:</strong></span> {{leadFollowUp.keyContactPersonMobile}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Mobile Change Reason:</strong></span> {{leadFollowUp.keyContactPersonMobileChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Paint Contractor:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Name:</strong></span> {{leadFollowUp.paintContractorName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Name Change Reason:</strong></span> {{leadFollowUp.paintContractorNameChangeReason}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Mobile:</strong></span> {{leadFollowUp.paintContractorMobile}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Mobile Change Reason:</strong></span> {{leadFollowUp.paintContractorMobileChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Number Of Storied Building:</strong></span> {{leadFollowUp.numberOfStoriedBuilding}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Number Of Storied Building Change Reason:</strong></span> {{leadFollowUp.numberOfStoriedBuildingChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Expected Value:</strong></span> {{leadFollowUp.expectedValue}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Expected Value Change Reason:</strong></span> {{leadFollowUp.expectedValueChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Expected Monthly Business Value:</strong></span> {{leadFollowUp.expectedMonthlyBusinessValue}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Expected Monthly Business Value Change Reason:</strong></span> {{leadFollowUp.expectedMonthlyBusinessValueChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Project Status:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Project Status:</strong></span> {{leadFollowUp.projectStatusText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Lead Completed:</strong></span> {{leadFollowUp.projectStatusLeadCompletedText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Total Loss:</strong></span> {{leadFollowUp.projectStatusTotalLossText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Total Loss Remarks:</strong></span> {{leadFollowUp.projectStatusTotalLossRemarks}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Partial Business:</strong></span> {{leadFollowUp.projectStatusPartialBusinessText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Partial Business (%):</strong></span> {{leadFollowUp.projectStatusPartialBusinessPercentage}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Swapping Competition:</strong></span> {{leadFollowUp.swappingCompetitionText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Swapping Competition Another Competitor Name:</strong></span> {{leadFollowUp.swappingCompetitionAnotherCompetitorName}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Total Painting Area:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Interior (Sqft):</strong></span> {{leadFollowUp.totalPaintingAreaSqftInterior}}</p>
+            </div>
+            <!-- <div class="col-sm-6">
+                <p><span><strong>Interior Change Count:</strong></span> {{leadFollowUp.totalPaintingAreaSqftInteriorChangeCount}}</p>
+            </div> -->
+            <div class="col-sm-6">
+                <p><span><strong>Interior Change Reason:</strong></span> {{leadFollowUp.totalPaintingAreaSqftInteriorChangeReason}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Exterior (Sqft):</strong></span> {{leadFollowUp.totalPaintingAreaSqftExterior}}</p>
+            </div>
+            <!-- <div class="col-sm-6">
+                <p><span><strong>Exterior Change Count:</strong></span> {{leadFollowUp.totalPaintingAreaSqftExteriorChangeCount}}</p>
+            </div> -->
+            <div class="col-sm-6">
+                <p><span><strong>Exterior Change Reason:</strong></span> {{leadFollowUp.totalPaintingAreaSqftExteriorChangeReason}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Up Trading From Brand Name:</strong></span> {{leadFollowUp.upTradingFromBrandName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Up Trading To Brand Name:</strong></span> {{leadFollowUp.upTradingToBrandName}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Brand Used:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Interior Brand Name:</strong></span> {{leadFollowUp.brandUsedInteriorBrandName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Exterior Brand Name:</strong></span> {{leadFollowUp.brandUsedExteriorBrandName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Under Coat Brand Name:</strong></span> {{leadFollowUp.brandUsedUnderCoatBrandName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Top Coat Brand Name:</strong></span> {{leadFollowUp.brandUsedTopCoatBrandName}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Actual Paint Job Completed Interior (%):</strong></span> {{leadFollowUp.actualPaintJobCompletedInteriorPercentage}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Actual Paint Job Completed Exterior (%):</strong></span> {{leadFollowUp.actualPaintJobCompletedExteriorPercentage}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12"><h6><span><strong>Actual Volume Sold:</strong></span></h6></div>
+            <div class="col-sm-6">
+                <p><span><strong>Interior (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldInteriorGallon}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Interior (Kg):</strong></span> {{leadFollowUp.actualVolumeSoldInteriorKg}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Exterior (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldExteriorGallon}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Exterior (Kg):</strong></span> {{leadFollowUp.actualVolumeSoldExteriorKg}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Under Coat (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldUnderCoatGallon}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Top Coat (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldTopCoatGallon}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h6><span><strong>Business Achievement:</strong></span></h6>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Berger Value Sales:</strong></span> {{leadFollowUp.businessAchievement?.bergerValueSales}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Berger Premium Brand Sales Value:</strong></span> {{leadFollowUp.businessAchievement?.bergerPremiumBrandSalesValue}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Competition Value Sales:</strong></span> {{leadFollowUp.businessAchievement?.competitionValueSales}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Product Sourcing:</strong></span> {{leadFollowUp.businessAchievement?.productSourcing}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Is Color Scheme Given:</strong></span> {{leadFollowUp.businessAchievement?.isColorSchemeGiven?'YES':'NO'}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Is Product Sampling:</strong></span> {{leadFollowUp.businessAchievement?.isProductSampling?'YES':'NO'}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Product Sampling Brand Name:</strong></span> {{leadFollowUp.businessAchievement?.productSamplingBrandName}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Next Visit Date:</strong></span> {{leadFollowUp.businessAchievement?.nextVisitDateText}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Remarks Or Outcome:</strong></span> {{leadFollowUp.businessAchievement?.remarksOrOutcome}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Photo Capture:</strong></span> 
+                    <!-- {{leadFollowUp.businessAchievement?.photoCaptureUrl}} -->
+                    <img [src]="leadFollowUp.businessAchievement?.photoCaptureUrl" alt="Photo" width="150px" height="180px">
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+    </div>
+

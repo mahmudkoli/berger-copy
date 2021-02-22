@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { Lead, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
+import { LeadGeneration, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
 import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 
 	query: LeadQuery;
 	PAGE_SIZE: number;
-	leads: Lead[];
+	leads: LeadGeneration[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 
@@ -66,6 +66,9 @@ export class LeadListComponent implements OnInit, OnDestroy {
 					this.leads = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
+					this.leads.forEach((x) => {
+						x.detailsBtnText = "View Lead";
+					});
 				},
 				(error) => {
 					console.log(error);
@@ -101,8 +104,9 @@ export class LeadListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Territory', width: '10%', internalName: 'territory', sort: false, type: "" },
 			{ headerName: 'Zone', width: '10%', internalName: 'zone', sort: false, type: "" },
 			{ headerName: 'Code', width: '10%', internalName: 'code', sort: false, type: "" },
-			{ headerName: 'Project Name', width: '15%', internalName: 'projectName', sort: false, type: "" },
-			{ headerName: 'Project Address', width: '15%', internalName: 'projectAddress', sort: false, type: "" },
+			{ headerName: 'Project Name', width: '10%', internalName: 'projectName', sort: false, type: "" },
+			{ headerName: 'Project Address', width: '10%', internalName: 'projectAddress', sort: false, type: "" },
+			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" }
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -127,5 +131,19 @@ export class LeadListComponent implements OnInit, OnDestroy {
 			globalSearchValue: queryObj.searchVal
 		});
 		this.loadLeadsPage();
+	}
+
+	public cellClickCallbackFn(event: any) {
+		console.log(event);
+		let id = event.record.id;
+		let cellName = event.cellName;
+
+		if (cellName == "detailsBtnText") {
+			this.detailsLead(id);
+		}
+	}
+
+	public detailsLead(id) {
+		this.router.navigate([`/lead/details/${id}`]);
 	}
 }
