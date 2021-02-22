@@ -139,7 +139,10 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Competition Product Display Image:</strong></span> {{dealerSalesCall.competitionProductDisplayImageUrl}}</p>
+                <p><span><strong>Competition Product Display Image:</strong></span> 
+                    <!-- {{dealerSalesCall.competitionProductDisplayImageUrl}} -->
+                    <img [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px">
+                </p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Competition Scheme Modality Comments:</strong></span> {{dealerSalesCall.competitionSchemeModalityComments}}</p>
@@ -148,7 +151,10 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Competition Scheme Modality Image:</strong></span> {{dealerSalesCall.competitionSchemeModalityImageUrl}}</p>
+                <p><span><strong>Competition Scheme Modality Image:</strong></span> 
+                    <!-- {{dealerSalesCall.competitionSchemeModalityImageUrl}} -->
+                    <img [src]="dealerSalesCall.competitionSchemeModalityImageUrl" alt="Photo" width="150px" height="180px">
+                </p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Competition Shop Boys Comments:</strong></span> {{dealerSalesCall.competitionShopBoysComments}}</p>

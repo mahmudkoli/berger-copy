@@ -82,27 +82,27 @@ export class DealerSalesCall {
 
     // display text
     detailsBtnText: string;
-    // isTargetPromotionCommunicatedText: string;
-    // isTargetCommunicatedText: string;
-    // hasOSText: string;
-    // isOSCommunicatedText: string;
-    // hasSlippageText: string;
-    // isSlippageCommunicatedText: string;
-    // isPremiumProductCommunicatedText: string;
-    // isPremiumProductLiftingText: string;
-    // isCBInstalledText: string;
-    // isCBProductivityCommunicatedText: string;
-    // hasSubDealerInfluenceText: string;
-    // hasPainterInfluenceText: string;
-    // isShopManProductKnowledgeDiscussedText: string;
-    // isShopManSalesTechniquesDiscussedText: string;
-    // isShopManMerchendizingImprovementDiscussedText: string;
-    // hasCompetitionPresenceText: string;
-    // isCompetitionServiceBetterThanBPBLText: string;
-    // isCompetitionProductDisplayBetterThanBPBLText: string;
-    // hasDealerSalesIssueText: string;
-    // isSubDealerCallText: string;
-    // hasBPBLSalesText: string;
+    isTargetPromotionCommunicatedText: string;
+    isTargetCommunicatedText: string;
+    hasOSText: string;
+    isOSCommunicatedText: string;
+    hasSlippageText: string;
+    isSlippageCommunicatedText: string;
+    isPremiumProductCommunicatedText: string;
+    isPremiumProductLiftingText: string;
+    isCBInstalledText: string;
+    isCBProductivityCommunicatedText: string;
+    hasSubDealerInfluenceText: string;
+    hasPainterInfluenceText: string;
+    isShopManProductKnowledgeDiscussedText: string;
+    isShopManSalesTechniquesDiscussedText: string;
+    isShopManMerchendizingImprovementDiscussedText: string;
+    hasCompetitionPresenceText: string;
+    isCompetitionServiceBetterThanBPBLText: string;
+    isCompetitionProductDisplayBetterThanBPBLText: string;
+    hasDealerSalesIssueText: string;
+    isSubDealerCallText: string;
+    hasBPBLSalesText: string;
 
     // [key: string]: any;
 
