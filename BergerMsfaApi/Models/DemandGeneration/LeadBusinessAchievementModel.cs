@@ -1,4 +1,6 @@
-﻿using Berger.Data.MsfaEntity.DemandGeneration;
+﻿using AutoMapper;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.DemandGeneration;
 using BergerMsfaApi.Mappings;
 using System;
 using System.Collections.Generic;
@@ -19,8 +21,16 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public bool IsProductSampling { get; set; }
         public string ProductSamplingBrandName { get; set; }
         public DateTime NextVisitDate { get; set; }
+        public string NextVisitDateText { get; set; }
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>()
+                .ForMember(dest => dest.NextVisitDateText,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)));
+        }
     }
 
     public class SaveLeadBusinessAchievementModel : IMapFrom<LeadBusinessAchievement>
