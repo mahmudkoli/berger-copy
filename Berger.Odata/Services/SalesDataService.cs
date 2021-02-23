@@ -17,12 +17,15 @@ namespace Berger.Odata.Services
     public class SalesDataService : ISalesDataService
     {
         private readonly IODataService _odataService;
+        private readonly IODataBrandService _odataBrandService;
 
         public SalesDataService(
-            IODataService odataService
+            IODataService odataService,
+            IODataBrandService odataBrandService
             )
         {
             _odataService = odataService;
+            _odataBrandService = odataBrandService;
         }
 
         public async Task<IList<InvoiceHistoryResultModel>> GetInvoiceHistory(InvoiceHistorySearchModel model)
@@ -111,7 +114,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model, bool isOnlyCBMaterial = false)
+        public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
         {
             //var currentdate = new DateTime(2011, 09, 21);
             var currentdate = model.Date;
@@ -137,9 +140,10 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
 
-            if(isOnlyCBMaterial)
+            if (model.IsOnlyCBMaterial)
             {
                 //TODO: get CB material codes and add to list
+                cbMaterialCodes = (await _odataBrandService.GetCBMaterialCodesAsync()).ToList();
             }
 
             dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, cbMaterialCodes)).ToList();
@@ -256,7 +260,11 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
 
-            //TODO: get MTS brand codes and add to list
+            if(model.BrandOrDivision == EnumBrandOrDivision.MTS_Brand)
+            {
+                //TODO: get MTS brand codes and add to list
+                mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
 
             dataLySm = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld, model.Division, brands: mtsBrandCodes)).ToList();
             

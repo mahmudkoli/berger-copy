@@ -32,7 +32,7 @@ namespace BergerMsfaApi.Models.Brand
 
     public class BrandStatusModel
     {
-        public string MaterialCode { get; set; }
+        public string MaterialOrBrandCode { get; set; }
         public string PropertyName { get; set; }
     }
 }
