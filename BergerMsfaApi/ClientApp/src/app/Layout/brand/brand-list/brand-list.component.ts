@@ -149,14 +149,19 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText") {
 			let brandStatus = new BrandStatus();
 			brandStatus.clear();
-			brandStatus.materialCode = event.record.materialCode;
 	
-			if (event.cellName == "isCBInstalledText")
+			if (event.cellName == "isCBInstalledText") {
 				brandStatus.propertyName = 'IsCBInstalled';
-			else if (event.cellName == "isMTSText")
+				brandStatus.materialOrBrandCode = event.record.materialCode;
+			}
+			else if (event.cellName == "isMTSText") {
 				brandStatus.propertyName = 'IsMTS';
-			else if (event.cellName == "isPremiumText")
+				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
+			}
+			else if (event.cellName == "isPremiumText") {
 				brandStatus.propertyName = 'IsPremium';
+				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
+			}
 
 			this.updateBrandStatus(brandStatus);
 		}
