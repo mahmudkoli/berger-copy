@@ -15,79 +15,196 @@ namespace Berger.Odata.Services
 {
     public class MTSDataService : IMTSDataService
     {
-        private readonly IHttpClientService _httpClientService;
-        private readonly ODataSettingsModel _appSettings;
+        private readonly IODataService _odataService;
+        private readonly IODataBrandService _odataBrandService;
 
-        public MTSDataService(IHttpClientService httpClientService, IOptions<ODataSettingsModel> appSettings)
+        public MTSDataService(
+            IODataService odataService,
+            IODataBrandService odataBrandService
+            )
         {
-            _httpClientService = httpClientService;
-            _appSettings = appSettings.Value;
-        }
-
-        private async Task<IList<MTSDataModel>> GetMTSData(string query)
-        {
-            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.MTSUrl}{query}";
-
-            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
-            var parsedData = Parser<MTSDataRootModel>.ParseJson(responseBody);
-            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
-
-            return data;
+            _odataService = odataService;
+            _odataBrandService = odataBrandService;
         }
 
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
         {
-            var fromDate = model.FromDate.DateFormat();
-            var toDate = model.ToDate.DateFormat();
-
-            var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, model.CustomerNo);
-                                //.And()
-                                //.StartGroup()
-                                //.GreaterThanOrEqual(DataColumnDef.MTS_period, fromDate)
-                                //.And()
-                                //.LessThanOrEqual(DataColumnDef.MTS_period, toDate)
-                                //.EndGroup();
+            var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
+            var mtsBrandCodes = new List<string>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
                                 .AddProperty(DataColumnDef.MTS_CustomerName)
                                 .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.MTS_tarvol)
-                                .AddProperty(DataColumnDef.MTS_asp);
+                                .AddProperty(DataColumnDef.MTS_TargetVolume)
+                                .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
-            //var topQuery = $"$top=5";
+            //TODO: get MTS brand codes and add to list
+            mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
-            var queryBuilder = new QueryOptionBuilder();
-            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
-                        //.AppendQuery(topQuery)
-                        .AppendQuery(selectQueryBuilder.Select);
+            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate, mtsBrandCodes)).ToList();
 
-            var data = await GetMTSData(queryBuilder.Query);
-
-            //var result = data.Select(x =>
-            //                    new MTSResultModel()
-            //                    {
-            //                        CustomerNo = x.CustomerNo,
-            //                        CustomerName = x.CustomerName,
-            //                        MatarialGroupOrBrand = x.MatarialGroupOrBrand,
-            //                        TargetVolume = CustomConvertExtension.ObjectToDecimal(x.tarvol),
-            //                        ActualVolume = CustomConvertExtension.ObjectToDecimal(x.asp),
-            //                        DifferenceVolume = CustomConvertExtension.ObjectToDecimal(x.tarvol) - CustomConvertExtension.ObjectToDecimal(x.asp)
-            //                    }).ToList();
-
-            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
+            var result = data.Select(x =>
                                 new MTSResultModel()
                                 {
-                                    CustomerNo = x.FirstOrDefault().CustomerNo,
-                                    CustomerName = x.FirstOrDefault().CustomerName,
-                                    MatarialGroupOrBrand = x.FirstOrDefault().MatarialGroupOrBrand,
-                                    TargetVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.tarvol)),
-                                    ActualVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.asp)),
-                                    DifferenceVolume = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.tarvol)) - x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.asp))
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    MatarialGroupOrBrand = x.MatarialGroupOrBrand,
+                                    TargetVolume = CustomConvertExtension.ObjectToDecimal(x.TargetVolume),
+                                    ActualVolume = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
+                                    DifferenceVolume = CustomConvertExtension.ObjectToDecimal(x.TargetVolume) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
                                 }).ToList();
 
+            #region get brand data
+            if (result.Any())
+            {
+                var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
+
+                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands, true))
+                                            .GroupBy(x => x.MatarialGroupOrBrandFamily).ToList();
+
+                foreach (var item in result)
+                {
+                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.Key == item.MatarialGroupOrBrand);
+                    if (brandFamilyData != null)
+                    {
+                        item.MatarialGroupOrBrand = string.Join(", ", brandFamilyData.Select(x => x.MatarialGroupOrBrandName));
+                    }
+                }
+            }
+            #endregion
+
             return result;
+        }
+
+        public async Task<IList<PerformanceResultModel>> GetPremiumBrandPerformance(MTSSearchModel model)
+        {
+            var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
+            var lyDate = (new DateTime(model.Year, model.Month, 01)).GetLYFD();
+            var lysmDate =  $"{string.Format("{0:0000}", lyDate.Year)}.{string.Format("{0:00}", lyDate.Month)}";
+            var premiumBrandCodes = new List<string>();
+
+            var dataLy = new List<MTSDataModel>();
+            var dataCy = new List<MTSDataModel>();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
+                                .AddProperty(DataColumnDef.MTS_CustomerName)
+                                .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand)
+                                .AddProperty(DataColumnDef.MTS_TargetVolume)
+                                .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
+
+            //TODO: get premiumB brand codes and add to list
+            premiumBrandCodes = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            dataLy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, lysmDate, premiumBrandCodes)).ToList();
+
+            dataCy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate, premiumBrandCodes)).ToList();
+            
+            Func<MTSDataModel, decimal> actVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice);
+            Func<MTSDataModel, decimal> tarVolCalcFunc = x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume);
+            var result = new List<PerformanceResultModel>();
+
+            var brandCodes = dataLy.Select(x => x.MatarialGroupOrBrand)
+                                .Concat(dataCy.Select(x => x.MatarialGroupOrBrand))
+                                        .Distinct().ToList();
+
+            foreach (var brandCode in brandCodes)
+            {
+                var res = new PerformanceResultModel();
+
+                if (dataLy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                {
+                    var mtdAmtLy = dataLy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(actVolCalcFunc);
+                    var brandNameLy = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    var customerNoLy = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
+                    var customerNameLy = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
+
+                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameLy : res.MatarialGroupOrBrand;
+                    res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? customerNoLy : res.CustomerNo;
+                    res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? customerNameLy : res.CustomerName;
+                    res.LYSMVolume = mtdAmtLy;
+                }
+
+                if (dataCy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                {
+                    var mtdTarAmtCy = dataCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(tarVolCalcFunc);
+                    var mtdActAmtCy = dataCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(actVolCalcFunc);
+                    var brandNameCy = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    var customerNoCy = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
+                    var customerNameCy = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
+
+                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameCy : res.MatarialGroupOrBrand;
+                    res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? customerNoCy : res.CustomerNo;
+                    res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? customerNameCy : res.CustomerName;
+                    res.TargetVolume = mtdTarAmtCy;
+                    res.ActualVolume = mtdActAmtCy;
+                }
+
+                res.TargetAchievement = res.TargetVolume > 0 ? (res.ActualVolume / res.TargetVolume) : decimal.Zero;
+                res.TillDateGrowth = res.LYSMVolume > 0 ? (res.ActualVolume / res.LYSMVolume - 1) : decimal.Zero;
+
+                result.Add(res);
+            }
+
+            #region get brand data
+            if (result.Any())
+            {
+                var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
+
+                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands)).ToList();
+
+                foreach (var item in result)
+                {
+                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand);
+                    if (brandFamilyData != null)
+                    {
+                        item.MatarialGroupOrBrand = brandFamilyData.MatarialGroupOrBrandName;
+                    }
+                }
+            }
+            #endregion
+
+            return result;
+        }
+
+        public async Task<IList<ValueTargetResultModel>> GetMonthlyValueTarget(MTSSearchModel model)
+        {
+            var currentdate = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.MTS_CustomerNo)
+                                .AddProperty(DataColumnDef.MTS_CustomerName)
+                                .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand)
+                                .AddProperty(DataColumnDef.MTS_TargetValue)
+                                .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
+
+            var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate)).ToList();
+
+            var result = data.Select(x =>
+                                new ValueTargetResultModel()
+                                {
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    //MatarialGroupOrBrand = x.MatarialGroupOrBrand,
+                                    TargetValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue),
+                                    ActualValue = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
+                                    DifferenceValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
+                                }).ToList();
+
+            var returnResult = new List<ValueTargetResultModel>();
+            if(result.Any())
+            {
+                var res = new ValueTargetResultModel();
+                res.CustomerNo = result.FirstOrDefault().CustomerNo;
+                res.CustomerName = result.FirstOrDefault().CustomerName;
+                res.TargetValue = result.Sum(x => x.TargetValue);
+                res.ActualValue = result.Sum(x => x.ActualValue);
+                res.DifferenceValue = res.TargetValue - res.ActualValue;
+                returnResult.Add(res);
+            }
+
+            return returnResult;
         }
     }
 }

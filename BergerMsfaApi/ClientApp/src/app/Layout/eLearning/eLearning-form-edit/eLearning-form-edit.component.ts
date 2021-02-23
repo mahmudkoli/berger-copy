@@ -13,6 +13,7 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { FileUpload } from 'primeng/fileupload';
 import { ELearningAttachment } from 'src/app/Shared/Entity/ELearning/eLearningAttachment';
+import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 
 @Component({
 	selector: 'app-eLearning-form-edit',
@@ -79,7 +80,7 @@ export class ELearningFormEditComponent implements OnInit, OnDestroy {
 
 	loadCategories() {
 		this.alertService.fnLoading(true);
-		const categoryCode = 'C01';
+		const categoryCode = EnumDynamicTypeCode.ELearningCategory;
 		const categorySubscription = this.dynamicDropdownService.GetDropdownByTypeCd(categoryCode)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {

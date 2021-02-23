@@ -47,14 +47,14 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, object>>>()
             {
-                ["matrialCode"] = v => v.MatrialCode,
-                ["matarialDescription"] = v => v.MatarialDescription,
-                ["matarialGroupOrBrand"] = v => v.MatarialGroupOrBrand,
+                ["materialCode"] = v => v.MaterialCode,
+                ["materialDescription"] = v => v.MaterialDescription,
+                ["materialGroupOrBrand"] = v => v.MaterialGroupOrBrand,
             };
 
             var result = await _brandInfoRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.MatarialGroupOrBrand.Contains(query.GlobalSearchValue) || x.MatrialCode.Contains(query.GlobalSearchValue) || x.MatarialDescription.Contains(query.GlobalSearchValue)),
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.MaterialGroupOrBrand.Contains(query.GlobalSearchValue) || x.MaterialCode.Contains(query.GlobalSearchValue) || x.MaterialDescription.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,
                                 query.Page,
@@ -74,18 +74,30 @@ namespace BergerMsfaApi.Services.Brand.Implementation
        
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
-            var find = await _brandInfoRepository.FindAsync(f => f.MatrialCode.ToLower() == brandStatus.MaterialCode.ToLower());
-            if (find == null) return false;
-
-            switch (brandStatus.PropertyName)
+            var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, bool>>>()
             {
-                case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
-                case "IsMTS": find.IsMTS = !find.IsMTS; break;
-                case "IsPremium": find.IsPremium = !find.IsPremium; break;
-                default: break;
+                ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["IsMTS"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["IsPremium"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+            };
+
+            var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
+            if (findAll == null || !findAll.Any()) return false;
+
+            foreach (var find in findAll)
+            {
+                switch (brandStatus.PropertyName)
+                {
+                    case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
+                    case "IsMTS": find.IsMTS = !find.IsMTS; break;
+                    case "IsPremium": find.IsPremium = !find.IsPremium; break;
+                    default: break;
+                }
             }
-            
-            await _brandInfoRepository.UpdateAsync(find);
+
+            if(findAll.Any())
+                await _brandInfoRepository.UpdateListAsync(findAll);
+
             return true;
         }
     }

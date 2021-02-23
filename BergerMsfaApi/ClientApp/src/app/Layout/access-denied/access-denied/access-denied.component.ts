@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-access-denied',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccessDeniedComponent implements OnInit {
 
-  constructor() { }
+  constructor(private activatedRoute: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit() {
   }
+
+	goHome() {
+		this.router.navigate([`/`], { relativeTo: this.activatedRoute });
+	}
 
 }

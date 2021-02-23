@@ -68,6 +68,18 @@ export class CommonService {
       return JSON.parse(value);;
   }
 
+  booleanToText(obj: any, postFixText: string = 'Text', trueText: string = 'YES', falseText: string = 'NO') {
+      let entries = Object.entries(obj) || [];
+      // console.log(entries);
+      entries.forEach(([key, value]) => {
+          // let value = obj[key];
+          let keyText = key+postFixText;
+          if (typeof value === "boolean") {
+            obj[keyText] = value ? trueText : falseText; 
+          }
+      });
+  }
+
   private appendFormDataNestedObject(formData, value, property, index: null | number) {
     if(typeof(value) === 'object' && !(value instanceof File)) {
       for (let subKey in value) {

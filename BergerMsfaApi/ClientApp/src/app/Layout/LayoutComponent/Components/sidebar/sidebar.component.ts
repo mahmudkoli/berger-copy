@@ -52,8 +52,8 @@ export class SidebarComponent implements OnInit {
 
   getMenus() { 
     let roleId = 1;
-    if(localStorage.getItem('userinfo')) {
-        const userInfo = JSON.parse(localStorage.getItem('userinfo'));
+    if(localStorage.getItem('currentUser')) {
+        const userInfo = JSON.parse(localStorage.getItem('currentUser'));
         roleId = userInfo.roleId;
     }
     this.menuService.getPermissionMenus(roleId).subscribe(

@@ -29,7 +29,7 @@ export class BrandService {
     }
 
     updateBrandStatus(brand: BrandStatus) {
-      return this.http.post<APIResponse>(`${this.BrandsEndpoint}`, brand);
+      return this.http.post<APIResponse>(`${this.BrandsEndpoint}/UpdateBrandStatus`, brand);
     }
   
     // activeInactive(id) {

@@ -28,16 +28,16 @@ namespace Berger.Odata.Model
         public MTSDataModel ToModel()
         {
             var model = new MTSDataModel();
-            model.period = this.period;
-            model.pernr = this.pernr;
-            model.RPMKR = this.RPMKR;
-            model.regiogroup = this.regiogroup;
+            model.Date = this.period;
+            model.EmployeeNo = this.pernr;
+            model.Territory = this.RPMKR;
+            model.Zone = this.regiogroup;
             model.CustomerGroup = this.kdgrp;
             model.UnitOfMeasure = this.meins;
             model.CustomerName = this.cname;
-            model.asp = this.asp;
-            model.tarvol = this.tarvol;
-            model.tarval = this.tarval;
+            model.AverageSalesPrice = this.asp;
+            model.TargetVolume = this.tarvol;
+            model.TargetValue = this.tarval;
             model.CustomerAccountGroup = this.ktokd;
             model.PlantOrBusinessArea = this.gsber;
             model.SalesOffice = this.vkbur;

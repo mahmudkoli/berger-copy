@@ -7,21 +7,23 @@ namespace Berger.Odata.Model
     public class DriverDataRootModel
     {
         public string BILLSL { get; set; }
-        public string WERKS { get; set; } // Business Area
+        public string WERKS { get; set; }
         public string VBELN { get; set; }
         public string fkdat { get; set; }
         public string DRIVERNAME { get; set; }
+        public string TELF1 { get; set; }
         public string VEHICLE { get; set; }
 
         public DriverDataModel ToModel()
         {
             var model = new DriverDataModel();
-            model.BILLSL = this.BILLSL;
-            model.WERKS = this.WERKS;
+            model.BillSl = this.BILLSL;
+            model.PlantOrBusinessArea = this.WERKS;
             model.InvoiceNoOrBillNo = this.VBELN;
             model.Date = this.fkdat;
-            model.DRIVERNAME = this.DRIVERNAME;
-            model.VEHICLE = this.VEHICLE;
+            model.DriverName = this.DRIVERNAME;
+            model.DriverMobileNo = this.TELF1;
+            model.Vehicle = this.VEHICLE;
             return model;
         }
     }
