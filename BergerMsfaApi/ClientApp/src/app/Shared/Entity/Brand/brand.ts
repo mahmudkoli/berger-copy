@@ -37,7 +37,7 @@ export class Brand {
 }
 
 export class BrandStatus {
-    materialCode: string;
+    materialOrBrandCode: string;
     propertyName: string;
     
     constructor(init?: Partial<BrandStatus>) {
@@ -45,7 +45,7 @@ export class BrandStatus {
     }
 
     clear() {
-        this.materialCode = '';
+        this.materialOrBrandCode = '';
         this.propertyName = '';
     }
 }
