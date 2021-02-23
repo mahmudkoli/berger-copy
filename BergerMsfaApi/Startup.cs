@@ -27,6 +27,7 @@ using NetCore.AutoRegisterDi;
 using AutoMapper;
 using Berger.Common.HttpClient;
 using Berger.Odata.Services;
+using Berger.Odata.Repositories;
 
 namespace BergerMsfaApi
 {
@@ -81,6 +82,8 @@ namespace BergerMsfaApi
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddScoped<IODataService, ODataService>();
+            services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IMTSDataService, MTSDataService>();
 

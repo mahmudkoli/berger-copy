@@ -16,12 +16,15 @@ namespace Berger.Odata.Services
     public class MTSDataService : IMTSDataService
     {
         private readonly IODataService _odataService;
+        private readonly IODataBrandService _odataBrandService;
 
         public MTSDataService(
-            IODataService odataService
+            IODataService odataService,
+            IODataBrandService odataBrandService
             )
         {
             _odataService = odataService;
+            _odataBrandService = odataBrandService;
         }
 
         public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
@@ -37,6 +40,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
             //TODO: get MTS brand codes and add to list
+            mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
             var data = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentdate, mtsBrandCodes)).ToList();
 
@@ -91,6 +95,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MTS_AverageSalesPrice);
 
             //TODO: get premiumB brand codes and add to list
+            premiumBrandCodes = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
 
             dataLy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, lysmDate, premiumBrandCodes)).ToList();
 
