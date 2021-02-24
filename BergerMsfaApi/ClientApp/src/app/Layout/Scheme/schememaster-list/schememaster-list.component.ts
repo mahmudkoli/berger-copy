@@ -90,7 +90,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 	// }
 
 	editSchemeMaster(id) {
-		this.router.navigate(['/scheme/master-add', id]);
+		this.router.navigate(['/scheme/master-edit', id]);
 	}
 
 	newSchemeMaster() {

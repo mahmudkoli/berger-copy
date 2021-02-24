@@ -83,7 +83,7 @@ export class SchemedetailListPngComponent implements OnInit {
         this.router.navigate(["/scheme/detail-add"]);
     }
     edit(id) {
-        this.router.navigate(["/scheme/detail-add", id]);
+        this.router.navigate(["/scheme/detail-edit", id]);
 
     }
     delete(id) {

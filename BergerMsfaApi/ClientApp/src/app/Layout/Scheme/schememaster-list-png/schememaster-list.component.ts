@@ -70,7 +70,7 @@ export class SchememasterListPngComponent implements OnInit {
         this.router.navigate(["scheme/master-add",]);
     }
     edit(id) {
-        this.router.navigate(["scheme/master-add", id]);
+        this.router.navigate(["scheme/master-edit", id]);
 
     }
     onSearch() {
@@ -107,6 +107,6 @@ export class SchememasterListPngComponent implements OnInit {
 
     }
     detail(id) {
-        this.router.navigate(["scheme/master-add", id]);
+        this.router.navigate(["scheme/master-edit", id]);
     }
 }

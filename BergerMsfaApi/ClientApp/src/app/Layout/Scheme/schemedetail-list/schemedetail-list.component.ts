@@ -92,7 +92,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 	// }
 
 	editSchemeDetail(id) {
-		this.router.navigate(['/scheme/detail-add', id]);
+		this.router.navigate(['/scheme/detail-edit', id]);
 	}
 
 	newSchemeDetail() {
