@@ -1,4 +1,5 @@
 ﻿import { Status } from '../../Enums/status';
+import { QueryObject } from '../Common/query-object';
 
 export class SchemeMaster {
     id: number;
@@ -32,6 +33,19 @@ export class SaveSchemeMaster {
     }
 }
 
+export class SchemeMasterQuery extends QueryObject {
+    schemeName: string;
+    
+    constructor(init?: Partial<SchemeMasterQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.schemeName = '';
+    }
+}
+
 export class SchemeDetail {
     id: number;
     //National Scheme (Brand)
@@ -58,6 +72,8 @@ export class SchemeDetail {
     schemeMasterCondition: string;
     status: number;
     
+    statusText: string;
+
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
@@ -99,5 +115,18 @@ export class SaveSchemeDetail {
     clear() {
         this.id = null;
         this.schemeMasterId = null;
+    }
+}
+
+export class SchemeDetailQuery extends QueryObject {
+    schemeMasterName: string;
+    
+    constructor(init?: Partial<SchemeDetailQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.schemeMasterName = '';
     }
 }

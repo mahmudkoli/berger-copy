@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Tinting.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,20 @@ namespace BergerMsfaApi.Controllers.Tinting
             try
             {
                 var result = await _tintiningService.GetAllAsync(index, pageSize, search);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] QueryObjectModel query)
+        {
+            try
+            {
+                var result = await _tintiningService.GetAllAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)

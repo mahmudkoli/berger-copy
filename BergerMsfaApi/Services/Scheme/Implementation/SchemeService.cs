@@ -2,12 +2,15 @@
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -46,6 +49,33 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             //return result.ToPagedList(index, pageSize);
 
             return new StaticPagedList<SchemeMasterModel>(modelResult, index, pageSize, result.TotalFilter);
+        }
+
+        public async Task<QueryResultModel<SchemeMasterModel>> GetAllSchemeMastersAsync(QueryObjectModel query)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<SchemeMaster, object>>>()
+            {
+                ["schemeName"] = v => v.SchemeName
+            };
+
+            var result = await _schemeMasterSvc.GetAllIncludeAsync(
+                                x => x,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.SchemeName.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                null,
+                                query.Page,
+                                query.PageSize,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<SchemeMasterModel>>(result.Items);
+
+            var queryResult = new QueryResultModel<SchemeMasterModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<SchemeMasterModel>> GetAllSchemeMastersAsync()
@@ -91,8 +121,8 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
 
         public async Task<int> DeleteSchemeMasterAsync(int id)
         {
-            var isExists = await _schemeDetailSvc.AnyAsync(f => f.Id == id);
-            if (isExists) await _schemeDetailSvc.DeleteAsync(f => f.SchemeMasterId == id);
+            //var isExists = await _schemeDetailSvc.AnyAsync(f => f.SchemeMasterId == id);
+            //if (isExists) await _schemeDetailSvc.DeleteAsync(f => f.SchemeMasterId == id);
             var result =  await _schemeMasterSvc.DeleteAsync(f => f.Id == id);
             return result;
         }
@@ -127,6 +157,33 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             //return result.ToPagedList(index, pageSize);
 
             return new StaticPagedList<SchemeDetailModel>(modelResult, index, pageSize, result.TotalFilter);
+        }
+
+        public async Task<QueryResultModel<SchemeDetailModel>> GetAllSchemeDetailsAsync(QueryObjectModel query)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<SchemeDetail, object>>>()
+            {
+                ["schemeMasterName"] = v => v.SchemeMaster.SchemeName
+            };
+
+            var result = await _schemeDetailSvc.GetAllIncludeAsync(
+                                x => x,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.SchemeMaster.SchemeName.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                x => x.Include(i => i.SchemeMaster),
+                                query.Page,
+                                query.PageSize,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<SchemeDetailModel>>(result.Items);
+
+            var queryResult = new QueryResultModel<SchemeDetailModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<SchemeDetailModel>> GetAllSchemeDetailsAsync()

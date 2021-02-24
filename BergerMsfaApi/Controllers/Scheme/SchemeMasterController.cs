@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -33,12 +34,12 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpGet("GetSchemeMasterById/{Id}")]
-        public async Task<IActionResult> GetSchemeMasterById(int Id)
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] QueryObjectModel query)
         {
             try
             {
-                var result = await _schemeService.GetSchemeMasterByIdAsync(Id);
+                var result = await _schemeService.GetAllSchemeMastersAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -47,7 +48,21 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpPost("CreateSchemeMaster")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSchemeMasterById(int id)
+        {
+            try
+            {
+                var result = await _schemeService.GetSchemeMasterByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateSchemeMaster([FromBody] SaveSchemeMasterModel model)
         {
             try
@@ -62,8 +77,8 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpPut("UpdateSchemeMaster")]
-        public async Task<IActionResult> UpdateSchemeMaster([FromBody] SaveSchemeMasterModel model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSchemeMaster(int id, [FromBody] SaveSchemeMasterModel model)
         {
             try
             {
@@ -77,7 +92,7 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpDelete("DeleteSchemeMaster/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchemeMaster(int id)
         {
             try
@@ -92,8 +107,8 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpGet("GetAllSchemeMastersForSelect")]
-        public async Task<IActionResult> GetAllSchemeMastersForSelect()
+        [HttpGet("select")]
+        public async Task<IActionResult> GetAllForSelect()
         {
             try
             {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -36,12 +37,12 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpGet("GetSchemeDetailById/{Id}")]
-        public async Task<IActionResult> GetSchemeDetailById(int Id)
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] QueryObjectModel query)
         {
             try
             {
-                var result = await _schemeService.GetSchemeDetailsByIdAsync(Id);
+                var result = await _schemeService.GetAllSchemeDetailsAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -50,7 +51,21 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpPost("CreateSchemeDetail")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSchemeDetailById(int id)
+        {
+            try
+            {
+                var result = await _schemeService.GetSchemeDetailsByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateSchemeDetail([FromBody] SaveSchemeDetailModel model)
         {
             try
@@ -65,8 +80,8 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpPut("UpdateSchemeDetail")]
-        public async Task<IActionResult> UpdateSchemeDetail([FromBody] SaveSchemeDetailModel model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSchemeDetail(int id, [FromBody] SaveSchemeDetailModel model)
         {
             try
             {
@@ -80,7 +95,7 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpDelete("DeleteSchemeDetail/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchemeDetail(int id)
         {
             try

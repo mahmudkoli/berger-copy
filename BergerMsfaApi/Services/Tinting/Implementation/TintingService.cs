@@ -3,6 +3,7 @@ using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Tinting;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Tinting;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -49,6 +51,39 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             //return result.ToPagedList(index, pageSize);
 
             return new StaticPagedList<TintingMachineModel>(modelResult, index, pageSize, result.TotalFilter);
+        }
+
+        public async Task<QueryResultModel<TintingMachineModel>> GetAllAsync(QueryObjectModel query)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<TintingMachine, object>>>()
+            {
+                ["userFullName"] = v => v.UserInfo.FullName,
+                ["territory"] = v => v.Territory,
+                ["companyName"] = v => v.Company.DropdownName,
+                ["noOfActiveMachine"] = v => v.NoOfActiveMachine,
+                ["noOfInactiveMachine"] = v => v.NoOfInactiveMachine,
+                ["no"] = v => v.No,
+                ["contribution"] = v => v.Contribution,
+            };
+
+            var result = await _tintingMachineSvc.GetAllIncludeAsync(
+                                x => x,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.Company.DropdownName.Contains(query.GlobalSearchValue) || x.Territory.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                x => x.Include(i => i.UserInfo).Include(i => i.Company),
+                                query.Page,
+                                query.PageSize,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<TintingMachineModel>>(result.Items);
+
+            var queryResult = new QueryResultModel<TintingMachineModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId)

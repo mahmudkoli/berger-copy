@@ -8,59 +8,72 @@ import { SaveSchemeDetail, SaveSchemeMaster } from '../../Entity/Scheme/SchemeMa
 
 export class SchemeService {
     public baseUrl: string;
+    public SchemeMastersEndpoint: string;
+    public SchemeDetailsEndpoint: string;
 
     constructor(private http: HttpClient,@Inject('BASE_URL') baseUrl: string,
         private commonService: CommonService) {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
+        this.SchemeMastersEndpoint = this.baseUrl + 'v1/SchemeMaster';
+        this.SchemeDetailsEndpoint = this.baseUrl + 'v1/SchemeDetail';
     }
 
     //#region Scheme Master
     public getSchemeMasterList(index, pageSize, search="") {
-        return this.http.get<APIResponse>(this.baseUrl + `v1/SchemeMaster/getSchemeMasterList/${index}/${pageSize}?search=${search}`);
+        return this.http.get<APIResponse>(`${this.SchemeMastersEndpoint}/getSchemeMasterList/${index}/${pageSize}?search=${search}`);
+    }
+
+    getSchemeMasters(filter?) {
+        return this.http.get<APIResponse>(`${this.SchemeMastersEndpoint}?${this.commonService.toQueryString(filter)}`);
     }
 
     public getSchemeMasterById(id) {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/SchemeMaster/GetSchemeMasterById/' + id);
+        return this.http.get<APIResponse>(`${this.SchemeMastersEndpoint}/${id}`);
     }
+
     public createSchemeMaster(model: SaveSchemeMaster) {
         model.id = 0;
-        return this.http.post<APIResponse>(this.baseUrl + 'v1/SchemeMaster/createSchemeMaster', model);
+        return this.http.post<APIResponse>(`${this.SchemeMastersEndpoint}`, model);
     }
 
-    public UpdateSchemeMaster(model: SaveSchemeMaster) {
-        return this.http.put<APIResponse>(this.baseUrl + 'v1/SchemeMaster/updateSchemeMaster', model);
+    public updateSchemeMaster(model: SaveSchemeMaster) {
+        return this.http.put<APIResponse>(`${this.SchemeMastersEndpoint}/${model.id}`, model);
     }
 
-    public DeleteSchemeMaster(id) {
-        return this.http.delete<any>(this.baseUrl + 'v1/SchemeMaster/DeleteSchemeMaster/' + id);
+    public deleteSchemeMaster(id) {
+        return this.http.delete<any>(`${this.SchemeMastersEndpoint}/${id}`);
     }
-  
+
     getAllSchemeMastersForSelect() {
-      return this.http.get<APIResponse>(this.baseUrl + 'v1/SchemeMaster/getAllSchemeMastersForSelect');
+        return this.http.get<APIResponse>(`${this.SchemeMastersEndpoint}/select`);
     }
     //#endregion
 
     //#region Scheme Detail
-    public getSchemeDetailList(index,pageSize,search="") {
-        return this.http.get<APIResponse>(this.baseUrl + `v1/SchemeDetail/getSchemeDetailList/${index}/${pageSize}?search=${search}`);
-    } 
+    public getSchemeDetailList(index, pageSize, search="") {
+        return this.http.get<APIResponse>(`${this.SchemeDetailsEndpoint}/getSchemeDetailList/${index}/${pageSize}?search=${search}`);
+    }
+
+    getSchemeDetails(filter?) {
+        return this.http.get<APIResponse>(`${this.SchemeDetailsEndpoint}?${this.commonService.toQueryString(filter)}`);
+    }
 
     public getSchemeDetailById(id) {
-        return this.http.get<APIResponse>(this.baseUrl + 'v1/SchemeDetail/getSchemeDetailById/' + id);
+        return this.http.get<APIResponse>(`${this.SchemeDetailsEndpoint}/${id}`);
     }
 
     public createSchemeDetail(model: SaveSchemeDetail) {
         model.id = 0;
-        return this.http.post<APIResponse>(this.baseUrl + 'v1/SchemeDetail/createSchemeDetail', model);
+        return this.http.post<APIResponse>(`${this.SchemeDetailsEndpoint}`, model);
     }
 
     public updateSchemeDetail(model: SaveSchemeDetail) {
-        return this.http.put<APIResponse>(this.baseUrl + 'v1/SchemeDetail/updateSchemeDetail', model);
+        return this.http.put<APIResponse>(`${this.SchemeDetailsEndpoint}/${model.id}`, model);
     }
 
     public deleteSchemeDetail(id: number) {
-        return this.http.delete<any>(this.baseUrl + 'v1/SchemeDetail/deleteSchemeDetail/' + id);
+        return this.http.delete<any>(`${this.SchemeDetailsEndpoint}/${id}`);
     }
     //#endregion
 }

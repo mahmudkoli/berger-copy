@@ -121,7 +121,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 
 	updateSchemeMasters(_schemeMaster: SaveSchemeMaster) {
 		this.alertService.fnLoading(true);
-		const updateSubscription = this.schemeMasterService.UpdateSchemeMaster(_schemeMaster)
+		const updateSubscription = this.schemeMasterService.updateSchemeMaster(_schemeMaster)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
 				this.alertService.tosterSuccess(`Scheme Master has been saved successfully.`);
