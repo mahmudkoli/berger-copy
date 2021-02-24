@@ -10,10 +10,10 @@ const routes: Routes = [
 
     { path: 'detail-list', component: SchemedetailListComponent },
     { path: 'detail-add', component: SchemedetailAddComponent },
-    { path: 'detail-add/:id', component: SchemedetailAddComponent },
+    { path: 'detail-edit/:id', component: SchemedetailAddComponent },
     { path: 'master-list', component: SchememasterListComponent },
     { path: 'master-add', component: SchememasterAddComponent },
-    { path: 'master-add/:id', component: SchememasterAddComponent }
+    { path: 'master-edit/:id', component: SchememasterAddComponent }
 ];
 
 @NgModule({

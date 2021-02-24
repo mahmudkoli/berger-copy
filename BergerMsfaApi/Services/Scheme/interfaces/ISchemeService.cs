@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Models.Scheme;
+﻿using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.Scheme;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -7,25 +8,25 @@ namespace BergerMsfaApi.Services.Scheme.interfaces
 {
     public interface ISchemeService
     {
-        Task<IPagedList<SchemeMasterModel>> PortalGetSchemeMasters(int index, int pageSize, string search);
-        Task<IEnumerable<SchemeMasterModel>> AppGetSchemeMasters();
+        #region Scheme Master
+        Task<IPagedList<SchemeMasterModel>> GetAllSchemeMastersAsync(int index, int pageSize, string search);
+        Task<QueryResultModel<SchemeMasterModel>> GetAllSchemeMastersAsync(QueryObjectModel query);
+        Task<IList<SchemeMasterModel>> GetAllSchemeMastersAsync();
+        Task<SchemeMasterModel> GetSchemeMasterByIdAsync(int id);
+        Task<int> AddSchemeMasterAsync(SaveSchemeMasterModel model);
+        Task<int> UpdateSchemeMasterAsync(SaveSchemeMasterModel model);
+        Task<int> DeleteSchemeMasterAsync(int id); 
+        Task<object> GetAllSchemeMastersForSelectAsync();
+        #endregion
 
-        Task<SchemeMasterModel> PortalGetSchemeMastersById(int Id );
-        Task<SchemeMasterModel> PortalCreateSchemeMasters(SchemeMasterModel model);
-        Task<SchemeMasterModel> PortalUpdateSchemeMasters(SchemeMasterModel model);
-        Task<int> PortalDeleteSchemeMasters(int Id);
-
-        Task<IPagedList<SchemeDetailModel>> PortalGetcShemeDetailWithMaster(int index, int pageSize, string search);
-        Task<IEnumerable<SchemeDetailModel>> AppGetcShemeDetailWithMaster();
-
-        Task<IEnumerable<SchemeDetailModel>> PortalGetSchemeDelails();
-        Task<SchemeDetailModel> PortalGetSchemeDetailById(int Id);
-        Task<SchemeDetailModel> PortalCreateSchemeDeatil(SchemeDetailModel model);
-        Task<SchemeDetailModel> PortalUpdateSchemeDetail(SchemeDetailModel model);
-        Task<int> PortalDeleteSchemeDetail(int Id);
-        Task<bool> IsSchemeMasterAlreadyExist(int Id);
-        Task<bool> IsSchemeDetailAlreadyExist(int Id);
-
-        //   Task<IEnumerable<SchemeMasterModel>> PortalGetSchemeMasterWithDetail();
+        #region Scheme Details
+        Task<IPagedList<SchemeDetailModel>> GetAllSchemeDetailsAsync(int index, int pageSize, string search);
+        Task<QueryResultModel<SchemeDetailModel>> GetAllSchemeDetailsAsync(QueryObjectModel query);
+        Task<IList<SchemeDetailModel>> GetAllSchemeDetailsAsync();
+        Task<SchemeDetailModel> GetSchemeDetailsByIdAsync(int id);
+        Task<int> AddSchemeDeatilsAsync(SaveSchemeDetailModel model);
+        Task<int> UpdateSchemeDetailsAsync(SaveSchemeDetailModel model);
+        Task<int> DeleteSchemeDetailsAsync(int id);
+        #endregion
     }
 }
