@@ -9,8 +9,8 @@ namespace BergerMsfaApi.Services.Tinting.Interfaces
 {
     public interface ITintiningService
     {
-        Task<IPagedList<TintingMachineModel>> GetTintingMachinePagingList(int index, int pageSize, string search);
-        Task<IList<SaveTintingMachineModel>> AppGetTintingMachineList(string territory, int userInfoId);
-        Task<bool> AppUpdateTitningMachine(List<SaveTintingMachineModel> model);
+        Task<IPagedList<TintingMachineModel>> GetAllAsync(int index, int pageSize, string search);
+        Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId);
+        Task<bool> UpdateAsync(List<SaveTintingMachineModel> model);
     }
 }

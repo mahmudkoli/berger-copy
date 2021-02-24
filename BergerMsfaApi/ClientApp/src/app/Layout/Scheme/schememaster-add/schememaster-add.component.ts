@@ -1,84 +1,165 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SchemeMaster } from '../../../Shared/Entity/Scheme/SchemeMaster';
+import { SaveSchemeMaster, SchemeMaster } from '../../../Shared/Entity/Scheme/SchemeMaster';
+import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-schememaster-add',
     templateUrl: './schememaster-add.component.html',
     styleUrls: ['./schememaster-add.component.css']
 })
-export class SchememasterAddComponent implements OnInit {
-    schemeMasterModel: SchemeMaster = new SchemeMaster();
-    constructor(
-        private schemeService: SchemeService,
-        private alertService: AlertService,
-        private route: ActivatedRoute,
-        private router: Router
-    ) { }
+export class SchememasterAddComponent implements OnInit, OnDestroy {
 
-    ngOnInit() {
-   
+	schemeMaster: SchemeMaster;
+	schemeMasterForm: FormGroup;
+	// actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
+	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
+	
+	private subscriptions: Subscription[] = [];
 
-        console.log("param", this.route.snapshot.params, Object.keys(this.route.snapshot.params).length);
+	constructor(private activatedRoute: ActivatedRoute,
+		private router: Router,
+		private formBuilder: FormBuilder,
+		private alertService: AlertService,
+		private commonService: CommonService,
+		private schemeMasterService: SchemeService) { }
 
-        if (Object.keys(this.route.snapshot.params).length !== 0 && this.route.snapshot.params.id !== 'undefined') {
-            console.log("id", this.route.snapshot.params.id);
-            let id = this.route.snapshot.params.id;
-            this.getSchemeMasterById(id);
-        }
+	ngOnInit() {
+		// this.alertService.fnLoading(true);
+		const routeSubscription = this.activatedRoute.params.subscribe(params => {
+			const id = params['id'];
+			console.log(id);
+			if (id) {
+				this.alertService.fnLoading(true);
+				this.schemeMasterService.getSchemeMasterById(id)
+					.pipe(finalize(() => this.alertService.fnLoading(false)))
+					.subscribe(res => {
+						if (res) {
+							this.schemeMaster = res.data as SchemeMaster;
+							this.initSchemeMasters();
+						}
+					});
+			} else {
+				this.schemeMaster = new SchemeMaster();
+				this.schemeMaster.clear();
+				this.initSchemeMasters();
+			}
+		});
+		this.subscriptions.push(routeSubscription);
+	}
 
-    }
+	ngOnDestroy() {
+		this.subscriptions.forEach(sb => sb.unsubscribe());
+	}
 
-    getSchemeMasterById(id) {
-        this.schemeService.getSchemeMasterById(id).subscribe(
-            (res) => { this.schemeMasterModel = res.data || new SchemeMaster() },
-            () => { },
-            () => { }
-        )
-    }
-    fnSave() {
-        this.schemeMasterModel.id == 0 ? this.insert(this.schemeMasterModel) : this.update(this.schemeMasterModel);
-    }
-    insert(schemeMasterModel) {
-        this.alertService.fnLoading(true);
-        this.schemeService.createSchemeMaster(schemeMasterModel).subscribe((res) => {
-            this.router.navigate(['/scheme/master-list']).then(() => {
-                this.alertService.tosterSuccess("Scheme has been created successfully.");
-            });
-        }, (error) => {
-            console.log(error);
-            this.displayError(error);
-        }, () => {
-            this.alertService.fnLoading(false);
-        });
-    }
-    update(schemeMasterModel) {
-        this.alertService.fnLoading(true);
-        this.schemeService.UpdateSchemeMaster(schemeMasterModel).subscribe((res) => {
-            this.router.navigate(['/scheme/master-list']).then(() => {
-                this.alertService.tosterSuccess("Scheme has been update successfully.");
-            });
-        }, (error) => {
-            console.log(error);
-            this.displayError(error);
-        }, () => {
-            this.alertService.fnLoading(false);
-        });
-    }
-    fnRouteList() {
-        this.router.navigate(['/scheme/master-list']);
-    }
-    private displayError(errorDetails: any) {
-         this.alertService.fnLoading(false);
-        console.log("error", errorDetails);
-        let errList = errorDetails.error.errors;
-        if (errList.length) {
-            console.log("error", errList, errList[0].errorList[0]);
-            this.alertService.tosterDanger(errList[0].errorList[0]);
-        } else {
-            this.alertService.tosterDanger(errorDetails.error.msg);
-        }
-    }
+	initSchemeMasters() {
+		this.createForm();
+	}
+
+	createForm() {
+		this.schemeMasterForm = this.formBuilder.group({
+			schemeName: [this.schemeMaster.schemeName, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
+			condition: [this.schemeMaster.condition],
+			// status: [this.schemeMaster.status, [Validators.required]]
+		});
+	}
+
+	get formControls() { return this.schemeMasterForm.controls; }
+
+	onSubmit() {
+		const controls = this.schemeMasterForm.controls;
+
+		if (this.schemeMasterForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+			return;
+		}
+
+		const editedSchemeMasters = this.prepareSchemeMasters();
+		if (editedSchemeMasters.id) {
+			this.updateSchemeMasters(editedSchemeMasters);
+		}
+		else {
+			this.createSchemeMasters(editedSchemeMasters);
+		}
+	}
+
+	prepareSchemeMasters(): SaveSchemeMaster {
+		const controls = this.schemeMasterForm.controls;
+
+		const _schemeMaster = new SaveSchemeMaster();
+		_schemeMaster.clear();
+		_schemeMaster.id = this.schemeMaster.id;
+		_schemeMaster.schemeName = controls['schemeName'].value;
+		_schemeMaster.condition = controls['condition'].value;
+		// _schemeMaster.status = controls['status'].value;
+			
+		return _schemeMaster;
+	}
+
+	createSchemeMasters(_schemeMaster: SaveSchemeMaster) {
+		this.alertService.fnLoading(true);
+		const createSubscription = this.schemeMasterService.createSchemeMaster(_schemeMaster)
+			.pipe(finalize(() => this.alertService.fnLoading(false)))
+			.subscribe(res => {
+				this.alertService.tosterSuccess(`New Scheme Master has been added successfully.`);
+				this.goBack();
+			},
+				error => {
+					this.throwError(error);
+				});
+		this.subscriptions.push(createSubscription);
+	}
+
+	updateSchemeMasters(_schemeMaster: SaveSchemeMaster) {
+		this.alertService.fnLoading(true);
+		const updateSubscription = this.schemeMasterService.UpdateSchemeMaster(_schemeMaster)
+			.pipe(finalize(() => this.alertService.fnLoading(false)))
+			.subscribe(res => {
+				this.alertService.tosterSuccess(`Scheme Master has been saved successfully.`);
+				this.goBack();
+			},
+				error => {
+					this.throwError(error);
+				});
+		this.subscriptions.push(updateSubscription);
+	}
+
+	getComponentTitle() {
+		let result = 'Create Scheme Master';
+		if (!this.schemeMaster || !this.schemeMaster.id) {
+			return result;
+		}
+
+		result = `Edit Scheme Master - ${this.schemeMaster.schemeName}`;
+		return result;
+	}
+
+	goBack() {
+		this.router.navigate([`/scheme/master-list`], { relativeTo: this.activatedRoute });
+	}
+
+	stringToInt(value): number {
+		return Number.parseInt(value);
+	}
+
+	private throwError(errorDetails: any) {
+		// this.alertService.fnLoading(false);
+		console.log("error", errorDetails);
+		let errList = errorDetails.error.errors;
+		if (errList.length) {
+			console.log("error", errList, errList[0].errorList[0]);
+			// this.alertService.tosterDanger(errList[0].errorList[0]);
+		} else {
+			// this.alertService.tosterDanger(errorDetails.error.message);
+		}
+	}
 }

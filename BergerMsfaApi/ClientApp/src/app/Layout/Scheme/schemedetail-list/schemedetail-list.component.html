@@ -21,9 +21,9 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="schemeName">Scheme Name<p-sortIcon field="schemeName"></p-sortIcon></th>
-                <th pSortableColumn="item">Item<p-sortIcon field="item"></p-sortIcon></th>
-                <th pSortableColumn="globalCondition">G.Condition <p-sortIcon field="globalCondition"></p-sortIcon></th>
+                <th pSortableColumn="schemeMasterName">Scheme Name<p-sortIcon field="schemeMasterName"></p-sortIcon></th>
+                <th pSortableColumn="material">Product<p-sortIcon field="material"></p-sortIcon></th>
+                <th pSortableColumn="schemeMasterCondition">G.Condition <p-sortIcon field="schemeMasterCondition"></p-sortIcon></th>
                 <th pSortableColumn="condition">Condition <p-sortIcon field="condition"></p-sortIcon></th>
                 <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
                 <th pSortableColumn="benefit">Benefit<p-sortIcon field="benefit"></p-sortIcon></th>
@@ -33,10 +33,10 @@
         </ng-template>
         <ng-template pTemplate="body" let-scheme>
             <tr>
-                <td>{{scheme.schemeName }}</td>
-                <td>{{scheme.item }}</td>
+                <td>{{scheme.schemeMasterName }}</td>
+                <td>{{scheme.material }}</td>
                 <td>
-                    {{scheme.globalCondition}}
+                    {{scheme.schemeMasterCondition}}
                 </td>
                 <td>
                     {{scheme.condition}}

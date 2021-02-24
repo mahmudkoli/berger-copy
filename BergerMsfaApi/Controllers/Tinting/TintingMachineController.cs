@@ -12,11 +12,11 @@ namespace BergerMsfaApi.Controllers.Tinting
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-
     public class TintingMachineController : BaseController
     {
         private readonly ILogger<TintingMachineController> _logger;
         private readonly ITintiningService _tintiningService;
+
         public TintingMachineController(
             ITintiningService tintiningService,
             ILogger<TintingMachineController> logger
@@ -31,15 +31,13 @@ namespace BergerMsfaApi.Controllers.Tinting
         {
             try
             {
-                var result = await _tintiningService.GetTintingMachinePagingList(index, pageSize, search);
+                var result = await _tintiningService.GetAllAsync(index, pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
-
         }
-
     }
 }

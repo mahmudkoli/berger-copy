@@ -27,7 +27,7 @@ export class SchemedetailListComponent implements OnInit {
     }
     onSchemeDetailMasterList(index,pageSize,search="") {
         this.alertService.fnLoading(true);
-        this.schemeService.getSchemeDetailWithMaster(index,pageSize,search).subscribe(
+        this.schemeService.getSchemeDetailList(index,pageSize,search).subscribe(
             (res) => {
                 debugger;
                 this.pagingConfig=res.data

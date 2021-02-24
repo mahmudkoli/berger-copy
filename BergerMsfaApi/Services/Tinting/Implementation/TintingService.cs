@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
     public class TintingService : ITintiningService
     {
         public readonly IRepository<TintingMachine> _tintingMachineSvc;
-        private readonly IDropdownService _dropdownService;
+        public readonly IDropdownService _dropdownService;
         public readonly IMapper _mapper;
 
         public TintingService(
@@ -33,7 +33,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             _mapper = mapper;
         }
 
-        public async Task<IPagedList<TintingMachineModel>> GetTintingMachinePagingList(int index, int pageSize, string search)
+        public async Task<IPagedList<TintingMachineModel>> GetAllAsync(int index, int pageSize, string search)
         {
             var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x,
                             x => (string.IsNullOrEmpty(search) || x.Territory.Contains(search) || 
@@ -51,7 +51,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             return new StaticPagedList<TintingMachineModel>(modelResult, index, pageSize, result.TotalFilter);
         }
 
-        public async Task<IList<SaveTintingMachineModel>> AppGetTintingMachineList(string territory, int userInfoId)
+        public async Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId)
         {
             var allCompanies = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
 
@@ -80,7 +80,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             return modelResult;
         }
 
-        public async Task<bool> AppUpdateTitningMachine(List<SaveTintingMachineModel> model)
+        public async Task<bool> UpdateAsync(List<SaveTintingMachineModel> model)
         {
             foreach (var tinMac in model)
             {
