@@ -33,7 +33,7 @@ namespace BergerMsfaApi.Controllers.Tinting
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _tintiningService.AppGetTintingMachineList(territory, userInfoId);
+                var result = await _tintiningService.GetAllAsync(territory, userInfoId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -48,7 +48,7 @@ namespace BergerMsfaApi.Controllers.Tinting
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _tintiningService.AppUpdateTitningMachine(model);
+                var result = await _tintiningService.UpdateAsync(model);
                 return OkResult(result);
             }
             catch (System.Exception ex)

@@ -10,10 +10,19 @@ import { SharedMasterModule } from '../../Shared/Modules/shared-master/shared-ma
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SchemedetailListComponent } from './schemedetail-list/schemedetail-list.component';
 import { SchemedetailAddComponent } from './schemedetail-add/schemedetail-add.component';
+import { SchememasterListPngComponent } from './schememaster-list-png/schememaster-list.component';
+import { SchemedetailListPngComponent } from './schemedetail-list-png/schemedetail-list.component';
 
 
 @NgModule({
-  declarations: [ SchememasterListComponent, SchememasterAddComponent, SchemedetailListComponent, SchemedetailAddComponent],
+  declarations: [ 
+    SchememasterListComponent, 
+    SchememasterListPngComponent, 
+    SchememasterAddComponent, 
+    SchemedetailListComponent, 
+    SchemedetailListPngComponent, 
+    SchemedetailAddComponent
+  ],
   imports: [
     CommonModule,
       SchemeRoutingModule,
