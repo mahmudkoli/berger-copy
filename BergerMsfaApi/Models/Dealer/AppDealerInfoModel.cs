@@ -13,7 +13,7 @@ namespace BergerMsfaApi.Models.Dealer
         public string PlanDate { get; set; }
         public bool IsFocused { get; set; }
         public bool IsSubdealer { get; set; }
-        public int PlandId { get; set; }
+        public int PlanId { get; set; }
 
 
     }

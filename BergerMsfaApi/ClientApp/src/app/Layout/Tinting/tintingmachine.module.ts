@@ -7,10 +7,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TintingmachineListComponent } from './tintingmachine-list/tintingmachine-list.component';
+import { TintingmachineListPngComponent } from './tintingmachine-list-png/tintingmachine-list.component';
 
 
 @NgModule({
-    declarations: [TintingmachineListComponent],
+    declarations: [
+      TintingmachineListComponent,
+      TintingmachineListPngComponent
+    ],
   imports: [
       CommonModule,
       CommonModule,

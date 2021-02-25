@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Berger.Common.Enumerations;
 using Berger.Data.Attributes;
 using Berger.Data.Common;
 
@@ -14,6 +15,7 @@ namespace Berger.Data.MsfaEntity.Users
         public string PhoneNumber { get; set; }
         public string Code { get; set; }
         public string EmployeeId { get; set; }
+        public EnumEmployeeRole EmployeeRole { get; set; }
         public string Department { get; set; }
         public string Designation { get; set; }
         public string ManagerName { get; set; }

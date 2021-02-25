@@ -1,4 +1,6 @@
-﻿import { QueryObject } from "../Common/query-object";
+﻿import { EnumEmployeeRole } from "../../Enums/employee-role";
+import { Status } from "../../Enums/status";
+import { QueryObject } from "../Common/query-object";
 
 export class UserInfo {
     public id: number;
@@ -6,8 +8,9 @@ export class UserInfo {
     public userName: string;
     public email: string;
     public phoneNumber: string;
-    public code: string;
+    // public code: string;
     public employeeId: string;
+    public employeeRole: EnumEmployeeRole;
     public designation: string;
     public department: string;
     public managerName: string;
@@ -21,6 +24,7 @@ export class UserInfo {
     public status: number;
     public roleId: number;
     public roleName: string;
+    public roleNames: string;
 
     public roleIds: number[];
     public plantIds: any[] = [];
@@ -30,6 +34,7 @@ export class UserInfo {
     public zoneIds: string[] = [];
 
     public statusText: string;
+    public employeeRoleText: string;
 
     constructor(init?: Partial<UserInfo>) {
         this.roleIds = [];
@@ -43,6 +48,8 @@ export class UserInfo {
 
     clear() {
         this.id = null;
+        this.status = Status.Active;
+        this.employeeRole = null;
     }
 }
 
@@ -52,8 +59,9 @@ export class SaveUserInfo {
     public userName: string;
     public email: string;
     public phoneNumber: string;
-    public code: string;
+    // public code: string;
     public employeeId: string;
+    public employeeRole: EnumEmployeeRole;
     public designation: string;
     public department: string;
     public managerName: string;
@@ -89,6 +97,8 @@ export class SaveUserInfo {
 
     clear() {
         this.id = null;
+        this.status = Status.Active;
+        this.employeeRole = null;
     }
 }
 

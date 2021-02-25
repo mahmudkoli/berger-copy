@@ -1,43 +1,60 @@
 
-
-
 <div class="main-card mb-3 card">
     <div class="card-header sticky-card d-flex justify-content-between align-items-center">
-        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create Scheme  </div>
-        <div class="btn-actions-pane-right">
-
-        </div>
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <!-- <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>
+        </div> -->
     </div>
     <div class="card-body">
-        <form  #schemeMasterForm="ngForm" (submit)="fnSave()">
+        <form [formGroup]="schemeMasterForm" (ngSubmit)="onSubmit()">
             <div class="form-row">
-     
-
                 <div class="col-md-6">
-                    <label for="name">Scheme Name</label>
-                    <div class="input-group">
-                        <input class="form-control" placeholder="" id="schemeName" name="schemeName" #schemeName="ngModel" [(ngModel)]="schemeMasterModel.schemeName">
-                    </div>
-                    <small class="text-danger" [class.d-none]="schemeName.valid || schemeName.untouched">
-                        Scheme name is required
-                    </small>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="name">Condition</label>
-                    <div class="input-group">
-                        <input class="form-control" placeholder="" id="condition" name="condition" #condition="ngModel" [(ngModel)]="schemeMasterModel.condition">
+                    <div class="position-relative form-group">
+                        <label class="required">Scheme Name</label>
+                        <input type="text" class="form-control" formControlName="schemeName"
+                                [ngClass]="{'is-valid':formControls.schemeName.touched && !formControls.schemeName.errors,
+                                'is-invalid':formControls.schemeName.touched && formControls.schemeName.errors }" />
+                        <small class="text-danger" *ngIf="formControls.schemeName.touched && formControls.schemeName.errors">
+                            <span *ngIf="formControls.schemeName.errors.required">Scheme Name is <strong>required</strong></span>
+                            <span *ngIf="formControls.schemeName.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
                     </div>
                 </div>
-
-
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Condition</label>
+                        <input type="text" class="form-control" formControlName="condition"
+                                [ngClass]="{'is-valid':formControls.condition.touched && !formControls.condition.errors,
+                                'is-invalid':formControls.condition.touched && formControls.condition.errors }" />
+                        <small class="text-danger" *ngIf="formControls.condition.touched && formControls.condition.errors">
+                            <span *ngIf="formControls.condition.errors.required">Condition is <strong>required</strong></span>
+                            <span *ngIf="formControls.condition.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
             </div>
+            <!-- <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div> -->
 
             <div class="d-flex justify-content-end">
-                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
-                <button [disabled]="!schemeMasterForm.valid" type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="schemeMasterForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
             </div>
         </form>
     </div>
-
-</div>   
+</div>

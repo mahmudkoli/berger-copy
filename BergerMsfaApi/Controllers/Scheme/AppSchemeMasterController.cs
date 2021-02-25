@@ -17,7 +17,6 @@ namespace BergerMsfaApi.Controllers.Scheme
         public AppSchemeMasterController(ISchemeService schemeService)
         {
             _schemeService = schemeService;
-
         }
 
         [HttpGet("GetSchemeMasterList")]
@@ -25,7 +24,7 @@ namespace BergerMsfaApi.Controllers.Scheme
         {
             try
             {
-                var result = await _schemeService.AppGetSchemeMasters();
+                var result = await _schemeService.GetAllSchemeMastersAsync();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -34,12 +33,12 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpGet("GetSchemeMasterById/{Id}")]
-        public async Task<IActionResult> GetSchemeMasterById(int Id)
+        [HttpGet("GetSchemeMasterById/{id}")]
+        public async Task<IActionResult> GetSchemeMasterById(int id)
         {
             try
             {
-                var result = await _schemeService.PortalGetSchemeMastersById(Id);
+                var result = await _schemeService.GetSchemeMasterByIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -49,12 +48,12 @@ namespace BergerMsfaApi.Controllers.Scheme
         }
 
         [HttpPost("CreateSchemeMaster")]
-        public async Task<IActionResult> CreateSchemeMaster([FromBody] SchemeMasterModel model)
+        public async Task<IActionResult> CreateSchemeMaster([FromBody] SaveSchemeMasterModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.PortalCreateSchemeMasters(model);
+                var result = await _schemeService.AddSchemeMasterAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -62,34 +61,29 @@ namespace BergerMsfaApi.Controllers.Scheme
                 return ExceptionResult(ex);
             }
         }
-        [HttpPut("UpdateSchemeMaster")]
-        public async Task<IActionResult> UpdateSchemeMaster([FromBody] SchemeMasterModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.PortalUpdateSchemeMasters(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-        [HttpDelete("DeleteSchemeMaster/{Id}")]
-        public async Task<IActionResult> DeleteSchemeMaster(int Id)
-        {
-            try
-            {
-                var exist = await _schemeService.IsSchemeMasterAlreadyExist(Id);
-                if (exist == false)
-                {
-                    ModelState.AddModelError(nameof(Id), "Scheme master not exist");
-                    return ValidationResult(ModelState);
 
-                }
+        [HttpPut("UpdateSchemeMaster")]
+        public async Task<IActionResult> UpdateSchemeMaster([FromBody] SaveSchemeMasterModel model)
+        {
+            try
+            {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.PortalDeleteSchemeMasters(Id);
+                var result = await _schemeService.UpdateSchemeMasterAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpDelete("DeleteSchemeMaster/{id}")]
+        public async Task<IActionResult> DeleteSchemeMaster(int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _schemeService.DeleteSchemeMasterAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -20,101 +21,90 @@ namespace BergerMsfaApi.Controllers.Scheme
         public SchemeDetailController(ISchemeService schemeService)
         {
             _schemeService = schemeService;
-
         }
 
-        [HttpGet("GetSchemeDetailWithMaster/{index}/{pageSize}")]
+        [HttpGet("GetSchemeDetailList/{index}/{pageSize}")]
         public async Task<IActionResult> GetSchemeDetailWithMaster(int index,int pageSize,string search)
         {
             try
             {
-                var result = await _schemeService.PortalGetcShemeDetailWithMaster(index, pageSize, search);
+                var result = await _schemeService.GetAllSchemeDetailsAsync(index, pageSize, search);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("GetSchemeDetailList")]
-        public async Task<IActionResult> GetSchemeDetailList()
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] QueryObjectModel query)
         {
             try
             {
-                var result = await _schemeService.PortalGetSchemeDelails();
+                var result = await _schemeService.GetAllSchemeDetailsAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
 
-        [HttpGet("GetSchemeDetailById/{Id}")]
-        public async Task<IActionResult> GetSchemeDetailById(int Id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSchemeDetailById(int id)
         {
             try
             {
-                var result = await _schemeService.PortalGetSchemeDetailById(Id);
+                var result = await _schemeService.GetSchemeDetailsByIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
 
-        [HttpPost("CreateSchemeDetail")]
-        public async Task<IActionResult> CreateSchemeDetail([FromBody] SchemeDetailModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.PortalCreateSchemeDeatil(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-
-                return ExceptionResult(ex);
-            }
-        }
-        [HttpPut("UpdateSchemeDetail")]
-        public async Task<IActionResult> UpdateSchemeDetail([FromBody] SchemeDetailModel model)
+        [HttpPost]
+        public async Task<IActionResult> CreateSchemeDetail([FromBody] SaveSchemeDetailModel model)
         {
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.PortalUpdateSchemeDetail(model);
+                var result = await _schemeService.AddSchemeDeatilsAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-        [HttpDelete("DeleteSchemeDetail/{Id}")]
-        public async Task<IActionResult> DeleteSchemeDetail(int Id)
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSchemeDetail(int id, [FromBody] SaveSchemeDetailModel model)
         {
             try
             {
-                var exist = await _schemeService.IsSchemeDetailAlreadyExist(Id);
-                if (exist == false)
-                {
-                    ModelState.AddModelError(nameof(Id), "Scheme detail not exist");
-                    return ValidationResult(ModelState);
-
-                }
-                var result = await _schemeService.PortalDeleteSchemeDetail(Id);
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _schemeService.UpdateSchemeDetailsAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
             {
+                return ExceptionResult(ex);
+            }
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSchemeDetail(int id)
+        {
+            try
+            {
+                var result = await _schemeService.DeleteSchemeDetailsAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
                 return ExceptionResult(ex);
             }
         }

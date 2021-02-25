@@ -2,6 +2,7 @@
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using DSC = Berger.Data.MsfaEntity.DealerSalesCall;
@@ -62,24 +64,35 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return result.Id;
         }
 
-        public async Task<IList<DealerSalesCallModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<DealerSalesCallModel>> GetAllAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<DSC.DealerSalesCall, object>>>()
+            {
+                ["dealerName"] = v => v.Dealer.CustomerName,
+                ["userFullName"] = v => v.User.FullName,
+            };
+
             var result = await _dealerSalesCallRepository.GetAllIncludeAsync(
                                 x => x,
-                                null,
-                                null,
-                                null,
-                                pageIndex,
-                                pageSize,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue) || x.Dealer.CustomerName.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                x => x.Include(i => i.User).Include(i => i.Dealer),
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
-            var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result);
+            var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<DealerSalesCallModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
-        public async Task<IList<DealerSalesCallModel>> GetAllByUserIdAsync(int userId)
+        public async Task<IList<AppDealerSalesCallModel>> GetAllByUserIdAsync(int userId)
         {
             var result = await _dealerSalesCallRepository.GetAllIncludeAsync(
                                 x => x,
@@ -89,7 +102,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                 true
                             );
 
-            var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result);
+            var modelResult = _mapper.Map<IList<AppDealerSalesCallModel>>(result);
 
             return modelResult;
         }
@@ -154,7 +167,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var modelResults = new List<SaveDealerSalesCallModel>();
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
 
             foreach (var id in ids)
             {
@@ -220,7 +233,14 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                null,
+                                x => x.Include(i => i.User).Include(i => i.Dealer)
+                                        .Include(i => i.SecondarySalesRatings).Include(i => i.PremiumProductLifting)
+                                        .Include(i => i.Merchendising).Include(i => i.SubDealerInfluence)
+                                        .Include(i => i.PainterInfluence).Include(i => i.DealerSatisfaction)
+                                        .Include(i => i.DealerCompetitionSales).ThenInclude(i => i.Company)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.DealerSalesIssueCategory)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.Priority)
+                                        .Include(i => i.DealerSalesIssues).ThenInclude(i => i.CBMachineMantainance),
                                 true
                             );
 

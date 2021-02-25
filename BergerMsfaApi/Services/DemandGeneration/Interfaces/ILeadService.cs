@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Models.DemandGeneration;
+﻿using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.DemandGeneration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<int> AddLeadFollowUpAsync(SaveLeadFollowUpModel model);
         Task<LeadGenerationModel> GetByIdAsync(int id);
         Task<SaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
-        Task<IList<LeadGenerationModel>> GetAllAsync(int pageIndex, int pageSize);
+        Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId);
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Services.OData.Interfaces;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
@@ -15,10 +16,15 @@ namespace BergerMsfaApi.Controllers.Odata
     public class OdataSalesDataController : BaseController
     {
         private readonly ISalesDataService _saledata;
+        private readonly IMTSDataService _mtsdataService;
 
-        public OdataSalesDataController(ISalesDataService saledata)
+        public OdataSalesDataController(
+            ISalesDataService saledata,
+            IMTSDataService mtsdataService
+            )
         {
             _saledata = saledata;
+            _mtsdataService = mtsdataService;
         }
 
         [HttpGet("InvoiceHistory")]
@@ -55,6 +61,62 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _saledata.GetBrandWiseMTDDetails(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("MTSBrandsVolume")]
+        public async Task<IActionResult> GetMTSBrandsVolume([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _mtsdataService.GetMTSBrandsVolume(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("PremiumBrandPerformance")]
+        public async Task<IActionResult> GetPremiumBrandPerformance([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _mtsdataService.GetPremiumBrandPerformance(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("MonthlyValueTarget")]
+        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModel model)
+        {
+            try
+            {
+                var data = await _mtsdataService.GetMonthlyValueTarget(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("BrandOrDivisionWisePerformance")]
+        public async Task<IActionResult> GetBrandOrDivisionWisePerformance([FromQuery] BrandOrDivisionWiseMTDSearchModel model)
+        {
+            try
+            {
+                var data = await _saledata.GetBrandOrDivisionWisePerformance(model);
                 return OkResult(data);
             }
             catch (Exception ex)

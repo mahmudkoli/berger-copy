@@ -129,6 +129,7 @@ namespace Berger.Odata.Model
             model.CompanyCode = this.bukrs;
             model.Division = this.spart;
             model.MatarialGroupOrBrand = this.matkl;
+            model.MatarialGroupOrBrandName = this.wgbez;
             model.MatrialCode = this.matnr;
             model.UnitOfMeasurement = this.gk;
             model.SalesOrgranization = this.vkorg;

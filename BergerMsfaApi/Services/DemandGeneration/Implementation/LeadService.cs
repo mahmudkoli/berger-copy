@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,21 +37,31 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             this._mapper = mapper;
         }
 
-        public async Task<IList<LeadGenerationModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
+            {
+                ["userFullName"] = v => v.User.FullName,
+            };
+
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                 x => x,
-                                null,
-                                null,
-                                null,
-                                pageIndex,
-                                pageSize,
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                x => x.Include(i => i.User),
+                                query.Page,
+                                query.PageSize,
                                 true
                             );
 
-            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
+            var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result.Items);
 
-            return modelResult;
+            var queryResult = new QueryResultModel<LeadGenerationModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
         }
 
         public async Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId)
@@ -83,6 +96,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelRes.Depot = res.Depot;
                 modelRes.Territory = res.Territory;
                 modelRes.Zone = res.Zone;
+                modelRes.ProjectName = res.ProjectName;
+                modelRes.ProjectAddress = res.ProjectAddress;
                 modelRes.LastVisitedDate = res.VisitDate;
                 modelRes.NextVisitDatePlan = res.NextFollowUpDate;
                 modelRes.KeyContactPersonName = res.KeyContactPersonName;
@@ -109,7 +124,14 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                null,
+                                x => x.Include(i => i.User).Include(i => i.TypeOfClient).Include(i => i.PaintingStage)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.TypeOfClient)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusTotalLoss)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusPartialBusiness)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement),
                                 true
                             );
 
@@ -121,15 +143,14 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
         public async Task<int> AddLeadGenerateAsync(SaveLeadGenerationModel model)
         {
             var leadGeneration = _mapper.Map<LeadGeneration>(model);
+            leadGeneration.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
+            leadGeneration.CreatedTime = DateTime.Now;
 
             if (!string.IsNullOrWhiteSpace(model.PhotoCaptureUrl))
             {
                 var fileName = leadGeneration.Code + "_" + Guid.NewGuid().ToString();
                 leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
             }
-
-            leadGeneration.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
-            leadGeneration.CreatedTime = DateTime.Now;
 
             var result = await _leadGenerationRepository.CreateAsync(leadGeneration);
 
@@ -152,6 +173,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             modelResult.Depot = result.Depot;
             modelResult.Territory = result.Territory;
             modelResult.Zone = result.Zone;
+            modelResult.ProjectName = result.ProjectName;
+            modelResult.ProjectAddress = result.ProjectAddress;
             modelResult.LastVisitedDate = result.VisitDate;
             modelResult.NextVisitDatePlan = result.NextFollowUpDate;
             modelResult.KeyContactPersonName = result.KeyContactPersonName;
@@ -200,6 +223,13 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             leadFollowUp.CreatedTime = DateTime.Now;
 
+            var leadFoll = (await _leadFollowUpRepository.GetFirstOrDefaultIncludeAsync(
+                                                            x => x,
+                                                            x => x.Id == leadFollowUp.LeadGenerationId,
+                                                            x => x.OrderByDescending(o => o.CreatedTime),
+                                                            null,
+                                                            true));
+
             var result = await _leadFollowUpRepository.CreateAsync(leadFollowUp);
 
             #region Lead Generation update
@@ -209,13 +239,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                                             null,
                                                             null,
                                                             true);
-
-            var leadFoll = (await _leadFollowUpRepository.GetAllIncludeAsync(
-                                                            x => x, 
-                                                            x => x.Id == leadFollowUp.LeadGenerationId, 
-                                                            x => x.OrderByDescending(o => o.CreatedTime),
-                                                            null,
-                                                            true)).FirstOrDefault();
             
             if(leadFoll != null)
             {

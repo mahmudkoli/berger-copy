@@ -1,5 +1,7 @@
-﻿using Berger.Data.MsfaEntity.Hirearchy;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Common.Implementation;
@@ -22,5 +24,7 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory);
         Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds);
+        Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(AppDealerSearchModel model);
+        Task<IList<PlantTerritoryZoneMappingModel>> GetPlantTerritoryZoneMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds);
     }
 }
