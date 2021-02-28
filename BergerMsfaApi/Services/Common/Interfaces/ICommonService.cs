@@ -25,6 +25,9 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(AppDealerSearchModel model);
-        Task<IList<PlantTerritoryZoneMappingModel>> GetPlantTerritoryZoneMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds);
+        Task<IList<PSATZMappingModel>> GetPSATZMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds, EnumTypeOfEmployeeHierarchy typeOfEmployeeHierarchy);
+        Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
+        Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
+        Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds);
     }
 }

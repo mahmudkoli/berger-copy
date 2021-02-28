@@ -25,19 +25,19 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             this._dealerSalesCallService = dealerSalesCallService;
         }
 
-        [HttpGet("GetAllByUserId/{id}")]
-        public async Task<IActionResult> GetAllByUserId(int id)
-        {
-            try
-            {
-                var result = await _dealerSalesCallService.GetAllByUserIdAsync(id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetAllByUserId/{id}")]
+        //public async Task<IActionResult> GetAllByUserId(int id)
+        //{
+        //    try
+        //    {
+        //        var result = await _dealerSalesCallService.GetAllByUserIdAsync(id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
         [HttpGet("GetDealerSalesCallByDealerId/{id}")]
         public async Task<IActionResult> GetDealerSalesCallByDealerId(int id)

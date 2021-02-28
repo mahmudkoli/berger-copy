@@ -38,10 +38,10 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DropdownDetail ProjectStatus { get; set; }
         public int? ProjectStatusLeadCompletedId { get; set; }
         public DropdownDetail ProjectStatusLeadCompleted { get; set; }
-        public int? ProjectStatusTotalLossId { get; set; }
+        public int? ProjectStatusTotalLossId { get; set; } // should be removed
         public DropdownDetail ProjectStatusTotalLoss { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
-        public int? ProjectStatusPartialBusinessId { get; set; }
+        public int? ProjectStatusPartialBusinessId { get; set; } // should be removed
         public DropdownDetail ProjectStatusPartialBusiness { get; set; }
         public int ProjectStatusPartialBusinessPercentage { get; set; }
         public int SwappingCompetitionId { get; set; }
