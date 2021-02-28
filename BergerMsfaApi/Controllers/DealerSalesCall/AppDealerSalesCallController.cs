@@ -85,5 +85,24 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpPost("CreateDealerSalesCallList")]
+        public async Task<IActionResult> CreateDealerSalesCallList([FromBody] List<SaveDealerSalesCallModel> models)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationResult(ModelState);
+            }
+
+            try
+            {
+                var result = await _dealerSalesCallService.AddRangeAsync(models);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
