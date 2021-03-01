@@ -8,7 +8,7 @@ const routes: Routes = [
     {
         path: '',
         component: BaseLayoutComponent,
-       // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
         children: [
 
             { path: '', redirectTo: 'menu' },

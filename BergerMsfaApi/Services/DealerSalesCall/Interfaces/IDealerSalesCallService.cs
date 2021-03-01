@@ -12,6 +12,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Interfaces
     public interface IDealerSalesCallService
     {
         Task<int> AddAsync(SaveDealerSalesCallModel model);
+        Task<bool> AddRangeAsync(List<SaveDealerSalesCallModel> models);
         Task<DealerSalesCallModel> GetByIdAsync(int id);
         Task<QueryResultModel<DealerSalesCallModel>> GetAllAsync(QueryObjectModel query);
         Task<SaveDealerSalesCallModel> GetDealerSalesCallByDealerIdAsync(int id);
