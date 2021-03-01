@@ -25,7 +25,8 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var data = await _saledata.GetInvoiceHistory(model);
+                //var data = await _saledata.GetInvoiceHistory(model);
+                var data = true;
                 return OkResult(data);
             }
             catch (Exception ex)

@@ -35,7 +35,7 @@ namespace Berger.Odata.Services
 
         public async Task GetAllFinanceData()
         {
-            $"filter{}"
+            //$"filter{}"
         }
 
     }
