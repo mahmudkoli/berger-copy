@@ -63,6 +63,35 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             return result.Id;
         }
+        
+        public async Task<bool> AddRangeAsync(List<SaveDealerSalesCallModel> models)
+        {
+            var dealerSalesCalls = new List<DSC.DealerSalesCall>();
+
+            foreach (var model in models)
+            {
+                var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
+
+                if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
+                {
+                    var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                    dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
+                {
+                    var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                    dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                }
+
+                dealerSalesCall.CreatedTime = DateTime.Now;
+
+                dealerSalesCalls.Add(dealerSalesCall);
+            }
+
+            var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
+            return true;
+        }
 
         public async Task<QueryResultModel<DealerSalesCallModel>> GetAllAsync(QueryObjectModel query)
         {
