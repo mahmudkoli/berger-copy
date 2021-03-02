@@ -80,6 +80,15 @@ export class CommonService {
       });
   }
 
+	insertSpaces(value) {
+		return value.replace(/(_|-)/g, ' ').trim()
+                .replace(/\w\S*/g, function(str) {
+                  return str.charAt(0).toUpperCase() + str.substr(1)
+                })   
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') ;
+	}
+
   private appendFormDataNestedObject(formData, value, property, index: null | number) {
     if(typeof(value) === 'object' && !(value instanceof File)) {
       for (let subKey in value) {

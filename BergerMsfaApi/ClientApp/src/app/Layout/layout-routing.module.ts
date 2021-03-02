@@ -33,6 +33,7 @@ const routes: Routes = [
             { path: 'brand', loadChildren: () => import('./brand/brand.module').then(m => m.BrandModule) },
             { path: 'dealer-sales-call', loadChildren: () => import('./dealer-sales-call/dealer-sales-call.module').then(m => m.DealerSalesCallModule) },
             { path: 'lead', loadChildren: () => import('./demand-generation/lead.module').then(m => m.LeadModule) },
+            { path: 'report', loadChildren: () => import('./report/report.module').then(m => m.ReportModule) },
             { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
 
         ]
