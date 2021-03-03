@@ -25,9 +25,15 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
 
+        public LeadBusinessAchievementModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
                 .ForMember(dest => dest.NextVisitDateText,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)));
         }
@@ -42,8 +48,25 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
         public string ProductSamplingBrandName { get; set; }
-        public DateTime NextVisitDate { get; set; }
+        public string NextVisitDate { get; set; }
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
+
+        public SaveLeadBusinessAchievementModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
+                .ForMember(dest => dest.NextVisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)));
+
+            profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>()
+                .ForMember(dest => dest.NextVisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDate)));
+        }
     }
 }

@@ -10,10 +10,10 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
 {
     public interface ILeadService
     {
-        Task<int> AddLeadGenerateAsync(SaveLeadGenerationModel model);
-        Task<int> AddLeadFollowUpAsync(SaveLeadFollowUpModel model);
+        Task<int> AddLeadGenerateAsync(AppSaveLeadGenerationModel model);
+        Task<int> AddLeadFollowUpAsync(AppSaveLeadFollowUpModel model);
         Task<LeadGenerationModel> GetByIdAsync(int id);
-        Task<SaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
+        Task<AppSaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
         Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId);
     }
