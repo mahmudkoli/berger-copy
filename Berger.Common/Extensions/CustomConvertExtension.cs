@@ -46,6 +46,18 @@ namespace Berger.Common.Extensions
             return value.HasValue ? value.Value.ToString(_dateTimeStringFormat) : string.Empty;
         }
 
+        public static DateTime ObjectToDateTime(object value)
+        {
+            if (value == null) return default(DateTime);
+            return DateTime.TryParse(value.ToString(), out DateTime result) ? result : default(DateTime);
+        }
+
+        public static DateTime? ObjectToNullableDateTime(object value)
+        {
+            if (value == null) return (DateTime?)null;
+            return DateTime.TryParse(value.ToString(), out DateTime result) ? result : (DateTime?)null;
+        }
+
         public static EnumUserCategory EmployeeRoleToUserCategory(EnumEmployeeRole employeeRole)
         {
             return employeeRole switch

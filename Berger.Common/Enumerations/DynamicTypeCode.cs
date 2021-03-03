@@ -27,5 +27,6 @@ namespace Berger.Common.Enumerations
         public const string CBMachineMantainance = "CBMM01";
         public const string Customer = "Customer01";
         public const string ELearningCategory = "ELC01";
+        public const string ProductSourcing = "PS03";
     }
 }

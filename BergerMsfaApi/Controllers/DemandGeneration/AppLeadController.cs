@@ -53,7 +53,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         }
 
         [HttpPost("CreateLeadGenerate")]
-        public async Task<IActionResult> CreateLeadGenerate([FromBody] SaveLeadGenerationModel model)
+        public async Task<IActionResult> CreateLeadGenerate([FromBody] AppSaveLeadGenerationModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -72,7 +72,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         }
 
         [HttpPost("CreateLeadFollowUp")]
-        public async Task<IActionResult> CreateLeadFollowUp([FromBody] SaveLeadFollowUpModel model)
+        public async Task<IActionResult> CreateLeadFollowUp([FromBody] AppSaveLeadFollowUpModel model)
         {
             if (!ModelState.IsValid)
             {

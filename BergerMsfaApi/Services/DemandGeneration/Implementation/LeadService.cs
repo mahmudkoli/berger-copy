@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
@@ -98,16 +99,16 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelRes.Zone = res.Zone;
                 modelRes.ProjectName = res.ProjectName;
                 modelRes.ProjectAddress = res.ProjectAddress;
-                modelRes.LastVisitedDate = res.VisitDate;
-                modelRes.NextVisitDatePlan = res.NextFollowUpDate;
+                modelRes.LastVisitedDate = CustomConvertExtension.ObjectToDateString(res.VisitDate);
+                modelRes.NextVisitDatePlan = CustomConvertExtension.ObjectToDateString(res.NextFollowUpDate);
                 modelRes.KeyContactPersonName = res.KeyContactPersonName;
                 modelRes.KeyContactPersonMobile = res.KeyContactPersonMobile;
 
                 if (res.LeadFollowUps.Any())
                 {
                     var leadFollowUp = res.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
-                    modelRes.LastVisitedDate = leadFollowUp.ActualVisitDate;
-                    modelRes.NextVisitDatePlan = leadFollowUp.NextVisitDatePlan;
+                    modelRes.LastVisitedDate = CustomConvertExtension.ObjectToDateString(leadFollowUp.ActualVisitDate);
+                    modelRes.NextVisitDatePlan = CustomConvertExtension.ObjectToDateString(leadFollowUp.NextVisitDatePlan);
                     modelRes.KeyContactPersonName = leadFollowUp.KeyContactPersonName;
                     modelRes.KeyContactPersonMobile = leadFollowUp.KeyContactPersonMobile;
                 }
@@ -128,8 +129,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.TypeOfClient)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
-                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusTotalLoss)
-                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusPartialBusiness)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement),
                                 true
@@ -140,7 +139,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return modelResult;
         }
 
-        public async Task<int> AddLeadGenerateAsync(SaveLeadGenerationModel model)
+        public async Task<int> AddLeadGenerateAsync(AppSaveLeadGenerationModel model)
         {
             var leadGeneration = _mapper.Map<LeadGeneration>(model);
             leadGeneration.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -157,26 +156,32 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return result.Id;
         }
 
-        public async Task<SaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id)
+        public async Task<AppSaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id)
         {
             var result = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                x => x.Include(i => i.LeadFollowUps),
+                                x => x.Include(i => i.TypeOfClient)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.TypeOfClient)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition),
                                 true
                             );
 
-            var modelResult = new SaveLeadFollowUpModel();
+            var modelResult = new AppSaveLeadFollowUpModel();
 
             modelResult.LeadGenerationId = result.Id;
             modelResult.Depot = result.Depot;
             modelResult.Territory = result.Territory;
             modelResult.Zone = result.Zone;
+            modelResult.TypeOfClientId = result.TypeOfClientId;
+            modelResult.TypeOfClientText = result.TypeOfClient != null ? $"{result.TypeOfClient.DropdownName}" : string.Empty;
             modelResult.ProjectName = result.ProjectName;
             modelResult.ProjectAddress = result.ProjectAddress;
-            modelResult.LastVisitedDate = result.VisitDate;
-            modelResult.NextVisitDatePlan = result.NextFollowUpDate;
+            modelResult.LastVisitedDate = CustomConvertExtension.ObjectToDateString(result.VisitDate);
+            modelResult.NextVisitDatePlan = CustomConvertExtension.ObjectToDateString(result.NextFollowUpDate);
             modelResult.KeyContactPersonName = result.KeyContactPersonName;
             modelResult.KeyContactPersonMobile = result.KeyContactPersonMobile;
             modelResult.PaintContractorName = result.PaintContractorName;
@@ -195,8 +200,17 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if(result.LeadFollowUps.Any())
             {
                 var leadFollowUp = result.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
-                modelResult.LastVisitedDate = leadFollowUp.ActualVisitDate;
-                modelResult.NextVisitDatePlan = leadFollowUp.NextVisitDatePlan;
+                modelResult.TypeOfClientId = leadFollowUp.TypeOfClientId;
+                modelResult.TypeOfClientText = leadFollowUp.TypeOfClient != null ? $"{leadFollowUp.TypeOfClient.DropdownName}" : string.Empty;
+                modelResult.ProjectStatusId = leadFollowUp.ProjectStatusId;
+                modelResult.ProjectStatusText = leadFollowUp.ProjectStatus != null ? $"{leadFollowUp.ProjectStatus.DropdownName}" : string.Empty;
+                modelResult.HasSwappingCompetition = leadFollowUp.HasSwappingCompetition;
+                modelResult.SwappingCompetitionId = leadFollowUp.SwappingCompetitionId;
+                modelResult.SwappingCompetitionText = leadFollowUp.SwappingCompetition != null ? $"{leadFollowUp.SwappingCompetition.DropdownName}" : string.Empty;
+                modelResult.ProjectStatusLeadCompletedId = leadFollowUp.ProjectStatusLeadCompletedId;
+                modelResult.ProjectStatusLeadCompletedText = leadFollowUp.ProjectStatusLeadCompleted != null ? $"{leadFollowUp.ProjectStatusLeadCompleted.DropdownName}" : string.Empty;
+                modelResult.LastVisitedDate = CustomConvertExtension.ObjectToDateString(leadFollowUp.ActualVisitDate);
+                modelResult.NextVisitDatePlan = CustomConvertExtension.ObjectToDateString(leadFollowUp.NextVisitDatePlan);
                 modelResult.KeyContactPersonName = leadFollowUp.KeyContactPersonName;
                 modelResult.KeyContactPersonMobile = leadFollowUp.KeyContactPersonMobile;
                 modelResult.PaintContractorName = leadFollowUp.PaintContractorName;
@@ -211,7 +225,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return modelResult;
         }
 
-        public async Task<int> AddLeadFollowUpAsync(SaveLeadFollowUpModel model)
+        public async Task<int> AddLeadFollowUpAsync(AppSaveLeadFollowUpModel model)
         {
             var leadFollowUp = _mapper.Map<LeadFollowUp>(model);
 
