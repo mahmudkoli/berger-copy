@@ -25,5 +25,6 @@ export enum EnumDynamicTypeCode {
     CBMachineMantainance = "CBMM01",
     Customer = "Customer01",
     ELearningCategory = "ELC01",
+    ProductSourcing = "PS03",
 }
 
