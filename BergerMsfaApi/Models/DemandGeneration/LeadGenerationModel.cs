@@ -59,9 +59,15 @@ namespace BergerMsfaApi.Models.DemandGeneration
 
         public IList<LeadFollowUpModel> LeadFollowUps { get; set; }
 
+        public LeadGenerationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<LeadGeneration, LeadGenerationModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
                 .ForMember(dest => dest.UserFullName,
                     opt => opt.MapFrom(src => src.User != null ? $"{src.User.FullName}" : string.Empty))
                 .ForMember(dest => dest.TypeOfClientText,
@@ -92,16 +98,26 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string ProjectAddress { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonMobile { get; set; }
-        public DateTime LastVisitedDate { get; set; }
-        public DateTime NextVisitDatePlan { get; set; }
+        public string LastVisitedDate { get; set; }
+        public string NextVisitDatePlan { get; set; }
+
+        public AppLeadGenerationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LeadGeneration, AppLeadGenerationModel>();
+            profile.CreateMap<LeadGeneration, AppLeadGenerationModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
+                .ForMember(dest => dest.LastVisitedDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.VisitDate)))
+                .ForMember(dest => dest.NextVisitDatePlan,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextFollowUpDate)));
         }
     }
     
-    public class SaveLeadGenerationModel : IMapFrom<LeadGeneration>
+    public class AppSaveLeadGenerationModel : IMapFrom<LeadGeneration>
     {
         //public int Id { get; set; }
         public int UserId { get; set; }
@@ -120,8 +136,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string PaintContractorMobile { get; set; }
         public int PaintingStageId { get; set; }
         //public DropdownDetail PaintingStage { get; set; }
-        public DateTime VisitDate { get; set; }
-        public DateTime ExpectedDateOfPainting { get; set; }
+        public string VisitDate { get; set; }
+        public string ExpectedDateOfPainting { get; set; }
         public int NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
@@ -133,16 +149,35 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int ExpectedMonthlyBusinessValueChangeCount { get; set; }
         public bool RequirementOfColorScheme { get; set; }
         public bool ProductSamplingRequired { get; set; }
-        public DateTime NextFollowUpDate { get; set; }
+        public string NextFollowUpDate { get; set; }
         public string Remarks { get; set; }
         public string PhotoCaptureUrl { get; set; }
 
         //public IList<LeadFollowUpModel> LeadFollowUps { get; set; }
 
+        public AppSaveLeadGenerationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LeadGeneration, SaveLeadGenerationModel>();
-            profile.CreateMap<SaveLeadGenerationModel, LeadGeneration>();
+            profile.CreateMap<LeadGeneration, AppSaveLeadGenerationModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
+                .ForMember(dest => dest.VisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.VisitDate)))
+                .ForMember(dest => dest.ExpectedDateOfPainting,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ExpectedDateOfPainting)))
+                .ForMember(dest => dest.NextFollowUpDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextFollowUpDate)));
+
+            profile.CreateMap<AppSaveLeadGenerationModel, LeadGeneration>()
+                .ForMember(dest => dest.VisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.VisitDate)))
+                .ForMember(dest => dest.ExpectedDateOfPainting,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.ExpectedDateOfPainting)))
+                .ForMember(dest => dest.NextFollowUpDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextFollowUpDate)));
         }
     }
 }

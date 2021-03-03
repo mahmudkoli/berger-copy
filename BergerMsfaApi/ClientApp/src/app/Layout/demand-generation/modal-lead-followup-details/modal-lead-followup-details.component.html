@@ -88,21 +88,24 @@
             <div class="col-sm-6">
                 <p><span><strong>Lead Completed:</strong></span> {{leadFollowUp.projectStatusLeadCompletedText}}</p>
             </div>
-            <div class="col-sm-6">
+            <!-- <div class="col-sm-6">
                 <p><span><strong>Total Loss:</strong></span> {{leadFollowUp.projectStatusTotalLossText}}</p>
-            </div>
+            </div> -->
             <div class="col-sm-6">
                 <p><span><strong>Total Loss Remarks:</strong></span> {{leadFollowUp.projectStatusTotalLossRemarks}}</p>
             </div>
-            <div class="col-sm-6">
+            <!-- <div class="col-sm-6">
                 <p><span><strong>Partial Business:</strong></span> {{leadFollowUp.projectStatusPartialBusinessText}}</p>
-            </div>
+            </div> -->
             <div class="col-sm-6">
                 <p><span><strong>Partial Business (%):</strong></span> {{leadFollowUp.projectStatusPartialBusinessPercentage}}</p>
             </div>
         </div>
 
         <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Has Swapping Competition:</strong></span> {{leadFollowUp.hasSwappingCompetition?'YES':'NO'}}</p>
+            </div>
             <div class="col-sm-6">
                 <p><span><strong>Swapping Competition:</strong></span> {{leadFollowUp.swappingCompetitionText}}</p>
             </div>
