@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Berger.Common.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +44,19 @@ namespace Berger.Common.Extensions
         public static string ObjectToDateString(DateTime? value)
         {
             return value.HasValue ? value.Value.ToString(_dateTimeStringFormat) : string.Empty;
+        }
+
+        public static EnumUserCategory EmployeeRoleToUserCategory(EnumEmployeeRole employeeRole)
+        {
+            return employeeRole switch
+            {
+                EnumEmployeeRole.DIC => EnumUserCategory.Plant,
+                EnumEmployeeRole.BIC => EnumUserCategory.SalesOffice,
+                EnumEmployeeRole.AM => EnumUserCategory.Area,
+                EnumEmployeeRole.TM_TO => EnumUserCategory.Territory,
+                EnumEmployeeRole.ZO => EnumUserCategory.Zone,
+                _ => EnumUserCategory.Zone,
+            };
         }
     }
 }
