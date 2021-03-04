@@ -22,7 +22,14 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 
+	// ptable settings
+	enabledTotal: boolean = true;
 	tableName: string = 'Lead Summary Report';
+	// renameKeys: any = {'userId':'// User Id //'};
+	renameKeys: any = {};
+	allTotalKeysOfNumberType: boolean = true;
+	// totalKeys: any[] = ['totalCall'];
+	totalKeys: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -65,16 +72,21 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 					this.data = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
-					
-					const obj = this.data[0] || {};
-					this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-						return { headerName: this.commonService.insertSpaces(key), internalName: key } as colDef;
-					});
+					this.ptableColDefGenerate();
 				},
 				(error) => {
 					console.log(error);
 				});
 		this.subscriptions.push(reportsSubscription);
+	}
+
+	ptableColDefGenerate() {
+		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
+		const obj = this.data[0] || {};
+		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
+			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+		});
 	}
 	
 	searchConfiguration() {
@@ -105,6 +117,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		// pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
+		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
 		downloadDataApiUrl: `${this.reportService.downloadLeadSummaryApiUrl(
 								new LeadSummaryQuery({

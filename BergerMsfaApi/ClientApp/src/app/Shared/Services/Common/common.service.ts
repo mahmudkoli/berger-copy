@@ -88,6 +88,16 @@ export class CommonService {
                 .replace(/([a-z])([A-Z])/g, '$1 $2')
                 .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') ;
 	}
+  
+  renameKeys(obj, keysMap) {
+    return Object.keys(obj).reduce(
+      (acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: obj[key] }
+      }),
+      {}
+    );
+  }
 
   private appendFormDataNestedObject(formData, value, property, index: null | number) {
     if(typeof(value) === 'object' && !(value instanceof File)) {
