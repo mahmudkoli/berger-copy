@@ -10,10 +10,10 @@ namespace BergerMsfaApi.Models.Report
 {
     public class ReportBaseSearchModel : QueryObjectModel
     {
-        public string Depot { get; set; }
-        //public string PlantName { get; set; }
+        public string DepotId { get; set; }
+        //public string DepotName { get; set; }
         public EnumEmployeeRole? EmployeeRole { get; set; }
-        //public IList<string> Areas { get; set; }
+        public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
         public int? UserId { get; set; }
@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Models.Report
 
         public ReportBaseSearchModel()
         {
-            //this.Areas = new List<string>();
+            this.SalesGroups = new List<string>();
             this.Territories = new List<string>();
             this.Zones = new List<string>();
         }

@@ -2,8 +2,9 @@
 import { QueryObject } from '../Common/query-object';
 
 export class ReportBaseQuery extends QueryObject {
-    depot: string;
+    depotId: string;
     employeeRole: EnumEmployeeRole;
+    salesGroups: string[];
     territories: string[];
     zones: string[];
     userId: number;

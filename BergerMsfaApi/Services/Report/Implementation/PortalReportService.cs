@@ -50,6 +50,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._mapper = mapper;
         }
 
+        private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
+
         public async Task<QueryResultModel<LeadSummaryReportResultModel>> GetLeadSummaryReportAsync(LeadSummaryReportSearchModel query)
         {
             var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
@@ -62,7 +64,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
                                 && (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
+                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -99,12 +101,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.NoOfColorSchemeGiven = leadFollowUps.Count(p => p.BusinessAchievement?.IsColorSchemeGiven ?? false);
                 reportModel.NoOfProductSampling = leadFollowUps.Count(p => p.BusinessAchievement?.IsProductSampling ?? false);
                 return reportModel;
-            }).ToList();
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<LeadSummaryReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = reportResult.Count();
-            queryResult.Total = reportResult.Count();
+            queryResult.TotalFilter = groupOfLeads.Count();
+            queryResult.Total = groupOfLeads.Count();
 
             return queryResult;
         }
@@ -121,7 +123,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
                                 && (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
+                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -187,7 +189,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadFollowUpRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.LeadGeneration.UserId == query.UserId.Value)
                                 && (!query.EmployeeRole.HasValue || x.LeadGeneration.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.Depot) || x.LeadGeneration.Depot == query.Depot)
+                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.LeadGeneration.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.LeadGeneration.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.LeadGeneration.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)

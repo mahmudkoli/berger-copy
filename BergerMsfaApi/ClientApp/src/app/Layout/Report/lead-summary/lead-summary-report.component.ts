@@ -1,13 +1,16 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { of, Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 
 @Component({
     selector: 'app-lead-summary-report',
@@ -21,6 +24,9 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
+	
+	fromDate: NgbDate;
+	toDate: NgbDate;
 
 	// ptable settings
 	enabledTotal: boolean = true;
@@ -30,6 +36,14 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
+
+	// initial dropdown data
+	employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
+    users: any[] = [];
+    depots: any[] = [];
+    salesGroups: any[] = [];
+    territories:any[]=[]
+    zones: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -51,6 +65,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		this.populateDropdwonDataList();
 		this.searchConfiguration();
 		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 			this.loadReportsPage();
@@ -61,10 +76,43 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
+	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadSummaryApiUrl(query);
+	getData = (query) => this.reportService.getLeadSummary(query);
+	
+    populateDropdwonDataList() {
+        forkJoin([
+            this.commonService.getUserInfoList(),
+            this.commonService.getDepotList(),
+            this.commonService.getSaleGroupList(),
+            this.commonService.getTerritoryList(),
+            this.commonService.getZoneList(),
+        ]).subscribe(([users, plants, areaGroups, territories, zones]) => {
+            this.users = users.data;
+            this.depots = plants.data;
+            this.salesGroups = areaGroups.data;
+            this.territories = territories.data;
+            this.zones = zones.data;
+        }, (err) => { }, () => { });
+    }
+
+	onSubmitSearch() {
+		this.query.page = 1;
+		this.query.fromDate = this.ngbDateToDate(this.fromDate);
+		this.query.toDate = this.ngbDateToDate(this.toDate);
+		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
+		this.loadReportsPage();
+	}
+
+	ngbDateToDate(date: NgbDate) : Date | null {
+		return date && date.year && date.month && date.day ? 
+				new Date(date.year,date.month-1,date.day) : 
+				null;
+	}
+
 	loadReportsPage() {
 		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
-		const reportsSubscription = this.reportService.getLeadSummary(this.query)
+		const reportsSubscription = this.getData(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
@@ -95,16 +143,17 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
 			isSortAscending: false,
-			globalSearchValue: ''
+			globalSearchValue: '',
+			depotId: '',
+			employeeRole: null,
+			salesGroups: [],
+			territories: [],
+			zones: [],
+			userId: null,
+			fromDate: null,
+			toDate: null,
 		});
 	}
-
-	// toggleActiveInactive(id) {
-	// 	const actInSubscription = this.reportService.activeInactive(id).subscribe(res => {
-	// 		this.loadTintingMachinesPage();
-	// 	});
-	// 	this.subscriptions.push(actInSubscription);
-	// }
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "reports-table",
@@ -119,8 +168,8 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
-		downloadDataApiUrl: `${this.reportService.downloadLeadSummaryApiUrl(
-								new LeadSummaryQuery({
+		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
+								new QueryObject({
 									page: 1,
 									pageSize: 2147483647, // Int32 max value
 									sortBy: 'createdTime',
@@ -131,15 +180,11 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
-		this.query = new LeadSummaryQuery({
-			page: queryObj.pageNo,
-			pageSize: queryObj.pageSize,
-			// sortBy: queryObj.orderBy,
-			sortBy: this.query.sortBy,
-			// isSortAscending: queryObj.isOrderAsc,
-			isSortAscending: this.query.isSortAscending,
-			globalSearchValue: queryObj.searchVal
-		});
+		this.query.page = queryObj.pageNo;
+		this.query.pageSize = queryObj.pageSize;
+		this.query.sortBy = queryObj.orderBy || this.query.sortBy;
+		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
+		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
 	}
 }
