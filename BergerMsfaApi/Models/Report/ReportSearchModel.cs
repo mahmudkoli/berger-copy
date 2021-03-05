@@ -43,6 +43,6 @@ namespace BergerMsfaApi.Models.Report
     {
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
-        public int? PaintingStageId { get; set; }
+        public int? ProjectStatusId { get; set; }
     }
 }

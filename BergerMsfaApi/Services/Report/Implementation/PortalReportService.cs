@@ -171,8 +171,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var queryResult = new QueryResultModel<LeadGenerationDetailsReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = reportResult.Count();
-            queryResult.Total = reportResult.Count();
+            queryResult.TotalFilter = leads.TotalFilter;
+            queryResult.Total = leads.Total;
 
             return queryResult;
         }
@@ -196,7 +196,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                 && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
                                 && (string.IsNullOrWhiteSpace(query.ProjectName) || x.LeadGeneration.ProjectName.Contains(query.ProjectName))
                                 && (string.IsNullOrWhiteSpace(query.ProjectCode) || x.LeadGeneration.Code.Contains(query.ProjectCode))
-                                && (!query.PaintingStageId.HasValue || x.LeadGeneration.PaintingStageId == query.PaintingStageId.Value),
+                                && (!query.ProjectStatusId.HasValue || x.ProjectStatusId == query.ProjectStatusId.Value),
                             x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                             x => x.Include(i => i.TypeOfClient).Include(i => i.SwappingCompetition).Include(i => i.ProjectStatus)
                                 .Include(i => i.LeadGeneration).ThenInclude(i => i.User),
@@ -259,8 +259,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var queryResult = new QueryResultModel<LeadFollowUpDetailsReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = reportResult.Count();
-            queryResult.Total = reportResult.Count();
+            queryResult.TotalFilter = leads.TotalFilter;
+            queryResult.Total = leads.Total;
 
             return queryResult;
         }

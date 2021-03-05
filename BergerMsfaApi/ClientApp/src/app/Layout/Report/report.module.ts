@@ -8,11 +8,15 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ReportRoutingModule } from './report-routing.module';
 import { ReportComponent } from './report.component';
 import { LeadSummaryReportComponent } from './lead-summary/lead-summary-report.component';
+import { LeadGenerationDetailsReportComponent } from './lead-generation-details/lead-generation-details-report.component';
+import { LeadFollowUpDetailsReportComponent } from './lead-followup-details/lead-followup-details-report.component';
 
 @NgModule({
     declarations: [
       ReportComponent,
       LeadSummaryReportComponent,
+      LeadGenerationDetailsReportComponent,
+      LeadFollowUpDetailsReportComponent,
     ],
   imports: [
       CommonModule,

@@ -47,7 +47,7 @@ export class LeadGenerationDetailsQuery extends ReportBaseQuery {
 export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
     projectName: string;
     projectCode: string;
-    paintingStageId: number;
+    projectStatusId: number;
 
     constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
         super();
