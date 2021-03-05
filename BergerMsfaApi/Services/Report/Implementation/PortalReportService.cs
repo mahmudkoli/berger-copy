@@ -63,7 +63,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
-                                && (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
+                                //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
                                 && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
@@ -122,7 +122,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
-                                && (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
+                                //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
                                 && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
@@ -188,7 +188,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var leads = await _leadFollowUpRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.LeadGeneration.UserId == query.UserId.Value)
-                                && (!query.EmployeeRole.HasValue || x.LeadGeneration.User.EmployeeRole == query.EmployeeRole.Value)
+                                //&& (!query.EmployeeRole.HasValue || x.LeadGeneration.User.EmployeeRole == query.EmployeeRole.Value)
                                 && (string.IsNullOrWhiteSpace(query.DepotId) || x.LeadGeneration.Depot == query.DepotId)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.LeadGeneration.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.LeadGeneration.Zone))

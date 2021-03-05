@@ -12,25 +12,25 @@
             <div class="col-md-3">
                 <div class="position-relative form-group">
                     <label class="">Employee Role</label>
-                    <ng-select [items]="employeeRoles" [(ngModel)]="query.employeeRole" bindValue="id" bindLabel="label" [multiple]="false">
+                    <ng-select [items]="employeeRoles" (ngModelChange)="onEmployeeRoleChange($event)" [(ngModel)]="query.employeeRole" bindValue="id" bindLabel="label" [multiple]="false">
                     </ng-select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="isSalesGroupFieldShow">
                 <div class="position-relative form-group">
                     <label class="">Sales Groups</label>
                     <ng-select [items]="salesGroups" [(ngModel)]="query.salesGroups" bindValue="code" bindLabel="name" [multiple]="true">
                     </ng-select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="isTerritoryFieldShow">
                 <div class="position-relative form-group">
                     <label class="">Territories</label>
                     <ng-select [items]="territories" [(ngModel)]="query.territories" bindValue="code" bindLabel="name" [multiple]="true">
                     </ng-select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="isZoneFieldShow">
                 <div class="position-relative form-group">
                     <label class="">Zones</label>
                     <ng-select [items]="zones" [(ngModel)]="query.zones" bindValue="code" bindLabel="name" [multiple]="true">

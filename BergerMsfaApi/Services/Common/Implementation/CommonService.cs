@@ -85,6 +85,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
            // var u = _userInfosvc.GetAll().ToList();
            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
+            var result = await _userInfosvc.GetAllAsync();
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
+
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager()
+        {
+           // var result1 = new List<UserInfoModel>();
+           // var u = _userInfosvc.GetAll().ToList();
+           //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
+         
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
         }

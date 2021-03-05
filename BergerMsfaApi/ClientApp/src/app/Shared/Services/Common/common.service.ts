@@ -29,6 +29,10 @@ export class CommonService {
           value.forEach((val, index) => {
             parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(val));
           });
+        } else if (value instanceof Date) {
+          const newValue = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), 
+                                              value.getHours(), value.getMinutes(), value.getSeconds()))
+          parts.push(encodeURIComponent(property) + '=' + newValue.toISOString());
         } else {
           parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
         }
@@ -150,6 +154,10 @@ export class CommonService {
 
   getDepotList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
+  }
+
+  getUserInfoListByLoggedInManager() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManager');
   }
 
   getUserInfoList() {

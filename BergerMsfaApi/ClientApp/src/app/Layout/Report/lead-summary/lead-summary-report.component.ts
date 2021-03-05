@@ -9,7 +9,7 @@ import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Mo
 import { LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 
 @Component({
@@ -19,14 +19,19 @@ import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 })
 export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 
+	// data list
 	query: LeadSummaryQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 	
+	// for filter
 	fromDate: NgbDate;
 	toDate: NgbDate;
+	isSalesGroupFieldShow: boolean = false;
+	isTerritoryFieldShow: boolean = false;
+	isZoneFieldShow: boolean = false;
 
 	// ptable settings
 	enabledTotal: boolean = true;
@@ -65,21 +70,40 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.populateDropdwonDataList();
 		this.searchConfiguration();
-		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
-			this.loadReportsPage();
-		});
+		this.populateDropdownDataList();
+		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+		// 	this.loadReportsPage();
+		// });
 	}
 
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
+	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadSummaryApiUrl(query);
 	getData = (query) => this.reportService.getLeadSummary(query);
 	
-    populateDropdwonDataList() {
+	searchConfiguration() {
+		this.query = new LeadSummaryQuery({
+			page: 1,
+			pageSize: this.PAGE_SIZE,
+			sortBy: 'createdTime',
+			isSortAscending: false,
+			globalSearchValue: '',
+			depotId: '',
+			employeeRole: null,
+			salesGroups: [],
+			territories: [],
+			zones: [],
+			userId: null,
+			fromDate: null,
+			toDate: null,
+		});
+	}
+	
+    populateDropdownDataList() {
         forkJoin([
             this.commonService.getUserInfoList(),
             this.commonService.getDepotList(),
@@ -95,18 +119,45 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
         }, (err) => { }, () => { });
     }
 
+	onEmployeeRoleChange(event) {
+		this.query.salesGroups = [];
+		this.query.territories = [];
+		this.query.zones = [];
+
+		switch (event) {
+			case EnumEmployeeRole.DIC:
+			case EnumEmployeeRole.BIC:
+			case EnumEmployeeRole.AM:
+				this.isSalesGroupFieldShow = true;
+				this.isTerritoryFieldShow = true;
+				this.isZoneFieldShow = true;
+				break;
+			case EnumEmployeeRole.TM_TO:
+				this.isSalesGroupFieldShow = false;
+				this.isTerritoryFieldShow = true;
+				this.isZoneFieldShow = true;
+				break;
+				case EnumEmployeeRole.ZO:
+					this.isSalesGroupFieldShow = false;
+					this.isTerritoryFieldShow = false;
+					this.isZoneFieldShow = true;
+					break;
+			default:
+				this.isSalesGroupFieldShow = false;
+				this.isTerritoryFieldShow = false;
+				this.isZoneFieldShow = false;
+				break;
+		}
+	}
+	//#endregion
+
+	//#region no need to change for another report
 	onSubmitSearch() {
 		this.query.page = 1;
 		this.query.fromDate = this.ngbDateToDate(this.fromDate);
 		this.query.toDate = this.ngbDateToDate(this.toDate);
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
-	}
-
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
 	}
 
 	loadReportsPage() {
@@ -134,24 +185,6 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
-		});
-	}
-	
-	searchConfiguration() {
-		this.query = new LeadSummaryQuery({
-			page: 1,
-			pageSize: this.PAGE_SIZE,
-			sortBy: 'createdTime',
-			isSortAscending: false,
-			globalSearchValue: '',
-			depotId: '',
-			employeeRole: null,
-			salesGroups: [],
-			territories: [],
-			zones: [],
-			userId: null,
-			fromDate: null,
-			toDate: null,
 		});
 	}
 
@@ -187,4 +220,11 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
 	}
+
+	ngbDateToDate(date: NgbDate) : Date | null {
+		return date && date.year && date.month && date.day ? 
+				new Date(date.year,date.month-1,date.day) : 
+				null;
+	}
+	//#endregion
 }
