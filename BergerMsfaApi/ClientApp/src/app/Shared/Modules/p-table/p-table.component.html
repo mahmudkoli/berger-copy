@@ -121,7 +121,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row search-table" *ngIf="pTableSetting.enabledSearch">
+            <div class="row search-table" *ngIf="pTableSetting.enabledSearch||pTableSetting.enabledDataLength">
                 <div class="col-sm-7 col-md-8 col-xs-9">
                     <div class="pull-left">
                         <div class="btn-group" *ngIf="pTableSetting.enabledDataLength">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
                 <div class="col-sm-5 col-md-4 col-xs-3 pull-right" style="padding-right:2px;">
-                    <div class="form-group has-feedback">
+                    <div class="form-group has-feedback" *ngIf="pTableSetting.enabledSearch">
                         <input type="text" class="form-control form-control-sm p-table-search" id="inputValidation"
                             #search placeholder="Search" [(ngModel)]="globalSearchValue"
                             (keyup)="fnFilterPTable(search.value)" />

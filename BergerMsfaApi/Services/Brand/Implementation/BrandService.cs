@@ -72,6 +72,25 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return queryResult;
         }
        
+        public async Task<object> GetBrandsAsync(AppBrandSearchModel query)
+        {
+            query.PageNo = query.PageNo ?? 1;
+            query.PageSize = query.PageSize ?? int.MaxValue;
+            query.MaterialDescription = query.MaterialDescription ?? string.Empty;
+
+            var result = await _brandInfoRepository.GetAllIncludeAsync(
+                                x => new { x.Id, x.MaterialCode, x.MaterialDescription },
+                                x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || x.MaterialDescription.Contains(query.MaterialDescription)),
+                                x => x.OrderBy(o => o.MaterialDescription),
+                                null,
+                                query.PageNo.Value,
+                                query.PageSize.Value,
+                                true
+                            );
+
+            return result;
+        }
+       
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, bool>>>()

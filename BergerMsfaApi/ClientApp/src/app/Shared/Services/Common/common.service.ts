@@ -29,6 +29,10 @@ export class CommonService {
           value.forEach((val, index) => {
             parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(val));
           });
+        } else if (value instanceof Date) {
+          const newValue = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), 
+                                              value.getHours(), value.getMinutes(), value.getSeconds()))
+          parts.push(encodeURIComponent(property) + '=' + newValue.toISOString());
         } else {
           parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
         }
@@ -78,6 +82,25 @@ export class CommonService {
             obj[keyText] = value ? trueText : falseText; 
           }
       });
+  }
+
+	insertSpaces(value) {
+		return value.replace(/(_|-)/g, ' ').trim()
+                .replace(/\w\S*/g, function(str) {
+                  return str.charAt(0).toUpperCase() + str.substr(1)
+                })   
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') ;
+	}
+  
+  renameKeys(obj, keysMap) {
+    return Object.keys(obj).reduce(
+      (acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: obj[key] }
+      }),
+      {}
+    );
   }
 
   private appendFormDataNestedObject(formData, value, property, index: null | number) {
@@ -131,6 +154,10 @@ export class CommonService {
 
   getDepotList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
+  }
+
+  getUserInfoListByLoggedInManager() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManager');
   }
 
   getUserInfoList() {

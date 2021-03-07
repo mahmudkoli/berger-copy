@@ -85,6 +85,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
            // var u = _userInfosvc.GetAll().ToList();
            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
+            var result = await _userInfosvc.GetAllAsync();
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
+
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager()
+        {
+           // var result1 = new List<UserInfoModel>();
+           // var u = _userInfosvc.GetAll().ToList();
+           //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
+         
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -223,30 +233,141 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
-        public async Task<IList<PlantTerritoryZoneMappingModel>> GetPlantTerritoryZoneMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds)
+        public async Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
-            var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
-            {
-                [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
-                [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
-                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
-            };
+            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
+            var salesOffices = (await GetPSATZMappingsAsync(EnumUserCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).ToList();
+            var areas = (await GetPSATZMappingsAsync(EnumUserCategory.Area.ToString(), areaIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.SalesOfficeId }).ToList();
+            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId }).ToList();
+            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
 
-            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).Select(x => new PlantTerritoryZoneMappingModel() 
-                            { 
-                                PlantId = x.BusinessArea,
-                                TerritoryId = x.Territory,
-                                ZoneId = x.CustZone,
-                            }).ToList();
-            
+            foreach (var plant in plants)
+            {
+                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).ToList();
+                foreach (var salesOffice in plant.Children)
+                {
+                    salesOffice.Children = areas.Where(x => x.ParentId == salesOffice.Id).ToList();
+                    foreach (var area in salesOffice.Children)
+                    {
+                        area.Children = territories.Where(x => x.ParentId == area.Id).ToList();
+                        foreach (var territory in area.Children)
+                        {
+                            territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
+                        }
+                    }
+                }
+            }
+
+            return plants;
+        }
+        
+        public async Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
+        {
+            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PATZ))
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
+            var areas = (await GetPSATZMappingsAsync(EnumUserCategory.Area.ToString(), areaIds, plantIds, EnumTypeOfEmployeeHierarchy.PATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.PlantId }).ToList();
+            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId }).ToList();
+            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PATZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
+
+            foreach (var plant in plants)
+            {
+                plant.Children = areas.Where(x => x.ParentId == plant.Id).ToList();
+                foreach (var area in plant.Children)
+                {
+                    area.Children = territories.Where(x => x.ParentId == area.Id).ToList();
+                    foreach (var territory in area.Children)
+                    {
+                        territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
+                    }
+                }
+            }
+
+            return plants;
+        }
+
+        public async Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds)
+        {
+            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PTZ))
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
+            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, plantIds, EnumTypeOfEmployeeHierarchy.PTZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).ToList();
+            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PTZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
+
+            foreach (var plant in plants)
+            {
+                plant.Children = territories.Where(x => x.ParentId == plant.Id).ToList();
+                foreach (var territory in plant.Children)
+                {
+                    territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
+                }
+            }
+
+            return plants;
+        }
+
+        private async Task<IList<PSATZMappingModel>> GetPSATZMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds, EnumTypeOfEmployeeHierarchy typeOfEmployeeHierarchy)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>();
+
+            if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PSATZ)
+            {
+                columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+                {
+                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                    [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesOffice)),
+                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesGroup)),
+                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                };
+            }
+            else if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PATZ)
+            {
+                columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+                {
+                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                    [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesGroup)),
+                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                };
+            }
+            else if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PTZ)
+            {
+                columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+                {
+                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                };
+            }
+
+            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).Select(x => new PSATZMappingModel()
+            {
+                PlantId = x.BusinessArea,
+                SalesOfficeId = x.SalesOffice,
+                AreaId = x.SalesGroup,
+                TerritoryId = x.Territory,
+                ZoneId = x.CustZone,
+            }).ToList();
+
             if (EnumUserCategory.Plant.ToString() == userCategory)
             {
                 result = result.GroupBy(x => x.PlantId).Select(x =>
                 {
                     var g = x.FirstOrDefault();
-                    var r = new PlantTerritoryZoneMappingModel();
+                    var r = new PSATZMappingModel();
                     r.PlantId = x.Key;
                     if (g == null) return r;
+                    r.SalesOfficeId = g.SalesOfficeId;
+                    r.AreaId = g.AreaId;
                     r.TerritoryId = g.TerritoryId;
                     r.ZoneId = g.ZoneId;
                     return r;
@@ -256,15 +377,55 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 foreach (var item in result)
                     SetName<Depot>(item, data, x => x.Werks == item.PlantId, x => x.Name1);
             }
+            else if (EnumUserCategory.SalesOffice.ToString() == userCategory)
+            {
+                result = result.GroupBy(x => x.SalesOfficeId).Select(x =>
+                {
+                    var g = x.FirstOrDefault();
+                    var r = new PSATZMappingModel();
+                    r.SalesOfficeId = x.Key;
+                    if (g == null) return r;
+                    r.PlantId = g.PlantId;
+                    r.AreaId = g.AreaId;
+                    r.TerritoryId = g.TerritoryId;
+                    r.ZoneId = g.ZoneId;
+                    return r;
+                }).ToList();
+                var filter = result.Select(s => s.SalesOfficeId);
+                var data = _saleOfficeSvc.FindAll(x => filter.Contains(x.Code)).ToList();
+                foreach (var item in result)
+                    SetName<SaleOffice>(item, data, x => x.Code == item.SalesOfficeId, x => x.Name);
+            }
+            else if (EnumUserCategory.Area.ToString() == userCategory)
+            {
+                result = result.GroupBy(x => x.AreaId).Select(x =>
+                {
+                    var g = x.FirstOrDefault();
+                    var r = new PSATZMappingModel();
+                    r.AreaId = x.Key;
+                    if (g == null) return r;
+                    r.PlantId = g.PlantId;
+                    r.SalesOfficeId = g.SalesOfficeId;
+                    r.TerritoryId = g.TerritoryId;
+                    r.ZoneId = g.ZoneId;
+                    return r;
+                }).ToList();
+                var filter = result.Select(s => s.AreaId);
+                var data = _saleGroupSvc.FindAll(x => filter.Contains(x.Code)).ToList();
+                foreach (var item in result)
+                    SetName<SaleGroup>(item, data, x => x.Code == item.AreaId, x => x.Name);
+            }
             else if (EnumUserCategory.Territory.ToString() == userCategory)
             {
                 result = result.GroupBy(x => x.TerritoryId).Select(x =>
                 {
                     var g = x.FirstOrDefault();
-                    var r = new PlantTerritoryZoneMappingModel();
+                    var r = new PSATZMappingModel();
                     r.TerritoryId = x.Key;
                     if (g == null) return r;
                     r.PlantId = g.PlantId;
+                    r.SalesOfficeId = g.SalesOfficeId;
+                    r.AreaId = g.AreaId;
                     r.ZoneId = g.ZoneId;
                     return r;
                 }).ToList();
@@ -278,10 +439,12 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 result = result.GroupBy(x => x.ZoneId).Select(x =>
                 {
                     var g = x.FirstOrDefault();
-                    var r = new PlantTerritoryZoneMappingModel();
+                    var r = new PSATZMappingModel();
                     r.ZoneId = x.Key;
                     if (g == null) return r;
                     r.PlantId = g.PlantId;
+                    r.SalesOfficeId = g.SalesOfficeId;
+                    r.AreaId = g.AreaId;
                     r.TerritoryId = g.TerritoryId;
                     return r;
                 }).ToList();
@@ -294,7 +457,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
-        private void SetName<T>(PlantTerritoryZoneMappingModel item,
+        private void SetName<T>(PSATZMappingModel item,
             List<T> data, 
             Func<T, bool> predicate,
             Func<T, string> selector)
@@ -311,11 +474,20 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public string Name { get; set; }
     }
 
-    public class PlantTerritoryZoneMappingModel
+    public class PSATZMappingModel
     {
         public string PlantId { get; set; } // BusinessArea, Depot
+        public string SalesOfficeId { get; set; }
+        public string AreaId { get; set; } // SalesGroup
         public string TerritoryId { get; set; }
         public string ZoneId { get; set; } // CustZone
         public string Name { get; set; }
+    }
+
+    public enum EnumTypeOfEmployeeHierarchy
+    {
+        PSATZ = 1, //Plant > SalesOffice > Area > Territory > Zone
+        PATZ = 2, //Plant > Area > Territory > Zone
+        PTZ = 3 //Plant > Territory > Zone
     }
 }

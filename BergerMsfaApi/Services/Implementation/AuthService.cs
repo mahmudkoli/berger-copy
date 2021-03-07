@@ -112,31 +112,21 @@ namespace BergerMsfaApi.Services.Implementation
                 }
                 #endregion
 
-                #region plant, territory, zone mapping
-                var plants = (await _commonService.GetPlantTerritoryZoneMappingsAsync(EnumUserCategory.Plant.ToString(), userInfo.PlantIds.Select(x => x.ToString()).ToList(), new List<string>()))
-                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
-                var territories = (await _commonService.GetPlantTerritoryZoneMappingsAsync(EnumUserCategory.Territory.ToString(), userInfo.TerritoryIds.Select(x => x.ToString()).ToList(), plants.Select(x => x.Id).ToList()))
-                                    .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).ToList();
-                var zones = (await _commonService.GetPlantTerritoryZoneMappingsAsync(EnumUserCategory.Zone.ToString(), userInfo.ZoneIds.Select(x => x.ToString()).ToList(), territories.Select(x => x.Id).ToList()))
-                                    .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
-
-                foreach (var plant in plants)
-                {
-                    plant.Children = territories.Where(x => x.ParentId == plant.Id).ToList();
-                    foreach (var territory in plant.Children)
-                    {
-                        territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
-                    }
-                }
-                #endregion
+                var dealerOpeningsHierarchyList = await _commonService.GetPSATZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                
 
                 var results = new AuthenticateUserModel()
                 {
                     //userId=AppIdentity.AppUser.UserId,
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
-                    FullName = $"{userInfo.FullName}",
-                    Plants = plants,
+                    FullName = userInfo.FullName,
+                    Plants = leadGenerationsHierarchyList,
+                    DealerOpeningsHierarchyList = dealerOpeningsHierarchyList,
+                    PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList,
+                    LeadGenerationsHierarchyList = leadGenerationsHierarchyList,
                     PlantIds = userInfo.PlantIds,
                     PlantId = userInfo.PlantIds.FirstOrDefault(),
                     SalesOfficeIds = userInfo.SaleOfficeIds,

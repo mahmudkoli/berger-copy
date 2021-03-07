@@ -86,12 +86,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreditControlAreaId");
@@ -140,12 +134,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
@@ -191,12 +179,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DealerOpeningId");
@@ -237,12 +219,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("ValidTo")
                         .HasColumnType("Date");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -423,12 +399,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -616,6 +586,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("ExpectedValueChangeReason")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("HasSwappingCompetition")
+                        .HasColumnType("bit");
+
                     b.Property<string>("KeyContactPersonMobile")
                         .HasColumnType("nvarchar(max)");
 
@@ -667,13 +640,7 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("ProjectStatusLeadCompletedId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProjectStatusPartialBusinessId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProjectStatusPartialBusinessPercentage")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProjectStatusTotalLossId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProjectStatusTotalLossRemarks")
@@ -685,7 +652,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("SwappingCompetitionAnotherCompetitorName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SwappingCompetitionId")
+                    b.Property<int?>("SwappingCompetitionId")
                         .HasColumnType("int");
 
                     b.Property<int>("TotalPaintingAreaSqftExterior")
@@ -709,12 +676,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("UpTradingToBrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessAchievementId");
@@ -724,10 +685,6 @@ namespace Berger.Data.Migrations
                     b.HasIndex("ProjectStatusId");
 
                     b.HasIndex("ProjectStatusLeadCompletedId");
-
-                    b.HasIndex("ProjectStatusPartialBusinessId");
-
-                    b.HasIndex("ProjectStatusTotalLossId");
 
                     b.HasIndex("SwappingCompetitionId");
 
@@ -842,12 +799,6 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("VisitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
@@ -902,12 +853,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ELearningDocumentId");
@@ -942,12 +887,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -990,12 +929,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ELearningDocumentId");
@@ -1036,12 +969,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1087,12 +1014,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("TotalMark")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ELearningDocumentId");
@@ -1129,12 +1050,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1183,12 +1098,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("UserInfoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionSetId");
@@ -1235,12 +1144,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("UserQuestionAnswerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
@@ -1280,12 +1183,6 @@ namespace Berger.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1374,12 +1271,6 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("VisitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("JourneyPlans");
@@ -1418,12 +1309,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("VisitDate")
                         .HasColumnType("Date");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1482,12 +1367,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1785,12 +1664,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Menus");
@@ -1827,12 +1700,6 @@ namespace Berger.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1882,12 +1749,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ActivityId");
@@ -1925,12 +1786,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MenuId");
@@ -1966,12 +1821,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2020,12 +1869,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("TableName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2117,12 +1960,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Zone")
                         .HasColumnType("nvarchar(max)");
 
@@ -2166,12 +2003,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2230,14 +2061,8 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("WorkInHandNumber")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2279,12 +2104,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2355,12 +2174,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("UpdatedDate")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2446,12 +2259,6 @@ namespace Berger.Data.Migrations
                     b.Property<decimal>("TotalDue")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("DealerInfos");
@@ -2467,6 +2274,12 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Benefit")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BenefitDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Brand")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
@@ -2479,10 +2292,7 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Item")
+                    b.Property<string>("Material")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
@@ -2490,6 +2300,15 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("RateInDrum")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RateInLtrOrKg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchemeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SchemeMasterId")
                         .HasColumnType("int");
@@ -2502,12 +2321,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<string>("TargetVolume")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2542,12 +2355,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2589,12 +2396,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TypeId");
@@ -2630,12 +2431,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("TypeName")
                         .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2688,12 +2483,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("UserInfoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -2728,12 +2517,6 @@ namespace Berger.Data.Migrations
                         .HasMaxLength(128);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2808,12 +2591,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("UserInfos");
@@ -2845,12 +2622,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("UserInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2897,12 +2668,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WFStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkflowId")
                         .HasColumnType("int");
 
                     b.Property<string>("ZoneId")
@@ -3054,19 +2819,9 @@ namespace Berger.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProjectStatusLeadCompletedId");
 
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatusPartialBusiness")
-                        .WithMany()
-                        .HasForeignKey("ProjectStatusPartialBusinessId");
-
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProjectStatusTotalLoss")
-                        .WithMany()
-                        .HasForeignKey("ProjectStatusTotalLossId");
-
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "SwappingCompetition")
                         .WithMany()
-                        .HasForeignKey("SwappingCompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SwappingCompetitionId");
 
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "TypeOfClient")
                         .WithMany()
@@ -3277,7 +3032,7 @@ namespace Berger.Data.Migrations
             modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeDetail", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.Scheme.SchemeMaster", "SchemeMaster")
-                        .WithMany("SchemeDetail")
+                        .WithMany("SchemeDetails")
                         .HasForeignKey("SchemeMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

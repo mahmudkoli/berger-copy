@@ -13,8 +13,8 @@ namespace Berger.Data.Common
         int? ModifiedBy { get; set; }
         DateTime? ModifiedTime { get; set; }
         Status Status { get; set; }
-        int? WorkflowId { get; set; }
-        WorkflowStatus WFStatus { get; set; }
+        //int? WorkflowId { get; set; }
+        //WorkflowStatus WFStatus { get; set; }
 
 
     }

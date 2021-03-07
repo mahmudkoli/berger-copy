@@ -18,8 +18,8 @@ namespace BergerMsfaApi.Models.Brand
         public string MaterialGroupOrBrand { get; set; } // matkl
         public string PackSize { get; set; } // groes
         public string Division { get; set; } // spart
-        public string ersda { get; set; } // ersda
-        public string laeda { get; set; } // laeda
+        public string CreatedDate { get; set; } // ersda
+        public string UpdatedDate { get; set; } // laeda
         public bool IsCBInstalled { get; set; }
         public bool IsMTS { get; set; }
         public bool IsPremium { get; set; }

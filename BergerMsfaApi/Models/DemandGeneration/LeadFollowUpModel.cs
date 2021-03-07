@@ -52,15 +52,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int? ProjectStatusLeadCompletedId { get; set; }
         //public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusLeadCompletedText { get; set; }
-        public int? ProjectStatusTotalLossId { get; set; }
-        //public DropdownDetail ProjectStatusTotalLoss { get; set; }
-        public string ProjectStatusTotalLossText { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
-        public int? ProjectStatusPartialBusinessId { get; set; }
-        //public DropdownDetail ProjectStatusPartialBusiness { get; set; }
-        public string ProjectStatusPartialBusinessText { get; set; }
         public int ProjectStatusPartialBusinessPercentage { get; set; }
-        public int SwappingCompetitionId { get; set; }
+        public bool HasSwappingCompetition { get; set; }
+        public int? SwappingCompetitionId { get; set; }
         //public DropdownDetail SwappingCompetition { get; set; }
         public string SwappingCompetitionText { get; set; }
         public string SwappingCompetitionAnotherCompetitorName { get; set; }
@@ -87,19 +82,21 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int BusinessAchievementId { get; set; }
         public LeadBusinessAchievementModel BusinessAchievement { get; set; }
 
+        public LeadFollowUpModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<LeadFollowUp, LeadFollowUpModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
                 .ForMember(dest => dest.TypeOfClientText,
                     opt => opt.MapFrom(src => src.TypeOfClient != null ? $"{src.TypeOfClient.DropdownName}" : string.Empty))
                 .ForMember(dest => dest.ProjectStatusText,
                     opt => opt.MapFrom(src => src.ProjectStatus != null ? $"{src.ProjectStatus.DropdownName}" : string.Empty))
                 .ForMember(dest => dest.ProjectStatusLeadCompletedText,
                     opt => opt.MapFrom(src => src.ProjectStatusLeadCompleted != null ? $"{src.ProjectStatusLeadCompleted.DropdownName}" : string.Empty))
-                .ForMember(dest => dest.ProjectStatusTotalLossText,
-                    opt => opt.MapFrom(src => src.ProjectStatusTotalLoss != null ? $"{src.ProjectStatusTotalLoss.DropdownName}" : string.Empty))
-                .ForMember(dest => dest.ProjectStatusPartialBusinessText,
-                    opt => opt.MapFrom(src => src.ProjectStatusPartialBusiness != null ? $"{src.ProjectStatusPartialBusiness.DropdownName}" : string.Empty))
                 .ForMember(dest => dest.SwappingCompetitionText,
                     opt => opt.MapFrom(src => src.SwappingCompetition != null ? $"{src.SwappingCompetition.DropdownName}" : string.Empty))
                 .ForMember(dest => dest.LastVisitedDateText,
@@ -108,15 +105,16 @@ namespace BergerMsfaApi.Models.DemandGeneration
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDatePlan)))
                 .ForMember(dest => dest.ActualVisitDateText,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)));
+
             //profile.CreateMap<LeadFollowUpModel, LeadFollowUp>();
             //profile.CreateMap<DropdownDetail, DropdownModel>();
             //profile.CreateMap<DropdownModel, DropdownDetail>();
-            profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>();
+            //profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>();
             //profile.CreateMap<LeadBusinessAchievementModel, LeadBusinessAchievement>();
         }
     }
 
-    public class SaveLeadFollowUpModel : IMapFrom<LeadFollowUp>
+    public class AppSaveLeadFollowUpModel : IMapFrom<LeadFollowUp>
     {
         //public int Id { get; set; }
         public int LeadGenerationId { get; set; }
@@ -126,11 +124,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string Zone { get; set; }
         public string ProjectName { get; set; }
         public string ProjectAddress { get; set; }
-        public DateTime LastVisitedDate { get; set; }
-        public DateTime NextVisitDatePlan { get; set; }
-        public DateTime ActualVisitDate { get; set; }
-        public int TypeOfClientId { get; set; }
+        public string LastVisitedDate { get; set; }
+        public string NextVisitDatePlan { get; set; }
+        public string ActualVisitDate { get; set; }
+        public int? TypeOfClientId { get; set; }
         //public DropdownDetail TypeOfClient { get; set; }
+        public string TypeOfClientText { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonNameChangeReason { get; set; }
         public string KeyContactPersonMobile { get; set; }
@@ -149,16 +148,16 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string ExpectedMonthlyBusinessValueChangeReason { get; set; }
         public int ProjectStatusId { get; set; }
         //public DropdownDetail ProjectStatus { get; set; }
+        public string ProjectStatusText { get; set; }
         public int? ProjectStatusLeadCompletedId { get; set; }
         //public DropdownDetail ProjectStatusLeadCompleted { get; set; }
-        public int? ProjectStatusTotalLossId { get; set; }
-        //public DropdownDetail ProjectStatusTotalLoss { get; set; }
+        public string ProjectStatusLeadCompletedText { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
-        public int? ProjectStatusPartialBusinessId { get; set; }
-        //public DropdownDetail ProjectStatusPartialBusiness { get; set; }
         public int ProjectStatusPartialBusinessPercentage { get; set; }
-        public int SwappingCompetitionId { get; set; }
+        public bool HasSwappingCompetition { get; set; }
+        public int? SwappingCompetitionId { get; set; }
         //public DropdownDetail SwappingCompetition { get; set; }
+        public string SwappingCompetitionText { get; set; }
         public string SwappingCompetitionAnotherCompetitorName { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
@@ -183,12 +182,40 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public int BusinessAchievementId { get; set; }
         public SaveLeadBusinessAchievementModel BusinessAchievement { get; set; }
 
+        public AppSaveLeadFollowUpModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LeadFollowUp, SaveLeadFollowUpModel>();
-            profile.CreateMap<SaveLeadFollowUpModel, LeadFollowUp>();
-            profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>();
-            profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>();
+            profile.CreateMap<LeadFollowUp, AppSaveLeadFollowUpModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
+                .ForMember(dest => dest.TypeOfClientText,
+                    opt => opt.MapFrom(src => src.TypeOfClient != null ? $"{src.TypeOfClient.DropdownName}" : string.Empty))
+                .ForMember(dest => dest.ProjectStatusText,
+                    opt => opt.MapFrom(src => src.ProjectStatus != null ? $"{src.ProjectStatus.DropdownName}" : string.Empty))
+                .ForMember(dest => dest.ProjectStatusLeadCompletedText,
+                    opt => opt.MapFrom(src => src.ProjectStatusLeadCompleted != null ? $"{src.ProjectStatusLeadCompleted.DropdownName}" : string.Empty))
+                .ForMember(dest => dest.SwappingCompetitionText,
+                    opt => opt.MapFrom(src => src.SwappingCompetition != null ? $"{src.SwappingCompetition.DropdownName}" : string.Empty))
+                .ForMember(dest => dest.LastVisitedDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.LastVisitedDate)))
+                .ForMember(dest => dest.NextVisitDatePlan,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDatePlan)))
+                .ForMember(dest => dest.ActualVisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)));
+
+            profile.CreateMap<AppSaveLeadFollowUpModel, LeadFollowUp>()
+                .ForMember(dest => dest.LastVisitedDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.LastVisitedDate)))
+                .ForMember(dest => dest.NextVisitDatePlan,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDatePlan)))
+                .ForMember(dest => dest.ActualVisitDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.ActualVisitDate)));
+
+            //profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>();
+            //profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>();
         }
     }
 }

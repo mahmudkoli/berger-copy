@@ -20,8 +20,10 @@ namespace Berger.Common.JSONParser
             {
                 if (jObject.First?.First != null)
                 {
-                    JsonSerializerSettings settings = new JsonSerializerSettings();
-                    settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    };
 
                     data = JsonConvert.DeserializeObject<Data>(jObject.First.First.ToString(), settings);   
                 }

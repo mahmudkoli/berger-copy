@@ -38,7 +38,7 @@ namespace BergerMsfaApi.Controllers.Common
         {
             try
             {
-                var result =await _commonSvc.GetSaleOfficeList();
+                var result = await _commonSvc.GetSaleOfficeList();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -123,6 +123,20 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetUserInfoList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUserInfoListByLoggedInManager")]
+        public async Task<IActionResult> GetUserInfoListByLoggedInManager()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByLoggedInManager();
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -11,6 +11,9 @@ namespace BergerMsfaApi.Models.Users
         public int UserId { get; set; }
         public string FullName { get; set; }
         public IList<KeyValuePairModel> Plants { get; set; }
+        public IList<KeyValuePairModel> DealerOpeningsHierarchyList { get; set; }
+        public IList<KeyValuePairModel> PainterRegistrationsHierarchyList { get; set; }
+        public IList<KeyValuePairModel> LeadGenerationsHierarchyList { get; set; }
         public List<string> PlantIds { get; set; }
         public string PlantId { get; set; }
         public List<string> SalesOfficeIds { get; set; }
@@ -32,6 +35,9 @@ namespace BergerMsfaApi.Models.Users
         public AuthenticateUserModel()
         {
             this.Plants = new List<KeyValuePairModel>();
+            this.DealerOpeningsHierarchyList = new List<KeyValuePairModel>();
+            this.PainterRegistrationsHierarchyList = new List<KeyValuePairModel>();
+            this.LeadGenerationsHierarchyList = new List<KeyValuePairModel>();
         }
     }
 

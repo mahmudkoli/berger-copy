@@ -1,158 +1,179 @@
+
 <div class="main-card mb-3 card">
     <div class="card-header sticky-card d-flex justify-content-between align-items-center">
-        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create Scheme Detail</div>
-        <div class="btn-actions-pane-right">
-
-        </div>
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <!-- <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>
+        </div> -->
     </div>
     <div class="card-body">
-        <form #schemDetailForm="ngForm" method="post" (ngSubmit)="fnSave()">
+        <form [formGroup]="schemeDetailForm" (ngSubmit)="onSubmit()">
             <div class="form-row">
-
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="zoneId">Scheme</label>
-
-                        <ng-select required id="schemeMasterId" #schemeMasterId="ngModel" name="schemeMasterId" [multiple]="false" [(ngModel)]="schemeDetailModel.schemeMasterId">
-                            <ng-option *ngFor="let schemeMaster of schemeMasterList" [value]="schemeMaster.id">{{schemeMaster.schemeName}}</ng-option>
+                        <label class="required">Scheme Master</label>
+                        <ng-select formControlName="schemeMasterId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let sm of schemeMasters;" [value]="sm.id">{{sm.label}}</ng-option>
                         </ng-select>
-
-                        <small class="text-danger" [class.d-none]="schemeMasterId.valid || schemeMasterId.untouched">
-                            Scheme Name  is Required
-                        </small>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="code">Code</label>
-                        <input required name="code" #code="ngModel" id="code" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':code.valid,'is-invalid':code.invalid && code.touched }"
-                               [(ngModel)]="schemeDetailModel.code" />
-                        <small class="text-danger" [class.d-none]="code.valid || code.untouched">
-                            Code is Required
+                        <small class="text-danger" *ngIf="formControls.schemeMasterId.touched && formControls.schemeMasterId.errors">
+                            <span *ngIf="formControls.schemeMasterId.errors.required">Scheme Master is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="slab">Slab</label>
-                        <input required name="slab" #slab="ngModel" id="slab" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':slab.valid,'is-invalid':slab.invalid && slab.touched }"
-                               [(ngModel)]="schemeDetailModel.slab" />
-                        <small class="text-danger" [class.d-none]="slab.valid || slab.untouched">
-                            Slab is Required
-                        </small>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="item">Item</label>
-                        <input required name="item" #item="ngModel" id="item" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':item.valid,'is-invalid':item.invalid && item.touched }"
-                               [(ngModel)]="schemeDetailModel.item" />
-                        <small class="text-danger" [class.d-none]="item.valid || item.untouched">
-                            Item is Required
-                        </small>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label for="condition">Condition</label>
-                        <input required name="condition" #condition="ngModel" id="condition" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':condition.valid,'is-invalid':condition.invalid && condition.touched }"
-                               [(ngModel)]="schemeDetailModel.condition" />
-                        <small class="text-danger" [class.d-none]="condition.valid || condition.untouched">
-                            condition is Required
+                        <label class="required">Code</label>
+                        <input type="text" class="form-control" formControlName="code"
+                                [ngClass]="{'is-valid':formControls.code.touched && !formControls.code.errors,
+                                'is-invalid':formControls.code.touched && formControls.code.errors }" />
+                        <small class="text-danger" *ngIf="formControls.code.touched && formControls.code.errors">
+                            <span *ngIf="formControls.code.errors.required">Code is <strong>required</strong></span>
+                            <span *ngIf="formControls.code.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="tagetVolume">Target Volume</label>
-                        <input required name="targetVolume" #targetVolume="ngModel" id="targetVolume" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':targetVolume.valid,'is-invalid':targetVolume.invalid && targetVolume.touched }"
-                               [(ngModel)]="schemeDetailModel.targetVolume" />
-                        <small class="text-danger" [class.d-none]="targetVolume.valid || targetVolume.untouched">
-                            target Volume is Required
+                        <label class="required">Brand</label>
+                        <input type="text" class="form-control" formControlName="brand"
+                                [ngClass]="{'is-valid':formControls.brand.touched && !formControls.brand.errors,
+                                'is-invalid':formControls.brand.touched && formControls.brand.errors }" />
+                        <small class="text-danger" *ngIf="formControls.brand.touched && formControls.brand.errors">
+                            <span *ngIf="formControls.brand.errors.required">Brand is <strong>required</strong></span>
+                            <span *ngIf="formControls.brand.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
                     </div>
                 </div>
-
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="benefit">Benefit</label>
-                        <input required name="benefit" #benefit="ngModel" id="benefit" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':benefit.valid,'is-invalid':benefit.invalid && benefit.touched }"
-                               [(ngModel)]="schemeDetailModel.benefit" />
-                        <small class="text-danger" [class.d-none]="benefit.valid || benefit.untouched">
-                            benefit is Required
+                        <label class="required">Rate In Ltr/Kg</label>
+                        <input type="text" class="form-control" formControlName="rateInLtrOrKg"
+                                [ngClass]="{'is-valid':formControls.rateInLtrOrKg.touched && !formControls.rateInLtrOrKg.errors,
+                                'is-invalid':formControls.rateInLtrOrKg.touched && formControls.rateInLtrOrKg.errors }" />
+                        <small class="text-danger" *ngIf="formControls.rateInLtrOrKg.touched && formControls.rateInLtrOrKg.errors">
+                            <span *ngIf="formControls.rateInLtrOrKg.errors.required">Rate In Ltr/Kg is <strong>required</strong></span>
+                            <span *ngIf="formControls.rateInLtrOrKg.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
                     </div>
                 </div>
-
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label for="date">Date</label>
-                        <!--<input required name="date" #date="ngModel" id="date" placeholder=""
-                               type="text" class="form-control"
-                               [ngClass]="{'is-valid':date.valid,'is-invalid':date.invalid && date.touched }"
-                               [(ngModel)]="schemeDetailModel.date" />
-                        <small class="text-danger" [class.d-none]="date.valid || date.untouched">
-                            date is Required
-                        </small>-->
-
-                        <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd"
-                                   name="date" id="date" [(ngModel)]="schemeDetailModel.vDate"  ngbDatepicker #d="ngbDatepicker">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button">
-                                    <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <label class="required">Rate In Drum</label>
+                        <input type="text" class="form-control" formControlName="rateInDrum"
+                                [ngClass]="{'is-valid':formControls.rateInDrum.touched && !formControls.rateInDrum.errors,
+                                'is-invalid':formControls.rateInDrum.touched && formControls.rateInDrum.errors }" />
+                        <small class="text-danger" *ngIf="formControls.rateInDrum.touched && formControls.rateInDrum.errors">
+                            <span *ngIf="formControls.rateInDrum.errors.required">Rate In Drum is <strong>required</strong></span>
+                            <span *ngIf="formControls.rateInDrum.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
                     </div>
                 </div>
-
-
-
-
-
-
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-
-                        <label for="status">Status</label>
-
-                        <ng-select required id="status" #status="ngModel" name="status" [multiple]="false" [(ngModel)]="schemeDetailModel.status">
-                            <ng-option *ngFor="let key of statusKeys" [value]="key">{{changeStatus[key]}}</ng-option>
+                        <label class="required">SLAB</label>
+                        <input type="text" class="form-control" formControlName="slab"
+                                [ngClass]="{'is-valid':formControls.slab.touched && !formControls.slab.errors,
+                                'is-invalid':formControls.slab.touched && formControls.slab.errors }" />
+                        <small class="text-danger" *ngIf="formControls.slab.touched && formControls.slab.errors">
+                            <span *ngIf="formControls.slab.errors.required">SLAB is <strong>required</strong></span>
+                            <span *ngIf="formControls.slab.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Condition</label>
+                        <input type="text" class="form-control" formControlName="condition"
+                                [ngClass]="{'is-valid':formControls.condition.touched && !formControls.condition.errors,
+                                'is-invalid':formControls.condition.touched && formControls.condition.errors }" />
+                        <small class="text-danger" *ngIf="formControls.condition.touched && formControls.condition.errors">
+                            <span *ngIf="formControls.condition.errors.required">Condition is <strong>required</strong></span>
+                            <span *ngIf="formControls.condition.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Benefit Date</label>
+                        <input type="text" class="form-control" formControlName="benefitDate"
+                                [ngClass]="{'is-valid':formControls.benefitDate.touched && !formControls.benefitDate.errors,
+                                'is-invalid':formControls.benefitDate.touched && formControls.benefitDate.errors }" />
+                        <small class="text-danger" *ngIf="formControls.benefitDate.touched && formControls.benefitDate.errors">
+                            <span *ngIf="formControls.benefitDate.errors.required">Benefit Date is <strong>required</strong></span>
+                            <span *ngIf="formControls.benefitDate.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Scheme Id</label>
+                        <input type="text" class="form-control" formControlName="schemeId"
+                                [ngClass]="{'is-valid':formControls.schemeId.touched && !formControls.schemeId.errors,
+                                'is-invalid':formControls.schemeId.touched && formControls.schemeId.errors }" />
+                        <small class="text-danger" *ngIf="formControls.schemeId.touched && formControls.schemeId.errors">
+                            <span *ngIf="formControls.schemeId.errors.required">Scheme Id is <strong>required</strong></span>
+                            <span *ngIf="formControls.schemeId.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Product</label>
+                        <input type="text" class="form-control" formControlName="material"
+                                [ngClass]="{'is-valid':formControls.material.touched && !formControls.material.errors,
+                                'is-invalid':formControls.material.touched && formControls.material.errors }" />
+                        <small class="text-danger" *ngIf="formControls.material.touched && formControls.material.errors">
+                            <span *ngIf="formControls.material.errors.required">Product is <strong>required</strong></span>
+                            <span *ngIf="formControls.material.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Target Volume</label>
+                        <input type="text" class="form-control" formControlName="targetVolume"
+                                [ngClass]="{'is-valid':formControls.targetVolume.touched && !formControls.targetVolume.errors,
+                                'is-invalid':formControls.targetVolume.touched && formControls.targetVolume.errors }" />
+                        <small class="text-danger" *ngIf="formControls.targetVolume.touched && formControls.targetVolume.errors">
+                            <span *ngIf="formControls.targetVolume.errors.required">Target Volume is <strong>required</strong></span>
+                            <span *ngIf="formControls.targetVolume.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Benefit</label>
+                        <input type="text" class="form-control" formControlName="benefit"
+                                [ngClass]="{'is-valid':formControls.benefit.touched && !formControls.benefit.errors,
+                                'is-invalid':formControls.benefit.touched && formControls.benefit.errors }" />
+                        <small class="text-danger" *ngIf="formControls.benefit.touched && formControls.benefit.errors">
+                            <span *ngIf="formControls.benefit.errors.required">Benefit is <strong>required</strong></span>
+                            <span *ngIf="formControls.benefit.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
                         </ng-select>
-
-                        <small class="text-danger" [class.d-none]="status.valid || status.untouched">
-                            Status is required
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>
-
-
             </div>
+
             <div class="d-flex justify-content-end">
-                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()">
-                    <i class="pe-7s-back pr-1"></i> Back
-                </button>
-                <button type="submit" class="mb-2 btn btn-primary">
-                    <i class="fa fa-save pr-1"></i> Save
-                </button>
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="schemeDetailForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
             </div>
-            {{schemeDetailModel|json}}
         </form>
     </div>
 </div>
