@@ -59,9 +59,9 @@ export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
 }
 
 export class PainterRegisterQuery extends ReportBaseQuery {
-    // projectName: string;
-    // projectCode: string;
-    // projectStatusId: number;
+    painterMobileNo: string;
+    painterId: number;
+    painterType: number;
 
     constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
         super();

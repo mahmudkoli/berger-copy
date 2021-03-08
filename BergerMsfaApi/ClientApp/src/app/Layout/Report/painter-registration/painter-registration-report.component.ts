@@ -39,7 +39,18 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 	enabledTotal: boolean = true;
 	tableName: string = 'Painter Registration Report';
 	// renameKeys: any = {'userId':'// User Id //'};
-	renameKeys: any = {};
+	// renameKeys: any = [
+	// 	{'appInstalledStatus': 'Shamparka APP Installed Status'},
+	// 	{'appNotInstalledReason': 'Shamparka App Not Installed "Reason"'},
+	// ];
+	renameKeys: any = {
+						'appInstalledStatus': 'Shamparka APP Installed Status', 
+						'appNotInstalledReason': 'Shamparka App Not Installed "Reason"',
+						'averageMonthlyUse' : 'Average Monthly Use (Value)',
+						'bergerLoyalty' : 'Berger Loyalty %',
+						'painterImageUrl' : 'Painter Image',
+						'identificationNo' : 'NID/Passport/Birth Certificate No'
+					};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
@@ -51,6 +62,8 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
     salesGroups: any[] = [];
     territories:any[]=[]
     zones: any[] = [];
+	painters: any[] = [];
+	painterTypes: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -113,12 +126,16 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
-        ]).subscribe(([users, plants, areaGroups, territories, zones]) => {
+			this.commonService.getPainterList(),
+			this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Painter),
+        ]).subscribe(([users, plants, areaGroups, territories, zones, painters, painterTypes]) => {
             this.users = users.data;
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
             this.territories = territories.data;
-            this.zones = zones.data
+            this.zones = zones.data;
+			this.painters = painters.data;
+			this.painterTypes = painterTypes.data;
         }, (err) => { }, () => { });
     }
 
@@ -185,6 +202,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 	ptableColDefGenerate() {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
+		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;

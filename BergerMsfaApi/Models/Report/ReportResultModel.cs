@@ -125,9 +125,9 @@ namespace BergerMsfaApi.Models.Report
         public string DBBLRocketAccountStatus { get; set; }
         public string AccountNumber { get; set; }
         public string AccountHolderName { get; set; }
-        public string NIDNo { get; set; }
-        public string PassportNo { get; set; }
-        public string BirthCertificateNo { get; set; }
+        public string IdentificationNo { get; set; }
+        //public string PassportNo { get; set; }
+        //public string BirthCertificateNo { get; set; }
         public string AttachedTaggedDealerId { get; set; }
         public string AttachedTaggedDealerName { get; set; }
         public string APPInstalledStatus { get; set; }

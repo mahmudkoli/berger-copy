@@ -164,6 +164,10 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
   }
 
+  getPainterList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getPainterList');
+  }
+
   public getDealerList(userCategory: string, userCategoryIds: string[]) {
     var params = new HttpParams();
     params = params.append("userCategory", userCategory);

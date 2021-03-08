@@ -3,10 +3,12 @@ using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
@@ -32,6 +34,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<FocusDealer> _focusDealerSvc;
         private readonly IRepository<UserInfo> _userInfosvc;
         private readonly IRepository<Division> _divisionSvc;
+        private readonly IRepository<Painter> _painterSvc;
 
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
@@ -45,7 +48,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Depot> depotSvc,
             IRepository<FocusDealer> focusDealerSvc,
             IRepository<UserInfo> userInfosvc,
-            IRepository<Division> divisionSvc)
+            IRepository<Division> divisionSvc,
+            IRepository<Painter> painterSvc)
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
@@ -59,6 +63,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _depotSvc = depotSvc;
             _userInfosvc = userInfosvc;
             _divisionSvc = divisionSvc;
+            _painterSvc = painterSvc;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -152,6 +157,12 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var result= await _roleSvc.GetAllAsync();
             return result.ToMap<Role, RoleModel>();
+        }
+
+        public async Task<IEnumerable<PainterModel>> GetPainterList()
+        {
+            var result = await _painterSvc.GetAllAsync();
+            return result.ToMap<Painter, PainterModel>();
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)

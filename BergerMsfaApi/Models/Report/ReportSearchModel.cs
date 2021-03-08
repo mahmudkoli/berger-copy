@@ -51,6 +51,6 @@ namespace BergerMsfaApi.Models.Report
         public int? PainterId { get; set; }
         public string PainterName { get; set; }
         public string PainterMobileNo { get; set; }
-        public string PainterType { get; set; }
+        public int? PainterType { get; set; }
     }
 }

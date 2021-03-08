@@ -4,6 +4,8 @@ using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
@@ -35,6 +37,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
         private readonly IRepository<Painter> _painterRepository;
         private readonly IRepository<UserInfo> _userInfoRepository;
+        private readonly IRepository<DropdownDetail> _dorpDownDetailsRepository;
+        private readonly IRepository<AttachedDealerPainter> _attachmentDealerRepository;
+        private readonly IRepository<DealerInfo> _dealerInfoRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
@@ -44,6 +49,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
                 IRepository<Painter> painterRepository,
                 IRepository<UserInfo> userInfoRepository,
+                IRepository<DropdownDetail> dropDownDetailsRepository,
+                IRepository<AttachedDealerPainter> attachmentDealerRepository,
+                IRepository<DealerInfo> dealerInfoRepository,
                 IDropdownService dropdownService,
                 IMapper mapper
             )
@@ -53,6 +61,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._dealerSalesCallRepository = dealerSalesCallRepository;
             this._painterRepository = painterRepository;
             this._userInfoRepository = userInfoRepository;
+            this._dorpDownDetailsRepository = dropDownDetailsRepository;
+            this._attachmentDealerRepository = attachmentDealerRepository;
+            this._dealerInfoRepository = dealerInfoRepository;
             this._dropdownService = dropdownService;
             this._mapper = mapper;
         }
@@ -284,15 +295,24 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = (from p in await _painterRepository.GetAllAsync()
                          join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
                          from userInfo in uleftjoin.DefaultIfEmpty()
+                         join d in await _dorpDownDetailsRepository.GetAllAsync() on p.PainterCatId equals d.Id into dleftjoin
+                         from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                         join adp in await _attachmentDealerRepository.GetAllAsync() on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                         from adpInfo in adpleftjoin.DefaultIfEmpty()
+                         join di in await _dealerInfoRepository.GetAllAsync() on adpInfo?.Dealer equals di.Id into dileftjoin
+                         from diInfo in dileftjoin.DefaultIfEmpty()
                          where (
-                            (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                            (!query.UserId.HasValue || userInfo?.Id == query.UserId.Value)
                             && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
                             && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
                             && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
                             && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
                             && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (!query.PainterId.HasValue || p?.Id == query.PainterId.Value)
+                            && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                            && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
                          )
-                         select new { p, userInfo }).ToList();
+                         select new { p, userInfo, dropDownInfo, diInfo }).ToList();
 
             reportResult = leads.Select(x => new PainterRegistrationReportResultModel
             {
@@ -301,7 +321,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.p.Zone,
                 PainterId =  x.p.Id.ToString(),
                 PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.p.CreatedTime),
-                TypeOfPainer = x.p.PainterCatId.ToString(),
+                TypeOfPainer = x.dropDownInfo?.DropdownName,
                 DepotName = x.p.Depot,
                 SalesGroup = x.p.SaleGroup,
                 PainterName = x.p.PainterName,
@@ -311,13 +331,13 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 DBBLRocketAccountStatus = x.p.HasDbbl.ToString(),
                 AccountNumber = x.p.AccDbblNumber,
                 AccountHolderName = x.p.AccDbblHolderName,
-                NIDNo = x.p.NationalIdNo,
-                //PassportNo = x.p.PassportNo,
-                //BirthCertificateNo = x.p.BrithCertificateNo,
+                IdentificationNo = !string.IsNullOrEmpty(x.p.NationalIdNo) ? x.p.NationalIdNo 
+                        : (!string.IsNullOrEmpty(x.p.PassportNo) ? x.p.PassportNo 
+                        : (!string.IsNullOrEmpty(x.p.BrithCertificateNo)) ? x.p.BrithCertificateNo : string.Empty),
                 AttachedTaggedDealerId = x.p.AttachedDealerCd,
-                //AttachedTaggedDealerName = x.p.AttachedDealers.FirstOrDefault().;
+                AttachedTaggedDealerName = x.diInfo?.CustomerName,
                 APPInstalledStatus = x.p.IsAppInstalled.ToString(),
-                //APPNotInstalledReason = 
+                APPNotInstalledReason = x.p.Remark,
                 AverageMonthlyUse = x.p.AvgMonthlyVal.ToString(),
                 BergerLoyalty = x.p.Loyality.ToString(),
                 PainterImageUrl = x.p.PainterImageUrl,
