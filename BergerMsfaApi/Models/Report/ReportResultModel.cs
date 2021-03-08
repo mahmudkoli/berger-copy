@@ -106,4 +106,36 @@ namespace BergerMsfaApi.Models.Report
         public string Comments { get; set; }
         public string ImageUrl { get; set; }
     }
+
+    #region Nasir
+    public class PainterRegistrationReportResultModel
+    {
+        public string UserId { get; set; }
+        public string PainterId { get; set; }
+        public string PainerRegistrationDate { get; set; }
+        public string TypeOfPainer { get; set; }
+        public string DepotName { get; set; }
+        public string SalesGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string PainterName { get; set; }
+        public string PainterAddress { get; set; }
+        public string MobileNumber { get; set; }
+        public int NoOfPaintingAttached { get; set; }
+        public string DBBLRocketAccountStatus { get; set; }
+        public string AccountNumber { get; set; }
+        public string AccountHolderName { get; set; }
+        public string NIDNo { get; set; }
+        public string PassportNo { get; set; }
+        public string BirthCertificateNo { get; set; }
+        public string AttachedTaggedDealerId { get; set; }
+        public string AttachedTaggedDealerName { get; set; }
+        public string APPInstalledStatus { get; set; }
+        public string APPNotInstalledReason { get; set; }
+        public string AverageMonthlyUse { get; set; }
+        public string BergerLoyalty { get; set; }
+        public string PainterImageUrl { get; set; }
+    }
+
+    #endregion
 }

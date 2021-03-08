@@ -45,4 +45,12 @@ namespace BergerMsfaApi.Models.Report
         public string ProjectCode { get; set; }
         public int? ProjectStatusId { get; set; }
     }
+
+    public class PainterRegistrationReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public string PainterName { get; set; }
+        public string PainterMobileNo { get; set; }
+        public string PainterType { get; set; }
+    }
 }

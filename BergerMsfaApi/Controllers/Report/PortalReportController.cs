@@ -116,5 +116,40 @@ namespace BergerMsfaApi.Controllers.Report
                 return BadRequest(ex);
             }
         }
+
+        #region Nasir
+
+        [HttpGet("GetPainterRegistration")]
+        public async Task<IActionResult> GetPainterRegistration([FromQuery] PainterRegistrationReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetPainterRegistrationReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadPainterRegistration")]
+        public async Task<IActionResult> DownloadPainterRegistration([FromQuery] PainterRegistrationReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetPainterRegistrationReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -4,6 +4,7 @@ using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
@@ -32,6 +33,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<LeadGeneration> _leadGenerationRepository;
         private readonly IRepository<LeadFollowUp> _leadFollowUpRepository;
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<Painter> _painterRepository;
+        private readonly IRepository<UserInfo> _userInfoRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
@@ -39,6 +42,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<LeadGeneration> leadGenerationRepository,
                 IRepository<LeadFollowUp> leadFollowUpRepository,
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
+                IRepository<Painter> painterRepository,
+                IRepository<UserInfo> userInfoRepository,
                 IDropdownService dropdownService,
                 IMapper mapper
             )
@@ -46,6 +51,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._leadGenerationRepository = leadGenerationRepository;
             this._leadFollowUpRepository = leadFollowUpRepository;
             this._dealerSalesCallRepository = dealerSalesCallRepository;
+            this._painterRepository = painterRepository;
+            this._userInfoRepository = userInfoRepository;
             this._dropdownService = dropdownService;
             this._mapper = mapper;
         }
@@ -263,6 +270,66 @@ namespace BergerMsfaApi.Services.Report.Implementation
             queryResult.Total = leads.Total;
 
             return queryResult;
+        }
+
+        public async Task<QueryResultModel<PainterRegistrationReportResultModel>> GetPainterRegistrationReportAsync(PainterRegistrationReportSearchModel query)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
+            {
+                ["createdTime"] = v => v.CreatedTime,
+            };
+
+            var reportResult = new List<PainterRegistrationReportResultModel>();
+
+            var leads = (from p in await _painterRepository.GetAllAsync()
+                         join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
+                         from userInfo in uleftjoin.DefaultIfEmpty()
+                         where (
+                            (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                            && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
+                            && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                            && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                            && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                         )
+                         select new { p, userInfo }).ToList();
+
+            reportResult = leads.Select(x => new PainterRegistrationReportResultModel
+            {
+                UserId = x.userInfo?.Email ?? string.Empty,
+                Territory = x.p.Territory,
+                Zone = x.p.Zone,
+                PainterId =  x.p.Id.ToString(),
+                PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.p.CreatedTime),
+                TypeOfPainer = x.p.PainterCatId.ToString(),
+                DepotName = x.p.Depot,
+                SalesGroup = x.p.SaleGroup,
+                PainterName = x.p.PainterName,
+                PainterAddress = x.p.Address,
+                MobileNumber = x.p.Phone,
+                NoOfPaintingAttached = x.p.NoOfPainterAttached,
+                DBBLRocketAccountStatus = x.p.HasDbbl.ToString(),
+                AccountNumber = x.p.AccDbblNumber,
+                AccountHolderName = x.p.AccDbblHolderName,
+                NIDNo = x.p.NationalIdNo,
+                //PassportNo = x.p.PassportNo,
+                //BirthCertificateNo = x.p.BrithCertificateNo,
+                AttachedTaggedDealerId = x.p.AttachedDealerCd,
+                //AttachedTaggedDealerName = x.p.AttachedDealers.FirstOrDefault().;
+                APPInstalledStatus = x.p.IsAppInstalled.ToString(),
+                //APPNotInstalledReason = 
+                AverageMonthlyUse = x.p.AvgMonthlyVal.ToString(),
+                BergerLoyalty = x.p.Loyality.ToString(),
+                PainterImageUrl = x.p.PainterImageUrl,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<PainterRegistrationReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = leads.Count();
+            queryResult.Total = leads.Count();
+
+            return queryResult;
+
         }
     }
 }

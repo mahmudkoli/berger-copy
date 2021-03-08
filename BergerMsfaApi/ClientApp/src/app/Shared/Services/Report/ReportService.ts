@@ -39,4 +39,12 @@ export class ReportService {
     public downloadLeadFollowUpDetailsApiUrl(filter?) {
         return `${this.reportsEndpoint}/DownloadLeadFollowUpDetails?${this.commonService.toQueryString(filter)}`;
     }
+
+    getPainterRegistration(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetPainterRegistration?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadPainterRegistration(filter?) {
+        return `${this.reportsEndpoint}/DownloadPainterRegistration?${this.commonService.toQueryString(filter)}`;
+    }
 }
