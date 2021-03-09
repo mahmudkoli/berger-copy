@@ -3,6 +3,8 @@ using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Setup;
@@ -40,6 +42,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<DropdownDetail> _dorpDownDetailsRepository;
         private readonly IRepository<AttachedDealerPainter> _attachmentDealerRepository;
         private readonly IRepository<DealerInfo> _dealerInfoRepository;
+        private readonly IRepository<Zone> _zoneSvc;
+        private readonly IRepository<Territory> _territorySvc;
+        private readonly IRepository<SaleGroup> _saleGroupSvc;
+        private readonly IRepository<Depot> _depotSvc;
+
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
@@ -52,6 +59,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<DropdownDetail> dropDownDetailsRepository,
                 IRepository<AttachedDealerPainter> attachmentDealerRepository,
                 IRepository<DealerInfo> dealerInfoRepository,
+                IRepository<Zone> zoneSvc,
+                IRepository<Territory> territorySvc,
+                IRepository<SaleGroup> saleGroupSvc,
+                IRepository<Depot> depotSvc,
                 IDropdownService dropdownService,
                 IMapper mapper
             )
@@ -64,6 +75,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._dorpDownDetailsRepository = dropDownDetailsRepository;
             this._attachmentDealerRepository = attachmentDealerRepository;
             this._dealerInfoRepository = dealerInfoRepository;
+            this._zoneSvc = zoneSvc;
+            this._territorySvc = territorySvc;
+            this._saleGroupSvc = saleGroupSvc;
+            this._depotSvc = depotSvc;
             this._dropdownService = dropdownService;
             this._mapper = mapper;
         }
@@ -301,6 +316,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                          from adpInfo in adpleftjoin.DefaultIfEmpty()
                          join di in await _dealerInfoRepository.GetAllAsync() on adpInfo?.Dealer equals di.Id into dileftjoin
                          from diInfo in dileftjoin.DefaultIfEmpty()
+                         join dep in await _depotSvc.GetAllAsync() on p.Depot equals dep.Werks into depleftjoin
+                         from depinfo in depleftjoin.DefaultIfEmpty()
+                         join sg in await _saleGroupSvc.GetAllAsync() on p.SaleGroup equals sg.Code into sgleftjoin
+                         from sginfo in sgleftjoin.DefaultIfEmpty()
+                         join t in await _territorySvc.GetAllAsync() on p.Territory equals t.Code into tleftjoin
+                         from tinfo in tleftjoin.DefaultIfEmpty()
+                         join z in await _zoneSvc.GetAllAsync() on p.Zone equals z.Code into zleftjoin
+                         from zinfo in zleftjoin.DefaultIfEmpty()
                          where (
                             (!query.UserId.HasValue || userInfo?.Id == query.UserId.Value)
                             && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
@@ -312,23 +335,23 @@ namespace BergerMsfaApi.Services.Report.Implementation
                             && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
                             && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
                          )
-                         select new { p, userInfo, dropDownInfo, diInfo }).ToList();
+                         select new { p, userInfo, dropDownInfo, diInfo, depinfo, sginfo, tinfo, zinfo }).ToList();
 
             reportResult = leads.Select(x => new PainterRegistrationReportResultModel
             {
                 UserId = x.userInfo?.Email ?? string.Empty,
-                Territory = x.p.Territory,
-                Zone = x.p.Zone,
+                Territory = x.tinfo.Name,
+                Zone = x.zinfo.Name,
                 PainterId =  x.p.Id.ToString(),
                 PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.p.CreatedTime),
                 TypeOfPainer = x.dropDownInfo?.DropdownName,
-                DepotName = x.p.Depot,
-                SalesGroup = x.p.SaleGroup,
+                DepotName = x.depinfo?.Name1,
+                SalesGroup = x.sginfo.Name,
                 PainterName = x.p.PainterName,
                 PainterAddress = x.p.Address,
                 MobileNumber = x.p.Phone,
                 NoOfPaintingAttached = x.p.NoOfPainterAttached,
-                DBBLRocketAccountStatus = x.p.HasDbbl.ToString(),
+                DBBLRocketAccountStatus = x.p.HasDbbl ? "Created" : "Not Created",
                 AccountNumber = x.p.AccDbblNumber,
                 AccountHolderName = x.p.AccDbblHolderName,
                 IdentificationNo = !string.IsNullOrEmpty(x.p.NationalIdNo) ? x.p.NationalIdNo 
@@ -336,7 +359,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                         : (!string.IsNullOrEmpty(x.p.BrithCertificateNo)) ? x.p.BrithCertificateNo : string.Empty),
                 AttachedTaggedDealerId = x.p.AttachedDealerCd,
                 AttachedTaggedDealerName = x.diInfo?.CustomerName,
-                APPInstalledStatus = x.p.IsAppInstalled.ToString(),
+                APPInstalledStatus = x.p.IsAppInstalled ? "Installed" : "Not Installed",
                 APPNotInstalledReason = x.p.Remark,
                 AverageMonthlyUse = x.p.AvgMonthlyVal.ToString(),
                 BergerLoyalty = x.p.Loyality.ToString(),
