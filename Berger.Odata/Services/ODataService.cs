@@ -76,6 +76,30 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<FinancialDataModel>> GetFinancialData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.FinancialUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<FinancialDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
+
+        public async Task<IList<BalanceDataModel>> GetBalanceData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.BalanceUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<BalanceDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data

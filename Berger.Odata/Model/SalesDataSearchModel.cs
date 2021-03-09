@@ -9,8 +9,8 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string Division { get; set; }
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        //public DateTime FromDate { get; set; }
+        //public DateTime ToDate { get; set; }
     }
 
     public class InvoiceItemDetailsSearchModel
@@ -22,7 +22,7 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string Division { get; set; }
-        public DateTime Date { get; set; }
+        //public DateTime Date { get; set; }
         public bool IsOnlyCBMaterial { get; set; }
     }
 
@@ -34,7 +34,7 @@ namespace Berger.Odata.Model
         //public string Brand { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
         //public EnumPeriod Period { get; set; }
-        public DateTime Date { get; set; }
+        //public DateTime Date { get; set; }
     }
 
     public enum EnumBrandOrDivision

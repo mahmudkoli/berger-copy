@@ -10,18 +10,18 @@ using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
 {
-    public class FinancialDataService : IFinancialDataService
+    public class BalanceDataService : IBalanceDataService
     {
         private readonly IODataService _odataService;
 
-        public FinancialDataService(
+        public BalanceDataService(
             IODataService odataService
             )
         {
             _odataService = odataService;
         }
 
-        public async Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model)
+        public async Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model)
         {
             return null;
         }

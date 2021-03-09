@@ -14,6 +14,8 @@ namespace Berger.Odata.Services
         Task<IList<MTSDataModel>> GetMTSData(string query);
         Task<IList<DriverDataModel>> GetDriverData(string query);
         Task<IList<BrandFamilyDataModel>> GetBrandFamilyData(string query);
+        Task<IList<FinancialDataModel>> GetFinancialData(string query);
+        Task<IList<BalanceDataModel>> GetBalanceData(string query);
         #endregion
 
         #region get selectable data
