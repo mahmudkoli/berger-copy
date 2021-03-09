@@ -10,6 +10,7 @@ namespace BergerMsfaApi.Models.JourneyPlan
     {
         public int Id { get; set; }
         public string EmployeeId { get; set; }
+        public int EditCount { get; set; }
         public string EmployeeName { get; set; }
         public string PlanStatusInText { get; set; }
         public EmployeeModel  Employee{ get; set; }

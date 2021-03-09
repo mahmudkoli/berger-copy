@@ -255,7 +255,9 @@ export class JourneyPlanListComponent implements OnInit {
                         //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
                         events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
-                        events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
+                        if(plan.editCount<2){
+                            events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
+                        }
                         events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
                     });
                     events.sort()
