@@ -46,6 +46,8 @@ namespace BergerMsfaApi.Controllers.Report
         {
             try
             {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetLeadSummaryReportAsync(query);
                 return Ok(result.Items);
             }
@@ -74,6 +76,8 @@ namespace BergerMsfaApi.Controllers.Report
         {
             try
             {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetLeadGenerationDetailsReportAsync(query);
                 return Ok(result.Items);
             }
@@ -102,6 +106,8 @@ namespace BergerMsfaApi.Controllers.Report
         {
             try
             {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetLeadFollowUpDetailsReportAsync(query);
                 return Ok(result.Items);
             }

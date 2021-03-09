@@ -35,8 +35,11 @@ namespace Berger.Odata.Services
             //model.CustomerNo = "24";
             //model.Division = "10";
 
-            var fromDate = model.FromDate.DateFormat();
-            var toDate = model.ToDate.DateFormat();
+            //var fromDate = model.FromDate.DateFormat();
+            //var toDate = model.ToDate.DateFormat();
+            var currentDate = DateTime.Now;
+            var fromDate = currentDate.AddDays(-30).DateFormat();
+            var toDate = currentDate.DateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -117,7 +120,8 @@ namespace Berger.Odata.Services
         public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
         {
             //var currentdate = new DateTime(2011, 09, 21);
-            var currentdate = model.Date;
+            //var currentdate = model.Date;
+            var currentdate = DateTime.Now;
             var previousMonthCount = 3;
             var cbMaterialCodes = new List<string>();
 
@@ -224,7 +228,8 @@ namespace Berger.Odata.Services
         {
             //var currentdate = new DateTime(2011, 09, 21);
             var firstMonthInYear = 4;
-            var currentdate = model.Date;
+            //var currentdate = model.Date;
+            var currentdate = DateTime.Now;
             var mtsBrandCodes = new List<string>();
 
             var cyfd = currentdate.GetCYFD().DateFormat();

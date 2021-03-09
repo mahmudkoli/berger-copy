@@ -76,6 +76,30 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<FinancialDataModel>> GetFinancialData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.FinancialUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<FinancialDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
+
+        public async Task<IList<BalanceDataModel>> GetBalanceData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.BalanceUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<BalanceDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -221,6 +245,34 @@ namespace Berger.Odata.Services
                         .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetMTSData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate, string creditControlArea)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000")
+                                .And()
+                                .Equal(FinancialColDef.CustomerLow, customerNo)
+                                .And()
+                                .Equal(FinancialColDef.CreditControlArea, creditControlArea)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(FinancialColDef.Date, startDate)
+                                .And()
+                                .LessThanOrEqual(FinancialColDef.Date, endDate)
+                                .EndGroup();
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetFinancialData(queryBuilder.Query)).ToList();
 
             return data;
         }

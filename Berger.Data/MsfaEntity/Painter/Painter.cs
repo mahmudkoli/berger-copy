@@ -1,4 +1,5 @@
 ﻿using Berger.Data.Common;
+using Berger.Data.MsfaEntity.Setup;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,7 +16,8 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string SaleGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
-        public int PainterCatId { get; set; }
+        public int PainterCatId { get; set; } // type of client
+        public DropdownDetail PainterCat { get; set; } // type of client
         public string PainterName { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
@@ -29,7 +31,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string PainterImageUrl { get; set; }
         public string AttachedDealerCd { get; set; }
         public bool IsAppInstalled { get; set; }
-        public string Remark { get; set; }
+        public string Remark { get; set; } // app not install reason
         public decimal AvgMonthlyVal { get; set; }
         public float Loyality { get; set; }
         public string EmployeeId { get; set; }

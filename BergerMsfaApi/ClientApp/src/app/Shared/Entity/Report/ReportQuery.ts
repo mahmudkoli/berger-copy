@@ -2,8 +2,9 @@
 import { QueryObject } from '../Common/query-object';
 
 export class ReportBaseQuery extends QueryObject {
-    depot: string;
+    depotId: string;
     employeeRole: EnumEmployeeRole;
+    salesGroups: string[];
     territories: string[];
     zones: string[];
     userId: number;
@@ -46,7 +47,7 @@ export class LeadGenerationDetailsQuery extends ReportBaseQuery {
 export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
     projectName: string;
     projectCode: string;
-    paintingStageId: number;
+    projectStatusId: number;
 
     constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
         super();

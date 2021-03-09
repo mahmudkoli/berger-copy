@@ -6,21 +6,23 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { LeadFollowUpDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 
 @Component({
-    selector: 'app-lead-summary-report',
-    templateUrl: './lead-summary-report.component.html',
-    styleUrls: ['./lead-summary-report.component.css']
+    selector: 'app-lead-followup-details-report',
+    templateUrl: './lead-followup-details-report.component.html',
+    styleUrls: ['./lead-followup-details-report.component.css']
 })
-export class LeadSummaryReportComponent implements OnInit, OnDestroy {
+export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: LeadSummaryQuery;
+	query: LeadFollowUpDetailsQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
@@ -35,7 +37,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Lead Summary Report';
+	tableName: string = 'Lead FollowUp Details Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -49,6 +51,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
     salesGroups: any[] = [];
     territories:any[]=[]
     zones: any[] = [];
+    projectStatuses: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -58,7 +61,8 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		private alertService: AlertService,
 		private reportService: ReportService,
 		private modalService: NgbModal,
-		private commonService: CommonService) {
+		private commonService: CommonService,
+		private dynamicDropdownService: DynamicDropdownService) {
 			// client side paggination
 			// this.PAGE_SIZE = 2147483647; // Int32 max value
 			// this.ptableSettings.pageSize = 10;
@@ -82,11 +86,11 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	}
 
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadSummaryApiUrl(query);
-	getData = (query) => this.reportService.getLeadSummary(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadFollowUpDetailsApiUrl(query);
+	getData = (query) => this.reportService.getLeadFollowUpDetails(query);
 	
 	searchConfiguration() {
-		this.query = new LeadSummaryQuery({
+		this.query = new LeadFollowUpDetailsQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -100,6 +104,9 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 			userId: null,
 			fromDate: null,
 			toDate: null,
+			projectName: '',
+			projectCode: '',
+			projectStatusId: null
 		});
 	}
 	
@@ -110,12 +117,14 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
-        ]).subscribe(([users, plants, areaGroups, territories, zones]) => {
+            this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ProjectStatus),
+        ]).subscribe(([users, plants, areaGroups, territories, zones, projectStatuses]) => {
             this.users = users.data;
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
             this.territories = territories.data;
             this.zones = zones.data;
+            this.projectStatuses = projectStatuses.data;
         }, (err) => { }, () => { });
     }
 
