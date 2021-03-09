@@ -53,4 +53,9 @@ namespace BergerMsfaApi.Models.Report
         public string PainterMobileNo { get; set; }
         public int? PainterType { get; set; }
     }
+
+    public class DealerOpeningReportSearchModel : ReportBaseSearchModel
+    {
+        
+    }
 }

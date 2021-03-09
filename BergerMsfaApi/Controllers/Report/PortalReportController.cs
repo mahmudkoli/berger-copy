@@ -149,6 +149,36 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetDealerOpening")]
+        public async Task<IActionResult> GetDealerOpening([FromQuery] DealerOpeningReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetDealerOpeningReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadDealerOpening")]
+        public async Task<IActionResult> DownloadDealerOpening([FromQuery] DealerOpeningReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetDealerOpeningReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
 
     }

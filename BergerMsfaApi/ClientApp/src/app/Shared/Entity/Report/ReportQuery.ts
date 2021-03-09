@@ -71,3 +71,14 @@ export class PainterRegisterQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class DealerOpeningQuery extends ReportBaseQuery {
+    
+    constructor(init?: Partial<DealerOpeningQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

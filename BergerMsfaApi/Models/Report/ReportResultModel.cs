@@ -126,8 +126,6 @@ namespace BergerMsfaApi.Models.Report
         public string AccountNumber { get; set; }
         public string AccountHolderName { get; set; }
         public string IdentificationNo { get; set; }
-        //public string PassportNo { get; set; }
-        //public string BirthCertificateNo { get; set; }
         public string AttachedTaggedDealerId { get; set; }
         public string AttachedTaggedDealerName { get; set; }
         public string APPInstalledStatus { get; set; }
@@ -135,6 +133,27 @@ namespace BergerMsfaApi.Models.Report
         public string AverageMonthlyUse { get; set; }
         public string BergerLoyalty { get; set; }
         public string PainterImageUrl { get; set; }
+    }
+
+    public class DealerOpeningReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DealrerOpeningId { get; set; }
+        public string BusinessArea { get; set; }
+        public string BusinessAreaName { get; set; }
+        public string SalesOffice { get; set; }
+        public string SalesGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string EmployeeId { get; set; }
+        public string DealershipOpeningApplicationForm { get; set; }
+        public string TradeLicensee { get; set; }
+        public string IdentificationNo { get; set; }
+        public string PhotographOfproprietor { get; set; }
+        public string NomineeIdentificationNo { get; set; }
+        public string NomineePhotograph { get; set; }
+        public string Cheque { get; set; }
+        public string CurrentStatusOfThisApplication { get; set; }
     }
 
     #endregion

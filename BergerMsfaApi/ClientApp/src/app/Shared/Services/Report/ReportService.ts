@@ -47,4 +47,13 @@ export class ReportService {
     public downloadPainterRegistration(filter?) {
         return `${this.reportsEndpoint}/DownloadPainterRegistration?${this.commonService.toQueryString(filter)}`;
     }
+
+    getDealerOpening(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetDealerOpening?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDealerOpening(filter?) {
+        return `${this.reportsEndpoint}/DownloadDealerOpening?${this.commonService.toQueryString(filter)}`;
+    }
+
 }

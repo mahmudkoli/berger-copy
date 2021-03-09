@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from 'src/app/Shared/Guards/auth.guard';
 import { PermissionGuard } from 'src/app/Shared/Guards/permission.guard';
+import { DealerOpeningReportComponent } from './dealer-opening/dealer-opening-report.component';
 import { LeadFollowUpDetailsReportComponent } from './lead-followup-details/lead-followup-details-report.component';
 import { LeadGenerationDetailsReportComponent } from './lead-generation-details/lead-generation-details-report.component';
 import { LeadSummaryReportComponent } from './lead-summary/lead-summary-report.component';
@@ -42,6 +43,12 @@ const routes: Routes = [
         component: PainterRegistrationReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Painter Registration', },
+      },
+      {
+        path: 'dealer-opening',
+        component: DealerOpeningReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Opening', },
       },
     ],
   }

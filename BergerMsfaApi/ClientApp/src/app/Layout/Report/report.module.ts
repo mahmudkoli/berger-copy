@@ -11,6 +11,7 @@ import { LeadSummaryReportComponent } from './lead-summary/lead-summary-report.c
 import { LeadGenerationDetailsReportComponent } from './lead-generation-details/lead-generation-details-report.component';
 import { LeadFollowUpDetailsReportComponent } from './lead-followup-details/lead-followup-details-report.component';
 import { PainterRegistrationReportComponent } from './painter-registration/painter-registration-report.component';
+import { DealerOpeningReportComponent } from './dealer-opening/dealer-opening-report.component';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { PainterRegistrationReportComponent } from './painter-registration/paint
       LeadSummaryReportComponent,
       LeadGenerationDetailsReportComponent,
       LeadFollowUpDetailsReportComponent,
-      PainterRegistrationReportComponent
+      PainterRegistrationReportComponent,
+      DealerOpeningReportComponent
     ],
   imports: [
       CommonModule,
