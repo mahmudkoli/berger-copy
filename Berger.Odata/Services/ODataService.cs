@@ -248,6 +248,34 @@ namespace Berger.Odata.Services
 
             return data;
         }
+
+        public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate, string creditControlArea)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000")
+                                .And()
+                                .Equal(FinancialColDef.CustomerLow, customerNo)
+                                .And()
+                                .Equal(FinancialColDef.CreditControlArea, creditControlArea)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(FinancialColDef.Date, startDate)
+                                .And()
+                                .LessThanOrEqual(FinancialColDef.Date, endDate)
+                                .EndGroup();
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetFinancialData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
         #endregion
     }
 }
