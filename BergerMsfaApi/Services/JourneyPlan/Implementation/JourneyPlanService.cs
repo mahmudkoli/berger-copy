@@ -219,10 +219,14 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
             var result = new PortalPlanDetailModel();
             var findPlan = await _journeyPlanMasterSvc.FindIncludeAsync(f => f.Id == model.Id, f => f.JourneyPlanDetail);
-
+            if (findPlan.EditCount >= 2)
+            {
+                throw new Exception("You cant not edit jouerny plan. Maximum edit level already done");
+            }
             await _journeyPlanDetailSvc.DeleteAsync(f => f.PlanId == findPlan.Id);
             findPlan.PlanStatus = PlanStatus.Edited;
             findPlan.PlanDate = findPlan.PlanDate;
+            findPlan.EditCount = findPlan.EditCount + 1;
             await _journeyPlanMasterSvc.UpdateAsync(findPlan);
             foreach (var id in model.Dealers)
             {

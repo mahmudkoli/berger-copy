@@ -49,7 +49,7 @@ export class MenuActivityPermissionsComponent implements OnInit {
 
     getAllRole() {
         this.roleService.getRoleList().subscribe((res: any) => {
-            debugger;
+            // debugger;
             this.roleList = res.data.model||[];
             
             console.log(this.roleList);
@@ -59,7 +59,7 @@ export class MenuActivityPermissionsComponent implements OnInit {
     
 
     submitPermissionForm(model : MenuActivityPermissionVm[]) {
-        debugger;
+        // debugger;
         this.menuActivityPermissionService.createOrUpdateAllActivityPermission(model).subscribe((res) => {
           //  console.log("resp: ", res);
 
@@ -81,7 +81,7 @@ export class MenuActivityPermissionsComponent implements OnInit {
 
     onRoleChange(id: number) {
 
-        debugger;
+        // debugger;
 
             this.menuActivityService.getAllMenuActivityPermissionByRoleId(id).subscribe(
               (result: any) => {

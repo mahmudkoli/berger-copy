@@ -46,7 +46,7 @@ export class FocusdealerListComponent implements OnInit {
         this.focusDealerService.getFocusdealerListPaging(index, pageSize, search)
             .subscribe(
                 (res) => {
-                    debugger;
+                    // debugger;
                     this.pagingConfig = res.data;
                    // this.pageSize = Math.ceil((this.pagingConfig.totalItemCount) / this.rows);
                     this.focusDealerList = this.pagingConfig.model as [] || []

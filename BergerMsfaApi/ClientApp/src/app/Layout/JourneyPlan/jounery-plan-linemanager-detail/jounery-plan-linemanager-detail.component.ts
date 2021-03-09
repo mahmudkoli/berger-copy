@@ -43,7 +43,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         this.alertService.fnLoading(true);
         this.journeyPlanService.getJourneyPlanDetailById(id).subscribe(
             (result: any) => {
-                debugger;
+                // debugger;
                 this.journeyPlan = result.data;
                // this.journeyPlanStatus.comment = this.journeyPlan.comment;
 
@@ -102,7 +102,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
 
     onStatusChange(mySelect, jPlan) {
 
-        debugger;
+        // debugger;
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(mySelect);
       

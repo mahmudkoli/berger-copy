@@ -137,11 +137,11 @@ export class JourneyPlanListComponent implements OnInit {
 
     }
     handleEvents(arg) {
-        debugger;
+        // debugger;
         alert('Set click! ' + arg.dateStr)
     }
     handleEventClick(info) {
-        debugger;
+        // debugger;
         let find = this.journeyPlanList.find(f => f.planDate == info.event.startStr);
         // this.detail(find);
         // alert('Cell');
@@ -166,7 +166,7 @@ export class JourneyPlanListComponent implements OnInit {
         //  alert('event click! ' + arg.dateStr)
     }
     handleDateClick(arg) {
-        debugger;
+        // debugger;
         var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
         if (arg.dateStr >= utc) {
             this.add(arg.dateStr);
@@ -175,7 +175,7 @@ export class JourneyPlanListComponent implements OnInit {
         // this.edit(find);
     }
     handleDateSelect(selectInfo: DateSelectArg) {
-        debugger;
+        // debugger;
         let eventDate = selectInfo.view.currentStart;
         let find = this.journeyPlanList.find(f => f.planDate == eventDate);
         this.detail(find);
@@ -251,7 +251,7 @@ export class JourneyPlanListComponent implements OnInit {
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                     let events = [];
                     this.journeyPlanList.forEach(plan => {
-                        debugger;
+                        // debugger;
                         //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
                         events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
@@ -299,7 +299,7 @@ export class JourneyPlanListComponent implements OnInit {
 
     edit(jPlan) {
 
-        debugger;
+        // debugger;
         if (this.compareDate(jPlan.planDate)) {
             console.log('edit plan', jPlan.id);
             this.router.navigate(['/journey-plan/add/' + jPlan.planDate]);
