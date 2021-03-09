@@ -88,7 +88,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                                 true
                             );
 
-            return result;
+            return result.Items;
         }
        
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)

@@ -14,6 +14,8 @@ namespace Berger.Odata.Services
         Task<IList<MTSDataModel>> GetMTSData(string query);
         Task<IList<DriverDataModel>> GetDriverData(string query);
         Task<IList<BrandFamilyDataModel>> GetBrandFamilyData(string query);
+        Task<IList<FinancialDataModel>> GetFinancialData(string query);
+        Task<IList<BalanceDataModel>> GetBalanceData(string query);
         #endregion
 
         #region get selectable data
@@ -23,6 +25,8 @@ namespace Berger.Odata.Services
             string customerNo, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null);
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
+        Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate, string creditControlArea);
         #endregion
     }
 }
