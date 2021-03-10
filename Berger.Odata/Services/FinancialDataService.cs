@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Odata.Common;
@@ -26,8 +27,8 @@ namespace Berger.Odata.Services
         public async Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model)
         {
             var currentDate = DateTime.Now;
-            var fromDate = currentDate.AddDays(-30).DateFormat();
-            var toDate = currentDate.DateFormat();
+            var fromDate = currentDate.AddDays(-30).DateTimeFormat();
+            var toDate = currentDate.DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
@@ -48,7 +49,7 @@ namespace Berger.Odata.Services
                                     Division = x.CreditControlArea,
                                     //DivisionName = x.CreditControlAreaName,
                                     PostingDate = x.PostingDate,
-                                    Amount = x.Amount
+                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
             return result;
@@ -63,7 +64,7 @@ namespace Berger.Odata.Services
                 EnumOutstandingDetailsDaysCount._31_To_60_Days => currentDate.AddDays(-60),
                 EnumOutstandingDetailsDaysCount._61_To_90_Days => currentDate.AddDays(-90),
                 _ => default(DateTime)
-            }).DateFormat();
+            }).DateTimeFormat();
 
             var toDate = (model.Days switch
             {
@@ -71,7 +72,7 @@ namespace Berger.Odata.Services
                 EnumOutstandingDetailsDaysCount._61_To_90_Days => currentDate.AddDays(-61),
                 EnumOutstandingDetailsDaysCount._GT_90_Days => currentDate.AddDays(-91),
                 _ => currentDate
-            }).DateFormat();
+            }).DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
@@ -87,7 +88,32 @@ namespace Berger.Odata.Services
                                     InvoiceNo = x.InvoiceNo,
                                     Age = x.Age,
                                     PostingDate = x.PostingDate,
-                                    Amount = x.Amount
+                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
+                                }).ToList();
+
+            return result;
+        }
+
+        public async Task<IList<OutstandingSummaryResultModel>> GetOutstandingSummary(OutstandingSummarySearchModel model)
+        {
+            var currentDate = DateTime.Now;
+            var fromDate = currentDate.AddDays(-30).DateTimeFormat();
+            var toDate = currentDate.DateTimeFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.CreditControlArea)
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Amount);
+
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate)).ToList();
+
+            var result = data.Select(x =>
+                                new OutstandingSummaryResultModel()
+                                {
+                                    Division = x.CreditControlArea,
+                                    DaysLimit = x.DayLimit,
                                 }).ToList();
 
             return result;

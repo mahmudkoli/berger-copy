@@ -87,14 +87,14 @@ namespace BergerMsfaApi.Models.Report
         public string BrandUsedTopCoatBrandName { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
-        public int ActualPaintJobCompletedInterior { get; set; }
-        public int ActualPaintJobCompletedExterior { get; set; }
-        public int ActualVolumeSoldInteriorGallon { get; set; }
-        public int ActualVolumeSoldInteriorKg { get; set; }
-        public int ActualVolumeSoldExteriorGallon { get; set; }
-        public int ActualVolumeSoldExteriorKg { get; set; }
-        public int ActualVolumeSoldUnderCoatGallon { get; set; }
-        public int ActualVolumeSoldTopCoatGallon { get; set; }
+        public decimal ActualPaintJobCompletedInterior { get; set; }
+        public decimal ActualPaintJobCompletedExterior { get; set; }
+        public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        public decimal ActualVolumeSoldInteriorKg { get; set; }
+        public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        public decimal ActualVolumeSoldExteriorKg { get; set; }
+        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         public decimal BergerValueSales { get; set; }
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }

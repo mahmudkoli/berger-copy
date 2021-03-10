@@ -16,7 +16,7 @@ namespace Berger.Odata.Model
         public string DivisionName { get; internal set; }
         public string InvoiceNoOrBillNo { get; internal set; }
         public string Date { get; internal set; }
-        public string NetAmount { get; internal set; }
+        public decimal NetAmount { get; internal set; }
 
         public InvoiceHistoryResultModel()
         {
@@ -26,8 +26,8 @@ namespace Berger.Odata.Model
 
     public class InvoiceItemDetailsResultModel
     {
-        public string NetAmount { get; internal set; }
-        public string Quantity { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        public decimal Quantity { get; internal set; }
         public string MatrialCode { get; internal set; }
         public string MatarialDescription { get; internal set; }
 
@@ -43,9 +43,20 @@ namespace Berger.Odata.Model
         public decimal LYMTD { get; internal set; }
         public decimal CYMTD { get; internal set; }
         public decimal Growth { get; internal set; }
-        public IDictionary<string, decimal> PreviousMonthData { get; internal set; }
+        public IList<BrandWiseMTDPreviousModel> PreviousMonthData { get; internal set; }
 
         public BrandWiseMTDResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class BrandWiseMTDPreviousModel
+    {
+        public string MonthName { get; internal set; }
+        public decimal Amount { get; internal set; }
+
+        public BrandWiseMTDPreviousModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
