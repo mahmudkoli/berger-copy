@@ -3,40 +3,55 @@
     <ng-template pTemplate="caption">
         <div class="table-header">
             <div class="row">
-                <div class="col-md-4">
+              
+                    <div class="col-sm-6">
+                        <p> <label>Business Area :{{dealerOpen.businessArea}}</label> </p>
+                    </div>
 
                     <div class="col-md-6">
-
-                        <p> <label>Business Area :{{dealerOpen.businessArea}}</label> </p>
                         <p> <label>Sale Office :{{dealerOpen.saleOffice}}</label> </p>
-                        <p> <label>Territory :{{dealerOpen.territoryNo}}</label> </p>
+                    </div>
 
+                    <div class="col-md-6">
+                        <p> <label>Territory :{{dealerOpen.territoryNo}}</label> </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p> <label>Sale Group :{{dealerOpen.saleGroup}}</label> </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p> <label>Zone :{{dealerOpen.zone}}</label> </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p> <label>Employee Id :{{dealerOpen.employeeId}}</label> </p>
                     </div>
 
                 </div>
-            </div>
         </div>
     </ng-template>
 
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="name">Name</th>
-            <th pSortableColumn="path">Path</th>
+            <th pSortableColumn="path">Image</th>
         </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-dealerOpen>
         <tr>
-            <td>{{dealerOpen.name }}</td>
             <td>
                 <!-- <img [alt]="dealerOpen.name" src="{{baseUrl}}/{{dealerOpen.path}}" width="60"
                 style="vertical-align: middle; border-radius: 50%;" /> -->
                 <span class="">
                     <strong>
-                        <a target="_blank" href="{{baseUrl}}/{{dealerOpen.path}}">{{dealerOpen.name}}</a>
+                        <a href="{{dealerOpen.path}}" target="_self" download [class.disabled]="!dealerOpen.path" >{{dealerOpen.name}} </a>
                     </strong>
                 </span>
             </td>
+            <td><img [alt]="dealerOpen.name" src="{{dealerOpen.path}}" width="60"
+                style="vertical-align: middle; border-radius: 5%;" /></td>
 
         </tr>
     </ng-template>
