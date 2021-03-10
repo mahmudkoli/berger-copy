@@ -32,7 +32,7 @@ export class DealerOpeningDetailComponent implements OnInit {
   private getDealerOpenDetailById(id) {
     this.dealerOpeningSvc.GetDealerOpeningDetailById(id).subscribe(
       (result: any) => {
-        debugger;
+        // debugger;
         this.dealerOpen = result.data;
       },
       (err: any) => console.log(err)

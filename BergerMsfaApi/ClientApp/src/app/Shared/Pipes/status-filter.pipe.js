@@ -13,7 +13,7 @@ var StatusPipe = /** @class */ (function () {
     function StatusPipe() {
     }
     StatusPipe.prototype.transform = function (value) {
-        debugger;
+        // debugger;
         var val = Number(value) ? PlanStatus_1.PlanStatus[value] : undefined;
         return val;
     };

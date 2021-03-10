@@ -103,7 +103,7 @@ export class MenuActivityListComponent implements OnInit {
     }
 
     createMenuActivityForm() {
-        debugger;
+        // debugger;
         this.menuActivityForm.reset();
         this.menuActivityModel = new MenuActivity();
         console.log(this.menuActivityModel);
