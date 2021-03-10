@@ -61,7 +61,7 @@ namespace Berger.Odata.Services
                                     DivisionName = x.DivisionName,
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
                                     Date = x.Date,
-                                    NetAmount = x.NetAmount 
+                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount)
                                 }).ToList();
 
             #region get driver data
@@ -108,8 +108,8 @@ namespace Berger.Odata.Services
 
             var result = data.Select(x => new InvoiceItemDetailsResultModel()
                                             {
-                                                NetAmount = x.NetAmount,
-                                                Quantity = x.Quantity,
+                                                NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
+                                                Quantity = CustomConvertExtension.ObjectToDecimal(x.Quantity),
                                                 MatrialCode = x.MatrialCode,
                                                 MatarialDescription = x.MatarialDescription,
                                             }).ToList();
@@ -177,7 +177,7 @@ namespace Berger.Odata.Services
             foreach (var brandCode in brandCodes)
             {
                 var res = new BrandWiseMTDResultModel();
-                res.PreviousMonthData = new Dictionary<string, decimal>();
+                res.PreviousMonthData = new List<BrandWiseMTDPreviousModel>();
 
                 if (dataLy.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
@@ -212,7 +212,7 @@ namespace Berger.Odata.Services
                         res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandName : res.MatarialGroupOrBrand;
                     }
 
-                    res.PreviousMonthData.Add(monthName, mtdAmt);
+                    res.PreviousMonthData.Add(new BrandWiseMTDPreviousModel() { MonthName = monthName, Amount = mtdAmt });
                 }
 
                 res.Growth =  res.LYMTD > 0 && res.CYMTD > 0 ? ((res.CYMTD - res.LYMTD) * 100) / res.LYMTD : 

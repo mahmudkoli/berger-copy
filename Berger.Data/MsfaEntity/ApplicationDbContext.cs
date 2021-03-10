@@ -149,6 +149,8 @@ namespace Berger.Data.MsfaEntity
         #region SAP Tables
         public DbSet<DealerInfo> DealerInfos { get; set; }
         public DbSet<BrandInfo> BrandInfos { get; set; }
+        public DbSet<BrandInfoStatusLog> BrandInfoStatusLogs { get; set; }
+        public DbSet<DealerInfoStatusLog> DealerInfoStatusLogs { get; set; }
         #endregion
 
         #region Scheme

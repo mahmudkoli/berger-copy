@@ -21,7 +21,7 @@ namespace Berger.Odata.Common
         public static string FiscalYear = "Gjahr";
         public static string Amount = "Dmbtr";
         public static string Age = "Age";
-        public static string Daylimit = "Daylimit";
+        public static string DayLimit = "Daylimit";
         public static string DueDate = "BlineDate";
         public static string PostingDate = "Budat";
         public static string CreditControlArea = "Kkber";

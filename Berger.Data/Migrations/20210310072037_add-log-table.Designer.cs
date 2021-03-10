@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210310072037_add-log-table")]
+    partial class addlogtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -526,32 +528,32 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("ActualPaintJobCompletedExteriorPercentage")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualPaintJobCompletedExteriorPercentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualPaintJobCompletedInteriorPercentage")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualPaintJobCompletedInteriorPercentage")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ActualVisitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("ActualVolumeSoldExteriorGallon")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldExteriorGallon")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualVolumeSoldExteriorKg")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldExteriorKg")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualVolumeSoldInteriorGallon")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldInteriorGallon")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualVolumeSoldInteriorKg")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldInteriorKg")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualVolumeSoldTopCoatGallon")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldTopCoatGallon")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ActualVolumeSoldUnderCoatGallon")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ActualVolumeSoldUnderCoatGallon")
+                        .HasColumnType("int");
 
                     b.Property<string>("BrandUsedExteriorBrandName")
                         .HasColumnType("nvarchar(max)");
@@ -640,8 +642,8 @@ namespace Berger.Data.Migrations
                     b.Property<int?>("ProjectStatusLeadCompletedId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ProjectStatusPartialBusinessPercentage")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ProjectStatusPartialBusinessPercentage")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProjectStatusTotalLossRemarks")
                         .HasColumnType("nvarchar(max)");
@@ -1971,8 +1973,6 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PainterCatId");
-
                     b.ToTable("Painters");
                 });
 
@@ -3086,15 +3086,6 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", "Painter")
                         .WithMany("AttachedDealers")
                         .HasForeignKey("PainterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Painter", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "PainterCat")
-                        .WithMany()
-                        .HasForeignKey("PainterCatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

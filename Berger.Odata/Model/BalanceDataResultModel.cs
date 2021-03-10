@@ -8,8 +8,11 @@ namespace Berger.Odata.Model
 {
     public class BalanceConfirmationSummaryResultModel
     {
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
+        public string Date { get; set; }
+        public decimal OpeningBalance { get; set; }
+        public decimal InvoiceBalance { get; set; }
+        public decimal PaymentBalance { get; set; }
+        public decimal ClosingBalance { get; set; }
 
         public BalanceConfirmationSummaryResultModel()
         {

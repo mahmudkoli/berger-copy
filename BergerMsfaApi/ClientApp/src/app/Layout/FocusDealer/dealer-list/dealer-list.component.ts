@@ -83,7 +83,7 @@ export class DealerListComponent implements OnInit {
     onChange(value, dealer, property) {
         // if (property == 'isCBInstalled') dealer[property] = value;
         // if (property == 'isExclusive') dealer[property] = value;
-        debugger;
+        // debugger;
 
         dealer[property] = value;
         this.alertSvc.fnLoading(true);

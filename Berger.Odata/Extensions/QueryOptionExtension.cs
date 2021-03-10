@@ -63,6 +63,12 @@ namespace Berger.Odata.Extensions
             return this; 
         }
 
+        public FilterQueryOptionBuilder GreaterThanOrEqualDateTime(string property, string value) 
+        { 
+            this._filter += $"{property} ge datetime'{value}'"; 
+            return this; 
+        }
+
         public FilterQueryOptionBuilder LessThan(string property, string value) 
         { 
             this._filter += $"{property} lt '{value}'"; 
@@ -72,6 +78,12 @@ namespace Berger.Odata.Extensions
         public FilterQueryOptionBuilder LessThanOrEqual(string property, string value) 
         { 
             this._filter += $"{property} le '{value}'"; 
+            return this; 
+        }
+
+        public FilterQueryOptionBuilder LessThanOrEqualDateTime(string property, string value) 
+        { 
+            this._filter += $"{property} le datetime'{value}'"; 
             return this; 
         }
 

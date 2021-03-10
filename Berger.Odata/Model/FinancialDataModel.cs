@@ -21,7 +21,7 @@ namespace Berger.Odata.Model
         public string FiscalYear { get; set; }
         public string Amount { get; set; }
         public string Age { get; set; }
-        public string Daylimit { get; set; }
+        public string DayLimit { get; set; }
         public string DueDate { get; set; }
         public string PostingDate { get; set; }
         public string CreditControlArea { get; set; }

@@ -44,7 +44,7 @@ namespace Berger.Odata.Model
             model.FiscalYear = this.Gjahr;
             model.Amount = this.Dmbtr;
             model.Age = this.Age;
-            model.Daylimit = this.Daylimit;
+            model.DayLimit = this.Daylimit;
             model.DueDate = this.BlineDate;
             model.PostingDate = this.Budat;
             model.CreditControlArea = this.Kkber;

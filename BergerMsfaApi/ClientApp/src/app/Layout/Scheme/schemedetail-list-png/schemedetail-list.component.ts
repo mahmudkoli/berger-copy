@@ -29,7 +29,7 @@ export class SchemedetailListPngComponent implements OnInit {
         this.alertService.fnLoading(true);
         this.schemeService.getSchemeDetailList(index,pageSize,search).subscribe(
             (res) => {
-                debugger;
+                // debugger;
                 this.pagingConfig=res.data
                 this.schemeDetailMasterList = this.pagingConfig.model;;
               
