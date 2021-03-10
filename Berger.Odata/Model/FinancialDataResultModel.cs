@@ -14,7 +14,7 @@ namespace Berger.Odata.Model
         public string Division { get; internal set; }
         public string BankName { get; internal set; }
         public string PostingDate { get; internal set; }
-        public string Amount { get; internal set; }
+        public decimal Amount { get; internal set; }
         public string InstrumentNo { get; internal set; }
 
         public CollectionHistoryResultModel()
@@ -28,7 +28,7 @@ namespace Berger.Odata.Model
         public string InvoiceNo { get; internal set; }
         public string Age { get; internal set; }
         public string PostingDate { get; internal set; }
-        public string Amount { get; internal set; }
+        public decimal Amount { get; internal set; }
 
         public OutstandingDetailsResultModel()
         {

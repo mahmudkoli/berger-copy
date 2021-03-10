@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Odata.Common;
@@ -48,7 +49,7 @@ namespace Berger.Odata.Services
                                     Division = x.CreditControlArea,
                                     //DivisionName = x.CreditControlAreaName,
                                     PostingDate = x.PostingDate,
-                                    Amount = x.Amount
+                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
             return result;
@@ -87,7 +88,7 @@ namespace Berger.Odata.Services
                                     InvoiceNo = x.InvoiceNo,
                                     Age = x.Age,
                                     PostingDate = x.PostingDate,
-                                    Amount = x.Amount
+                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
             return result;
