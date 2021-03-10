@@ -35,4 +35,19 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class OutstandingSummaryResultModel
+    {
+        public string Division { get; internal set; }
+        public string DaysLimit { get; internal set; }
+        public string ValueLimit { get; internal set; }
+        public string NetDue { get; internal set; }
+        public string Slippage { get; internal set; }
+        public string HighestDaysInvoice { get; internal set; }
+
+        public OutstandingSummaryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

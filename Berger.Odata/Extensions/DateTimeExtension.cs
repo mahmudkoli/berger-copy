@@ -5,7 +5,8 @@ namespace Berger.Odata.Extensions
     public static class DateTimeExtension
     {
         public static string DateFormat(this DateTime date) => date.ToString("yyyy.MM.dd");
-        public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.ToString("yyyy.MM.dd") : "";
+        public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
+        public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
 
         public static string GetMonthName(this DateTime date, int number) => date.AddMonths(number).ToString("MMMM");

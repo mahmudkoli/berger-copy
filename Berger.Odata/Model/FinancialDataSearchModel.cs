@@ -18,6 +18,11 @@ namespace Berger.Odata.Model
         public EnumOutstandingDetailsDaysCount Days { get; set; }
     }
 
+    public class OutstandingSummarySearchModel
+    {
+        public string CustomerNo { get; set; }
+    }
+
     public enum EnumOutstandingDetailsDaysCount
     {
         _All_Days = 1,
