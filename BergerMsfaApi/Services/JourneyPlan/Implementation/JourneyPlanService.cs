@@ -133,6 +133,34 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             var result = await final.ToPagedListAsync(index, pageSize);
             return result;
         }
+
+
+        public async Task<List<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManagerForNotification()
+        {
+
+            var employeeIds = _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
+
+            var plans = (from plan in _journeyPlanMasterSvc.GetAll().Where(p=>p.PlanStatus==PlanStatus.Pending).ToList()
+                         join emp in employeeIds on plan.EmployeeId equals emp.EmployeeId
+                         orderby plan.PlanDate.Date descending
+                         select new { plan, emp });
+
+
+            var final = plans.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.plan.Id,
+                EmployeeId = s.emp.EmployeeId,
+                Comment = s.plan.Comment,
+                PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
+                Status = s.plan.Status,
+                PlanStatus = s.plan.PlanStatus,
+                PlanStatusInText = s.plan.PlanStatus.ToString(),
+                EmployeeName = $"{s.emp.FullName}"
+            }).ToList();
+
+            return final;
+        }
+
         public async Task<JourneyPlanDetailModel> GetJourneyPlanDetailById(int PlanId)
         {
 
