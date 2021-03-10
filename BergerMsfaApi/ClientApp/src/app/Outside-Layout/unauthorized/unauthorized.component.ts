@@ -20,7 +20,7 @@ export class UnauthorizedComponent implements OnInit {
   }
 
   backToHome() {
-    debugger;
+    // debugger;
     this.routerService.navigate(['/dashboard/common']);
   }
 
