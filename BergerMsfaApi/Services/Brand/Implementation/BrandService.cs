@@ -127,16 +127,9 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             // update Brand info status log
             foreach (var brandInfoItem in findAll)
             {
-                // var existLog = (await _brandInfoStatusLogRepository.FindAsync(log => log.BrandInfoId == brandInfoItem.Id));
-
-
+                
                 var brandStatusLog = new BrandInfoStatusLog()
                 {
-                    //CreatedBy = (existLog != null) ? existLog.CreatedBy : userId,
-                    //CreatedTime = (existLog != null) ? existLog.CreatedTime : DateTime.Now,
-                    //ModifiedBy = userId,
-                    //ModifiedTime = DateTime.Now,
-                    //Status = Status.Active,
                     UserId = userId,
                     BrandInfoId = brandInfoItem.Id,
                     PropertyValue = GetPropertyValue(brandStatus.PropertyName, brandInfoItem),
