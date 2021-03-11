@@ -57,6 +57,7 @@ export class ProjectCollectionReportComponent implements OnInit, OnDestroy {
     territories:any[]=[]
     zones: any[] = [];
     paymentMethods: any[] = [];
+	dealerList: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -81,10 +82,12 @@ export class ProjectCollectionReportComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.searchConfiguration();
 		this.populateDropdownDataList();
+		this.getDealerList();
 		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 		// 	this.loadReportsPage();
 		// });
 	}
+	private get _loggedUser() { return this.commonService.getUserInfoFromLocalStorage(); }
 
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
@@ -94,6 +97,20 @@ export class ProjectCollectionReportComponent implements OnInit, OnDestroy {
 	getDownloadDataApiUrl = (query) => this.reportService.downloadDirectProjectCollection(query);
 	getData = (query) => this.reportService.getDirectProjectCollection(query);
 	
+	private getDealerList() {
+        if (this._loggedUser) {
+            this.alertService.fnLoading(true);
+            this.commonService.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
+                (result: any) => {
+                    this.dealerList = result.data;
+                },
+                (err: any) => console.log(err)
+
+            ).add(() => this.alertService.fnLoading(false));
+        }
+
+    }
+
 	searchConfiguration() {
 		this.query = new CollectionReportQuery({
 			page: 1,

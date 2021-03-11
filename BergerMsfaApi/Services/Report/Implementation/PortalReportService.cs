@@ -461,23 +461,33 @@ namespace BergerMsfaApi.Services.Report.Implementation
                            from dpminfo in dpmleftjoin.DefaultIfEmpty()
                            join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                            from cainfo in caleftjoin.DefaultIfEmpty()
+                           join d in await _dealerInfoRepository.GetAllAsync() on p.Code equals d.Id.ToString() into dleftjoin
+                           from dinfo in dleftjoin.DefaultIfEmpty()
+                           join t in await _territorySvc.GetAllAsync() on dinfo?.Territory equals t.Code into tleftjoin
+                           from tinfo in tleftjoin.DefaultIfEmpty()
+                           join z in await _zoneSvc.GetAllAsync() on dinfo?.CustZone equals z.Code into zleftjoin
+                           from zinfo in zleftjoin.DefaultIfEmpty()
+                           join dep in await _depotSvc.GetAllAsync() on dinfo?.BusinessArea equals dep.Werks into depleftjoin
+                           from depinfo in depleftjoin.DefaultIfEmpty()
                            where (
                              dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDealer
                              && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                             && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
+                             && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                              && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
                              && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
                              && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                              && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                            )
-                           select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+                           select new { p, uinfo, dctinfo, dpminfo, cainfo, tinfo, zinfo, depinfo }).ToList();
 
             reportResult = dealers.Select(x => new DealerCollectionReportResultModel
             {
                 UserId = x.uinfo?.Email ?? string.Empty,
-                DepotId = "",
-                DepotName = "",
-                Territory = "",
-                Zone = "",
+                DepotId = x.depinfo.Werks,
+                DepotName = x.depinfo.Name1,
+                Territory = x.tinfo.Name,
+                Zone = x.zinfo.Name,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
                 TypeOfCustomer = x.dctinfo?.DropdownName,
                 DealerId = x.p.Code,
@@ -512,23 +522,33 @@ namespace BergerMsfaApi.Services.Report.Implementation
                               from dpminfo in dpmleftjoin.DefaultIfEmpty()
                               join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                               from cainfo in caleftjoin.DefaultIfEmpty()
+                              join d in await _dealerInfoRepository.GetAllAsync() on p.Code equals d.Id.ToString() into dleftjoin
+                              from dinfo in dleftjoin.DefaultIfEmpty()
+                              join t in await _territorySvc.GetAllAsync() on dinfo?.Territory equals t.Code into tleftjoin
+                              from tinfo in tleftjoin.DefaultIfEmpty()
+                              join z in await _zoneSvc.GetAllAsync() on dinfo?.CustZone equals z.Code into zleftjoin
+                              from zinfo in zleftjoin.DefaultIfEmpty()
+                              join dep in await _depotSvc.GetAllAsync() on dinfo?.BusinessArea equals dep.Werks into depleftjoin
+                              from depinfo in depleftjoin.DefaultIfEmpty()
                               where (
                                 dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeSubDealer
                                 && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                                && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
+                                && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                                 && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
                                 && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
                                 && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                 && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                               )
-                              select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+                              select new { p, uinfo, dctinfo, dpminfo, cainfo, tinfo, zinfo, depinfo }).ToList();
 
             reportResult = subDealers.Select(x => new SubDealerCollectionReportResultModel
             {
                 UserId = x.uinfo?.Email ?? string.Empty,
-                DepotId = "",
-                DepotName = "",
-                Territory = "",
-                Zone = "",
+                DepotId = x.depinfo.Werks,
+                DepotName = x.depinfo.Name1,
+                Territory = x.tinfo.Name,
+                Zone = x.zinfo.Name,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
                 TypeOfCustomer = x.dctinfo?.DropdownName,
                 SubDealerCode = x.p.Code,

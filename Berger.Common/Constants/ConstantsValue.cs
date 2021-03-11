@@ -19,7 +19,7 @@ namespace Berger.Common.Constants
     public static class ConstantsCustomerTypeValue
     {
         public const string CustomerTypeDealer = "Dealer";
-        public const string CustomerTypeSubDealer = "Sub Dealer";
+        public const string CustomerTypeSubDealer = "Sub-Dealer";
         public const string CustomerTypeCustomer = "Customer";
         public const string CustomerTypeDirectProject = "Direct Project";
     }
