@@ -58,4 +58,10 @@ namespace BergerMsfaApi.Models.Report
     {
         
     }
+
+    public class CollectionReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PaymentMethodId { get; set; }
+        public int? DealerId { get; set; }
+    }
 }

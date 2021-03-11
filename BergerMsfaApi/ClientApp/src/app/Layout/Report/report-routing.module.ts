@@ -2,12 +2,16 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from 'src/app/Shared/Guards/auth.guard';
 import { PermissionGuard } from 'src/app/Shared/Guards/permission.guard';
+import { CustomerCollectionReportComponent } from './customer-collection/customer-collection-report.component';
+import { DealerCollectionReportComponent } from './dealer-collection/dealer-collection-report.component';
 import { DealerOpeningReportComponent } from './dealer-opening/dealer-opening-report.component';
+import { ProjectCollectionReportComponent } from './project-collection/project-collection-report.component';
 import { LeadFollowUpDetailsReportComponent } from './lead-followup-details/lead-followup-details-report.component';
 import { LeadGenerationDetailsReportComponent } from './lead-generation-details/lead-generation-details-report.component';
 import { LeadSummaryReportComponent } from './lead-summary/lead-summary-report.component';
 import { PainterRegistrationReportComponent } from './painter-registration/painter-registration-report.component';
 import { ReportComponent } from './report.component';
+import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 
 const routes: Routes = [
   {
@@ -49,6 +53,30 @@ const routes: Routes = [
         component: DealerOpeningReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Dealer Opening', },
+      },
+      {
+        path: 'dealer-collection',
+        component: DealerCollectionReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Collection', },
+      },
+      {
+        path: 'sub-dealer-collection',
+        component: SubDealerCollectionReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Sub Dealer Collection', },
+      },
+      {
+        path: 'customer-collection',
+        component: CustomerCollectionReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Customer Collection', },
+      },
+      {
+        path: 'project-collection',
+        component: ProjectCollectionReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Direct Project Collection', },
       },
     ],
   }

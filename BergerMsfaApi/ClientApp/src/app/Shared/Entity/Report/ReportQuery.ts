@@ -82,3 +82,17 @@ export class DealerOpeningQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class CollectionReportQuery extends ReportBaseQuery {
+    
+    paymentMethodId: number;
+    dealerId: number;
+
+    constructor(init?: Partial<DealerOpeningQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

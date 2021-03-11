@@ -2,6 +2,7 @@
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.Hirearchy;
@@ -50,6 +51,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<Depot> _depotSvc;
         private readonly IRepository<DealerOpening> _dealerOpening;
         private readonly IRepository<DealerOpeningAttachment> _dealerOpeningAttachmentSvc;
+        private readonly IRepository<Payment> _paymentRepository;
+        private readonly IRepository<CreditControlArea> _creditControlAreaRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
@@ -69,6 +72,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<Depot> depotSvc,
                 IRepository<DealerOpening> dealerOpening,
                 IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
+                IRepository<Payment> paymentRepository,
+                IRepository<CreditControlArea> creditControlAreaRepository,
                 IDropdownService dropdownService,
                 IMapper mapper
             )
@@ -89,6 +94,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._dealerOpening = dealerOpening;
             this._dealerOpeningAttachmentSvc = dealerOpeningAttachmentSvc;
             this._dropdownService = dropdownService;
+            this._paymentRepository = paymentRepository;
+            this._creditControlAreaRepository = creditControlAreaRepository;
             this._mapper = mapper;
         }
 
@@ -411,8 +418,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      from diinfo in dileftjoin.DefaultIfEmpty()
                                      select new { doa, diinfo }).ToList();
 
-            var aa = dealerAttachments.Where(x => x.doa.Name == "Application Form").Select(x => x.doa.Path).FirstOrDefault();
-
             var dealerId = "";
             reportResult = dealers.Select(x => new DealerOpeningReportResultModel
             {
@@ -441,7 +446,216 @@ namespace BergerMsfaApi.Services.Report.Implementation
             queryResult.Total = dealers.Count();
 
             return queryResult;
-
         }
+
+        public async Task<QueryResultModel<DealerCollectionReportResultModel>> GetDealerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<DealerCollectionReportResultModel>();
+
+            var dealers = (from p in await _paymentRepository.GetAllAsync()
+                           join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
+                           from uinfo in uleftjoin.DefaultIfEmpty()
+                           join dct in await _dorpDownDetailsRepository.GetAllAsync() on p.CustomerTypeId equals dct.Id into dctleftjoin
+                           from dctinfo in dctleftjoin.DefaultIfEmpty()
+                           join dpm in await _dorpDownDetailsRepository.GetAllAsync() on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                           from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                           join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                           from cainfo in caleftjoin.DefaultIfEmpty()
+                           where (
+                             dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDealer
+                             && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                             && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
+                             && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
+                             && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                             && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                           )
+                           select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+
+            reportResult = dealers.Select(x => new DealerCollectionReportResultModel
+            {
+                UserId = x.uinfo?.Email ?? string.Empty,
+                DepotId = "",
+                DepotName = "",
+                Territory = "",
+                Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
+                TypeOfCustomer = x.dctinfo?.DropdownName,
+                DealerId = x.p.Code,
+                DealerName = x.p.Name,
+                PaymentMethod = x.dpminfo?.DropdownName,
+                CreditControlArea = x.cainfo?.Description,
+                BankName = x.p.BankName,
+                ChequeNumber = x.p.Number,
+                CashAmount = x.p.Amount,
+                ManualMrNumber = x.p.ManualNumber,
+                Remarks = x.p.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealers.Count();
+            queryResult.Total = dealers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<SubDealerCollectionReportResultModel>> GetSubDealerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<SubDealerCollectionReportResultModel>();
+
+            var subDealers = (from p in await _paymentRepository.GetAllAsync()
+                              join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
+                              from uinfo in uleftjoin.DefaultIfEmpty()
+                              join dct in await _dorpDownDetailsRepository.GetAllAsync() on p.CustomerTypeId equals dct.Id into dctleftjoin
+                              from dctinfo in dctleftjoin.DefaultIfEmpty()
+                              join dpm in await _dorpDownDetailsRepository.GetAllAsync() on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                              from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                              join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                              from cainfo in caleftjoin.DefaultIfEmpty()
+                              where (
+                                dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeSubDealer
+                                && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                                && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
+                                && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
+                                && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                              )
+                              select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+
+            reportResult = subDealers.Select(x => new SubDealerCollectionReportResultModel
+            {
+                UserId = x.uinfo?.Email ?? string.Empty,
+                DepotId = "",
+                DepotName = "",
+                Territory = "",
+                Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
+                TypeOfCustomer = x.dctinfo?.DropdownName,
+                SubDealerCode = x.p.Code,
+                SubDealerName = x.p.Name,
+                SubDealerMobileNumber = x.p.MobileNumber,
+                SubDealerAddress = x.p.Address,
+                PaymentMethod = x.dpminfo?.DropdownName,
+                CreditControlArea = x.cainfo?.Description,
+                BankName = x.p.BankName,
+                ChequeNumber = x.p.Number,
+                CashAmount = x.p.Amount,
+                ManualMrNumber = x.p.ManualNumber,
+                Remarks = x.p.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<SubDealerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = subDealers.Count();
+            queryResult.Total = subDealers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<CustomerCollectionReportResultModel>> GetCustomerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<CustomerCollectionReportResultModel>();
+
+            var customers = (from p in await _paymentRepository.GetAllAsync()
+                             join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
+                             from uinfo in uleftjoin.DefaultIfEmpty()
+                             join dct in await _dorpDownDetailsRepository.GetAllAsync() on p.CustomerTypeId equals dct.Id into dctleftjoin
+                             from dctinfo in dctleftjoin.DefaultIfEmpty()
+                             join dpm in await _dorpDownDetailsRepository.GetAllAsync() on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                             from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                             join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                             from cainfo in caleftjoin.DefaultIfEmpty()
+                             where (
+                               dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeCustomer
+                               && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                               && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
+                               && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
+                               && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                               && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                             )
+                             select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+
+            reportResult = customers.Select(x => new CustomerCollectionReportResultModel
+            {
+                UserId = x.uinfo?.Email ?? string.Empty,
+                DepotId = "",
+                DepotName = "",
+                Territory = "",
+                Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
+                TypeOfCustomer = x.dctinfo?.DropdownName,
+                CustomerName = x.p.Name,
+                CustomerMobileNumber = x.p.MobileNumber,
+                CustomerAddress = x.p.Address,
+                PaymentMethod = x.dpminfo?.DropdownName,
+                CreditControlArea = x.cainfo?.Description,
+                BankName = x.p.BankName,
+                ChequeNumber = x.p.Number,
+                CashAmount = x.p.Amount,
+                ManualMrNumber = x.p.ManualNumber,
+                Remarks = x.p.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<CustomerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = customers.Count();
+            queryResult.Total = customers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DirectProjectCollectionReportResultModel>> GetDirectProjectCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<DirectProjectCollectionReportResultModel>();
+
+            var projects = (from p in await _paymentRepository.GetAllAsync()
+                            join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
+                            from uinfo in uleftjoin.DefaultIfEmpty()
+                            join dct in await _dorpDownDetailsRepository.GetAllAsync() on p.CustomerTypeId equals dct.Id into dctleftjoin
+                            from dctinfo in dctleftjoin.DefaultIfEmpty()
+                            join dpm in await _dorpDownDetailsRepository.GetAllAsync() on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                            from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                            join ca in await _creditControlAreaRepository.GetAllAsync() on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                            from cainfo in caleftjoin.DefaultIfEmpty()
+                            where (
+                              dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDirectProject
+                              && (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
+                              && (!query.PaymentMethodId.HasValue || p?.PaymentMethodId == query.PaymentMethodId.Value)
+                              && (!query.DealerId.HasValue || p?.Code == query.DealerId.Value.ToString())
+                              && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                              && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                            )
+                            select new { p, uinfo, dctinfo, dpminfo, cainfo }).ToList();
+
+            reportResult = projects.Select(x => new DirectProjectCollectionReportResultModel
+            {
+                UserId = x.uinfo?.Email ?? string.Empty,
+                DepotId = "",
+                DepotName = "",
+                Territory = "",
+                Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.p.CollectionDate),
+                TypeOfCustomer = x.dctinfo?.DropdownName,
+                ProjectSapId = x.p.SapId,
+                ProjectName = x.p.Name,
+                ProjectAddress = x.p.Address,
+                PaymentMethod = x.dpminfo?.DropdownName,
+                CreditControlArea = x.cainfo?.Description,
+                BankName = x.p.BankName,
+                ChequeNumber = x.p.Number,
+                CashAmount = x.p.Amount,
+                ManualMrNumber = x.p.ManualNumber,
+                Remarks = x.p.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DirectProjectCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = projects.Count();
+            queryResult.Total = projects.Count();
+
+            return queryResult;
+        }
+
+
     }
 }

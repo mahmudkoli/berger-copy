@@ -56,4 +56,37 @@ export class ReportService {
         return `${this.reportsEndpoint}/DownloadDealerOpening?${this.commonService.toQueryString(filter)}`;
     }
 
+    //---
+    getDealerCollection(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetDealerCollection?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDealerCollection(filter?) {
+        return `${this.reportsEndpoint}/DownloadDealerCollection?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getSubDealerCollection(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetSubDealerCollection?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadSubDealerCollection(filter?) {
+        return `${this.reportsEndpoint}/DownloadSubDealerCollection?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getCustomerCollection(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetCustomerCollection?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadCustomerCollection(filter?) {
+        return `${this.reportsEndpoint}/DownloadCustomerCollection?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getDirectProjectCollection(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetProjectCollection?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDirectProjectCollection(filter?) {
+        return `${this.reportsEndpoint}/DownloadProjectCollection?${this.commonService.toQueryString(filter)}`;
+    }
+
 }

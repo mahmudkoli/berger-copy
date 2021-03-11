@@ -156,5 +156,89 @@ namespace BergerMsfaApi.Models.Report
         public string CurrentStatusOfThisApplication { get; set; }
     }
 
+    public class DealerCollectionReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CollectionDate { get; set; }
+        public string TypeOfCustomer { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string PaymentMethod { get; set; }
+        public string CreditControlArea { get; set; }
+        public string BankName { get; set; }
+        public string ChequeNumber { get; set; }
+        public decimal CashAmount { get; set; }
+        public string ManualMrNumber { get; set; }
+        public string Remarks { get; set; }
+    }
+
+    public class SubDealerCollectionReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CollectionDate { get; set; }
+        public string TypeOfCustomer { get; set; }
+        public string SubDealerCode { get; set; }
+        public string SubDealerName { get; set; }
+        public string SubDealerMobileNumber { get; set; }
+        public string SubDealerAddress { get; set; }
+        public string PaymentMethod { get; set; }
+        public string CreditControlArea { get; set; }
+        public string BankName { get; set; }
+        public string ChequeNumber { get; set; }
+        public decimal CashAmount { get; set; }
+        public string ManualMrNumber { get; set; }
+        public string Remarks { get; set; }
+    }
+
+    public class CustomerCollectionReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CollectionDate { get; set; }
+        public string TypeOfCustomer { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerMobileNumber { get; set; }
+        public string CustomerAddress { get; set; }
+        public string PaymentMethod { get; set; }
+        public string CreditControlArea { get; set; }
+        public string BankName { get; set; }
+        public string ChequeNumber { get; set; }
+        public decimal CashAmount { get; set; }
+        public string ManualMrNumber { get; set; }
+        public string Remarks { get; set; }
+    }
+
+    public class DirectProjectCollectionReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CollectionDate { get; set; }
+        public string TypeOfCustomer { get; set; }
+        public string ProjectSapId { get; set; }
+        public string ProjectName { get; set; }
+        public string ProjectAddress { get; set; }
+        public string PaymentMethod { get; set; }
+        public string CreditControlArea { get; set; }
+        public string BankName { get; set; }
+        public string ChequeNumber { get; set; }
+        public decimal CashAmount { get; set; }
+        public string ManualMrNumber { get; set; }
+        public string Remarks { get; set; }
+    }
+
     #endregion
 }

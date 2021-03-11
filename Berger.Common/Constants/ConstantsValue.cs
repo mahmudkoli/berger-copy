@@ -15,4 +15,12 @@ namespace Berger.Common.Constants
         public const string ProjectStatusLeadCompletedTotalLoss = "Total Loss";
         public const string ProjectStatusLeadCompletedPartialBusiness = "Partial Business";
     }
+
+    public static class ConstantsCustomerTypeValue
+    {
+        public const string CustomerTypeDealer = "Dealer";
+        public const string CustomerTypeSubDealer = "Sub Dealer";
+        public const string CustomerTypeCustomer = "Customer";
+        public const string CustomerTypeDirectProject = "Direct Project";
+    }
 }

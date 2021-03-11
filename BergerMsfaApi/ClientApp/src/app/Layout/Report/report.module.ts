@@ -12,6 +12,10 @@ import { LeadGenerationDetailsReportComponent } from './lead-generation-details/
 import { LeadFollowUpDetailsReportComponent } from './lead-followup-details/lead-followup-details-report.component';
 import { PainterRegistrationReportComponent } from './painter-registration/painter-registration-report.component';
 import { DealerOpeningReportComponent } from './dealer-opening/dealer-opening-report.component';
+import { DealerCollectionReportComponent } from './dealer-collection/dealer-collection-report.component';
+import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
+import { CustomerCollectionReportComponent } from './customer-collection/customer-collection-report.component';
+import { ProjectCollectionReportComponent } from './project-collection/project-collection-report.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +24,11 @@ import { DealerOpeningReportComponent } from './dealer-opening/dealer-opening-re
       LeadGenerationDetailsReportComponent,
       LeadFollowUpDetailsReportComponent,
       PainterRegistrationReportComponent,
-      DealerOpeningReportComponent
+      DealerOpeningReportComponent,
+      DealerCollectionReportComponent,
+      SubDealerCollectionReportComponent,
+      CustomerCollectionReportComponent,
+      ProjectCollectionReportComponent
     ],
   imports: [
       CommonModule,
