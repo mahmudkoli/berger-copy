@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerFocus;
+using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Controllers.DealerFocus;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Repositories;
@@ -23,15 +25,20 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private readonly IFileUploadService _fileUploadSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
         private readonly IMapper _mapper;
-
+        private readonly IRepository<UserInfo> _userInfoSvc;
+        private readonly IRepository<EmailConfigForDealerOppening> _emailconfig;
+        private readonly IRepository<DealerOpeningLog> _dealerOpeningLog;
 
         public DealerOpeningService(
               IRepository<DealerOpening> dealerOpeningSvc,
               IFileUploadService fileUploadSvc, 
               IRepository<Attachment> attachmentSvc,
               IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
-              IMapper mapper
-            
+              IMapper mapper,
+              IRepository<UserInfo> userInfoSvc,
+              IRepository<EmailConfigForDealerOppening> emailconfig,
+              IRepository<DealerOpeningLog> dealerOpeningLog
+
             )
         {
             _fileUploadSvc = fileUploadSvc;
@@ -39,13 +46,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _dealerOpeningAttachmentSvc = dealerOpeningAttachmentSvc;
             _attachmentSvc = attachmentSvc;
             _mapper=mapper;
-         
-            
+            _userInfoSvc = userInfoSvc;
+            _emailconfig = emailconfig;
+            _dealerOpeningLog = dealerOpeningLog;
+
+
         }
         public async Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model,List<IFormFile> attachments)
         {
-         
+            var user = _userInfoSvc.Where(f => f.EmployeeId == AppIdentity.AppUser.EmployeeId).FirstOrDefault();
+
             var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
+            _dealerOpening.NextApprovarId = user.Id;
+            _dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
             var result = await _dealerOpeningSvc.CreateAsync(_dealerOpening);
             var _dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
             foreach (var attach in attachments)
@@ -93,6 +106,45 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //}
             //return dealerOpeningModel;
 
+        }
+
+
+        public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
+        {
+            var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.Status == (int)DealerOpeningStatus.Pending).ToListAsync());
+
+            return await result.ToPagedListAsync(index, pageSize);
+
+
+        }
+
+
+        public async Task<bool> ChangeDealerStatus(DealerOpeningModel model)
+        {
+            var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var dealer = _dealerOpeningSvc.Where(p => p.Id == model.Id).FirstOrDefault();
+
+            if (model.DealerOpeningStatus == (int)DealerOpeningStatus.Approved)
+            {
+                if(_emailconfig.IsExist(p=>p.Designation== _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Designation))
+                {
+                    dealer.NextApprovarId = null;
+                    dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Approved;
+
+                }
+                else
+                {
+                    dealer.NextApprovarId = _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Id;
+
+                }
+            }
+            else if(model.DealerOpeningStatus == (int)DealerOpeningStatus.Rejected)
+            {
+                dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Rejected;
+            }
+            dealer.CurrentApprovarId = AppIdentity.AppUser.UserId;
+            await _dealerOpeningSvc.UpdateAsync(dealer);
+            return false;
         }
 
         public async Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> attachments)
@@ -211,6 +263,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var result = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == id, f => f.DealerOpeningAttachments);
             return _mapper.Map<DealerOpeningModel>(result); ;
 
+        }
+
+
+        private void DealerStatusLog(int dealerInfoId,string propertyName,string propertyValue)
+        {
+            var DealerStatusLog = new DealerOpeningLog()
+            {
+                DealerInfoId= dealerInfoId,
+                UserId=AppIdentity.AppUser.UserId,
+                PropertyName= propertyName,
+                PropertyValue= propertyValue
+            };
+             _dealerOpeningLog.CreateAsync(DealerStatusLog);
         }
     }
 }

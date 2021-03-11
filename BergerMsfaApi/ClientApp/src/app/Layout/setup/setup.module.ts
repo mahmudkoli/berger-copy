@@ -9,13 +9,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { SetupRoutingModule } from './setup-routing.module';
 import { DropdownListComponent } from './dropdown-list/dropdown-list.component';
 import { DropdownAddComponent } from './dropdown-add/dropdown-add.component';
+import { EmailConfigForDealerOppeningComponent } from './email-config-for-dealer-oppening/email-config-for-dealer-oppening.component';
 
 //import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 
 
 
 @NgModule({
-    declarations: [DropdownListComponent, DropdownAddComponent],
+    declarations: [DropdownListComponent, DropdownAddComponent, EmailConfigForDealerOppeningComponent],
     imports: [
         CommonModule,
         SharedMasterModule,

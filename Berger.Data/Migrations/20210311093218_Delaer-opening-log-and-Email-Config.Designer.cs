@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210311093218_Delaer-opening-log-and-Email-Config")]
+    partial class DelaeropeninglogandEmailConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,9 +109,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
@@ -117,9 +116,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CurrentApprovarId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DealerOpeningStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("EmployeeId")
@@ -2601,8 +2597,8 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Designation")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Designation")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");

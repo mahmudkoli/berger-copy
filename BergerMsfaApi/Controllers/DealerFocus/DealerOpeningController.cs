@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         {
             try
             {
-                var result = await _dealerOpeningSvc.GetDealerOpeningListAsync(index, pageSize, search);
+                var result = await _dealerOpeningSvc.GetDealerOpeningPendingListAsync(index, pageSize, search);
                 return OkResult(result);
 
             }
@@ -36,6 +36,21 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
 
+        }
+
+        [HttpPut("ChangeDealerOpeningStatus")]
+        public async Task<IActionResult> ChangePlanStatus(DealerOpeningModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _dealerOpeningSvc.ChangeDealerStatus(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            };
         }
         [HttpGet("GetDealerOpeningDetailById/{id}")]
         public async Task<IActionResult> GetDealerOpeningDetailById(int id)

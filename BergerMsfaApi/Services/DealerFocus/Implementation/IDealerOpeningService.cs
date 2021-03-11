@@ -18,6 +18,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
 
         #region Portal
         Task<IPagedList<DealerOpeningModel>> GetDealerOpeningListAsync(int index,int pageSize,string search);
+        Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search);
+        Task<bool> ChangeDealerStatus(DealerOpeningModel model);
         Task<DealerOpeningModel> GetDealerOpeningDetailById(int id);
 
         Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
