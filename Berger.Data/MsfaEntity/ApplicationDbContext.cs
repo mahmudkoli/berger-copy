@@ -163,6 +163,8 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         public DbSet<DealerOpening> DealerOpenings { get; set; }
+        public DbSet<DealerOpeningLog> DealerOpeningLogs { get; set; }
+        public DbSet<EmailConfigForDealerOppening> EmailConfigForDealerOppenings { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
 
