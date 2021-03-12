@@ -227,7 +227,7 @@ namespace Berger.Odata.Services
         public async Task<IList<BrandOrDivisionWiseMTDResultModel>> GetBrandOrDivisionWisePerformance(BrandOrDivisionWiseMTDSearchModel model)
         {
             //var currentdate = new DateTime(2011, 09, 21);
-            var firstMonthInYear = 4;
+            //var firstMonthInYear = 4;
             //var currentdate = model.Date;
             var currentdate = DateTime.Now;
             var mtsBrandCodes = new List<string>();
@@ -240,13 +240,13 @@ namespace Berger.Odata.Services
             var lylcd = currentdate.GetLYLCD().DateFormat();
             var lyld = currentdate.GetLYLD().DateFormat();
 
-            var lfyfd = currentdate.GetLFYFD(firstMonthInYear).DateFormat();
-            var lfylcd = currentdate.GetLFYLCD(firstMonthInYear).DateFormat();
-            var lfyld = currentdate.GetLFYLD(firstMonthInYear).DateFormat();
+            var lfyfd = currentdate.GetLFYFD().DateFormat();
+            var lfylcd = currentdate.GetLFYLCD().DateFormat();
+            var lfyld = currentdate.GetLFYLD().DateFormat();
 
-            var cfyfd = currentdate.GetCFYFD(firstMonthInYear).DateFormat();
-            var cfylcd = currentdate.GetCFYLCD(firstMonthInYear).DateFormat();
-            var cfyld = currentdate.GetCFYLD(firstMonthInYear).DateFormat();
+            var cfyfd = currentdate.GetCFYFD().DateFormat();
+            var cfylcd = currentdate.GetCFYLCD().DateFormat();
+            var cfyld = currentdate.GetCFYLD().DateFormat();
 
             var dataLySm = new List<SalesDataModel>();
             var dataLyMtd = new List<SalesDataModel>();

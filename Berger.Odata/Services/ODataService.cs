@@ -283,14 +283,17 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string creditControlArea, string startDate, string endDate, string fiscalYear = "")
+            string customerNo, string startDate, string endDate, string creditControlArea = "", string fiscalYear = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(BalanceColDef.CompanyCode, "1000")
                                 .And()
-                                .Equal(BalanceColDef.CustomerLow, customerNo)
-                                .And()
-                                .Equal(BalanceColDef.CreditControlArea, creditControlArea);
+                                .Equal(BalanceColDef.CustomerLow, customerNo);
+
+            if (!string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(BalanceColDef.CreditControlArea, creditControlArea);
+            }
 
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {

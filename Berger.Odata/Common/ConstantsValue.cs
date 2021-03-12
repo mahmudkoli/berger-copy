@@ -9,8 +9,7 @@ namespace Berger.Odata.Common
     public class ConstantsValue
     {
         public const string BalanceLineTextOpening = "A Opening";
-        public const string BalanceLineTextInvoice = "";
-        public const string BalanceLineTextPayment = "";
+        public const string BalanceLineTextTransaction = "B Transaction";
         public const string BalanceLineTextClosing = "C Closing";
     }
 }
