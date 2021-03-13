@@ -8,19 +8,41 @@ namespace Berger.Odata.Model
 {
     public class InvoiceHistoryResultModel
     {
+        //    public string DriverName { get; internal set; }
+        //    public string DriverMobileNo { get; internal set; }
+        //    public string CustomerNo { get; internal set; }
+        //    public string CustomerName { get; internal set; }
+        //    public string Division { get; internal set; }
+        //    public string DivisionName { get; internal set; }
+        public string InvoiceNoOrBillNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        //public string Currency { get; internal set; }
+        public string Time { get; internal set; }
+
+        public InvoiceHistoryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class InvoiceDetailsResultModel
+    {
+        public string InvoiceNoOrBillNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal NetAmount { get; internal set; }
         public string DriverName { get; internal set; }
         public string DriverMobileNo { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
         public string Division { get; internal set; }
         public string DivisionName { get; internal set; }
-        public string InvoiceNoOrBillNo { get; internal set; }
-        public string Date { get; internal set; }
-        public decimal NetAmount { get; internal set; }
+        public IList<InvoiceItemDetailsResultModel> InvoiceItemDetails { get; set; }
 
-        public InvoiceHistoryResultModel()
+        public InvoiceDetailsResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.InvoiceItemDetails = new List<InvoiceItemDetailsResultModel>();
         }
     }
 
@@ -30,6 +52,9 @@ namespace Berger.Odata.Model
         public decimal Quantity { get; internal set; }
         public string MatrialCode { get; internal set; }
         public string MatarialDescription { get; internal set; }
+        public string Unit { get; internal set; }
+        public string LineNumber { get; internal set; }
+        //public string Currency { get; internal set; }
 
         public InvoiceItemDetailsResultModel()
         {

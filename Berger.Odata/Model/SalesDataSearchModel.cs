@@ -13,7 +13,7 @@ namespace Berger.Odata.Model
         //public DateTime ToDate { get; set; }
     }
 
-    public class InvoiceItemDetailsSearchModel
+    public class InvoiceDetailsSearchModel
     {
         public string InvoiceNo { get; set; }
     }

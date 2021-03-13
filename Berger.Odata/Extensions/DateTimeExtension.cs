@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Berger.Odata.Extensions
 {
@@ -8,6 +9,10 @@ namespace Berger.Odata.Extensions
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
+        public static DateTime DateFormatDate(this string date, string format = "yyyyMMdd") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
+        public static DateTime DateFormatTime(this string date, string format = "HH:mm:ss") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
+        public static string ReturnDateFormatDate(this string date, string format = "yyyyMMdd") => DateFormatDate(date, format).ToString("dd MMM yyyy");
+        public static string ReturnDateFormatTime(this string date, string format = "HH:mm:ss") => DateFormatTime(date, format).ToString("HH:mm:ss");
 
         public static string GetMonthName(this DateTime date, int number) => date.AddMonths(number).ToString("MMMM");
         public static DateTime GetMonthDate(this DateTime date, int number) => Convert.ToDateTime(date.AddMonths(number));

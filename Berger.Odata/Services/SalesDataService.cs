@@ -43,59 +43,72 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.Division)
-                                .AddProperty(DataColumnDef.DivisionName)
+                                //.AddProperty(DataColumnDef.CustomerName)
+                                //.AddProperty(DataColumnDef.Division)
+                                //.AddProperty(DataColumnDef.DivisionName)
                                 .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
                                 .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount);
+                                .AddProperty(DataColumnDef.NetAmount)
+                                //.AddProperty(DataColumnDef.AmountCurrency)
+                                .AddProperty(DataColumnDef.Time);
 
             var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
 
             var result = data.Select(x => 
                                 new InvoiceHistoryResultModel()
                                 {
-                                    CustomerNo = x.CustomerNoOrSoldToParty,
-                                    CustomerName = x.CustomerName,
-                                    Division = x.Division,
-                                    DivisionName = x.DivisionName,
+                                    //CustomerNo = x.CustomerNoOrSoldToParty,
+                                    //CustomerName = x.CustomerName,
+                                    //Division = x.Division,
+                                    //DivisionName = x.DivisionName,
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
-                                    Date = x.Date,
-                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount)
+                                    Date = x.Date.ReturnDateFormatDate(),
+                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
+                                    //Currency = x.AmountCurrency,
+                                    Time = x.Time.ReturnDateFormatTime()
                                 }).ToList();
 
             #region get driver data
-            if(result.Any())
-            {
-                var invoiceNos = result.Select(x => x.InvoiceNoOrBillNo).Distinct().ToList();
+            //if (result.Any())
+            //{
+            //    var invoiceNos = result.Select(x => x.InvoiceNoOrBillNo).Distinct().ToList();
 
-                var allDriverData = await _odataService.GetDriverDataByInvoiceNos(invoiceNos);
+            //    var allDriverData = await _odataService.GetDriverDataByInvoiceNos(invoiceNos);
 
-                foreach (var item in result)
-                {
-                    var driverData = allDriverData.FirstOrDefault(x => x.InvoiceNoOrBillNo == item.InvoiceNoOrBillNo);
-                    if (driverData != null)
-                    {
-                        item.DriverName = driverData.DriverName;
-                        item.DriverMobileNo = driverData.DriverMobileNo;
-                    }
-                }
-            }
+            //    foreach (var item in result)
+            //    {
+            //        var driverData = allDriverData.FirstOrDefault(x => x.InvoiceNoOrBillNo == item.InvoiceNoOrBillNo);
+            //        if (driverData != null)
+            //        {
+            //            item.DriverName = driverData.DriverName;
+            //            item.DriverMobileNo = driverData.DriverMobileNo;
+            //        }
+            //    }
+            //}
             #endregion
 
             return result;
         }
 
-        public async Task<IList<InvoiceItemDetailsResultModel>> GetInvoiceItemDetails(InvoiceItemDetailsSearchModel model)
+        public async Task<InvoiceDetailsResultModel> GetInvoiceDetails(InvoiceDetailsSearchModel model)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.InvoiceNoOrBillNo, model.InvoiceNo);
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.NetAmount)
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.CustomerName)
+                                .AddProperty(DataColumnDef.Division)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.DivisionName)
+                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.LineNumber)
+                                .AddProperty(DataColumnDef.NetAmount)
                                 .AddProperty(DataColumnDef.Quantity)
                                 .AddProperty(DataColumnDef.MatrialCode)
-                                .AddProperty(DataColumnDef.MatarialDescription);
+                                .AddProperty(DataColumnDef.MatarialDescription)
+                                //.AddProperty(DataColumnDef.AmountCurrency)
+                                .AddProperty(DataColumnDef.UnitOfMeasure);
 
             //var topQuery = $"$top=5";
 
@@ -112,9 +125,32 @@ namespace Berger.Odata.Services
                                                 Quantity = CustomConvertExtension.ObjectToDecimal(x.Quantity),
                                                 MatrialCode = x.MatrialCode,
                                                 MatarialDescription = x.MatarialDescription,
+                                                //Currency = x.AmountCurrency,
+                                                Unit = x.UnitOfMeasure,
+                                                LineNumber = x.LineNumber,
                                             }).ToList();
 
-            return result;
+            var returnResult = new InvoiceDetailsResultModel();
+            returnResult.InvoiceNoOrBillNo = data.FirstOrDefault().InvoiceNoOrBillNo;
+            returnResult.Date = data.FirstOrDefault().Date.ReturnDateFormatDate();
+            returnResult.NetAmount = data.Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            returnResult.CustomerNo = data.FirstOrDefault().CustomerNoOrSoldToParty;
+            returnResult.CustomerName = data.FirstOrDefault().CustomerName;
+            returnResult.Division = data.FirstOrDefault().Division;
+            returnResult.DivisionName = data.FirstOrDefault().DivisionName;
+
+            returnResult.InvoiceItemDetails = result;
+
+            #region get driver data
+            var driverData = (await _odataService.GetDriverDataByInvoiceNos(new List<string>() { returnResult.InvoiceNoOrBillNo })).FirstOrDefault();
+            if (driverData != null)
+            {
+                returnResult.DriverName = driverData.DriverName;
+                returnResult.DriverMobileNo = driverData.DriverMobileNo;
+            }
+            #endregion
+
+            return returnResult;
         }
 
         public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)

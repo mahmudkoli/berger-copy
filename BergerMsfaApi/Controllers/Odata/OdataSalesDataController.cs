@@ -48,12 +48,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("InvoiceItemDetails")]
-        public async Task<IActionResult> GetInvoiceItemDetails([FromQuery] InvoiceItemDetailsSearchModel model)
+        [HttpGet("InvoiceDetails")]
+        public async Task<IActionResult> GetInvoiceDetails([FromQuery] InvoiceDetailsSearchModel model)
         {
             try
             {
-                var data = await _salesDataService.GetInvoiceItemDetails(model);
+                var data = await _salesDataService.GetInvoiceDetails(model);
                 return OkResult(data);
             }
             catch (Exception ex)
