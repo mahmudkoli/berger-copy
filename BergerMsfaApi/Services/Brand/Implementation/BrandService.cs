@@ -98,7 +98,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
             var userId = AppIdentity.AppUser.UserId;
-            
+
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, bool>>>()
             {
                 ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
@@ -108,10 +108,10 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
             if (findAll == null || !findAll.Any()) return false;
-            
+
             foreach (var find in findAll)
             {
-                
+
                 switch (brandStatus.PropertyName)
                 {
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
@@ -121,13 +121,20 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 }
             }
 
-            if(findAll.Any())
+            if (findAll.Any())
                 await _brandInfoRepository.UpdateListAsync(findAll);
 
-            // update Brand info status log
+            // Create Brand info status log
+            await CreateBrandInfoStatusLog(brandStatus, userId, findAll);
+
+            return true;
+        }
+
+        private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
+        {
             foreach (var brandInfoItem in findAll)
             {
-                
+
                 var brandStatusLog = new BrandInfoStatusLog()
                 {
                     UserId = userId,
@@ -136,11 +143,12 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     PropertyName = brandStatus.PropertyName
 
                 };
-                await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
-            }
+                
+                 await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
 
-            return true;
+            }
         }
+
         private string GetPropertyValue(string propertyName,BrandInfo brandInfo)
         {
             string value="";
