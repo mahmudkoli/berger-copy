@@ -12,4 +12,18 @@ namespace Berger.Odata.Model
         public string PostingDate { get; set; }
         public string FiscalYear { get; set; }
     }
+
+    public class ChequeBounceSearchModel
+    {
+        public string CustomerNo { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
+
+    public class ChequeSummarySearchModel
+    {
+        public string CustomerNo { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
 }

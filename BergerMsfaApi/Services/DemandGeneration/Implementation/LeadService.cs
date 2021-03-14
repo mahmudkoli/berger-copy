@@ -220,6 +220,14 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.ExpectedMonthlyBusinessValue = leadFollowUp.ExpectedMonthlyBusinessValue;
                 modelResult.TotalPaintingAreaSqftInterior = leadFollowUp.TotalPaintingAreaSqftInterior;
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
+
+                //modelResult.ProjectStatusPartialBusinessPercentage = leadFollowUp.ProjectStatusPartialBusinessPercentage;
+                //modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
+                //modelResult.UpTradingToBrandName = leadFollowUp.UpTradingToBrandName;
+                //modelResult.BrandUsedInteriorBrandName = leadFollowUp.BrandUsedInteriorBrandName;
+                //modelResult.BrandUsedExteriorBrandName = leadFollowUp.BrandUsedExteriorBrandName;
+                //modelResult.BrandUsedTopCoatBrandName = leadFollowUp.BrandUsedTopCoatBrandName;
+                //modelResult.BrandUsedUnderCoatBrandName = leadFollowUp.BrandUsedUnderCoatBrandName;
             }
 
             return modelResult;
