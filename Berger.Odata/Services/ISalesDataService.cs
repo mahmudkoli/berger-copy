@@ -9,7 +9,7 @@ namespace Berger.Odata.Services
     public interface ISalesDataService
     {
         Task<IList<InvoiceHistoryResultModel>> GetInvoiceHistory(InvoiceHistorySearchModel model);
-        Task<IList<InvoiceItemDetailsResultModel>> GetInvoiceItemDetails(InvoiceItemDetailsSearchModel model);
+        Task<InvoiceDetailsResultModel> GetInvoiceDetails(InvoiceDetailsSearchModel model);
         Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model);
         Task<IList<BrandOrDivisionWiseMTDResultModel>> GetBrandOrDivisionWisePerformance(BrandOrDivisionWiseMTDSearchModel model);
     }

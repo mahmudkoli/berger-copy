@@ -183,6 +183,9 @@ namespace Berger.Odata.Model
             model.SalesOrderNumber = this.aubel;
             model.ItemCategory = this.pstyv;
             model.DistributionChannel = this.vtweg;
+            model.AmountCurrency = this.waerk;
+            //model.Time = this.erzet;
+            model.Time = this.erzet_T;
             return model;
         }
     }

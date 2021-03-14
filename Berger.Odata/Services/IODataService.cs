@@ -28,7 +28,7 @@ namespace Berger.Odata.Services
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate, string endDate, string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string creditControlArea, string startDate, string endDate, string fiscalYear = "");
+            string customerNo, string startDate, string endDate, string creditControlArea = "", string fiscalYear = "");
         #endregion
     }
 }
