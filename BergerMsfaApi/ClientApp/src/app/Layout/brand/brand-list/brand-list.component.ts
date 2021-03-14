@@ -173,7 +173,7 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		if (event.cellName == 'viewDetailsText') {
 			let id = event.record.id;
 			console.log("id: "+id);
-			//this.detailsBrandInfoStatusLogCall(id);
+			this.detailsBrandInfoStatusLogCall(id);
 		}
 	}
 	detailsBrandInfoStatusLogCall(id: any) {

@@ -144,7 +144,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
                 };
                 
-                 await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
+                await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
 
             }
         }
