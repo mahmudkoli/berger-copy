@@ -73,6 +73,7 @@ namespace Berger.Odata.Model
         public BrandWiseMTDResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.PreviousMonthData = new List<BrandWiseMTDPreviousModel>();
         }
     }
 

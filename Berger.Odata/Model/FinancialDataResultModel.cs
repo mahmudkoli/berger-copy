@@ -39,10 +39,11 @@ namespace Berger.Odata.Model
     public class OutstandingSummaryResultModel
     {
         public string Division { get; internal set; }
+        public string DivisionName { get; internal set; }
         public string DaysLimit { get; internal set; }
-        public string ValueLimit { get; internal set; }
-        public string NetDue { get; internal set; }
-        public string Slippage { get; internal set; }
+        public decimal ValueLimit { get; internal set; }
+        public decimal NetDue { get; internal set; }
+        public decimal Slippage { get; internal set; }
         public string HighestDaysInvoice { get; internal set; }
 
         public OutstandingSummaryResultModel()
