@@ -100,6 +100,18 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<CustomerDataModel>> GetCustomerData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<CustomerDataModel>.ParseJson(responseBody);
+            var data = parsedData.Results.ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -250,24 +262,42 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startDate, string endDate, string creditControlArea = "")
+            string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000")
                                 .And()
-                                .Equal(FinancialColDef.CustomerLow, customerNo)
+                                .Equal(FinancialColDef.CustomerLow, customerNo);
                                 //.And()
                                 //.Equal(FinancialColDef.CreditControlArea, creditControlArea)
-                                .And()
+                                //.And()
+                                //.StartGroup()
+                                //.GreaterThanOrEqualDateTime(FinancialColDef.Date, startDate)
+                                //.And()
+                                //.LessThanOrEqualDateTime(FinancialColDef.Date, endDate)
+                                //.EndGroup();
+
+            if (!string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(FinancialColDef.CreditControlArea, creditControlArea);
+            }
+
+            if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And()
                                 .StartGroup()
                                 .GreaterThanOrEqualDateTime(FinancialColDef.Date, startDate)
                                 .And()
                                 .LessThanOrEqualDateTime(FinancialColDef.Date, endDate)
                                 .EndGroup();
-
-            if (!string.IsNullOrEmpty(creditControlArea))
+            } 
+            else if (!string.IsNullOrEmpty(startDate))
             {
-                filterQueryBuilder.And().Equal(FinancialColDef.CreditControlArea, creditControlArea);
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(FinancialColDef.Date, startDate);
+            } 
+            else if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
             }
 
             //var topQuery = $"$top=5";
@@ -283,7 +313,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startDate, string endDate, string creditControlArea = "", string fiscalYear = "")
+            string customerNo, string startDate = "", string endDate = "", string creditControlArea = "", string fiscalYear = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(BalanceColDef.CompanyCode, "1000")
@@ -304,6 +334,14 @@ namespace Berger.Odata.Services
                                 .LessThanOrEqualDateTime(BalanceColDef.PostingDate, endDate)
                                 .EndGroup();
             }
+            else if (!string.IsNullOrEmpty(startDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(BalanceColDef.PostingDate, startDate);
+            }
+            else if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(BalanceColDef.PostingDate, endDate);
+            }
 
             if (!string.IsNullOrEmpty(fiscalYear))
             {
@@ -318,6 +356,24 @@ namespace Berger.Odata.Services
                         .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetBalanceData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(nameof(CustomerDataModel.CustomerNo), customerNo);
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerData(queryBuilder.Query)).ToList();
 
             return data;
         }

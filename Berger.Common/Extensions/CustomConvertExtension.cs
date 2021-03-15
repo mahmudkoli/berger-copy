@@ -23,6 +23,12 @@ namespace Berger.Common.Extensions
             }
         }
 
+        public static int ObjectToInt(object value)
+        {
+            if (value == null) return 0;
+            return int.TryParse(value.ToString(), out int result) ? result : 0;
+        }
+
         public static double ObjectToDouble(object value)
         {
             if (value == null) return 0.0;
