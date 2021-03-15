@@ -69,3 +69,4 @@ export class BrandQuery extends QueryObject {
         this.matarialGroupOrBrand = '';
     }
 }
+

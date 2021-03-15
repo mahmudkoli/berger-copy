@@ -47,5 +47,20 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetBrandInfoStatusLog/{id}")]
+        public async Task<IActionResult> GetBrandInfoStatusLogDetails(int id)
+        {
+            try
+            {
+                var result = await _brandService.GetBrandInfoStatusLog(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

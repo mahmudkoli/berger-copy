@@ -14,7 +14,7 @@ using X.PagedList;
 using AutoMapper;
 using BergerMsfaApi.Models.Common;
 using System.Linq.Expressions;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.Brand.Implementation
 {
@@ -130,6 +130,8 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return true;
         }
 
+
+        
         private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
         {
             foreach (var brandInfoItem in findAll)
@@ -145,7 +147,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 };
                 
                 await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
-
+                
             }
         }
 
@@ -161,7 +163,20 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             }
             return value;
         }
-        
+
+        public async Task<IEnumerable<BrandInfoStatusLog>> GetBrandInfoStatusLog(int brandInfoId)
+        {
+
+            var result = await _brandInfoStatusLogRepository.GetAllIncludeAsync(
+                        brand => brand,
+                        brand => brand.BrandInfoId == brandInfoId,
+                        brand => brand.OrderByDescending(b => b.CreatedTime),
+                        brand => brand.Include(i => i.BrandInfo).Include(i => i.User),
+                        true
+                ) ; 
+            return result;
+        }
+
     }
 }
 
