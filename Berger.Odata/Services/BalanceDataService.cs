@@ -26,9 +26,9 @@ namespace Berger.Odata.Services
 
         public async Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model)
         {
-            var currentDate = CustomConvertExtension.ObjectToDateTime(model.PostingDate);
-            var fromDate = currentDate.AddDays(-90).DateTimeFormat();
-            var toDate = currentDate.DateTimeFormat();
+            var currentDate = new DateTime(model.Year, model.Month, 1);
+            var fromDate = currentDate.DateTimeFormat();
+            var toDate = currentDate.GetCYLD().DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(BalanceColDef.LineText)
@@ -38,7 +38,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(BalanceColDef.PostingDate)
                                 .AddProperty(BalanceColDef.Amount);
 
-            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.CreditControlArea, model.FiscalYear)).ToList();
+            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.CreditControlArea)).ToList();
 
             var groupData = data.GroupBy(x => x.PostingDate);
 

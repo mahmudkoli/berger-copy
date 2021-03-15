@@ -9,8 +9,10 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string CreditControlArea { get; set; }
-        public string PostingDate { get; set; }
-        public string FiscalYear { get; set; }
+        //public string PostingDate { get; set; }
+        //public string FiscalYear { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
     }
 
     public class ChequeBounceSearchModel
