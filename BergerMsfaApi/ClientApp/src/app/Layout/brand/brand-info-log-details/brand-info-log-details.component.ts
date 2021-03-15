@@ -17,7 +17,7 @@ import { IPTableSetting } from '../../../Shared/Modules/p-table';
 export class BrandInfoLogDetailsComponent implements OnInit {
 
 	brandInfoLogs: any[];
-
+	brandInfo: any;
 	private subscriptions: Subscription[] = [];
 	
 	constructor(
@@ -43,11 +43,13 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 					.subscribe(res => {
 						if (res) {
 							this.brandInfoLogs = res.data;
+
 							console.log(this.brandInfoLogs);
 							this.brandInfoLogs.forEach(obj => {
 								obj.propertyValue = (obj.propertyValue == "CBI" || obj.propertyValue == "PREMIUM" || obj.propertyValue == "MTS") ? obj.propertyValue : this.getPropertyValue(obj.propertyValue);
-								
+								this.brandInfo = obj.brandInfo;
 							});
+							console.log(this.brandInfo);
 						}
 					},
 					(error) => {
@@ -63,14 +65,16 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 		else if (propertyValue == "NonMTS") return "Non MTS";
 	}
 
-
+	public backToTheList() {
+		this.router.navigate(['/brand']);
+	}
 	public ptableSettings: IPTableSetting = {
 		tableID: "brands-table",
 		tableClass: "table table-border ",
 		tableName: 'Brand Info Status Log',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Created By', width: '20%', internalName: 'userfullName', sort: false, type: "" },
+			{ headerName: 'Created By', width: '20%', internalName: 'createdBy', sort: false, type: "" },
 			{ headerName: 'Property Name', width: '20%', internalName: 'propertyName', sort: false, type: "" },
 			{ headerName: 'Property Value', width: '20%', internalName: 'propertyValue', sort: false, type: "" },
 			{ headerName: 'Created Time', width: '20%', internalName: 'createdTime', sort: false, type: "" },

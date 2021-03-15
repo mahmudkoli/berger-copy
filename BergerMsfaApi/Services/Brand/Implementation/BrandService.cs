@@ -164,7 +164,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return value;
         }
 
-        public async Task<IEnumerable<BrandInfoStatusLog>> GetBrandInfoStatusLog(int brandInfoId)
+        public async Task<IEnumerable<BrandInfoStatusLogModel>> GetBrandInfoStatusLog(int brandInfoId)
         {
 
             var result = await _brandInfoStatusLogRepository.GetAllIncludeAsync(
@@ -173,8 +173,9 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                         brand => brand.OrderByDescending(b => b.CreatedTime),
                         brand => brand.Include(i => i.BrandInfo).Include(i => i.User),
                         true
-                ) ; 
-            return result;
+                ) ;
+            var modelResult = _mapper.Map<IEnumerable<BrandInfoStatusLogModel>>(result);
+            return modelResult;
         }
 
     }
