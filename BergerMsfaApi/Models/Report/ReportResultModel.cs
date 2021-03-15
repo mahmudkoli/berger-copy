@@ -240,5 +240,55 @@ namespace BergerMsfaApi.Models.Report
         public string Remarks { get; set; }
     }
 
-    #endregion
-}
+    public class PainterCallReportResultModel
+    {
+        public string UserId { get; set; }
+        public string PainterId { get; set; }
+        public string PainterVisitDate { get; set; }
+        public string TypeOfPainter { get; set; }
+        public string DepotName { get; set; }
+        public string SalesGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string PainterName { get; set; }
+        public string PainterAddress { get; set; }
+        public string MobileNumber { get; set; }
+        public string NoOfPainterAttached { get; set; }
+        public string DbblRocketAccountStatus { get; set; }
+        public string AccountNumber { get; set; }
+        public string AcccountHolderName { get; set; }
+        public string IdentificationNo { get; set; }
+        public string AttachedTaggedDealerId { get; set; }
+        public string AttachedTaggedDealerName { get; set; }
+        public string ShamparkaAppInstallStatus { get; set; }
+        public string BergerLoyalty { get; set; }
+        public string PainterSchemeCommunication { get; set; }
+        public string PremiumProductBriefing { get; set; }
+        public string NewProductBriefing { get; set; }
+        public string EpToolsUsage { get; set; }
+        public string PainterAppUsage { get; set; }
+        public string WorkInHandNo { get; set; }
+        public string ApMtdValue { get; set; }
+        public string ApCount { get; set; }
+        public string NerolacMtdValue { get; set; }
+        public string NerolacCount { get; set; }
+        public string EliteMtdValue { get; set; }
+        public string EliteCount { get; set; }
+        public string NipponMtdValue { get; set; }
+        public string NipponCount { get; set; }
+        public string DuluxMtdValue { get; set; }
+        public string DuluxCount { get; set; }
+        public string MoonstarMtdValue { get; set; }
+        public string MoonstarCount { get; set; }
+        public string OthersMtdValue { get; set; }
+        public string OthersCount { get; set; }
+        public string TotalMtdValue { get; set; }
+        public string TotalCount { get; set; }
+        public string IssueWithDbblAccount { get; set; }
+        public string RemarkIssueWithDbblAccount { get; set; }
+        public string Comments { get; set; }
+    }
+
+
+        #endregion
+    }

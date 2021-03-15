@@ -299,6 +299,36 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetPaintersCall")]
+        public async Task<IActionResult> GetPaintersCall([FromQuery] PainterCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetPainterCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadPaintersCall")]
+        public async Task<IActionResult> DownloadPaintersCall([FromQuery] PainterCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetPainterCallReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
 
     }

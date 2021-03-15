@@ -52,6 +52,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<DealerOpening> _dealerOpening;
         private readonly IRepository<DealerOpeningAttachment> _dealerOpeningAttachmentSvc;
         private readonly IRepository<Payment> _paymentRepository;
+        private readonly IRepository<PainterCall> _painterCallRepository;
+        private readonly IRepository<PainterCompanyMTDValue> _painterCompanyMtdRepository;
         private readonly IRepository<CreditControlArea> _creditControlAreaRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
@@ -73,6 +75,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<DealerOpening> dealerOpening,
                 IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
                 IRepository<Payment> paymentRepository,
+                IRepository<PainterCall> painterCallRepository,
+                IRepository<PainterCompanyMTDValue> painterCompanyMtdRepository,
                 IRepository<CreditControlArea> creditControlAreaRepository,
                 IDropdownService dropdownService,
                 IMapper mapper
@@ -95,6 +99,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._dealerOpeningAttachmentSvc = dealerOpeningAttachmentSvc;
             this._dropdownService = dropdownService;
             this._paymentRepository = paymentRepository;
+            this._painterCallRepository = painterCallRepository;
+            this._painterCompanyMtdRepository = painterCompanyMtdRepository;
             this._creditControlAreaRepository = creditControlAreaRepository;
             this._mapper = mapper;
         }
@@ -675,6 +681,123 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return queryResult;
         }
+
+        public async Task<QueryResultModel<PainterCallReportResultModel>> GetPainterCallReportAsync(PainterCallReportSearchModel query)
+        {
+            var reportResult = new List<PainterCallReportResultModel>();
+
+            var painterCalls = (from pcm in await _painterCompanyMtdRepository.GetAllAsync()
+                                join pc in await _painterCallRepository.GetAllAsync() on pcm.PainterCallId equals pc.Id into pcleftjoin
+                                from pcinfo in pcleftjoin.DefaultIfEmpty()
+                                join p in await _painterRepository.GetAllAsync() on pcinfo.PainterId equals p.Id into pleftjoin
+                                from pinfo in pleftjoin.DefaultIfEmpty()
+                                join u in await _userInfoRepository.GetAllAsync() on pinfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                from userInfo in uleftjoin.DefaultIfEmpty()
+                                join ddc in await _dorpDownDetailsRepository.GetAllAsync() on pinfo.PainterCatId equals ddc.Id into ddcleftjoin
+                                from ddcinfo in ddcleftjoin.DefaultIfEmpty()
+                                join dep in await _depotSvc.GetAllAsync() on pinfo.Depot equals dep.Werks into depleftjoin
+                                from depinfo in depleftjoin.DefaultIfEmpty()
+                                join sg in await _saleGroupSvc.GetAllAsync() on pinfo.SaleGroup equals sg.Code into sgleftjoin
+                                from sginfo in sgleftjoin.DefaultIfEmpty()
+                                join t in await _territorySvc.GetAllAsync() on pinfo.Territory equals t.Code into tleftjoin
+                                from tinfo in tleftjoin.DefaultIfEmpty()
+                                join z in await _zoneSvc.GetAllAsync() on pinfo.Zone equals z.Code into zleftjoin
+                                from zinfo in zleftjoin.DefaultIfEmpty()
+                                join adp in await _attachmentDealerRepository.GetAllAsync() on pinfo.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                join di in await _dealerInfoRepository.GetAllAsync() on adpInfo?.Dealer equals di.Id into dileftjoin
+                                from diInfo in dileftjoin.DefaultIfEmpty()
+                                where (
+                                (!query.UserId.HasValue || userInfo?.Id == query.UserId.Value)
+                                && (string.IsNullOrWhiteSpace(query.DepotId) || pinfo.Depot == query.DepotId)
+                                && (!query.Territories.Any() || query.Territories.Contains(pinfo.Territory))
+                                && (!query.Zones.Any() || query.Zones.Contains(pinfo.Zone))
+                                && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || pcinfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                && (!query.PainterId.HasValue || pinfo?.Id == query.PainterId.Value)
+                                && (!query.PainterType.HasValue || pinfo.PainterCatId == query.PainterType.Value)
+                            )
+                            select new { pcinfo, pinfo, userInfo, ddcinfo, depinfo, sginfo, tinfo, zinfo, diInfo }).Distinct().ToList();
+
+            var painterCallMtd = (from pmtd in await _painterCompanyMtdRepository.GetAllAsync()
+                                  join dd in await _dorpDownDetailsRepository.GetAllAsync() on pmtd.CompanyId equals dd.Id into ddleftjoin
+                                  from ddinfo in ddleftjoin.DefaultIfEmpty()
+                                 where (
+                                 (!query.FromDate.HasValue || pmtd.CreatedTime.Date >= query.FromDate.Value.Date)
+                                 && (!query.ToDate.HasValue || pmtd.CreatedTime.Date <= query.ToDate.Value.Date)
+                                 )select new { pmtd, ddinfo }).ToList();
+
+            reportResult = painterCalls.Select(x => new PainterCallReportResultModel
+            {
+                UserId = x.userInfo?.Email ?? string.Empty,
+                PainterId = x.pcinfo?.PainterId.ToString(),
+                PainterVisitDate = CustomConvertExtension.ObjectToDateString(x.pcinfo.CreatedTime),
+                TypeOfPainter = x.ddcinfo?.DropdownName,
+                DepotName = x.depinfo?.Name1,
+                SalesGroup = x.sginfo?.Name,
+                Territory = x.tinfo?.Name,
+                Zone = x.zinfo?.Name,
+                PainterName = x.pinfo?.PainterName,
+                PainterAddress = x.pinfo?.Address,
+                MobileNumber = x.pinfo?.Phone,
+                NoOfPainterAttached = x.pinfo?.NoOfPainterAttached.ToString(),
+                DbblRocketAccountStatus = x.pinfo.HasDbbl ? "Created" : "Not Created",
+                AccountNumber = x.pinfo?.AccDbblNumber,
+                AcccountHolderName = x.pinfo?.AccDbblHolderName,
+                IdentificationNo = !string.IsNullOrEmpty(x.pinfo.NationalIdNo) ? x.pinfo.NationalIdNo
+                        : (!string.IsNullOrEmpty(x.pinfo.PassportNo) ? x.pinfo.PassportNo
+                        : (!string.IsNullOrEmpty(x.pinfo.BrithCertificateNo)) ? x.pinfo.BrithCertificateNo : string.Empty),
+                AttachedTaggedDealerId = x.pinfo?.AttachedDealerCd,
+                AttachedTaggedDealerName = x.diInfo?.CustomerName,
+                ShamparkaAppInstallStatus = x.pinfo.IsAppInstalled ? "Installed" : "Not Installed",
+                BergerLoyalty = x.pinfo?.Loyality.ToString(),
+                PainterSchemeCommunication = x.pcinfo.HasSchemeComnunaction ? "Yes" : "No",
+                PremiumProductBriefing = x.pcinfo.HasPremiumProtBriefing ? "Yes" : "No",
+                NewProductBriefing = x.pcinfo.HasNewProBriefing ? "Yes" : "No",
+                EpToolsUsage = x.pcinfo.HasUsageEftTools ? "Yes" : "No",
+                PainterAppUsage = x.pcinfo.HasAppUsage ? "Yes" : "No",
+                WorkInHandNo = x.pcinfo?.WorkInHandNumber.ToString(),
+                ApMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.pmtd.Value).ToString(),
+                ApCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.pmtd.CountInPercent).ToString(),
+                NerolacMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.pmtd.Value).ToString(),
+                NerolacCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.pmtd.CountInPercent).ToString(),
+                EliteMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.pmtd.Value).ToString(),
+                EliteCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.pmtd.CountInPercent).ToString(),
+                NipponMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.pmtd.Value).ToString(),
+                NipponCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.pmtd.CountInPercent).ToString(),
+                DuluxMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.pmtd.Value).ToString(),
+                DuluxCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.pmtd.CountInPercent).ToString(),
+                MoonstarMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.pmtd.Value).ToString(),
+                MoonstarCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.pmtd.CountInPercent).ToString(),
+                OthersMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.pmtd.Value).ToString(),
+                OthersCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.pmtd.CountInPercent).ToString(),
+                TotalMtdValue = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorAsianPaints
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNerolac
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorElitePaints
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNippon
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorDulux
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorMoonstar
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.pmtd.Value).ToString(),
+                TotalCount = painterCallMtd.Where(x => x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorAsianPaints
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNerolac
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorElitePaints
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorNippon
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorDulux
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorMoonstar
+                                                    || x.ddinfo.DropdownName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.pmtd.CountInPercent).ToString(),
+                IssueWithDbblAccount = x.pcinfo.HasDbblIssue ? "Yes" : "No",
+                RemarkIssueWithDbblAccount = "",
+                Comments = x.pcinfo?.Comment,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<PainterCallReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = painterCalls.Count();
+            queryResult.Total = painterCalls.Count();
+
+            return queryResult;
+        }
+
 
 
     }

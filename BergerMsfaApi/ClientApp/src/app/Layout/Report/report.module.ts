@@ -16,6 +16,7 @@ import { DealerCollectionReportComponent } from './dealer-collection/dealer-coll
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 import { CustomerCollectionReportComponent } from './customer-collection/customer-collection-report.component';
 import { ProjectCollectionReportComponent } from './project-collection/project-collection-report.component';
+import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import { ProjectCollectionReportComponent } from './project-collection/project-c
       DealerCollectionReportComponent,
       SubDealerCollectionReportComponent,
       CustomerCollectionReportComponent,
-      ProjectCollectionReportComponent
+      ProjectCollectionReportComponent,
+      PainterCallReportComponent
     ],
   imports: [
       CommonModule,

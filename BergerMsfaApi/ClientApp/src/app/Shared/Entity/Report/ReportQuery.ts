@@ -96,3 +96,16 @@ export class CollectionReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class PaintersCallReportQuery extends ReportBaseQuery {
+    painterId: number;
+    painterType: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

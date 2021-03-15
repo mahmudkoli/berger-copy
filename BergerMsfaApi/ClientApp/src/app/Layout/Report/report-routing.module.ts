@@ -12,6 +12,7 @@ import { LeadSummaryReportComponent } from './lead-summary/lead-summary-report.c
 import { PainterRegistrationReportComponent } from './painter-registration/painter-registration-report.component';
 import { ReportComponent } from './report.component';
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
+import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 
 const routes: Routes = [
   {
@@ -77,6 +78,12 @@ const routes: Routes = [
         component: ProjectCollectionReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Direct Project Collection', },
+      },
+      {
+        path: 'painter-call',
+        component: PainterCallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Painter Call', },
       },
     ],
   }

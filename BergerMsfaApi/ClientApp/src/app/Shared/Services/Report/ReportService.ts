@@ -89,4 +89,12 @@ export class ReportService {
         return `${this.reportsEndpoint}/DownloadProjectCollection?${this.commonService.toQueryString(filter)}`;
     }
 
+    getPainterCall(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetPaintersCall?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadPainterCall(filter?) {
+        return `${this.reportsEndpoint}/DownloadPaintersCall?${this.commonService.toQueryString(filter)}`;
+    }
+
 }
