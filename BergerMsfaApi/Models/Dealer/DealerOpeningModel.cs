@@ -17,6 +17,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public DealerOpeningModel()
         {
             DealerOpeningAttachments = new List<DealerOpeningAttachmentModel>();
+            dealerOpeningLogs = new List<DealerOpeningLog>();
         }
         public int Id { get; set; }
         public string BusinessArea { get; set; }
@@ -32,6 +33,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public string Comment { get; set; }
         public int DealerOpeningStatus { get; set; }
         public List<DealerOpeningAttachmentModel> DealerOpeningAttachments { get; set; }
+        public List<DealerOpeningLog> dealerOpeningLogs { get; set; }
+
 
         public void Mapping(Profile profile)
         {

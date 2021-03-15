@@ -10,8 +10,8 @@ namespace Berger.Data.MsfaEntity.DealerFocus
    public class DealerOpeningLog: AuditableEntity<int>
     {
         public int UserId { get; set; }
-        public int DealerInfoId { get; set; }
-        public DealerInfo DealerInfo { get; set; }
+        public int DealerOpeningId { get; set; }
+        public DealerOpening DealerOpening { get; set; }
 
         public UserInfo User { get; set; }
 

@@ -13,6 +13,7 @@ namespace Berger.Data.MsfaEntity.DealerFocus
         public DealerOpening()
         {
             DealerOpeningAttachments=new  List<DealerOpeningAttachment>();
+            dealerOpeningLogs = new List<DealerOpeningLog>();
         }
         public string BusinessArea { get; set; }
         public string SaleOffice { get; set; }
@@ -29,5 +30,7 @@ namespace Berger.Data.MsfaEntity.DealerFocus
 
 
         public List<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
+        public List<DealerOpeningLog> dealerOpeningLogs { get; set; }
+
     }
 }

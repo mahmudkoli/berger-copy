@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpPut("ChangeDealerOpeningStatus")]
-        public async Task<IActionResult> ChangePlanStatus(DealerOpeningModel model)
+        public async Task<IActionResult> ChangePlanStatus(DealerOpeningStatusChangeModel model)
         {
             try
             {
