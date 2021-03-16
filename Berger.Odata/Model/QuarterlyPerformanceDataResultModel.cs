@@ -6,7 +6,7 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class MTSValueTargetAchivementResultModel
+    public class QuarterlyPerformanceDataResultModel
     {
         public IList<MonthlyDataModel> MonthlyTargetData { get; internal set; }
         public IList<MonthlyDataModel> MonthlyActualData { get; internal set; }
@@ -14,7 +14,7 @@ namespace Berger.Odata.Model
         public decimal TotalActual { get; set; }
         public decimal Achivement { get; set; }
 
-        public MTSValueTargetAchivementResultModel()
+        public QuarterlyPerformanceDataResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
             this.MonthlyTargetData = new List<MonthlyDataModel>();

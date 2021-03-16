@@ -235,8 +235,8 @@ namespace Berger.Odata.Services
                                     CustomerName = x.CustomerName,
                                     MatarialGroupOrBrand = x.MatarialGroupOrBrand,
                                     TargetValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue),
-                                    ActualValue = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
-                                    DifferenceValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
+                                    //ActualValue = CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice),
+                                    //DifferenceValue = CustomConvertExtension.ObjectToDecimal(x.TargetValue) - CustomConvertExtension.ObjectToDecimal(x.AverageSalesPrice)
                                 }).ToList();
 
             #region get actual data
