@@ -27,70 +27,39 @@ namespace Berger.Odata.Services
             _odataCommonService = odataCommonService;
         }
 
-        public async Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model)
-        {
-            var currentDate = DateTime.Now;
-            var fromDate = currentDate.AddDays(-30).DateTimeFormat();
-            var toDate = currentDate.DateTimeFormat();
-
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
-                                .AddProperty(FinancialColDef.CustomerNo)
-                                .AddProperty(FinancialColDef.CustomerName)
-                                .AddProperty(FinancialColDef.CreditControlArea)
-                                .AddProperty(FinancialColDef.PostingDate)
-                                .AddProperty(FinancialColDef.Amount);
-
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
-
-            var result = data.Select(x =>
-                                new CollectionHistoryResultModel()
-                                {
-                                    InvoiceNo = x.InvoiceNo,
-                                    CustomerNo = x.CustomerNo,
-                                    CustomerName = x.CustomerName,
-                                    Division = x.CreditControlArea,
-                                    //DivisionName = x.CreditControlAreaName,
-                                    PostingDate = x.PostingDate,
-                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
-                                }).ToList();
-
-            return result;
-        }
-
         public async Task<IList<OutstandingDetailsResultModel>> GetOutstandingDetails(OutstandingDetailsSearchModel model)
         {
-            var currentDate = DateTime.Now;
-            var fromDate = (model.Days switch
-            {
-                EnumOutstandingDetailsDaysCount._0_To_30_Days => currentDate.AddDays(-30),
-                EnumOutstandingDetailsDaysCount._31_To_60_Days => currentDate.AddDays(-60),
-                EnumOutstandingDetailsDaysCount._61_To_90_Days => currentDate.AddDays(-90),
-                _ => default(DateTime)
-            }).DateTimeFormat();
-
-            var toDate = (model.Days switch
-            {
-                EnumOutstandingDetailsDaysCount._31_To_60_Days => currentDate.AddDays(-31),
-                EnumOutstandingDetailsDaysCount._61_To_90_Days => currentDate.AddDays(-61),
-                EnumOutstandingDetailsDaysCount._GT_90_Days => currentDate.AddDays(-91),
-                _ => currentDate
-            }).DateTimeFormat();
+            //var currentDate = DateTime.Now;
+            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
+                                .AddProperty(FinancialColDef.CreditControlArea)
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
 
-            var result = data.Select(x =>
+            Func<FinancialDataModel, bool> predicateFunc = x => (model.Days switch
+            {
+                EnumOutstandingDetailsAgeDays._0_To_30_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 0 && 
+                                                                    CustomConvertExtension.ObjectToInt(x.Age) <= 30,
+                EnumOutstandingDetailsAgeDays._31_To_60_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 31 &&
+                                                                    CustomConvertExtension.ObjectToInt(x.Age) <= 60,
+                EnumOutstandingDetailsAgeDays._61_To_90_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 61 &&
+                                                                    CustomConvertExtension.ObjectToInt(x.Age) <= 90,
+                EnumOutstandingDetailsAgeDays._GT_90_Days => CustomConvertExtension.ObjectToInt(x.Age) > 90,
+                _ => true
+            });
+            Func<FinancialDataModel, bool> predicateFuncFinal = x => predicateFunc(x) && x.CreditControlArea == model.CreditControlArea;
+
+            var result = data.Where(predicateFuncFinal).Select(x =>
                                 new OutstandingDetailsResultModel()
                                 {
                                     InvoiceNo = x.InvoiceNo,
                                     Age = x.Age,
-                                    PostingDate = x.PostingDate,
+                                    PostingDate = x.PostingDate.ReturnDateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ"),
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
@@ -124,22 +93,22 @@ namespace Berger.Odata.Services
             var result = groupData.Select(x =>
                                     {
                                         var osModel = new OutstandingSummaryResultModel();
-                                        osModel.Division = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
+                                        osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.DaysLimit = x.FirstOrDefault()?.DayLimit ?? string.Empty;
-                                        osModel.ValueLimit = customerData.FirstOrDefault(f => f.CreditControlArea == osModel.Division)?.CreditLimit ?? (decimal)0;
+                                        osModel.ValueLimit = customerData.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0;
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
                                                             .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.HighestDaysInvoice = x.Max(m => CustomConvertExtension.ObjectToInt(m.Age)).ToString();
                                         return osModel;
-                                    }).OrderBy(o => o.Division).ToList();
+                                    }).ToList();
 
             #region Credit Control Area 
             var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
 
             foreach (var item in result)
             {
-                item.DivisionName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.Division)?.Description ?? string.Empty;
+                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
             }
             #endregion
 

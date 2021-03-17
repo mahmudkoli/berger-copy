@@ -5,6 +5,12 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
+    public class CollectionHistorySearchModel
+    {
+        public string CustomerNo { get; set; }
+        public string Division { get; set; }
+    }
+
     public class BalanceConfirmationSummarySearchModel
     {
         public string CustomerNo { get; set; }

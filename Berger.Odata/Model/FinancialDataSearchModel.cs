@@ -5,17 +5,11 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class CollectionHistorySearchModel
-    {
-        public string CustomerNo { get; set; }
-        public string Division { get; set; }
-    }
-
     public class OutstandingDetailsSearchModel
     {
         public string CustomerNo { get; set; }
-        public string Division { get; set; }
-        public EnumOutstandingDetailsDaysCount Days { get; set; }
+        public string CreditControlArea { get; set; }
+        public EnumOutstandingDetailsAgeDays Days { get; set; }
     }
 
     public class OutstandingSummarySearchModel
@@ -23,7 +17,7 @@ namespace Berger.Odata.Model
         public string CustomerNo { get; set; }
     }
 
-    public enum EnumOutstandingDetailsDaysCount
+    public enum EnumOutstandingDetailsAgeDays
     {
         _All_Days = 1,
         _0_To_30_Days = 2,

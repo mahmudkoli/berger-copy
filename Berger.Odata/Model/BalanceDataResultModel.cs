@@ -6,6 +6,23 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
+    public class CollectionHistoryResultModel
+    {
+        public string InvoiceNo { get; internal set; }
+        public string CustomerNo { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string Division { get; internal set; }
+        public string BankName { get; internal set; }
+        public string PostingDate { get; internal set; }
+        public decimal Amount { get; internal set; }
+        public string InstrumentNo { get; internal set; }
+
+        public CollectionHistoryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
     public class BalanceConfirmationSummaryResultModel
     {
         public string Date { get; set; }

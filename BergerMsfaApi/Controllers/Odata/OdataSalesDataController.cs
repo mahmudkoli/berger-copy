@@ -134,20 +134,6 @@ namespace BergerMsfaApi.Controllers.Odata
         #endregion
 
         #region Financial Data
-        [HttpGet("CollectionHistory")]
-        public async Task<IActionResult> GetCollectionHistory([FromQuery] CollectionHistorySearchModel model)
-        {
-            try
-            {
-                var data = await _financialDataService.GetCollectionHistory(model);
-                return OkResult(data);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
         [HttpGet("OutstandingDetails")]
         public async Task<IActionResult> GetOutstandingDetails([FromQuery] OutstandingDetailsSearchModel model)
         {
@@ -178,6 +164,20 @@ namespace BergerMsfaApi.Controllers.Odata
         #endregion
 
         #region Balance Data
+        [HttpGet("CollectionHistory")]
+        public async Task<IActionResult> GetCollectionHistory([FromQuery] CollectionHistorySearchModel model)
+        {
+            try
+            {
+                var data = await _balanceDataService.GetCollectionHistory(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("BalanceConfirmationSummary")]
         public async Task<IActionResult> GetBalanceConfirmationSummary([FromQuery] BalanceConfirmationSummarySearchModel model)
         {
