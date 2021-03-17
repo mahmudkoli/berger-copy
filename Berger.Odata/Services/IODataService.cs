@@ -20,7 +20,7 @@ namespace Berger.Odata.Services
         #endregion
 
         #region get selectable data
-        Task<IList<DriverDataModel>> GetDriverDataByInvoiceNos(List<string> invoiceNos);
+        Task<DriverDataModel> GetDriverDataByInvoiceNo(string invoiceNo);
         Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands = null, bool isFamily = false);
         Task<IList<SalesDataModel>> GetSalesDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null);
@@ -36,6 +36,13 @@ namespace Berger.Odata.Services
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo);
+        #endregion
+
+        #region calculate data
+        public decimal GetGrowth(decimal first, decimal second);
+        public decimal GetAchivement(decimal target, decimal actual);
+        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays);
+        public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays);
         #endregion
     }
 }

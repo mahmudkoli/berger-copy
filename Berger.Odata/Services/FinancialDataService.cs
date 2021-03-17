@@ -100,7 +100,7 @@ namespace Berger.Odata.Services
         public async Task<IList<OutstandingSummaryResultModel>> GetOutstandingSummary(OutstandingSummarySearchModel model)
         {
             //var currentDate = DateTime.Now;
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat();
+            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             foreach (var prop in typeof(CustomerDataModel).GetProperties())
