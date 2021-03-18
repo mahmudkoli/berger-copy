@@ -4,9 +4,9 @@ import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Subscription, of } from 'rxjs';
 import { IPTableSetting } from '../../../Shared/Modules/p-table';
+import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 
 @Component({
@@ -17,7 +17,7 @@ import { IPTableSetting } from '../../../Shared/Modules/p-table';
 export class BrandInfoLogDetailsComponent implements OnInit {
 
 	brandInfoLogs: any[];
-	brandInfo: any;
+	
 	private subscriptions: Subscription[] = [];
 	
 	constructor(
@@ -29,36 +29,53 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 		private modalService: NgbModal
 		
 	) { }
-	brandInfoId: any;
-	
+	id: any;
+	division: any;
+	packSize: any;
+	materialDescription: any;
+	materialGroupOrBrand: any;
+	materialCode: any;
+
 	ngOnInit() {
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
-			const id = params['id'];
-			this.brandInfoId = id;
-			
-			if (id) {
-				this.alertService.fnLoading(true);
-				this.brandService.getBrandStatusInfoLogDetails(id)
-					.pipe(finalize(() => this.alertService.fnLoading(false)))
-					.subscribe(res => {
-						if (res) {
-							this.brandInfoLogs = res.data;
+			this.id = params['id'];
+			of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+				this.loadPage();
+			});
 
-							console.log(this.brandInfoLogs);
-							this.brandInfoLogs.forEach(obj => {
-								obj.propertyValue = obj.propertyValue;
-								this.brandInfo = obj.brandInfo;
-							});
-							console.log(this.brandInfo);
-						}
-					},
-					(error) => {
-						console.log(error);
-					});
-			}
 		});
 		this.subscriptions.push(routeSubscription);
+		
+		
 	}
+	ngOnDestroy() {
+		this.subscriptions.forEach(sb => sb.unsubscribe());
+	}
+	loadPage() {
+		this.alertService.fnLoading(true);
+		const brandInfoLogsSubscription = this.brandService.getBrandStatusInfoLogDetails(this.id)
+			.pipe(
+				finalize(() => { this.alertService.fnLoading(false); })
+			)
+			.subscribe(res => {
+				this.brandInfoLogs = res.data;
+				console.log("done");
+				console.log(this.brandInfoLogs);
+				this.brandInfoLogs.forEach(obj => {
+					this.materialCode = obj.materialCode;
+					this.materialGroupOrBrand = obj.materialGroupOrBrand;
+					this.materialDescription = obj.materialDescription;
+					this.packSize = obj.packSize;
+					this.division = obj.division;
+				
+				});
+				
+			},
+			(error) => {console.log(error);});
+		this.subscriptions.push(brandInfoLogsSubscription);
+       
+    }
+
 	//getPropertyValue(propertyValue) {
 	//	if (propertyValue == "NonCBI") return "Non CBI";
 	//	else if (propertyValue == "NonPREMIUM") return "Non PREMIUM";
