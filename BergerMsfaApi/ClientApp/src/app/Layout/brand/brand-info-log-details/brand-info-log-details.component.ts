@@ -46,7 +46,7 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 
 							console.log(this.brandInfoLogs);
 							this.brandInfoLogs.forEach(obj => {
-								obj.propertyValue = (obj.propertyValue == "CBI" || obj.propertyValue == "PREMIUM" || obj.propertyValue == "MTS") ? obj.propertyValue : this.getPropertyValue(obj.propertyValue);
+								obj.propertyValue = obj.propertyValue;
 								this.brandInfo = obj.brandInfo;
 							});
 							console.log(this.brandInfo);
@@ -59,11 +59,11 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 		});
 		this.subscriptions.push(routeSubscription);
 	}
-	getPropertyValue(propertyValue) {
-		if (propertyValue == "NonCBI") return "Non CBI";
-		else if (propertyValue == "NonPREMIUM") return "Non PREMIUM";
-		else if (propertyValue == "NonMTS") return "Non MTS";
-	}
+	//getPropertyValue(propertyValue) {
+	//	if (propertyValue == "NonCBI") return "Non CBI";
+	//	else if (propertyValue == "NonPREMIUM") return "Non PREMIUM";
+	//	else if (propertyValue == "NonMTS") return "Non MTS";
+	//}
 
 	public backToTheList() {
 		this.router.navigate(['/brand']);

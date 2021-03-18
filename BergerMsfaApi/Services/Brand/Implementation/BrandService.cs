@@ -104,6 +104,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsMTS"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsPremium"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["isEnamel"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
             };
 
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
@@ -117,6 +118,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
                     case "IsMTS": find.IsMTS = !find.IsMTS; break;
                     case "IsPremium": find.IsPremium = !find.IsPremium; break;
+                    case "isEnamel": find.IsEnamel = !find.IsEnamel; break;
                     default: break;
                 }
             }
@@ -156,9 +158,10 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             string value="";
             switch (propertyName)
             {
-                case "IsCBInstalled": value = (brandInfo.IsCBInstalled == true? "CBI" : "NonCBI"); break;
-                case "IsMTS": value = (brandInfo.IsMTS == true ? "MTS" : "NonMTS"); break;
-                case "IsPremium": value = (brandInfo.IsPremium == true ? "PREMIUM" : "NonPREMIUM"); break;
+                case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "CBI" : "Non CBI"); break;
+                case "IsMTS": value = (brandInfo.IsMTS ? "MTS" : "Non MTS"); break;
+                case "IsPremium": value = (brandInfo.IsPremium ? "PREMIUM" : "Non PREMIUM"); break;
+                case "isEnamel": value = (brandInfo.IsEnamel ? "ENAMEL" : "Non ENAMEL"); break;
                 default: break;
             }
             return value;

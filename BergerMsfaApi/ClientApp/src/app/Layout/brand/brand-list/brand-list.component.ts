@@ -79,6 +79,10 @@ export class BrandListComponent implements OnInit, OnDestroy {
 						obj.isPremiumBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isPremium ? 'primary' : 'warning') + ' d-flex align-items-center';
 						obj.isPremiumBtnIcon = 'fa fa-' + (obj.isPremium ? 'check' : 'ban');
 
+						obj.isEnamelText = obj.isEnamel ? 'Enamel' : 'Non Enamel';
+						obj.isEnamelBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isEnamel ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isEnamelBtnIcon = 'fa fa-' + (obj.isEnamel ? 'check' : 'ban');
+
 						obj.viewDetailsText = 'View Log Details';
 						obj.viewDetailsBtnclass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
 						
@@ -113,15 +117,16 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		tableName: 'Brand List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Material Code', width: '15%', internalName: 'materialCode', sort: true, type: "" },
-			{ headerName: 'Material Description', width: '25%', internalName: 'materialDescription', sort: true, type: "" },
+			{ headerName: 'Material Code', width: '10%', internalName: 'materialCode', sort: true, type: "" },
+			{ headerName: 'Material Description', width: '20%', internalName: 'materialDescription', sort: true, type: "" },
 			{ headerName: 'Material Group/Brand', width: '10%', internalName: 'materialGroupOrBrand', sort: true, type: "" },
 			{ headerName: 'Pack Size', width: '8%', internalName: 'packSize', sort: false, type: "" },
 			{ headerName: 'Division', width: '7%', internalName: 'division', sort: false, type: "" },
 			{ headerName: 'Is CB', width: '10%', internalName: 'isCBInstalledText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isCBInstalledBtnClass', innerBtnIcon: 'isCBInstalledBtnIcon' },
 			{ headerName: 'Is MTS', width: '10%', internalName: 'isMTSText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isMTSBtnClass', innerBtnIcon: 'isMTSBtnIcon' },
 			{ headerName: 'Is Premium', width: '10%', internalName: 'isPremiumText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isPremiumBtnClass', innerBtnIcon: 'isPremiumBtnIcon' },
-			{ headerName: 'Details', width: '5%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnclass', innerBtnIcon: '' },
+			{ headerName: 'Is Enamel', width: '10%', internalName: 'isEnamelText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isEnamelBtnClass', innerBtnIcon: 'isEnamelBtnIcon' },
+			{ headerName: 'Details', width: '5%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnclass', innerBtnIcon: '' }
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -151,7 +156,7 @@ export class BrandListComponent implements OnInit, OnDestroy {
 	public cellClickCallbackFn(event) {
 		console.log("cell click: ", event);
 
-		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText") {
+		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText" || event.cellName =="isEnamelText") {
 			let brandStatus = new BrandStatus();
 			brandStatus.clear();
 	
@@ -165,6 +170,10 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			}
 			else if (event.cellName == "isPremiumText") {
 				brandStatus.propertyName = 'IsPremium';
+				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
+			}
+			else if (event.cellName == "isEnamelText") {
+				brandStatus.propertyName = 'isEnamel';
 				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
 			}
 
