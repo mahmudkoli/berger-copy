@@ -59,6 +59,8 @@ export class NotificationComponent implements OnInit {
    workFlowStatusEnumLabel : MapObject[] =  WorkflowStatusEnumLabel.workflowStatusEnumLabel;
    workFlowStatusEnum = WorkflowStatusEnum;
   lstList=[];
+  lstDealerOpening=[];
+  lstJourneyPlan=[]
   constructor(
     private router: Router,
     private workflowLogService: WorkflowLogService,
@@ -73,8 +75,9 @@ export class NotificationComponent implements OnInit {
     // this.getWorkflowLogForCurrentUser();
     // this.getWorkflowLogHistoryForCurrentUser();
     this.notificationService.getJourneyPlanList().subscribe((res:any)=>{
-      this.lstList=res
-      this.pendingWorkflowCount=res.length
+      this.lstDealerOpening=res.notificationForDealerOpningModel
+      this.lstJourneyPlan=res.notificationForJourneyPlan
+      this.pendingWorkflowCount=res.totalNoification
       console.log(res,"Res")
     })
   }

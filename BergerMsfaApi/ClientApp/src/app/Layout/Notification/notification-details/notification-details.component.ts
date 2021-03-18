@@ -33,6 +33,8 @@ export class NotificationDetailsComponent implements OnInit {
   workFlowStatusEnum = WorkflowStatusEnum;
   tabOpen: number = 1;
   lstList=[];
+  lstDealerOpening=[];
+  lstJourneyPlan=[]
 
  constructor(
    private router: Router,
@@ -50,7 +52,8 @@ export class NotificationDetailsComponent implements OnInit {
   //  this.getWorkflowLogHistoryForCurrentUser();
   this.getWorkflowLogWithHistoryForCurrentUser();
   this.notificationService.getJourneyPlanList().subscribe((res:any)=>{
-    this.lstList=res;
+    this.lstDealerOpening=res.notificationForDealerOpningModel
+      this.lstJourneyPlan=res.notificationForJourneyPlan
   })
  }
 

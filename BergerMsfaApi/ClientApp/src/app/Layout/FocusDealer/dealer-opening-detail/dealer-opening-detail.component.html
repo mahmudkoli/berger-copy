@@ -37,7 +37,7 @@
                         <button *ngIf="dealerOpen" (click)="onStatusChange(3,dealerOpen)" class="btn btn-sm btn-danger ml-2">Reject</button>
                     </div>
                     <div class="col-md-5">
-                        <textarea style="display:inline" *ngIf="dealerOpen || dealerOpen" [(ngModel)]="dealerOpen.comment" placeholder="comment...." class="form-control"></textarea>
+                        <textarea style="display:inline"  [(ngModel)]="dealeropening.comment" placeholder="comment...." class="form-control"></textarea>
                     </div>
             
                 </div>
@@ -71,9 +71,7 @@
 
  
 
-    <ng-template pTemplate="footer">
-        <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
-    </ng-template>
+    
 
 </p-table>
 
@@ -105,6 +103,10 @@
             </td>
 
         </tr>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
     </ng-template>
 </p-table>
 <!--{{dealerOpen|json}}-->

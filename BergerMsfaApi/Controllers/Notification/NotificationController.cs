@@ -1,5 +1,6 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Notification;
+using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,14 @@ namespace BergerMsfaApi.Controllers.Notification
     {
         private readonly ILogger<NotificationController> _logger;
         private readonly IJourneyPlanService _journeyPlanService;
+        private readonly IDealerOpeningService _dealerOpeningService;
         //private readonly IMenuService _menu;
         //private readonly IMenuService _menu;
-        public NotificationController(ILogger<NotificationController> logger, IJourneyPlanService journeyPlanService)
+        public NotificationController(ILogger<NotificationController> logger, IJourneyPlanService journeyPlanService, IDealerOpeningService dealerOpeningService)
         {
             _logger = logger;
             _journeyPlanService = journeyPlanService;
+            _dealerOpeningService = dealerOpeningService;
         }
 
         [HttpGet("GetAllNotification")]
@@ -31,13 +34,13 @@ namespace BergerMsfaApi.Controllers.Notification
         {
             try
             {
-                List<NotificationModel> notificationVms = new List<NotificationModel>();
+                NotificationModel notificationVms = new NotificationModel();
 
-                var result = await  _journeyPlanService.GetJourneyPlanDetailForLineManagerForNotification();
-                foreach (var item in result)
+                var journeyPlans = await  _journeyPlanService.GetJourneyPlanDetailForLineManagerForNotification();
+                foreach (var item in journeyPlans)
                 {
-                    notificationVms.Add(
-                        new NotificationModel()
+                    notificationVms.notificationForJourneyPlan.Add(
+                        new NotificationForJourneyPlan()
                         {
                             Name=item.EmployeeName,
                             Code=item.EmployeeId,
@@ -47,6 +50,30 @@ namespace BergerMsfaApi.Controllers.Notification
                         }
                         );
                 }
+
+                var dealeropening = await _dealerOpeningService.GetDealerOpeningPendingListForNotificationAsync();
+                if (dealeropening.Count > 0)
+                {
+                    foreach (var item in dealeropening)
+                    {
+                        notificationVms.notificationForDealerOpningModel.Add(
+                            new NotificationForDealerOpningModel()
+                            {
+                                Id=item.Id,
+                                BusinessArea = item.BusinessArea,
+                                CurrentApprovar = item.CurrentApprovar?.UserName,
+                                NextApprovar = item.NextApprovar?.UserName,
+                                SaleGroup = item.SaleGroup,
+                                SaleOffice = item.SaleOffice,
+                                Territory = item.Territory,
+                                Zone = item.Zone
+                            }
+                            );
+                    }
+                }
+                
+                notificationVms.TotalNoification = notificationVms.notificationForDealerOpningModel.Count + notificationVms.notificationForJourneyPlan.Count;
+
                 //return OkResult(result);
                 return Ok(notificationVms);
             }
