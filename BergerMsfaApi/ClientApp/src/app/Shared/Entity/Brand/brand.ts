@@ -26,7 +26,10 @@ export class Brand {
     isCBInstalledBtnIcon: string;
     isMTSBtnIcon: string;
     isPremiumBtnIcon: string;
-    
+
+    // log details button
+    viewDetailsText: string;
+    viewDetailsBtnclass: string;
     constructor(init?: Partial<Brand>) {
         Object.assign(this, init);
     }
@@ -66,3 +69,4 @@ export class BrandQuery extends QueryObject {
         this.matarialGroupOrBrand = '';
     }
 }
+

@@ -24,11 +24,42 @@ namespace Berger.Odata.Services
             _odataService = odataService;
         }
 
+        public async Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model)
+        {
+            var currentDate = DateTime.Now;
+            var fromDate = currentDate.AddDays(-30).DateTimeFormat();
+            var toDate = currentDate.DateTimeFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
+                                .AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.CreditControlArea)
+                                .AddProperty(FinancialColDef.PostingDate)
+                                .AddProperty(FinancialColDef.Amount);
+
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
+
+            var result = data.Select(x =>
+                                new CollectionHistoryResultModel()
+                                {
+                                    InvoiceNo = x.InvoiceNo,
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    Division = x.CreditControlArea,
+                                    //DivisionName = x.CreditControlAreaName,
+                                    PostingDate = x.PostingDate,
+                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
+                                }).ToList();
+
+            return result;
+        }
+
         public async Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model)
         {
-            var currentDate = CustomConvertExtension.ObjectToDateTime(model.PostingDate);
-            var fromDate = currentDate.AddDays(-90).DateTimeFormat();
-            var toDate = currentDate.DateTimeFormat();
+            var currentDate = new DateTime(model.Year, model.Month, 1);
+            var fromDate = currentDate.DateTimeFormat();
+            var toDate = currentDate.GetCYLD().DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(BalanceColDef.LineText)
@@ -38,7 +69,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(BalanceColDef.PostingDate)
                                 .AddProperty(BalanceColDef.Amount);
 
-            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.CreditControlArea, model.FiscalYear)).ToList();
+            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.CreditControlArea)).ToList();
 
             var groupData = data.GroupBy(x => x.PostingDate);
 

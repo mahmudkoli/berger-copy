@@ -1,12 +1,8 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-using Berger.Data.Common;
-
-
-namespace Berger.Data.MsfaEntity.SAPTables
+namespace Berger.Odata.Model
 {
-    public class DealerInfo : AuditableEntity<int>
+    public class CustomerDataModel
     {
         public int CustomerNo { get; set; }
         public int Division { get; set; }
@@ -23,20 +19,11 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string CreditControlArea { get; set; }
-
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsExclusive { get; set; }
-        public bool IsCBInstalled { get; set; }
-        public bool IsLastYearAppointed { get; set; }
-        public bool IsClubSupreme { get; set; }
-
-        private string compositeKey;
-        [NotMapped] 
-        public string CompositeKey
-        {
-            get => CustomerNo.ToString() + AccountGroup + BusinessArea;
-            set => compositeKey = value;
-        }
+        public string CreatedOn { get; set; }
+        public string CustomerGroup { get; set; }
+        public string District { get; set; }
+        public string PriceGroup { get; set; }
+        public string SalesOrg { get; set; }
+        public string Channel { get; set; }
     }
 }
