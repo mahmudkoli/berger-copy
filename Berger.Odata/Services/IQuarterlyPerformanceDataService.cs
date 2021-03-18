@@ -8,6 +8,6 @@ namespace Berger.Odata.Services
 {
     public interface IQuarterlyPerformanceDataService
     {
-        Task<IList<MTSValueTargetAchivementResultModel>> GetMTSValueTargetAchivement(QuarterlyPerformanceSearchModel model);
+        Task<IList<QuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(QuarterlyPerformanceSearchModel model);
     }
 }

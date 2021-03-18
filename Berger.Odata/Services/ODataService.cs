@@ -115,7 +115,7 @@ namespace Berger.Odata.Services
         #endregion
 
         #region Get selectable data
-        public async Task<IList<DriverDataModel>> GetDriverDataByInvoiceNos(List<string> invoiceNos)
+        public async Task<DriverDataModel> GetDriverDataByInvoiceNo(string invoiceNo)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.Driver_InvoiceNoOrBillNo)
@@ -123,12 +123,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.Driver_DriverMobileNo);
 
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNos.FirstOrDefault());
-
-            foreach (var invoiceNo in invoiceNos.Skip(1))
-            {
-                filterQueryBuilder.Or().Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNo);
-            }
+            filterQueryBuilder.Equal(DataColumnDef.Driver_InvoiceNoOrBillNo, invoiceNo);
 
             //var topQuery = $"$top=5";
 
@@ -139,7 +134,7 @@ namespace Berger.Odata.Services
 
             var data = await GetDriverData(queryBuilder.Query);
 
-            return data;
+            return data.FirstOrDefault();
         }
 
         public async Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands = null, bool isFamily = false)
@@ -229,6 +224,45 @@ namespace Berger.Odata.Services
             return data;
         }
 
+        public async Task<IList<SalesDataModel>> GetSalesDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string territory = "-1", List<string> brands = null)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.StartGroup()
+                                .GreaterThanOrEqual(DataColumnDef.Date, startDate)
+                                .And()
+                                .LessThanOrEqual(DataColumnDef.Date, endDate)
+                                .EndGroup();
+
+            if (territory != "-1")
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.Territory, territory);
+            }
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetSalesData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
         public async Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null)
         {
@@ -236,6 +270,41 @@ namespace Berger.Odata.Services
             filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, customerNo)
                                 .And()
                                 .Equal(DataColumnDef.MTS_Date, date);
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetMTSData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<MTSDataModel>> GetMTSDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
+            string date, string territory = "-1", List<string> brands = null)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(DataColumnDef.MTS_Date, date);
+
+            if (territory != "-1")
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_Territory, territory);
+            }
 
             if (brands != null && brands.Any())
             {
@@ -313,7 +382,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startDate = "", string endDate = "", string creditControlArea = "", string fiscalYear = "")
+            string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(BalanceColDef.CompanyCode, "1000")
@@ -341,11 +410,6 @@ namespace Berger.Odata.Services
             else if (!string.IsNullOrEmpty(endDate))
             {
                 filterQueryBuilder.And().LessThanOrEqualDateTime(BalanceColDef.PostingDate, endDate);
-            }
-
-            if (!string.IsNullOrEmpty(fiscalYear))
-            {
-                filterQueryBuilder.And().Equal(BalanceColDef.FiscalYear, fiscalYear);
             }
 
             //var topQuery = $"$top=5";
@@ -376,6 +440,36 @@ namespace Berger.Odata.Services
             var data = (await GetCustomerData(queryBuilder.Query)).ToList();
 
             return data;
+        }
+        #endregion
+
+        #region calculate data
+        public decimal GetGrowth(decimal first, decimal second)
+        {
+            return first > 0 && second > 0 ? ((second - first) * 100) / first :
+                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
+                            decimal.Zero;
+        }
+
+        public decimal GetAchivement(decimal target, decimal actual)
+        {
+            return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
+        }
+
+        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays)
+        {
+            first = (first / totalDays) * countDays;
+
+            return first > 0 && second > 0 ? ((second - first) * 100) / first :
+                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
+                            decimal.Zero;
+        }
+
+        public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays)
+        {
+            target = (target / totalDays) * countDays;
+
+            return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
         }
         #endregion
     }

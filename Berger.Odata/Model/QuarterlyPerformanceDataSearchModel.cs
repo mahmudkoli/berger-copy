@@ -7,8 +7,10 @@ namespace Berger.Odata.Model
 {
     public class QuarterlyPerformanceSearchModel
     {
-        public string FromDate { get; set; }
-        public string ToDate { get; set; }
+        public int FromMonth { get; set; }
+        public int FromYear { get; set; }
+        public int ToMonth { get; set; }
+        public int ToYear { get; set; }
         public string Territory { get; set; }
     }
 }
