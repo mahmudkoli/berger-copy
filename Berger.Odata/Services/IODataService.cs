@@ -16,6 +16,7 @@ namespace Berger.Odata.Services
         Task<IList<BrandFamilyDataModel>> GetBrandFamilyData(string query);
         Task<IList<FinancialDataModel>> GetFinancialData(string query);
         Task<IList<BalanceDataModel>> GetBalanceData(string query);
+        Task<IList<CollectionDataModel>> GetCollectionData(string query);
         Task<IList<CustomerDataModel>> GetCustomerData(string query);
         #endregion
 
@@ -34,6 +35,8 @@ namespace Berger.Odata.Services
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
+        Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "");
         Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo);
         #endregion
@@ -43,6 +46,7 @@ namespace Berger.Odata.Services
         public decimal GetAchivement(decimal target, decimal actual);
         public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays);
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays);
+        public decimal GetPercentage(decimal total, decimal value);
         #endregion
     }
 }
