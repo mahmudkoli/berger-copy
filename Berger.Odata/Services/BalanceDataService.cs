@@ -43,7 +43,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.Amount);
 
-            var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.CreditControlArea)).ToList();
+            var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea)).ToList();
 
             var result = data.Select(x =>
                                 new CollectionHistoryResultModel()
@@ -96,7 +96,7 @@ namespace Berger.Odata.Services
 
             var dataBalance = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectBalanceQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
             
-            var dataCollection = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectCollectionQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
+            var dataCollection = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectCollectionQueryBuilder, model.CustomerNo, startPostingDate: fromDateStr, endPostingDate: toDateStr, creditControlArea: model.CreditControlArea)).ToList();
 
             var result = new List<BalanceConfirmationSummaryResultModel>();
 
