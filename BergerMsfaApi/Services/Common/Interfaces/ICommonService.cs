@@ -24,6 +24,8 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<RoleModel>> GetRoleList();
         Task<IEnumerable<Division>> GetDivisionList();
         Task<IEnumerable<PainterModel>> GetPainterList();
+        IEnumerable<MonthModel> GetMonthList();
+        IEnumerable<YearModel> GetYearList();
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory);
         Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds);

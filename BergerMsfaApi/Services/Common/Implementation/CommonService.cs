@@ -14,6 +14,7 @@ using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -163,6 +164,33 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var result = await _painterSvc.GetAllAsync();
             return result.ToMap<Painter, PainterModel>();
+        }
+
+        public IEnumerable<MonthModel> GetMonthList()
+        {
+            var months = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+
+            List<MonthModel> monthModels = new List<MonthModel>();
+            
+            for (int i = 0; i < months.Length; i++)
+            {
+                monthModels.Add(new MonthModel { Id = i + 1, Name = months[i] });
+            }
+            return monthModels;
+        }
+
+        public IEnumerable<YearModel> GetYearList()
+        {
+            List<YearModel> yearModels = new List<YearModel>();
+            var currentYear = DateTime.Now.Year;
+
+            yearModels.Add(new YearModel { Id = currentYear + 1, Name = (currentYear + 1).ToString() });
+
+            for (int i = 0; i < 5; i++)
+            {
+                yearModels.Add(new YearModel { Id = currentYear - i, Name = (currentYear - i).ToString() });
+            }
+            return yearModels;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)
@@ -500,5 +528,17 @@ namespace BergerMsfaApi.Services.Common.Implementation
         PSATZ = 1, //Plant > SalesOffice > Area > Territory > Zone
         PATZ = 2, //Plant > Area > Territory > Zone
         PTZ = 3 //Plant > Territory > Zone
+    }
+
+    public class MonthModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class YearModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

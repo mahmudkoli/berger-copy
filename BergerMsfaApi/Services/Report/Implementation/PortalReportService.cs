@@ -2,6 +2,7 @@
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DemandGeneration;
@@ -55,6 +56,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<PainterCall> _painterCallRepository;
         private readonly IRepository<PainterCompanyMTDValue> _painterCompanyMtdRepository;
         private readonly IRepository<CreditControlArea> _creditControlAreaRepository;
+        private readonly IRepository<JourneyPlanMaster> _journeyPlanMasterRepository;
+        private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
@@ -78,6 +81,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<PainterCall> painterCallRepository,
                 IRepository<PainterCompanyMTDValue> painterCompanyMtdRepository,
                 IRepository<CreditControlArea> creditControlAreaRepository,
+                IRepository<JourneyPlanMaster> journeyPlanMasterRepository,
+                IRepository<JourneyPlanDetail> journeyPlanDetailRepository,
                 IDropdownService dropdownService,
                 IMapper mapper
             )
@@ -102,6 +107,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._painterCallRepository = painterCallRepository;
             this._painterCompanyMtdRepository = painterCompanyMtdRepository;
             this._creditControlAreaRepository = creditControlAreaRepository;
+            this._journeyPlanMasterRepository = journeyPlanMasterRepository;
+            this._journeyPlanDetailRepository = journeyPlanDetailRepository;
             this._mapper = mapper;
         }
 
@@ -794,6 +801,125 @@ namespace BergerMsfaApi.Services.Report.Implementation
             queryResult.Items = reportResult;
             queryResult.TotalFilter = painterCalls.Count();
             queryResult.Total = painterCalls.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DealerVisitReportResultModel>> GetDealerVisitReportAsync(DealerVisitReportSearchModel query)
+        {
+            var reportResult = new List<DealerVisitReportResultModel>();
+            int? month = (!query.Month.HasValue) ? DateTime.Now.Month : query.Month;
+            int? year = (!query.Year.HasValue) ? DateTime.Now.Year : query.Year;
+            int tvist = 0;
+            int avisit = 0;
+
+            var dealerVisits = (from jpd in await _journeyPlanDetailRepository.GetAllAsync()
+                               join jpm in await _journeyPlanMasterRepository.GetAllAsync() on jpd.PlanId equals jpm.Id into jpmleftjoin
+                               from jpminfo in jpmleftjoin.DefaultIfEmpty()
+                               join dsc in await _dealerSalesCallRepository.GetAllAsync() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                               from dscinfo in dscleftjoin.DefaultIfEmpty()
+                               join u in await _userInfoRepository.GetAllAsync() on jpminfo?.EmployeeId equals u.EmployeeId into uleftjoin
+                               from userInfo in uleftjoin.DefaultIfEmpty()
+                               join di in await _dealerInfoRepository.GetAllAsync() on jpd?.DealerId equals di.Id into dileftjoin
+                               from diInfo in dileftjoin.DefaultIfEmpty()
+                               join dep in await _depotSvc.GetAllAsync() on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                               from depinfo in depleftjoin.DefaultIfEmpty()
+                               join t in await _territorySvc.GetAllAsync() on diInfo.Territory equals t.Code into tleftjoin
+                               from tinfo in tleftjoin.DefaultIfEmpty()
+                               join z in await _zoneSvc.GetAllAsync() on diInfo.CustZone equals z.Code into zleftjoin
+                               from zinfo in zleftjoin.DefaultIfEmpty()
+                               where (
+                                 (jpminfo.PlanDate.Month == month && jpminfo.PlanDate.Year == year)
+                                 && (!query.UserId.HasValue || userInfo?.Id == query.UserId.Value)
+                                 && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                 && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                 && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 && (!query.DealerId.HasValue || jpd?.DealerId == query.DealerId.Value)
+                               )
+                               select new { jpd, jpminfo, dscinfo, userInfo, diInfo, depinfo, tinfo, zinfo }).ToList();
+
+            reportResult = dealerVisits
+                        .GroupBy(x => new { x.jpminfo.EmployeeId, x.jpd.DealerId })
+                        .Select(x => new DealerVisitReportResultModel
+                        {
+                            UserId = x.FirstOrDefault()?.userInfo?.Email,
+                            DepotId = x.FirstOrDefault()?.diInfo?.BusinessArea,
+                            DepotName = x.FirstOrDefault()?.depinfo?.Name1,
+                            Territory = x.FirstOrDefault()?.tinfo?.Name,
+                            Zone = x.FirstOrDefault()?.zinfo?.Name,
+                            DealerId = x.Key.DealerId.ToString(),
+                            DealerName = x.FirstOrDefault()?.diInfo?.CustomerName,
+                            D1 = x.Count(c => c.jpminfo?.PlanDate.Day == 1) > 0 ? 
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 1) > 0 ? "Visited" : "Not Visited" : "",
+                            D2 = x.Count(c => c.jpminfo?.PlanDate.Day == 2) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 2) > 0 ? "Visited" : "Not Visited" : "",
+                            D3 = x.Count(c => c.jpminfo?.PlanDate.Day == 3) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 3) > 0 ? "Visited" : "Not Visited" : "",
+                            D4 = x.Count(c => c.jpminfo?.PlanDate.Day == 4) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 4) > 0 ? "Visited" : "Not Visited" : "",
+                            D5 = x.Count(c => c.jpminfo?.PlanDate.Day == 5) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 5) > 0 ? "Visited" : "Not Visited" : "",
+                            D6 = x.Count(c => c.jpminfo?.PlanDate.Day == 6) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 6) > 0 ? "Visited" : "Not Visited" : "",
+                            D7 = x.Count(c => c.jpminfo?.PlanDate.Day == 7) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 7) > 0 ? "Visited" : "Not Visited" : "",
+                            D8 = x.Count(c => c.jpminfo?.PlanDate.Day == 8) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 8) > 0 ? "Visited" : "Not Visited" : "",
+                            D9 = x.Count(c => c.jpminfo?.PlanDate.Day == 9) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 9) > 0 ? "Visited" : "Not Visited" : "",
+                            D10 = x.Count(c => c.jpminfo?.PlanDate.Day == 10) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 10) > 0 ? "Visited" : "Not Visited" : "",
+                            D11 = x.Count(c => c.jpminfo?.PlanDate.Day == 11) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 11) > 0 ? "Visited" : "Not Visited" : "",
+                            D12 = x.Count(c => c.jpminfo?.PlanDate.Day == 12) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 12) > 0 ? "Visited" : "Not Visited" : "",
+                            D13 = x.Count(c => c.jpminfo?.PlanDate.Day == 13) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 13) > 0 ? "Visited" : "Not Visited" : "",
+                            D14 = x.Count(c => c.jpminfo?.PlanDate.Day == 14) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 14) > 0 ? "Visited" : "Not Visited" : "",
+                            D15 = x.Count(c => c.jpminfo?.PlanDate.Day == 15) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 15) > 0 ? "Visited" : "Not Visited" : "",
+                            D16 = x.Count(c => c.jpminfo?.PlanDate.Day == 16) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 16) > 0 ? "Visited" : "Not Visited" : "",
+                            D17 = x.Count(c => c.jpminfo?.PlanDate.Day == 17) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 17) > 0 ? "Visited" : "Not Visited" : "",
+                            D18 = x.Count(c => c.jpminfo?.PlanDate.Day == 18) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 18) > 0 ? "Visited" : "Not Visited" : "",
+                            D19 = x.Count(c => c.jpminfo?.PlanDate.Day == 19) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 19) > 0 ? "Visited" : "Not Visited" : "",
+                            D20 = x.Count(c => c.jpminfo?.PlanDate.Day == 20) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 20) > 0 ? "Visited" : "Not Visited" : "",
+                            D21 = x.Count(c => c.jpminfo?.PlanDate.Day == 21) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 21) > 0 ? "Visited" : "Not Visited" : "",
+                            D22 = x.Count(c => c.jpminfo?.PlanDate.Day == 22) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 22) > 0 ? "Visited" : "Not Visited" : "",
+                            D23 = x.Count(c => c.jpminfo?.PlanDate.Day == 23) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 23) > 0 ? "Visited" : "Not Visited" : "",
+                            D24 = x.Count(c => c.jpminfo?.PlanDate.Day == 24) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 24) > 0 ? "Visited" : "Not Visited" : "",
+                            D25 = x.Count(c => c.jpminfo?.PlanDate.Day == 25) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 25) > 0 ? "Visited" : "Not Visited" : "",
+                            D26 = x.Count(c => c.jpminfo?.PlanDate.Day == 26) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 26) > 0 ? "Visited" : "Not Visited" : "",
+                            D27 = x.Count(c => c.jpminfo?.PlanDate.Day == 27) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 27) > 0 ? "Visited" : "Not Visited" : "",
+                            D28 = x.Count(c => c.jpminfo?.PlanDate.Day == 28) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 28) > 0 ? "Visited" : "Not Visited" : "",
+                            D29 = x.Count(c => c.jpminfo?.PlanDate.Day == 29) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 29) > 0 ? "Visited" : "Not Visited" : "",
+                            D30 = x.Count(c => c.jpminfo?.PlanDate.Day == 30) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
+                            D31 = x.Count(c => c.jpminfo?.PlanDate.Day == 31) > 0 ?
+                                        x.Count(c => c.dscinfo?.JourneyPlanId != null && c.jpminfo?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
+                            TargetVisits = tvist = x.Count(c => c.jpminfo?.PlanDate.Month == month && c.jpminfo?.PlanDate.Year == year),
+                            ActualVisits = avisit = x.Count(c => c.dscinfo?.JourneyPlanId != null && (c.jpminfo.PlanDate.Month == month && c.jpminfo.PlanDate.Year == year)),
+                            NotVisits = (tvist - avisit)
+                        }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerVisitReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = reportResult.Count();
+            queryResult.Total = reportResult.Count();
 
             return queryResult;
         }

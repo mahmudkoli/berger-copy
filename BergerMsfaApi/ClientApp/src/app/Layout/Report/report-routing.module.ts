@@ -13,6 +13,7 @@ import { PainterRegistrationReportComponent } from './painter-registration/paint
 import { ReportComponent } from './report.component';
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
+import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
 
 const routes: Routes = [
   {
@@ -85,9 +86,17 @@ const routes: Routes = [
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Painter Call', },
       },
+      {
+        path: 'dealer-visit',
+        component: DealerVisitReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Visit', },
+      },
     ],
   }
 ];
+
+// DealerVisitReportComponent
 
 @NgModule({
 

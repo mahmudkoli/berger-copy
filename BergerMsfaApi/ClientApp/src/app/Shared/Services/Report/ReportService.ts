@@ -97,4 +97,12 @@ export class ReportService {
         return `${this.reportsEndpoint}/DownloadPaintersCall?${this.commonService.toQueryString(filter)}`;
     }
 
+    getDealerVisit(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetDealerVisit?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDealerVisit(filter?) {
+        return `${this.reportsEndpoint}/DownloadDealerVisit?${this.commonService.toQueryString(filter)}`;
+    }
+
 }
