@@ -43,7 +43,7 @@ namespace Berger.Odata.Services
 
             var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
 
-            var result = data.Select(x => 
+            var result = data.Select(x =>
                                 new InvoiceHistoryResultModel()
                                 {
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
@@ -81,14 +81,14 @@ namespace Berger.Odata.Services
             var data = await _odataService.GetSalesData(queryBuilder.Query);
 
             var result = data.Select(x => new InvoiceItemDetailsResultModel()
-                                            {
-                                                NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
-                                                Quantity = CustomConvertExtension.ObjectToDecimal(x.Quantity),
-                                                MatrialCode = x.MatrialCode,
-                                                MatarialDescription = x.MatarialDescription,
-                                                Unit = x.UnitOfMeasure,
-                                                LineNumber = x.LineNumber,
-                                            }).ToList();
+            {
+                NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
+                Quantity = CustomConvertExtension.ObjectToDecimal(x.Quantity),
+                MatrialCode = x.MatrialCode,
+                MatarialDescription = x.MatarialDescription,
+                Unit = x.UnitOfMeasure,
+                LineNumber = x.LineNumber,
+            }).ToList();
 
             var returnResult = new InvoiceDetailsResultModel();
 
@@ -148,9 +148,9 @@ namespace Berger.Odata.Services
             }
 
             dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, cbMaterialCodes)).ToList();
-            
+
             dataCy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, cbMaterialCodes)).ToList();
-            
+
             for (var i = 1; i <= previousMonthCount; i++)
             {
                 int number = i * -1;
@@ -263,20 +263,20 @@ namespace Berger.Odata.Services
             }
 
             dataLySm = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld, model.Division, brands: mtsBrandCodes)).ToList();
-            
+
             dataLyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, brands: mtsBrandCodes)).ToList();
-            
+
             dataCyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, brands: mtsBrandCodes)).ToList();
 
             dataLyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lfyfd, lfylcd, model.Division, brands: mtsBrandCodes)).ToList();
 
             dataCyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cfyfd, cfylcd, model.Division, brands: mtsBrandCodes)).ToList();
-            
+
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(
                                                             model.VolumeOrValue == EnumVolumeOrValue.Value ? x.NetAmount : x.Volume);
-            Func<SalesDataModel, string> selectFunc = x => model.BrandOrDivision == EnumBrandOrDivision.Division ? 
+            Func<SalesDataModel, string> selectFunc = x => model.BrandOrDivision == EnumBrandOrDivision.Division ?
                                                             x.DivisionName : x.MatarialGroupOrBrandName;
-            Func<SalesDataModel, string, bool> predicateFunc = (x, val) => model.BrandOrDivision == EnumBrandOrDivision.Division ? 
+            Func<SalesDataModel, string, bool> predicateFunc = (x, val) => model.BrandOrDivision == EnumBrandOrDivision.Division ?
                                                                     x.DivisionName == val : x.MatarialGroupOrBrandName == val;
             var result = new List<BrandOrDivisionWiseMTDResultModel>();
 
@@ -344,6 +344,36 @@ namespace Berger.Odata.Services
             }
 
             return result;
+        }
+
+        public async Task<IList<SalesDataModel>> GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
+            MyTargetReportType targetReportType, IList<int> dealerIds)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+
+            switch (targetReportType)
+            {
+                case MyTargetReportType.TerritoryWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.Territory);
+                    break;
+                case MyTargetReportType.ZoneWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.Zone);
+                    break;
+                case MyTargetReportType.BrandWise:
+                    selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
+                    break;
+            }
+
+
+            selectQueryBuilder.AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+                ? DataColumnDef.Volume
+                : DataColumnDef.NetAmount);
+
+            var cyfd = fromDate.GetCYFD().DateFormat();
+            var cyed = endDate.DateFormat();
+
+            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division);
+
         }
     }
 }

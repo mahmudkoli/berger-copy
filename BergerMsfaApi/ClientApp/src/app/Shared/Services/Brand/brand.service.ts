@@ -31,8 +31,12 @@ export class BrandService {
     updateBrandStatus(brand: BrandStatus) {
       return this.http.post<APIResponse>(`${this.BrandsEndpoint}/UpdateBrandStatus`, brand);
     }
-  
+    
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.BrandsEndpoint}/activeInactive/${id}`, null);
     // }
+
+    getBrandStatusInfoLogDetails(id) {
+        return this.http.get<APIResponse>(`${this.BrandsEndpoint}/GetBrandInfoStatusLog/${id}`);
+    }
 }

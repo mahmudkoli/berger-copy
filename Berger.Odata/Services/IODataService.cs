@@ -39,6 +39,17 @@ namespace Berger.Odata.Services
             string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "");
         Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo);
+
+        Task<IList<MTSDataModel>> GetMtsDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string compareMonth, string division = "-1");
+
+        Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(
+            SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerList, string startDate, string endDate, string division = "-1",
+            List<string> materialCodes = null, List<string> brands = null);
+
+        Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds, string compareMonth, string division = "-1");
         #endregion
 
         #region calculate data

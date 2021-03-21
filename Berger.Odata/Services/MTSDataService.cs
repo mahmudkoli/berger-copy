@@ -44,9 +44,9 @@ namespace Berger.Odata.Services
             mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
             var dataTarget = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentDateStr, mtsBrandCodes)).ToList();
-            
+
             var dataActual = await GetSalesDataValueVolume(model.CustomerNo, fromDate, toDate, mtsBrandCodes);
-            
+
             var result = new List<MTSResultModel>();
 
             var brandCodes = dataTarget.Select(x => x.MatarialGroupOrBrand)
@@ -185,7 +185,7 @@ namespace Berger.Odata.Services
                 }
 
                 res.TargetAchievement = _odataService.GetAchivement(res.TargetVolume, res.ActualVolume);
-                res.TillDateGrowth = _odataService.GetTillDateGrowth(res.LYSMVolume, res.ActualVolume, 
+                res.TillDateGrowth = _odataService.GetTillDateGrowth(res.LYSMVolume, res.ActualVolume,
                                         currentDate.GetCYLD().Day, currentDate.GetCYLCD().Day);
 
                 result.Add(res);
@@ -271,7 +271,7 @@ namespace Berger.Odata.Services
             }
 
             var returnResult = new List<ValueTargetResultModel>();
-            if(result.Any())
+            if (result.Any())
             {
                 var res = new ValueTargetResultModel();
                 res.CustomerNo = result.FirstOrDefault().CustomerNo;
@@ -296,7 +296,7 @@ namespace Berger.Odata.Services
 
             var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, customerNo, fromDate, toDate, brands: brands)).ToList();
 
-            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x => 
+            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
                                                                     (
                                                                         MatarialGroupOrBrand: x.Key,
                                                                         CustomerNo: x.FirstOrDefault().CustomerNo,
@@ -306,6 +306,31 @@ namespace Berger.Odata.Services
                                                                     )).ToList();
 
             return result;
+        }
+
+        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<int> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+
+            switch (targetReportType)
+            {
+                case MyTargetReportType.TerritoryWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Territory);
+                    break;
+                case MyTargetReportType.ZoneWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Zone);
+                    break;
+                case MyTargetReportType.BrandWise:
+                    selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
+                    break;
+            }
+            selectQueryBuilder.AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+                ? DataColumnDef.MTS_TargetVolume
+                : DataColumnDef.MTS_TargetValue);
+
+            string compareDate = date.ToString("yyyy.MM");
+
+            return await _odataService.GetMtsDataByMultipleCustomerAndDivision(selectQueryBuilder,dealerIds, compareDate, division);
         }
     }
 }
