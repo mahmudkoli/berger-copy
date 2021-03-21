@@ -9,6 +9,7 @@ namespace Berger.Odata.Extensions
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
+        public static string DateFormat(this DateTime date, string format) => date.ToString(format);
         public static DateTime DateFormatDate(this string date, string format = "yyyyMMdd") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
         public static DateTime DateFormatTime(this string date, string format = "HH:mm:ss") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
         public static string ReturnDateFormatDate(this string date, string format = "yyyyMMdd") => DateFormatDate(date, format).ToString("dd MMM yyyy");
