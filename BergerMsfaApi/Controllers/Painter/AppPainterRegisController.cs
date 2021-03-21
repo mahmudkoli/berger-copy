@@ -61,77 +61,77 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             }
         }
 
-        [HttpGet("GetPainterById/{Id}")]
-        public async Task<IActionResult> GetPainterById([BindRequired] int Id)
-        {
-            try
-            {
-                var result = await _painterSvc.AppGetPainterByIdAsync(Id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetPainterById/{Id}")]
+        //public async Task<IActionResult> GetPainterById([BindRequired] int Id)
+        //{
+        //    try
+        //    {
+        //        var result = await _painterSvc.AppGetPainterByIdAsync(Id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpGet("GetPainterByPhone/{Phone}")]
-        public async Task<IActionResult> GetPainterByIPhone([BindRequired] string Phone)
-        {
-            try
-            {
+        //[HttpGet("GetPainterByPhone/{Phone}")]
+        //public async Task<IActionResult> GetPainterByIPhone([BindRequired] string Phone)
+        //{
+        //    try
+        //    {
 
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _painterSvc.AppGetPainterByPhonesync(Phone);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpPut("UpdatePainter")]
-        public async Task<IActionResult> UpdatePainter([FromBody]PainterModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (!await _painterSvc.IsExistAsync(model.Id))
-                {
-                    ModelState.AddModelError(nameof(model.Id), "painter  not found");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _painterSvc.AppUpdatePainterAsync(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPut("UpdatePainter")]
+        //public async Task<IActionResult> UpdatePainter([FromBody]PainterModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        if (!await _painterSvc.IsExistAsync(model.Id))
+        //        {
+        //            ModelState.AddModelError(nameof(model.Id), "painter  not found");
+        //            return ValidationResult(ModelState);
+        //        }
+        //        var result = await _painterSvc.AppUpdatePainterAsync(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
 
 
-        [HttpDelete("DeletePainter/{Id}")]
-        public async Task<IActionResult> DeletePainter([BindRequired]int Id)
-        {
-            try
-            {
-                if (!await _painterSvc.IsExistAsync(Id))
-                {
-                    ModelState.AddModelError(nameof(Id), "painter  not found");
-                    return ValidationResult(ModelState);
-                }
+        //[HttpDelete("DeletePainter/{Id}")]
+        //public async Task<IActionResult> DeletePainter([BindRequired]int Id)
+        //{
+        //    try
+        //    {
+        //        if (!await _painterSvc.IsExistAsync(Id))
+        //        {
+        //            ModelState.AddModelError(nameof(Id), "painter  not found");
+        //            return ValidationResult(ModelState);
+        //        }
 
-                var result = await _painterSvc.AppDeletePainterByIdAsync(Id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //        var result = await _painterSvc.AppDeletePainterByIdAsync(Id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
 
     }
