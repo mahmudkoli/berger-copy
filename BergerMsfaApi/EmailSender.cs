@@ -1,10 +1,17 @@
-﻿using BergerMsfaApi.Models.EmailVm;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.EmailLog;
+using BergerMsfaApi.Models.EmailVm;
+using BergerMsfaApi.Services.DealerFocus.Implementation;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using MimeKit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,42 +19,145 @@ namespace Berger.Common
 {
     public class EmailSender : IEmailSender
     {
-        public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
+        private readonly SmtpSettings _smtpSettings;
+        private readonly IEmailLogService _emailLog;
+        private readonly IWebHostEnvironment _env;
+        public EmailSender(
+            //IOptions<AuthMessageSenderOptions> optionsAccessor,
+            IOptions<SmtpSettings> smtpSettings,
+            IWebHostEnvironment env,
+            IEmailLogService emailLog
+            )
         {
-            Options = optionsAccessor.Value;
+            //Options = optionsAccessor.Value;
+
+            _smtpSettings = smtpSettings.Value;
+            _env = env;
+            _emailLog = emailLog;
         }
 
-        public AuthMessageSenderOptions Options { get; } //set only via Secret Manager
 
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
-            return this.Execute(Options.SendGridKey, email, subject, htmlMessage);
-        }
 
-        private Task Execute(string apiKey, string email, string subject, string htmlMessage)
+        public async Task SendEmailWithAttachmentAsync(string email, string subject, string body, List<Attachment> lstattachment)
         {
-            var client = new SendGridClient(apiKey);
-            var msg = new SendGridMessage()
+            try
             {
-                From = new EmailAddress(Options.FromEmail, Options.FromName),
-                Subject = subject,
-                PlainTextContent = htmlMessage,
-                HtmlContent = htmlMessage
-            };
+                var message = new MailMessage();
+                EmailLog emailLog = new EmailLog()
+                {
+                    From = _smtpSettings.SenderEmail,
+                    To = email,
+                    Body = body,
+                    Subject = subject,
 
-            msg.AddTo(new EmailAddress(email));
+                };
 
-            // Disable click tracking.
-            // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-            msg.SetClickTracking(false, false);
+                message.To.Add(email);
+                message.From = message.From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName);
+                message.Subject = subject;
+                foreach (var item in lstattachment)
+                {
+                    message.Attachments.Add(item);
+                }
+                message.Body = body;
+                using (var smtpClient = new SmtpClient())
+                {
+                    try
+                    {
+                        smtpClient.Host = _smtpSettings.Server;
+                        smtpClient.Port = 587; // Google smtp port
+                        smtpClient.EnableSsl = true;
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;// disable it
+                        /// Now specify the credentials 
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
-            Task<Response> response = client.SendEmailAsync(msg);
-            return response;
+                        await smtpClient.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        emailLog.LogStatus = (int)EmailStatus.Fail;
+                        emailLog.FailResoan = e.Message;
+                    }
+                    finally
+                    {
+
+                        await _emailLog.CreateAsync(emailLog);
+
+
+                    }
+                }
+               
+
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(e.Message);
+            }
         }
+        public async Task SendEmailAsync(string email, string subject, string body)
+        {
+            try
+            {
+                var message = new MailMessage();
+
+                EmailLog emailLog = new EmailLog()
+                {
+                    From = _smtpSettings.SenderEmail,
+                    To = email,
+                    Body = body,
+                    Subject = subject,
+
+                };
+
+
+
+                message.To.Add(email);
+                message.From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName);
+                message.Subject = subject;
+                message.Body = body;
+                using (var smtpClient = new SmtpClient())
+                {
+                    try
+                    {
+                        smtpClient.Host = _smtpSettings.Server;
+                        smtpClient.Port = 587; // Google smtp port
+                        smtpClient.EnableSsl = true;
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.UseDefaultCredentials = false;// disable it
+                        /// Now specify the credentials 
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+
+                        await smtpClient.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        emailLog.LogStatus = (int)EmailStatus.Fail;
+                        emailLog.FailResoan = e.Message;
+                    }
+                    finally
+                    {
+
+                        await _emailLog.CreateAsync(emailLog);
+
+
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(e.Message);
+            }
+        }
+
+
+
     }
 
     public interface IEmailSender
     {
         Task SendEmailAsync(string email, string subject, string htmlMessage);
+        Task SendEmailWithAttachmentAsync(string email, string subject, string htmlMessage, List<Attachment> attachments);
     }
 }

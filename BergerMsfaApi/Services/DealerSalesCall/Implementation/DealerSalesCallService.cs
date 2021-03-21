@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Berger.Common;
 using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
@@ -25,21 +27,28 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
     public class DealerSalesCallService : IDealerSalesCallService
     {
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<EmailConfigForDealerSalesCall> _repository;
         private readonly IDropdownService _dropdownService;
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
+
 
         public DealerSalesCallService(
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
                 IDropdownService dropdownService,
                 IFileUploadService fileUploadService,
-                IMapper mapper
+                IMapper mapper,
+                IRepository<EmailConfigForDealerSalesCall> repository,
+                IEmailSender emailSender
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
             this._dropdownService = dropdownService;
             this._fileUploadService = fileUploadService;
             this._mapper = mapper;
+            _repository = repository;
+            _emailSender = emailSender;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -63,7 +72,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             return result.Id;
         }
-        
+
         public async Task<bool> AddRangeAsync(List<SaveDealerSalesCallModel> models)
         {
             var dealerSalesCalls = new List<DSC.DealerSalesCall>();
@@ -90,6 +99,15 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
 
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
+            var res = models.Select(p => p.DealerSalesIssues).ToList().Select(p => p.Select(c => c.DealerSalesIssueCategoryId)).Distinct().ToArray();
+
+            for (int i = 0; i < res.Length; i++)
+            {
+                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
+                if (!string.IsNullOrEmpty(email))
+                    await sendEmail(email);
+            }
+
             return true;
         }
 
@@ -156,15 +174,15 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             foreach (var item in companyList)
             {
                 modelResult.DealerCompetitionSales.Add(
-                        new SaveDealerCompetitionSalesModel 
-                        { 
-                            CompanyId = item.Id, 
-                            CompanyName = item.DropdownName 
+                        new SaveDealerCompetitionSalesModel
+                        {
+                            CompanyId = item.Id,
+                            CompanyName = item.DropdownName
                         }
                     );
             }
 
-            if(result != null)
+            if (result != null)
             {
                 modelResult.HasSubDealerInfluence = result.HasSubDealerInfluence;
                 modelResult.SubDealerInfluenceId = result.SubDealerInfluenceId;
@@ -175,12 +193,12 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
                 modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
 
-                if(result.DealerCompetitionSales != null)
+                if (result.DealerCompetitionSales != null)
                 {
                     foreach (var item in result.DealerCompetitionSales)
                     {
                         var dcs = modelResult.DealerCompetitionSales.FirstOrDefault(X => X.CompanyId == item.CompanyId);
-                        if(dcs != null)
+                        if (dcs != null)
                         {
                             dcs.AverageMonthlySales = item.AverageMonthlySales;
                             dcs.ActualMTDSales = item.ActualMTDSales;
@@ -276,6 +294,29 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
 
             return modelResult;
+        }
+
+
+
+        private async Task sendEmail(string email)
+        {
+            try
+            {
+                string[] lstemail = email.Split(',');
+
+
+                foreach (var item in lstemail)
+                {
+                    string messageBody = "Hello";
+
+                    await _emailSender.SendEmailAsync(item, "Issue Category", messageBody);
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }

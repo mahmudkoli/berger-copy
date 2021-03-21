@@ -48,8 +48,11 @@ namespace BergerMsfaApi
             services.Configure<ActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectorySettings").Bind(options));
             services.Configure<TokensSettingsModel>(options => Configuration.GetSection("TokensSettings").Bind(options));
             services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
-            services.Configure<AuthMessageSenderOptions>(options =>
-                       Configuration.GetSection("SendGridEmailSettings").Bind(options));
+            //services.Configure<AuthMessageSenderOptions>(options =>
+            //           Configuration.GetSection("SendGridEmailSettings").Bind(options));
+            
+            services.Configure<SmtpSettings>(options =>
+                       Configuration.GetSection("SmtpSettings").Bind(options));
            
             var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
@@ -90,7 +93,8 @@ namespace BergerMsfaApi
             services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IMTSDataService, MTSDataService>();
-            services.Configure<AuthMessageSenderOptions>(Configuration);
+            //services.Configure<AuthMessageSenderOptions>(Configuration);
+            services.Configure<SmtpSettings>(Configuration);
 
             services.AddTransient<IEmailSender, EmailSender>();
 

@@ -32,4 +32,12 @@ namespace Berger.Common.Enumerations
         Edited = 2,
         Rejected = 3
     }
+
+
+    public enum EmailStatus
+    {
+        Success = 1,
+        Fail = 2,
+        
+    }
 }

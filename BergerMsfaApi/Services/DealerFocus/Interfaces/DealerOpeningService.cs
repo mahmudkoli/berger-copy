@@ -12,14 +12,14 @@ using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting.Internal;
 using MimeKit;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
-using Attachment = Berger.Data.MsfaEntity.PainterRegistration.Attachment;
-
+using Berger.Data.MsfaEntity.PainterRegistration;
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
     public class DealerOpeningService : IDealerOpeningService
@@ -33,6 +33,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private readonly IRepository<EmailConfigForDealerOppening> _emailconfig;
         private readonly IRepository<DealerOpeningLog> _dealerOpeningLog;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _env;
 
         public DealerOpeningService(
               IRepository<DealerOpening> dealerOpeningSvc,
@@ -43,7 +44,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
               IRepository<UserInfo> userInfoSvc,
               IRepository<EmailConfigForDealerOppening> emailconfig,
               IRepository<DealerOpeningLog> dealerOpeningLog,
-              IEmailSender emailSender
+              IEmailSender emailSender,
+              IWebHostEnvironment env
+
 
             )
         {
@@ -56,6 +59,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _emailconfig = emailconfig;
             _dealerOpeningLog = dealerOpeningLog;
             _emailSender = emailSender;
+            _env = env;
 
 
         }
@@ -314,42 +318,21 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
 
                 var attachment =await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.Id == dealeropeningId);
-
-                List<Attachment> lstAttachment = new List<Attachment>();
-                //foreach (var item in attachment)
-                //{
-
-                //    lstAttachment.Add(item.)
-                //}
+                List<System.Net.Mail.Attachment> lstAttachment = new List<System.Net.Mail.Attachment>();
+                foreach (var item in attachment)
+                {
+                    //string path = Path.Combine(_env.ContentRootPath, item.Path);
+                    //var url = new SendGrid.Helpers.Mail.Attachment(path);
+                    //lstAttachment.Add();
+                }
 
                 string[] lstemail = email.Split(',');
-
-                
-
-                //var pathToFile = _env.WebRootPath
-                //            + Path.DirectorySeparatorChar.ToString()
-                //            + "EmailTemplete"
-                //            + Path.DirectorySeparatorChar.ToString()
-                //            + "EmailTamplete.html";
-
-
-                //var builder = new BodyBuilder();
-
-
-                //using (StreamReader SourceReader = System.IO.File.OpenText(pathToFile))
-                //{
-
-                //    builder.HtmlBody = SourceReader.ReadToEnd();
-
-                //}
-
-
 
                 foreach (var item in lstemail)
                 {
                     string messageBody = "Hello";
 
-                    await _emailSender.SendEmailAsync(item, "Dummy", messageBody);
+                    await _emailSender.SendEmailWithAttachmentAsync(item, "Dummy", messageBody, lstAttachment);
                 }
             }
             catch (System.Exception ex)
