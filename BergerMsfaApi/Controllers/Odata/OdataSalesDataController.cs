@@ -163,7 +163,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
         #endregion
 
-        #region Balance Data
+        #region Balance Collection Data
         [HttpGet("CollectionHistory")]
         public async Task<IActionResult> GetCollectionHistory([FromQuery] CollectionHistorySearchModel model)
         {

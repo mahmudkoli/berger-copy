@@ -8,10 +8,11 @@ namespace Berger.Odata.Model
 {
     public class CollectionHistoryResultModel
     {
-        public string InvoiceNo { get; internal set; }
+        public string DocumentNo { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
-        public string Division { get; internal set; }
+        public string CreditControlArea { get; internal set; }
+        public string CreditControlAreaName { get; internal set; }
         public string BankName { get; internal set; }
         public string PostingDate { get; internal set; }
         public decimal Amount { get; internal set; }
@@ -41,14 +42,15 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
-        public string ChequeNo { get; set; }
+        public string DocumentNo { get; set; }
         public string InstrumentNo { get; set; }
         public string ReversalDate { get; set; }
-        public decimal ReversalAmount { get; set; }
-        public string Bank { get; set; }
-        public string Division { get; set; }
+        public decimal Amount { get; set; }
+        public string BankName { get; set; }
+        public string CreditControlArea { get; set; }
+        public string CreditControlAreaName { get; internal set; }
         public string Reason { get; set; }
-        public string Remarks { get; set; }
+        //public string Remarks { get; set; }
 
         public ChequeBounceResultModel()
         {
@@ -73,10 +75,10 @@ namespace Berger.Odata.Model
 
     public class ChequeSummaryChequeDetailsModel
     {
-        public string ChequeDetails { get; set; }
-        public int MTDNoOfCheque { get; set; }
+        public string ChequeDetailsName { get; set; }
+        public decimal MTDNoOfCheque { get; set; }
         public decimal MTDTotalChequeValue { get; set; }
-        public int YTDNoOfCheque { get; set; }
+        public decimal YTDNoOfCheque { get; set; }
         public decimal YTDTotalChequeValue { get; set; }
 
         public ChequeSummaryChequeDetailsModel()
@@ -87,10 +89,11 @@ namespace Berger.Odata.Model
 
     public class ChequeSummaryChequeBounceDetailsModel
     {
-        public string DealerCodeName { get; set; }
-        public string Date { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public string ReversalDate { get; set; }
         public string ChequeNo { get; set; }
-        public string ChequeAmount { get; set; }
+        public string Amount { get; set; }
 
         public ChequeSummaryChequeBounceDetailsModel()
         {

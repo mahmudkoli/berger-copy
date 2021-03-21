@@ -8,15 +8,13 @@ namespace Berger.Odata.Model
     public class CollectionHistorySearchModel
     {
         public string CustomerNo { get; set; }
-        public string Division { get; set; }
+        public string CreditControlArea { get; set; }
     }
 
     public class BalanceConfirmationSummarySearchModel
     {
         public string CustomerNo { get; set; }
         public string CreditControlArea { get; set; }
-        //public string PostingDate { get; set; }
-        //public string FiscalYear { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
     }
