@@ -14,18 +14,22 @@ export class Brand {
     isCBInstalled: boolean;
     isMTS: boolean;
     isPremium: boolean;
+    isEnamel: boolean;
 
     isCBInstalledText: string;
     isMTSText: string;
     isPremiumText: string;
+    isEnamelText: string;
     
     isCBInstalledBtnClass: string;
     isMTSBtnClass: string;
     isPremiumBtnClass: string;
+    isEnamelBtnClass: string;
     
     isCBInstalledBtnIcon: string;
     isMTSBtnIcon: string;
     isPremiumBtnIcon: string;
+    isEnamelBtnIcon: string;
 
     // log details button
     viewDetailsText: string;
