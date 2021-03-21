@@ -14,4 +14,18 @@
         public decimal TillDateIdealAchieved { get; set; }
         public decimal TillDateActualAchieved { get; set; }
     }
+
+    public class MySummaryReportResultModel
+    {
+        public int DealerVisitTarget { get; set; }
+        public int ActualVisited { get; set; }
+        public int SubDealerActuallyVisited { get; set; }
+        public int PainterActuallyVisited { get; set; }
+        public int AdHocVisitNo { get; set; }
+        public int LeadGenerationNo { get; set; }
+        public int LeadFollowupNo { get; set; }
+        public int LeadFollowupValue { get; set; }
+        public int NoOfBillingDealer { get; set; }
+        public int TotalCollectionValue { get; set; }
+    } 
 }
