@@ -35,6 +35,7 @@ export class PainterRegisDetailComponent implements OnInit {
             (result: any) => {
 
                 this.painter = result.data;
+                console.log(this.painter);
             },
             (err: any) => console.log(err)
         );
