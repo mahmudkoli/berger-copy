@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.Interfaces;
+using BergerMsfaApi.Services.OData.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
@@ -17,11 +17,13 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IReportDataService _reportDataService;
         private readonly IAuthService _authService;
+        private readonly IODataReportService _oDataReportService;
 
-        public ODataReportController(IReportDataService reportDataService, IAuthService authService)
+        public ODataReportController(IReportDataService reportDataService, IAuthService authService,IODataReportService oDataReportService)
         {
             _reportDataService = reportDataService;
             _authService = authService;
+            _oDataReportService = oDataReportService;
         }
 
         [HttpGet("MyTargetReport")]
@@ -43,5 +45,21 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("MySummaryReport")]
+        public async Task<IActionResult> MySummaryReport()
+        {
+            try
+            {
+                var result = await _oDataReportService.MySummaryReport();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+         
     }
 }
