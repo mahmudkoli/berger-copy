@@ -90,6 +90,7 @@ namespace BergerMsfaApi
             services.AddScoped<IFinancialDataService, FinancialDataService>();
             services.AddScoped<IBalanceDataService, BalanceDataService>();
             services.AddScoped<IQuarterlyPerformanceDataService, QuarterlyPerformanceDataService>();
+            services.AddScoped<IReportDataService, ReportDataService>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Repository"))

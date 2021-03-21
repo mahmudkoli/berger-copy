@@ -20,12 +20,12 @@ namespace Berger.Odata.Services
 
         public ODataCommonService(
             IODataRepository<CreditControlArea> creditControlAreaRepository,
-            IMapper mapper
-            )
+            IMapper mapper)
         {
             _creditControlAreaRepository = creditControlAreaRepository;
             _mapper = mapper;
         }
+
 
         public async Task<IList<CreditControlArea>> GetAllCreditControlAreasAsync()
         {

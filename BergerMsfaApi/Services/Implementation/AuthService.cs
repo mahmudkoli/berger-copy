@@ -25,7 +25,7 @@ namespace BergerMsfaApi.Services.Implementation
         private readonly ICommonService _commonService;
 
         public AuthService(
-            IOptions<TokensSettingsModel> settings, 
+            IOptions<TokensSettingsModel> settings,
             IUserInfoService user,
             ICommonService commonService)
         {
@@ -52,7 +52,7 @@ namespace BergerMsfaApi.Services.Implementation
                     Phone = userInfo.PhoneNumber,
                     UserAgentInfo = "127.0.0.1",
                     //NodeId = userInfo.NodeId,
-                    ActiveRoleName = userInfo.RoleName
+                    ActiveRoleName = userInfo.RoleName,
                 };
 
                 var appClaimes = userPrincipal.GetByName().Select(item => new Claim(item.Key, item.Value));
@@ -64,7 +64,6 @@ namespace BergerMsfaApi.Services.Implementation
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 };
                 claims.AddRange(appClaimes);
-
                 foreach (var role in userPrincipal.RoleIdList)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
@@ -85,37 +84,13 @@ namespace BergerMsfaApi.Services.Implementation
                 var userCat = string.Empty;
                 var userCatIds = new List<string>();
 
-                switch (userInfo.EmployeeRole)
-                {
-                    case EnumEmployeeRole.DIC:
-                        userCat = EnumUserCategory.Plant.ToString();
-                        userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
-                        break;
-                    case EnumEmployeeRole.BIC:
-                        userCat = EnumUserCategory.SalesOffice.ToString();
-                        userCatIds = userInfo.SaleOfficeIds.Select(x => x.ToString()).ToList();
-                        break;
-                    case EnumEmployeeRole.AM:
-                        userCat = EnumUserCategory.Area.ToString();
-                        userCatIds = userInfo.AreaIds.Select(x => x.ToString()).ToList();
-                        break;
-                    case EnumEmployeeRole.TM_TO:
-                        userCat = EnumUserCategory.Territory.ToString();
-                        userCatIds = userInfo.TerritoryIds.Select(x => x.ToString()).ToList();
-                        break;
-                    case EnumEmployeeRole.ZO:
-                        userCat = EnumUserCategory.Zone.ToString();
-                        userCatIds = userInfo.ZoneIds.Select(x => x.ToString()).ToList();
-                        break;
-                    default:
-                        break;
-                }
+                userCat = UserCat(userInfo, userCat, ref userCatIds);
                 #endregion
 
                 var dealerOpeningsHierarchyList = await _commonService.GetPSATZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
-                
+
 
                 var results = new AuthenticateUserModel()
                 {
@@ -130,17 +105,17 @@ namespace BergerMsfaApi.Services.Implementation
                     PlantIds = userInfo.PlantIds,
                     PlantId = userInfo.PlantIds.FirstOrDefault(),
                     SalesOfficeIds = userInfo.SaleOfficeIds,
-                    SalesOfficeId = userInfo.SaleOfficeIds.FirstOrDefault()??"",
+                    SalesOfficeId = userInfo.SaleOfficeIds.FirstOrDefault() ?? "",
                     AreaIds = userInfo.AreaIds,
-                    AreaId = userInfo.AreaIds.FirstOrDefault()??"",
+                    AreaId = userInfo.AreaIds.FirstOrDefault() ?? "",
                     TerritoryIds = userInfo.TerritoryIds,
-                    TerritoryId = userInfo.TerritoryIds.FirstOrDefault()??"",
+                    TerritoryId = userInfo.TerritoryIds.FirstOrDefault() ?? "",
                     ZoneIds = userInfo.ZoneIds,
-                    ZoneId = userInfo.ZoneIds.FirstOrDefault()??"",
+                    ZoneId = userInfo.ZoneIds.FirstOrDefault() ?? "",
                     UserCategory = userCat,
                     UserCategoryIds = userCatIds,
-                    RoleId=userInfo.RoleId,
-                    RoleName=userInfo.RoleName,
+                    RoleId = userInfo.RoleId,
+                    RoleName = userInfo.RoleName,
                     EmployeeId = userInfo.EmployeeId,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
@@ -152,6 +127,50 @@ namespace BergerMsfaApi.Services.Implementation
             {
                 throw ex;
             }
+        }
+
+        public async Task<IList<int>> GetDealerByUserId(int userId)
+        {
+
+            var userInfo = await _userService.GetUserAsync(userId);
+            var userCat = string.Empty;
+            var userCatIds = new List<string>();
+
+            userCat = UserCat(userInfo, userCat, ref userCatIds);
+
+            var result = await _commonService.AppGetDealerInfoListByUserCategory(userCat, userCatIds);
+            return result.Select(x => x.CustomerNo).ToList();
+        }
+
+        private  string UserCat(UserInfoModel userInfo, string userCat, ref List<string> userCatIds)
+        {
+            switch (userInfo.EmployeeRole)
+            {
+                case EnumEmployeeRole.DIC:
+                    userCat = EnumUserCategory.Plant.ToString();
+                    userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
+                    break;
+                case EnumEmployeeRole.BIC:
+                    userCat = EnumUserCategory.SalesOffice.ToString();
+                    userCatIds = userInfo.SaleOfficeIds.Select(x => x.ToString()).ToList();
+                    break;
+                case EnumEmployeeRole.AM:
+                    userCat = EnumUserCategory.Area.ToString();
+                    userCatIds = userInfo.AreaIds.Select(x => x.ToString()).ToList();
+                    break;
+                case EnumEmployeeRole.TM_TO:
+                    userCat = EnumUserCategory.Territory.ToString();
+                    userCatIds = userInfo.TerritoryIds.Select(x => x.ToString()).ToList();
+                    break;
+                case EnumEmployeeRole.ZO:
+                    userCat = EnumUserCategory.Zone.ToString();
+                    userCatIds = userInfo.ZoneIds.Select(x => x.ToString()).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            return userCat;
         }
     }
 }
