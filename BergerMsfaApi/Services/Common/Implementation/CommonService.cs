@@ -51,7 +51,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<FocusDealer> focusDealerSvc,
             IRepository<UserInfo> userInfosvc,
             IRepository<Division> divisionSvc,
-            IRepository<Painter> painterSvc),
+            IRepository<Painter> painterSvc,
             IRepository<CreditControlArea> creditControlAreaSvc)
         {
             _focusDealerSvc = focusDealerSvc;
