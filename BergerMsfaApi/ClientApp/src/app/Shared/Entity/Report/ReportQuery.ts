@@ -123,3 +123,17 @@ export class DealerVisitReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class TintingMachineReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

@@ -59,6 +59,11 @@ namespace BergerMsfaApi.Models.Report
         
     }
 
+    public class TintingMachineReportSearchModel : ReportBaseSearchModel
+    {
+     
+    }
+
     public class CollectionReportSearchModel : ReportBaseSearchModel
     {
         public int? PaymentMethodId { get; set; }

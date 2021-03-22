@@ -14,6 +14,7 @@ import { ReportComponent } from './report.component';
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
+import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
 
 const routes: Routes = [
   {
@@ -91,6 +92,12 @@ const routes: Routes = [
         component: DealerVisitReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Dealer Visit', },
+      },
+      {
+        path: 'tinting-machine',
+        component: TintingMachineReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Tinting Machine Report', },
       },
     ],
   }

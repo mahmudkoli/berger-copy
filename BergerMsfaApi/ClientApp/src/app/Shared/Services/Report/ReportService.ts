@@ -105,4 +105,13 @@ export class ReportService {
         return `${this.reportsEndpoint}/DownloadDealerVisit?${this.commonService.toQueryString(filter)}`;
     }
 
+
+    getTintingMachine(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetTintingMachine?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadTintingMachine(filter?) {
+        return `${this.reportsEndpoint}/DownloadTintingMachine?${this.commonService.toQueryString(filter)}`;
+    }
+
 }
