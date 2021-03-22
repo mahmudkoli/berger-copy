@@ -15,6 +15,7 @@ namespace Berger.Odata.Model
         public decimal DaySales { get; set; }
         public decimal TillDateIdealAchieved { get; set; }
         public decimal TillDateActualAchieved { get; set; }
+        public string Category { get; set; }
     }
 
     public class MySummaryReportResultModel
