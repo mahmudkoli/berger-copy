@@ -83,7 +83,7 @@ import { ModalNotificationComponent } from './LayoutComponent/Components/header/
 
     NotificationComponent,
 
-    ModalNotificationComponent
+    ModalNotificationComponent,
 
    
 

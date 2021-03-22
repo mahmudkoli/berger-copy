@@ -158,5 +158,47 @@ namespace BergerMsfaApi.Controllers.Common
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetPainterList")]
+        public async Task<IActionResult> GetPainterList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetPainterList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetMonthList")]
+        public async Task<IActionResult> GetMonthList()
+        {
+            try
+            {
+                var result = _commonSvc.GetMonthList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetYearList")]
+        public async Task<IActionResult> GetYearList()
+        {
+            try
+            {
+                var result = _commonSvc.GetYearList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
