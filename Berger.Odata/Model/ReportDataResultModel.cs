@@ -71,4 +71,19 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class ReportOutstandingSummaryResultModel
+    {
+        public string CreditControlArea { get; internal set; }
+        public string CreditControlAreaName { get; internal set; }
+        public decimal ValueLimit { get; internal set; }
+        public decimal NetDue { get; internal set; }
+        public decimal Slippage { get; internal set; }
+        public decimal OSOver90Days { get; internal set; }
+
+        public ReportOutstandingSummaryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

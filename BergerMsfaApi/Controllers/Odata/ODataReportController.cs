@@ -19,13 +19,20 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IAuthService _authService;
         private readonly IODataReportService _oDataReportService;
         private readonly ISalesDataService _salesDataService;
+        private readonly IFinancialDataService _financialDataService;
 
-        public ODataReportController(IReportDataService reportDataService, IAuthService authService,IODataReportService oDataReportService,ISalesDataService salesDataService)
+        public ODataReportController(
+            IReportDataService reportDataService, 
+            IAuthService authService,
+            IODataReportService oDataReportService,
+            ISalesDataService salesDataService,
+            IFinancialDataService financialDataService)
         {
             _reportDataService = reportDataService;
             _authService = authService;
             _oDataReportService = oDataReportService;
             _salesDataService = salesDataService;
+            _financialDataService = financialDataService;
         }
 
         [HttpGet("MyTargetReport")]
@@ -107,6 +114,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-         
+        [HttpGet("OutstandingSummary")]
+        public async Task<IActionResult> GetReportOutstandingSummary()
+        {
+            try
+            {
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _financialDataService.GetReportOutstandingSummary(dealerIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
     }
 }
