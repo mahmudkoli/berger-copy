@@ -46,5 +46,24 @@ export class FocusdealerService {
     public updateDealerStatus(dealer) {
         return this.http.put<any>(this.baseUrl + `v1/focusdealer/UpdateDealerStatus/`,dealer);
     }
+
+
+    public createEmailConfig(model) {
+        // debugger;
+        return this.http.post<APIResponse>(this.baseUrl + 'v1/EmailConfig/CreateEmailConfig', model);
+
+    }
+
+    public updateEmailConfig(dealer) {
+        return this.http.put<any>(this.baseUrl + `v1/EmailConfig/UpdateEmailConfig/`,dealer);
+    }
+
+    public getEmailConfig() {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/EmailConfig/GetEmailConfig`);
+    }
+
+    public getEmailConfigById(id) {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/EmailConfig/GetById/' + id);
+    }
   
 }

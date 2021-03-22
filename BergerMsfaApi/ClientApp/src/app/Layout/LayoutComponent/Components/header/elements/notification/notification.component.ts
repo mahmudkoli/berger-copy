@@ -11,6 +11,7 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { Enums } from 'src/app/Shared/Enums/enums';
 import { WorkflowLogHistoryService } from 'src/app/Shared/Services/Workflow/workflow-log-history.service';
 import { WorkflowStatusEnumLabel, WorkflowStatusEnum } from 'src/app/Shared/Enums/workflowStatusEnum';
+import { NotificationService } from 'src/app/Shared/Services/Notification/Notification.service';
 
 
 
@@ -57,19 +58,28 @@ export class NotificationComponent implements OnInit {
    closeResult: string;
    workFlowStatusEnumLabel : MapObject[] =  WorkflowStatusEnumLabel.workflowStatusEnumLabel;
    workFlowStatusEnum = WorkflowStatusEnum;
-
+  lstList=[];
+  lstDealerOpening=[];
+  lstJourneyPlan=[]
   constructor(
     private router: Router,
     private workflowLogService: WorkflowLogService,
     private workflowLogHistoryService: WorkflowLogHistoryService,
     private alertService: AlertService,
     private modalService: NgbModal,
+    private notificationService: NotificationService
   
   ) { }
 
   ngOnInit() {
     // this.getWorkflowLogForCurrentUser();
     // this.getWorkflowLogHistoryForCurrentUser();
+    this.notificationService.getJourneyPlanList().subscribe((res:any)=>{
+      this.lstDealerOpening=res.notificationForDealerOpningModel
+      this.lstJourneyPlan=res.notificationForJourneyPlan
+      this.pendingWorkflowCount=res.totalNoification
+      console.log(res,"Res")
+    })
   }
 
   getStatusText(status) {
@@ -120,6 +130,8 @@ export class NotificationComponent implements OnInit {
       backdrop: 'static',
       keyboard: false
     };
+    this.pendingWorkflowCount=0;
+
     const modalRef = this.modalService.open(ModalNotificationComponent, ngbModalOptions);
     modalRef.componentInstance.workflowLogModel = workflowLog;
     modalRef.componentInstance.workflowStatus = status;

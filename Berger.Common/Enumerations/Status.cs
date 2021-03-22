@@ -24,4 +24,20 @@ namespace Berger.Common.Enumerations
         Edited = 2,
         Rejected=3
     }
+
+    public enum DealerOpeningStatus
+    {
+        Pending = 0,
+        Approved = 1,
+        Edited = 2,
+        Rejected = 3
+    }
+
+
+    public enum EmailStatus
+    {
+        Success = 1,
+        Fail = 2,
+        
+    }
 }
