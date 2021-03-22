@@ -237,7 +237,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<int> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null)
+            IList<int> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -264,6 +264,16 @@ namespace Berger.Odata.Services
             if (division != "-1")
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
+            }
+
+            if (customerClassification != "-1")
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.CustomerClassification, customerClassification);
+            }
+
+            if (territory != "-1")
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.Territory, territory);
             }
 
             if (materialCodes != null && materialCodes.Any())

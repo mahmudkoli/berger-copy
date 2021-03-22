@@ -46,7 +46,7 @@ namespace Berger.Odata.Services
         Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(
             SelectQueryOptionBuilder selectQueryBuilder,
             IList<int> dealerList, string startDate, string endDate, string division = "-1",
-            List<string> materialCodes = null, List<string> brands = null);
+            List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1");
 
         Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
             IList<int> dealerIds, string compareMonth, string division = "-1");
