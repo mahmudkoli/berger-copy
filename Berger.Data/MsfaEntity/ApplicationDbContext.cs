@@ -163,6 +163,9 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         public DbSet<DealerOpening> DealerOpenings { get; set; }
+        public DbSet<DealerOpeningLog> DealerOpeningLogs { get; set; }
+        public DbSet<EmailConfigForDealerOppening> EmailConfigForDealerOppenings { get; set; }
+        public DbSet<EmailConfigForDealerSalesCall> EmailConfigForDealerSalesCalls { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
 
@@ -170,6 +173,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
+        public DbSet<Berger.Data.MsfaEntity.EmailLog.EmailLog> EmailLogs { get; set; }
         #endregion
 
         #region Demand Generation

@@ -28,3 +28,14 @@ export enum EnumDynamicTypeCode {
     ProductSourcing = "PS03",
 }
 
+
+export class EnumDealerSalesCallIssueCategory{
+    public static IssueCategory :  MapObject[] = [
+        { id : 1, label : "ISSUES01" },
+        { id : 2, label : "ISSUES02" },
+        { id : 3, label : "ISSUES03" },
+        { id : 4, label : "ISSUES04" },
+        { id : 5, label : "ISSUES05" }
+    ];
+}
+
