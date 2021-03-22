@@ -1,4 +1,6 @@
-﻿namespace Berger.Odata.Model
+﻿using Berger.Common.Extensions;
+
+namespace Berger.Odata.Model
 {
     public class TargetReportResultModel
     {
@@ -28,4 +30,29 @@
         public int NoOfBillingDealer { get; set; }
         public int TotalCollectionValue { get; set; }
     } 
+
+    public class TotalInvoiceValueResultModel
+    {
+        public string InvoiceNoOrBillNo { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public decimal NetAmount { get; set; }
+    }
+
+    public class BrandOrDivisionWisePerformanceResultModel
+    {
+        public string MatarialGroupOrBrandOrDivision { get; internal set; }
+        //public decimal LYSM { get; internal set; }
+        public decimal LYMTD { get; internal set; }
+        public decimal LYYTD { get; internal set; }
+        public decimal CYMTD { get; internal set; }
+        public decimal CYYTD { get; internal set; }
+        public decimal GrowthMTD { get; internal set; }
+        public decimal GrowthYTD { get; internal set; }
+
+        public BrandOrDivisionWisePerformanceResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

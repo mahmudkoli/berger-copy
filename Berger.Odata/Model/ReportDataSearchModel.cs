@@ -21,4 +21,18 @@
         Liquid = 1,
         PowderClub = 2,
     }
+
+    public class TotalInvoiceValueSearchModel
+    {
+        public string Division { get; set; }
+    }
+
+    public class BrandOrDivisionWisePerformanceSearchModel
+    {
+        //public string CustomerNo { get; set; }
+        public string Division { get; set; } // "-1" for all
+        public EnumBrandOrDivision BrandOrDivision { get; set; }
+        public EnumVolumeOrValue VolumeOrValue { get; set; }
+        //public EnumPeriod Period { get; set; }
+    }
 }
