@@ -57,3 +57,69 @@ export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class PainterRegisterQuery extends ReportBaseQuery {
+    painterMobileNo: string;
+    painterId: number;
+    painterType: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class DealerOpeningQuery extends ReportBaseQuery {
+    
+    constructor(init?: Partial<DealerOpeningQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class CollectionReportQuery extends ReportBaseQuery {
+    
+    paymentMethodId: number;
+    dealerId: number;
+
+    constructor(init?: Partial<DealerOpeningQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class PaintersCallReportQuery extends ReportBaseQuery {
+    painterId: number;
+    painterType: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class DealerVisitReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

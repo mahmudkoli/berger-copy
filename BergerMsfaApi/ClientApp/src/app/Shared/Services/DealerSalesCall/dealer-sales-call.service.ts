@@ -27,6 +27,26 @@ export class DealerSalesCallService {
       return this.http.get<APIResponse>(`${this.DealerSalesCallsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }
   
+
+
+    
+    public createEmailConfig(model) {
+      // debugger;
+      return this.http.post<APIResponse>(this.baseUrl + 'v1/EmailConfigDealerSales/CreateEmailConfig', model);
+
+  }
+
+  public updateEmailConfig(dealer) {
+      return this.http.put<any>(this.baseUrl + `v1/EmailConfigDealerSales/UpdateEmailConfig/`,dealer);
+  }
+
+  public getEmailConfig() {
+      return this.http.get<APIResponse>(this.baseUrl + `v1/EmailConfigDealerSales/GetEmailConfig`);
+  }
+
+  public getEmailConfigById(id) {
+      return this.http.get<APIResponse>(this.baseUrl + 'v1/EmailConfigDealerSales/GetById/' + id);
+  }
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.DealerSalesCallsEndpoint}/activeInactive/${id}`, null);
     // }
