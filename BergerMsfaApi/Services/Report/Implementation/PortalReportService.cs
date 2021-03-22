@@ -61,6 +61,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
 
+        private readonly ApplicationDbContext _context;
+
         public PortalReportService(
                 IRepository<LeadGeneration> leadGenerationRepository,
                 IRepository<LeadFollowUp> leadFollowUpRepository,
@@ -84,7 +86,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<JourneyPlanMaster> journeyPlanMasterRepository,
                 IRepository<JourneyPlanDetail> journeyPlanDetailRepository,
                 IDropdownService dropdownService,
-                IMapper mapper
+                IMapper mapper,
+
+                ApplicationDbContext context
             )
         {
             this._leadGenerationRepository = leadGenerationRepository;
@@ -110,6 +114,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._journeyPlanMasterRepository = journeyPlanMasterRepository;
             this._journeyPlanDetailRepository = journeyPlanDetailRepository;
             this._mapper = mapper;
+
+            this._context = context;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -923,8 +929,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return queryResult;
         }
-
-
 
     }
 }

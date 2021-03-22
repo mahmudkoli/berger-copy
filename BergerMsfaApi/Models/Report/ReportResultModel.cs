@@ -334,5 +334,128 @@ namespace BergerMsfaApi.Models.Report
         public int NotVisits { get; set; }
     }
 
+    public class DealerSalesCallReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string VisitDate { get; set; }
+        public string TradePromotion { get; set; }
+        public string Target { get; set; }
+        public string SsStatus { get; set; }
+        public string SsReasonForPourOrAverage { get; set; }
+        public string OsCommunication { get; set; }
+        public string SlippageCommunication { get; set; }
+        public string UspCommunication { get; set; }
+        public string ProductLiftingStatus { get; set; }
+        public string ReasonForNotLifting { get; set; }
+        public string CbMachineStatus { get; set; }
+        public string CbProductivity { get; set; }
+        public string Merchendising { get; set; }
+        public string SubDealerInfluence { get; set; }
+        public string SdInfluecePercent { get; set; }
+        public string PainterInfluence { get; set; }
+        public string PainterInfluecePercent { get; set; }
+        public string ProductKnoledge { get; set; }
+        public string SalesTechniques { get; set; }
+        public string MerchendisingImprovement { get; set; }
+        public string CompetitionPresence { get; set; }
+        public string CompetitionService { get; set; }
+        public string CsRemarks { get; set; }
+        public string ProductDisplayAndMerchendizingStatus { get; set; }
+        public string PdmRemarks { get; set; }
+        public string ProductDisplayAndMerchendizingImage { get; set; }
+        public string SchemeModality { get; set; }
+        public string SchemeModalityImage { get; set; }
+        public string ShopBoy { get; set; }
+        public string ApAvrgMonthlySales { get; set; }
+        public string ApActualMtdSales { get; set; }
+        public string NerolacAvrgMonthlySales { get; set; }
+        public string NerolacActualMtdSales { get; set; }
+        public string NipponAvrgMonthlySales { get; set; }
+        public string NipponActualMtdSales { get; set; }
+        public string DuluxAvrgMonthlySales { get; set; }
+        public string DuluxActualMtdSales { get; set; }
+        public string JotunAvrgMonthlySales { get; set; }
+        public string JotunActualMtdSales { get; set; }
+        public string MoonstarAvrgMonthlySales { get; set; }
+        public string MoonstarActualMtdSales { get; set; }
+        public string EliteAvrgMonthlySales { get; set; }
+        public string EliteActualMtdSales { get; set; }
+        public string AlkarimAvrgMonthlySales { get; set; }
+        public string AlkarimActualMtdSales { get; set; }
+        public string OthersAvrgMonthlySales { get; set; }
+        public string OthersActualMtdSales { get; set; }
+        public string TotalAvrgMonthlySales { get; set; }
+        public string TotalActualMtdSales { get; set; }
+        public string DealerIssueStatus { get; set; }
+        public string DealerSatisfactionStatus { get; set; }
+        public string DealerDissatisfactionReason { get; set; }
+    }
+
+    public class SubDealerSalesCallReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string SubDealerId { get; set; }
+        public string SubDealerName { get; set; }
+        public string VisitDate { get; set; }
+        public string TradePromotion { get; set; }
+        public string SsStatus { get; set; }
+        public string SsReasonForPourOrAverage { get; set; }
+        public string OsStatus { get; set; }
+        public string OsActivity { get; set; }
+        public string UspCommunication { get; set; }
+        public string ProductLiftingStatus { get; set; }
+        public string ReasonForNotLifting { get; set; }
+        public string Merchendising { get; set; }
+        public string PainterInfluence { get; set; }
+        public string PainterInfluecePercent { get; set; }
+        public string ProductKnoledge { get; set; }
+        public string SalesTechniques { get; set; }
+        public string MerchendisingImprovement { get; set; }
+        public string BergerAvrgMonthlySales { get; set; }
+        public string BergerActualMtdSales { get; set; }
+        public string CompetitionPresence { get; set; }
+        public string CompetitionService { get; set; }
+        public string CsRemarks { get; set; }
+        public string ProductDisplayAndMerchendizingStatus { get; set; }
+        public string PdmRemarks { get; set; }
+        public string ProductDisplayAndMerchendizingImage { get; set; }
+        public string SchemeModality { get; set; }
+        public string SchemeModalityImage { get; set; }
+        public string ShopBoy { get; set; }
+        public string ApAvrgMonthlySales { get; set; }
+        public string ApActualMtdSales { get; set; }
+        public string NerolacAvrgMonthlySales { get; set; }
+        public string NerolacActualMtdSales { get; set; }
+        public string NipponAvrgMonthlySales { get; set; }
+        public string NipponActualMtdSales { get; set; }
+        public string DuluxAvrgMonthlySales { get; set; }
+        public string DuluxActualMtdSales { get; set; }
+        public string JotunAvrgMonthlySales { get; set; }
+        public string JotunActualMtdSales { get; set; }
+        public string MoonstarAvrgMonthlySales { get; set; }
+        public string MoonstarActualMtdSales { get; set; }
+        public string EliteAvrgMonthlySales { get; set; }
+        public string EliteActualMtdSales { get; set; }
+        public string AlkarimAvrgMonthlySales { get; set; }
+        public string AlkarimActualMtdSales { get; set; }
+        public string OthersAvrgMonthlySales { get; set; }
+        public string OthersActualMtdSales { get; set; }
+        public string TotalAvrgMonthlySales { get; set; }
+        public string TotalActualMtdSales { get; set; }
+        public string SubDealerIssueStatus { get; set; }
+        public string DealerSatisfactionStatus { get; set; }
+        public string DealerDissatisfactionReason { get; set; }
+    }
+
     #endregion
 }
