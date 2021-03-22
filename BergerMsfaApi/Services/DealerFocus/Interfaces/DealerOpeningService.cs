@@ -20,6 +20,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Common.Constants;
+
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
     public class DealerOpeningService : IDealerOpeningService
@@ -316,7 +318,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             try
             {
-
+                var dealer = _dealerOpeningSvc.Find(p => p.Id == dealeropeningId);
                 var attachment =await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.Id == dealeropeningId);
                 List<System.Net.Mail.Attachment> lstAttachment = new List<System.Net.Mail.Attachment>();
                 foreach (var item in attachment)
@@ -330,9 +332,12 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
                 foreach (var item in lstemail)
                 {
-                    string messageBody = "Hello";
+                    var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
+                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId);;
+                    string messageBody = string.Format(ConstantsLeadValue.OpeningMailBody, createdBy.UserName,LastApprovar.UserName);
+                    string subject = string.Format(ConstantsLeadValue.OpeningMailSubject,dealeropeningId);
 
-                    await _emailSender.SendEmailWithAttachmentAsync(item, "Dummy", messageBody, lstAttachment);
+                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
                 }
             }
             catch (System.Exception ex)
