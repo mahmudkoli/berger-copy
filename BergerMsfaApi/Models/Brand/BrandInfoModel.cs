@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Models.Brand
         public bool IsCBInstalled { get; set; }
         public bool IsMTS { get; set; }
         public bool IsPremium { get; set; }
+        public bool IsEnamel { get; set; }
 
         public void Mapping(Profile profile)
         {

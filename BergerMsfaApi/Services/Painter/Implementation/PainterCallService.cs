@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Models.PainterRegistration;
@@ -187,7 +188,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         }
         public async Task<PainterCallModel> AppCreatePainterCallAsync(int PainterId)
         {
-            var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId == 16);
+            var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.SwappingCompetition);
             if (await _painterCallSvc.AnyAsync(p => p.PainterId == PainterId))
             {
                 var _painterCall = _painterCallSvc
@@ -196,7 +197,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
                 return new PainterCallModel
                 {
-                    Id = _painterCall.Id,
+                    //Id = _painterCall.Id,
                     HasAppUsage = _painterCall.HasAppUsage,
                     Comment = _painterCall.Comment,
                     HasDbblIssue = _painterCall.HasDbblIssue,
@@ -254,6 +255,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             //    };
             else return new PainterCallModel
             {
+                PainterId = PainterId,
                 PainterCompanyMTDValue = (from c in result
                                           join m in _painterCompanyMtvSvc.GetAll()
                                           on new { a = c.Id } equals new { a = m.CompanyId } into comLeftJoin

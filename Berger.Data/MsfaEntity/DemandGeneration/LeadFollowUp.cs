@@ -39,7 +39,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public int? ProjectStatusLeadCompletedId { get; set; }
         public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
-        public int ProjectStatusPartialBusinessPercentage { get; set; }
+        public decimal ProjectStatusPartialBusinessPercentage { get; set; }
         public bool HasSwappingCompetition { get; set; }
         public int? SwappingCompetitionId { get; set; }
         public DropdownDetail SwappingCompetition { get; set; }
@@ -54,14 +54,14 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public string BrandUsedExteriorBrandName { get; set; }
         public string BrandUsedUnderCoatBrandName { get; set; }
         public string BrandUsedTopCoatBrandName { get; set; }
-        public int ActualPaintJobCompletedInteriorPercentage { get; set; }
-        public int ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public int ActualVolumeSoldInteriorGallon { get; set; }
-        public int ActualVolumeSoldInteriorKg { get; set; }
-        public int ActualVolumeSoldExteriorGallon { get; set; }
-        public int ActualVolumeSoldExteriorKg { get; set; }
-        public int ActualVolumeSoldUnderCoatGallon { get; set; }
-        public int ActualVolumeSoldTopCoatGallon { get; set; }
+        public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
+        public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
+        public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        public decimal ActualVolumeSoldInteriorKg { get; set; }
+        public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        public decimal ActualVolumeSoldExteriorKg { get; set; }
+        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         public int BusinessAchievementId { get; set; }
         public LeadBusinessAchievement BusinessAchievement { get; set; }
     }

@@ -14,9 +14,13 @@ using X.PagedList;
 using AutoMapper;
 using BergerMsfaApi.Models.Common;
 using System.Linq.Expressions;
+using Berger.Data.MsfaEntity;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Services.OData.Interfaces;
 using Berger.Odata.Services;
 using Berger.Odata.Model;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Services.OData.Implementation
 {
@@ -27,13 +31,15 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly IRepository<DealerInfo> _dealerInfoRepository;
         private readonly IMTSDataService _mTSDataService;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
         public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
             IRepository<UserInfo> userInfoRepository,
             IRepository<DealerInfo> dealerInfoRepository,
             IMTSDataService mTSDataService,
-            IMapper mapper
+            IMapper mapper,
+            ApplicationDbContext context
             )
         {
             _brandInfoRepository = brandInfoRepository;
@@ -41,6 +47,50 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _dealerInfoRepository = dealerInfoRepository;
             _mTSDataService = mTSDataService;
             _mapper = mapper;
+            _context = context;
+        }
+
+        public async Task<MySummaryReportResultModel> MySummaryReport()
+        {
+            var query = await (from master in _context.JourneyPlanMasters
+                               join details in _context.JourneyPlanDetails on master.Id equals details.PlanId
+                               join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
+                               from dscInfo in dscLeftJoin.DefaultIfEmpty()
+                               join painterCall in _context.PainterCalls on master.EmployeeId equals painterCall.EmployeeId into
+                                   painterCallLeftJoin
+                               from painterCallInfo in painterCallLeftJoin.DefaultIfEmpty()
+                               join dsc2 in _context.DealerSalesCalls on new { master.EmployeeId, Date = DateTime.Now.Date }
+                                   equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date } into dsc2LeftJoin
+                               from dsc2Info in dsc2LeftJoin.DefaultIfEmpty()
+                               join ld in _context.LeadGenerations on new { master.EmployeeId, Date = DateTime.Now.Date }
+                                   equals new { EmployeeId = ld.UserId.ToString(), Date = ld.CreatedTime.Date } into ldLeftJoin
+                               from ldInfo in ldLeftJoin.DefaultIfEmpty()
+                               join lfu in _context.LeadFollowUps on new { ldInfo.Id, Date = DateTime.Now.Date }
+                                   equals new { Id = lfu.LeadGenerationId, Date = lfu.CreatedTime.Date }
+                                   into lfuLeftJoin
+                               from lfuInfo in lfuLeftJoin.DefaultIfEmpty()
+                               where (master.PlanDate.Date == DateTime.Now.Date)
+                               select new
+                               {
+                                   DelarId = details.Id,
+                                   dscInfo.IsSubDealerCall,
+                                   PainterCallInfoId = painterCallInfo.Id,
+                                   dsc2InfoId = dsc2Info.Id,
+                                   LdInfoId = ldInfo.Id,
+                                   lfuInfoId = lfuInfo.Id
+                               }).ToListAsync();
+
+            return new MySummaryReportResultModel
+            {
+                DealerVisitTarget = query.Select(x => x.DelarId).Distinct().Count(),
+                ActualVisited = query.Count(x => !x.IsSubDealerCall),
+                SubDealerActuallyVisited = query.Count(x => x.IsSubDealerCall),
+                PainterActuallyVisited = query.Select(x => x.PainterCallInfoId).Distinct().Count(),
+                AdHocVisitNo = query.Select(x => x.dsc2InfoId).Distinct().Count(),
+                LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(),
+                LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count()
+            };
+
         }
     }
 }

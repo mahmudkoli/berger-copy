@@ -18,7 +18,8 @@ namespace BergerMsfaApi.Models.PainterRegistration
                 .ForMember(src => src.AttachedDealers, map => map.MapFrom(dest => dest.AttachedDealers.Select(dealer => new PNTR.AttachedDealerPainter { Dealer = dealer })));
             
             profile.CreateMap<PNTR.Painter, PainterModel>()
-                   .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)));
+                   .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)))
+                   .ForMember(src => src.PainterCatName, dest => dest.MapFrom(s => s.PainterCat != null ? s.PainterCat.DropdownName : string.Empty));
            
         }
 

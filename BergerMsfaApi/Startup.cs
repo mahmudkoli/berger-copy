@@ -90,9 +90,14 @@ namespace BergerMsfaApi
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddScoped<IODataService, ODataService>();
             services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            services.AddScoped<IODataCommonService, ODataCommonService>();
             services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IMTSDataService, MTSDataService>();
+            services.AddScoped<IFinancialDataService, FinancialDataService>();
+            services.AddScoped<IBalanceDataService, BalanceDataService>();
+            services.AddScoped<IQuarterlyPerformanceDataService, QuarterlyPerformanceDataService>();
+            services.AddScoped<IReportDataService, ReportDataService>();
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             services.Configure<SmtpSettings>(Configuration);
 

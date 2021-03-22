@@ -26,54 +26,55 @@ namespace BergerMsfaApi.Controllers.Painter
     }
 
 
-        [HttpGet("GetPainterCall")]
-        public async Task<IActionResult> GetPainterCallAsync([BindRequired] string employeeId)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _paintCallSvc.AppGetPainterCallListAsync(employeeId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
+        //[HttpGet("GetPainterCall")]
+        //public async Task<IActionResult> GetPainterCallAsync([BindRequired] string employeeId)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _paintCallSvc.AppGetPainterCallListAsync(employeeId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                return ExceptionResult(ex);
-            }
-        }
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
 
-        [HttpGet("GetPainterCallById/{Id}")]
-        public async Task<IActionResult> GetPainterCallByIdAsync(int Id)
-        {
-            try
-            {
-                var result = await _paintCallSvc.AppGetPainterByIdAsync(Id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
+        //[HttpGet("GetPainterCallById/{Id}")]
+        //public async Task<IActionResult> GetPainterCallByIdAsync(int Id)
+        //{
+        //    try
+        //    {
+        //        var result = await _paintCallSvc.AppGetPainterByIdAsync(Id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                return ExceptionResult(ex);
-            }
-        }
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpGet("GetPainterCallByPainterId/{employeeId}/{PainterId}")]
-        public async Task<IActionResult> GetPainterCallByPainterId([BindRequired] string employeeId,int PainterId)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _paintCallSvc.AppGetPainterByPainterIdAsync(employeeId,PainterId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
+        //[HttpGet("GetPainterCallByPainterId/{employeeId}/{PainterId}")]
+        //public async Task<IActionResult> GetPainterCallByPainterId([BindRequired] string employeeId,int PainterId)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _paintCallSvc.AppGetPainterByPainterIdAsync(employeeId,PainterId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                return ExceptionResult(ex);
-            }
-        }
-        [HttpGet("CreatePainterCall/{PainterId}")]
+        //        return ExceptionResult(ex);
+        //    }
+        //}
+
+        [HttpGet("GetPainterCallByPainterId/{PainterId}")]
         public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int PainterId)
         {
             try
@@ -86,12 +87,13 @@ namespace BergerMsfaApi.Controllers.Painter
                 return ExceptionResult(ex);
             }
         }
+
         [HttpPost("CreatePainterCall/{employeeId}")]
-        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired]string employeeId,[FromBody] PainterCallModel model)
+        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] string employeeId, [FromBody] PainterCallModel model)
         {
             try
             {
-                var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId,model);
+                var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId, model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -100,39 +102,40 @@ namespace BergerMsfaApi.Controllers.Painter
             }
         }
 
-        [HttpPut("UpdatePainterCall")]
-        public async Task<IActionResult> UpdatePainterCallAysnc([BindRequired] string employeeId,[FromBody] PainterCallModel model)
-        {
-            try
-            {
-                if(!await _paintCallSvc.IsExistAsync(model.Id))
-                {
-                    ModelState.AddModelError(nameof(model.Id), "Painter Call Not Found");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _paintCallSvc.AppUpdatePainterCallAsync(employeeId,model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
+        //[HttpPut("UpdatePainterCall")]
+        //public async Task<IActionResult> UpdatePainterCallAysnc([BindRequired] string employeeId,[FromBody] PainterCallModel model)
+        //{
+        //    try
+        //    {
+        //        if(!await _paintCallSvc.IsExistAsync(model.Id))
+        //        {
+        //            ModelState.AddModelError(nameof(model.Id), "Painter Call Not Found");
+        //            return ValidationResult(ModelState);
+        //        }
+        //        var result = await _paintCallSvc.AppUpdatePainterCallAsync(employeeId,model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                return ExceptionResult(ex);
-            }
-        }
-        [HttpDelete("DeletePainterCallById/{PainterId}")]
-        public async Task<IActionResult> DeletePainterCallById(int PainterId)
-        {
-            try
-            {
-                var result = await _paintCallSvc.DeletePainterCallByIdlAsync(PainterId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpDelete("DeletePainterCallById/{PainterId}")]
+        //public async Task<IActionResult> DeletePainterCallById(int PainterId)
+        //{
+        //    try
+        //    {
+        //        var result = await _paintCallSvc.DeletePainterCallByIdlAsync(PainterId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
     }
 }

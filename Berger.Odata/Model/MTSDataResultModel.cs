@@ -52,4 +52,19 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class ValueTargetTempResultModel
+    {
+        public string CustomerNo { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string MatarialGroupOrBrand { get; set; }
+        public decimal TargetValue { get; internal set; }
+        public decimal ActualValue { get; internal set; }
+        public decimal DifferenceValue { get; internal set; }
+
+        public ValueTargetTempResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

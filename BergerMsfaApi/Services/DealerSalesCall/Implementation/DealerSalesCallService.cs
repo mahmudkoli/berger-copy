@@ -169,7 +169,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
             modelResult.DealerId = id;
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd("C01");
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
 
             foreach (var item in companyList)
             {

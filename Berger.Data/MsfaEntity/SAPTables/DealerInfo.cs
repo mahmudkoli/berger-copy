@@ -28,6 +28,8 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsActive { get; set; }
         public bool IsExclusive { get; set; }
         public bool IsCBInstalled { get; set; }
+        public bool IsLastYearAppointed { get; set; }
+        public bool IsClubSupreme { get; set; }
 
         private string compositeKey;
         [NotMapped] 

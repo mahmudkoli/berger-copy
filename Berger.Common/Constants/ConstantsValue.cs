@@ -22,4 +22,24 @@ namespace Berger.Common.Constants
         public const string OpeningMailSubject = "New dealer open Request.REQUEST ID: {}";
 
     }
+
+    public static class ConstantsCustomerTypeValue
+    {
+        public const string CustomerTypeDealer = "Dealer";
+        public const string CustomerTypeSubDealer = "Sub-Dealer";
+        public const string CustomerTypeCustomer = "Customer";
+        public const string CustomerTypeDirectProject = "Direct Project";
+    }
+
+    public static class SwappingCompetitionValue
+    {
+        public const string CompetitorAsianPaints = "Asian Paints";
+        public const string CompetitorNerolac = "Nerolac";
+        public const string CompetitorElitePaints = "Elite Paints";
+        public const string CompetitorNippon = "Nippon";
+        public const string CompetitorDulux = "Dulux";
+        public const string CompetitorMoonstar = "Moonstar";
+        public const string CompetitorOthers = "Others";
+    }
+
 }
