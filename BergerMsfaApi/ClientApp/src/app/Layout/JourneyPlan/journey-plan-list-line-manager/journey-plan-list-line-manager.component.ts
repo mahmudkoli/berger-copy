@@ -119,7 +119,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
     }
 
     handleEventClick(info) {
-        debugger;
+        // debugger;
         // alert('Event: ' + info.event.startStr);
         // alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
         // alert('View: ' + info.view.type);

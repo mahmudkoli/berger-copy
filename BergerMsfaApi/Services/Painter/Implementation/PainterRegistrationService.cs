@@ -178,10 +178,33 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 s => s,
                 f => f.EmployeeId == employeeId,
                 null,
-                a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments),
+                a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments).Include(f => f.PainterCat),
                 false
                 );
-            return _mapper.Map<List<PainterModel>>(_painters);
+
+            var mapResults = _mapper.Map<List<PainterModel>>(_painters);
+
+            #region get area mapping data
+            //var depotIds = mapResults.Select(x => x.Depot).Distinct().ToList();
+            //var saleGroupIds = mapResults.Select(x => x.SaleGroup).Distinct().ToList();
+            //var territoryIds = mapResults.Select(x => x.Territory).Distinct().ToList();
+            //var zoneIds = mapResults.Select(x => x.Zone).Distinct().ToList();
+
+            //var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+            //var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
+            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
+            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
+
+            //foreach (var item in mapResults)
+            //{
+            //    item.DepotName = depots.FirstOrDefault(x => x.Werks == item.Depot)?.Name1 ?? string.Empty;
+            //    item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
+            //    item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Name ?? string.Empty;
+            //    item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Name ?? string.Empty;
+            //}
+            #endregion
+
+            return mapResults;
         }
 
 

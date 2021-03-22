@@ -142,7 +142,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
         public async Task<int> AddLeadGenerateAsync(AppSaveLeadGenerationModel model)
         {
             var leadGeneration = _mapper.Map<LeadGeneration>(model);
-            leadGeneration.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
+            //TODO: need to generate code
+            leadGeneration.Code = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
             leadGeneration.CreatedTime = DateTime.Now;
 
             if (!string.IsNullOrWhiteSpace(model.PhotoCaptureUrl))
@@ -220,6 +221,14 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.ExpectedMonthlyBusinessValue = leadFollowUp.ExpectedMonthlyBusinessValue;
                 modelResult.TotalPaintingAreaSqftInterior = leadFollowUp.TotalPaintingAreaSqftInterior;
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
+
+                //modelResult.ProjectStatusPartialBusinessPercentage = leadFollowUp.ProjectStatusPartialBusinessPercentage;
+                //modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
+                //modelResult.UpTradingToBrandName = leadFollowUp.UpTradingToBrandName;
+                //modelResult.BrandUsedInteriorBrandName = leadFollowUp.BrandUsedInteriorBrandName;
+                //modelResult.BrandUsedExteriorBrandName = leadFollowUp.BrandUsedExteriorBrandName;
+                //modelResult.BrandUsedTopCoatBrandName = leadFollowUp.BrandUsedTopCoatBrandName;
+                //modelResult.BrandUsedUnderCoatBrandName = leadFollowUp.BrandUsedUnderCoatBrandName;
             }
 
             return modelResult;

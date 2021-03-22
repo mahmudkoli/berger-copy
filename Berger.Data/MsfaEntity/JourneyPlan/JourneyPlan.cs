@@ -7,6 +7,7 @@ namespace Berger.Data.MsfaEntity
     {
         public string Code { get; set; }
         public int EmployeeRegId { get; set; }
+        public int EditCount { get; set; }
 
         public DateTime VisitDate { get; set; }
         public int? ApprovedBy { get; set; }

@@ -36,6 +36,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<UserInfo> _userInfosvc;
         private readonly IRepository<Division> _divisionSvc;
         private readonly IRepository<Painter> _painterSvc;
+        private readonly IRepository<CreditControlArea> _creditControlAreaSvc;
 
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
@@ -50,7 +51,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<FocusDealer> focusDealerSvc,
             IRepository<UserInfo> userInfosvc,
             IRepository<Division> divisionSvc,
-            IRepository<Painter> painterSvc)
+            IRepository<Painter> painterSvc),
+            IRepository<CreditControlArea> creditControlAreaSvc)
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
@@ -65,6 +67,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _userInfosvc = userInfosvc;
             _divisionSvc = divisionSvc;
             _painterSvc = painterSvc;
+            _creditControlAreaSvc = creditControlAreaSvc;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -112,6 +115,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
 
             return await _divisionSvc.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<CreditControlArea>> GetCreditControlAreaList()
+        {
+            return await _creditControlAreaSvc.GetAllAsync(); ;
         }
 
         private List<UserInfoModel> Getuser(List<UserInfoModel> result, string employeeId)

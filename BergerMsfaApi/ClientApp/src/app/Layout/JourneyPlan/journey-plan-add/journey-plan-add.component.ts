@@ -32,7 +32,7 @@ export class JourneyPlanAddComponent implements OnInit {
     ngOnInit() {
 
         this.getDealerList();
-        debugger;
+        // debugger;
         console.log("param", this.route.snapshot.params, Object.keys(this.route.snapshot.params).length);
 
 
@@ -53,6 +53,10 @@ export class JourneyPlanAddComponent implements OnInit {
             this.commonSvc.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
                 (result: any) => {
                     this.dealerList = result.data;
+                    this.dealerList.forEach(p=>{
+                        p.customerName=p.customerName+'-'+p.customerNo
+                    })
+                   
                 },
                 (err: any) => console.log(err)
 
@@ -73,7 +77,7 @@ export class JourneyPlanAddComponent implements OnInit {
     }
 
     delete(jPlan) {
-        debugger;
+        // debugger;
         this.journeyPlanModel.visitDate = this.journeyPlanModel.visitDDate.year.toString() + "-" + this.journeyPlanModel.visitDDate.month.toString() + "-" + this.journeyPlanModel.visitDDate.day.toString();
         if (this.compareDate(this.journeyPlanModel.visitDate)) {
             this.alertService.confirm("Are you sure you want to delete this item?", () => {
@@ -100,7 +104,6 @@ export class JourneyPlanAddComponent implements OnInit {
         this.alertService.fnLoading(true);
         this.journeyPlanService.getJourneyPlanById(date).subscribe(
             (result: any) => {
-                debugger;
 
                 this.readonly=true;
                 let editData = result.data as JourneyPlan;
