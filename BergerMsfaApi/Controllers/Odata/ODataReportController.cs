@@ -18,12 +18,14 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IReportDataService _reportDataService;
         private readonly IAuthService _authService;
         private readonly IODataReportService _oDataReportService;
+        private readonly ISalesDataService _salesDataService;
 
-        public ODataReportController(IReportDataService reportDataService, IAuthService authService,IODataReportService oDataReportService)
+        public ODataReportController(IReportDataService reportDataService, IAuthService authService,IODataReportService oDataReportService,ISalesDataService salesDataService)
         {
             _reportDataService = reportDataService;
             _authService = authService;
             _oDataReportService = oDataReportService;
+            _salesDataService = salesDataService;
         }
 
         [HttpGet("MyTargetReport")]
@@ -52,6 +54,36 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _oDataReportService.MySummaryReport();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("TotalInvoiceValue")]
+        public async Task<IActionResult> GetTotalInvoiceValue([FromQuery] TotalInvoiceValueSearchModel model)
+        {
+            try
+            {
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _salesDataService.GetReportTotalInvoiceValue(model, dealerIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("BrandOrDivisionWisePerformance")]
+        public async Task<IActionResult> GetBrandOrDivisionWisePerformance([FromQuery] BrandOrDivisionWisePerformanceSearchModel model)
+        {
+            try
+            {
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _salesDataService.GetReportBrandOrDivisionWisePerformance(model, dealerIds);
                 return OkResult(result);
             }
             catch (Exception ex)
