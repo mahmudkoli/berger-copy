@@ -85,6 +85,11 @@ namespace BergerMsfaApi.Repositories
                             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
                             bool disableTracking = true);
+
+
+        IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression);
+
+
         #endregion
 
         #region SaveChange

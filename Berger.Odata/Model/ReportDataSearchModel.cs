@@ -15,7 +15,7 @@
         ZoneWiseTarget = 2,
         BrandWise = 3
     }
- 
+
 
     public class TotalInvoiceValueSearchModel
     {
@@ -29,5 +29,19 @@
         public EnumBrandOrDivision BrandOrDivision { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
         //public EnumPeriod Period { get; set; }
+    }
+    
+    public class DealerPerformanceResultSearchModel
+    {
+        public string Territory { get; set; }
+        public DealerPerformanceReportType ReportType { get; set; }
+    }
+
+
+    public enum DealerPerformanceReportType
+    {
+        LastYearAppointed = 1,
+        ClubSupremeTerritoryWise = 2,
+        ClubSupremeTerritoryAndDealerWise = 3,
     }
 }

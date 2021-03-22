@@ -32,6 +32,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly IMTSDataService _mTSDataService;
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
+        private readonly ISalesDataService _salesDataService;
 
         public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
@@ -39,7 +40,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             IRepository<DealerInfo> dealerInfoRepository,
             IMTSDataService mTSDataService,
             IMapper mapper,
-            ApplicationDbContext context
+            ApplicationDbContext context, ISalesDataService salesDataService
             )
         {
             _brandInfoRepository = brandInfoRepository;
@@ -48,6 +49,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _mTSDataService = mTSDataService;
             _mapper = mapper;
             _context = context;
+            _salesDataService = salesDataService;
         }
 
         public async Task<MySummaryReportResultModel> MySummaryReport()
@@ -91,6 +93,55 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count()
             };
 
+        }
+
+        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model)
+        {
+            var customerNoList = new List<int>();
+
+            if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
+            {
+                customerNoList= await _dealerInfoRepository
+                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory)
+                    .Select(x => x.CustomerNo).ToListAsync();
+            }
+            else
+            {
+                customerNoList= await _dealerInfoRepository
+                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory)
+                    .Select(x => x.CustomerNo).ToListAsync();
+            }
+
+
+            if (!customerNoList.Any())
+                return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
+
+
+            var result = new List<ReportDealerPerformanceResultModel>
+            {
+                new ReportDealerPerformanceResultModel()
+                {
+                    Territory = model.Territory,
+                    NumberOfDealer = customerNoList.Count()
+                }
+            };
+
+            var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
+                await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+
+            if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
+            {
+                reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
+               {
+                   x.NumberOfDealer = customerNoList.Count();
+                   x.Territory = model.Territory;
+               });
+                return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
+            }
+            else
+            {
+                return result;
+            }
         }
     }
 }
