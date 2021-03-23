@@ -142,5 +142,20 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("OSOver90Days")]
+        public async Task<IActionResult> GetReportOSOver90Days([FromQuery] OSOver90DaysSearchModel model)
+        {
+            try
+            {
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _financialDataService.GetReportOSOver90Days(model, dealerIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

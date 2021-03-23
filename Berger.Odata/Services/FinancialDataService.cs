@@ -164,5 +164,47 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<ReportOSOver90DaysResultModel>> GetReportOSOver90Days(OSOver90DaysSearchModel model, IList<int> dealerIds)
+        {
+            var currentDate = DateTime.Now;
+            var fmDate = currentDate.AddMonths(-3);
+            var smDate = currentDate.AddMonths(-2);
+            var tmDate = currentDate.AddMonths(-1);
+
+            var fromDateFM = fmDate.GetCYFD().DateTimeFormat(); // First month
+            var toDateFM = fmDate.GetCYLD().DateTimeFormat();
+            var fromDateSM = smDate.GetCYFD().DateTimeFormat(); // Second month
+            var toDateSM = smDate.GetCYLD().DateTimeFormat();
+            var fromDateTM = tmDate.GetCYFD().DateTimeFormat(); // Third month
+            var toDateTM = tmDate.GetCYLD().DateTimeFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.CreditControlArea)
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age)
+                                .AddProperty(FinancialColDef.Amount);
+
+            var dataFM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateFM, toDateFM, model.CreditControlArea)).ToList();
+            var dataSM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateSM, toDateSM, model.CreditControlArea)).ToList();
+            var dataTM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateTM, toDateTM, model.CreditControlArea)).ToList();
+
+            var result = new List<ReportOSOver90DaysResultModel>();
+
+            var res = new ReportOSOver90DaysResultModel();
+            res.FirstMonthName = fmDate.ToString("MMMM");
+            res.SecondMonthName = smDate.ToString("MMMM");
+            res.ThirdMonthName = tmDate.ToString("MMMM");
+            res.FirstMonthAmount = dataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            res.SecondMonthAmount = dataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            res.ThirdMonthAmount = dataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            res.SecondMonthChangeAmount = res.SecondMonthAmount - res.FirstMonthAmount;
+            res.ThirdMonthChangeAmount = res.ThirdMonthAmount - res.SecondMonthAmount;
+            result.Add(res);
+
+            return result;
+        }
     }
 }

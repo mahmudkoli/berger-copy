@@ -64,4 +64,9 @@
         ClubSupremeTerritoryWise = 2,
         ClubSupremeTerritoryAndDealerWise = 3,
     }
+
+    public class OSOver90DaysSearchModel
+    {
+        public string CreditControlArea { get; set; }
+    }
 }
