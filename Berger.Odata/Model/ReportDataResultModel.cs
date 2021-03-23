@@ -86,4 +86,18 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class ReportDealerPerformanceResultModel
+    {
+        public string Territory { get; set; }
+        public int NumberOfDealer { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD  { get; set; }
+        public decimal LYYTD  { get; set; }
+        public decimal CYYTD   { get; set; }
+        public decimal GrowthMTD   { get; set; }
+        public decimal GrowthYTD    { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+    }
 }

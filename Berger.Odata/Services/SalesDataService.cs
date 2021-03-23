@@ -517,7 +517,7 @@ namespace Berger.Odata.Services
 
             return result;
         }
-        
+
         public async Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<int> dealerIds)
         {
             var currentDate = DateTime.Now;
@@ -533,7 +533,7 @@ namespace Berger.Odata.Services
 
             var fromDate = currentDate.AddDays(-30);
             var toDate = currentDate;
-
+            
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
             var lfyld = currentDate.GetLFYLD().DateFormat();
@@ -541,7 +541,7 @@ namespace Berger.Odata.Services
             var cfyfd = currentDate.GetCFYFD().DateFormat();
             var cfylcd = currentDate.GetCFYLCD().DateFormat();
             var cfyld = currentDate.GetCFYLD().DateFormat();
-
+            
             var dataLy = new List<SalesDataModel>();
             var dataCy = new List<SalesDataModel>();
 
@@ -619,10 +619,117 @@ namespace Berger.Odata.Services
                     result.Add(res);
                 }
             }
-
+            
             return result;
         }
 
+        public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
+        {
+            var currentDate = DateTime.Now;
+            var mtsBrandCodes = new List<string>();
+
+            var cyfd = currentDate.GetCYFD().DateFormat();
+            var cylcd = currentDate.GetCYLCD().DateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();
+
+            var lyfd = currentDate.GetLYFD().DateFormat();
+            var lylcd = currentDate.GetLYLCD().DateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();
+            
+            var lfyfd = currentDate.GetLFYFD().DateFormat();
+            var lfylcd = currentDate.GetLFYLCD().DateFormat();
+            var lfyld = currentDate.GetLFYLD().DateFormat();
+
+            var cfyfd = currentDate.GetCFYFD().DateFormat();
+            var cfylcd = currentDate.GetCFYLCD().DateFormat();
+            var cfyld = currentDate.GetCFYLD().DateFormat();
+            
+            var dataLyMtd = new List<SalesDataModel>();
+            var dataCyMtd = new List<SalesDataModel>();
+            var dataLyYtd = new List<SalesDataModel>();
+            var dataCyYtd = new List<SalesDataModel>();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                .AddProperty(DataColumnDef.NetAmount)
+                .AddProperty(DataColumnDef.Territory);
+
+            if (dealerPerformanceReportType == DealerPerformanceReportType.ClubSupremeTerritoryAndDealerWise)
+            {
+                selectQueryBuilder
+                    .AddProperty(DataColumnDef.CustomerNo)
+                    .AddProperty(DataColumnDef.CustomerName);
+            }
+
+
+            dataLyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lyfd, lylcd, "-1", brands: mtsBrandCodes)).ToList();
+
+            dataCyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cylcd, "-1", brands: mtsBrandCodes)).ToList();
+
+            dataLyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfylcd, "-1", brands: mtsBrandCodes)).ToList();
+
+            dataCyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfylcd, "-1", brands: mtsBrandCodes)).ToList();
+
+
+            Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
+            {
+                NetAmount = x.NetAmount,
+                Territory = x.Territory,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            };
+            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.Territory == val.Territory && x.CustomerName == val.CustomerName && val.CustomerNo == val.CustomerNo;
+
+            var concatAllList = dataLyMtd.Select(selectFunc)
+                .Concat(dataCyMtd.Select(selectFunc))
+                .Concat(dataLyYtd.Select(selectFunc))
+                .Concat(dataCyYtd.Select(selectFunc))
+                .GroupBy(p => new { p.Territory, p.CustomerName, p.CustomerNo })
+                .Select(g => g.First());
+
+            var result = new List<ReportDealerPerformanceResultModel>();
+
+
+            foreach (var item in concatAllList)
+            {
+                var res = new ReportDealerPerformanceResultModel();
+
+                if (dataLyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyMtd = dataLyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYMTD = amtLyMtd;
+                }
+
+                if (dataCyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYMTD = amtCyMtd;
+                }
+
+                if (dataLyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYYTD = amtLyYtd;
+                }
+
+                if (dataCyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYYTD = amtCyYtd;
+                }
+
+                res.Territory = item.Territory;
+                res.DealerId = item.CustomerNo;
+                res.DealerName = item.CustomerName;
+                res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+
+                result.Add(res);
+            }
+            
+            return result;
+        }
     }
 }
 

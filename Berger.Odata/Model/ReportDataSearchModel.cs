@@ -15,7 +15,7 @@
         ZoneWiseTarget = 2,
         BrandWise = 3
     }
- 
+
 
     public class TotalInvoiceValueSearchModel
     {
@@ -50,5 +50,18 @@
         All = 1,
         Exclusive = 2,
         NonExclusive = 3,
+    }
+    
+    public class DealerPerformanceResultSearchModel
+    {
+        public string Territory { get; set; }
+        public DealerPerformanceReportType ReportType { get; set; }
+    }
+
+    public enum DealerPerformanceReportType
+    {
+        LastYearAppointed = 1,
+        ClubSupremeTerritoryWise = 2,
+        ClubSupremeTerritoryAndDealerWise = 3,
     }
 }

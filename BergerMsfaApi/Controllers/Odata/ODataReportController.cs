@@ -45,7 +45,7 @@ namespace BergerMsfaApi.Controllers.Odata
                 //{
                 //    24,48,1852,1861,1835,1826,1796,1692,1681,1677,1610,4,8
                 //};
-                var result = await _reportDataService.MyTarget(model,dealerIds);
+                var result = await _reportDataService.MyTarget(model, dealerIds);
 
                 return OkResult(result);
             }
@@ -114,6 +114,20 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("ReportDealerPerformance")]
+        public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportDealerPerformance(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("OutstandingSummary")]
         public async Task<IActionResult> GetReportOutstandingSummary()
         {
@@ -128,7 +142,5 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
-
-
     }
 }
