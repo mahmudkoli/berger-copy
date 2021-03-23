@@ -517,6 +517,112 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<int> dealerIds)
+        {
+            var currentDate = DateTime.Now;
+            var customerCount = 10;
+
+            var customerClassification = model.DealerCategory switch
+            {
+                EnumDealerClassificationCategory.All => "-1",
+                EnumDealerClassificationCategory.Exclusive => ConstantsValue.CustomerClassificationExclusive,
+                EnumDealerClassificationCategory.NonExclusive => ConstantsValue.CustomerClassificationNonExclusive,
+                _ => "-1"
+            };
+
+            var fromDate = currentDate.AddDays(-30);
+            var toDate = currentDate;
+            
+            var lfyfd = currentDate.GetLFYFD().DateFormat();
+            var lfylcd = currentDate.GetLFYLCD().DateFormat();
+            var lfyld = currentDate.GetLFYLD().DateFormat();
+
+            var cfyfd = currentDate.GetCFYFD().DateFormat();
+            var cfylcd = currentDate.GetCFYLCD().DateFormat();
+            var cfyld = currentDate.GetCFYLD().DateFormat();
+            
+            var dataLy = new List<SalesDataModel>();
+            var dataCy = new List<SalesDataModel>();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.CustomerName)
+                                .AddProperty(DataColumnDef.CustomerClassification)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.NetAmount);
+
+            dataLy = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfyld, customerClassification: customerClassification, territory: model.Territory)).ToList();
+
+            dataCy = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfyld, customerClassification: customerClassification, territory: model.Territory)).ToList();
+
+            var dataLyGroup = dataLy.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
+                                        new DealerPerformanceResultModel()
+                                        {
+                                            CustomerNo = s.Key,
+                                            CustomerName = s.FirstOrDefault()?.CustomerName ?? string.Empty,
+                                            LYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                                        });
+
+            var result = new List<DealerPerformanceResultModel>();
+
+            if (model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Top_10_Performer || model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Bottom_10_Performer)
+            {
+                var dataCyGroup = dataCy.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
+                                            new DealerPerformanceResultModel()
+                                            {
+                                                CustomerNo = s.Key,
+                                                CustomerName = s.FirstOrDefault()?.CustomerName ?? string.Empty,
+                                                CYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                                            });
+
+                var performerData = model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Top_10_Performer ?
+                            dataCyGroup.OrderByDescending(o => o.CYSales).Take(customerCount) : dataCyGroup.OrderBy(o => o.CYSales).Take(customerCount);
+                
+                var slNo = 1;
+
+                foreach (var item in performerData)
+                {
+                    var res = new DealerPerformanceResultModel();
+                    res.SLNo = slNo++;
+                    res.CustomerNo = item.CustomerNo;
+                    res.CustomerName = item.CustomerName;
+                    res.CYSales = item.CYSales;
+                    res.LYSales = dataLyGroup.FirstOrDefault(f => f.CustomerNo == item.CustomerNo)?.LYSales ?? decimal.Zero;
+                    res.Growth = _odataService.GetGrowth(res.LYSales, res.CYSales);
+                    result.Add(res);
+                }
+            } 
+            else if (model.DealerPerformanceCategory == EnumDealerPerformanceCategory.NotPurchasedLastMonth)
+            { 
+                var notPurchasedCyData = dataCy.Where(x => !(x.Date.DateFormatDate("yyyyMMdd") >= fromDate && x.Date.DateFormatDate("yyyyMMdd") <= toDate));
+
+                var notPurchasedCyGroupData = notPurchasedCyData.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
+                                            new DealerPerformanceResultModel()
+                                            {
+                                                CustomerNo = s.Key,
+                                                CustomerName = s.FirstOrDefault()?.CustomerName ?? string.Empty,
+                                                CYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                                            });
+
+                var slNo = 1;
+
+                foreach (var item in notPurchasedCyGroupData)
+                {
+                    var res = new DealerPerformanceResultModel();
+                    res.SLNo = slNo++;
+                    res.CustomerNo = item.CustomerNo;
+                    res.CustomerName = item.CustomerName;
+                    res.CYSales = item.CYSales;
+                    res.LYSales = dataLyGroup.FirstOrDefault(f => f.CustomerNo == item.CustomerNo)?.LYSales ?? decimal.Zero;
+                    res.Growth = _odataService.GetGrowth(res.LYSales, res.CYSales);
+                    result.Add(res);
+                }
+            }
+            
+            return result;
+        }
+
         public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
         {
             var currentDate = DateTime.Now;
@@ -529,7 +635,7 @@ namespace Berger.Odata.Services
             var lyfd = currentDate.GetLYFD().DateFormat();
             var lylcd = currentDate.GetLYLCD().DateFormat();
             var lyld = currentDate.GetLYLD().DateFormat();
-
+            
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
             var lfyld = currentDate.GetLFYLD().DateFormat();
@@ -537,7 +643,7 @@ namespace Berger.Odata.Services
             var cfyfd = currentDate.GetCFYFD().DateFormat();
             var cfylcd = currentDate.GetCFYLCD().DateFormat();
             var cfyld = currentDate.GetCFYLD().DateFormat();
-
+            
             var dataLyMtd = new List<SalesDataModel>();
             var dataCyMtd = new List<SalesDataModel>();
             var dataLyYtd = new List<SalesDataModel>();
@@ -621,9 +727,9 @@ namespace Berger.Odata.Services
 
                 result.Add(res);
             }
+            
             return result;
         }
-
     }
 }
 
