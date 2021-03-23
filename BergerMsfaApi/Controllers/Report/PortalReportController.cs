@@ -359,6 +359,66 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetDealerSalesCall")]
+        public async Task<IActionResult> GetDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadDealerSalesCall")]
+        public async Task<IActionResult> DownloadDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetSubDealerSalesCall")]
+        public async Task<IActionResult> GetSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadSubDealerSalesCall")]
+        public async Task<IActionResult> DownloadSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
 
     }

@@ -35,4 +35,17 @@ namespace Berger.Common.Constants
         public const string CompetitorOthers = "Others";
     }
 
+    public static class ConstantCompanyValue
+    {
+        public const string companyAP = "AP";
+        public const string companyNippon = "Nippon";
+        public const string companyNerolac = "Nerolac";
+        public const string companyDulux = "Dulux";
+        public const string companyJotun = "Jotun";
+        public const string companyElite = "Elite";
+        public const string companyMoonstar = "Moonstar";
+        public const string companyAlKarim = "Al- Karim";
+        public const string companyOthers = "Others";
+    }
+
 }
