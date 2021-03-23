@@ -135,11 +135,10 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 {
                     DealerInfoId = find.Id,
                     UserId = AppIdentity.AppUser.UserId,
-                    PropertyName = find.IsExclusive != dealer.IsExclusive ? "IsExclusive" : "IsCBInstalled",
-                    PropertyValue = find.IsExclusive != dealer.IsExclusive ?
-                    (dealer.IsExclusive ? "Exclusive" : "Non Exclusive") :
-                    (dealer.IsCBInstalled ? "Installed" : "Not Installed")
+                    PropertyName = GetPropertyName(dealer, find),
+                    PropertyValue = GetPropertyValue(dealer, find)
                 };
+                
                 await _dealerInfoStatusLog.CreateAsync(dealerInfoStatusLog);
             }
             catch (Exception ex)
@@ -147,6 +146,54 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 throw ex;
             }
             return true;
+        }
+        public string GetPropertyName(DealerInfo dealer, DealerInfo find)
+        {
+            string propertyName="";
+            if (find.IsExclusive != dealer.IsExclusive)
+                propertyName = "IsExclusive";
+            else if (find.IsCBInstalled != dealer.IsCBInstalled)
+                propertyName = "IsCBInstalled";
+            else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
+                propertyName = "IsLastYearAppointed";
+            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+                propertyName = "IsClubSupreme";
+
+            return propertyName;
+        }
+        public string GetPropertyValue(DealerInfo dealer, DealerInfo find)
+        {
+            string propertyValue = "";
+            if (find.IsExclusive != dealer.IsExclusive)
+            {
+                if (dealer.IsExclusive)
+                    propertyValue = "Exclusive";
+                else
+                    propertyValue = "Non Exclusive";
+            }    
+            else if (find.IsCBInstalled != dealer.IsCBInstalled)
+            {
+                if (dealer.IsCBInstalled)
+                    propertyValue = "Installed";
+                else
+                    propertyValue = "Not Installed";
+            }
+            else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
+            {
+                if (dealer.IsLastYearAppointed)
+                    propertyValue = "Appointed";
+                else
+                    propertyValue = "Not Appointed";
+            }
+            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+            {
+                if (dealer.IsClubSupreme)
+                    propertyValue = "Supreme";
+                else
+                    propertyValue = "Not Supreme";
+            }
+
+            return propertyValue;
         }
         #endregion
     }
