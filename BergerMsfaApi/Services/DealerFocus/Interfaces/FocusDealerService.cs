@@ -7,10 +7,12 @@ using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
+using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -20,17 +22,20 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private readonly IRepository<UserInfo> _userInfoSvc;
         private readonly IRepository<DealerInfo> _dealerInfo;
         private readonly IRepository<DealerInfoStatusLog> _dealerInfoStatusLog;
+        private readonly IMapper _mapper;
         public FocusDealerService(
             IRepository<FocusDealer> focusDealer,
             IRepository<UserInfo> userInfoSvc,
             IRepository<DealerInfo> dealerInfo,
-            IRepository<DealerInfoStatusLog> dealerInfoStatusLog
+            IRepository<DealerInfoStatusLog> dealerInfoStatusLog,
+            IMapper mapper
             )
         {
             _focusDealer = focusDealer;
             _userInfoSvc = userInfoSvc;
             _dealerInfo = dealerInfo;
             _dealerInfoStatusLog = dealerInfoStatusLog;
+            _mapper = mapper;
         }
 
         public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string search)
@@ -194,6 +199,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
 
             return propertyValue;
+        }
+        public async Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId)
+        {
+
+            var result = await _dealerInfoStatusLog.GetAllIncludeAsync(
+                        dealer => dealer,
+                        dealer => dealer.DealerInfoId == dealerInfoId,
+                        dealer => dealer.OrderByDescending(b => b.CreatedTime),
+                        dealer => dealer.Include(i => i.DealerInfo).Include(i => i.User),
+                        true
+                );
+            var modelResult = _mapper.Map<IEnumerable<DealerInfoStatusLogModel>>(result);
+            return modelResult;
         }
         #endregion
     }
