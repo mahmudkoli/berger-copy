@@ -91,6 +91,7 @@
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
+    <None Remove="ClientApp\src\app\Shared\Entity\Painter\PainterCall.ts" />
 
     <None Remove="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
 
@@ -138,6 +139,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\PainterCall.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Scheme\SchemeMaster.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\role.ts" />
