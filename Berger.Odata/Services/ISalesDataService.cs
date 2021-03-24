@@ -21,5 +21,6 @@ namespace Berger.Odata.Services
         Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<int> dealerIds);
 
         Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType);
+        Task<int> NoOfBillingDealer(IList<int> dealerIds);
     }
 }

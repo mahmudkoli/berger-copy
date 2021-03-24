@@ -358,6 +358,7 @@ namespace Berger.Odata.Services
                     filterQueryBuilder.Or().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brand);
                 }
 
+                
                 filterQueryBuilder.EndGroup();
             }
 

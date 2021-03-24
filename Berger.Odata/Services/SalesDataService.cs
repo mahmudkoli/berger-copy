@@ -555,15 +555,15 @@ namespace Berger.Odata.Services
                     .AddProperty(DataColumnDef.CustomerName);
             }
 
+            string division = "-1";
 
-            dataLyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lyfd, lylcd, "-1", brands: mtsBrandCodes)).ToList();
+            dataLyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lyfd, lylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataCyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cylcd, "-1", brands: mtsBrandCodes)).ToList();
+            dataCyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataLyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfylcd, "-1", brands: mtsBrandCodes)).ToList();
+            dataLyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataCyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfylcd, "-1", brands: mtsBrandCodes)).ToList();
-
+            dataCyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfylcd, division, brands: mtsBrandCodes)).ToList();
 
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
@@ -572,8 +572,9 @@ namespace Berger.Odata.Services
                 CustomerNo = x.CustomerNo,
                 CustomerName = x.CustomerName
             };
+
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
-            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.Territory == val.Territory && x.CustomerName == val.CustomerName && val.CustomerNo == val.CustomerNo;
+            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.Territory == val.Territory && x.CustomerName == val.CustomerName && x.CustomerNo == val.CustomerNo;
 
             var concatAllList = dataLyMtd.Select(selectFunc)
                 .Concat(dataCyMtd.Select(selectFunc))
@@ -624,6 +625,15 @@ namespace Berger.Odata.Services
             return result;
         }
 
+        public async Task<int> NoOfBillingDealer(IList<int> dealerIds)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
+            var fromDate = DateTime.Now.DateFormat();
+            var toDate = DateTime.Now.DateFormat();
+            IList<SalesDataModel> salesDataByMultipleCustomerAndDivision = await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, fromDate, toDate);
+            return salesDataByMultipleCustomerAndDivision.Select(x => x.CustomerNo).Distinct().Count();
+        }
     }
 }
 

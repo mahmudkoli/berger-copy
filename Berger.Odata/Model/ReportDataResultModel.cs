@@ -27,7 +27,7 @@ namespace Berger.Odata.Model
         public int AdHocVisitNo { get; set; }
         public int LeadGenerationNo { get; set; }
         public int LeadFollowupNo { get; set; }
-        public int LeadFollowupValue { get; set; }
+        public decimal LeadFollowupValue { get; set; }
         public int NoOfBillingDealer { get; set; }
         public int TotalCollectionValue { get; set; }
     } 
