@@ -69,4 +69,15 @@
     {
         public string CreditControlArea { get; set; }
     }
+
+    public class PaymentFollowUpSearchModel
+    {
+        public EnumPaymentFollowUpTypeModel PaymentFollowUpType { get; set; }
+    }
+
+    public enum EnumPaymentFollowUpTypeModel
+    {
+        RPRS = 1,
+        FastPayCarry = 2
+    }
 }

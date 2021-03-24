@@ -206,5 +206,46 @@ namespace Berger.Odata.Services
 
             return result;
         }
+        
+        public async Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<int> dealerIds)
+        {
+            //var currentDate = DateTime.Now;
+            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.InvoiceNo)
+                                .AddProperty(FinancialColDef.PostingDate)
+                                .AddProperty(FinancialColDef.Age)
+                                .AddProperty(FinancialColDef.DayLimit);
+
+            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+            
+            var result = data.Select(x => 
+                                new ReportPaymentFollowUpResultModel() 
+                                { 
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    InvoiceNo = x.InvoiceNo,
+                                    InvoiceDate = x.PostingDate.DateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ").DateFormat("dd.MM.yyyy"),
+                                    InvoiceAge = x.Age,
+                                    DayLimit = x.DayLimit
+                                }).ToList();
+
+            if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS)
+            {
+                var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
+
+                foreach (var item in result)
+                {
+                    var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
+                                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
+                    item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
+                }
+            }
+
+            return result;
+        }
     }
 }

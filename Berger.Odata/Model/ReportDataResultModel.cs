@@ -117,4 +117,20 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class ReportPaymentFollowUpResultModel
+    {
+        public string CustomerNo { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string InvoiceNo { get; internal set; }
+        public string InvoiceDate { get; internal set; }
+        public string InvoiceAge { get; internal set; }
+        public string DayLimit { get; internal set; }
+        public string RPRSDate { get; internal set; }
+
+        public ReportPaymentFollowUpResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }
