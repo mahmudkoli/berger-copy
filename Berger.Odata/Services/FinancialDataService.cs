@@ -114,5 +114,55 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<ReportOutstandingSummaryResultModel>> GetReportOutstandingSummary(IList<int> dealerIds)
+        {
+            //var currentDate = DateTime.Now;
+            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            {
+                selectCustomerQueryBuilder.AddProperty(prop.Name);
+            }
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.CreditControlArea)
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age)
+                                .AddProperty(FinancialColDef.Amount);
+
+            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+
+            var groupData = data.GroupBy(x => x.CreditControlArea).ToList();
+
+            var result = groupData.Select(x =>
+                                    {
+                                        var osModel = new ReportOutstandingSummaryResultModel();
+                                        osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
+                                        osModel.ValueLimit = customerData.GroupBy(g => g.CustomerNo)
+                                                                .Sum(s => s.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0);
+                                        osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+                                        osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
+                                                                .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+                                        osModel.OSOver90Days = x.Where(m => CustomConvertExtension.ObjectToInt(m.Age) > 90)
+                                                                .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+                                        return osModel;
+                                    }).ToList();
+
+            #region Credit Control Area 
+            var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
+
+            foreach (var item in result)
+            {
+                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+            }
+            #endregion
+
+            return result;
+        }
     }
 }

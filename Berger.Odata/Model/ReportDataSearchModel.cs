@@ -30,13 +30,33 @@
         public EnumVolumeOrValue VolumeOrValue { get; set; }
         //public EnumPeriod Period { get; set; }
     }
+
+    public class DealerPerformanceSearchModel
+    {
+        public string Territory { get; set; }
+        public EnumDealerPerformanceCategory DealerPerformanceCategory { get; set; }
+        public EnumDealerClassificationCategory DealerCategory { get; set; }
+    }
+
+    public enum EnumDealerPerformanceCategory
+    {
+        Top_10_Performer = 1,
+        Bottom_10_Performer = 2,
+        NotPurchasedLastMonth = 3,
+    }
+
+    public enum EnumDealerClassificationCategory
+    {
+        All = 1,
+        Exclusive = 2,
+        NonExclusive = 3,
+    }
     
     public class DealerPerformanceResultSearchModel
     {
         public string Territory { get; set; }
         public DealerPerformanceReportType ReportType { get; set; }
     }
-
 
     public enum DealerPerformanceReportType
     {
