@@ -240,6 +240,8 @@ namespace Berger.Odata.Services
             IList<int> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(DataColumnDef.SalesOrgranization, "1000").And();
+
             filterQueryBuilder.StartGroup()
                                 .GreaterThanOrEqual(DataColumnDef.Date, startDate)
                                 .And()
@@ -368,7 +370,7 @@ namespace Berger.Odata.Services
                     filterQueryBuilder.Or().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brand);
                 }
 
-                
+
                 filterQueryBuilder.EndGroup();
             }
 
@@ -461,7 +463,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "")
         {
@@ -560,7 +562,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "")
         {
@@ -729,6 +731,43 @@ namespace Berger.Odata.Services
 
             var data = (await GetMTSData(queryBuilder.Query)).ToList();
 
+            return data;
+        }
+
+        public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string fromDate, string endDate)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            //filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000");
+            if (dealerIds.Any())
+            {
+                filterQueryBuilder.StartGroup();
+                for (int i = 0; i < dealerIds.Count; i++)
+                {
+                    filterQueryBuilder.Equal(DataColumnDef.Collection_Customer, dealerIds[i].ToString());
+
+                    if (i + 1 != dealerIds.Count)
+                    {
+                        filterQueryBuilder.Or();
+                    }
+                }
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (!string.IsNullOrEmpty(fromDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, fromDate);
+            }
+            if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endDate);
+            }
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                //.AppendQuery(topQuery)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCollectionData(queryBuilder.Query)).ToList();
             return data;
         }
 

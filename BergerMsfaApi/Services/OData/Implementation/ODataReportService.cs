@@ -35,6 +35,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly ApplicationDbContext _context;
         private readonly ISalesDataService _salesDataService;
         private readonly IAuthService _authService;
+        private readonly ICollectionDataService _collectionDataService;
 
         public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
@@ -44,7 +45,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             IMapper mapper,
             ApplicationDbContext context,
             ISalesDataService salesDataService,
-            IAuthService authService
+            IAuthService authService, ICollectionDataService collectionDataService
             )
         {
             _brandInfoRepository = brandInfoRepository;
@@ -55,6 +56,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _context = context;
             _salesDataService = salesDataService;
             _authService = authService;
+            _collectionDataService = collectionDataService;
         }
 
         public async Task<MySummaryReportResultModel> MySummaryReport()
@@ -107,7 +109,8 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(),
                 LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count(),
                 LeadFollowupValue = query.Sum(x => x.ExpectedValue),
-                NoOfBillingDealer = await _salesDataService.NoOfBillingDealer(dealerIds)
+                NoOfBillingDealer = await _salesDataService.NoOfBillingDealer(dealerIds),
+                TotalCollectionValue = await _collectionDataService.GetTotalCollectionValue(dealerIds)
             };
 
         }

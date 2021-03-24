@@ -533,7 +533,7 @@ namespace Berger.Odata.Services
 
             var fromDate = currentDate.AddDays(-30);
             var toDate = currentDate;
-            
+
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
             var lfyld = currentDate.GetLFYLD().DateFormat();
@@ -541,7 +541,7 @@ namespace Berger.Odata.Services
             var cfyfd = currentDate.GetCFYFD().DateFormat();
             var cfylcd = currentDate.GetCFYLCD().DateFormat();
             var cfyld = currentDate.GetCFYLD().DateFormat();
-            
+
             var dataLy = new List<SalesDataModel>();
             var dataCy = new List<SalesDataModel>();
 
@@ -578,7 +578,7 @@ namespace Berger.Odata.Services
 
                 var performerData = model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Top_10_Performer ?
                             dataCyGroup.OrderByDescending(o => o.CYSales).Take(customerCount) : dataCyGroup.OrderBy(o => o.CYSales).Take(customerCount);
-                
+
                 var slNo = 1;
 
                 foreach (var item in performerData)
@@ -592,9 +592,9 @@ namespace Berger.Odata.Services
                     res.Growth = _odataService.GetGrowth(res.LYSales, res.CYSales);
                     result.Add(res);
                 }
-            } 
+            }
             else if (model.DealerPerformanceCategory == EnumDealerPerformanceCategory.NotPurchasedLastMonth)
-            { 
+            {
                 var notPurchasedCyData = dataCy.Where(x => !(x.Date.DateFormatDate("yyyyMMdd") >= fromDate && x.Date.DateFormatDate("yyyyMMdd") <= toDate));
 
                 var notPurchasedCyGroupData = notPurchasedCyData.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
@@ -619,7 +619,7 @@ namespace Berger.Odata.Services
                     result.Add(res);
                 }
             }
-            
+
             return result;
         }
 
@@ -635,7 +635,7 @@ namespace Berger.Odata.Services
             var lyfd = currentDate.GetLYFD().DateFormat();
             var lylcd = currentDate.GetLYLCD().DateFormat();
             var lyld = currentDate.GetLYLD().DateFormat();
-            
+
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
             var lfyld = currentDate.GetLFYLD().DateFormat();
@@ -643,7 +643,7 @@ namespace Berger.Odata.Services
             var cfyfd = currentDate.GetCFYFD().DateFormat();
             var cfylcd = currentDate.GetCFYLCD().DateFormat();
             var cfyld = currentDate.GetCFYLD().DateFormat();
-            
+
             var dataLyMtd = new List<SalesDataModel>();
             var dataCyMtd = new List<SalesDataModel>();
             var dataLyYtd = new List<SalesDataModel>();
@@ -728,14 +728,15 @@ namespace Berger.Odata.Services
 
                 result.Add(res);
             }
-            
+
             return result;
         }
 
         public async Task<int> NoOfBillingDealer(IList<int> dealerIds)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo).AddProperty(DataColumnDef.Volume);
             var fromDate = DateTime.Now.DateFormat();
             var toDate = DateTime.Now.DateFormat();
             IList<SalesDataModel> salesDataByMultipleCustomerAndDivision = await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, fromDate, toDate);

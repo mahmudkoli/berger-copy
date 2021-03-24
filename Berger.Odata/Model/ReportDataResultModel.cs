@@ -29,7 +29,7 @@ namespace Berger.Odata.Model
         public int LeadFollowupNo { get; set; }
         public decimal LeadFollowupValue { get; set; }
         public int NoOfBillingDealer { get; set; }
-        public int TotalCollectionValue { get; set; }
+        public decimal TotalCollectionValue { get; set; }
     } 
 
     public class TotalInvoiceValueResultModel
