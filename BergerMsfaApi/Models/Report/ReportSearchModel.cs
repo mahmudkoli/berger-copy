@@ -88,5 +88,14 @@ namespace BergerMsfaApi.Models.Report
         public int? SubDealerId { get; set; }
     }
 
+    public class DealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class SubDealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? SubDealerId { get; set; }
+    }
 
 }

@@ -25,5 +25,7 @@ namespace BergerMsfaApi.Services.Report.Interfaces
         Task<QueryResultModel<DealerVisitReportResultModel>> GetDealerVisitReportAsync(DealerVisitReportSearchModel query);
         Task<QueryResultModel<DealerSalesCallReportResultModel>> GetDealerSalesCallReportAsync(DealerSalesCallReportSearchModel query);
         Task<QueryResultModel<SubDealerSalesCallReportResultModel>> GetSubDealerSalesCallReportAsync(SubDealerSalesCallReportSearchModel query);
+        Task<QueryResultModel<DealerIssueReportResultModel>> GetDealerIssueReportAsync(DealerIssueReportSearchModel query);
+        Task<QueryResultModel<SubDealerIssueReportResultModel>> GetSubDealerIssueReportAsync(SubDealerIssueReportSearchModel query);
     }
 }
