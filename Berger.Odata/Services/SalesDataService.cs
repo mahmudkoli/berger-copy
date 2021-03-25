@@ -431,11 +431,12 @@ namespace Berger.Odata.Services
             var dataCyYtd = new List<SalesDataModel>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            selectQueryBuilder
+                                //.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
                                 .AddProperty(DataColumnDef.Division)
                                 .AddProperty(DataColumnDef.DivisionName)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Date)
+                                //.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                //.AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount)
                                 .AddProperty(DataColumnDef.Volume)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
