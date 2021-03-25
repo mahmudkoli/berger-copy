@@ -198,8 +198,8 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 		let res=this.monthDiff(this.query.fromDate,this.query.toDate);
 
 		if(res==2){
-			this.query.fromDate = this.ngbDateToDate(this.fromDate);
-			this.query.toDate = this.ngbDateToDate(this.toDate);
+			// this.query.fromDate = this.ngbDateToDate(this.fromDate);
+			// this.query.toDate = this.ngbDateToDate(this.toDate);
 			this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 			this.loadReportsPage();
 		}
@@ -271,11 +271,11 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 		this.loadReportsPage();
 	}
 
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
-	}
+	// ngbDateToDate(date: NgbDate) : Date | null {
+	// 	return date && date.year && date.month && date.day ? 
+	// 			new Date(date.year,date.month-1,date.day) : 
+	// 			null;
+	// }
 
 
 	private MonthToDateConvert(fromMonth,fromYear,toMonth,toYear){
