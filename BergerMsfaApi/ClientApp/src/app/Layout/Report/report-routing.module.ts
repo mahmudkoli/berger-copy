@@ -15,6 +15,8 @@ import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
 import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
+import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
+import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
 
 const routes: Routes = [
   {
@@ -98,6 +100,18 @@ const routes: Routes = [
         component: TintingMachineReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Tinting Machine Report', },
+      },
+      {
+        path: 'active-summery',
+        component: ActiveSummeryReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Active Summery Report', },
+      },
+      {
+        path: 'os-over-90-days-trend',
+        component: OSOver90DaysTrendReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'OS Over 90 Days Trend Report', },
       },
     ],
   }

@@ -106,12 +106,28 @@ export class ReportService {
     }
 
 
-    getTintingMachine(filter?) {
+    public getTintingMachine(filter?) {
         return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetTintingMachine?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadTintingMachine(filter?) {
         return `${this.reportsEndpoint}/DownloadTintingMachine?${this.commonService.toQueryString(filter)}`;
+    }
+
+    public getActiveSummery(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetActiveSummery?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadActiveSummery(filter?) {
+        return `${this.reportsEndpoint}/DownloadActiveSummery?${this.commonService.toQueryString(filter)}`;
+    }
+
+    public getOsOver90DaysTrend(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetOsOver90DaysTrend?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadOsOver90DaysTrend(filter?) {
+        return `${this.reportsEndpoint}/DownloadOsOver90DaysTrend?${this.commonService.toQueryString(filter)}`;
     }
 
 }

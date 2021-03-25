@@ -19,6 +19,8 @@ import { ProjectCollectionReportComponent } from './project-collection/project-c
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
 import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
+import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
+import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
 
 @NgModule({
     declarations: [
@@ -34,7 +36,9 @@ import { TintingMachineReportComponent } from './tinting-machine/tinting-machine
       ProjectCollectionReportComponent,
       PainterCallReportComponent,
       DealerVisitReportComponent,
-      TintingMachineReportComponent
+      TintingMachineReportComponent,
+      ActiveSummeryReportComponent,
+      OSOver90DaysTrendReportComponent
     ],
   imports: [
       CommonModule,

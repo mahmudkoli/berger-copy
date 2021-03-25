@@ -30,6 +30,8 @@ namespace BergerMsfaApi.Services.Report.Interfaces
 
 
         Task<QueryResultModel<TintingMachineReportResultModel>> GetTintingMachineReportAsync(TintingMachineReportSearchModel query);
+        Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query);
+
 
     }
 }

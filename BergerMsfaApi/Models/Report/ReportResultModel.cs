@@ -470,5 +470,22 @@ namespace BergerMsfaApi.Models.Report
         
     }
 
+
+    public class ActiveSummaryReportResultModel
+    {
+
+        public string UserID { get; set; }
+        public string DepotID { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string Activity { get; set; }
+        public string Target { get; set; }
+        public string Actual { get; set; }
+        public string BusinessGeneration { get; set; }
+        public string Variance { get; set; }
+       
+    }
+
     #endregion
 }

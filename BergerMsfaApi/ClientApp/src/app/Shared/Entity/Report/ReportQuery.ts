@@ -137,3 +137,31 @@ export class TintingMachineReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class ActiveSummeryReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
+    creditControllAreaName: number;
+    dealerId: number;
+
+    
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
