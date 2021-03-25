@@ -19,5 +19,8 @@ namespace Berger.Odata.Services
             MyTargetReportType targetReportType, IList<int> dealerIds);
         Task<IList<TotalInvoiceValueResultModel>> GetReportTotalInvoiceValue(TotalInvoiceValueSearchModel model, IList<int> dealerIds);
         Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<int> dealerIds);
+        Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<int> dealerIds);
+        Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType);
+        Task<int> NoOfBillingDealer(IList<int> dealerIds);
     }
 }

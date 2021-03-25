@@ -14,6 +14,10 @@ import { ReportComponent } from './report.component';
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
+import { SubDealerIssueReportComponent } from './sub-dealer-issue/sub-dealer-issue-report.component';
+import { DealerIssueReportComponent } from './dealer-issue/dealer-issue-report.component';
+import { SubDealerSalescallReportComponent } from './sub-dealer-salescall/sub-dealer-salescall-report.component';
+import { DealerSalescallReportComponent } from './dealer-salescall/dealer-salescall-report.component';
 import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
 import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
 import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
@@ -96,6 +100,30 @@ const routes: Routes = [
         data: { title: 'Dealer Visit', },
       },
       {
+        path: 'sub-dealer-issue',
+        component: SubDealerIssueReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Sub Dealer Visit', },
+      },
+      {
+        path: 'dealer-issue',
+        component: DealerIssueReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Issue', },
+      },
+      {
+        path: 'sub-dealer-sales-call',
+        component: SubDealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Sub Dealer Sales Call', },
+      },
+      {
+        path: 'dealer-sales-call',
+        component: DealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Sales Call', },
+      },
+      {
         path: 'tinting-machine',
         component: TintingMachineReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
@@ -117,7 +145,7 @@ const routes: Routes = [
   }
 ];
 
-// DealerVisitReportComponent
+// DealerSalescallReportComponent
 
 @NgModule({
 

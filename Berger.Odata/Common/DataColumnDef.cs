@@ -102,5 +102,10 @@ namespace Berger.Odata.Common
         public static string BrandFamily_MatarialGroupOrBrandFamilyName = "WGBEZMTS";
         public static string BrandFamily_MatarialGroupOrBrand = "MATKL";
         public static string BrandFamily_MatarialGroupOrBrandName = "WGBEZ";
+
+        //Collection Data
+
+        public static string Collection_Amount = "Amount";
+        public static string Collection_Customer = "Customer";
     }
 }

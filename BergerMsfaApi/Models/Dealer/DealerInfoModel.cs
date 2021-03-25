@@ -42,6 +42,10 @@ namespace BergerMsfaApi.Models.Dealer
         public string IsCBInstalledLabel { get; set; }
         public bool IsExclusive { get; set; }
         public string IsExclusiveLabel { get; set; }
+        public bool IsLastYearAppointed { get; set; }
+        public string IsLastYearAppointedLabel { get; set; }
+        public bool IsClubSupreme { get; set; }
+        public string IsClubSupremeLabel { get; set; }
 
 
     }

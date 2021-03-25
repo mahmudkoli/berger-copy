@@ -9,5 +9,6 @@ namespace Berger.Odata.Services
     public interface IODataCommonService
     {
         Task<IList<CreditControlArea>> GetAllCreditControlAreasAsync();
+        Task<IList<RPRSPolicy>> GetAllRPRSPoliciesAsync();
     }
 }

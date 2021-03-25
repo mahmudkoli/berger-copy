@@ -2507,6 +2507,45 @@ namespace Berger.Data.Migrations
                     b.ToTable("DealerInfoStatusLogs");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.RPRSPolicy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FromDaysLimit")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NotificationDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RPRSDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToDaysLimit")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RPRSPolicies");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Scheme.SchemeDetail", b =>
                 {
                     b.Property<int>("Id")
