@@ -46,5 +46,9 @@ export class FocusdealerService {
     public updateDealerStatus(dealer) {
         return this.http.put<any>(this.baseUrl + `v1/focusdealer/UpdateDealerStatus/`,dealer);
     }
+    public getDealerLogByDealerId(id) {
+        return this.http.get<APIResponse>(this.baseUrl + 'v1/focusdealer/GetDealerInfoStatusLog/' + id);
+    }
+
   
 }

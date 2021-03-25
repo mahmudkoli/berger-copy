@@ -26,6 +26,7 @@
                 <th pSortableColumn="isCBInstalled">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
                 <th pSortableColumn="isLastYearAppointed">Last Year Appointed <p-sortIcon field="isLastYearAppointed"></p-sortIcon></th>
                 <th pSortableColumn="isClubSupreme">Club Supreme <p-sortIcon field="isClubSupreme"></p-sortIcon></th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-dealer>
@@ -45,6 +46,9 @@
                 </td>
                 <td>
                     <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isClubSupreme')" onLabel="{{dealer.isClubSupremeLabel}}" offLabel="{{dealer.isClubSupremeLabel}}" [(ngModel)]="dealer.isClubSupreme"></p-toggleButton>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary" type="button" (click)="detail(dealer.id)">View Detail</button>
                 </td>
 
             </tr>

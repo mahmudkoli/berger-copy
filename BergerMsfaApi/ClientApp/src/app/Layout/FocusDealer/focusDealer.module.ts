@@ -13,6 +13,7 @@ import { DealerOpeningListComponent } from './dealer-opening-list/dealer-opening
 import { FocusDealerRoutingModule } from './foucusDealer-routing.module';
 import { DealerOpeningDetailComponent } from './dealer-opening-detail/dealer-opening-detail.component';
 import { DealerListComponent } from './dealer-list/dealer-list.component';
+import { DealerInfoLogDetailsComponent } from './dealer-info-log-details/dealer-info-log-details.component';
 
 
 //import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
@@ -20,7 +21,7 @@ import { DealerListComponent } from './dealer-list/dealer-list.component';
 
 
 @NgModule({
-    declarations: [FocusdealerAddComponent, FocusdealerListComponent, DealerOpeningListComponent, DealerOpeningDetailComponent, DealerListComponent],
+    declarations: [FocusdealerAddComponent, FocusdealerListComponent, DealerOpeningListComponent, DealerOpeningDetailComponent, DealerListComponent, DealerInfoLogDetailsComponent],
     imports: [
         CommonModule,
         SharedMasterModule,
