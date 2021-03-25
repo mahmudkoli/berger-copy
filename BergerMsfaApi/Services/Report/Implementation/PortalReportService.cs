@@ -1769,7 +1769,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             }).ToListAsync();
 
             var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
-            //dealerIds = new List<int> { 24 };
+            dealerIds = new List<int> { 24 };
 
 
             var monthList = Enumerable.Range(0, Int32.MaxValue)
