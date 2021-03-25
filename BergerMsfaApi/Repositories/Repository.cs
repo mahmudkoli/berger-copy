@@ -20,7 +20,7 @@ using X.PagedList;
 
 namespace BergerMsfaApi.Repositories
 {
-    
+
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         #region CONFIG
@@ -163,8 +163,8 @@ namespace BergerMsfaApi.Repositories
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
                 cmd.CommandText = Sql;
-                if(isStoredProcedure)
-                    cmd.CommandType = CommandType.StoredProcedure; 
+                if (isStoredProcedure)
+                    cmd.CommandType = CommandType.StoredProcedure;
                 if (cmd.Connection.State != ConnectionState.Open) { cmd.Connection.Open(); }
 
                 foreach (KeyValuePair<string, object> p in Params)
@@ -229,7 +229,7 @@ namespace BergerMsfaApi.Repositories
 
                         foreach (var property in properties)
                         {
-                            if(!reader.IsDBNull(property.Name))
+                            if (!reader.IsDBNull(property.Name))
                                 property.SetValue(instance, reader[property.Name]);
                         }
 
@@ -336,17 +336,17 @@ namespace BergerMsfaApi.Repositories
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-           
+
             DbSet.Attach(item);
             var entry = _context.Entry(item);
             entry.State = EntityState.Modified;
             await SaveChangesAsync();
-         //  _uow.Commit();
-           return item;
+            //  _uow.Commit();
+            return item;
         }
 
         public async Task<TEntity> CreateOrUpdateAsync(TEntity item)
-        {            
+        {
             var pi = item.GetType().GetProperty("Id");
             var keyFieldId = pi != null ? pi.GetValue(item, null) : -1;
             keyFieldId = keyFieldId == (object)0 ? -1 : keyFieldId;
@@ -458,6 +458,11 @@ namespace BergerMsfaApi.Repositories
             var result = await query.Select(selector).ToListAsync();
 
             return result;
+        }
+
+        public virtual IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression)
+        {
+            return DbSet.Where(expression).AsNoTracking();
         }
 
         public virtual async Task<(IList<TResult> Items, int Total, int TotalFilter)> GetAllIncludeAsync<TResult>(Expression<Func<TEntity, TResult>> selector,

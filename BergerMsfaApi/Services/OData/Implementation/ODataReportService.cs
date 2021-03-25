@@ -19,6 +19,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Services.OData.Interfaces;
 using Berger.Odata.Services;
 using Berger.Odata.Model;
+using BergerMsfaApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
@@ -32,6 +33,9 @@ namespace BergerMsfaApi.Services.OData.Implementation
         private readonly IMTSDataService _mTSDataService;
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
+        private readonly ISalesDataService _salesDataService;
+        private readonly IAuthService _authService;
+        private readonly ICollectionDataService _collectionDataService;
 
         public ODataReportService(
             IRepository<BrandInfo> brandInfoRepository,
@@ -39,7 +43,9 @@ namespace BergerMsfaApi.Services.OData.Implementation
             IRepository<DealerInfo> dealerInfoRepository,
             IMTSDataService mTSDataService,
             IMapper mapper,
-            ApplicationDbContext context
+            ApplicationDbContext context,
+            ISalesDataService salesDataService,
+            IAuthService authService, ICollectionDataService collectionDataService
             )
         {
             _brandInfoRepository = brandInfoRepository;
@@ -48,10 +54,21 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _mTSDataService = mTSDataService;
             _mapper = mapper;
             _context = context;
+            _salesDataService = salesDataService;
+            _authService = authService;
+            _collectionDataService = collectionDataService;
         }
 
         public async Task<MySummaryReportResultModel> MySummaryReport()
         {
+
+            IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            //dealerIds = new List<int>
+            //{
+            //    24,48,1852,1861,1835,1826,1796,1692,1681,1677,1610,4,8
+            //};
+
+
             var query = await (from master in _context.JourneyPlanMasters
                                join details in _context.JourneyPlanDetails on master.Id equals details.PlanId
                                join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
@@ -69,28 +86,83 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                    equals new { Id = lfu.LeadGenerationId, Date = lfu.CreatedTime.Date }
                                    into lfuLeftJoin
                                from lfuInfo in lfuLeftJoin.DefaultIfEmpty()
-                               where (master.PlanDate.Date == DateTime.Now.Date)
+                               where (master.PlanDate.Date == DateTime.Now.Date && master.EmployeeId == AppIdentity.AppUser.EmployeeId)
                                select new
                                {
                                    DelarId = details.Id,
+                                   dscInfoId = dscInfo.Id,
                                    dscInfo.IsSubDealerCall,
                                    PainterCallInfoId = painterCallInfo.Id,
                                    dsc2InfoId = dsc2Info.Id,
                                    LdInfoId = ldInfo.Id,
-                                   lfuInfoId = lfuInfo.Id
+                                   lfuInfoId = lfuInfo.Id,
+                                   lfuInfo.ExpectedValue
                                }).ToListAsync();
 
             return new MySummaryReportResultModel
             {
                 DealerVisitTarget = query.Select(x => x.DelarId).Distinct().Count(),
-                ActualVisited = query.Count(x => !x.IsSubDealerCall),
-                SubDealerActuallyVisited = query.Count(x => x.IsSubDealerCall),
+                ActualVisited = query.Select(x => x.dscInfoId).Distinct().Count(),
+                SubDealerActuallyVisited = query.Where(x => x.IsSubDealerCall).Select(x => x.dscInfoId).Distinct().Count(),
                 PainterActuallyVisited = query.Select(x => x.PainterCallInfoId).Distinct().Count(),
                 AdHocVisitNo = query.Select(x => x.dsc2InfoId).Distinct().Count(),
                 LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(),
-                LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count()
+                LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count(),
+                LeadFollowupValue = query.Sum(x => x.ExpectedValue),
+                NoOfBillingDealer = await _salesDataService.NoOfBillingDealer(dealerIds),
+                TotalCollectionValue = await _collectionDataService.GetTotalCollectionValue(dealerIds)
             };
 
+        }
+
+        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model)
+        {
+            var customerNoList = new List<int>();
+
+            if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
+            {
+                customerNoList = await _dealerInfoRepository
+                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory)
+                    .Select(x => x.CustomerNo).ToListAsync();
+            }
+            else
+            {
+                customerNoList = await _dealerInfoRepository
+                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory)
+                    .Select(x => x.CustomerNo).ToListAsync();
+            }
+
+
+            if (!customerNoList.Any())
+                return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
+
+
+            var result = new List<ReportDealerPerformanceResultModel>
+            {
+                new ReportDealerPerformanceResultModel()
+                {
+                    Territory = model.Territory,
+                    NumberOfDealer = customerNoList.Count()
+                }
+            };
+
+
+            var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
+                await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+
+            if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
+            {
+                reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
+               {
+                   x.NumberOfDealer = customerNoList.Count();
+                   x.Territory = model.Territory;
+               });
+                return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
+            }
+            else
+            {
+                return result;
+            }
         }
     }
 }

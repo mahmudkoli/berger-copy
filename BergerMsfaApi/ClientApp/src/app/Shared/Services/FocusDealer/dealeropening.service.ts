@@ -24,5 +24,8 @@ export class DealeropeningService {
     public GetDealerOpeningDetailById(id) {
         return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningDetailById/${id}`);
     }
+    public DealerOpeningStatusChange(model) {
+        return this.http.put<APIResponse>(this.baseUrl + 'v1/DealerOpening/ChangeDealerOpeningStatus/', model);
+    }
 
 }
