@@ -13,8 +13,10 @@ import { DealerOpeningListComponent } from './dealer-opening-list/dealer-opening
 import { FocusDealerRoutingModule } from './foucusDealer-routing.module';
 import { DealerOpeningDetailComponent } from './dealer-opening-detail/dealer-opening-detail.component';
 import { DealerListComponent } from './dealer-list/dealer-list.component';
+import { DealerInfoLogDetailsComponent } from './dealer-info-log-details/dealer-info-log-details.component';
 import { EmailConfigAddComponent } from './email-config-add/email-config-add.component';
 import { EmailConfigListComponent } from './email-config-list/email-config-list.component';
+
 
 
 //import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
@@ -22,7 +24,7 @@ import { EmailConfigListComponent } from './email-config-list/email-config-list.
 
 
 @NgModule({
-    declarations: [FocusdealerAddComponent, FocusdealerListComponent, DealerOpeningListComponent, DealerOpeningDetailComponent, DealerListComponent, EmailConfigAddComponent, EmailConfigListComponent],
+    declarations: [FocusdealerAddComponent, FocusdealerListComponent, DealerOpeningListComponent, DealerOpeningDetailComponent, DealerListComponent, EmailConfigAddComponent, EmailConfigListComponent, DealerInfoLogDetailsComponent],
     imports: [
         CommonModule,
         SharedMasterModule,
