@@ -55,10 +55,14 @@ namespace Berger.Common
                 message.To.Add(email);
                 message.From = message.From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName);
                 message.Subject = subject;
-                //foreach (var item in lstattachment)
-                //{
-                //    message.Attachments.Add(item);
-                //}
+                if (lstattachment.Count > 0)
+                {
+                    foreach (var item in lstattachment)
+                    {
+                        message.Attachments.Add(item);
+                    }
+                }
+                
                 message.Body = body;
                 using (var smtpClient = new SmtpClient())
                 {
