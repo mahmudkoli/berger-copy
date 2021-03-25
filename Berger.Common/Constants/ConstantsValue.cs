@@ -33,6 +33,7 @@ namespace Berger.Common.Constants
 
     public static class SwappingCompetitionValue
     {
+        public const string CompetitorBpbl = "BPBL";
         public const string CompetitorAsianPaints = "Asian Paints";
         public const string CompetitorNerolac = "Nerolac";
         public const string CompetitorElitePaints = "Elite Paints";
@@ -41,5 +42,31 @@ namespace Berger.Common.Constants
         public const string CompetitorMoonstar = "Moonstar";
         public const string CompetitorOthers = "Others";
     }
+
+    public static class ConstantCompanyValue
+    {
+        public const string companyAP = "AP";
+        public const string companyNippon = "Nippon";
+        public const string companyNerolac = "Nerolac";
+        public const string companyDulux = "Dulux";
+        public const string companyJotun = "Jotun";
+        public const string companyElite = "Elite";
+        public const string companyMoonstar = "Moonstar";
+        public const string companyAlKarim = "Al- Karim";
+        public const string companyOthers = "Others";
+    }
+
+    public static class ConstantIssuesValue
+    {
+        public const string IssuePosMaterialShort = "POS Material Short";
+        public const string IssueShadeCard = "Shade Card";
+        public const string IssueShopSignComplain = "Shop Sign Complain";
+        public const string IssueDelivery = "Delivery Issue";
+        public const string IssueOthers = "Others";
+        public const string IssueDamageProduct = "Damage Product";
+        public const string IssueCBMachine = "CB Machine Mantainance";
+        public const string IssueProductComplaint = "Product Complaint";
+    }
+
 
 }

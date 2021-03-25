@@ -18,6 +18,10 @@ import { CustomerCollectionReportComponent } from './customer-collection/custome
 import { ProjectCollectionReportComponent } from './project-collection/project-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
+import { SubDealerIssueReportComponent } from './sub-dealer-issue/sub-dealer-issue-report.component';
+import { DealerIssueReportComponent } from './dealer-issue/dealer-issue-report.component';
+import { SubDealerSalescallReportComponent } from './sub-dealer-salescall/sub-dealer-salescall-report.component';
+import { DealerSalescallReportComponent } from './dealer-salescall/dealer-salescall-report.component';
 
 @NgModule({
     declarations: [
@@ -32,7 +36,11 @@ import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.c
       CustomerCollectionReportComponent,
       ProjectCollectionReportComponent,
       PainterCallReportComponent,
-      DealerVisitReportComponent
+      DealerVisitReportComponent,
+      SubDealerIssueReportComponent,
+      DealerIssueReportComponent,
+      SubDealerSalescallReportComponent,
+      DealerSalescallReportComponent
     ],
   imports: [
       CommonModule,
