@@ -1,7 +1,19 @@
-﻿namespace BergerMsfaApi.Models.PainterRegistration
+﻿using AutoMapper;
+using Berger.Data.MsfaEntity.PainterRegistration;
+
+namespace BergerMsfaApi.Models.PainterRegistration
 {
-    public class PainterCompanyMTDValueModel
+    public class PainterCompanyMTDValueModel : MapFrom<PainterCompanyMTDValue>
+
     {
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.DropdownName));
+            
+
+        }
+
         public int Id { get; set; }
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }

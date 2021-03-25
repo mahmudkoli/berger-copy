@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Data.Migrations;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Mappings;
 using BergerMsfaApi.Models.Painter;
 using System.Collections.Generic;
@@ -13,23 +14,25 @@ namespace BergerMsfaApi.Models.PainterRegistration
     {
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PNTR.Painter, PainterModel>()
-               .ForMember(dest => dest.PainterCallList,
-                   opt => opt.MapFrom(src => src.PainterCallList));
+            // profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
 
+            //profile.CreateMap<PainterModel, PNTR.Painter>()
+            //   .ForMember(dest => dest.PainterCalls, opt => opt.MapFrom(src => src.PainterCalls));
+
+           
 
             profile.CreateMap<PainterAttachmentModel, PNTR.PainterAttachment>().ReverseMap();
 
             profile.CreateMap<PainterModel, PNTR.Painter>()
                 .ForMember(src => src.AttachedDealers, map => map.MapFrom(dest => dest.AttachedDealers.Select(dealer => new PNTR.AttachedDealerPainter { Dealer = dealer })));
 
+
             profile.CreateMap<PNTR.Painter, PainterModel>()
                    .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)))
                    .ForMember(src => src.PainterCatName, dest => dest.MapFrom(s => s.PainterCat != null ? s.PainterCat.DropdownName : string.Empty));
 
-
-
-
+            profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
+            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>();
 
         }
 
@@ -37,7 +40,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         {
             AttachedDealers = new List<int>();
             Attachments = new List<PainterAttachmentModel>();
-            PainterCallList = new List<PNTR.PainterCall>();
+            PainterCalls = new List<PainterCallModel>();
             DealerDetails = new List<AttachedDealerDetails>();
 
         }
@@ -74,7 +77,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string EmployeeId { get; set; }
         public List<PainterAttachmentModel> Attachments { get; set; }
         public List<int> AttachedDealers { get; set; }
-        public List<PNTR.PainterCall> PainterCallList { get; set; }
+        public List<PainterCallModel> PainterCalls { get; set; }
 
         public List<AttachedDealerDetails> DealerDetails {get;set;}
 

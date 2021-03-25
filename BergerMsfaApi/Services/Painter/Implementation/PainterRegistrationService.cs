@@ -12,6 +12,7 @@ using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -94,28 +95,37 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            //var result = await _painterSvc.FindAsync(f => f.Id == Id);
+            
 
             var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
                     painter => painter,
                     painter => painter.Id == Id,
                     null,
-                    painter => painter.Include(i => i.PainterCallList).ThenInclude(i => i.PainterCompanyMTDValue)
+                    painter => painter
                                       .Include(i => i.Attachments)
-                                      .Include(i => i.AttachedDealers),
+                                      .Include(i => i.AttachedDealers)
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue),
+
                     true
                 );
-           
-             
-            var painterModel = result.ToMap<Painter, PainterModel>();
+
+            
+            var painterModel = _mapper.Map<PainterModel>(result);
+            
+
+
+
             //dummy data
-            painterModel.AttachedDealers.Add(3519);
-            painterModel.AttachedDealers.Add(3520);
+
+            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. qwds fsad", CustomerNo = 103 });
+            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
+            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
 
             foreach (var id in painterModel.AttachedDealers)
             {
                 var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
                 painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails.CustomerName, CustomerNo = dealerDetails.CustomerNo });
+                
             }
 
             // var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));

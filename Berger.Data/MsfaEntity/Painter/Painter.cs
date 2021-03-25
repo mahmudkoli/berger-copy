@@ -13,7 +13,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         {
             Attachments = new List<PainterAttachment>();
             AttachedDealers = new List<AttachedDealerPainter>();
-            PainterCallList = new List<PainterCall>();
+            PainterCalls = new List<PainterCall>();
     }
         public string Depot { get; set; }
         public string SaleGroup { get; set; }
@@ -41,7 +41,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 
         public List<AttachedDealerPainter> AttachedDealers { get; set; } 
         public List<PainterAttachment> Attachments { get; set; }
-        public List<PainterCall> PainterCallList { get; set; }
+        public List<PainterCall> PainterCalls { get; set; }
 
         public object Include(Func<object, object> p)
         {

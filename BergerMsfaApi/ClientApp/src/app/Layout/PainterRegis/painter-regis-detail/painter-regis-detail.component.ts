@@ -7,7 +7,8 @@ import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/pain
 import { Observable } from 'rxjs';
 import { IPTableSetting } from '../../../Shared/Modules/p-table';
 import { PainterCall } from '../../../Shared/Entity/Painter/PainterCall';
-
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { ModalPainterCallDetailsComponent } from '../modal-painter-call-details/modal-painter-call-details.component'
 @Component({
     selector: 'app-painter-regis-detail',
     templateUrl: './painter-regis-detail.component.html',
@@ -17,8 +18,8 @@ export class PainterRegisDetailComponent implements OnInit {
     public baseUrl: string;
     painter: any;
     image: any = "uploads//images//Painters//BirtCertificateNo.jpg";
-    attachedDealers: any;
-    painterCallList: PainterCall[];
+    attachedDealers: any[];
+    painterCalls: PainterCall[];
     viewDetailsBtnclass:string = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
     attachments = [
         {
@@ -40,6 +41,7 @@ export class PainterRegisDetailComponent implements OnInit {
         private route: ActivatedRoute,
         private painterRegisSvc: PainterRegisService,
         private router: Router,
+        private modalService: NgbModal,
         @Inject('BASE_URL') baseUrl: string) { this.baseUrl = baseUrl; }
 
     ngOnInit() {
@@ -56,11 +58,21 @@ export class PainterRegisDetailComponent implements OnInit {
             (result: any) => {
 
                 this.painter = result.data;
-                this.painterCallList = this.painter.painterCallList;
-                console.log(this.painterCallList);
-                this.painterCallList.forEach(obj => {
-                    obj.viewDetailsText = 'View Log Details';
+                this.painterCalls = this.painter.painterCalls;
+                this.attachedDealers = this.painter.dealerDetails;
+
+                console.log(this.painter);
+                this.painterCalls.forEach(obj => {
+                    obj.hasAppUsageText = obj.hasAppUsage ? "Yes" : "No";
+                    obj.hasDbblIssueText = obj.hasDbblIssue ? "Yes" : "No";
+                    obj.hasNewProBriefingText = obj.hasNewProBriefing ? "Yes" : "No";
+                    obj.hasUsageEftToolsText = obj.hasUsageEftTools ? "Yes" : "No";
+                    obj.hasPremiumProtBriefingText = obj.hasPremiumProtBriefing ? "Yes" : "No";
+                    obj.hasSchemeComnunactionText = obj.hasSchemeComnunaction ? "Yes" : "No";
+
+                    obj.viewDetailsText = 'View Details';
                     obj.viewDetailsBtnclass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
+                    
 
                 });
 
@@ -77,22 +89,46 @@ export class PainterRegisDetailComponent implements OnInit {
 
 
     public ptableSettingsPainterCall: IPTableSetting = {
-        tableID: "painter call-table",
+        tableID: "painterCall-table",
         tableClass: "table table-border ",
-        tableName: 'Painter Call List',
+        tableName: 'PainterCall List',
         tableRowIDInternalName: "id",
         tableColDef: [
             { headerName: 'Comment', width: '12%', internalName: 'comment', sort: false, type: "" },
             { headerName: 'Work In Hand Number', width: '12%', internalName: 'workInHandNumber', sort: false, type: "" },
-            { headerName: 'Has Scheme Comnunaction', width: '12%', internalName: 'hasSchemeComnunaction', sort: false, type: "" },
-            { headerName: 'Has Premium Prot Briefing', width: '12%', internalName: 'hasPremiumProtBriefing', sort: false, type: "" },
-            { headerName: 'Has New Pro Briefing', width: '12%', internalName: 'hasNewProBriefing', sort: false, type: "" },
-            { headerName: 'Has Usage Eft Tools', width: '12%', internalName: 'hasUsageEftTools', sort: false, type: "" },
-            { headerName: 'Has App Usage', width: '12%', internalName: 'hasAppUsage', sort: false, type: "" },
-            { headerName: 'Has Dbbl Issue', width: '12%', internalName: 'hasDbblIssue', sort: false, type: "" },
+            { headerName: 'Has Scheme Comnunaction', width: '12%', internalName: 'hasSchemeComnunactionText', sort: false, type: "" },
+            { headerName: 'Has Premium Prot Briefing', width: '12%', internalName: 'hasPremiumProtBriefingText', sort: false, type: "" },
+            { headerName: 'Has New Pro Briefing', width: '12%', internalName: 'hasNewProBriefingText', sort: false, type: "" },
+            { headerName: 'Has Usage Eft Tools', width: '12%', internalName: 'hasUsageEftToolsText', sort: false, type: "" },
+            { headerName: 'Has App Usage', width: '12%', internalName: 'hasAppUsageText', sort: false, type: "" },
+            { headerName: 'Has Dbbl Issue', width: '12%', internalName: 'hasDbblIssueText', sort: false, type: "" },
             { headerName: 'Details', width: '5%', internalName: 'viewDetailsText', sort: false, type: "button", onClick: 'true', className:'viewDetailsBtnclass', innerBtnIcon:''}
 
 
+
+        ],
+        //enabledSearch: true,
+        enabledSerialNo: true,
+        // pageSize: 10,
+        enabledPagination: true,
+        // enabledDeleteBtn: true,
+        // enabledEditBtn: true,
+        enabledCellClick: true,
+        //enabledColumnFilter: false,
+        // enabledRecordCreateBtn: true,
+        enabledDataLength: true,
+        // newRecordButtonText: 'New ELearning'
+    };
+
+    public ptableSettingsAttachedDealers: IPTableSetting = {
+        tableID: "attachedDealers-table",
+        tableClass: "table table-border ",
+        tableName: 'Attached Dealers List',
+        tableRowIDInternalName: "id",
+        tableColDef: [
+            { headerName: 'Dealer Name', width: '50%', internalName: 'customerName', sort: false, type: "" },
+            { headerName: 'Dealer No', width: '50%', internalName: 'customerNo', sort: false, type: "" },
+            
 
         ],
         //enabledSearch: true,
@@ -108,8 +144,38 @@ export class PainterRegisDetailComponent implements OnInit {
         // newRecordButtonText: 'New ELearning'
     };
 
-    public cellClickCallbackFn(event) {
+    
+    public cellClickCallbackFn(event: any) {
+        let cellName = event.cellName;
+        let data = event.record.painterCompanyMTDValue;
+        if (cellName == 'viewDetailsText') {
+            this.detailsPainterCall(data);
+        }
+    }
+    detailsPainterCall(data) {
+        console.log(data);
+        this.openDetailsPainterCallModal(data);
+    }
+    openDetailsPainterCallModal(data: any) {
+        let ngbModalOptions: NgbModalOptions = {
+            backdrop: "static",
+            keyboard: false,
+            size: "lg",
+        };
+        const modalRef = this.modalService.open(
+            ModalPainterCallDetailsComponent,
+            ngbModalOptions
+        );
+        modalRef.componentInstance.painterCompanyMTDValue = data;
 
+        modalRef.result.then(
+            (result) => {
+                console.log(result);
+            },
+            (reason) => {
+                console.log(reason);
+            }
+        );
     }
 
 }

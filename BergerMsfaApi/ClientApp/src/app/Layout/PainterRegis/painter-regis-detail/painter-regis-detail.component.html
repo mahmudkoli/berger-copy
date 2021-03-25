@@ -1,16 +1,4 @@
 
-<!--<ul class="list-group">
-    <li class="list-group-item text-muted">Attachment List</li>
-    <li *ngFor="let attachment of painter.attachments" class="list-group-item">
-        <span class="">
-            <strong>
-                <a target="_blank" href="{{baseUrl}}/{{attachment.path}}">{{attachment.name}}</a>
-            </strong>
-        </span>
-    </li>
-
-</ul>-->
-
 <div *ngIf="painter" class="card-shadow-warning border mb-3 card card-body border-warning">
     <div class="card-body">
         <div class="row">
@@ -161,45 +149,20 @@
 
     </div>
 
-    <hr class="divider" style="background:#2196F3" />
+
+    <br />
+    <br />
 
     <div class="col col-md-12">
-        <p-table [value]="painter.dealerDetails">
-
-            <ng-template pTemplate="header">
-                <tr>
-                    <th pSortableColumn="name">Dealer Name</th>
-                    <th pSortableColumn="path">Dealer No</th>
-                </tr>
-            </ng-template>
-
-            <ng-template pTemplate="body" let-dealer>
-                <tr>
-                    <td>
-                        <span>
-                            <strong>
-                                <a href="{{dealer.customerName}}" target="_self" download [class.disabled]="!painter.path">{{dealer.customerName}} </a>
-                            </strong>
-                        </span>
-                    </td>
-                    <td>
-                        <strong>
-                            <a href="{{dealer.customerNo}}" target="_self" download [class.disabled]="!painter.path">{{dealer.customerNo}} </a>
-                        </strong>
-                    </td>
-
-                </tr>
-            </ng-template>
-
-
-        </p-table>
+        <app-p-table [pTableSetting]="ptableSettingsAttachedDealers" [pTableMasterData]="attachedDealers" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength">
+        </app-p-table>
     </div>
 
     <br />
     <br />
 
     <div class="col col-md-12">
-        <app-p-table [pTableSetting]="ptableSettingsPainterCall" [pTableMasterData]="painterCallList" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
+        <app-p-table [pTableSetting]="ptableSettingsPainterCall" [pTableMasterData]="painterCalls" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
                      (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
         </app-p-table>
     </div>
