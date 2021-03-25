@@ -6,7 +6,7 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { CollectionReportQuery, DealerOpeningQuery, LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { SubDealerIssueReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
@@ -15,14 +15,14 @@ import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 
 @Component({
-    selector: 'app-dealer-collection-report',
-    templateUrl: './dealer-collection-report.component.html',
-    styleUrls: ['./dealer-collection-report.component.css']
+    selector: 'sub-dealer-issue-report',
+    templateUrl: './sub-dealer-issue-report.component.html',
+    styleUrls: ['./sub-dealer-issue-report.component.css']
 })
-export class DealerCollectionReportComponent implements OnInit, OnDestroy {
+export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: CollectionReportQuery;
+	query: SubDealerIssueReportQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
@@ -37,12 +37,24 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Dealer Collection Report';
+	tableName: string = 'Sub Dealer Issue Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {
-		'chequeNumber' : 'Cheque/DD/PO Number',
-		'cashAmount' : 'Cheque/DD/PO/Cash Amount',
-		'manualMrNumber' : 'Manual MR Number',
+		'pcMaterial' : 'Material',
+		'posComments' : 'pcomment',
+		'posPriority' : 'ppriority',
+		'shadeComments' : 'scomments',
+		'shadePriority' : 'spriority',
+		'shopSignComments' : 'sscomments',
+		'shopSignPriority' : 'sspriority',
+		'deliveryComments' : 'dcomments',
+		'deliveryPriority' : 'dpriority',
+		'cbmStatus' : 'Status',
+		'cbmMaintatinanceFrequency' : 'Maintatinance Frequency',
+		'cbmRemarks' : 'Remarks for Irregular',
+		'cbmPriority' : 'cbmPriority',
+		'othersComment' : 'ocomment',
+		'othersriority' : 'opriority'
 	};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
@@ -55,8 +67,7 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
     salesGroups: any[] = [];
     territories:any[]=[]
     zones: any[] = [];
-    paymentMethods: any[] = [];
-	dealerList: any[] = [];
+	subDealerList: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -93,15 +104,15 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 	}
 	
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadDealerCollection(query);
-	getData = (query) => this.reportService.getDealerCollection(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadSubDealerIssue(query);
+	getData = (query) => this.reportService.getSubDealerIssue(query);
 	
 	private getDealerList() {
         if (this._loggedUser) {
             this.alertService.fnLoading(true);
             this.commonService.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
                 (result: any) => {
-                    this.dealerList = result.data;
+                    this.subDealerList = result.data;
                 },
                 (err: any) => console.log(err)
 
@@ -111,7 +122,7 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
     }
 
 	searchConfiguration() {
-		this.query = new CollectionReportQuery({
+		this.query = new SubDealerIssueReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -136,13 +147,12 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
 			this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment),
-        ]).subscribe(([users, plants, areaGroups, territories, zones, paymentMethods]) => {
+        ]).subscribe(([users, plants, areaGroups, territories, zones]) => {
             this.users = users.data;
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
             this.territories = territories.data;
             this.zones = zones.data;
-			this.paymentMethods = paymentMethods.data;
         }, (err) => { }, () => { });
     }
 
@@ -212,6 +222,54 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'pcomment' || x.internalName == 'ppriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'POS Material Short';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'scomments' || x.internalName == 'spriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Shade Card';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'sscomments' || x.internalName == 'sspriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Shop Sign Complain';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'Status' || x.internalName == 'Maintatinance Frequency' || x.internalName == 'Remarks for Irregular' || x.internalName == 'cbmPriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Color Bank Maintainance';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'ocomment' || x.internalName == 'opriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Others';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'dcomments' || x.internalName == 'dpriority'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Delivery Issue';
 		});
 	}
 

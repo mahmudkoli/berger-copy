@@ -118,6 +118,56 @@ export class DealerVisitReportQuery extends ReportBaseQuery {
     constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
         super();
         Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class DealerSalesCallReportQuery extends ReportBaseQuery {
+    dealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class SubDealerSalesCallReportQuery extends ReportBaseQuery {
+    subDealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class DealerIssueReportQuery extends ReportBaseQuery {
+    dealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class SubDealerIssueReportQuery extends ReportBaseQuery {
+    subDealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
     }
 
     clear() {

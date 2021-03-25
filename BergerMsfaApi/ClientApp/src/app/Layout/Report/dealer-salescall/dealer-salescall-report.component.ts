@@ -6,7 +6,7 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { CollectionReportQuery, DealerOpeningQuery, LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { DealerSalesCallReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
@@ -15,14 +15,14 @@ import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 
 @Component({
-    selector: 'app-dealer-collection-report',
-    templateUrl: './dealer-collection-report.component.html',
-    styleUrls: ['./dealer-collection-report.component.css']
+    selector: 'dealer-salescall-report',
+    templateUrl: './dealer-salescall-report.component.html',
+    styleUrls: ['./dealer-salescall-report.component.css']
 })
-export class DealerCollectionReportComponent implements OnInit, OnDestroy {
+export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: CollectionReportQuery;
+	query: DealerSalesCallReportQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
@@ -37,12 +37,16 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Dealer Collection Report';
+	tableName: string = 'Dealer Sales Call Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {
-		'chequeNumber' : 'Cheque/DD/PO Number',
-		'cashAmount' : 'Cheque/DD/PO/Cash Amount',
-		'manualMrNumber' : 'Manual MR Number',
+		'ssStatus' : 'Status',
+		'ssReasonForPourOrAverage' : 'Reason for poor or Average',
+		'sdInfluecePercent' : 'Influence %',
+		'painterInfluecePercent' : 'Influenc %',
+		'csRemarks' : 'Remarks',
+		'pdmRemarks' : 'Remark',
+		'dealerSatisfactionStatus' : 'dStatus'
 	};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
@@ -55,7 +59,6 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
     salesGroups: any[] = [];
     territories:any[]=[]
     zones: any[] = [];
-    paymentMethods: any[] = [];
 	dealerList: any[] = [];
 
 	// Subscriptions
@@ -93,8 +96,8 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 	}
 	
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadDealerCollection(query);
-	getData = (query) => this.reportService.getDealerCollection(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadDealerSalesCall(query);
+	getData = (query) => this.reportService.getDealerSalesCall(query);
 	
 	private getDealerList() {
         if (this._loggedUser) {
@@ -111,7 +114,7 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
     }
 
 	searchConfiguration() {
-		this.query = new CollectionReportQuery({
+		this.query = new DealerSalesCallReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -136,13 +139,12 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
 			this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment),
-        ]).subscribe(([users, plants, areaGroups, territories, zones, paymentMethods]) => {
+        ]).subscribe(([users, plants, areaGroups, territories, zones]) => {
             this.users = users.data;
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
             this.territories = territories.data;
             this.zones = zones.data;
-			this.paymentMethods = paymentMethods.data;
         }, (err) => { }, () => { });
     }
 
@@ -213,7 +215,82 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'Status' || x.internalName == 'Reason for poor or Average'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Secondary Sales';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'uspCommunication' || x.internalName == 'productLiftingStatus' || x.internalName == 'reasonForNotLifting'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Premium Product Activity';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'cbMachineStatus' || x.internalName == 'cbProductivity'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Color Bank';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'subDealerInfluence' || x.internalName == 'Influence %'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Sub-Dealer Management';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'painterInfluence' || x.internalName == 'Influenc %'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Painter';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'productKnoledge' || x.internalName == 'salesTechniques' || x.internalName == 'merchendisingImprovement'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Shop Manage/Shop Boy';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'competitionService' || x.internalName == 'Remarks' || x.internalName == 'productDisplayAndMerchendizingStatus' || x.internalName == 'Remark' || x.internalName == 'productDisplayAndMerchendizingImage' || x.internalName == 'schemeModality' || x.internalName == 'schemeModalityImage' || x.internalName == 'shopBoy'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Competition Information';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'apAvrgMonthlySales' || x.internalName == 'apActualMtdSales' || x.internalName == 'nerolacAvrgMonthlySales' || x.internalName == 'nerolacActualMtdSales' || x.internalName == 'nipponAvrgMonthlySales' || x.internalName == 'nipponActualMtdSales' || x.internalName == 'duluxAvrgMonthlySales' || x.internalName == 'duluxActualMtdSales'  || x.internalName == 'jotunAvrgMonthlySales' || x.internalName == 'jotunActualMtdSales' || x.internalName == 'moonstarAvrgMonthlySales' || x.internalName == 'moonstarActualMtdSales' || x.internalName == 'eliteAvrgMonthlySales' || x.internalName == 'eliteActualMtdSales' || x.internalName == 'alkarimAvrgMonthlySales' || x.internalName == 'alkarimActualMtdSales' || x.internalName == 'othersAvrgMonthlySales' || x.internalName == 'othersActualMtdSales' || x.internalName == 'totalAvrgMonthlySales' || x.internalName == 'totalActualMtdSales'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Competition Sales';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'dStatus' || x.internalName == 'dealerDissatisfactionReason'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Dealer Satisfaction';
+		});
+
 	}
+
+	
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "reports-table",

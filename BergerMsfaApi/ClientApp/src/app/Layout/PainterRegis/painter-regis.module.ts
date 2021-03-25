@@ -7,11 +7,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PainterRegisRoutingModule } from './painterRegis-routing.module';
 import { PainterRegisDetailComponent } from './painter-regis-detail/painter-regis-detail.component';
+import { ModalPainterCallDetailsComponent } from './modal-painter-call-details/modal-painter-call-details.component';
+
 
 
 
 @NgModule({
-  declarations: [PainterRegisListComponent, PainterRegisDetailComponent],
+  declarations: [PainterRegisListComponent, PainterRegisDetailComponent, ModalPainterCallDetailsComponent],
   imports: [
       CommonModule,
       SharedMasterModule,
@@ -20,6 +22,10 @@ import { PainterRegisDetailComponent } from './painter-regis-detail/painter-regi
       NgbModule,
       FormsModule,
       ReactiveFormsModule,
-  ]
+      
+    ],
+    entryComponents: [
+        ModalPainterCallDetailsComponent
+    ]
 })
 export class PainterRegisModule { }
