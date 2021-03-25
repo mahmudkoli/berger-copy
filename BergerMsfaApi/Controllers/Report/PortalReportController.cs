@@ -449,7 +449,7 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
-        [HttpGet("GetDealerIssue")]
+        [HttpGet("GetSubDealerIssue")]
         public async Task<IActionResult> GetSubDealerIssue([FromQuery] SubDealerIssueReportSearchModel query)
         {
             try
@@ -463,7 +463,7 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
-        [HttpGet("DownloadDealerIssue")]
+        [HttpGet("DownloadSubDealerIssue")]
         public async Task<IActionResult> DownloadSubDealerIssue([FromQuery] SubDealerIssueReportSearchModel query)
         {
             try

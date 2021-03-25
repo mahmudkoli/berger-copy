@@ -131,7 +131,7 @@ export class CustomerCollectionReportComponent implements OnInit, OnDestroy {
 	
     populateDropdownDataList() {
         forkJoin([
-            this.commonService.getUserInfoList(),
+            this.commonService.getUserInfoListByLoggedInManager(),
             this.commonService.getDepotList(),
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),

@@ -201,10 +201,10 @@ namespace BergerMsfaApi.Models.Report
     public class CustomerCollectionReportResultModel
     {
         public string UserId { get; set; }
-        public string DepotId { get; set; }
-        public string DepotName { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string DepotId { get; set; }
+        //public string DepotName { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string CustomerName { get; set; }
@@ -222,10 +222,10 @@ namespace BergerMsfaApi.Models.Report
     public class DirectProjectCollectionReportResultModel
     {
         public string UserId { get; set; }
-        public string DepotId { get; set; }
-        public string DepotName { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string DepotId { get; set; }
+        //public string DepotName { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string ProjectSapId { get; set; }
@@ -268,6 +268,8 @@ namespace BergerMsfaApi.Models.Report
         public string EpToolsUsage { get; set; }
         public string PainterAppUsage { get; set; }
         public string WorkInHandNo { get; set; }
+        public string BpblMtdValue { get; set; }
+        public string BpblCount { get; set; }
         public string ApMtdValue { get; set; }
         public string ApCount { get; set; }
         public string NerolacMtdValue { get; set; }
