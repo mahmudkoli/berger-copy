@@ -1,0 +1,29 @@
+<div class="card-shadow-warning border mb-3 card card-body border-warning">
+    <h5 class="card-title"><strong>Dealer Info Details:</strong></h5>
+    <h3>{{a}}</h3>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong> Divison: </strong>{{divison}}</span></p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong> Sales Office: </strong>{{salesOffice}}</span></p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong> Sales Group: </strong>{{salesGroup}}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col col-md-12">
+        <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="dealerInfoLogs">
+        </app-p-table>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="backToTheList()">
+            <i class="pe-7s-back pr-1"></i> Back
+        </button>
+    </div>
+</div>
+
+
