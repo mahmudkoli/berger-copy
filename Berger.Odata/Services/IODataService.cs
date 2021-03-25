@@ -18,6 +18,7 @@ namespace Berger.Odata.Services
         Task<IList<BalanceDataModel>> GetBalanceData(string query);
         Task<IList<CollectionDataModel>> GetCollectionData(string query);
         Task<IList<CustomerDataModel>> GetCustomerData(string query);
+        Task<IList<StockDataModel>> GetStockData(string query);
         #endregion
 
         #region get selectable data
@@ -54,6 +55,9 @@ namespace Berger.Odata.Services
 
         Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
             IList<int> dealerIds, string compareMonth, string division = "-1");
+
+        Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
+            string plant = "", string materialGroup = "", string materialCode = "");
         #endregion
 
         #region calculate data

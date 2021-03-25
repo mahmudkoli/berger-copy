@@ -6,10 +6,12 @@ using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.OData.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

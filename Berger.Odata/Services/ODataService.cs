@@ -124,6 +124,18 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<StockDataModel>> GetStockData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.StockUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<StockDataModel>.ParseJson(responseBody);
+            var data = parsedData.Results.ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -696,6 +708,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
+        
         public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -731,6 +744,50 @@ namespace Berger.Odata.Services
             return data;
         }
 
+        public async Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
+            string plant = "", string materialGroup = "", string materialCode = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            var filter = new List<(string Prop, string Value)>();
+
+            if (string.IsNullOrEmpty(plant))
+            {
+                filter.Add((nameof(StockDataModel.Plant), plant));
+            }
+
+            if (string.IsNullOrEmpty(materialGroup))
+            {
+                filter.Add((nameof(StockDataModel.MaterialGroup), materialGroup));
+            }
+
+            if (string.IsNullOrEmpty(materialCode))
+            {
+                filter.Add((nameof(StockDataModel.MaterialCode), materialCode));
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            if (filter.Any())
+            {
+                var fil = filter.FirstOrDefault();
+                filterQueryBuilder.Equal(fil.Prop, fil.Value);
+                foreach (var item in filter.Skip(1))
+                {
+                    filterQueryBuilder.And().Equal(item.Prop, item.Value);
+                }
+
+                queryBuilder.AppendQuery(filterQueryBuilder.Filter);
+            }
+
+            var data = (await GetStockData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
         #endregion
 
         #region calculate data
