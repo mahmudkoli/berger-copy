@@ -35,7 +35,7 @@ export class ModalPainterCallDetailsComponent implements OnInit {
 	public ptableSettings: IPTableSetting = {
 		tableID: "painterCompanyMTDValue-table",
 		tableClass: "table table-border ",
-		tableName: 'painter Company MTD Value',
+		tableName: 'Painter Company MTD Value',
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'CompanyId', width: '20%', internalName: 'companyId', sort: false, type: "" },

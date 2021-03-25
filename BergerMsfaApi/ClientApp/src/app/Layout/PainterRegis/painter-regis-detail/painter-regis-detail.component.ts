@@ -17,24 +17,26 @@ import { ModalPainterCallDetailsComponent } from '../modal-painter-call-details/
 export class PainterRegisDetailComponent implements OnInit {
     public baseUrl: string;
     painter: any;
-    image: any = "uploads//images//Painters//BirtCertificateNo.jpg";
     attachedDealers: any[];
     painterCalls: PainterCall[];
-    viewDetailsBtnclass:string = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
-    attachments = [
-        {
-            path: "xyz",
-            name: "passport",
-        },
-        {
-            path: "abc",
-            name: "nid",
-        },
-        {
-            path: "bleh",
-            name: "birth",
-        }
-    ];
+    attachments: any[];
+
+    //dummy data
+    //image: any = "uploads//images//Painters//BirtCertificateNo.jpg";
+    //attachments = [
+    //    {
+    //        path: "/abc",
+    //        name: "passport",
+    //    },
+    //    {
+    //        path: "/abc",
+    //        name: "nid",
+    //    },
+    //    {
+    //        path: "/abc",
+    //        name: "birth",
+    //    }
+    //];
     constructor(
 
         private alertService: AlertService,
@@ -60,6 +62,7 @@ export class PainterRegisDetailComponent implements OnInit {
                 this.painter = result.data;
                 this.painterCalls = this.painter.painterCalls;
                 this.attachedDealers = this.painter.dealerDetails;
+                this.attachments = this.painter.attachments;
 
                 console.log(this.painter);
                 this.painterCalls.forEach(obj => {

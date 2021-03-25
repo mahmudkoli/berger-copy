@@ -14,13 +14,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
     {
         public void Mapping(Profile profile)
         {
-            // profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
-
-            //profile.CreateMap<PainterModel, PNTR.Painter>()
-            //   .ForMember(dest => dest.PainterCalls, opt => opt.MapFrom(src => src.PainterCalls));
-
-           
-
+          
             profile.CreateMap<PainterAttachmentModel, PNTR.PainterAttachment>().ReverseMap();
 
             profile.CreateMap<PainterModel, PNTR.Painter>()

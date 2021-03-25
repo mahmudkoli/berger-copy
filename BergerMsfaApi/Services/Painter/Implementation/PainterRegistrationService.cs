@@ -117,9 +117,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             //dummy data
 
-            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. qwds fsad", CustomerNo = 103 });
-            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
-            painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. qwds fsad", CustomerNo = 103 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
 
             foreach (var id in painterModel.AttachedDealers)
             {
