@@ -62,6 +62,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
+             
                 var result = await _oDataReportService.MySummaryReport();
                 return OkResult(result);
             }
