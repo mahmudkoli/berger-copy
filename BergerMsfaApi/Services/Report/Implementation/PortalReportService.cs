@@ -2,8 +2,16 @@
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity;
+using Berger.Data.MsfaEntity.CollectionEntry;
+using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
@@ -32,22 +40,88 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IRepository<LeadGeneration> _leadGenerationRepository;
         private readonly IRepository<LeadFollowUp> _leadFollowUpRepository;
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<Painter> _painterRepository;
+        private readonly IRepository<UserInfo> _userInfoRepository;
+        private readonly IRepository<DropdownDetail> _dorpDownDetailsRepository;
+        private readonly IRepository<AttachedDealerPainter> _attachmentDealerRepository;
+        private readonly IRepository<DealerInfo> _dealerInfoRepository;
+        private readonly IRepository<Zone> _zoneSvc;
+        private readonly IRepository<Territory> _territorySvc;
+        private readonly IRepository<SaleGroup> _saleGroupSvc;
+        private readonly IRepository<SaleOffice> _saleOfficeSvc;
+        private readonly IRepository<Depot> _depotSvc;
+        private readonly IRepository<DealerOpening> _dealerOpening;
+        private readonly IRepository<DealerOpeningAttachment> _dealerOpeningAttachmentSvc;
+        private readonly IRepository<Payment> _paymentRepository;
+        private readonly IRepository<PainterCall> _painterCallRepository;
+        private readonly IRepository<PainterCompanyMTDValue> _painterCompanyMtdRepository;
+        private readonly IRepository<CreditControlArea> _creditControlAreaRepository;
+        private readonly IRepository<JourneyPlanMaster> _journeyPlanMasterRepository;
+        private readonly IRepository<JourneyPlanDetail> _journeyPlanDetailRepository;
+        private readonly IRepository<DSC.DealerCompetitionSales> _dealerCompetitionSaleRepository;
+        private readonly IRepository<DSC.DealerSalesIssue> _dealerSaleIssueRepository;
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
+        
+        private readonly ApplicationDbContext _context;
 
         public PortalReportService(
                 IRepository<LeadGeneration> leadGenerationRepository,
                 IRepository<LeadFollowUp> leadFollowUpRepository,
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
+                IRepository<Painter> painterRepository,
+                IRepository<UserInfo> userInfoRepository,
+                IRepository<DropdownDetail> dropDownDetailsRepository,
+                IRepository<AttachedDealerPainter> attachmentDealerRepository,
+                IRepository<DealerInfo> dealerInfoRepository,
+                IRepository<Zone> zoneSvc,
+                IRepository<Territory> territorySvc,
+                IRepository<SaleGroup> saleGroupSvc,
+                IRepository<SaleOffice> saleOfficeSvc,
+                IRepository<Depot> depotSvc,
+                IRepository<DealerOpening> dealerOpening,
+                IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
+                IRepository<Payment> paymentRepository,
+                IRepository<PainterCall> painterCallRepository,
+                IRepository<PainterCompanyMTDValue> painterCompanyMtdRepository,
+                IRepository<CreditControlArea> creditControlAreaRepository,
+                IRepository<JourneyPlanMaster> journeyPlanMasterRepository,
+                IRepository<JourneyPlanDetail> journeyPlanDetailRepository,
+                IRepository<DSC.DealerCompetitionSales> dealerCompetitionSaleRepository,
+                IRepository<DSC.DealerSalesIssue> dealerSaleIssueRepository,
                 IDropdownService dropdownService,
-                IMapper mapper
+                IMapper mapper,
+
+                ApplicationDbContext context
             )
         {
             this._leadGenerationRepository = leadGenerationRepository;
             this._leadFollowUpRepository = leadFollowUpRepository;
             this._dealerSalesCallRepository = dealerSalesCallRepository;
+            this._painterRepository = painterRepository;
+            this._userInfoRepository = userInfoRepository;
+            this._dorpDownDetailsRepository = dropDownDetailsRepository;
+            this._attachmentDealerRepository = attachmentDealerRepository;
+            this._dealerInfoRepository = dealerInfoRepository;
+            this._zoneSvc = zoneSvc;
+            this._territorySvc = territorySvc;
+            this._saleGroupSvc = saleGroupSvc;
+            this._saleOfficeSvc = saleOfficeSvc;
+            this._depotSvc = depotSvc;
+            this._dealerOpening = dealerOpening;
+            this._dealerOpeningAttachmentSvc = dealerOpeningAttachmentSvc;
             this._dropdownService = dropdownService;
+            this._paymentRepository = paymentRepository;
+            this._painterCallRepository = painterCallRepository;
+            this._painterCompanyMtdRepository = painterCompanyMtdRepository;
+            this._creditControlAreaRepository = creditControlAreaRepository;
+            this._journeyPlanMasterRepository = journeyPlanMasterRepository;
+            this._journeyPlanDetailRepository = journeyPlanDetailRepository;
+            this._dealerCompetitionSaleRepository = dealerCompetitionSaleRepository;
+            this._dealerSaleIssueRepository = dealerSaleIssueRepository;
             this._mapper = mapper;
+
+            this._context = context;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -261,6 +335,1397 @@ namespace BergerMsfaApi.Services.Report.Implementation
             queryResult.Items = reportResult;
             queryResult.TotalFilter = leads.TotalFilter;
             queryResult.Total = leads.Total;
+
+            return queryResult;
+        }
+        
+        public async Task<QueryResultModel<PainterRegistrationReportResultModel>> GetPainterRegistrationReportAsync(PainterRegistrationReportSearchModel query)
+        {
+            var reportResult = new List<PainterRegistrationReportResultModel>();
+
+            var painters = await (from p in _context.Painters
+                            join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                            from userInfo in uleftjoin.DefaultIfEmpty()
+                            join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
+                            from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                            join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                            from adpInfo in adpleftjoin.DefaultIfEmpty()
+                            join di in _context.DealerInfos on adpInfo.Dealer equals di.Id into dileftjoin
+                            from diInfo in dileftjoin.DefaultIfEmpty()
+                            join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
+                            from depinfo in depleftjoin.DefaultIfEmpty()
+                            join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
+                            from sginfo in sgleftjoin.DefaultIfEmpty()
+                            join t in _context.Territory on p.Territory equals t.Code into tleftjoin
+                            from tinfo in tleftjoin.DefaultIfEmpty()
+                            join z in _context.Zone on p.Zone equals z.Code into zleftjoin
+                            from zinfo in zleftjoin.DefaultIfEmpty()
+                            where (
+                               (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                               && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
+                               && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                               && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                               && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                               && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                               && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
+                               && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                               && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
+                            )
+                            select new 
+                            {
+                                userInfo.Email,
+                                territoryName = tinfo.Name,
+                                zoneName = zinfo.Name,
+                                painterId = p.Id.ToString(),
+                                p.CreatedTime,
+                                typeOfPainter = dropDownInfo.DropdownName,
+                                depotName = depinfo.Name1,
+                                salesGroupName = sginfo.Name,
+                                p.PainterName,
+                                p.Address,
+                                p.Phone,
+                                p.NoOfPainterAttached,
+                                rocketAccountStatus = p.HasDbbl ? "Created" : "Not Created",
+                                p.AccDbblNumber,
+                                p.AccDbblHolderName,
+                                identification = !string.IsNullOrEmpty(p.NationalIdNo) ? p.NationalIdNo
+                                                 : (!string.IsNullOrEmpty(p.PassportNo) ? p.PassportNo
+                                                 : (!string.IsNullOrEmpty(p.BrithCertificateNo)) ? p.BrithCertificateNo : string.Empty),
+                                p.AttachedDealerCd,
+                                diInfo.CustomerName,
+                                appInstalledStatus = p.IsAppInstalled ? "Installed" : "Not Installed",
+                                p.Remark,
+                                avgMonthlyUse = p.AvgMonthlyVal.ToString(),
+                                bergerLoyalty = p.Loyality.ToString(),
+                                p.PainterImageUrl
+                            }).ToListAsync();
+
+            reportResult = painters.Select(x => new PainterRegistrationReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                PainterId = x.painterId,
+                PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                TypeOfPainer = x.typeOfPainter,
+                DepotName = x.depotName,
+                SalesGroup = x.salesGroupName,
+                PainterName = x.PainterName,
+                PainterAddress = x.Address,
+                MobileNumber = x.Phone,
+                NoOfPaintingAttached = x.NoOfPainterAttached,
+                DBBLRocketAccountStatus = x.rocketAccountStatus,
+                AccountNumber = x.AccDbblNumber,
+                AccountHolderName = x.AccDbblHolderName,
+                IdentificationNo = x.identification,
+                AttachedTaggedDealerId = x.AttachedDealerCd,
+                AttachedTaggedDealerName = x.CustomerName,
+                APPInstalledStatus = x.appInstalledStatus,
+                APPNotInstalledReason = x.Remark,
+                AverageMonthlyUse = x.avgMonthlyUse,
+                BergerLoyalty = x.bergerLoyalty,
+                PainterImageUrl = x.PainterImageUrl,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<PainterRegistrationReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = painters.Count();
+            queryResult.Total = painters.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DealerOpeningReportResultModel>> GetDealerOpeningReportAsync(DealerOpeningReportSearchModel query)
+        {
+            var reportResult = new List<DealerOpeningReportResultModel>();
+
+            var dealers = await (from d in _context.DealerOpenings
+                           join u in _context.UserInfos on d.EmployeeId equals u.EmployeeId into uleftjoin
+                           from uinfo in uleftjoin.DefaultIfEmpty()
+                           join dep in _context.Depots on d.BusinessArea equals dep.Werks into depleftjoin
+                           from depinfo in depleftjoin.DefaultIfEmpty()
+                           join so in _context.SaleOffice on d.SaleOffice equals so.Code into soleftjoin
+                           from soinfo in soleftjoin.DefaultIfEmpty()
+                           join sg in _context.SaleGroup on d.SaleGroup equals sg.Code into sgleftjoin
+                           from sginfo in sgleftjoin.DefaultIfEmpty()
+                           join t in _context.Territory on d.Territory equals t.Code into tleftjoin
+                           from tinfo in tleftjoin.DefaultIfEmpty()
+                           join z in _context.Zone on d.Zone equals z.Code into zleftjoin
+                           from zinfo in zleftjoin.DefaultIfEmpty()
+                           where (
+                             (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                             && (string.IsNullOrWhiteSpace(query.DepotId) || d.BusinessArea == query.DepotId)
+                             && (!query.Territories.Any() || query.Territories.Contains(d.Territory))
+                             && (!query.Zones.Any() || query.Zones.Contains(d.Zone))
+                             && (!query.FromDate.HasValue || d.CreatedTime.Date >= query.FromDate.Value.Date)
+                             && (!query.ToDate.HasValue || d.CreatedTime.Date <= query.ToDate.Value.Date)
+                           )
+                           select new 
+                           {
+                               uinfo.Email,
+                               dealerId = d.Id.ToString(),
+                               d.BusinessArea,
+                               businessAreaName = depinfo.Name1,
+                               salesOffice = sginfo.Name,
+                               saleGroupName = sginfo.Name,
+                               territoryName = tinfo.Name,
+                               zoneName = zinfo.Name,
+                               d.EmployeeId
+                           }).ToListAsync();
+
+            var dealerAttachments = await (from doa in _context.DealerOpeningAttachments
+                                    join di in _context.DealerInfos on doa.DealerOpeningId equals di.Id into dileftjoin
+                                    from diinfo in dileftjoin.DefaultIfEmpty()
+                                    select new 
+                                    {
+                                        attachmentName = doa.Name,
+                                        dealerOpeningId = doa.DealerOpeningId.ToString(),
+                                        doa.Path
+                                    }).ToListAsync();
+
+            reportResult = dealers.Select(x => new DealerOpeningReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                DealrerOpeningId = x.dealerId,
+                BusinessArea = x.BusinessArea,
+                BusinessAreaName = x.businessAreaName,
+                SalesOffice = x.salesOffice,
+                SalesGroup = x.saleGroupName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                EmployeeId = x.EmployeeId,
+                DealershipOpeningApplicationForm = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Application Form" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                TradeLicensee = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Trade Licensee" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                IdentificationNo = dealerAttachments.FirstOrDefault(y => y.attachmentName == "NID/Passport/Birth" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                PhotographOfproprietor = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Photograph of proprietor" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                NomineeIdentificationNo = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee NID/PASSPORT/BIRTH" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                NomineePhotograph = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee/Photograph" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                Cheque = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Cheque" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                CurrentStatusOfThisApplication = "",
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerOpeningReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealers.Count();
+            queryResult.Total = dealers.Count();
+
+            return queryResult;
+        }
+        
+        public async Task<QueryResultModel<DealerCollectionReportResultModel>> GetDealerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<DealerCollectionReportResultModel>();
+
+            var dealers = await (from p in _context.Payments
+                                    join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                    from uinfo in uleftjoin.DefaultIfEmpty()
+                                    join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                    from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                    join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                    from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                                    join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                    from cainfo in caleftjoin.DefaultIfEmpty()
+                                    join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                    from dinfo in dleftjoin.DefaultIfEmpty()
+                                    join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
+                                    from tinfo in tleftjoin.DefaultIfEmpty()
+                                    join z in _context.Zone on dinfo.CustZone equals z.Code into zleftjoin
+                                    from zinfo in zleftjoin.DefaultIfEmpty()
+                                    join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
+                                    from depinfo in depleftjoin.DefaultIfEmpty()
+                                    where (
+                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDealer
+                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                      && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
+                                      && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
+                                      && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                      && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                    )
+                                    select new
+                                    {
+                                        uinfo.Email,
+                                        p.CollectionDate,
+                                        customerType = dctinfo.DropdownName,
+                                        p.SapId,
+                                        projectName = p.Name,
+                                        p.Address,
+                                        paymentMethod = dpminfo.DropdownName,
+                                        creditControlArea = cainfo.Description,
+                                        p.BankName,
+                                        p.Number,
+                                        p.Amount,
+                                        p.ManualNumber,
+                                        p.Remarks,
+                                        p.Name,
+                                        p.MobileNumber,
+                                        depotId = depinfo.Werks,
+                                        depotName = depinfo.Name1,
+                                        territoryName = tinfo.Name,
+                                        zoneName = zinfo.Name,
+                                        p.Code
+                                    }).ToListAsync();
+
+            reportResult = dealers.Select(x => new DealerCollectionReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                DepotId = x.depotId,
+                DepotName = x.depotName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
+                TypeOfCustomer = x.customerType,
+                DealerId = x.Code,
+                DealerName = x.Name,
+                PaymentMethod = x.paymentMethod,
+                CreditControlArea = x.creditControlArea,
+                BankName = x.BankName,
+                ChequeNumber = x.Number,
+                CashAmount = x.Amount,
+                ManualMrNumber = x.ManualNumber,
+                Remarks = x.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealers.Count();
+            queryResult.Total = dealers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<SubDealerCollectionReportResultModel>> GetSubDealerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<SubDealerCollectionReportResultModel>();
+
+            var subDealers = await (from p in _context.Payments
+                                   join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                   from uinfo in uleftjoin.DefaultIfEmpty()
+                                   join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                   from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                   join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                   from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                                   join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                   from cainfo in caleftjoin.DefaultIfEmpty()
+                                   join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                   from dinfo in dleftjoin.DefaultIfEmpty()
+                                   join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
+                                   from tinfo in tleftjoin.DefaultIfEmpty()
+                                   join z in _context.Zone on dinfo.CustZone equals z.Code into zleftjoin
+                                   from zinfo in zleftjoin.DefaultIfEmpty()
+                                   join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
+                                   from depinfo in depleftjoin.DefaultIfEmpty()
+                                   where (
+                                     dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeSubDealer
+                                     && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                     && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
+                                     && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                     && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                     && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                     && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                   )
+                                   select new
+                                   {
+                                       uinfo.Email,
+                                       p.CollectionDate,
+                                       customerType = dctinfo.DropdownName,
+                                       p.SapId,
+                                       projectName = p.Name,
+                                       p.Address,
+                                       paymentMethod = dpminfo.DropdownName,
+                                       creditControlArea = cainfo.Description,
+                                       p.BankName,
+                                       p.Number,
+                                       p.Amount,
+                                       p.ManualNumber,
+                                       p.Remarks,
+                                       p.Name,
+                                       p.MobileNumber,
+                                       depotId = depinfo.Werks,
+                                       depotName = depinfo.Name1,
+                                       territoryName = tinfo.Name,
+                                       zoneName = zinfo.Name,
+                                       p.Code
+                                   }).ToListAsync();
+
+            reportResult = subDealers.Select(x => new SubDealerCollectionReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                DepotId = x.depotId,
+                DepotName = x.depotName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
+                TypeOfCustomer = x.customerType,
+                SubDealerCode = x.Code,
+                SubDealerName = x.Name,
+                SubDealerMobileNumber = x.MobileNumber,
+                SubDealerAddress = x.Address,
+                PaymentMethod = x.paymentMethod,
+                CreditControlArea = x.creditControlArea,
+                BankName = x.BankName,
+                ChequeNumber = x.Number,
+                CashAmount = x.Amount,
+                ManualMrNumber = x.ManualNumber,
+                Remarks = x.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<SubDealerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = subDealers.Count();
+            queryResult.Total = subDealers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<CustomerCollectionReportResultModel>> GetCustomerCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<CustomerCollectionReportResultModel>();
+
+            var customers = await (from p in _context.Payments
+                                        join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                        from uinfo in uleftjoin.DefaultIfEmpty()
+                                        join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                        from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                        join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                        from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                                        join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                        from cainfo in caleftjoin.DefaultIfEmpty()
+                                        where (
+                                          dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeCustomer
+                                          && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                          && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                          && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                          && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                          && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                        )
+                                        select new
+                                        {
+                                            uinfo.Email,
+                                            p.CollectionDate,
+                                            customerType = dctinfo.DropdownName,
+                                            p.SapId,
+                                            projectName = p.Name,
+                                            p.Address,
+                                            paymentMethod = dpminfo.DropdownName,
+                                            creditControlArea = cainfo.Description,
+                                            p.BankName,
+                                            p.Number,
+                                            p.Amount,
+                                            p.ManualNumber,
+                                            p.Remarks,
+                                            p.Name, 
+                                            p.MobileNumber
+                                        }).ToListAsync();
+
+            reportResult = customers.Select(x => new CustomerCollectionReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                //DepotId = "",
+                //DepotName = "",
+                //Territory = "",
+                //Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
+                TypeOfCustomer = x.customerType,
+                CustomerName = x.Name,
+                CustomerMobileNumber = x.MobileNumber,
+                CustomerAddress = x.Address,
+                PaymentMethod = x.paymentMethod,
+                CreditControlArea = x.creditControlArea,
+                BankName = x.BankName,
+                ChequeNumber = x.Number,
+                CashAmount = x.Amount,
+                ManualMrNumber = x.ManualNumber,
+                Remarks = x.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<CustomerCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = customers.Count();
+            queryResult.Total = customers.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DirectProjectCollectionReportResultModel>> GetDirectProjectCollectionReportAsync(CollectionReportSearchModel query)
+        {
+            var reportResult = new List<DirectProjectCollectionReportResultModel>();
+
+            var directProjects = await (from p in _context.Payments
+                                 join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                 from uinfo in uleftjoin.DefaultIfEmpty()
+                                 join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                 from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                 join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                 from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                                 join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                 from cainfo in caleftjoin.DefaultIfEmpty()
+                                 where (
+                                   dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDirectProject
+                                   && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                   && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                   && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                   && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                   && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                 )
+                                 select new {
+                                     uinfo.Email,
+                                     p.CollectionDate,
+                                     customerType = dctinfo.DropdownName,
+                                     p.SapId,
+                                     projectName = p.Name,
+                                     p.Address,
+                                     paymentMethod = dpminfo.DropdownName,
+                                     creditControlArea = cainfo.Description,
+                                     p.BankName,
+                                     p.Number,
+                                     p.Amount,
+                                     p.ManualNumber,
+                                     p.Remarks
+                                 }).ToListAsync();
+
+            reportResult = directProjects.Select(x => new DirectProjectCollectionReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                //DepotId = "",
+                //DepotName = "",
+                //Territory = "",
+                //Zone = "",
+                CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
+                TypeOfCustomer = x.customerType,
+                ProjectSapId = x.SapId,
+                ProjectName = x.projectName,
+                ProjectAddress = x.Address,
+                PaymentMethod = x.paymentMethod,
+                CreditControlArea = x.creditControlArea,
+                BankName = x.BankName,
+                ChequeNumber = x.Number,
+                CashAmount = x.Amount,
+                ManualMrNumber = x.ManualNumber,
+                Remarks = x.Remarks
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DirectProjectCollectionReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = directProjects.Count();
+            queryResult.Total = directProjects.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<PainterCallReportResultModel>> GetPainterCallReportAsync(PainterCallReportSearchModel query)
+        {
+            var reportResult = new List<PainterCallReportResultModel>();
+
+            var paintersCalls = await (from pcm in _context.PainterCompanyMTDValues
+                                join pc in _context.PainterCalls on pcm.PainterCallId equals pc.Id into pcleftjoin
+                                from pcinfo in pcleftjoin.DefaultIfEmpty()
+                                join p in _context.Painters on pcinfo.PainterId equals p.Id into pleftjoin
+                                from pinfo in pleftjoin.DefaultIfEmpty()
+                                join u in _context.UserInfos on pinfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                from userInfo in uleftjoin.DefaultIfEmpty()
+                                join ddc in _context.DropdownDetails on pinfo.PainterCatId equals ddc.Id into ddcleftjoin
+                                from ddcinfo in ddcleftjoin.DefaultIfEmpty()
+                                join dep in _context.Depots on pinfo.Depot equals dep.Werks into depleftjoin
+                                from depinfo in depleftjoin.DefaultIfEmpty()
+                                join sg in _context.SaleGroup on pinfo.SaleGroup equals sg.Code into sgleftjoin
+                                from sginfo in sgleftjoin.DefaultIfEmpty()
+                                join t in _context.Territory on pinfo.Territory equals t.Code into tleftjoin
+                                from tinfo in tleftjoin.DefaultIfEmpty()
+                                join z in _context.Zone on pinfo.Zone equals z.Code into zleftjoin
+                                from zinfo in zleftjoin.DefaultIfEmpty()
+                                join adp in _context.AttachedDealerPainters on pinfo.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                join di in _context.DealerInfos on adpInfo.Dealer equals di.Id into dileftjoin
+                                from diInfo in dileftjoin.DefaultIfEmpty()
+                                where (
+                                (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                && (string.IsNullOrWhiteSpace(query.DepotId) || pinfo.Depot == query.DepotId)
+                                && (!query.Territories.Any() || query.Territories.Contains(pinfo.Territory))
+                                && (!query.Zones.Any() || query.Zones.Contains(pinfo.Zone))
+                                && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || pcinfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                && (!query.PainterId.HasValue || pinfo.Id == query.PainterId.Value)
+                                && (!query.PainterType.HasValue || pinfo.PainterCatId == query.PainterType.Value)
+                            )select new 
+                            {
+                                userInfo.Email,
+                                painterId = pcinfo.PainterId.ToString(),
+                                pcinfo.CreatedTime,
+                                painterType = ddcinfo.DropdownName,
+                                depot = depinfo.Name1,
+                                salesGroupName = sginfo.Name,
+                                territoryName = tinfo.Name,
+                                zoneName = zinfo.Name,
+                                pinfo.PainterName,
+                                pinfo.Address,
+                                pinfo.Phone,
+                                noOfAttachment = pinfo.NoOfPainterAttached.ToString(),
+                                rocketAccountStatus = pinfo.HasDbbl ? "Created" : "Not Created",
+                                pinfo.AccDbblNumber,
+                                identification = !string.IsNullOrEmpty(pinfo.NationalIdNo) ? pinfo.NationalIdNo
+                                                    : (!string.IsNullOrEmpty(pinfo.PassportNo) ? pinfo.PassportNo
+                                                    : (!string.IsNullOrEmpty(pinfo.BrithCertificateNo)) ? pinfo.BrithCertificateNo : string.Empty),
+                                pinfo.AttachedDealerCd,
+                                diInfo.CustomerName,
+                                shamparkaAppStatus = pinfo.IsAppInstalled ? "Installed" : "Not Installed",
+                                loyality = pinfo.Loyality.ToString(),
+                                painterSchemeCommunication = pcinfo.HasSchemeComnunaction ? "Yes" : "No",
+                                premiumProductBriefing = pcinfo.HasPremiumProtBriefing ? "Yes" : "No",
+                                newProductBriefing = pcinfo.HasNewProBriefing ? "Yes" : "No",
+                                epToolsUsage = pcinfo.HasUsageEftTools ? "Yes" : "No",
+                                painterAppUsage = pcinfo.HasAppUsage ? "Yes" : "No",
+                                workInHandNo = pcinfo.WorkInHandNumber.ToString(),
+                                issueWithDbblAccount = pcinfo.HasDbblIssue ? "Yes" : "No",
+                                pcinfo.Comment
+                            }).Distinct().ToListAsync();
+
+            var paintersCallMtd = await (from pmtd in _context.PainterCompanyMTDValues
+                                  join dd in _context.DropdownDetails on pmtd.CompanyId equals dd.Id into ddleftjoin
+                                  from ddinfo in ddleftjoin.DefaultIfEmpty()
+                                  where (
+                                  (!query.FromDate.HasValue || pmtd.CreatedTime.Date >= query.FromDate.Value.Date)
+                                  && (!query.ToDate.HasValue || pmtd.CreatedTime.Date <= query.ToDate.Value.Date)
+                                  )
+                                  select new 
+                                  {
+                                      companyName = ddinfo.DropdownName,
+                                      pmtd.Value,
+                                      pmtd.CountInPercent
+                                  }).ToListAsync();
+
+            reportResult = paintersCalls.Select(x => new PainterCallReportResultModel
+            {
+                UserId = x?.Email ?? string.Empty,
+                PainterId = x?.painterId ?? string.Empty,
+                PainterVisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                TypeOfPainter = x.painterType,
+                DepotName = x.depot,
+                SalesGroup = x.salesGroupName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                PainterName = x.PainterName,
+                PainterAddress = x.Address,
+                MobileNumber = x.Phone,
+                NoOfPainterAttached = x.noOfAttachment,
+                DbblRocketAccountStatus = x.rocketAccountStatus,
+                AccountNumber = x.AccDbblNumber,
+                AcccountHolderName = x.AccDbblNumber,
+                IdentificationNo = x.identification,
+                AttachedTaggedDealerId = x.AttachedDealerCd,
+                AttachedTaggedDealerName = x.CustomerName,
+                ShamparkaAppInstallStatus = x.shamparkaAppStatus,
+                BergerLoyalty = x.loyality,
+                PainterSchemeCommunication = x.painterSchemeCommunication,
+                PremiumProductBriefing = x.premiumProductBriefing,
+                NewProductBriefing = x.newProductBriefing,
+                EpToolsUsage = x.epToolsUsage,
+                PainterAppUsage = x.painterAppUsage,
+                WorkInHandNo = x.workInHandNo,
+
+                BpblMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorBpbl).Sum(x => x.Value).ToString(),
+                BpblCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorBpbl).Sum(x => x.CountInPercent).ToString(),
+                ApMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.Value).ToString(),
+                ApCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.CountInPercent).ToString(),
+                NerolacMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.Value).ToString(),
+                NerolacCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.CountInPercent).ToString(),
+                EliteMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.Value).ToString(),
+                EliteCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.CountInPercent).ToString(),
+                NipponMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.Value).ToString(),
+                NipponCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.CountInPercent).ToString(),
+                DuluxMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.Value).ToString(),
+                DuluxCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.CountInPercent).ToString(),
+                MoonstarMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.Value).ToString(),
+                MoonstarCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.CountInPercent).ToString(),
+                OthersMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.Value).ToString(),
+                OthersCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.CountInPercent).ToString(),
+
+                TotalMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorNerolac
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorElitePaints
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorNippon
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorDulux
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorMoonstar
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorBpbl
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.Value).ToString(),
+                TotalCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorNerolac
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorElitePaints
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorNippon
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorDulux
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorMoonstar
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorBpbl
+                                                    || x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.CountInPercent).ToString(),
+                
+                IssueWithDbblAccount = x.issueWithDbblAccount,
+                RemarkIssueWithDbblAccount = "",
+                Comments = x.Comment,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<PainterCallReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = paintersCalls.Count();
+            queryResult.Total = paintersCalls.Count();
+
+            return queryResult;
+        }
+        
+        public async Task<QueryResultModel<DealerVisitReportResultModel>> GetDealerVisitReportAsync(DealerVisitReportSearchModel query)
+        {
+            var reportResult = new List<DealerVisitReportResultModel>();
+            int? month = (!query.Month.HasValue) ? DateTime.Now.Month : query.Month;
+            int? year = (!query.Year.HasValue) ? DateTime.Now.Year : query.Year;
+            int tvist = 0;
+            int avisit = 0;
+
+            var dealerVisit = await (from jpd in _context.JourneyPlanDetails
+                               join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
+                               from jpminfo in jpmleftjoin.DefaultIfEmpty()
+                               join dsc in _context.DealerSalesCalls on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                               from dscinfo in dscleftjoin.DefaultIfEmpty()
+                               join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
+                               from userInfo in uleftjoin.DefaultIfEmpty()
+                               join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
+                               from diInfo in dileftjoin.DefaultIfEmpty()
+                               join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                               from depinfo in depleftjoin.DefaultIfEmpty()
+                               join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                               from tinfo in tleftjoin.DefaultIfEmpty()
+                               join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                               from zinfo in zleftjoin.DefaultIfEmpty()
+                               where (
+                                 (jpminfo.PlanDate.Month == month && jpminfo.PlanDate.Year == year)
+                                 && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                 && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                 && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                 && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 && (!query.DealerId.HasValue || jpd.DealerId == query.DealerId.Value)
+                               )
+                               select new {
+                                   jpminfo.EmployeeId,
+                                   jpd.DealerId,
+                                   userInfo.Email,
+                                   diInfo.BusinessArea,
+                                   depot = depinfo.Name1,
+                                   territoryName = tinfo.Name,
+                                   zoneName = zinfo.Name,
+                                   diInfo.CustomerName,
+                                   jpminfo.PlanDate,
+                                   dscinfo.JourneyPlanId
+                               }).ToListAsync();
+
+            var dealerVisitGroup = dealerVisit.GroupBy(x => new { x.EmployeeId, x.DealerId }).Select(x => new
+            {
+                userId = x.FirstOrDefault()?.Email,
+                depotId = x.FirstOrDefault()?.BusinessArea,
+                depotName = x.FirstOrDefault()?.depot ?? string.Empty,
+                territory = x.FirstOrDefault()?.territoryName,
+                zone = x.FirstOrDefault()?.zoneName,
+                dealerId = x.Key?.DealerId.ToString() ?? string.Empty,
+                dealerName = x.FirstOrDefault()?.CustomerName,
+
+                d1 = x.Count(c => c?.PlanDate.Day == 1) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 1) > 0 ? "Visited" : "Not Visited" : "",
+                d2 = x.Count(c => c?.PlanDate.Day == 2) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 2) > 0 ? "Visited" : "Not Visited" : "",
+                d3 = x.Count(c => c?.PlanDate.Day == 3) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 3) > 0 ? "Visited" : "Not Visited" : "",
+                d4 = x.Count(c => c?.PlanDate.Day == 4) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 4) > 0 ? "Visited" : "Not Visited" : "",
+                d5 = x.Count(c => c?.PlanDate.Day == 5) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 5) > 0 ? "Visited" : "Not Visited" : "",
+                d6 = x.Count(c => c?.PlanDate.Day == 6) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 6) > 0 ? "Visited" : "Not Visited" : "",
+                d7 = x.Count(c => c?.PlanDate.Day == 7) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 7) > 0 ? "Visited" : "Not Visited" : "",
+                d8 = x.Count(c => c?.PlanDate.Day == 8) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 8) > 0 ? "Visited" : "Not Visited" : "",
+                d9 = x.Count(c => c?.PlanDate.Day == 9) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 9) > 0 ? "Visited" : "Not Visited" : "",
+                d10 = x.Count(c => c?.PlanDate.Day == 10) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 10) > 0 ? "Visited" : "Not Visited" : "",
+                d11 = x.Count(c => c?.PlanDate.Day == 11) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 11) > 0 ? "Visited" : "Not Visited" : "",
+                d12 = x.Count(c => c?.PlanDate.Day == 12) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 12) > 0 ? "Visited" : "Not Visited" : "",
+                d13 = x.Count(c => c?.PlanDate.Day == 13) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 13) > 0 ? "Visited" : "Not Visited" : "",
+                d14 = x.Count(c => c?.PlanDate.Day == 14) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 14) > 0 ? "Visited" : "Not Visited" : "",
+                d15 = x.Count(c => c?.PlanDate.Day == 15) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 15) > 0 ? "Visited" : "Not Visited" : "",
+                d16 = x.Count(c => c?.PlanDate.Day == 16) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 16) > 0 ? "Visited" : "Not Visited" : "",
+                d17 = x.Count(c => c?.PlanDate.Day == 17) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 17) > 0 ? "Visited" : "Not Visited" : "",
+                d18 = x.Count(c => c?.PlanDate.Day == 18) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 18) > 0 ? "Visited" : "Not Visited" : "",
+                d19 = x.Count(c => c?.PlanDate.Day == 19) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 19) > 0 ? "Visited" : "Not Visited" : "",
+                d20 = x.Count(c => c?.PlanDate.Day == 20) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 20) > 0 ? "Visited" : "Not Visited" : "",
+                d21 = x.Count(c => c?.PlanDate.Day == 21) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 21) > 0 ? "Visited" : "Not Visited" : "",
+                d22 = x.Count(c => c?.PlanDate.Day == 22) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 22) > 0 ? "Visited" : "Not Visited" : "",
+                d23 = x.Count(c => c?.PlanDate.Day == 23) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 23) > 0 ? "Visited" : "Not Visited" : "",
+                d24 = x.Count(c => c?.PlanDate.Day == 24) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 24) > 0 ? "Visited" : "Not Visited" : "",
+                d25 = x.Count(c => c?.PlanDate.Day == 25) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 25) > 0 ? "Visited" : "Not Visited" : "",
+                d26 = x.Count(c => c?.PlanDate.Day == 26) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 26) > 0 ? "Visited" : "Not Visited" : "",
+                d27 = x.Count(c => c?.PlanDate.Day == 27) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 27) > 0 ? "Visited" : "Not Visited" : "",
+                d28 = x.Count(c => c?.PlanDate.Day == 28) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 28) > 0 ? "Visited" : "Not Visited" : "",
+                d29 = x.Count(c => c?.PlanDate.Day == 29) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 29) > 0 ? "Visited" : "Not Visited" : "",
+                d30 = x.Count(c => c?.PlanDate.Day == 30) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
+                d31 = x.Count(c => c?.PlanDate.Day == 31) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
+                targetVisits = tvist = x.Count(c => c?.PlanDate.Month == month && c?.PlanDate.Year == year),
+                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != null && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
+                notVisits = (tvist - avisit)
+            }).ToList();
+
+
+            reportResult = dealerVisitGroup.Select(x => new DealerVisitReportResultModel
+            {
+                UserId = x.userId,
+                DepotId = x.depotId,
+                DepotName = x.depotName,
+                Territory = x.territory,
+                Zone = x?.zone,
+                DealerId = x.dealerId,
+                DealerName = x.dealerName,
+                D1 = x.d1,
+                D2 = x.d2,
+                D3 = x.d3,
+                D4 = x.d4,
+                D5 = x.d5,
+                D6 = x.d6,
+                D7 = x.d7,
+                D8 = x.d8,
+                D9 = x.d9,
+                D10 = x.d10,
+                D11 = x.d11,
+                D12 = x.d12,
+                D13 = x.d13,
+                D14 = x.d14,
+                D15 = x.d15,
+                D16 = x.d16,
+                D17 = x.d17,
+                D18 = x.d18,
+                D19 = x.d19,
+                D20 = x.d20,
+                D21 = x.d21,
+                D22 = x.d22,
+                D23 = x.d23,
+                D24 = x.d24,
+                D25 = x.d25,
+                D26 = x.d26,
+                D27 = x.d27,
+                D28 = x.d28,
+                D29 = x.d29,
+                D30 = x.d30,
+                D31 = x.d31,
+                TargetVisits = x.targetVisits,
+                ActualVisits = x.actualVisits,
+                NotVisits = x.notVisits,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerVisitReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealerVisitGroup.Count();
+            queryResult.Total = dealerVisitGroup.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DealerSalesCallReportResultModel>> GetDealerSalesCallReportAsync(DealerSalesCallReportSearchModel query)
+        {
+            var reportResult = new List<DealerSalesCallReportResultModel>();
+
+            var dealerCalls = await (from dsc in _context.DealerSalesCalls
+                                     join ssdd in _context.DropdownDetails on dsc.SecondarySalesRatingsId equals ssdd.Id into ssddleftjoin
+                                     from ssddinfo in ssddleftjoin.DefaultIfEmpty()
+                                     join ppldd in _context.DropdownDetails on dsc.PremiumProductLiftingId equals ppldd.Id into pplddleftjoin
+                                     from pplddinfo in pplddleftjoin.DefaultIfEmpty()
+                                     join mdd in _context.DropdownDetails on dsc.MerchendisingId equals mdd.Id into mddleftjoin
+                                     from mddinfo in mddleftjoin.DefaultIfEmpty()
+                                     join sdidd in _context.DropdownDetails on dsc.SubDealerInfluenceId equals sdidd.Id into sdiddleftjoin
+                                     from sdiddinfo in sdiddleftjoin.DefaultIfEmpty()
+                                     join pidd in _context.DropdownDetails on dsc.PainterInfluenceId equals pidd.Id into piddleftjoin
+                                     from piddinfo in piddleftjoin.DefaultIfEmpty()
+                                     join dsdd in _context.DropdownDetails on dsc.DealerSatisfactionId equals dsdd.Id into dsddleftjoin
+                                     from dsddinfo in dsddleftjoin.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on dsc.DealerId equals di.Id into dileftjoin
+                                     from diInfo in dileftjoin.DefaultIfEmpty()
+                                     join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     from depinfo in depleftjoin.DefaultIfEmpty()
+                                     join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     from tinfo in tleftjoin.DefaultIfEmpty()
+                                     join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     from zinfo in zleftjoin.DefaultIfEmpty()
+                                     join u in _context.UserInfos on dsc.UserId equals u.Id into uleftjoin
+                                     from userInfo in uleftjoin.DefaultIfEmpty()
+                                     where (
+                                        (dsc.IsSubDealerCall == false)
+                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                        && (!query.DealerId.HasValue || dsc.DealerId == query.DealerId.Value)
+                                     )
+                                     select new
+                                     {
+                                         dsc.Id,
+                                         userInfo.Email,
+                                         diInfo.BusinessArea,
+                                         depot = depinfo.Name1,
+                                         territory = tinfo.Name,
+                                         zone = zinfo.Name,
+                                         dsc.DealerId,
+                                         diInfo.CustomerName,
+                                         dsc.CreatedTime,
+                                         dsc.IsTargetPromotionCommunicated,
+                                         ssStatus = ssddinfo.DropdownName,
+                                         dsc.SecondarySalesReasonRemarks,
+                                         dsc.HasOS,
+                                         dsc.IsSlippageCommunicated,
+                                         dsc.IsPremiumProductCommunicated,
+                                         ProductLiftingStatus = pplddinfo.DropdownName,
+                                         dsc.PremiumProductLiftingOthers,
+                                         Merchendising = mddinfo.DropdownName,
+                                         dsc.HasPainterInfluence,
+                                         PainterInfluecePercent = piddinfo.DropdownName,
+                                         dsc.IsShopManProductKnowledgeDiscussed,
+                                         dsc.IsShopManSalesTechniquesDiscussed,
+                                         dsc.IsShopManMerchendizingImprovementDiscussed,
+                                         dsc.BPBLAverageMonthlySales,
+                                         dsc.BPBLActualMTDSales,
+                                         dsc.HasCompetitionPresence,
+                                         dsc.IsCompetitionServiceBetterThanBPBL,
+                                         dsc.CompetitionServiceBetterThanBPBLRemarks,
+                                         dsc.IsCompetitionProductDisplayBetterThanBPBL,
+                                         dsc.CompetitionProductDisplayBetterThanBPBLRemarks,
+                                         dsc.CompetitionProductDisplayImageUrl,
+                                         dsc.CompetitionSchemeModalityComments,
+                                         dsc.CompetitionSchemeModalityImageUrl,
+                                         dsc.CompetitionShopBoysComments,
+                                         dsc.HasDealerSalesIssue,
+                                         DealerSatisfactionStatus = dsddinfo.DropdownName,
+                                         dsc.DealerSatisfactionReason,
+                                         dsc.IsTargetCommunicated,
+                                         dsc.IsOSCommunicated,
+                                         dsc.IsCBInstalled,
+                                         dsc.IsCBProductivityCommunicated,
+                                         dsc.HasSubDealerInfluence,
+                                         sdInfluecePercent = sdiddinfo.DropdownName,
+                                     }).ToListAsync();
+
+            var dealerCompititions = (from dcs in _context.DealerCompetitionSales
+                                      join dd in _context.DropdownDetails on dcs.CompanyId equals dd.Id into ddleft
+                                      from ddinfo in ddleft.DefaultIfEmpty()
+                                      select new
+                                      {
+                                          dcs.DealerSalesCallId,
+                                          companyName = ddinfo.DropdownName,
+                                          dcs.AverageMonthlySales,
+                                          dcs.ActualMTDSales
+                                      }).ToList();
+
+            reportResult = dealerCalls.Select(x => new DealerSalesCallReportResultModel
+            {
+                UserId = x.Email ?? string.Empty,
+                DepotId = x.BusinessArea ?? string.Empty,
+                DepotName = x.depot,
+                Territory = x.territory,
+                Zone = x.zone,
+                DealerId = x.DealerId.ToString(),
+                DealerName = x.CustomerName,
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
+                Target = x.IsTargetCommunicated ? "Yes" : "No",
+                SsStatus = x.ssStatus,
+                SsReasonForPourOrAverage = x.SecondarySalesReasonRemarks,
+                OsCommunication = x.IsOSCommunicated ? "Yes" : "No",
+                SlippageCommunication = x.IsSlippageCommunicated ? "Yes" : "No",
+                UspCommunication = x.IsPremiumProductCommunicated ? "Yes" : "No",
+                ProductLiftingStatus = x.ProductLiftingStatus,
+                ReasonForNotLifting = x.PremiumProductLiftingOthers,
+                CbMachineStatus = x.IsCBInstalled ? "Yes" : "No",
+                CbProductivity = x.IsCBProductivityCommunicated ? "Yes" : "No",
+                Merchendising = x.Merchendising,
+                SubDealerInfluence = x.HasSubDealerInfluence ? "Yes" : "No",
+                SdInfluecePercent = x.sdInfluecePercent,
+                PainterInfluence = x.HasPainterInfluence ? "Yes" : "No",
+                PainterInfluecePercent = x.PainterInfluecePercent,
+                ProductKnoledge = x.IsShopManProductKnowledgeDiscussed ? "Yes" : "No",
+                SalesTechniques = x.IsShopManSalesTechniquesDiscussed ? "Yes" : "No",
+                MerchendisingImprovement = x.IsShopManMerchendizingImprovementDiscussed ? "Yes" : "No",
+                CompetitionPresence = x.HasCompetitionPresence ? "Yes" : "No",
+                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Yes" : "No",
+                CsRemarks = x.CompetitionServiceBetterThanBPBLRemarks,
+                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Yes" : "No",
+                PdmRemarks = x.CompetitionProductDisplayBetterThanBPBLRemarks,
+                ProductDisplayAndMerchendizingImage = x.CompetitionProductDisplayImageUrl,
+                SchemeModality = x.CompetitionSchemeModalityComments,
+                SchemeModalityImage = x.CompetitionSchemeModalityImageUrl,
+                ShopBoy = x.CompetitionShopBoysComments,
+
+                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.AverageMonthlySales.ToString() ?? string.Empty,
+                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.ActualMTDSales.ToString() ?? string.Empty,
+                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.ActualMTDSales.ToString() ?? string.Empty,
+                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.ActualMTDSales.ToString() ?? string.Empty,
+                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.AverageMonthlySales.ToString() ?? string.Empty,
+                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.ActualMTDSales.ToString() ?? string.Empty,
+                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.AverageMonthlySales.ToString() ?? string.Empty,
+                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.ActualMTDSales.ToString() ?? string.Empty,
+                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
+                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.ActualMTDSales.ToString() ?? string.Empty,
+                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.AverageMonthlySales.ToString() ?? string.Empty,
+                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.ActualMTDSales.ToString() ?? string.Empty,
+                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
+                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
+                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.AverageMonthlySales.ToString() ?? string.Empty,
+                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.ActualMTDSales.ToString() ?? string.Empty,
+                TotalAvrgMonthlySales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.AverageMonthlySales).ToString(),
+                TotalActualMtdSales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.ActualMTDSales).ToString(),
+
+                DealerIssueStatus = x.HasDealerSalesIssue ? "Yes" : "No",
+                DealerSatisfactionStatus = x.DealerSatisfactionStatus,
+                DealerDissatisfactionReason = x.DealerSatisfactionReason,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerSalesCallReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealerCalls.Count();
+            queryResult.Total = dealerCalls.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<SubDealerSalesCallReportResultModel>> GetSubDealerSalesCallReportAsync(SubDealerSalesCallReportSearchModel query)
+        {
+            var reportResult = new List<SubDealerSalesCallReportResultModel>();
+
+            var dealerCalls = await (from dsc in _context.DealerSalesCalls
+                              join ssdd in _context.DropdownDetails on dsc.SecondarySalesRatingsId equals ssdd.Id into ssddleftjoin
+                              from ssddinfo in ssddleftjoin.DefaultIfEmpty()
+                              join ppldd in _context.DropdownDetails on dsc.PremiumProductLiftingId equals ppldd.Id into pplddleftjoin
+                              from pplddinfo in pplddleftjoin.DefaultIfEmpty()
+                              join mdd in _context.DropdownDetails on dsc.MerchendisingId equals mdd.Id into mddleftjoin
+                              from mddinfo in mddleftjoin.DefaultIfEmpty()
+                              join sdidd in _context.DropdownDetails on dsc.SubDealerInfluenceId equals sdidd.Id into sdiddleftjoin
+                              from sdiddinfo in sdiddleftjoin.DefaultIfEmpty()
+                              join pidd in _context.DropdownDetails on dsc.PainterInfluenceId equals pidd.Id into piddleftjoin
+                              from piddinfo in piddleftjoin.DefaultIfEmpty()
+                              join dsdd in _context.DropdownDetails on dsc.DealerSatisfactionId equals dsdd.Id into dsddleftjoin
+                              from dsddinfo in dsddleftjoin.DefaultIfEmpty()
+                              join di in _context.DealerInfos on dsc.DealerId equals di.Id into dileftjoin
+                              from diInfo in dileftjoin.DefaultIfEmpty()
+                              join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                              from depinfo in depleftjoin.DefaultIfEmpty()
+                              join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                              from tinfo in tleftjoin.DefaultIfEmpty()
+                              join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                              from zinfo in zleftjoin.DefaultIfEmpty()
+                              join u in _context.UserInfos on dsc.UserId equals u.Id into uleftjoin
+                              from userInfo in uleftjoin.DefaultIfEmpty()
+                              where (
+                                 (dsc.IsSubDealerCall == true)
+                                 && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                 && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                 && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
+                                 && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                 && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                 && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 && (!query.SubDealerId.HasValue || dsc.DealerId == query.SubDealerId.Value)
+                              )
+                              select new {
+                                  dsc.Id,
+                                  userInfo.Email,
+                                  diInfo.BusinessArea,
+                                  depot = depinfo.Name1,
+                                  territory = tinfo.Name,
+                                  zone = zinfo.Name,
+                                  dsc.DealerId,
+                                  diInfo.CustomerName,
+                                  dsc.CreatedTime,
+                                  dsc.IsTargetPromotionCommunicated,
+                                  ssStatus = ssddinfo.DropdownName,
+                                  dsc.SecondarySalesReasonRemarks,
+                                  dsc.HasOS,
+                                  dsc.IsSlippageCommunicated,
+                                  dsc.IsPremiumProductCommunicated,
+                                  ProductLiftingStatus = pplddinfo.DropdownName,
+                                  dsc.PremiumProductLiftingOthers,
+                                  Merchendising = mddinfo.DropdownName,
+                                  dsc.HasPainterInfluence,
+                                  PainterInfluecePercent = piddinfo.DropdownName,
+                                  dsc.IsShopManProductKnowledgeDiscussed,
+                                  dsc.IsShopManSalesTechniquesDiscussed,
+                                  dsc.IsShopManMerchendizingImprovementDiscussed,
+                                  dsc.BPBLAverageMonthlySales,
+                                  dsc.BPBLActualMTDSales,
+                                  dsc.HasCompetitionPresence,
+                                  dsc.IsCompetitionServiceBetterThanBPBL,
+                                  dsc.CompetitionServiceBetterThanBPBLRemarks,
+                                  dsc.IsCompetitionProductDisplayBetterThanBPBL,
+                                  dsc.CompetitionProductDisplayBetterThanBPBLRemarks,
+                                  dsc.CompetitionProductDisplayImageUrl,
+                                  dsc.CompetitionSchemeModalityComments,
+                                  dsc.CompetitionSchemeModalityImageUrl,
+                                  dsc.CompetitionShopBoysComments,
+                                  dsc.HasDealerSalesIssue,
+                                  DealerSatisfactionStatus = dsddinfo.DropdownName,
+                                  dsc.DealerSatisfactionReason
+                              }).ToListAsync();
+
+            var dealerCompititions = (from dcs in _context.DealerCompetitionSales
+                                     join dd in _context.DropdownDetails on dcs.CompanyId equals dd.Id into ddleft
+                                     from ddinfo in ddleft.DefaultIfEmpty()
+                                     select new 
+                                     {
+                                         dcs.DealerSalesCallId,
+                                         companyName = ddinfo.DropdownName,
+                                         dcs.AverageMonthlySales,
+                                         dcs.ActualMTDSales
+                                     }).ToList();
+
+
+            reportResult = dealerCalls.Select(x => new SubDealerSalesCallReportResultModel
+            {
+                UserId = x.Email ?? string.Empty,
+                DepotId = x.BusinessArea ?? string.Empty,
+                DepotName = x.depot,
+                Territory = x.territory,
+                Zone = x.zone,
+                SubDealerId = x.DealerId.ToString(),
+                SubDealerName = x.CustomerName,
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
+                SsStatus = x.ssStatus,
+                SsReasonForPourOrAverage = x.SecondarySalesReasonRemarks,
+                OsStatus = x.HasOS ? "Yes" : "No",
+                OsActivity = x.IsSlippageCommunicated ? "Yes" : "No",
+                UspCommunication = x.IsPremiumProductCommunicated ? "Yes" : "No",
+                ProductLiftingStatus = x.ProductLiftingStatus,
+                ReasonForNotLifting = x.PremiumProductLiftingOthers,
+                Merchendising = x.Merchendising,
+                PainterInfluence = x.HasPainterInfluence ? "Yes" : "No",
+                PainterInfluecePercent = x.PainterInfluecePercent,
+                ProductKnoledge = x.IsShopManProductKnowledgeDiscussed ? "Yes" : "No",
+                SalesTechniques = x.IsShopManSalesTechniquesDiscussed ? "Yes" : "No",
+                MerchendisingImprovement = x.IsShopManMerchendizingImprovementDiscussed ? "Yes" : "No",
+                BergerAvrgMonthlySales = x.BPBLAverageMonthlySales.ToString(),
+                BergerActualMtdSales = x.BPBLActualMTDSales.ToString(),
+                CompetitionPresence = x.HasCompetitionPresence ? "Yes" : "No",
+                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Yes" : "No",
+                CsRemarks = x.CompetitionServiceBetterThanBPBLRemarks,
+                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Yes" : "No",
+                PdmRemarks = x.CompetitionProductDisplayBetterThanBPBLRemarks,
+                ProductDisplayAndMerchendizingImage = x.CompetitionProductDisplayImageUrl,
+                SchemeModality = x.CompetitionSchemeModalityComments,
+                SchemeModalityImage = x.CompetitionSchemeModalityImageUrl,
+                ShopBoy = x.CompetitionShopBoysComments,
+
+                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.AverageMonthlySales.ToString() ?? string.Empty,
+                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.ActualMTDSales.ToString() ?? string.Empty,
+                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.ActualMTDSales.ToString() ?? string.Empty,
+                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.ActualMTDSales.ToString() ?? string.Empty,
+                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.AverageMonthlySales.ToString() ?? string.Empty,
+                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.ActualMTDSales.ToString() ?? string.Empty,
+                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.AverageMonthlySales.ToString() ?? string.Empty,
+                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.ActualMTDSales.ToString() ?? string.Empty,
+                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
+                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.ActualMTDSales.ToString() ?? string.Empty,
+                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.AverageMonthlySales.ToString() ?? string.Empty,
+                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.ActualMTDSales.ToString() ?? string.Empty,
+                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
+                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
+                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.AverageMonthlySales.ToString() ?? string.Empty,
+                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.ActualMTDSales.ToString() ?? string.Empty,
+                TotalAvrgMonthlySales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.AverageMonthlySales).ToString(),
+                TotalActualMtdSales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.ActualMTDSales).ToString(),
+                
+                SubDealerIssueStatus = x.HasDealerSalesIssue ? "Yes" : "No",
+                DealerSatisfactionStatus = x.DealerSatisfactionStatus,
+                DealerDissatisfactionReason = x.DealerSatisfactionReason,
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<SubDealerSalesCallReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = dealerCalls.Count();
+            queryResult.Total = dealerCalls.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<DealerIssueReportResultModel>> GetDealerIssueReportAsync(DealerIssueReportSearchModel query)
+        {
+            var reportResult = new List<DealerIssueReportResultModel>();
+
+            var dealerIssue = await (from dsi in _context.DealerSalesIssues
+                                     join dsc in _context.DealerSalesCalls on dsi.DealerSalesCallId equals dsc.Id into dscleft
+                                     from dscInfo in dscleft.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on dscInfo.DealerId equals di.Id into dileft
+                                     from diInfo in dileft.DefaultIfEmpty()
+                                     join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     from depInfo in depleftjoin.DefaultIfEmpty()
+                                     join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     from tInfo in tleftjoin.DefaultIfEmpty()
+                                     join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     from zInfo in zleftjoin.DefaultIfEmpty()
+                                     join u in _context.UserInfos on dscInfo.UserId equals u.Id into uleftjoin
+                                     from userInfo in uleftjoin.DefaultIfEmpty()
+                                     join dscdd in _context.DropdownDetails on dsi.DealerSalesIssueCategoryId equals dscdd.Id into dscddleft
+                                     from dscddInfo in dscddleft.DefaultIfEmpty()
+                                     join pdd in _context.DropdownDetails on dsi.PriorityId equals pdd.Id into pddleft
+                                     from pddInfo in pddleft.DefaultIfEmpty()
+                                     join cbmdd in _context.DropdownDetails on dsi.CBMachineMantainanceId equals cbmdd.Id into cbmddleft
+                                     from cbmddInfo in cbmddleft.DefaultIfEmpty()
+                                     where (
+                                        (dscInfo.IsSubDealerCall == false)
+                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                        && (!query.DealerId.HasValue || dscInfo.DealerId == query.DealerId.Value)
+                                     )
+                                     select new
+                                     {
+                                         userInfo.Email,
+                                         diInfo.BusinessArea,
+                                         depot = depInfo.Name1,
+                                         territory = tInfo.Name,
+                                         zone = zInfo.Name,
+                                         dscInfo.DealerId,
+                                         diInfo.CustomerName,
+                                         dscInfo.CreatedTime,
+                                         dsi.MaterialName,
+                                         dsi.MaterialGroup,
+                                         dsi.BatchNumber,
+                                         dsi.Comments,
+                                         priority = pddInfo.DropdownName,
+                                         dsi.Quantity,
+                                         dsi.HasCBMachineMantainance,
+                                         maintinaceFrequency = cbmddInfo.DropdownName,
+                                         dsi.CBMachineMantainanceRegularReason,
+                                         issueCategory = dscddInfo.DropdownName,
+                                         dsi.DealerSalesCallId
+                                     }).ToListAsync();
+
+            var groupdealerIssue = dealerIssue.GroupBy(x => x.DealerSalesCallId).Select(x => new
+            {
+                dealerSalesCallId = x.Key,
+                userId = x.FirstOrDefault()?.Email,
+                depotId = x.FirstOrDefault()?.DealerId,
+                depotName = x.FirstOrDefault()?.depot,
+                territoryName = x.FirstOrDefault()?.territory,
+                zoneName = x.FirstOrDefault()?.zone,
+                dealerId = x.FirstOrDefault()?.DealerId,
+                dealerName = x.FirstOrDefault()?.CustomerName,
+                visitDate = x.FirstOrDefault()?.CreatedTime,
+                pcMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.MaterialName,
+                pcMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.MaterialGroup,
+                pcQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.Quantity,
+                pcBatchNumber = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.BatchNumber,
+                pcComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.Comments,
+                pcPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.priority,
+                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.Comments,
+                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.priority,
+                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.Comments,
+                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.priority,
+                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.Comments,
+                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.priority,
+                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.Comments,
+                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.priority,
+                damageMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.MaterialName,
+                damageMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.MaterialGroup,
+                damageQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.Quantity,
+                damageComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.Comments,
+                damagePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.priority,
+                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.HasCBMachineMantainance ?? false,
+                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.maintinaceFrequency,
+                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.CBMachineMantainanceRegularReason,
+                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.priority,
+                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.Comments,
+                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.priority
+            }).ToList();
+
+            reportResult = groupdealerIssue.Select(x => new DealerIssueReportResultModel
+            {
+                UserId = x.userId,
+                DepotId = x.depotId.ToString(),
+                DepotName = x.depotName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                DealerId = x.dealerId.ToString(),
+                DealerName = x.dealerName,
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.visitDate),
+                PcMaterial = x.pcMaterial,
+                PcMaterialGroup = x.pcMaterialGroup,
+                PcQuantity = x.pcQuantity.ToString(),
+                PcBatchNumber = x.pcBatchNumber,
+                PcComments = x.pcComments,
+                PcPriority = x.pcPriority,
+                PosComments = x.posComments,
+                PosPriority = x.posPriority,
+                ShadeComments = x.shadeComments,
+                ShadePriority = x.shadePriority,
+                ShopSignComments = x.shopsignComments,
+                ShopSignPriority = x.shopsignPriority,
+                DeliveryComments = x.deliveryComments,
+                DeliveryPriority = x.deliveryPriority,
+                DamageMaterial = x.damageMaterial,
+                DamageMaterialGroup = x.damageMaterialGroup,
+                DamageQuantity = x.damageQuantity.ToString(),
+                DamageComments = x.damageComments,
+                DamagecPriority = x.damagePriority,
+                CBMStatus = x.cbmStatus ? "Yes" : "No",
+                CBMMaintatinanceFrequency = x.cbmMaintatinanceFrequency,
+                CBMRemarks = x.cbmRemarks,
+                CBMPriority = x.cbmPriority,
+                OthersComment = x.othersComments,
+                Othersriority = x.othersPriority
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<DealerIssueReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = groupdealerIssue.Count();
+            queryResult.Total = groupdealerIssue.Count();
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<SubDealerIssueReportResultModel>> GetSubDealerIssueReportAsync(SubDealerIssueReportSearchModel query)
+        {
+            var reportResult = new List<SubDealerIssueReportResultModel>();
+
+            var subDealerIssue = await (from dsi in _context.DealerSalesIssues
+                                     join dsc in _context.DealerSalesCalls on dsi.DealerSalesCallId equals dsc.Id into dscleft
+                                     from dscInfo in dscleft.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on dscInfo.DealerId equals di.Id into dileft
+                                     from diInfo in dileft.DefaultIfEmpty()
+                                     join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     from depInfo in depleftjoin.DefaultIfEmpty()
+                                     join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     from tInfo in tleftjoin.DefaultIfEmpty()
+                                     join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     from zInfo in zleftjoin.DefaultIfEmpty()
+                                     join u in _context.UserInfos on dscInfo.UserId equals u.Id into uleftjoin
+                                     from userInfo in uleftjoin.DefaultIfEmpty()
+                                     join dscdd in _context.DropdownDetails on dsi.DealerSalesIssueCategoryId equals dscdd.Id into dscddleft
+                                     from dscddInfo in dscddleft.DefaultIfEmpty()
+                                     join pdd in _context.DropdownDetails on dsi.PriorityId equals pdd.Id into pddleft
+                                     from pddInfo in pddleft.DefaultIfEmpty()
+                                     join cbmdd in _context.DropdownDetails on dsi.CBMachineMantainanceId equals cbmdd.Id into cbmddleft
+                                     from cbmddInfo in cbmddleft.DefaultIfEmpty()
+                                     where (
+                                        (dscInfo.IsSubDealerCall == true)
+                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                        && (!query.SubDealerId.HasValue || dscInfo.DealerId == query.SubDealerId.Value)
+                                     )
+                                     select new
+                                     {
+                                         userInfo.Email,
+                                         diInfo.BusinessArea,
+                                         depot = depInfo.Name1,
+                                         territory = tInfo.Name,
+                                         zone = zInfo.Name,
+                                         dscInfo.DealerId,
+                                         diInfo.CustomerName,
+                                         dscInfo.CreatedTime,
+                                         dsi.MaterialName,
+                                         dsi.MaterialGroup,
+                                         dsi.BatchNumber,
+                                         dsi.Comments,
+                                         priority = pddInfo.DropdownName,
+                                         dsi.Quantity,
+                                         dsi.HasCBMachineMantainance,
+                                         maintinaceFrequency = cbmddInfo.DropdownName,
+                                         dsi.CBMachineMantainanceRegularReason,
+                                         issueCategory = dscddInfo.DropdownName,
+                                         dsi.DealerSalesCallId
+                                     }).ToListAsync();
+
+            var groupSubDealerIssue = subDealerIssue.GroupBy(x => x.DealerSalesCallId).Select(x => new
+            {
+                dealerSalesCallId = x.Key,
+                userId = x.FirstOrDefault()?.Email,
+                depotId = x.FirstOrDefault()?.DealerId,
+                depotName = x.FirstOrDefault()?.depot,
+                territoryName = x.FirstOrDefault()?.territory,
+                zoneName = x.FirstOrDefault()?.zone,
+                dealerId = x.FirstOrDefault()?.DealerId,
+                dealerName = x.FirstOrDefault()?.CustomerName,
+                visitDate = x.FirstOrDefault()?.CreatedTime,
+                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.Comments,
+                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.priority,
+                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.Comments,
+                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.priority,
+                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.Comments,
+                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.priority,
+                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.Comments,
+                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.priority,
+                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.HasCBMachineMantainance ?? false,
+                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.maintinaceFrequency,
+                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.CBMachineMantainanceRegularReason,
+                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.priority,
+                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.Comments,
+                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.priority
+            }).ToList();
+
+            reportResult = groupSubDealerIssue.Select(x => new SubDealerIssueReportResultModel
+            {
+                UserId = x.userId,
+                DepotId = x.depotId.ToString(),
+                DepotName = x.depotName,
+                Territory = x.territoryName,
+                Zone = x.zoneName,
+                SubDealerId = x.dealerId.ToString(),
+                SubDealerName = x.dealerName,
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.visitDate),
+                PosComments = x.posComments,
+                PosPriority = x.posPriority,
+                ShadeComments = x.shadeComments,
+                ShadePriority = x.shadePriority,
+                ShopSignComments = x.shopsignComments,
+                ShopSignPriority = x.shopsignPriority,
+                DeliveryComments = x.deliveryComments,
+                DeliveryPriority = x.deliveryPriority,
+                CBMStatus = x.cbmStatus ? "Yes" : "No",
+                CBMMaintatinanceFrequency = x.cbmMaintatinanceFrequency,
+                CBMRemarks = x.cbmRemarks,
+                CBMPriority = x.cbmPriority,
+                OthersComment = x.othersComments,
+                Othersriority = x.othersPriority
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<SubDealerIssueReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = groupSubDealerIssue.Count();
+            queryResult.Total = groupSubDealerIssue.Count();
 
             return queryResult;
         }

@@ -1,4 +1,6 @@
-﻿using BergerMsfaApi.Controllers.DealerFocus;
+﻿using Berger.Data.MsfaEntity.DealerFocus;
+using BergerMsfaApi.Controllers.DealerFocus;
+using BergerMsfaApi.Models.Dealer;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
 
         #region Portal
         Task<IPagedList<DealerOpeningModel>> GetDealerOpeningListAsync(int index,int pageSize,string search);
+        Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search);
+        Task<List<DealerOpening>> GetDealerOpeningPendingListForNotificationAsync();
+        Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model);
         Task<DealerOpeningModel> GetDealerOpeningDetailById(int id);
 
         Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);

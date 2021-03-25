@@ -16,20 +16,35 @@ namespace Berger.Odata.Services
     public class ODataCommonService : IODataCommonService
     {
         private readonly IODataRepository<CreditControlArea> _creditControlAreaRepository;
+        private readonly IODataRepository<RPRSPolicy> _rPRSPolicyRepository;
         private readonly IMapper _mapper;
 
         public ODataCommonService(
             IODataRepository<CreditControlArea> creditControlAreaRepository,
-            IMapper mapper
-            )
+            IODataRepository<RPRSPolicy> rPRSPolicyRepository,
+            IMapper mapper)
         {
             _creditControlAreaRepository = creditControlAreaRepository;
+            _rPRSPolicyRepository = rPRSPolicyRepository;
             _mapper = mapper;
         }
 
         public async Task<IList<CreditControlArea>> GetAllCreditControlAreasAsync()
         {
             var result = await _creditControlAreaRepository.GetAllIncludeAsync(
+                                x => x,
+                                null,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result;
+        }
+
+        public async Task<IList<RPRSPolicy>> GetAllRPRSPoliciesAsync()
+        {
+            var result = await _rPRSPolicyRepository.GetAllIncludeAsync(
                                 x => x,
                                 null,
                                 null,
