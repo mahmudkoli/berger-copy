@@ -37,5 +37,46 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("EnamelPaintsQuarterlyGrowth")]
+        public async Task<IActionResult> GetEnamelPaintsQuarterlyGrowth([FromQuery] OdataQuartPerformSearchModel model)
+        {
+            try
+            {
+               var result= await _quarterlyPerformanceDataService.GetEnamelPaintsQuarterlyGrowth(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        [HttpGet("GetPremiumBrandsGrowth")]
+        public async Task<IActionResult> GetPremiumBrandsGrowthGrowth([FromQuery] OdataQuartPerformSearchModel model)
+        {
+            try
+            {
+               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsGrowth(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        
+        [HttpGet("GetPremiumBrandsContribution")]
+        public async Task<IActionResult> GetPremiumBrandsContribution([FromQuery] OdataQuartPerformSearchModel model)
+        {
+            try
+            {
+               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsContribution(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

@@ -711,7 +711,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -836,6 +836,24 @@ namespace Berger.Odata.Services
             return first > 0 && second > 0 ? ((second - first) * 100) / first :
                         first <= 0 && second > 0 ? decimal.Parse("100.000") :
                             decimal.Zero;
+        }
+        public decimal GetGrowthNew(decimal first, decimal second)
+        {
+            var subValue = (first - second);
+            if (subValue == 0 || second == 0)
+            {
+                return 0;
+            }
+            return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
+        }
+        public decimal GetContribution(decimal first, decimal second)
+        {
+            if (first == 0 || second == 0)
+            {
+                return 0;
+            }
+
+            return decimal.Parse(((second / first) * 100).ToString("#.##"));
         }
 
         public decimal GetAchivement(decimal target, decimal actual)

@@ -9,5 +9,10 @@ namespace Berger.Odata.Services
     public interface IQuarterlyPerformanceDataService
     {
         Task<IList<QuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(QuarterlyPerformanceSearchModel model);
+        Task<IList<QuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(OdataQuartPerformSearchModel model);
+
+        Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(OdataQuartPerformSearchModel model);
+
+        Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(OdataQuartPerformSearchModel model);
     }
 }
