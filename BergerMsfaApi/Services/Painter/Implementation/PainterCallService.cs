@@ -126,7 +126,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<List<PainterCallModel>> AppGetPainterByPainterIdAsync(string employeeId,int PainterId)
         {
-            var companys = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId == 16);
+            var companys = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.SwappingCompetition);
             var result = await _painterCallSvc.GetAllIncludeAsync(
                                         s => s, f => f.EmployeeId == employeeId && f.PainterId == PainterId,
                                         null, f => f.Include(i => i.PainterCompanyMTDValue),
