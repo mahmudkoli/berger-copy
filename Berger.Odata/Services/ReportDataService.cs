@@ -109,10 +109,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public void MySummaryReport()
-        {
-
-        }
+       
 
     }
 }

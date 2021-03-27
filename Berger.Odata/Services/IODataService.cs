@@ -58,6 +58,9 @@ namespace Berger.Odata.Services
 
         Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
             string plant = "", string materialGroup = "", string materialCode = "");
+
+        Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds, string fromDate, string endDate);
         #endregion
 
         #region calculate data

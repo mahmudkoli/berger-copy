@@ -406,7 +406,7 @@ ul.ul-dragable {
 
 
 /* checkbox- switch*/
-.p-table-scroll-body{
+.p-table-scroll-body .p-table-body {
     overflow: auto;
 }
 
