@@ -105,4 +105,36 @@ export class ReportService {
         return `${this.reportsEndpoint}/DownloadDealerVisit?${this.commonService.toQueryString(filter)}`;
     }
 
+    getDealerSalesCall(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetDealerSalesCall?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDealerSalesCall(filter?) {
+        return `${this.reportsEndpoint}/DownloadDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getSubDealerSalesCall(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetSubDealerSalesCall?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadSubDealerSalesCall(filter?) {
+        return `${this.reportsEndpoint}/DownloadSubDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getDealerIssue(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetDealerIssue?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadDealerIssue(filter?) {
+        return `${this.reportsEndpoint}/DownloadDealerIssue?${this.commonService.toQueryString(filter)}`;
+    }
+
+    getSubDealerIssue(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetSubDealerIssue?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadSubDealerIssue(filter?) {
+        return `${this.reportsEndpoint}/DownloadSubDealerIssue?${this.commonService.toQueryString(filter)}`;
+    }
+
 }

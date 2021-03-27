@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Paginator } from 'primeng/paginator';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
@@ -22,7 +23,8 @@ export class DealerListComponent implements OnInit {
 
     constructor(
         private dealerSvc: FocusdealerService,
-        private alertSvc: AlertService
+        private alertSvc: AlertService,
+        private router: Router,
     ) {
         this.pagingConfig = new APIModel(1, 10);
     }
@@ -104,5 +106,9 @@ export class DealerListComponent implements OnInit {
         } else {
             this.alertSvc.tosterDanger(errorDetails.error.msg);
         }
+    }
+    detail(id) {
+        this.router.navigate(['/dealer/dealerList/' + id]);
+
     }
 }

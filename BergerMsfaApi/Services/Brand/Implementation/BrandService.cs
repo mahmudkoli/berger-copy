@@ -176,7 +176,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                         brand => brand.OrderByDescending(b => b.CreatedTime),
                         brand => brand.Include(i => i.BrandInfo).Include(i => i.User),
                         true
-                ) ;
+                );
             var modelResult = _mapper.Map<IEnumerable<BrandInfoStatusLogModel>>(result);
             return modelResult;
         }

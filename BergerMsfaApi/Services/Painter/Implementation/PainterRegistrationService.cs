@@ -3,6 +3,7 @@ using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Painter;
 using BergerMsfaApi.Models.PainterRegistration;
@@ -11,12 +12,13 @@ using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
-
+using PNTR = Berger.Data.MsfaEntity.PainterRegistration;
 namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 {
     public class PainterRegistrationService : IPainterRegistrationService
@@ -30,6 +32,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<Territory> _territorySvc;
         private readonly IRepository<Depot> _depotSvc;
         private readonly IRepository<AttachedDealerPainter> _attachedDealerSvc;
+        private readonly IRepository<PainterCall> _painterCallSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
         public PainterRegistrationService(
             IRepository<Painter> painterSvc,
@@ -41,6 +45,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
              IRepository<Territory> territorySvc,
              IRepository<Depot> depotSvc,
              IRepository<AttachedDealerPainter> attachedDealerSvc,
+             IRepository<PNTR.PainterCall> painterCallSvc,
+             IRepository<DealerInfo> dealerInfoSvc,
               IMapper mapper
 
             )
@@ -54,6 +60,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             _zoneSvc = zoneSvc;
             _saleGroupSvc = saleGroupSvc;
             _attachedDealerSvc = attachedDealerSvc;
+            _painterCallSvc = painterCallSvc;
+            _dealerInfoSvc = dealerInfoSvc;
             _mapper = mapper;
 
         }
@@ -87,11 +95,42 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            var result = await _painterSvc.FindAsync(f => f.Id == Id);
-            var painterModel = result.ToMap<Painter, PainterModel>();
-            var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));
-            //foreach (var attachment in painterAttachments)
-            //      painterModel.Attachments.Add(attachment.ToMap<Attachment, AttachmentModel>());
+            
+
+            var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
+                    painter => painter,
+                    painter => painter.Id == Id,
+                    null,
+                    painter => painter
+                                      .Include(i => i.Attachments)
+                                      .Include(i => i.AttachedDealers)
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue),
+
+                    true
+                );
+
+            
+            var painterModel = _mapper.Map<PainterModel>(result);
+            
+
+
+
+            //dummy data
+
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. qwds fsad", CustomerNo = 103 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
+
+            foreach (var id in painterModel.AttachedDealers)
+            {
+                var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
+                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails.CustomerName, CustomerNo = dealerDetails.CustomerNo });
+                
+            }
+
+            // var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));
+            // foreach (var item in painterCallList)
+            //painterModel.PainterCallList.Add(item); //(PainterCall.ToMap<Attachment, AttachmentModel>()
 
             return painterModel;
         }

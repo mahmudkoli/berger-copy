@@ -15,6 +15,7 @@
 	<NullableReferenceTypes>true</NullableReferenceTypes>
   <LangVersion>8.0</LangVersion>
   <UserSecretsId>367fb947-1b7f-4fc8-923a-6b4da63855de</UserSecretsId>
+  <OutputType>Exe</OutputType>
   <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
@@ -93,6 +94,7 @@
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <None Remove="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
+    <None Remove="ClientApp\src\app\Shared\Entity\Painter\PainterCall.ts" />
 
     <None Remove="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
 
@@ -141,6 +143,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\orgrole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Organizations\userrorgolemapping.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\Painter.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Painter\PainterCall.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Products\posmproduct.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Scheme\SchemeMaster.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Shared\Entity\Users\role.ts" />

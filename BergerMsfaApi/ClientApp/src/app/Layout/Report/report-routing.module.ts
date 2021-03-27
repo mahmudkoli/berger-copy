@@ -14,6 +14,10 @@ import { ReportComponent } from './report.component';
 import { SubDealerCollectionReportComponent } from './sub-dealer-collection/sub-dealer-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
+import { SubDealerIssueReportComponent } from './sub-dealer-issue/sub-dealer-issue-report.component';
+import { DealerIssueReportComponent } from './dealer-issue/dealer-issue-report.component';
+import { SubDealerSalescallReportComponent } from './sub-dealer-salescall/sub-dealer-salescall-report.component';
+import { DealerSalescallReportComponent } from './dealer-salescall/dealer-salescall-report.component';
 
 const routes: Routes = [
   {
@@ -92,11 +96,35 @@ const routes: Routes = [
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Dealer Visit', },
       },
+      {
+        path: 'sub-dealer-issue',
+        component: SubDealerIssueReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Sub Dealer Visit', },
+      },
+      {
+        path: 'dealer-issue',
+        component: DealerIssueReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Issue', },
+      },
+      {
+        path: 'sub-dealer-sales-call',
+        component: SubDealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Sub Dealer Sales Call', },
+      },
+      {
+        path: 'dealer-sales-call',
+        component: DealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Sales Call', },
+      },
     ],
   }
 ];
 
-// DealerVisitReportComponent
+// DealerSalescallReportComponent
 
 @NgModule({
 

@@ -1,6 +1,7 @@
 ﻿using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -18,6 +19,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         #region Dealer
         public Task<bool> DealerStatusUpdate( DealerInfo dealer);
         public Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search);
+        public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
+
         #endregion
 
     }
