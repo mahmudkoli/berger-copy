@@ -70,16 +70,22 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
 
             var query = await (from master in _context.JourneyPlanMasters
-                               join details in _context.JourneyPlanDetails on master.Id equals details.PlanId
+                               join details in _context.JourneyPlanDetails on master.Id equals details.PlanId into detailsLeftJoin
+                               from detailsInfo in detailsLeftJoin.DefaultIfEmpty()
                                join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
                                from dscInfo in dscLeftJoin.DefaultIfEmpty()
                                join painterCall in _context.PainterCalls on master.EmployeeId equals painterCall.EmployeeId into
                                    painterCallLeftJoin
                                from painterCallInfo in painterCallLeftJoin.DefaultIfEmpty()
-                               join dsc2 in _context.DealerSalesCalls on new { master.EmployeeId, Date = DateTime.Now.Date }
-                                   equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date } into dsc2LeftJoin
+                               join dsc2 in _context.DealerSalesCalls on new
+                               {
+                                   EmployeeId = AppIdentity.AppUser.UserId.ToString(),
+                                   Date = DateTime.Now.Date,
+                                   JourneyPlanId = 0
+                               }
+                                   equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date, JourneyPlanId = dsc2.JourneyPlanId ?? 0 } into dsc2LeftJoin
                                from dsc2Info in dsc2LeftJoin.DefaultIfEmpty()
-                               join ld in _context.LeadGenerations on new { master.EmployeeId, Date = DateTime.Now.Date }
+                               join ld in _context.LeadGenerations on new { EmployeeId = AppIdentity.AppUser.UserId.ToString(), Date = DateTime.Now.Date }
                                    equals new { EmployeeId = ld.UserId.ToString(), Date = ld.CreatedTime.Date } into ldLeftJoin
                                from ldInfo in ldLeftJoin.DefaultIfEmpty()
                                join lfu in _context.LeadFollowUps on new { ldInfo.Id, Date = DateTime.Now.Date }
@@ -89,7 +95,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                where (master.PlanDate.Date == DateTime.Now.Date && master.EmployeeId == AppIdentity.AppUser.EmployeeId)
                                select new
                                {
-                                   DelarId = details.Id,
+                                   DelarId = detailsInfo.Id,
                                    dscInfoId = dscInfo.Id,
                                    dscInfo.IsSubDealerCall,
                                    PainterCallInfoId = painterCallInfo.Id,
@@ -97,7 +103,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                    LdInfoId = ldInfo.Id,
                                    lfuInfoId = lfuInfo.Id,
                                    lfuInfo.ExpectedValue
-                               }).ToListAsync();
+                               }).Distinct().ToListAsync();
 
             return new MySummaryReportResultModel
             {
@@ -108,7 +114,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 AdHocVisitNo = query.Select(x => x.dsc2InfoId).Distinct().Count(x => x > 0),
                 LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(x => x > 0),
                 LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count(x => x > 0),
-                LeadFollowupValue = query.Sum(x => x.ExpectedValue),
+                LeadFollowupValue = query.Select(x => new { x.ExpectedValue, x.lfuInfoId }).Distinct().Sum(x => x.ExpectedValue),
                 NoOfBillingDealer = await _salesDataService.NoOfBillingDealer(dealerIds),
                 TotalCollectionValue = await _collectionDataService.GetTotalCollectionValue(dealerIds)
             };
