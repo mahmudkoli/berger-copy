@@ -101,13 +101,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             return new MySummaryReportResultModel
             {
-                DealerVisitTarget = query.Select(x => x.DelarId).Distinct().Count(),
-                ActualVisited = query.Select(x => x.dscInfoId).Distinct().Count(),
-                SubDealerActuallyVisited = query.Where(x => x.IsSubDealerCall).Select(x => x.dscInfoId).Distinct().Count(),
-                PainterActuallyVisited = query.Select(x => x.PainterCallInfoId).Distinct().Count(),
-                AdHocVisitNo = query.Select(x => x.dsc2InfoId).Distinct().Count(),
-                LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(),
-                LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count(),
+                DealerVisitTarget = query.Select(x => x.DelarId).Distinct().Count(x => x > 0),
+                ActualVisited = query.Select(x => x.dscInfoId).Distinct().Count(x => x > 0),
+                SubDealerActuallyVisited = query.Where(x => x.IsSubDealerCall).Select(x => x.dscInfoId).Distinct().Count(x => x > 0),
+                PainterActuallyVisited = query.Select(x => x.PainterCallInfoId).Distinct().Count(x => x > 0),
+                AdHocVisitNo = query.Select(x => x.dsc2InfoId).Distinct().Count(x => x > 0),
+                LeadGenerationNo = query.Select(x => x.LdInfoId).Distinct().Count(x => x > 0),
+                LeadFollowupNo = query.Select(x => x.lfuInfoId).Distinct().Count(x => x > 0),
                 LeadFollowupValue = query.Sum(x => x.ExpectedValue),
                 NoOfBillingDealer = await _salesDataService.NoOfBillingDealer(dealerIds),
                 TotalCollectionValue = await _collectionDataService.GetTotalCollectionValue(dealerIds)
