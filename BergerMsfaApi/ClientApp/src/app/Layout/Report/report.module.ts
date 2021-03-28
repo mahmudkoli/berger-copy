@@ -21,6 +21,11 @@ import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.c
 import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
 import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
 import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
+import { MtsValueTargetAchivementReportComponent } from './mts-value-target-achivement/mts-value-target-achivement-report.component';
+import { BillingDealerQuarterlyGrowthReportComponent } from './billing-dealer-quarterly-growth/billing-dealer-quarterly-growth-report.component';
+import { EnamelPaintsQuarterlyGrowthReportComponent } from './enamel-paints-quarterly-growth/enamel-paints-quarterly-growth-report.component';
+import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/premium-brands-growth-report.component';
+import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +43,12 @@ import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-ove
       DealerVisitReportComponent,
       TintingMachineReportComponent,
       ActiveSummeryReportComponent,
-      OSOver90DaysTrendReportComponent
+      OSOver90DaysTrendReportComponent,
+      MtsValueTargetAchivementReportComponent,
+      BillingDealerQuarterlyGrowthReportComponent,
+      EnamelPaintsQuarterlyGrowthReportComponent,
+      PremiumBrandsGrowthReportComponent,
+      PremiumBrandsContributionReportComponent
     ],
   imports: [
       CommonModule,

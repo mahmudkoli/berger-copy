@@ -123,11 +123,56 @@ export class ReportService {
     }
 
     public getOsOver90DaysTrend(filter?) {
-        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetOsOver90DaysTrend?${this.commonService.toQueryString(filter)}`);
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/OsOver90daysTrendReport?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadOsOver90DaysTrend(filter?) {
-        return `${this.reportsEndpoint}/DownloadOsOver90DaysTrend?${this.commonService.toQueryString(filter)}`;
+        return `${this.reportsEndpoint}/DownloadOsOver90daysTrendReport?${this.commonService.toQueryString(filter)}`;
+    }
+
+
+    public getMtsValueTargetAchivement(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetMtsValueTargetAchivement?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadMtsValueTargetAchivement(filter?) {
+        return `${this.reportsEndpoint}/DownloadMtsValueTargetAchivement?${this.commonService.toQueryString(filter)}`;
+    }
+
+
+    public getBillingDealerQuarterlyGrowth(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadBillingDealerQuarterlyGrowth(filter?) {
+        return `${this.reportsEndpoint}/DownloadBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
+    }
+
+    public getEnamelPaintsQuarterlyGrowth(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadEnamelPaintsQuarterlyGrowth(filter?) {
+        return `${this.reportsEndpoint}/DownloadEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
+    }
+
+
+    public getPremiumBrandsGrowth(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadPremiumBrandsGrowth(filter?) {
+        return `${this.reportsEndpoint}/DownloadPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`;
+    }
+
+
+
+    public getPremiumBrandsContribution(filter?) {
+        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetPremiumBrandsContribution?${this.commonService.toQueryString(filter)}`);
+    }
+
+    public downloadPremiumBrandsContribution(filter?) {
+        return `${this.reportsEndpoint}/DownloadPremiumBrandsContribution?${this.commonService.toQueryString(filter)}`;
     }
 
 }
