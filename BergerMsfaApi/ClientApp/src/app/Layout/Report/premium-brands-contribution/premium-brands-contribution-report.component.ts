@@ -193,6 +193,11 @@ export class PremiumBrandsContributionReportComponent implements OnInit, OnDestr
 		this.MonthToDateConvert(this.frommonth,this.fromyear,this.tomonth,this.toyear);
 		let res=this.monthDiff(this.query.fromDate,this.query.toDate);
 
+		this.query.fromMonth=this.frommonth;
+		this.query.fromYear=this.fromyear;
+		this.query.toMonth=this.tomonth;
+		this.query.toYear=this.toyear;
+
 		if(res==2){
 			// this.query.fromDate = this.ngbDateToDate(this.fromDate);
 			// this.query.toDate = this.ngbDateToDate(this.toDate);

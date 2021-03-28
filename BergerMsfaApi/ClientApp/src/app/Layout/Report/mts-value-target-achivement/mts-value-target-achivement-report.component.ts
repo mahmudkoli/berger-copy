@@ -129,6 +129,7 @@ export class MtsValueTargetAchivementReportComponent implements OnInit, OnDestro
 			userId: null,
 			fromDate: null,
 			toDate: null,
+			
 		});
 	}
 	
@@ -189,6 +190,11 @@ export class MtsValueTargetAchivementReportComponent implements OnInit, OnDestro
 	//#region no need to change for another report
 	onSubmitSearch() {
 		this.query.page = 1;
+
+		this.query.fromMonth=this.frommonth;
+		this.query.fromYear=this.fromyear;
+		this.query.toMonth=this.tomonth;
+		this.query.toYear=this.toyear;
 
 		this.MonthToDateConvert(this.frommonth,this.fromyear,this.tomonth,this.toyear);
 		let res=this.monthDiff(this.query.fromDate,this.query.toDate);
