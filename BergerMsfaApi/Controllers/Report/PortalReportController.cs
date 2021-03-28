@@ -558,6 +558,22 @@ namespace BergerMsfaApi.Controllers.Report
             {
                 return ExceptionResult(ex);
             }
+        } 
+
+        [HttpGet("DownloadOsOver90daysTrendReport")]
+        public async Task<IActionResult> DownloadOsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetOsOver90daysTrendReport(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         #endregion
