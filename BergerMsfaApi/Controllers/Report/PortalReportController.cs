@@ -479,6 +479,69 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+
+
+
+        [HttpGet("GetTintingMachine")]
+        public async Task<IActionResult> GetTintingMachine([FromQuery] TintingMachineReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetTintingMachineReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadTintingMachine")]
+        public async Task<IActionResult> DownloadTintingMachine([FromQuery] TintingMachineReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetTintingMachineReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetActiveSummery")]
+        public async Task<IActionResult> GetActiveSummery([FromQuery] ActiveSummeryReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetActiveSummeryReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadActiveSummery")]
+        public async Task<IActionResult> DownloadActiveSummery([FromQuery] ActiveSummeryReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetActiveSummeryReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
 
         #region Os over 90 days Trend Report

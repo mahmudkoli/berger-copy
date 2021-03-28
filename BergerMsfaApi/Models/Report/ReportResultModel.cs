@@ -459,6 +459,36 @@ namespace BergerMsfaApi.Models.Report
         public string DealerDissatisfactionReason { get; set; }
     }
 
+
+
+    public class TintingMachineReportResultModel
+    {
+        public string Territory { get; set; }
+        public string Company { get; set; }
+        public int ActiveMachineNO { get; set; }
+        public int InactiveMachineNO { get; set; }
+        public int TotalCBMachineNO { get; set; }
+        public decimal Contribution { get; set; }
+        
+    }
+
+
+    public class ActiveSummaryReportResultModel
+    {
+
+        public string UserID { get; set; }
+        public string DepotID { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string Activity { get; set; }
+        public string Target { get; set; }
+        public string Actual { get; set; }
+        public string BusinessGeneration { get; set; }
+        public string Variance { get; set; }
+       
+    }
+
     public class DealerIssueReportResultModel
     {
         public string UserId { get; set; }

@@ -18,6 +18,14 @@ import { SubDealerIssueReportComponent } from './sub-dealer-issue/sub-dealer-iss
 import { DealerIssueReportComponent } from './dealer-issue/dealer-issue-report.component';
 import { SubDealerSalescallReportComponent } from './sub-dealer-salescall/sub-dealer-salescall-report.component';
 import { DealerSalescallReportComponent } from './dealer-salescall/dealer-salescall-report.component';
+import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
+import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
+import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
+import { MtsValueTargetAchivementReportComponent } from './mts-value-target-achivement/mts-value-target-achivement-report.component';
+import { BillingDealerQuarterlyGrowthReportComponent } from './billing-dealer-quarterly-growth/billing-dealer-quarterly-growth-report.component';
+import { EnamelPaintsQuarterlyGrowthReportComponent } from './enamel-paints-quarterly-growth/enamel-paints-quarterly-growth-report.component';
+import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
+import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/premium-brands-growth-report.component';
 
 const routes: Routes = [
   {
@@ -119,6 +127,63 @@ const routes: Routes = [
         component: DealerSalescallReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Dealer Sales Call', },
+      },
+      {
+        path: 'tinting-machine',
+        component: TintingMachineReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Tinting Machine Report', },
+      },
+      {
+        path: 'active-summery',
+        component: ActiveSummeryReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Active Summery Report', },
+      },
+      {
+        path: 'os-over-90-days-trend',
+        component: OSOver90DaysTrendReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'OS Over 90 Days Trend Report', },
+      },
+
+
+
+      {
+        path: 'mts-value-target-achivement',
+        component: MtsValueTargetAchivementReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'MTS Value Target achivement', },
+      },
+
+      {
+        path: 'billing-dealer-quarterly-growth-report',
+        component: BillingDealerQuarterlyGrowthReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Billing Dealer Quarterly Growth', },
+      },
+
+      {
+        path: 'enamel-paints-quarterly-growth-report',
+        component: EnamelPaintsQuarterlyGrowthReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Enamel Paints Quarterly Growth', },
+      },
+
+
+      {
+        path: 'premium-brands-growth-report',
+        component: PremiumBrandsGrowthReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Premium Brands Growth', },
+      },
+
+
+      {
+        path: 'premium-brands-contribution-report',
+        component: PremiumBrandsContributionReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Premium Brands Contribution', },
       },
     ],
   }
