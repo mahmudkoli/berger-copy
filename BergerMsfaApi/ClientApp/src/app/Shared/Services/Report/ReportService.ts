@@ -8,12 +8,16 @@ import { CommonService } from '../Common/common.service';
 export class ReportService {
     public baseUrl: string;
     public reportsEndpoint: string;
+    public quaterlyReportEndpoint: string;
+
 
     constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
     private commonService: CommonService) {
         console.log("baseUrl: ", baseUrl);
         this.baseUrl = baseUrl + 'api/';
         this.reportsEndpoint = this.baseUrl + 'v1/PortalReport';
+        this.quaterlyReportEndpoint = this.baseUrl + 'v1/PortalQuartPerformReport';
+
     }
 
     getLeadSummary(filter?) {
@@ -132,37 +136,37 @@ export class ReportService {
 
 
     public getMtsValueTargetAchivement(filter?) {
-        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetMtsValueTargetAchivement?${this.commonService.toQueryString(filter)}`);
+        return this.http.get<APIResponse>(`${this.quaterlyReportEndpoint}/GetMTSValueTargetAchivement?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadMtsValueTargetAchivement(filter?) {
-        return `${this.reportsEndpoint}/DownloadMtsValueTargetAchivement?${this.commonService.toQueryString(filter)}`;
+        return `${this.quaterlyReportEndpoint}/DownloadMTSValueTargetAchivement?${this.commonService.toQueryString(filter)}`;
     }
 
 
     public getBillingDealerQuarterlyGrowth(filter?) {
-        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
+        return this.http.get<APIResponse>(`${this.quaterlyReportEndpoint}/GetBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadBillingDealerQuarterlyGrowth(filter?) {
-        return `${this.reportsEndpoint}/DownloadBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
+        return `${this.quaterlyReportEndpoint}/DownloadBillingDealerQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
     }
 
     public getEnamelPaintsQuarterlyGrowth(filter?) {
-        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
+        return this.http.get<APIResponse>(`${this.quaterlyReportEndpoint}/GetEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadEnamelPaintsQuarterlyGrowth(filter?) {
-        return `${this.reportsEndpoint}/DownloadEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
+        return `${this.quaterlyReportEndpoint}/DownloadEnamelPaintsQuarterlyGrowth?${this.commonService.toQueryString(filter)}`;
     }
 
 
     public getPremiumBrandsGrowth(filter?) {
-        return this.http.get<APIResponse>(`${this.reportsEndpoint}/GetPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`);
+        return this.http.get<APIResponse>(`${this.quaterlyReportEndpoint}/GetPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`);
     }
 
     public downloadPremiumBrandsGrowth(filter?) {
-        return `${this.reportsEndpoint}/DownloadPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`;
+        return `${this.quaterlyReportEndpoint}/DownloadPremiumBrandsGrowth?${this.commonService.toQueryString(filter)}`;
     }
 
 
