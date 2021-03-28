@@ -201,10 +201,10 @@ namespace BergerMsfaApi.Models.Report
     public class CustomerCollectionReportResultModel
     {
         public string UserId { get; set; }
-        public string DepotId { get; set; }
-        public string DepotName { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string DepotId { get; set; }
+        //public string DepotName { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string CustomerName { get; set; }
@@ -222,10 +222,10 @@ namespace BergerMsfaApi.Models.Report
     public class DirectProjectCollectionReportResultModel
     {
         public string UserId { get; set; }
-        public string DepotId { get; set; }
-        public string DepotName { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string DepotId { get; set; }
+        //public string DepotName { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string ProjectSapId { get; set; }
@@ -268,6 +268,8 @@ namespace BergerMsfaApi.Models.Report
         public string EpToolsUsage { get; set; }
         public string PainterAppUsage { get; set; }
         public string WorkInHandNo { get; set; }
+        public string BpblMtdValue { get; set; }
+        public string BpblCount { get; set; }
         public string ApMtdValue { get; set; }
         public string ApCount { get; set; }
         public string NerolacMtdValue { get; set; }
@@ -487,5 +489,88 @@ namespace BergerMsfaApi.Models.Report
        
     }
 
+    public class DealerIssueReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string VisitDate { get; set; }
+        public string PcMaterial { get; set; }
+        public string PcMaterialGroup { get; set; }
+        public string PcQuantity { get; set; }
+        public string PcBatchNumber { get; set; }
+        public string PcComments { get; set; }
+        public string PcPriority { get; set; }
+        public string PosComments { get; set; }
+        public string PosPriority { get; set; }
+        public string ShadeComments { get; set; }
+        public string ShadePriority { get; set; }
+        public string ShopSignComments { get; set; }
+        public string ShopSignPriority { get; set; }
+        public string DeliveryComments { get; set; }
+        public string DeliveryPriority { get; set; }
+        public string DamageMaterial { get; set; }
+        public string DamageMaterialGroup { get; set; }
+        public string DamageQuantity { get; set; }
+        public string DamageComments { get; set; }
+        public string DamagecPriority { get; set; }
+        public string CBMStatus { get; set; }
+        public string CBMMaintatinanceFrequency { get; set; }
+        public string CBMRemarks { get; set; }
+        public string CBMPriority { get; set; }
+        public string OthersComment { get; set; }
+        public string Othersriority { get; set; }
+    }
+
+    public class SubDealerIssueReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string SubDealerId { get; set; }
+        public string SubDealerName { get; set; }
+        public string VisitDate { get; set; }
+        public string PosComments { get; set; }
+        public string PosPriority { get; set; }
+        public string ShadeComments { get; set; }
+        public string ShadePriority { get; set; }
+        public string ShopSignComments { get; set; }
+        public string ShopSignPriority { get; set; }
+        public string DeliveryComments { get; set; }
+        public string DeliveryPriority { get; set; }
+        public string CBMStatus { get; set; }
+        public string CBMMaintatinanceFrequency { get; set; }
+        public string CBMRemarks { get; set; }
+        public string CBMPriority { get; set; }
+        public string OthersComment { get; set; }
+        public string Othersriority { get; set; }
+    }
+
     #endregion
+
+    public class OsOver90daysTrendReportResultModel
+    {
+
+        public string CreditControlArea { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string Month1Name { get; set; }
+        public string Month2Name { get; set; }
+        public string Month3Name { get; set; }
+        public decimal Month1Value { get; set; }
+        public decimal Month2Value { get; set; }
+        public decimal Change1 { get; set; }
+        public decimal Month3Value { get; set; }
+        public decimal Change2 { get; set; }
+    }
+
+
 }

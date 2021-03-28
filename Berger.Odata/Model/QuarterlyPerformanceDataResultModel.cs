@@ -12,7 +12,7 @@ namespace Berger.Odata.Model
         public IList<MonthlyDataModel> MonthlyActualData { get; internal set; }
         public decimal TotalTarget { get; set; }
         public decimal TotalActual { get; set; }
-        public decimal Achivement { get; set; }
+        public decimal AchivementOrGrowth { get; set; }
 
         public QuarterlyPerformanceDataResultModel()
         {

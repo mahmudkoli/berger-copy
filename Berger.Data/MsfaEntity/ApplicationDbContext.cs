@@ -151,6 +151,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<BrandInfo> BrandInfos { get; set; }
         public DbSet<BrandInfoStatusLog> BrandInfoStatusLogs { get; set; }
         public DbSet<DealerInfoStatusLog> DealerInfoStatusLogs { get; set; }
+        public DbSet<RPRSPolicy> RPRSPolicies { get; set; }
         #endregion
 
         #region Scheme

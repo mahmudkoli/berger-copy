@@ -359,6 +359,126 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetDealerSalesCall")]
+        public async Task<IActionResult> GetDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadDealerSalesCall")]
+        public async Task<IActionResult> DownloadDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetSubDealerSalesCall")]
+        public async Task<IActionResult> GetSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadSubDealerSalesCall")]
+        public async Task<IActionResult> DownloadSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetDealerIssue")]
+        public async Task<IActionResult> GetDealerIssue([FromQuery] DealerIssueReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetDealerIssueReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadDealerIssue")]
+        public async Task<IActionResult> DownloadDealerIssue([FromQuery] DealerIssueReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetDealerIssueReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetSubDealerIssue")]
+        public async Task<IActionResult> GetSubDealerIssue([FromQuery] SubDealerIssueReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetSubDealerIssueReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadSubDealerIssue")]
+        public async Task<IActionResult> DownloadSubDealerIssue([FromQuery] SubDealerIssueReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetSubDealerIssueReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
 
 
 
@@ -424,5 +544,38 @@ namespace BergerMsfaApi.Controllers.Report
 
         #endregion
 
+        #region Os over 90 days Trend Report
+
+        [HttpGet("OsOver90daysTrendReport")]
+        public async Task<IActionResult> OsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetOsOver90daysTrendReport(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        } 
+
+        [HttpGet("DownloadOsOver90daysTrendReport")]
+        public async Task<IActionResult> DownloadOsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetOsOver90daysTrendReport(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        #endregion
     }
 }

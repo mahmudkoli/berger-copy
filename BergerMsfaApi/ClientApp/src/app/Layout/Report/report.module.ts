@@ -18,6 +18,10 @@ import { CustomerCollectionReportComponent } from './customer-collection/custome
 import { ProjectCollectionReportComponent } from './project-collection/project-collection-report.component';
 import { PainterCallReportComponent } from './painter-call/painter-call-report.component';
 import { DealerVisitReportComponent } from './dealer-visit/dealer-visit-report.component';
+import { SubDealerIssueReportComponent } from './sub-dealer-issue/sub-dealer-issue-report.component';
+import { DealerIssueReportComponent } from './dealer-issue/dealer-issue-report.component';
+import { SubDealerSalescallReportComponent } from './sub-dealer-salescall/sub-dealer-salescall-report.component';
+import { DealerSalescallReportComponent } from './dealer-salescall/dealer-salescall-report.component';
 import { TintingMachineReportComponent } from './tinting-machine/tinting-machine-report.component';
 import { ActiveSummeryReportComponent } from './active-summery/active-summery-report.component';
 import { OSOver90DaysTrendReportComponent } from './os-over-90-days-trend/os-over-90-days-trend-report.component';
@@ -40,6 +44,11 @@ import { PremiumBrandsContributionReportComponent } from './premium-brands-contr
       CustomerCollectionReportComponent,
       ProjectCollectionReportComponent,
       PainterCallReportComponent,
+      DealerVisitReportComponent,
+      SubDealerIssueReportComponent,
+      DealerIssueReportComponent,
+      SubDealerSalescallReportComponent,
+      DealerSalescallReportComponent,
       DealerVisitReportComponent,
       TintingMachineReportComponent,
       ActiveSummeryReportComponent,
