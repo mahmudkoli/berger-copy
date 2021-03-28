@@ -207,11 +207,32 @@ export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
     dealerId: number;
 
     
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
-        super();
-        Object.assign(this, init);
-    }
+    
 
     clear() {
     }
+}
+
+
+
+export class MtsValueTargetAchivementReportQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+
+export class BillingDealerQuarterlyGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+
+export class EnamelPaintsQuarterlyGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+export class PremiumBrandsGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
+    dealerId: number;
 }

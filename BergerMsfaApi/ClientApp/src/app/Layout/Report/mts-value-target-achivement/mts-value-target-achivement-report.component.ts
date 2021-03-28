@@ -6,22 +6,23 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { ActiveSummeryReportQuery, OSOver90DaysTrendReportQuery, TintingMachineReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { ActiveSummeryReportQuery, MtsValueTargetAchivementReportQuery, TintingMachineReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
+import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 
 @Component({
-    selector: 'app-os-over-90-days-trend-report',
-    templateUrl: './os-over-90-days-trend-report.component.html',
-    styleUrls: ['./os-over-90-days-trend-report.component.css']
+    selector: 'app-mts-value-target-achivement-report',
+    templateUrl: './mts-value-target-achivement-report.component.html',
+    styleUrls: ['./mts-value-target-achivement-report.component.css']
 })
-export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
+export class MtsValueTargetAchivementReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: OSOver90DaysTrendReportQuery;
+	query: MtsValueTargetAchivementReportQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
@@ -41,7 +42,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Active Summery Report';
+	tableName: string = 'MTS Value Target Achivement';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -96,8 +97,8 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 	}
 	
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadOsOver90DaysTrend(query);
-	getData = (query) => this.reportService.getOsOver90DaysTrend(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadMtsValueTargetAchivement(query);
+	getData = (query) => this.reportService.getMtsValueTargetAchivement(query);
 	
 	private getDealerList() {
         if (this._loggedUser) {
@@ -114,7 +115,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
     }
 
 	searchConfiguration() {
-		this.query = new OSOver90DaysTrendReportQuery({
+		this.query = new MtsValueTargetAchivementReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -138,21 +139,18 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
-            this.commonService.getCreditControlAreaList(),
             this.commonService.getMonthList(),
             this.commonService.getYearList(),
-        ]).subscribe(([users, plants, areaGroups, territories, zones,creditZoneControll,month,year]) => {
+        ]).subscribe(([users, plants, areaGroups, territories, zones,month,year]) => {
             this.users = users.data;
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
             this.territories = territories.data;
             this.zones = zones.data;
-			this.creditControllArea=creditZoneControll.data
 			this.monthList=month.data
 			this.yearList=year.data
 
 
-			console.log("creditZoneControll.data",year.data)
         }, (err) => { }, () => { });
     }
 
