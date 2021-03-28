@@ -414,35 +414,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       bergerLoyalty = p.Loyality.ToString(),
                                       p.PainterImageUrl
                                   }).ToListAsync();
-            var painters = (from p in await _painterRepository.GetAllAsync()
-                            join u in await _userInfoRepository.GetAllAsync() on p.EmployeeId equals u.EmployeeId into uleftjoin
-                            from userInfo in uleftjoin.DefaultIfEmpty()
-                            join d in await _dorpDownDetailsRepository.GetAllAsync() on p.PainterCatId equals d.Id into dleftjoin
-                            from dropDownInfo in dleftjoin.DefaultIfEmpty()
-                            join adp in await _attachmentDealerRepository.GetAllAsync() on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
-                            from adpInfo in adpleftjoin.DefaultIfEmpty()
-                            join di in await _dealerInfoRepository.GetAllAsync() on adpInfo?.Dealer equals di.Id into dileftjoin
-                            from diInfo in dileftjoin.DefaultIfEmpty()
-                            join dep in await _depotSvc.GetAllAsync() on p.Depot equals dep.Werks into depleftjoin
-                            from depinfo in depleftjoin.DefaultIfEmpty()
-                            join sg in await _saleGroupSvc.GetAllAsync() on p.SaleGroup equals sg.Code into sgleftjoin
-                            from sginfo in sgleftjoin.DefaultIfEmpty()
-                            join t in await _territorySvc.GetAllAsync() on p.Territory equals t.Code into tleftjoin
-                            from tinfo in tleftjoin.DefaultIfEmpty()
-                            join z in await _zoneSvc.GetAllAsync() on p.Zone equals z.Code into zleftjoin
-                            from zinfo in zleftjoin.DefaultIfEmpty()
-                            where (
-                               (!query.UserId.HasValue || userInfo?.Id == query.UserId.Value)
-                               && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
-                               && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
-                               && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
-                               && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
-                               && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
-                               && (!query.PainterId.HasValue || p?.Id == query.PainterId.Value)
-                               && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
-                               && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
-                            )
-                            select new { p, userInfo, dropDownInfo, diInfo, depinfo, sginfo, tinfo, zinfo }).ToList();
 
             reportResult = painters.Select(x => new PainterRegistrationReportResultModel
             {
@@ -468,32 +439,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 APPNotInstalledReason = x.Remark,
                 AverageMonthlyUse = x.avgMonthlyUse,
                 BergerLoyalty = x.bergerLoyalty,
-                PainterImageUrl = x.PainterImageUrl,
-                UserId = x.userInfo?.Email ?? string.Empty,
-                Territory = x.tinfo.Name,
-                Zone = x.zinfo.Name,
-                PainterId = x.p.Id.ToString(),
-                PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.p.CreatedTime),
-                TypeOfPainer = x.dropDownInfo?.DropdownName,
-                DepotName = x.depinfo?.Name1,
-                SalesGroup = x.sginfo.Name,
-                PainterName = x.p.PainterName,
-                PainterAddress = x.p.Address,
-                MobileNumber = x.p.Phone,
-                NoOfPaintingAttached = x.p.NoOfPainterAttached,
-                DBBLRocketAccountStatus = x.p.HasDbbl ? "Created" : "Not Created",
-                AccountNumber = x.p.AccDbblNumber,
-                AccountHolderName = x.p.AccDbblHolderName,
-                IdentificationNo = !string.IsNullOrEmpty(x.p.NationalIdNo) ? x.p.NationalIdNo
-                        : (!string.IsNullOrEmpty(x.p.PassportNo) ? x.p.PassportNo
-                        : (!string.IsNullOrEmpty(x.p.BrithCertificateNo)) ? x.p.BrithCertificateNo : string.Empty),
-                AttachedTaggedDealerId = x.p.AttachedDealerCd,
-                AttachedTaggedDealerName = x.diInfo?.CustomerName,
-                APPInstalledStatus = x.p.IsAppInstalled ? "Installed" : "Not Installed",
-                APPNotInstalledReason = x.p.Remark,
-                AverageMonthlyUse = x.p.AvgMonthlyVal.ToString(),
-                BergerLoyalty = x.p.Loyality.ToString(),
-                PainterImageUrl = x.p.PainterImageUrl,
+                PainterImageUrl = x.PainterImageUrl
+               
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<PainterRegistrationReportResultModel>();
@@ -541,28 +488,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      zoneName = zinfo.Name,
                                      d.EmployeeId
                                  }).ToListAsync();
-            var dealers = (from d in await _dealerOpening.GetAllAsync()
-                           join u in await _userInfoRepository.GetAllAsync() on d.EmployeeId equals u.EmployeeId into uleftjoin
-                           from uinfo in uleftjoin.DefaultIfEmpty()
-                           join dep in await _depotSvc.GetAllAsync() on d.BusinessArea equals dep.Werks into depleftjoin
-                           from depinfo in depleftjoin.DefaultIfEmpty()
-                           join so in await _saleOfficeSvc.GetAllAsync() on d.SaleOffice equals so.Code into soleftjoin
-                           from soinfo in soleftjoin.DefaultIfEmpty()
-                           join sg in await _saleGroupSvc.GetAllAsync() on d.SaleGroup equals sg.Code into sgleftjoin
-                           from sginfo in sgleftjoin.DefaultIfEmpty()
-                           join t in await _territorySvc.GetAllAsync() on d.Territory equals t.Code into tleftjoin
-                           from tinfo in tleftjoin.DefaultIfEmpty()
-                           join z in await _zoneSvc.GetAllAsync() on d.Zone equals z.Code into zleftjoin
-                           from zinfo in zleftjoin.DefaultIfEmpty()
-                           where (
-                             (!query.UserId.HasValue || uinfo?.Id == query.UserId.Value)
-                             && (string.IsNullOrWhiteSpace(query.DepotId) || d.BusinessArea == query.DepotId)
-                             && (!query.Territories.Any() || query.Territories.Contains(d.Territory))
-                             && (!query.Zones.Any() || query.Zones.Contains(d.Zone))
-                             && (!query.FromDate.HasValue || d.CreatedTime.Date >= query.FromDate.Value.Date)
-                             && (!query.ToDate.HasValue || d.CreatedTime.Date <= query.ToDate.Value.Date)
-                           )
-                           select new { d, uinfo, depinfo, soinfo, sginfo, tinfo, zinfo }).ToList();
+
 
             var dealerAttachments = await (from doa in _context.DealerOpeningAttachments
                                            join di in _context.DealerInfos on doa.DealerOpeningId equals di.Id into dileftjoin
@@ -592,24 +518,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 NomineeIdentificationNo = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee NID/PASSPORT/BIRTH" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
                 NomineePhotograph = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee/Photograph" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
                 Cheque = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Cheque" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                CurrentStatusOfThisApplication = "",
-                UserId = x.uinfo?.Email ?? string.Empty,
-                DealrerOpeningId = dealerId = x.d?.Id.ToString(),
-                BusinessArea = x.d?.BusinessArea,
-                BusinessAreaName = x.depinfo?.Name1,
-                SalesOffice = x.sginfo?.Name,
-                SalesGroup = x.sginfo?.Name,
-                Territory = x.tinfo?.Name,
-                Zone = x.zinfo?.Name,
-                EmployeeId = x.d?.EmployeeId,
-                DealershipOpeningApplicationForm = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Application Form" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                TradeLicensee = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Trade Licensee" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                IdentificationNo = dealerAttachments.FirstOrDefault(x => x.doa.Name == "NID/Passport/Birth" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                PhotographOfproprietor = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Photograph of proprietor" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                NomineeIdentificationNo = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Nominee NID/PASSPORT/BIRTH" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                NomineePhotograph = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Nominee/Photograph" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                Cheque = dealerAttachments.FirstOrDefault(x => x.doa.Name == "Cheque" && x.doa.DealerOpeningId.ToString() == dealerId)?.doa?.Path ?? string.Empty,
-                CurrentStatusOfThisApplication = "",
+                CurrentStatusOfThisApplication = ""
+               
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<DealerOpeningReportResultModel>();
