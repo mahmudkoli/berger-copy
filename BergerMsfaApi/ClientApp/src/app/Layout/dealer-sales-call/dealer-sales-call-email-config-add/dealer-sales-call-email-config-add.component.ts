@@ -60,7 +60,7 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
     }
     loadCategories() {
 		this.alertService.fnLoading(true);
-		const categoryCode = EnumDynamicTypeCode.SwappingCompetition;
+		const categoryCode = EnumDynamicTypeCode.ISSUES_01;
 		this.dynamicDropdownService.GetDropdownByTypeCd(categoryCode)
 			.subscribe(res => {
 				this.categories = res.data;
