@@ -48,7 +48,7 @@ import { PremiumBrandsContributionReportComponent } from './premium-brands-contr
       SubDealerIssueReportComponent,
       DealerIssueReportComponent,
       SubDealerSalescallReportComponent,
-      DealerSalescallReportComponent
+      DealerSalescallReportComponent,
       DealerVisitReportComponent,
       TintingMachineReportComponent,
       ActiveSummeryReportComponent,
