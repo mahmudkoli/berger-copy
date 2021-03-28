@@ -1878,8 +1878,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<TintingMachineReportResultModel>();
 
-            reportResult = (await _tintingMachine
-                .FindAllAsync(p =>
+            reportResult = (_tintingMachine
+                .GetAllInclude(x => x.Company).Where(p =>
            (query.Territories.Count > 0 ? query.Territories.Contains(p.Territory) : true)
             && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
                                  && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)))

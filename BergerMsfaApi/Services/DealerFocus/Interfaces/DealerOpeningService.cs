@@ -208,24 +208,33 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
             //}).CreateMapper();
 
-            var user = _userInfoSvc.Where(f => f.EmployeeId == AppIdentity.AppUser.EmployeeId).FirstOrDefault();
+            var user = _userInfoSvc.Where(f => f.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var managerUser = _userInfoSvc.Where(f => f.EmployeeId == user.ManagerId).FirstOrDefault();
 
-            var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
-            _dealerOpening.NextApprovarId = user.Id;
-            _dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
+            //var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
+            //_dealerOpening.NextApprovarId = user.Id;
+            //_dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
             var dealerOpening = _mapper.Map<DealerOpening>(model);
+            dealerOpening.NextApprovarId = managerUser.Id;
+            dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
             foreach (var attach in dealerOpening.DealerOpeningAttachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
                 if (!string.IsNullOrEmpty(attach.Path))
                 {
-
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(
-                        attach.Path,
-                        attach.Name, FileUploadCode.DealerOpening,
-                        300, 300);
+                    try
+                    {
+                        attach.Path = await _fileUploadSvc.SaveImageAsync(
+                            attach.Path,
+                            attach.Name, FileUploadCode.DealerOpening,
+                            300, 300);
+                    }
+                    catch (System.Exception e)
+                    {
+                        var err = e;
+                    }
                 }
 
             }

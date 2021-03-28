@@ -69,7 +69,7 @@ namespace Berger.Common
                     try
                     {
                         smtpClient.Host = _smtpSettings.Server;
-                        smtpClient.Port = 587; // Google smtp port
+                        //smtpClient.Port = 587; // Google smtp port
                         smtpClient.EnableSsl = true;
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.UseDefaultCredentials = false;// disable it
