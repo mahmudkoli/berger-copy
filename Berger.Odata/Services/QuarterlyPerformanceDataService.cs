@@ -120,7 +120,7 @@ namespace Berger.Odata.Services
         #endregion
 
         #region Portal Report
-        public async Task<IList<QuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(PortalQuarterlyPerformanceSearchModel model)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
@@ -203,10 +203,10 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return result;
+            return await ToPortalModel(result);
         }
 
-        public async Task<IList<QuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
@@ -283,10 +283,10 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return result;
+            return await ToPortalModel(result);
         }
         
-        public async Task<IList<QuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
@@ -363,10 +363,10 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return result;
+            return await ToPortalModel(result);
         }
 
-        public async Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(PortalQuarterlyPerformanceSearchModel model)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
@@ -448,10 +448,10 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return result;
+            return await ToPortalModel(result);
         }
 
-        public async Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(PortalQuarterlyPerformanceSearchModel model)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
@@ -524,6 +524,37 @@ namespace Berger.Odata.Services
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
                 res.AchivementOrGrowth = _odataService.GetGrowthNew(res.TotalTarget, res.TotalActual);
+
+                result.Add(res);
+            }
+
+            return await ToPortalModel(result);
+        }
+        
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> ToPortalModel(List<QuarterlyPerformanceDataResultModel> data)
+        {
+            var result = new List<PortalQuarterlyPerformanceDataResultModel>();
+
+            foreach (var item in data)
+            {
+                var res = new PortalQuarterlyPerformanceDataResultModel();
+                res.FirstMonthTargetName = item.MonthlyTargetData[0].MonthName;
+                res.SecondMonthTargetName = item.MonthlyTargetData[1].MonthName;
+                res.ThirdMonthTargetName = item.MonthlyTargetData[2].MonthName;
+                res.FirstMonthTargetAmount = item.MonthlyTargetData[0].Amount;
+                res.SecondMonthTargetAmount = item.MonthlyTargetData[1].Amount;
+                res.ThirdMonthTargetAmount = item.MonthlyTargetData[2].Amount;
+
+                res.FirstMonthActualName = item.MonthlyActualData[0].MonthName;
+                res.SecondMonthActualName = item.MonthlyActualData[1].MonthName;
+                res.ThirdMonthActualName = item.MonthlyActualData[2].MonthName;
+                res.FirstMonthActualAmount = item.MonthlyActualData[0].Amount;
+                res.SecondMonthActualAmount = item.MonthlyActualData[1].Amount;
+                res.ThirdMonthActualAmount = item.MonthlyActualData[2].Amount;
+
+                res.TotalTarget = item.TotalTarget;
+                res.TotalActual = item.TotalActual;
+                res.AchivementOrGrowth = item.AchivementOrGrowth;
 
                 result.Add(res);
             }
