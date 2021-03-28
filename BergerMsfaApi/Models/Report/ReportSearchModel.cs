@@ -56,7 +56,7 @@ namespace BergerMsfaApi.Models.Report
 
     public class DealerOpeningReportSearchModel : ReportBaseSearchModel
     {
-        
+
     }
 
     public class CollectionReportSearchModel : ReportBaseSearchModel
@@ -97,5 +97,11 @@ namespace BergerMsfaApi.Models.Report
     {
         public int? SubDealerId { get; set; }
     }
-
+    public class OsOver90daysTrendReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+        public string CreditControlArea { get; set; }
+        public string AccountGroup { get; set; }
+        public string SalesOffice { get; set; }
+    }
 }

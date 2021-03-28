@@ -326,8 +326,8 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<SalesDataModel>> GetSalesDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string territory = "-1", List<string> brands = null)
+        public async Task<IList<SalesDataModel>> GetSalesDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.StartGroup()
@@ -336,9 +336,29 @@ namespace Berger.Odata.Services
                                 .LessThanOrEqual(DataColumnDef.Date, endDate)
                                 .EndGroup();
 
-            if (territory != "-1")
+            if (!string.IsNullOrEmpty(territory))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Territory, territory);
+            }
+
+            if (!string.IsNullOrEmpty(depot))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.PlantOrBusinessArea, depot);
+            }
+
+            if (!string.IsNullOrEmpty(salesGroup))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.SalesGroup, salesGroup);
+            }
+
+            if (!string.IsNullOrEmpty(salesOffice))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.SalesOffice, salesOffice);
+            }
+
+            if (!string.IsNullOrEmpty(zone))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.Zone, zone);
             }
 
             if (brands != null && brands.Any())
@@ -398,15 +418,35 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<MTSDataModel>> GetMTSDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string date, string territory = "-1", List<string> brands = null)
+        public async Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.MTS_Date, date);
 
-            if (territory != "-1")
+            if (!string.IsNullOrEmpty(territory))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.MTS_Territory, territory);
+            }
+
+            if (!string.IsNullOrEmpty(depot))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_PlantOrBusinessArea, depot);
+            }
+
+            if (!string.IsNullOrEmpty(salesGroup))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesGroup, salesGroup);
+            }
+
+            if (!string.IsNullOrEmpty(salesOffice))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesOffice, salesOffice);
+            }
+
+            if (!string.IsNullOrEmpty(zone))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_Zone, zone);
             }
 
             if (brands != null && brands.Any())
@@ -711,7 +751,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -836,6 +876,24 @@ namespace Berger.Odata.Services
             return first > 0 && second > 0 ? ((second - first) * 100) / first :
                         first <= 0 && second > 0 ? decimal.Parse("100.000") :
                             decimal.Zero;
+        }
+        public decimal GetGrowthNew(decimal first, decimal second)
+        {
+            var subValue = (first - second);
+            if (subValue == 0 || second == 0)
+            {
+                return 0;
+            }
+            return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
+        }
+        public decimal GetContribution(decimal first, decimal second)
+        {
+            if (first == 0 || second == 0)
+            {
+                return 0;
+            }
+
+            return decimal.Parse(((second / first) * 100).ToString("#.##"));
         }
 
         public decimal GetAchivement(decimal target, decimal actual)

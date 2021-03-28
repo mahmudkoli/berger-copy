@@ -523,4 +523,24 @@ namespace BergerMsfaApi.Models.Report
     }
 
     #endregion
+
+    public class OsOver90daysTrendReportResultModel
+    {
+
+        public string CreditControlArea { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string Month1Name { get; set; }
+        public string Month2Name { get; set; }
+        public string Month3Name { get; set; }
+        public decimal Month1Value { get; set; }
+        public decimal Month2Value { get; set; }
+        public decimal Change1 { get; set; }
+        public decimal Month3Value { get; set; }
+        public decimal Change2 { get; set; }
+    }
+
+
 }
