@@ -241,7 +241,7 @@
             <div class="col-sm-6">
                 <p><span><strong>Photo Capture:</strong></span> 
                     <!-- {{leadFollowUp.businessAchievement?.photoCaptureUrl}} -->
-                    <img [src]="leadFollowUp.businessAchievement?.photoCaptureUrl" alt="Photo" width="150px" height="180px">
+                    <img *ngIf='leadFollowUp.businessAchievement?.photoCaptureUrl' [src]="leadFollowUp.businessAchievement?.photoCaptureUrl" alt="Photo" width="150px" height="180px">
                 </p>
             </div>
         </div>
