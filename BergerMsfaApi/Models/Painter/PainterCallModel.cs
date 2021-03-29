@@ -1,4 +1,7 @@
-﻿using Berger.Data.MsfaEntity.PainterRegistration;
+﻿using AutoMapper;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.PainterRegistration;
+using BergerMsfaApi.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +9,19 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.PainterRegistration
 {
-    public class PainterCallModel
+    public class PainterCallModel : IMapFrom<PainterCall>
     {
+        public PainterCallModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<PainterCall, PainterCallModel>();
+                 
+        }
+        
         public int Id { get; set; }
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
@@ -19,5 +33,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string Comment { get; set; }
         public int PainterId { get; set; }
         public List<PainterCompanyMTDValueModel> PainterCompanyMTDValue{ get; set; }
+
+
     }
 }

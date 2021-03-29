@@ -109,7 +109,7 @@ export class DealerOpeningReportComponent implements OnInit, OnDestroy {
 	
     populateDropdownDataList() {
         forkJoin([
-            this.commonService.getUserInfoList(),
+            this.commonService.getUserInfoListByLoggedInManager(),
             this.commonService.getDepotList(),
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
@@ -190,6 +190,27 @@ export class DealerOpeningReportComponent implements OnInit, OnDestroy {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
+
+		var columName = this.ptableSettings.tableColDef.filter(x => 
+						x.internalName == 'dealershipOpeningApplicationForm' ||
+						x.internalName == 'tradeLicensee' ||
+						x.internalName == 'NID/Passport/Birth Certificate' ||
+						x.internalName == 'Photograph of Proprietor' ||
+						x.internalName == 'Nominee NID/Passport/Birth Certificate' ||
+						x.internalName == 'nomineePhotograph' ||
+						x.internalName == 'cheque'
+			);
+		if(columName.length > 0){
+			columName[0].type = 'image';
+			columName[1].type = 'image';
+			columName[2].type = 'image';
+			columName[3].type = 'image';
+			columName[4].type = 'image';
+			columName[5].type = 'image';
+			columName[6].type = 'image';
+		}
+		
+		// console.log(this.ptableSettings.tableColDef);
 	}
 
 	public ptableSettings: IPTableSetting = {

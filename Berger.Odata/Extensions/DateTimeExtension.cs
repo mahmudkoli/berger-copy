@@ -20,7 +20,7 @@ namespace Berger.Odata.Extensions
 
         public static DateTime GetLYFD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, 1));
         public static DateTime GetLYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, DateTime.Now.AddYears(-1).Day));
-        public static DateTime GetLYLD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month)));
+        public static DateTime GetLYLD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, DateTime.DaysInMonth(date.AddYears(-1).Year, date.Month)));
 
         public static DateTime GetCYFD(this DateTime date) => Convert.ToDateTime(new DateTime(date.Year, date.Month, 1));
         public static DateTime GetCYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.Year, date.Month, DateTime.Now.Day));

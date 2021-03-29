@@ -122,7 +122,7 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
 
   populateDropdownDataList() {
     forkJoin([
-      this.commonService.getUserInfoList(),
+      this.commonService.getUserInfoListByLoggedInManager(),
       this.commonService.getDepotList(),
       this.commonService.getSaleGroupList(),
       this.commonService.getTerritoryList(),
@@ -239,6 +239,30 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
 
     this.ptableSettings.tableColDef
       .filter(
+        (x) => x.internalName == 'bpblMtdValue' || x.internalName == 'bpblCount'
+      )
+      .forEach((x) => {
+        x.parentHeaderName = 'BPBL';
+      });
+
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) => x.internalName == 'duluxMtdValue' || x.internalName == 'duluxCount'
+      )
+      .forEach((x) => {
+        x.parentHeaderName = 'Dulux';
+      });
+    
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) => x.internalName == 'moonstarMtdValue' || x.internalName == 'moonstarCount'
+      )
+      .forEach((x) => {
+        x.parentHeaderName = 'Moonstar';
+      });  
+
+    this.ptableSettings.tableColDef
+      .filter(
         (x) => x.internalName == 'apMtdValue' || x.internalName == 'apCount'
       )
       .forEach((x) => {
@@ -284,7 +308,7 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
     this.ptableSettings.tableColDef
       .filter(
         (x) =>
-          x.internalName == 'totalMtdValue' || x.internalName == 'totalMtdValue'
+          x.internalName == 'totalMtdValue' || x.internalName == 'totalCount'
       )
       .forEach((x) => {
         x.parentHeaderName = 'Total';

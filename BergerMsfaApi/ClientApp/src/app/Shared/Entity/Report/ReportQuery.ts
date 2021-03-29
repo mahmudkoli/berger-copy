@@ -118,8 +118,141 @@ export class DealerVisitReportQuery extends ReportBaseQuery {
     constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
         super();
         Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
     }
 
     clear() {
     }
+}
+
+export class DealerSalesCallReportQuery extends ReportBaseQuery {
+    dealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class SubDealerSalesCallReportQuery extends ReportBaseQuery {
+    subDealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class DealerIssueReportQuery extends ReportBaseQuery {
+    dealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class SubDealerIssueReportQuery extends ReportBaseQuery {
+    subDealerId: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class TintingMachineReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class ActiveSummeryReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
+    creditControllAreaName: number;
+    dealerId: number;
+
+    
+    
+
+    clear() {
+    }
+}
+
+
+
+export class MtsValueTargetAchivementReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
+}
+
+
+export class BillingDealerQuarterlyGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
+}
+
+
+export class EnamelPaintsQuarterlyGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
+}
+
+export class PremiumBrandsGrowthReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
+}
+
+export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }

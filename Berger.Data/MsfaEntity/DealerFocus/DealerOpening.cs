@@ -27,6 +27,7 @@ namespace Berger.Data.MsfaEntity.DealerFocus
         public UserInfo NextApprovar { get; set; }
         public string Comment { get; set; }
         public int DealerOpeningStatus { get; set; }
+        public string Code { get; set; }
 
 
         public List<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }

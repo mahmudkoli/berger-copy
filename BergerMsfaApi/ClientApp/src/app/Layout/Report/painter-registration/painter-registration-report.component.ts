@@ -121,7 +121,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 	
     populateDropdownDataList() {
         forkJoin([
-            this.commonService.getUserInfoList(),
+            this.commonService.getUserInfoListByLoggedInManager(),
             this.commonService.getDepotList(),
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
@@ -207,6 +207,13 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
+
+		var columName = this.ptableSettings.tableColDef.filter(x => x.internalName == 'Painter Image');
+		if(columName.length > 0){
+			columName[0].type = 'image';
+		}
+
+		console.log(this.ptableSettings.tableColDef);
 	}
 
 	public ptableSettings: IPTableSetting = {

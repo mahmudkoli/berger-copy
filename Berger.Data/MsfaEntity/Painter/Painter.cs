@@ -1,5 +1,6 @@
 ﻿using Berger.Data.Common;
 using Berger.Data.MsfaEntity.Setup;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,11 +8,13 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 {
     [Table("Painters")]
     public class Painter :AuditableEntity<int>    {
+        
         public Painter()
         {
             Attachments = new List<PainterAttachment>();
             AttachedDealers = new List<AttachedDealerPainter>();
-        }
+            PainterCalls = new List<PainterCall>();
+    }
         public string Depot { get; set; }
         public string SaleGroup { get; set; }
         public string Territory { get; set; }
@@ -37,15 +40,18 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string EmployeeId { get; set; }
 
         public List<AttachedDealerPainter> AttachedDealers { get; set; } 
-        public List<PainterAttachment> Attachments { get; set; } 
+        public List<PainterAttachment> Attachments { get; set; }
+        public List<PainterCall> PainterCalls { get; set; }
 
-     
-
+        public object Include(Func<object, object> p)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class AttachedDealerPainter: AuditableEntity<int>
     {
-        public int Dealer { get; set; }
+        public int Dealer { get; set; } // DealerInfo Id
         public int PainterId { get; set; }
 
         [ForeignKey("PainterId")]
