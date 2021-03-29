@@ -403,10 +403,12 @@ ul.ul-dragable {
     padding: 3px;
     cursor: pointer;
 }
-.p-table .page-item.active .page-link
 
 
 /* checkbox- switch*/
+.p-table-scroll-body .p-table-body {
+    overflow: auto;
+}
 
 .p-table-scroll-body .switch {
     position: relative;
@@ -530,24 +532,11 @@ select {
     border: 1px solid #3ab4e5;
 }
 
-@media only screen and (max-width: 576px) {
-    .p-table-scroll-body {
-        overflow-y: scroll!important;
-    }
-}
-
-
 /* Medium devices (tablets, 768px and up) The navbar toggle appears at this breakpoint */
 
 .styletable {
     width: 100%;
     overflow: auto !important;
-}
-
-@media only screen and (max-width: 576px) {
-    .p-table-scroll-body {
-        overflow-y: scroll!important;
-    }
 }
 .table.p-table td {
     border: 1px solid #ffffff;

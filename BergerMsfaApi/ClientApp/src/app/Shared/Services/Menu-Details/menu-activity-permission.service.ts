@@ -28,7 +28,7 @@ export class MenuActivityPermissionService {
     }
     
     public getAllMenuActivityPermissionByRoleId(id: number) {
-        debugger
+        // debugger
         return this.http.get<APIResponse>(`${this.url}/activity_permission_by_role_id/${id}`);
     }
 

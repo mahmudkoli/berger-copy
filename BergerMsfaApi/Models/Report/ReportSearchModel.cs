@@ -10,10 +10,10 @@ namespace BergerMsfaApi.Models.Report
 {
     public class ReportBaseSearchModel : QueryObjectModel
     {
-        public string Depot { get; set; }
-        //public string PlantName { get; set; }
+        public string DepotId { get; set; }
+        //public string DepotName { get; set; }
         public EnumEmployeeRole? EmployeeRole { get; set; }
-        //public IList<string> Areas { get; set; }
+        public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
         public int? UserId { get; set; }
@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Models.Report
 
         public ReportBaseSearchModel()
         {
-            //this.Areas = new List<string>();
+            this.SalesGroups = new List<string>();
             this.Territories = new List<string>();
             this.Zones = new List<string>();
         }
@@ -43,6 +43,75 @@ namespace BergerMsfaApi.Models.Report
     {
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
-        public int? PaintingStageId { get; set; }
+        public int? ProjectStatusId { get; set; }
+    }
+
+    public class PainterRegistrationReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public string PainterName { get; set; }
+        public string PainterMobileNo { get; set; }
+        public int? PainterType { get; set; }
+    }
+
+    public class DealerOpeningReportSearchModel : ReportBaseSearchModel
+    {
+
+    }
+
+    public class TintingMachineReportSearchModel : ReportBaseSearchModel
+    {
+     
+    }
+
+    public class ActiveSummeryReportSearchModel : ReportBaseSearchModel
+    {
+
+    }
+
+    public class CollectionReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PaymentMethodId { get; set; }
+        public int? DealerId { get; set; }
+    }
+
+    public class PainterCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public int? PainterType { get; set; }
+    }
+
+    public class DealerVisitReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
+    }
+
+    public class DealerSalesCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class SubDealerSalesCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? SubDealerId { get; set; }
+    }
+
+    public class DealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class SubDealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? SubDealerId { get; set; }
+    }
+    public class OsOver90daysTrendReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+        public string CreditControlArea { get; set; }
+        public string AccountGroup { get; set; }
+        public string SalesOffice { get; set; }
     }
 }

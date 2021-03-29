@@ -64,15 +64,9 @@ namespace Berger.Odata.Common
         public static string SalesOrderNumber = "aubel";
         public static string ItemCategory = "pstyv";
         public static string DistributionChannel = "vtweg";
-
-        // Driver Data
-        public static string Driver_BillSl = "BILLSL";
-        public static string Driver_PlantOrBusinessArea = "WERKS";
-        public static string Driver_InvoiceNoOrBillNo = "VBELN";
-        public static string Driver_Date = "fkdat";
-        public static string Driver_DriverName = "DRIVERNAME";
-        public static string Driver_DriverMobileNo = "TELF1";
-        public static string Driver_Vehicle = "VEHICLE";
+        public static string AmountCurrency = "waerk";
+        //public static string Time = "erzet";
+        public static string Time = "erzet_T";
 
         // MTS Data
         public static string MTS_Date = "period";
@@ -94,10 +88,24 @@ namespace Berger.Odata.Common
         public static string MTS_Division = "spart";
         public static string MTS_MatarialGroupOrBrand = "matkl";
 
+        // Driver Data
+        public static string Driver_BillSl = "BILLSL";
+        public static string Driver_PlantOrBusinessArea = "WERKS";
+        public static string Driver_InvoiceNoOrBillNo = "VBELN";
+        public static string Driver_Date = "fkdat";
+        public static string Driver_DriverName = "DRIVERNAME";
+        public static string Driver_DriverMobileNo = "TELF1";
+        public static string Driver_Vehicle = "VEHICLE";
+
         // Brand Family Data
         public static string BrandFamily_MatarialGroupOrBrandFamily = "MATKL_MTS";
         public static string BrandFamily_MatarialGroupOrBrandFamilyName = "WGBEZMTS";
         public static string BrandFamily_MatarialGroupOrBrand = "MATKL";
         public static string BrandFamily_MatarialGroupOrBrandName = "WGBEZ";
+
+        //Collection Data
+
+        public static string Collection_Amount = "Amount";
+        public static string Collection_Customer = "Customer";
     }
 }

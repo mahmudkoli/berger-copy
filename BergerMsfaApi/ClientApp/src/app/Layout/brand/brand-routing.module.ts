@@ -4,7 +4,7 @@ import { AuthGuard } from 'src/app/Shared/Guards/auth.guard';
 import { PermissionGuard } from 'src/app/Shared/Guards/permission.guard';
 import { BrandListComponent } from './brand-list/brand-list.component';
 import { BrandComponent } from './brand.component';
-
+import { BrandInfoLogDetailsComponent } from './brand-info-log-details/brand-info-log-details.component';
 const routes: Routes = [
   {
     path: '',
@@ -22,6 +22,12 @@ const routes: Routes = [
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Brand', },
       },
+    {
+        path: 'log-details/:id',
+        component: BrandInfoLogDetailsComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Brand Info log details', },
+    },
     ],
 
   }

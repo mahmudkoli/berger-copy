@@ -25,6 +25,7 @@ namespace Berger.Data.MsfaEntity
         public bool IsActive { get; set; }
         public PlanStatus PlanStatus { get; set; }
         public int RejectedBy { get; set; }
+        public int EditCount { get; set; }
         public  DateTime RejectedDate { get; set; }
         public List<JourneyPlanDetail> JourneyPlanDetail { get; set; }
     }

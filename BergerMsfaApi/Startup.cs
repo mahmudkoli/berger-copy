@@ -28,6 +28,8 @@ using AutoMapper;
 using Berger.Common.HttpClient;
 using Berger.Odata.Services;
 using Berger.Odata.Repositories;
+using Berger.Common;
+using BergerMsfaApi.Models.EmailVm;
 
 namespace BergerMsfaApi
 {
@@ -46,7 +48,12 @@ namespace BergerMsfaApi
             services.Configure<ActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectorySettings").Bind(options));
             services.Configure<TokensSettingsModel>(options => Configuration.GetSection("TokensSettings").Bind(options));
             services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
-
+            //services.Configure<AuthMessageSenderOptions>(options =>
+            //           Configuration.GetSection("SendGridEmailSettings").Bind(options));
+            
+            services.Configure<SmtpSettings>(options =>
+                       Configuration.GetSection("SmtpSettings").Bind(options));
+           
             var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
@@ -83,9 +90,19 @@ namespace BergerMsfaApi
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddScoped<IODataService, ODataService>();
             services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            services.AddScoped<IODataCommonService, ODataCommonService>();
             services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
             services.AddScoped<IMTSDataService, MTSDataService>();
+            services.AddScoped<IFinancialDataService, FinancialDataService>();
+            services.AddScoped<IBalanceDataService, BalanceDataService>();
+            services.AddScoped<IQuarterlyPerformanceDataService, QuarterlyPerformanceDataService>();
+            services.AddScoped<IReportDataService, ReportDataService>();
+            services.AddScoped<ICollectionDataService, CollectionDataService>();
+            //services.Configure<AuthMessageSenderOptions>(Configuration);
+            services.Configure<SmtpSettings>(Configuration);
+
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
                     .Where(c => c.Name.EndsWith("Repository"))

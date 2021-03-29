@@ -42,7 +42,7 @@ export class FocusdealerAddComponent implements OnInit {
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 
     private getEmpList() {
-        this.commonSvc.getUserInfoList().subscribe(
+        this.commonSvc.getUserInfoListByLoggedInManager().subscribe(
             (result: any) => {
                 this.employeeList = result.data;
             },
@@ -56,7 +56,7 @@ export class FocusdealerAddComponent implements OnInit {
     }
 
     public fnSave() {
-        debugger;
+        // debugger;
         this.focusDealerModel.validFrom = this.focusDealerModel.validFromNgbDate.year.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.month.toString() + "-"
             + this.focusDealerModel.validFromNgbDate.day.toString();

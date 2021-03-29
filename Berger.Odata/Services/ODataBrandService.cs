@@ -64,5 +64,18 @@ namespace Berger.Odata.Services
 
             return result.Distinct().ToList();
         }
+
+        public async Task<IList<string>> GetEnamelBrandCodesAsync()
+        {
+            var result = await _brandInfoRepository.GetAllIncludeAsync(
+                                x => x.MaterialGroupOrBrand,
+                                x => x.IsEnamel,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result.Distinct().ToList();
+        }
     }
 }

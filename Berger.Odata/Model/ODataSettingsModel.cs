@@ -17,6 +17,10 @@ namespace Berger.Odata.Model
         public string MTSUrl { get; set; }
         public string BrandFamilyUrl { get; set; }
         public string FinancialUrl { get; set; }
+        public string BalanceUrl { get; set; }
+        public string CollectionUrl { get; set; }
+        public string CustomerUrl { get; set; }
+        public string StockUrl { get; set; }
         
     }
 }

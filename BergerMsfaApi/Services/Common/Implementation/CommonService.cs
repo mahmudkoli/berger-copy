@@ -3,15 +3,18 @@ using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -32,6 +35,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
         private readonly IRepository<FocusDealer> _focusDealerSvc;
         private readonly IRepository<UserInfo> _userInfosvc;
         private readonly IRepository<Division> _divisionSvc;
+        private readonly IRepository<Painter> _painterSvc;
+        private readonly IRepository<CreditControlArea> _creditControlAreaSvc;
 
         public CommonService(
             IRepository<DealerInfo> dealerInfoSvc,
@@ -45,7 +50,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             IRepository<Depot> depotSvc,
             IRepository<FocusDealer> focusDealerSvc,
             IRepository<UserInfo> userInfosvc,
-            IRepository<Division> divisionSvc)
+            IRepository<Division> divisionSvc,
+            IRepository<Painter> painterSvc,
+            IRepository<CreditControlArea> creditControlAreaSvc)
         {
             _focusDealerSvc = focusDealerSvc;
             _dealerInfoSvc = dealerInfoSvc;
@@ -59,6 +66,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _depotSvc = depotSvc;
             _userInfosvc = userInfosvc;
             _divisionSvc = divisionSvc;
+            _painterSvc = painterSvc;
+            _creditControlAreaSvc = creditControlAreaSvc;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory)
@@ -85,6 +94,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
            // var u = _userInfosvc.GetAll().ToList();
            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
+            var result = await _userInfosvc.GetAllAsync();
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
+
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager()
+        {
+           // var result1 = new List<UserInfoModel>();
+           // var u = _userInfosvc.GetAll().ToList();
+           //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
+         
             var result = await _userInfosvc.FindAllAsync(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -96,6 +115,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
 
             return await _divisionSvc.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<CreditControlArea>> GetCreditControlAreaList()
+        {
+            return await _creditControlAreaSvc.GetAllAsync(); ;
         }
 
         private List<UserInfoModel> Getuser(List<UserInfoModel> result, string employeeId)
@@ -142,6 +166,39 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var result= await _roleSvc.GetAllAsync();
             return result.ToMap<Role, RoleModel>();
+        }
+
+        public async Task<IEnumerable<PainterModel>> GetPainterList()
+        {
+            var result = await _painterSvc.GetAllAsync();
+            return result.ToMap<Painter, PainterModel>();
+        }
+
+        public IEnumerable<MonthModel> GetMonthList()
+        {
+            var months = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+
+            List<MonthModel> monthModels = new List<MonthModel>();
+            
+            for (int i = 0; i < months.Length; i++)
+            {
+                monthModels.Add(new MonthModel { Id = i + 1, Name = months[i] });
+            }
+            return monthModels;
+        }
+
+        public IEnumerable<YearModel> GetYearList()
+        {
+            List<YearModel> yearModels = new List<YearModel>();
+            var currentYear = DateTime.Now.Year;
+
+            yearModels.Add(new YearModel { Id = currentYear + 1, Name = (currentYear + 1).ToString() });
+
+            for (int i = 0; i < 5; i++)
+            {
+                yearModels.Add(new YearModel { Id = currentYear - i, Name = (currentYear - i).ToString() });
+            }
+            return yearModels;
         }
 
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds)
@@ -479,5 +536,17 @@ namespace BergerMsfaApi.Services.Common.Implementation
         PSATZ = 1, //Plant > SalesOffice > Area > Territory > Zone
         PATZ = 2, //Plant > Area > Territory > Zone
         PTZ = 3 //Plant > Territory > Zone
+    }
+
+    public class MonthModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class YearModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

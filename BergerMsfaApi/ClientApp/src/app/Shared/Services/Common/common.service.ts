@@ -29,6 +29,10 @@ export class CommonService {
           value.forEach((val, index) => {
             parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(val));
           });
+        } else if (value instanceof Date) {
+          const newValue = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), 
+                                              value.getHours(), value.getMinutes(), value.getSeconds()))
+          parts.push(encodeURIComponent(property) + '=' + newValue.toISOString());
         } else {
           parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
         }
@@ -88,6 +92,16 @@ export class CommonService {
                 .replace(/([a-z])([A-Z])/g, '$1 $2')
                 .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') ;
 	}
+  
+  renameKeys(obj, keysMap) {
+    return Object.keys(obj).reduce(
+      (acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: obj[key] }
+      }),
+      {}
+    );
+  }
 
   private appendFormDataNestedObject(formData, value, property, index: null | number) {
     if(typeof(value) === 'object' && !(value instanceof File)) {
@@ -142,8 +156,28 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
   }
 
+  getUserInfoListByLoggedInManager() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManager');
+  }
+
   getUserInfoList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
+  }
+
+  getPainterList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getPainterList');
+  }
+
+  getMonthList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getMonthList');
+  }
+
+  getYearList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getYearList');
+  }
+
+  getCreditControlAreaList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/AppCommon/GetCreditControlAreaList');
   }
 
   public getDealerList(userCategory: string, userCategoryIds: string[]) {

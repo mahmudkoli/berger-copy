@@ -22,8 +22,11 @@
             <tr>
                 <th pSortableColumn="'businessArea'">Business Area <p-sortIcon field="'businessArea'"></p-sortIcon></th>
                 <th pSortableColumn="'saleOffice'">Sale Office <p-sortIcon field="'saleOffice'"></p-sortIcon></th>
+                <th pSortableColumn="saleGroup">Sale Group<p-sortIcon field="saleGroup"></p-sortIcon></th>
                 <th pSortableColumn="zoneNo">Zone No <p-sortIcon field="zoneNo"></p-sortIcon></th>
                 <th pSortableColumn="territoryNo">Territory No<p-sortIcon field="territoryNo"></p-sortIcon></th>
+                <th pSortableColumn="employeeId">Employee Id<p-sortIcon field="employeeId"></p-sortIcon></th>
+
                 <th></th>
             </tr>
     
@@ -34,8 +37,12 @@
                 <td>{{dOpen.businessArea}}</td>
     
                 <td>{{dOpen.saleOffice}}</td>
+                <td>{{dOpen.saleGroup}}</td>
+
                 <td>{{dOpen.zoneNo }}</td>
                 <td>{{dOpen.territoryNo }}</td>
+                <td>{{dOpen.employeeId }}</td>
+
     
                 <td>
                     <button class="btn btn-sm btn-primary" type="button" (click)="detail(dOpen.id)">View Detail</button>

@@ -137,6 +137,20 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+        [HttpGet("GetDealerInfoStatusLog/{id}")]
+        public async Task<IActionResult> GetDealerInfoStatusLogDetails(int id)
+        {
+            try
+            {
+                var result = await _focusDealerService.GetDealerInfoStatusLog(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
 
     }
 }

@@ -38,7 +38,7 @@ namespace BergerMsfaApi.Controllers.Common
         {
             try
             {
-                var result =await _commonSvc.GetSaleOfficeList();
+                var result = await _commonSvc.GetSaleOfficeList();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -131,12 +131,68 @@ namespace BergerMsfaApi.Controllers.Common
             }
         }
 
+        [HttpGet("GetUserInfoListByLoggedInManager")]
+        public async Task<IActionResult> GetUserInfoListByLoggedInManager()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByLoggedInManager();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("GetDivisionList")]
         public async Task<IActionResult> GetDivisionList()
         {
             try
             {
                 var result = await _commonSvc.GetDivisionList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetPainterList")]
+        public async Task<IActionResult> GetPainterList()
+        {
+            try
+            {
+                var result = await _commonSvc.GetPainterList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetMonthList")]
+        public async Task<IActionResult> GetMonthList()
+        {
+            try
+            {
+                var result = _commonSvc.GetMonthList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetYearList")]
+        public async Task<IActionResult> GetYearList()
+        {
+            try
+            {
+                var result = _commonSvc.GetYearList();
                 return OkResult(result);
             }
             catch (Exception ex)

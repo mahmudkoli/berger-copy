@@ -1,0 +1,104 @@
+
+<div class="col col-md-12">
+    <div class="p-3 bg-white mb-3 rounded">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">Depot Id</label>
+                    <ng-select [items]="depots" [(ngModel)]="query.depotId" bindValue="code" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">Employee Role</label>
+                    <ng-select [items]="employeeRoles" (ngModelChange)="onEmployeeRoleChange($event)" [(ngModel)]="query.employeeRole" bindValue="id" bindLabel="label" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="isSalesGroupFieldShow">
+                <div class="position-relative form-group">
+                    <label class="">Sales Groups</label>
+                    <ng-select [items]="salesGroups" [(ngModel)]="query.salesGroups" bindValue="code" bindLabel="name" [multiple]="true">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="isTerritoryFieldShow">
+                <div class="position-relative form-group">
+                    <label class="">Territories</label>
+                    <ng-select [items]="territories" [(ngModel)]="query.territories" bindValue="code" bindLabel="name" [multiple]="true">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="isZoneFieldShow">
+                <div class="position-relative form-group">
+                    <label class="">Zones</label>
+                    <ng-select [items]="zones" [(ngModel)]="query.zones" bindValue="code" bindLabel="name" [multiple]="true">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">Dealer</label>
+                    <ng-select [items]="dealerList" [(ngModel)]="query.dealerId" bindValue="id" bindLabel="customerName" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">User Id</label>
+                    <ng-select [items]="users" [(ngModel)]="query.userId" bindValue="id" bindLabel="fullName" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">Creadt Control Area Name</label>
+                    <ng-select [items]="creditControllArea" [(ngModel)]="query.creditControllAreaName" bindValue="creditControlAreaId" bindLabel="description" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">From Month</label>
+                    <ng-select [items]="monthList" [(ngModel)]="frommonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">From Year</label>
+                    <ng-select [items]="yearList" [(ngModel)]="fromyear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">To Month</label>
+                    <ng-select [items]="monthList" [(ngModel)]="tomonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class=""> To Year</label>
+                    <ng-select [items]="yearList" [(ngModel)]="toyear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="text-center m-3 w-100">
+                <button type="button" (click)="onSubmitSearch()" class="btn btn-primary btn-login d-block rounded-0 w-100">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="data" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
+        (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+    </app-p-table>
+</div>

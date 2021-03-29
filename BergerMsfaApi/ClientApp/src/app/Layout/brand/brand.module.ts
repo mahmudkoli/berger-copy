@@ -9,11 +9,13 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { BrandListComponent } from './brand-list/brand-list.component';
 import { BrandComponent } from './brand.component';
 import { BrandRoutingModule } from './brand-routing.module';
+import { BrandInfoLogDetailsComponent } from './brand-info-log-details/brand-info-log-details.component';
 
 @NgModule({
   declarations: [
     BrandListComponent,
     BrandComponent,
+    BrandInfoLogDetailsComponent,
   ],
   imports: [
     CommonModule,

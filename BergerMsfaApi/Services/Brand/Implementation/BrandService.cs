@@ -14,6 +14,7 @@ using X.PagedList;
 using AutoMapper;
 using BergerMsfaApi.Models.Common;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.Brand.Implementation
 {
@@ -22,18 +23,21 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         private readonly IRepository<BrandInfo> _brandInfoRepository;
         private readonly IRepository<UserInfo> _userInfoRepository;
         private readonly IRepository<DealerInfo> _dealerInfoRepository;
+        private readonly IRepository<BrandInfoStatusLog> _brandInfoStatusLogRepository;
         private readonly IMapper _mapper;
 
         public BrandService(
             IRepository<BrandInfo> brandInfoRepository,
             IRepository<UserInfo> userInfoRepository,
             IRepository<DealerInfo> dealerInfoRepository,
+            IRepository<BrandInfoStatusLog> brandInfoStatusLogRepository,
             IMapper mapper
             )
         {
             _brandInfoRepository = brandInfoRepository;
             _userInfoRepository = userInfoRepository;
             _dealerInfoRepository = dealerInfoRepository;
+            _brandInfoStatusLogRepository = brandInfoStatusLogRepository;
             _mapper = mapper;
         }
 
@@ -88,16 +92,19 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                                 true
                             );
 
-            return result;
+            return result.Items;
         }
        
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
+            var userId = AppIdentity.AppUser.UserId;
+
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, bool>>>()
             {
                 ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsMTS"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsPremium"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["isEnamel"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
             };
 
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
@@ -105,19 +112,76 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
             foreach (var find in findAll)
             {
+
                 switch (brandStatus.PropertyName)
                 {
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
                     case "IsMTS": find.IsMTS = !find.IsMTS; break;
                     case "IsPremium": find.IsPremium = !find.IsPremium; break;
+                    case "isEnamel": find.IsEnamel = !find.IsEnamel; break;
                     default: break;
                 }
             }
 
-            if(findAll.Any())
+            if (findAll.Any())
                 await _brandInfoRepository.UpdateListAsync(findAll);
+
+            // Create Brand info status log
+            await CreateBrandInfoStatusLog(brandStatus, userId, findAll);
 
             return true;
         }
+
+
+        
+        private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
+        {
+            foreach (var brandInfoItem in findAll)
+            {
+
+                var brandStatusLog = new BrandInfoStatusLog()
+                {
+                    UserId = userId,
+                    BrandInfoId = brandInfoItem.Id,
+                    PropertyValue = GetPropertyValue(brandStatus.PropertyName, brandInfoItem),
+                    PropertyName = brandStatus.PropertyName
+
+                };
+                
+                await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
+                
+            }
+        }
+
+        private string GetPropertyValue(string propertyName,BrandInfo brandInfo)
+        {
+            string value="";
+            switch (propertyName)
+            {
+                case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "CBI" : "Non CBI"); break;
+                case "IsMTS": value = (brandInfo.IsMTS ? "MTS" : "Non MTS"); break;
+                case "IsPremium": value = (brandInfo.IsPremium ? "PREMIUM" : "Non PREMIUM"); break;
+                case "isEnamel": value = (brandInfo.IsEnamel ? "ENAMEL" : "Non ENAMEL"); break;
+                default: break;
+            }
+            return value;
+        }
+
+        public async Task<IEnumerable<BrandInfoStatusLogModel>> GetBrandInfoStatusLog(int brandInfoId)
+        {
+
+            var result = await _brandInfoStatusLogRepository.GetAllIncludeAsync(
+                        brand => brand,
+                        brand => brand.BrandInfoId == brandInfoId,
+                        brand => brand.OrderByDescending(b => b.CreatedTime),
+                        brand => brand.Include(i => i.BrandInfo).Include(i => i.User),
+                        true
+                );
+            var modelResult = _mapper.Map<IEnumerable<BrandInfoStatusLogModel>>(result);
+            return modelResult;
+        }
+
     }
 }
+
+

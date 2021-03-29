@@ -54,6 +54,7 @@ export class DealerSalesCallDetailsComponent implements OnInit, OnDestroy {
 								this.commonService.booleanToText(obj);
 							});
 							console.log(this.dealerSalesCall);
+							
 						}
 					});
 			} else {

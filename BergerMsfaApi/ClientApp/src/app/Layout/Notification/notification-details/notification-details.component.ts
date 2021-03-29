@@ -12,6 +12,7 @@ import { WorkflowLogHistory } from 'src/app/Shared/Entity/WorkFlows/workflow-log
 import { finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { WorkflowStatusEnum, WorkflowStatusEnumLabel } from 'src/app/Shared/Enums/workflowStatusEnum';
+import { NotificationService } from 'src/app/Shared/Services/Notification/Notification.service';
 
 @Component({
   selector: 'app-notification-details',
@@ -31,6 +32,9 @@ export class NotificationDetailsComponent implements OnInit {
   workFlowStatusEnumLabel : MapObject[] =  WorkflowStatusEnumLabel.workflowStatusEnumLabel;
   workFlowStatusEnum = WorkflowStatusEnum;
   tabOpen: number = 1;
+  lstList=[];
+  lstDealerOpening=[];
+  lstJourneyPlan=[]
 
  constructor(
    private router: Router,
@@ -38,6 +42,7 @@ export class NotificationDetailsComponent implements OnInit {
    private workflowLogHistoryService: WorkflowLogHistoryService,
    private alertService: AlertService,
    private modalService: NgbModal,
+   private notificationService: NotificationService
  
  ) { }
 
@@ -45,7 +50,11 @@ export class NotificationDetailsComponent implements OnInit {
 
   //  this.getWorkflowLogForCurrentUser();
   //  this.getWorkflowLogHistoryForCurrentUser();
-  this.getWorkflowLogWithHistoryForCurrentUser();
+  // this.getWorkflowLogWithHistoryForCurrentUser();
+  this.notificationService.getJourneyPlanList().subscribe((res:any)=>{
+    this.lstDealerOpening=res.notificationForDealerOpningModel
+      this.lstJourneyPlan=res.notificationForJourneyPlan
+  })
  }
 
 

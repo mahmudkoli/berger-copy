@@ -8,15 +8,17 @@ namespace Berger.Odata.Model
 {
     public class InvoiceHistoryResultModel
     {
-        public string DriverName { get; internal set; }
-        public string DriverMobileNo { get; internal set; }
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
-        public string Division { get; internal set; }
-        public string DivisionName { get; internal set; }
+        //    public string DriverName { get; internal set; }
+        //    public string DriverMobileNo { get; internal set; }
+        //    public string CustomerNo { get; internal set; }
+        //    public string CustomerName { get; internal set; }
+        //    public string Division { get; internal set; }
+        //    public string DivisionName { get; internal set; }
         public string InvoiceNoOrBillNo { get; internal set; }
         public string Date { get; internal set; }
-        public string NetAmount { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        //public string Currency { get; internal set; }
+        public string Time { get; internal set; }
 
         public InvoiceHistoryResultModel()
         {
@@ -24,12 +26,35 @@ namespace Berger.Odata.Model
         }
     }
 
+    public class InvoiceDetailsResultModel
+    {
+        public string InvoiceNoOrBillNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        public string DriverName { get; internal set; }
+        public string DriverMobileNo { get; internal set; }
+        public string CustomerNo { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string Division { get; internal set; }
+        public string DivisionName { get; internal set; }
+        public IList<InvoiceItemDetailsResultModel> InvoiceItemDetails { get; set; }
+
+        public InvoiceDetailsResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.InvoiceItemDetails = new List<InvoiceItemDetailsResultModel>();
+        }
+    }
+
     public class InvoiceItemDetailsResultModel
     {
-        public string NetAmount { get; internal set; }
-        public string Quantity { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        public decimal Quantity { get; internal set; }
         public string MatrialCode { get; internal set; }
         public string MatarialDescription { get; internal set; }
+        public string Unit { get; internal set; }
+        public string LineNumber { get; internal set; }
+        //public string Currency { get; internal set; }
 
         public InvoiceItemDetailsResultModel()
         {
@@ -43,9 +68,21 @@ namespace Berger.Odata.Model
         public decimal LYMTD { get; internal set; }
         public decimal CYMTD { get; internal set; }
         public decimal Growth { get; internal set; }
-        public IDictionary<string, decimal> PreviousMonthData { get; internal set; }
+        public IList<BrandWiseMTDPreviousModel> PreviousMonthData { get; internal set; }
 
         public BrandWiseMTDResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.PreviousMonthData = new List<BrandWiseMTDPreviousModel>();
+        }
+    }
+
+    public class BrandWiseMTDPreviousModel
+    {
+        public string MonthName { get; internal set; }
+        public decimal Amount { get; internal set; }
+
+        public BrandWiseMTDPreviousModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
