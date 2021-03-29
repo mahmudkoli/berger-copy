@@ -26,7 +26,8 @@ export class ModalPainterCallDetailsComponent implements OnInit {
 		public activeModal: NgbActiveModal
 	) { }
 
-	 ngOnInit() {
+	ngOnInit() {
+		console.log(this.painterCompanyMTDValue);
 	 }
 	ngOnDestroy() {
 		this.subscriptions.forEach(sb => sb.unsubscribe());

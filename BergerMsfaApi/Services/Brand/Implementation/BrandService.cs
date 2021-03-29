@@ -122,7 +122,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     default: break;
                 }
             }
-
+            
             if (findAll.Any())
                 await _brandInfoRepository.UpdateListAsync(findAll);
 
@@ -136,6 +136,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         
         private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
         {
+            
             foreach (var brandInfoItem in findAll)
             {
 
@@ -144,7 +145,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     UserId = userId,
                     BrandInfoId = brandInfoItem.Id,
                     PropertyValue = GetPropertyValue(brandStatus.PropertyName, brandInfoItem),
-                    PropertyName = brandStatus.PropertyName
+                    PropertyName = brandStatus.PropertyName.Remove(0,2) // ISMTS -> MTS
 
                 };
                 
@@ -158,10 +159,10 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             string value="";
             switch (propertyName)
             {
-                case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "CBI" : "Non CBI"); break;
-                case "IsMTS": value = (brandInfo.IsMTS ? "MTS" : "Non MTS"); break;
-                case "IsPremium": value = (brandInfo.IsPremium ? "PREMIUM" : "Non PREMIUM"); break;
-                case "isEnamel": value = (brandInfo.IsEnamel ? "ENAMEL" : "Non ENAMEL"); break;
+                case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "Yes" : "No"); break;
+                case "IsMTS": value = (brandInfo.IsMTS ? "Yes" : "No"); break;
+                case "IsPremium": value = (brandInfo.IsPremium ? "Yes" : "No"); break;
+                case "isEnamel": value = (brandInfo.IsEnamel ? "Yes" : "No"); break;
                 default: break;
             }
             return value;

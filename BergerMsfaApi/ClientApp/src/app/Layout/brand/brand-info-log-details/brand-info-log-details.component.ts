@@ -73,8 +73,8 @@ export class BrandInfoLogDetailsComponent implements OnInit {
 			},
 			(error) => {console.log(error);});
 		this.subscriptions.push(brandInfoLogsSubscription);
-       
-    }
+	   
+	}
 
 	//getPropertyValue(propertyValue) {
 	//	if (propertyValue == "NonCBI") return "Non CBI";
