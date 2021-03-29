@@ -360,8 +360,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 {
                     var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
                     var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); 
-                    string messageBody = string.Format(ConstantsLeadValue.OpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
-                    string subject = string.Format(ConstantsLeadValue.OpeningMailSubject, dealer.Code??string.Empty);
+                    string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
+                    string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
 
                     await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
                 }

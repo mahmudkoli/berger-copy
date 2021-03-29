@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Berger.Common;
+using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
@@ -32,6 +34,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
+        private readonly IRepository<UserInfo> _userInfo;
 
 
         public DealerSalesCallService(
@@ -40,6 +43,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IFileUploadService fileUploadService,
                 IMapper mapper,
                 IRepository<EmailConfigForDealerSalesCall> repository,
+                IRepository<UserInfo> userInfo,
                 IEmailSender emailSender
             )
         {
@@ -49,6 +53,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             this._mapper = mapper;
             _repository = repository;
             _emailSender = emailSender;
+           _userInfo= userInfo;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -71,12 +76,12 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
-
+            var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
             for (int i = 0; i < res.Length; i++)
             {
                 var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
                 if (!string.IsNullOrEmpty(email))
-                    await sendEmail(email);
+                    await sendEmail(email,res[i] , user?.UserName??string.Empty);
             }
             return result.Id;
         }
@@ -109,11 +114,12 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
             var res = models.Select(p => p.DealerSalesIssues).ToList().Select(p => p.Select(c => c.DealerSalesIssueCategoryId)).Distinct().ToArray();
 
+            var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
             for (int i = 0; i < res.Length; i++)
             {
                 var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
                 if (!string.IsNullOrEmpty(email))
-                    await sendEmail(email);
+                    await sendEmail(email, Convert.ToInt32(res[i]), user?.UserName ?? string.Empty);
             }
 
             return true;
@@ -306,7 +312,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
 
 
-        private async Task sendEmail(string email)
+        private async Task sendEmail(string email, int issue,string createdby)
         {
             try
             {
@@ -315,9 +321,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                 foreach (var item in lstemail)
                 {
-                    string messageBody = "Hello";
+                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby);
+                    string messagesubject = string.Format(ConstantsLeadValue.IssueCategoryMailSubject,issue);
 
-                    await _emailSender.SendEmailAsync(item, "Issue Category", messageBody);
+                    await _emailSender.SendEmailAsync(item, messagesubject, messageBody);
                 }
             }
             catch (System.Exception ex)
