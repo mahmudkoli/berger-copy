@@ -219,7 +219,8 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             {
                 EmployeeId = AppIdentity.AppUser.EmployeeId,
                 PlanDate = model.VisitDate,
-                Status = Status.Pending,
+                Status = Status.Active,
+                PlanStatus = PlanStatus.Pending,
                 Comment = model.Comment
             });
             if (plan == null) return result;
@@ -356,7 +357,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         public async Task<IEnumerable<DealerInfoModel>> AppGetJourneyPlanDealerList(string employeeId)
         {
-            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >= DateTime.Now.Date);
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >= DateTime.Now.Date && f.PlanStatus == PlanStatus.Approved);
             var d = _customerGroupSvc.FindAll(f => f.Description.StartsWith("Subdealer"));
             var result = (from plan in planList
                           join planDetail in _journeyPlanDetailSvc.GetAll() on plan.Id equals planDetail.PlanId
@@ -389,7 +390,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
 
 
-            return result;
+            return result.OrderBy(o => o.CustomerName).ToList();
 
 
         }
@@ -442,7 +443,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
             foreach (var jPlan in model)
             {
-                var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = employeeId, PlanDate = jPlan.VisitDate, Status = Status.Pending });
+                var plan = await _journeyPlanMasterSvc.CreateAsync(new JourneyPlanMaster { EmployeeId = employeeId, PlanDate = jPlan.VisitDate, Status = Status.Active, PlanStatus = PlanStatus.Pending });
                 if (plan == null) return null;
                 foreach (var id in jPlan.Dealers)
                     await _journeyPlanDetailSvc.CreateAsync(new JourneyPlanDetail { DealerId = id, PlanId = plan.Id });
