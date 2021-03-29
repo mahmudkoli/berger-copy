@@ -5,6 +5,7 @@ import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { DealeropeningService } from '../../../Shared/Services/FocusDealer/dealeropening.service';
 import { APIModel } from 'src/app/Shared/Entity';
 import { Paginator } from 'primeng/paginator';
+import { AuthService } from 'src/app/Shared/Services/Users';
 
 @Component({
     selector: 'app-dealer-opening-list',
@@ -21,7 +22,8 @@ export class DealerOpeningListComponent implements OnInit {
     constructor(
         private router: Router,
         private alertService: AlertService,
-        private dealeropeningService: DealeropeningService
+        private dealeropeningService: DealeropeningService,
+        private auth:AuthService
     ) {
         //  this._initPermissionGroup();
         this.pagingConfig = new APIModel(1, 10);
