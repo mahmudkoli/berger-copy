@@ -91,6 +91,7 @@
 }
 
 .p-table thead th {
+    white-space: nowrap;
     vertical-align: middle;
     padding-left: 5px!important;
 }
@@ -163,10 +164,10 @@ span.sort-icon {
     background: #3ab4e5;
     color: #fff;
     border: none;
-    padding: 0px;
+    padding: 5px 25px 5px 5px;
     padding-top: 9px;
     padding-bottom: 8px;
-    border-right: 1px solid #fff;
+    border: 1px solid #fff;
     text-align: center;
     font-size: 12px;
 }

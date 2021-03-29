@@ -91,6 +91,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   img{
     width: 135px;
     height: 45px;
+    filter: brightness(0) invert(1);
   }
 }
 .closed-sidebar .logo-src img{
@@ -104,8 +105,8 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   padding: 0 $layout-spacer-x $layout-spacer-x;
 
   %side-link-hover {
-    background: $dropdown-link-hover-bg;
-    color: $primary;
+    background: rgba(255,255,255,0.15);
+    color: $white;
   }
 
   & .vsm-link {
@@ -115,7 +116,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     padding: 0 1.5rem 0 45px;
     position: relative;
     border-radius: .25rem;
-    color: $gray-700;
+    color: $white;
     white-space: nowrap;
     transition: all .2s;
     text-decoration: none;
@@ -229,7 +230,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     font-size: $font-size-xs;
     margin: ($layout-spacer-x / 2) 0;
     font-weight: bold;
-    color: $primary;
+    color: $white;
     white-space: nowrap;
     position: relative;
   }
