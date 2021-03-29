@@ -75,7 +75,7 @@ export class FocusdealerAddComponent implements OnInit {
         this.focusDealerService.create(focusDealer).subscribe(res => {
             console.log("focus-dealer response: ", res);
             this.router.navigate(['/dealer/focusdealer-list']).then(() => {
-                this.alertService.tosterSuccess("focus-dealer has been created successfully.");
+                this.alertService.tosterSuccess("Focus dealer has been created successfully.");
             });
         },
             (error) => {
@@ -88,7 +88,7 @@ export class FocusdealerAddComponent implements OnInit {
         this.focusDealerService.update(model).subscribe(res => {
             console.log("focus update res: ", res);
             this.router.navigate(['/dealer/focusdealer-list']).then(() => {
-                this.alertService.tosterSuccess("focus-dealer has been edited successfully.");
+                this.alertService.tosterSuccess("Focus dealer has been edited successfully.");
             });
         },
             (error) => {

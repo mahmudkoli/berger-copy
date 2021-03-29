@@ -18,8 +18,12 @@ namespace Berger.Common.Constants
 
 
 
-        public const string OpeningMailBody = "Dear Concerned, A new dealer open request has been been generated from {0} and got approved from {1}. You are requested to open the new dealer into SAP by using the attached informations";
-        public const string OpeningMailSubject = "New dealer open Request.REQUEST ID: {}";
+        public const string DealerOpeningMailBody = "Dear Concerned, A new dealer open request has been been generated from {0} and got approved from {1}. You are requested to open the new dealer into SAP by using the attached informations";
+        public const string DealerOpeningMailSubject = "New dealer open Request.REQUEST ID: {0}";
+
+
+        public const string IssueCategoryMailBody = "Dear Concerned, A issue has been generated from {0}. You are requeste to see the issue";
+        public const string IssueCategoryMailSubject = "Dealer sales calliIssue arrived.Issue Category name: {0}";
 
     }
 
