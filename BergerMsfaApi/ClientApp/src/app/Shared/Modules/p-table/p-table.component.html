@@ -548,8 +548,7 @@
                       pTableSetting.enabledEditBtn ||
                       pTableSetting.enabledDeleteBtn
                     "
-                    class="setting-update"
-                    style="width: 78px; display: block"
+                    class="setting-update text-center"
                   >
                     <span
                       *ngIf="pTableSetting.enabledColumnResize"
@@ -609,7 +608,7 @@
                     />
                   </td>
                   <td
-                    class=""
+                    class="align-middle text-center"
                     *ngFor="let dispCol of pTableSetting.tableColDef"
                     [style.display]="
                       dispCol?.visible == false && dispCol?.visible != null
@@ -663,6 +662,7 @@
                         <span class="slider round"></span>
                       </label>
                     </div>
+                    
                     <div *ngIf="dispCol.type == 'image'">
                       <img src="{{ body[dispCol.internalName] }}" width="50" height="50" alt="">
                     </div>
@@ -851,24 +851,26 @@
                       pTableSetting.enabledDeleteBtn
                     "
                   >
+                  <div class="items-center">
                     <a
-                      *ngIf="
-                        pTableSetting.enabledEditDeleteBtn ||
-                        pTableSetting.enabledEditBtn
-                      "
-                      class="p-table-edit-icon"
-                      (click)="fnActivityOnRecord('edit-item', body)"
-                      ><em class="fa fa-edit"></em
-                    ></a>
-                    <a
-                      *ngIf="
-                        pTableSetting.enabledEditDeleteBtn ||
-                        pTableSetting.enabledDeleteBtn
-                      "
-                      class="p-table-delete-icon"
-                      (click)="fnActivityOnRecord('delete-item', body)"
-                      ><em class="fa fa-trash"></em
-                    ></a>
+                    *ngIf="
+                      pTableSetting.enabledEditDeleteBtn ||
+                      pTableSetting.enabledEditBtn
+                    "
+                    class="p-table-edit-icon"
+                    (click)="fnActivityOnRecord('edit-item', body)"
+                    ><em class="fa fa-edit"></em
+                  ></a>
+                  <a
+                    *ngIf="
+                      pTableSetting.enabledEditDeleteBtn ||
+                      pTableSetting.enabledDeleteBtn
+                    "
+                    class="p-table-delete-icon"
+                    (click)="fnActivityOnRecord('delete-item', body)"
+                    ><em class="fa fa-trash"></em
+                  ></a>
+                  </div>
                   </td>
                 </tr>
                 <tr
@@ -911,7 +913,7 @@
                   ></td>
                 </tr>
                 <tr *ngIf="pTableDatalength < 1" class="no-record-found">
-                  <td [colSpan]="totalColspan" align="center">
+                  <td [colSpan]="totalColspan + 1" align="center">
                     <b>No Record Found.</b>
                   </td>
                 </tr>
