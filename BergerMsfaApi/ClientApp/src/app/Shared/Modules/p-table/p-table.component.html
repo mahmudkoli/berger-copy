@@ -508,7 +508,8 @@
                         head.type == 'text' ||
                         head.type == 'hyperlink' ||
                         head.type == 'checkbox' ||
-                        head.type == null
+                        head.type == null ||
+                        head.type == 'image'
                       "
                     >
                       {{ head.headerName }}
@@ -661,6 +662,9 @@
                         />
                         <span class="slider round"></span>
                       </label>
+                    </div>
+                    <div *ngIf="dispCol.type == 'image'">
+                      <img src="{{ body[dispCol.internalName] }}" width="50" height="50" alt="">
                     </div>
                     <div *ngIf="dispCol.type == 'battery-level'">
                       <i
