@@ -299,11 +299,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //}).CreateMapper();
 
             var result = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == id, f => f.DealerOpeningAttachments, f => f.dealerOpeningLogs);
-            //foreach (var item in result.dealerOpeningLogs)
-            //{
-            //    var user = _userInfoSvc.Find(p => p.Id == item.UserId);
-            //    item.User = user;
-            //}
+            foreach (var item in result.dealerOpeningLogs)
+            {
+                var user = _userInfoSvc.Find(p => p.Id == item.UserId);
+                item.User = user;
+            }
             //var data = result.dealerOpeningLogs.OrderByDescending(p => p.CreatedTime);
             //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); 
             return _mapper.Map<DealerOpeningModel>(result);
@@ -375,7 +375,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<List<DealerOpening>> GetDealerOpeningPendingListForNotificationAsync()
         {
-            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.Status == (int)DealerOpeningStatus.Pending).ToListAsync();
+            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync();
             return result;
         }
     }
