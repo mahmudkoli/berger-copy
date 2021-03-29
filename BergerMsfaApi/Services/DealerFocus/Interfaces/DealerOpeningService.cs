@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using X.PagedList;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Common.Constants;
+using System;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -219,6 +220,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             dealerOpening.NextApprovarId = managerUser.Id;
             dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
+            dealerOpening.Code = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+
+
             foreach (var attach in dealerOpening.DealerOpeningAttachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
@@ -300,8 +304,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //    var user = _userInfoSvc.Find(p => p.Id == item.UserId);
             //    item.User = user;
             //}
-
-            //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); ;
+            //var data = result.dealerOpeningLogs.OrderByDescending(p => p.CreatedTime);
+            //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); 
             return _mapper.Map<DealerOpeningModel>(result);
 
         }
@@ -315,7 +319,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 DealerOpening = dealerInfoId,
                 UserId = AppIdentity.AppUser.UserId,
                 PropertyName = propertyName,
-                PropertyValue = propertyValue
+                PropertyValue = propertyValue,
+                CreatedTime = DateTime.UtcNow
             };
             var res = await _dealerOpeningLog.CreateAsync(DealerStatusLog);
 
@@ -328,15 +333,23 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             try
             {
                 var dealer = _dealerOpeningSvc.Find(p => p.Id == dealeropeningId);
-                var attachment = await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.Id == dealeropeningId);
+                var attachment = await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.DealerOpeningId == dealeropeningId);
                 List<System.Net.Mail.Attachment> lstAttachment = new List<System.Net.Mail.Attachment>();
-                if (lstAttachment.Count > 0)
+                if (attachment.Count > 0)
                 {
                     foreach (var item in attachment)
                     {
-                        string path = Path.Combine(_env.ContentRootPath, item.Path);
-                        var url = new System.Net.Mail.Attachment(path);
-                        lstAttachment.Add(url);
+                        if (!string.IsNullOrEmpty(item.Path))
+                        {
+                            string path = Path.Combine(_env.WebRootPath, item.Path);
+                            if (File.Exists(path))
+                            {
+                                var url = new System.Net.Mail.Attachment(path);
+                                lstAttachment.Add(url);
+                            }
+
+                        }
+
                     }
 
                 }
@@ -346,11 +359,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 foreach (var item in lstemail)
                 {
                     var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
-                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); ;
-                    //string messageBody = string.Format(ConstantsLeadValue.OpeningMailBody, createdBy.UserName, LastApprovar.UserName);
-                    //string subject = string.Format(ConstantsLeadValue.OpeningMailSubject, dealeropeningId);
+                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); 
+                    string messageBody = string.Format(ConstantsLeadValue.OpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
+                    string subject = string.Format(ConstantsLeadValue.OpeningMailSubject, dealer.Code??string.Empty);
 
-                    await _emailSender.SendEmailWithAttachmentAsync(item, ConstantsLeadValue.OpeningMailSubject, ConstantsLeadValue.OpeningMailBody, lstAttachment);
+                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
                 }
             }
             catch (System.Exception ex)

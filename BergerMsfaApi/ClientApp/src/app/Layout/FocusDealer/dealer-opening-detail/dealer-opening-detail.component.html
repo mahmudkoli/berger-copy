@@ -79,9 +79,9 @@
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="userName">User Name</th>
-            <th pSortableColumn="dealerOpeningId">Dealer Opening Id</th>
-            <th pSortableColumn="propertyValue">Property Value</th>
+            <!-- <th pSortableColumn="dealerOpeningId">Dealer Opening Id</th> -->
             <th pSortableColumn="propertyName">Property Name</th>
+            <th pSortableColumn="propertyValue">Property Value</th>
 
 
         </tr>
@@ -92,14 +92,15 @@
             <td>
                 {{dealerOpenlog.userid}}
             </td>
+            <!-- <td>
+                {{dealerOpenlog.dealerOpeningId}}
+            </td> -->
             <td>
-{{dealerOpenlog.dealerOpeningId}}
+                Approve
             </td>
             <td>
-                {{dealerOpenlog.propertyValue}}
-            </td>
-            <td>
-                {{dealerOpenlog.propertyName}}
+                <p *ngIf="dealerOpenlog.propertyValue==1">Yes</p>
+                <p *ngIf="dealerOpenlog.propertyValue==3">No</p>
             </td>
 
         </tr>
