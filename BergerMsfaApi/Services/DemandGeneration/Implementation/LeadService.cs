@@ -2,6 +2,8 @@
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.Master;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
@@ -22,18 +24,27 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
     {
         private readonly IRepository<LeadGeneration> _leadGenerationRepository;
         private readonly IRepository<LeadFollowUp> _leadFollowUpRepository;
+        private readonly IRepository<Depot> _depotRepository;
+        private readonly IRepository<Territory> _territoryRepository;
+        private readonly IRepository<Zone> _zoneRepository;
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
 
         public LeadService(
                 IRepository<LeadGeneration> leadGenerationRepository,
                 IRepository<LeadFollowUp> leadFollowUpRepository,
+                IRepository<Depot> depotRepository,
+                IRepository<Territory> territoryRepository,
+                IRepository<Zone> zoneRepository,
                 IFileUploadService fileUploadService,
                 IMapper mapper
             )
         {
             this._leadGenerationRepository = leadGenerationRepository;
             this._leadFollowUpRepository = leadFollowUpRepository;
+            this._depotRepository = depotRepository;
+            this._territoryRepository = territoryRepository;
+            this._zoneRepository = zoneRepository;
             this._fileUploadService = fileUploadService;
             this._mapper = mapper;
         }
@@ -231,6 +242,12 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 //modelResult.BrandUsedUnderCoatBrandName = leadFollowUp.BrandUsedUnderCoatBrandName;
             }
 
+            #region Depot, Territory, Zone
+            modelResult.DepotName = _depotRepository.Find(f => f.Werks == modelResult.Depot)?.Name1 ?? string.Empty;
+            modelResult.TerritoryName = _territoryRepository.Find(f => f.Code == modelResult.Territory)?.Name ?? string.Empty;
+            modelResult.ZoneName = _zoneRepository.Find(f => f.Code == modelResult.Zone)?.Name ?? string.Empty;
+            #endregion
+
             return modelResult;
         }
 
@@ -241,7 +258,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (model.BusinessAchievement != null && !string.IsNullOrWhiteSpace(model.BusinessAchievement.PhotoCaptureUrl))
             {
                 var fileName = leadFollowUp.LeadGenerationId + "_" + Guid.NewGuid().ToString();
-                model.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
             }
 
             leadFollowUp.CreatedTime = DateTime.Now;

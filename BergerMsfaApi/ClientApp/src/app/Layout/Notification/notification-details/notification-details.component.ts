@@ -50,7 +50,7 @@ export class NotificationDetailsComponent implements OnInit {
 
   //  this.getWorkflowLogForCurrentUser();
   //  this.getWorkflowLogHistoryForCurrentUser();
-  this.getWorkflowLogWithHistoryForCurrentUser();
+  // this.getWorkflowLogWithHistoryForCurrentUser();
   this.notificationService.getJourneyPlanList().subscribe((res:any)=>{
     this.lstDealerOpening=res.notificationForDealerOpningModel
       this.lstJourneyPlan=res.notificationForJourneyPlan

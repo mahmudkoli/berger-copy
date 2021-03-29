@@ -43,7 +43,7 @@ namespace Berger.Odata.Services
 
             Func<FinancialDataModel, bool> predicateFunc = x => (model.Days switch
             {
-                EnumOutstandingDetailsAgeDays._0_To_30_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 0 && 
+                EnumOutstandingDetailsAgeDays._0_To_30_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 0 &&
                                                                     CustomConvertExtension.ObjectToInt(x.Age) <= 30,
                 EnumOutstandingDetailsAgeDays._31_To_60_Days => CustomConvertExtension.ObjectToInt(x.Age) >= 31 &&
                                                                     CustomConvertExtension.ObjectToInt(x.Age) <= 60,
@@ -206,7 +206,7 @@ namespace Berger.Odata.Services
 
             return result;
         }
-        
+
         public async Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<int> dealerIds)
         {
             //var currentDate = DateTime.Now;
@@ -221,10 +221,10 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.DayLimit);
 
             var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
-            
-            var result = data.Select(x => 
-                                new ReportPaymentFollowUpResultModel() 
-                                { 
+
+            var result = data.Select(x =>
+                                new ReportPaymentFollowUpResultModel()
+                                {
                                     CustomerNo = x.CustomerNo,
                                     CustomerName = x.CustomerName,
                                     InvoiceNo = x.InvoiceNo,
@@ -247,5 +247,20 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                .AddProperty(FinancialColDef.CustomerNo).AddProperty(FinancialColDef.Amount)
+                .AddProperty(FinancialColDef.Age);
+
+            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds,
+                fromDate.DateTimeFormat(), toDate.DateTimeFormat())).ToList();
+
+            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
+        }
+
+
     }
 }

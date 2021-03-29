@@ -49,16 +49,21 @@ namespace Berger.Common
                     To = email,
                     Body = body,
                     Subject = subject,
+                    
 
                 };
 
                 message.To.Add(email);
                 message.From = message.From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName);
                 message.Subject = subject;
-                //foreach (var item in lstattachment)
-                //{
-                //    message.Attachments.Add(item);
-                //}
+                if (lstattachment.Count > 0)
+                {
+                    foreach (var item in lstattachment)
+                    {
+                        message.Attachments.Add(item);
+                    }
+                }
+                
                 message.Body = body;
                 using (var smtpClient = new SmtpClient())
                 {
@@ -73,6 +78,7 @@ namespace Berger.Common
                         smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
+                        emailLog.LogStatus = (int)EmailStatus.Success;
                     }
                     catch (Exception e)
                     {
@@ -129,6 +135,8 @@ namespace Berger.Common
                         smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
+                        emailLog.LogStatus = (int)EmailStatus.Success;
+
                     }
                     catch (Exception e)
                     {

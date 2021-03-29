@@ -44,7 +44,7 @@
                 <td>{{dOpen.employeeId }}</td>
 
     
-                <td>
+                <td *ngIf="dOpen.nextApprovarId==this.auth.currentUserValue.userId">
                     <button class="btn btn-sm btn-primary" type="button" (click)="detail(dOpen.id)">View Detail</button>
                 </td>
             </tr>

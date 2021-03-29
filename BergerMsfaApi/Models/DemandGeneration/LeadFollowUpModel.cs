@@ -122,6 +122,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string Depot { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
+        public string DepotName { get; set; }
+        public string TerritoryName { get; set; }
+        public string ZoneName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectAddress { get; set; }
         public string LastVisitedDate { get; set; }

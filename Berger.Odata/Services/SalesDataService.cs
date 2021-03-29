@@ -248,15 +248,35 @@ namespace Berger.Odata.Services
             var dataCyYtd = new List<SalesDataModel>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.Division)
-                                .AddProperty(DataColumnDef.DivisionName)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.Volume)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                .AddProperty(DataColumnDef.Division)
+            //                .AddProperty(DataColumnDef.DivisionName)
+            //                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+            //                .AddProperty(DataColumnDef.Date)
+            //                .AddProperty(DataColumnDef.NetAmount)
+            //                .AddProperty(DataColumnDef.Volume)
+            //                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
+            //                .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
+
+            if (model.VolumeOrValue == EnumVolumeOrValue.Volume)
+            {
+                selectQueryBuilder.AddProperty(DataColumnDef.Volume);
+            } 
+            else
+            {
+                selectQueryBuilder.AddProperty(DataColumnDef.NetAmount);
+            }
+
+            if (model.BrandOrDivision == EnumBrandOrDivision.Division)
+            {
+                selectQueryBuilder.AddProperty(DataColumnDef.Division)
+                                    .AddProperty(DataColumnDef.DivisionName);
+            } 
+            else
+            {
+                selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand)
+                                    .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
+            }
 
             if (model.BrandOrDivision == EnumBrandOrDivision.MTS_Brand)
             {

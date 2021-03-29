@@ -298,8 +298,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
+                var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
             }
 
             var result = await _painterSvc.CreateAsync(_painter);
@@ -334,8 +335,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
+                var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
 
             }
 

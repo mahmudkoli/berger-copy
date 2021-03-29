@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Berger.Common;
+using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
@@ -32,6 +34,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
+        private readonly IRepository<UserInfo> _userInfo;
 
 
         public DealerSalesCallService(
@@ -40,6 +43,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IFileUploadService fileUploadService,
                 IMapper mapper,
                 IRepository<EmailConfigForDealerSalesCall> repository,
+                IRepository<UserInfo> userInfo,
                 IEmailSender emailSender
             )
         {
@@ -49,6 +53,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             this._mapper = mapper;
             _repository = repository;
             _emailSender = emailSender;
+           _userInfo= userInfo;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -70,6 +75,19 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             dealerSalesCall.CreatedTime = DateTime.Now;
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
+            var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
+            var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            string body = string.Format("Customer No: ", dealerSalesCall.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", dealerSalesCall.Dealer.CustomerName, "Zone: ", dealerSalesCall.Dealer.CustZone);
+            for (int i = 0; i < res.Length; i++)
+            {
+                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
+                if (!string.IsNullOrEmpty(email))
+                {
+                    var issue = await _dropdownService.GetDropdownById(res[i]);
+                    await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
+
+                }
+            }
             return result.Id;
         }
 
@@ -99,14 +117,25 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
 
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
-            var res = models.Select(p => p.DealerSalesIssues).ToList().Select(p => p.Select(c => c.DealerSalesIssueCategoryId)).Distinct().ToArray();
-
-            for (int i = 0; i < res.Length; i++)
+            foreach (var item in dealerSalesCalls)
             {
-                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
-                if (!string.IsNullOrEmpty(email))
-                    await sendEmail(email);
+                string body = string.Format("Customer No: ", item.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", item.Dealer.CustomerName, "Zone: ", item.Dealer.CustZone);
+                var res = item.DealerSalesIssues.Select(c => c.DealerSalesIssueCategoryId).Distinct().ToArray();
+
+                var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+                for (int i = 0; i < res.Length; i++)
+                {
+                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var issue = await _dropdownService.GetDropdownById(Convert.ToInt32(res[i]));
+                        await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
+
+                    }
+                }
             }
+
+            
 
             return true;
         }
@@ -169,7 +198,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
             modelResult.DealerId = id;
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetition);
 
             foreach (var item in companyList)
             {
@@ -214,7 +243,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var modelResults = new List<SaveDealerSalesCallModel>();
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetition);
 
             foreach (var id in ids)
             {
@@ -298,7 +327,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
 
 
-        private async Task sendEmail(string email)
+        private async Task sendEmail(string email, string issue,string createdby,string body)
         {
             try
             {
@@ -307,9 +336,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                 foreach (var item in lstemail)
                 {
-                    string messageBody = "Hello";
+                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby,Environment.NewLine)+ body;
+                    string messagesubject = string.Format(ConstantsLeadValue.IssueCategoryMailSubject,issue);
 
-                    await _emailSender.SendEmailAsync(item, "Issue Category", messageBody);
+                    await _emailSender.SendEmailAsync(item, messagesubject, messageBody);
                 }
             }
             catch (System.Exception ex)
