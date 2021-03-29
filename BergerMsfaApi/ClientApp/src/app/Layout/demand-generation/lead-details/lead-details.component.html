@@ -106,10 +106,10 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Requirement Of Color Scheme:</strong></span> {{lead.requirementOfColorScheme}}</p>
+                <p><span><strong>Requirement Of Color Scheme:</strong></span> {{lead.requirementOfColorSchemeText}}</p>
             </div>
             <div class="col-sm-6">
-                <p><span><strong>Product Sampling Required:</strong></span> {{lead.productSamplingRequired}}</p>
+                <p><span><strong>Product Sampling Required:</strong></span> {{lead.productSamplingRequiredText}}</p>
             </div>
         </div>
 
@@ -122,11 +122,12 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-6">
-                <p><span><strong>Photo Capture:</strong></span> 
+        <div class="row" *ngIf="lead.photoCaptureUrl">
+            <div class="col-sm-6" >
+                <p>
+                    <span><strong>Photo Capture:</strong></span>
                     <!-- {{lead.photoCaptureUrl}} -->
-                    <img [src]="lead.photoCaptureUrl" alt="Photo" width="150px" height="180px">
+                    <img src="{{lead.photoCaptureUrl}}" alt="Photo" width="150px" height="180px">
                 </p>
             </div>
             <div class="col-sm-6">

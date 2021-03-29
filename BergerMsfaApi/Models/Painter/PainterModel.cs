@@ -26,7 +26,9 @@ namespace BergerMsfaApi.Models.PainterRegistration
                    .ForMember(src => src.PainterCatName, dest => dest.MapFrom(s => s.PainterCat != null ? s.PainterCat.DropdownName : string.Empty));
 
             profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
-            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>();
+            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src != null ? $"{src.Company.DropdownName}" : string.Empty))
+                .ForMember(dest => dest.CumelativeInPercent, opt => opt.MapFrom(src => src.CountInPercent));
 
         }
 

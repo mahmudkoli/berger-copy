@@ -104,14 +104,13 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     painter => painter
                                       .Include(i => i.Attachments)
                                       .Include(i => i.AttachedDealers)
-                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue),
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue).ThenInclude(i=>i.Company),
 
                     true
                 );
 
             
             var painterModel = _mapper.Map<PainterModel>(result);
-            
 
 
 
