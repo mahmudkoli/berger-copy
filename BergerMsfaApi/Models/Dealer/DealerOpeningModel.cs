@@ -32,6 +32,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public UserInfo NextApprovar { get; set; }
         public string Comment { get; set; }
         public int DealerOpeningStatus { get; set; }
+        public string Code { get; set; }
+
         public List<DealerOpeningAttachmentModel> DealerOpeningAttachments { get; set; }
         public List<DealerOpeningLog> dealerOpeningLogs { get; set; }
 
