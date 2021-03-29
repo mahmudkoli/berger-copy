@@ -31,9 +31,14 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 		
 	) { }
 	id: any;
+	customerNo: any;
+	customerName: any;
 	division: any;
+	businessArea: any;
 	salesOffice: any;
 	salesGroup: any;
+	territory: any;
+	custZone: any;
 
 	ngOnInit() {
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
@@ -61,16 +66,14 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 				//console.log("done");
 				//console.log(this.dealerInfoLogs);
 				this.dealerInfoLogs.forEach(obj => {
-					//this.materialCode = obj.materialCode;
-					//this.materialGroupOrBrand = obj.materialGroupOrBrand;
+					this.customerNo = obj.customerNo;
+					this.customerName = obj.customerName;
 					this.division = obj.division;
+					this.businessArea = obj.businessArea;
 					this.salesOffice = obj.salesOffice;
 					this.salesGroup = obj.salesGroup;
-
-
-					//this.packSize = obj.packSize;
-					
-				
+					this.territory = obj.territory;
+					this.custZone = obj.custZone;
 				});
 				
 			},
