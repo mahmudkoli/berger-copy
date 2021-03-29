@@ -558,10 +558,10 @@
                     <em class="fa fa-cog"></em>
                   </th>
                 </tr>
-                <tr>
+                <tr *ngIf="isParentHeaderExists()">
                   <th></th>
                   <th *ngFor="let head2 of pTableSetting.tableColDef">
-                    {{ head2.parentHeaderName ? head2.headerName : '' }}
+                    {{ head2.parentHeaderName ? head2.headerName : '' }} aa
                   </th>
                 </tr>
               </thead>
