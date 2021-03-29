@@ -1197,7 +1197,7 @@ export class PTableComponent implements OnInit, DoCheck {
   }
 
   isParentHeaderExists() {
-    this.pTableSetting.tableColDef.filter((x) => x.parentHeaderName != '')
+    return this.pTableSetting.tableColDef.filter((x) => x.parentHeaderName != '')
       .length > 0;
   }
 }
