@@ -135,6 +135,8 @@ namespace Berger.Common
                         smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
+                        emailLog.LogStatus = (int)EmailStatus.Success;
+
                     }
                     catch (Exception e)
                     {

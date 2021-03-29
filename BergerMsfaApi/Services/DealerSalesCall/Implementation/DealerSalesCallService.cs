@@ -70,6 +70,14 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             dealerSalesCall.CreatedTime = DateTime.Now;
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
+            var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
+
+            for (int i = 0; i < res.Length; i++)
+            {
+                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
+                if (!string.IsNullOrEmpty(email))
+                    await sendEmail(email);
+            }
             return result.Id;
         }
 
