@@ -1909,7 +1909,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)
         {
             var data = await (from master in _context.JourneyPlanMasters
-                              join details in _context.JourneyPlanDetails on master.Id equals details.PlanId
+                              join details in _context.JourneyPlanDetails on master.Id equals details.PlanId into detailsLeftJoin
+                              from detailsInfo in detailsLeftJoin.DefaultIfEmpty()
                               join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
                               from dscInfo in dscLeftJoin.DefaultIfEmpty()
                               join painterCall in _context.PainterCalls on master.EmployeeId equals painterCall.EmployeeId into
@@ -1920,13 +1921,17 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  painterRegistrationLeftJoin
                               from painterRegistration in painterRegistrationLeftJoin.DefaultIfEmpty()
 
-                              join userinfo in _context.UserInfos on master.EmployeeId equals userinfo.EmployeeId into
+                              join userInfo in _context.UserInfos on master.EmployeeId equals userInfo.EmployeeId into
                                  userinfoLeftJoin
-                              from userinfo in userinfoLeftJoin.DefaultIfEmpty()
+                              from userInfo in userinfoLeftJoin.DefaultIfEmpty()
 
-
-                              join dsc2 in _context.DealerSalesCalls on new { master.EmployeeId, Date = DateTime.Now.Date }
-                                  equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date } into dsc2LeftJoin
+                              join dsc2 in _context.DealerSalesCalls on new
+                              {
+                                  EmployeeId = AppIdentity.AppUser.UserId.ToString(),
+                                  Date = DateTime.Now.Date,
+                                  JourneyPlanId = 0
+                              }
+                                  equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date, JourneyPlanId = dsc2.JourneyPlanId ?? 0 } into dsc2LeftJoin
                               from dsc2Info in dsc2LeftJoin.DefaultIfEmpty()
                               join ld in _context.LeadGenerations on new { master.EmployeeId, Date = DateTime.Now.Date }
                                   equals new { EmployeeId = ld.UserId.ToString(), Date = ld.CreatedTime.Date } into ldLeftJoin
@@ -1935,23 +1940,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   equals new { Id = lfu.LeadGenerationId, Date = lfu.CreatedTime.Date }
                                   into lfuLeftJoin
                               from lfuInfo in lfuLeftJoin.DefaultIfEmpty()
-                              where (master.PlanDate.Date == DateTime.Now.Date 
-                              
-                              && (!query.UserId.HasValue || query.UserId==userinfo.Id)
+                              where (master.PlanDate.Date == DateTime.Now.Date
+
+                              && (!query.UserId.HasValue || query.UserId == userInfo.Id)
 
                               )
                               select new
                               {
-                                  DelarId = details.Id,
+                                  DelarId = detailsInfo.Id,
                                   dscInfo.IsSubDealerCall,
                                   PainterCallInfoId = painterCallInfo.Id,
                                   dsc2InfoId = dsc2Info.Id,
                                   LdInfoId = ldInfo.Id,
                                   lfuInfoId = lfuInfo.Id,
-                                  PainterRegistration= painterRegistration.Id,
-                                  UserEmail=userinfo.Email,
-                                  
-                              }).ToListAsync();
+                                  PainterRegistration = painterRegistration.Id,
+                                  UserEmail = userInfo.Email,
+                              }).Distinct().ToListAsync();
 
 
             var reportResult = new List<ActiveSummaryReportResultModel>()
@@ -1959,9 +1963,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
                     Activity="Journey Plan",
-                    Target=data.Select(x => x.DelarId).Distinct().Count().ToString(),
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count().ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count()-data.Select(x => x.dsc2InfoId).Distinct().Count()).ToString(),
+                    Target=data.Select(x => x.DelarId).Distinct().Count(x=>x>0).ToString(),
+                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0).ToString(),
+                    Variance=(data.Select(x => x.DelarId).Distinct().Count(x=>x>0)-data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0)).ToString(),
                     BusinessGeneration="N/A",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
@@ -1982,9 +1986,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
 
                     Activity="SALES CALL- DIRECT DEALER",
-                    Target=data.Select(x => x.DelarId).Distinct().Count().ToString(),
+                    Target=data.Select(x => x.DelarId).Distinct().Count(x=>x>0).ToString(),
                     Actual = data.Count(x => !x.IsSubDealerCall).ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count()-data.Count(x => !x.IsSubDealerCall)).ToString(),
+                    Variance=(data.Select(x => x.DelarId).Distinct().Count(x=>x>0)-data.Count(x => !x.IsSubDealerCall)).ToString(),
                     BusinessGeneration="N/A",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
@@ -1993,7 +1997,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     Activity="PAINTER CALL",
                     Target="0",
-                    Actual = data.Select(x => x.PainterCallInfoId).Distinct().Count().ToString(),
+                    Actual = data.Select(x => x.PainterCallInfoId).Distinct().Count(x=>x>0).ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
@@ -2003,7 +2007,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     Activity="PAINTER REGISTRATION",
                     Target="0",
-                    Actual = data.Select(x => x.PainterRegistration).Distinct().Count().ToString(),
+                    Actual = data.Select(x => x.PainterRegistration).Distinct().Count(x=>x>0).ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
@@ -2014,7 +2018,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="DEALER ADHOC VISIT",
                     Target="N/A",
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count().ToString(),
+                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="N/A",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
@@ -2024,9 +2028,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
 
-                    Activity="LEAD GENARATION",
+                    Activity="LEAD GENERATION",
                     Target="N/A",
-                    Actual =data.Select(x => x.LdInfoId).Distinct().Count().ToString(),
+                    Actual =data.Select(x => x.LdInfoId).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
@@ -2036,7 +2040,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     Activity="LEAD FOLLOWUP",
                     Target="N/A",
-                    Actual =data.Select(x => x.lfuInfoId).Distinct().Count().ToString(),
+                    Actual =data.Select(x => x.lfuInfoId).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
                     UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
