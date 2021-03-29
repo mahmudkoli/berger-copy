@@ -125,12 +125,18 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
         {
-            var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync());
-
-
-            return await result.ToPagedListAsync(index, pageSize);
-
-
+            var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString()).FirstOrDefault();
+            if (emailConfig != null)
+            {
+                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.GetAllAsync());
+                return await result.ToPagedListAsync(index, pageSize);
+            }
+            else
+            {
+                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync());
+                return await result.ToPagedListAsync(index, pageSize);
+            }
         }
 
 

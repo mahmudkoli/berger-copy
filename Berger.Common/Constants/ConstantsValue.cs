@@ -23,7 +23,7 @@ namespace Berger.Common.Constants
 
 
         public const string IssueCategoryMailBody = "Dear Concerned, A issue has been generated from {0}. You are requeste to see the issue";
-        public const string IssueCategoryMailSubject = "Issue arrived.Issue Category Id: {0}";
+        public const string IssueCategoryMailSubject = "Dealer sales calliIssue arrived.Issue Category name: {0}";
 
     }
 

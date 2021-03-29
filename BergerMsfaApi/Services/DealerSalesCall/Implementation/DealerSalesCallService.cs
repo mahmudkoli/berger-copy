@@ -77,11 +77,16 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
             var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            string body = string.Format("Customer No: ", dealerSalesCall.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", dealerSalesCall.Dealer.CustomerName, "Zone: ", dealerSalesCall.Dealer.CustZone);
             for (int i = 0; i < res.Length; i++)
             {
                 var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
                 if (!string.IsNullOrEmpty(email))
-                    await sendEmail(email,res[i] , user?.UserName??string.Empty);
+                {
+                    var issue = await _dropdownService.GetDropdownById(res[i]);
+                    await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
+
+                }
             }
             return result.Id;
         }
@@ -112,15 +117,25 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
 
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
-            var res = models.Select(p => p.DealerSalesIssues).ToList().Select(p => p.Select(c => c.DealerSalesIssueCategoryId)).Distinct().ToArray();
-
-            var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-            for (int i = 0; i < res.Length; i++)
+            foreach (var item in dealerSalesCalls)
             {
-                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
-                if (!string.IsNullOrEmpty(email))
-                    await sendEmail(email, Convert.ToInt32(res[i]), user?.UserName ?? string.Empty);
+                string body = string.Format("Customer No: ", item.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", item.Dealer.CustomerName, "Zone: ", item.Dealer.CustZone);
+                var res = item.DealerSalesIssues.Select(c => c.DealerSalesIssueCategoryId).Distinct().ToArray();
+
+                var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+                for (int i = 0; i < res.Length; i++)
+                {
+                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var issue = await _dropdownService.GetDropdownById(Convert.ToInt32(res[i]));
+                        await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
+
+                    }
+                }
             }
+
+            
 
             return true;
         }
@@ -312,7 +327,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
 
 
-        private async Task sendEmail(string email, int issue,string createdby)
+        private async Task sendEmail(string email, string issue,string createdby,string body)
         {
             try
             {
@@ -321,7 +336,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                 foreach (var item in lstemail)
                 {
-                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby);
+                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby,Environment.NewLine)+ body;
                     string messagesubject = string.Format(ConstantsLeadValue.IssueCategoryMailSubject,issue);
 
                     await _emailSender.SendEmailAsync(item, messagesubject, messageBody);
