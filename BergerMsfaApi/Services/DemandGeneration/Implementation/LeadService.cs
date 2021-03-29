@@ -241,7 +241,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (model.BusinessAchievement != null && !string.IsNullOrWhiteSpace(model.BusinessAchievement.PhotoCaptureUrl))
             {
                 var fileName = leadFollowUp.LeadGenerationId + "_" + Guid.NewGuid().ToString();
-                model.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
             }
 
             leadFollowUp.CreatedTime = DateTime.Now;

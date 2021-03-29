@@ -51,7 +51,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 
     public class AttachedDealerPainter: AuditableEntity<int>
     {
-        public int Dealer { get; set; }
+        public int Dealer { get; set; } // DealerInfo Id
         public int PainterId { get; set; }
 
         [ForeignKey("PainterId")]

@@ -9,6 +9,7 @@ import { EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
 import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { EmailConfigForDealerOpening } from '../../../Shared/Entity/DealerOpening/EmailConfig';
@@ -30,7 +31,7 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
-        private focusDealerService: FocusdealerService,
+        private focusDealerService: DealerSalesCallService,
         private dynamicDropdownService: DynamicDropdownService,
         private commonSvc: CommonService,
         private router: Router
@@ -60,7 +61,7 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
     }
     loadCategories() {
 		this.alertService.fnLoading(true);
-		const categoryCode = EnumDynamicTypeCode.SwappingCompetition;
+		const categoryCode = EnumDynamicTypeCode.ISSUES_01;
 		this.dynamicDropdownService.GetDropdownByTypeCd(categoryCode)
 			.subscribe(res => {
 				this.categories = res.data;
