@@ -7,14 +7,14 @@ namespace Berger.Common.Enumerations
         [Display(Name = "In Active")]
         InActive,
         Active,
-        Pending,
-        Revert,
-        Rejected,
-        Completed,
-        NotCompleted,
-        InCompleted,
-        InPlace,
-        NotInPlace
+        //Pending,
+        //Revert,
+        //Rejected,
+        //Completed,
+        //NotCompleted,
+        //InCompleted,
+        //InPlace,
+        //NotInPlace
     }
 
     public enum PlanStatus
