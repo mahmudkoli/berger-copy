@@ -156,13 +156,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             string propertyName="";
             if (find.IsExclusive != dealer.IsExclusive)
-                propertyName = "IsExclusive";
+                propertyName = "Exclusive";
             else if (find.IsCBInstalled != dealer.IsCBInstalled)
-                propertyName = "IsCBInstalled";
+                propertyName = "CB Installed";
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
-                propertyName = "IsLastYearAppointed";
+                propertyName = "Last Year Appointed";
             else if (find.IsClubSupreme != dealer.IsClubSupreme)
-                propertyName = "IsClubSupreme";
+                propertyName = "Club Supreme";
 
             return propertyName;
         }
@@ -172,30 +172,30 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             if (find.IsExclusive != dealer.IsExclusive)
             {
                 if (dealer.IsExclusive)
-                    propertyValue = "Exclusive";
+                    propertyValue = "Yes";
                 else
-                    propertyValue = "Non Exclusive";
+                    propertyValue = "No";
             }    
             else if (find.IsCBInstalled != dealer.IsCBInstalled)
             {
                 if (dealer.IsCBInstalled)
-                    propertyValue = "Installed";
+                    propertyValue = "Yes";
                 else
-                    propertyValue = "Not Installed";
+                    propertyValue = "No";
             }
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
             {
                 if (dealer.IsLastYearAppointed)
-                    propertyValue = "Appointed";
+                    propertyValue = "Yes";
                 else
-                    propertyValue = "Not Appointed";
+                    propertyValue = "No";
             }
             else if (find.IsClubSupreme != dealer.IsClubSupreme)
             {
                 if (dealer.IsClubSupreme)
-                    propertyValue = "Supreme";
+                    propertyValue = "Yes";
                 else
-                    propertyValue = "Not Supreme";
+                    propertyValue = "No";
             }
 
             return propertyValue;
