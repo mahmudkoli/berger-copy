@@ -126,7 +126,7 @@
             <div class="col-sm-6">
                 <p><span><strong>Photo Capture:</strong></span> 
                     <!-- {{lead.photoCaptureUrl}} -->
-                    <img [src]="lead.photoCaptureUrl" alt="Photo" width="150px" height="180px">
+                    <img *ngIf='lead.photoCaptureUrl' [src]="lead.photoCaptureUrl" alt="Photo" width="150px" height="180px">
                 </p>
             </div>
             <div class="col-sm-6">
