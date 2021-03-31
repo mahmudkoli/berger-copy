@@ -1914,62 +1914,72 @@ namespace BergerMsfaApi.Services.Report.Implementation
         {
             UserInfo userinfo = new UserInfo();
 
+            string territory = query.Territories.Count > 0 ? query.Territories[0]:string.Empty;
+            string zone = query.Zones.Count > 0 ? query.Zones[0]:string.Empty;
+
             IList<int> dealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
             if (query.UserId.HasValue)
             {
                 userinfo = _context.UserInfos.Where(p => p.Id == query.UserId).FirstOrDefault();
 
             }
-            else
-            {
-                userinfo = _context.UserInfos.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
 
-            }
 
 
             var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
-                        .Join(_context.DealerSalesCalls.Include(p=>p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
-                        .Where( p=> 
-                        
-                            (!query.UserId.HasValue?true:userinfo.EmployeeId==p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
+                        .Join(_context.DealerSalesCalls.Include(p => p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
+                        .Where(p =>
 
-                            && (!query.FromDate.HasValue?true:p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime>=query.FromDate)
-                            && (!query.ToDate.HasValue?true:p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime<=query.ToDate)
+                           (!query.UserId.HasValue ? true : userinfo.EmployeeId == p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
 
-                            && (query.Zones.Count==0?true:query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
-                            && (query.Territories.Count==0?true:query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
+                           && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime >= query.FromDate)
+                           && (!query.ToDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime <= query.ToDate)
+
+                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
                 )
-                        .Select(p => new {
+                        .Select(p => new
+                        {
                             JourneyPlanMaster = p.JourneyPlanMaster.JourneyPlanMaster,
                             JourneyPlanDetail = p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
                             DealerSalesCall = p.DealerSalesCall
                         }).ToList();
+            var dealerSalesCall = _context.DealerSalesCalls.Where(p => p.JourneyPlanId == null
 
+               && (!query.FromDate.HasValue ? true : p.CreatedTime.Date >= query.FromDate.Value.Date)
+                              && (!query.ToDate.HasValue ? true : p.CreatedTime.Date <= query.ToDate.Value.Date)
+            ).ToList();
 
-            var painter = _context.JourneyPlanMasters.Join(_context.Painters, jpm => jpm.EmployeeId, p => p.EmployeeId, (JourneyPlanMaster, Painter) => new { JourneyPlanMaster, Painter })
+            var painter =  _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (Painter, PainterCall) => new { Painter, PainterCall })
+                                .Where(p =>
+                              (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (!query.FromDate.HasValue ? true : p.Painter.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue ? true : p.Painter.CreatedTime.Date <= query.ToDate.Value.Date)
 
-                                .Join(_context.PainterCalls, p => p.Painter.Id, pc => pc.PainterId, (JourneyPlanMaster, PainterCall) => new { JourneyPlanMaster, PainterCall })
-                                .Where(p=>
-                              (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime >= query.FromDate)
-                            && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime <= query.ToDate)
-                            && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.Painter.CreatedTime >= query.FromDate)
-                            && (!query.ToDate.HasValue ? true : p.JourneyPlanMaster.Painter.CreatedTime <= query.ToDate)
+                            && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.Painter.Zone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.Painter.Territory))
                                 )
-                                .Select(p => new {
-                                    PainterRegistration = p.JourneyPlanMaster.Painter,
+                                .Select(p => new
+                                {
+                                    PainterRegistration = p.Painter,
                                     PainterCalls = p.PainterCall
                                 }).ToList();
 
 
             var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
-                .Where( p=>
-                (!query.FromDate.HasValue ? true : p.LeadGeneration.CreatedTime >= query.FromDate)
-                            && (!query.ToDate.HasValue ? true : p.LeadGeneration.CreatedTime <= query.ToDate)
-                            && (!query.FromDate.HasValue ? true : p.LeadFollowUp.CreatedTime >= query.FromDate)
-                            && (!query.ToDate.HasValue ? true : p.LeadFollowUp.CreatedTime <= query.ToDate)
+                .Where(p =>
+               (!query.FromDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date >= query.FromDate.Value.Date)
+                           && (!query.ToDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date <= query.ToDate.Value.Date)
+                           && (!query.FromDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date >= query.FromDate.Value.Date)
+                           && (!query.ToDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date <= query.ToDate.Value.Date)
+
+                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.LeadGeneration.Zone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.LeadGeneration.Territory))
                 )
-                
-                .Select(p => new {
+
+                .Select(p => new
+                {
                     LeadGeneration = p.LeadGeneration,
                     LeadFollowUp = p.LeadFollowUp
                 }).ToList();
@@ -1984,7 +1994,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
                     Variance=(data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count()-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
-                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -1996,6 +2009,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="0",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
 
@@ -2008,6 +2025,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2018,6 +2039,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="N/A",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2028,6 +2053,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="0",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2035,10 +2064,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="DEALER ADHOC VISIT",
                     Target="N/A",
-                    Actual = data.Where(p=>p.DealerSalesCall.JourneyPlanId==null).Select(x => x.DealerSalesCall.Id).Distinct().Count().ToString(),
+                    Actual = dealerSalesCall.Count().ToString(),
                     Variance="N/A",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
 
                 },
@@ -2051,6 +2084,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="N/A",
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2074,6 +2111,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="N/A",
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 }
             }
@@ -2107,7 +2148,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             //var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
             //            .Join(_context.DealerSalesCalls, jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
-                        
+
             //            .Select(p=> new {
             //                JourneyPlanMaster=p.JourneyPlanMaster.JourneyPlanMaster,
             //                JourneyPlanDetail=p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
