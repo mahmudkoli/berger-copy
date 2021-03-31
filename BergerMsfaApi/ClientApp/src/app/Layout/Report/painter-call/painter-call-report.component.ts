@@ -245,21 +245,21 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
         x.parentHeaderName = 'BPBL';
       });
 
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) => x.internalName == 'duluxMtdValue' || x.internalName == 'duluxCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Dulux';
-      });
+    // this.ptableSettings.tableColDef
+    //   .filter(
+    //     (x) => x.internalName == 'duluxMtdValue' || x.internalName == 'duluxCount'
+    //   )
+    //   .forEach((x) => {
+    //     x.parentHeaderName = 'Dulux';
+    //   });
     
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) => x.internalName == 'moonstarMtdValue' || x.internalName == 'moonstarCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Moonstar';
-      });  
+    // this.ptableSettings.tableColDef
+    //   .filter(
+    //     (x) => x.internalName == 'moonstarMtdValue' || x.internalName == 'moonstarCount'
+    //   )
+    //   .forEach((x) => {
+    //     x.parentHeaderName = 'Moonstar';
+    //   });  
 
     this.ptableSettings.tableColDef
       .filter(
