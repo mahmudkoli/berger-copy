@@ -12,71 +12,39 @@
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="p-0" style="width: 320px;">
       <div class="notification-header text-center text-white bg-primary p-3">
         <h5>Notifications</h5>
-        <p class="mb-0">You have <strong>{{pendingWorkflowCount}}</strong> unread messages</p>
+        <p class="mb-0">You have <strong>{{pendingWorkflowCount}}</strong> pending request</p>
       </div>
       <div class="notification-body p-3">
         <ngb-tabset>
-          <ngb-tab title="Message">
+          <ngb-tab title="Journey Plan">
             <ng-template ngbTabContent>
               <perfect-scrollbar style="max-width: 320px; max-height: 250px;" [autoPropagation]="true" >
-                <ul [@slideInOutAnimation] class="p-0">
-                  <li *ngFor="let workflowLog of workflowLogList" class="message-list">
-                    <!-- <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42"> -->
-                    <div>
-                      <p class="mb-0 text-ellipsis">{{workflowLog.workflowMessage}}</p>
-                      <small class="font-italic text-ellipsis">Created: {{workflowLog.createdTime | date:'dd-MM-yyyy hh.mm.ss a'}}</small>
-                    </div>
-                    <div class="approve-reject d-flex justify-content-center flex-direction-coloumn">
-                      <i class="fa fa-check-circle-o text-success" title="Approve" aria-hidden="true" (click)="openWorkflowLogModal(workflowLog, workFlowStatusEnum.Approved)"></i>
-                      <i class="fa fa-times-circle-o text-danger" title="Reject" aria-hidden="true" (click)="openWorkflowLogModal(workflowLog, workFlowStatusEnum.Rejected)"></i>
-                    </div>
-                  </li>
-                  <!-- <li class="p-2 border-bottom d-flex rounded message-list">
-                    <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42">
-                    <div>
-                      <p class="mb-0 text-ellipsis">Lorem ipsum</p>
-                      <small class="font-italic text-ellipsis">Lorem ipsum text</small>
-                    </div>
-                  </li>
-                  <li class="p-2 border-bottom d-flex rounded message-list">
-                    <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42">
-                    <div>
-                      <p class="mb-0 text-ellipsis">Lorem ipsum</p>
-                      <small class="font-italic text-ellipsis">Lorem ipsum text</small>
-                    </div>
-                  </li>
-                  <li class="p-2 border-bottom d-flex rounded message-list">
-                    <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42">
-                    <div>
-                      <p class="mb-0 text-ellipsis">Lorem ipsum</p>
-                      <small class="font-italic text-ellipsis">Lorem ipsum text</small>
-                    </div>
-                  </li> -->
-                </ul>
+                <p-table #dt [value]="lstJourneyPlan">
+                 
+                  
+                  <ng-template pTemplate="body" let-journey>
+                      <tr>
+                          <td><a href="/journey-plan/line-manager-detail/{{journey.id}}"><strong>{{journey.name }}</strong> is waiting for approval.</a></td>
+                      </tr>
+                  </ng-template>
+              </p-table>
 
               </perfect-scrollbar>
             </ng-template>
           </ngb-tab>
           <ngb-tab>
-            <ng-template ngbTabTitle>Recent</ng-template>
+            <ng-template ngbTabTitle>Dealer Opening</ng-template>
             <ng-template ngbTabContent>
               <perfect-scrollbar style="max-width: 320px; max-height: 250px;" [autoPropagation]="true" > 
-              <ul [@slideInOutAnimation] class="p-0">
-                <li *ngFor="let wfLogHis of workflowLogHistoryList" class="p-2 border-bottom d-flex rounded message-list">
-                  <!-- <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42"> -->
-                  <div>
-                    <p class="mb-0 text-ellipsis">{{wfLogHis.comments}}</p>
-                    <small class="font-italic text-ellipsis">{{getStatusText(wfLogHis.workflowStatus)}} by {{wfLogHis.userName}} on {{wfLogHis.createdTime | date:'dd-MM-yyyy hh.mm.ss a'}}</small>
-                  </div>
-                </li>
-                <!-- <li class="p-2 border-bottom d-flex rounded message-list">
-                  <img alt="" class="rounded-circle mr-2" src="./assets/images/avatars/1.jpg" width="42">
-                  <div>
-                    <p class="mb-0 text-ellipsis">Lorem ipsum</p>
-                    <small class="font-italic text-ellipsis">Lorem ipsum text</small>
-                  </div>
-                </li> -->
-              </ul>
+                <p-table #dt [value]="lstDealerOpening">
+                 
+                  
+                  <ng-template pTemplate="body" let-dealer>
+                      <tr>
+                          <td><a href="/dealer/openingList/{{dealer.id}}">Dealer opening request forword from <strong>{{dealer.currentApprovar }}</strong> to you.</a></td>
+                      </tr>
+                  </ng-template>
+              </p-table>
               </perfect-scrollbar>
             </ng-template>
           </ngb-tab>

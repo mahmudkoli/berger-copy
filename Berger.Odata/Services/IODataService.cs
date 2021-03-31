@@ -18,6 +18,7 @@ namespace Berger.Odata.Services
         Task<IList<BalanceDataModel>> GetBalanceData(string query);
         Task<IList<CollectionDataModel>> GetCollectionData(string query);
         Task<IList<CustomerDataModel>> GetCustomerData(string query);
+        Task<IList<StockDataModel>> GetStockData(string query);
         #endregion
 
         #region get selectable data
@@ -25,28 +26,52 @@ namespace Berger.Odata.Services
         Task<IList<BrandFamilyDataModel>> GetBrandFamilyDataByBrands(List<string> brands = null, bool isFamily = false);
         Task<IList<SalesDataModel>> GetSalesDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null);
-        Task<IList<SalesDataModel>> GetSalesDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string territory = "-1", List<string> brands = null);
+        Task<IList<SalesDataModel>> GetSalesDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
-        Task<IList<MTSDataModel>> GetMTSDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string date, string territory = "-1", List<string> brands = null);
+        Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
+        Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "");
         Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo);
+        Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds);
+
+        Task<IList<MTSDataModel>> GetMtsDataByCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string compareMonth, string division = "-1");
+
+        Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(
+            SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerList, string startDate, string endDate, string division = "-1",
+            List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1");
+
+        Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds, string compareMonth, string division = "-1");
+
+        Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
+            string plant = "", string materialGroup = "", string materialCode = "");
+
+        Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<int> dealerIds, string fromDate, string endDate);
         #endregion
 
         #region calculate data
         public decimal GetGrowth(decimal first, decimal second);
+        public decimal GetGrowthNew(decimal first, decimal second);
         public decimal GetAchivement(decimal target, decimal actual);
         public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays);
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays);
         public decimal GetPercentage(decimal total, decimal value);
+        decimal GetContribution(decimal first, decimal second);
+
         #endregion
     }
 }

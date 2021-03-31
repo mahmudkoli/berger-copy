@@ -5,7 +5,7 @@ namespace Berger.Common.Enumerations
     {
         public const string Dealer = "D01";
         public const string Employee = "E01";
-        public const string Company = "C01";
+        //public const string Company = "C01"; // not used from app
         public const string Payment = "P01";
         public const string Ratings = "R01";
         public const string ProductLifting = "PL01";
@@ -18,7 +18,7 @@ namespace Berger.Common.Enumerations
         public const string PaintingStage = "PS01";
         public const string ProjectStatus = "PS02";
         public const string ProjectStatusLeadCompleted = "PSLC01";
-        public const string SwappingCompetition = "SC01";
+        public const string SwappingCompetition = "SC01"; // Company
         public const string Painter = "Painter01";
         public const string ISSUES_01 = "ISSUES01";
         public const string ISSUES_02 = "ISSUES01";

@@ -1,85 +1,140 @@
-<div *ngIf="painter" class="container bootstrap snippet">
-    <div class="row">
-        <div class="col-sm-10">
-            <h1>{{painter.painterName}}</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-3">
-            <!--left col-->
 
-
-            <div class="text-center">
-                <img src="{{baseUrl}}/{{painter.painterImageUrl}}" style="border-radius: 50%;"
-                    class="avatar img-circle img-thumbnail" alt="avatar">
-            </div><br>
-
-
-
-
-            <ul class="list-group">
-                <li class="list-group-item text-muted">Attachment List</li>
-                <li *ngFor="let attachment of painter.attachments" class="list-group-item">
-                    <span class="">
-                        <strong>
-                            <a target="_blank" href="{{baseUrl}}/{{attachment.path}}">{{attachment.name}}</a>
-                        </strong>
-                    </span>
-                </li>
-
-            </ul>
-
-
-
-        </div>
-        <!--/col-3-->
-        <div class="col-sm-9">
-
-            <div class="tab-content">
-                <div class="tab-pane active" id="home">
-                    <hr>
-                    <form class="form" action="##" method="post" id="registrationForm">
-                        <div class="form-group">
-
-                            <div class="col-xs-6">
-                                <label for="first_name">
-                                    <h4> Name</h4>
-                                </label>
-                                <input type="text" value="{{painter.painterName}}" class="form-control">
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <div class="col-xs-6">
-                                <label for="phone">
-                                    <h4>Phone</h4>
-                                </label>
-                                <input type="text" value="{{painter.phone}}" class="form-control">
-                            </div>
-                        </div>
-
-
-
-                        <div class="form-group">
-                            <div class="col-xs-12">
-                                <br>
-                                <button class="btn btn-lg btn-success" type="button" (click)="back()"><i
-                                        class="glyphicon glyphicon-ok-sign"></i>Back To List</button>
-
-                            </div>
-                        </div>
-                    </form>
-
-                    <hr>
-
+<div *ngIf="painter" class="card-shadow-warning border mb-3 card card-body border-warning">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-3 border bg-light p-2">
+                <div class="text-center">
+                    <img *ngIf='painter.painterImageUrl' [src]="painter.painterImageUrl" style="border-radius: 50%;"
+                         class="avatar img-circle img-thumbnail" alt="avatar">
                 </div>
+                <br>
+                <div class="text-center">
+                    <h6 class="font-weight-bold">{{painter.painterName}}</h6>
+                    <h6 class="font-weight-bold">{{painter.phone}}</h6>
+                    <h6 class="font-weight-bold">{{painter.address}}</h6>
+                </div>
+            </div>
+            <div class="col-sm-9 bg-secondary pt-2">
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Depot:</strong></span> {{painter.depot}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Depot Name:</strong></span> {{painter.depotName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Sale Group:</strong></span> {{painter.saleGroup}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Sale Group Name:</strong></span> {{painter.saleGroupName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Zone:</strong></span> {{painter.zone}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Zone Name:</strong></span> {{painter.zoneName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Territory:</strong></span> {{painter.territory}}</p>
 
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Territory Name:</strong></span> {{painter.territoryName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Has Dbbl:</strong></span> {{painter.hasDbbl}}</p>
 
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Is App Installed:</strong></span> {{painter.isAppInstalled}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Acc Dbbl Number:</strong></span> {{painter.accDbblNumber}}</p>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Acc Dbbl Holder Named:</strong></span> {{painter.accDbblHolderName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Passport No:</strong></span> {{painter.passportNo}}</p>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>NationalId No:</strong></span> {{painter.nationalIdNo}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>BrithCertificateNo No:</strong></span> {{painter.brithCertificateNo}}</p>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Employee Id:</strong></span> {{painter.employeeId}}</p>
+
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>PainterCat Id:</strong></span> {{painter.painterCatId}}</p>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>PainterCat Name:</strong></span> {{painter.painterCatName}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Average Monthly Value:</strong></span> {{painter.avgMonthlyVal}}</p>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>Remark:</strong></span> {{painter.remark}}</p>
+                    </div>
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-sm-5">
+                        <p><span><strong>Loyality:</strong></span> {{painter.loyality}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><span><strong>No Of Painter Attached:</strong></span> {{painter.noOfPainterAttached}}</p>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
-    <!--/col-9-->
+
+
+    <br />
+    <br />
+
+    <div class="col col-md-12">
+        <app-p-table [pTableSetting]="ptableSettingsAttachedDealers" [pTableMasterData]="attachedDealers" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength">
+        </app-p-table>
+    </div>
+
+    <br />
+    <br />
+
+    <div class="col col-md-12">
+        <app-p-table [pTableSetting]="ptableSettingsPainterCall" [pTableMasterData]="painterCalls" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
+                     (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+        </app-p-table>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="back()">
+            <i class="pe-7s-back pr-1"></i> Back
+        </button>
+    </div>
 </div>

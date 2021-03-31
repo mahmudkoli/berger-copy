@@ -3,6 +3,7 @@ using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Painter;
 using BergerMsfaApi.Models.PainterRegistration;
@@ -11,12 +12,13 @@ using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
-
+using PNTR = Berger.Data.MsfaEntity.PainterRegistration;
 namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 {
     public class PainterRegistrationService : IPainterRegistrationService
@@ -30,6 +32,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<Territory> _territorySvc;
         private readonly IRepository<Depot> _depotSvc;
         private readonly IRepository<AttachedDealerPainter> _attachedDealerSvc;
+        private readonly IRepository<PainterCall> _painterCallSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
         public PainterRegistrationService(
             IRepository<Painter> painterSvc,
@@ -41,6 +45,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
              IRepository<Territory> territorySvc,
              IRepository<Depot> depotSvc,
              IRepository<AttachedDealerPainter> attachedDealerSvc,
+             IRepository<PNTR.PainterCall> painterCallSvc,
+             IRepository<DealerInfo> dealerInfoSvc,
               IMapper mapper
 
             )
@@ -54,6 +60,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             _zoneSvc = zoneSvc;
             _saleGroupSvc = saleGroupSvc;
             _attachedDealerSvc = attachedDealerSvc;
+            _painterCallSvc = painterCallSvc;
+            _dealerInfoSvc = dealerInfoSvc;
             _mapper = mapper;
 
         }
@@ -87,11 +95,81 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            var result = await _painterSvc.FindAsync(f => f.Id == Id);
-            var painterModel = result.ToMap<Painter, PainterModel>();
-            var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));
-            //foreach (var attachment in painterAttachments)
-            //      painterModel.Attachments.Add(attachment.ToMap<Attachment, AttachmentModel>());
+            
+
+            var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
+                    painter => painter,
+                    painter => painter.Id == Id,
+                    null,
+                    painter => painter
+                                      .Include(i => i.Attachments)
+                                      .Include(i => i.AttachedDealers)
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue).ThenInclude(i=>i.Company),
+
+                    true
+                );
+
+            
+            var painterModel = _mapper.Map<PainterModel>(result);
+            
+            //calculate painter call mtd value
+            foreach (var painterCall in painterModel.PainterCalls)
+            {
+                decimal sum = 0;
+                foreach (var mtdvalue in painterCall.PainterCompanyMTDValue)
+                {
+                    sum += Convert.ToDecimal(mtdvalue.Value);
+                }
+                if (sum == 0)
+                {
+                    foreach (var item in painterCall.PainterCompanyMTDValue)
+                    {
+                        item.CountInPercent = 0;
+                        item.CumelativeInPercent = 0;
+                    }
+                }
+                else
+                {
+                    //for percent
+                    foreach (var item in painterCall.PainterCompanyMTDValue)
+                    {
+                        float cal = (float)(item.Value / sum * 100);
+                        item.CountInPercent = (float)Math.Round(cal, 2);
+                    }
+                    //for cumulative percent
+                    for (int it = 0;it < painterCall.PainterCompanyMTDValue.Count; it++)
+                    {
+                        if (it < painterCall.PainterCompanyMTDValue.Count - 1)
+                        {
+                            var item = painterCall.PainterCompanyMTDValue[it];
+                            var forwardItem = painterCall.PainterCompanyMTDValue[it + 1];
+                            float cal = ((float)(item.CountInPercent * forwardItem.CountInPercent) / 100);
+                            item.CumelativeInPercent = (float)Math.Round(cal, 2);
+
+                            painterCall.PainterCompanyMTDValue[it].CumelativeInPercent = item.CumelativeInPercent;
+                        }
+                       
+                    }
+
+                }
+            }
+
+            //dummy data
+
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. qwds fsad", CustomerNo = 103 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
+            //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
+
+            foreach (var id in painterModel.AttachedDealers)
+            {
+                var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
+                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails.CustomerName, CustomerNo = dealerDetails.CustomerNo });
+                
+            }
+
+            // var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));
+            // foreach (var item in painterCallList)
+            //painterModel.PainterCallList.Add(item); //(PainterCall.ToMap<Attachment, AttachmentModel>()
 
             return painterModel;
         }
@@ -212,6 +290,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
+            _painterImageFileName = _painterImageFileName.Replace(" ", "_");
             if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
                 _painter.PainterImageUrl =
                                   await _fileUploadSvc
@@ -220,8 +299,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
+                var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
             }
 
             var result = await _painterSvc.CreateAsync(_painter);
@@ -256,8 +336,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
+                var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, attach.Name, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
 
             }
 

@@ -20,6 +20,7 @@ namespace Berger.Odata.Model
         public string BalanceUrl { get; set; }
         public string CollectionUrl { get; set; }
         public string CustomerUrl { get; set; }
+        public string StockUrl { get; set; }
         
     }
 }

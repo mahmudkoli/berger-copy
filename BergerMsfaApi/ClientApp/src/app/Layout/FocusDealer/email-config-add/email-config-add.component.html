@@ -1,0 +1,59 @@
+
+
+<div class="main-card mb-3 card">
+
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Create Email Configuration For Dealer Approval</div>
+    </div>
+
+    <div class="card-body">
+        <form #focusDealerForm="ngForm" (submit)="fnSave()">
+            <div class="form-row">
+                <div class="col-md-6">
+
+                    <div class="position-relative form-group">
+                        <label for="name">Role</label>
+                        <!-- <ng-select bindValue="employeeId"
+                                   [(ngModel)]="emailConfigModel.designation"
+                                  >
+
+                            <ng-option *ngFor="let st of employeeRoles;" [value]="st.label">{{st.label}}</ng-option>
+
+                        </ng-select> -->
+
+
+                        <ng-select [items]="employeeRoles"
+                                   bindLabel="label"
+                                   bindValue="label"
+                                   [multiple]="false"
+                                   [(ngModel)]="emailConfigModel.designation"
+                                   name="designation" #designation="ngModel">
+                        </ng-select>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Email</label>
+                        <div class="input-group">
+                            <input class="form-control" placeholder="Email"
+                                   name="Email" [(ngModel)]="emailConfigModel.email">
+                           
+                        </div>
+                    </div>
+                </div>
+
+  
+
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="fnRouteList()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>   

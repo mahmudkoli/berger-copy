@@ -3,7 +3,7 @@ import { MapObject } from "./mapObject";
 export enum EnumDynamicTypeCode {
     Dealer = "D01",
     Employee = "E01",
-    Company = "C01",
+    // Company = "C01",
     Payment = "P01",
     Ratings = "R01",
     ProductLifting = "PL01",
@@ -16,7 +16,7 @@ export enum EnumDynamicTypeCode {
     PaintingStage = "PS01",
     ProjectStatus = "PS02",
     ProjectStatusLeadCompleted = "PSLC01",
-    SwappingCompetition = "SC01",
+    SwappingCompetition = "SC01", // Company
     Painter = "Painter01",
     ISSUES_01 = "ISSUES01",
     ISSUES_02 = "ISSUES01",
@@ -26,5 +26,16 @@ export enum EnumDynamicTypeCode {
     Customer = "Customer01",
     ELearningCategory = "ELC01",
     ProductSourcing = "PS03",
+}
+
+
+export class EnumDealerSalesCallIssueCategory{
+    public static IssueCategory :  MapObject[] = [
+        { id : 1, label : "ISSUES01" },
+        { id : 2, label : "ISSUES02" },
+        { id : 3, label : "ISSUES03" },
+        { id : 4, label : "ISSUES04" },
+        { id : 5, label : "ISSUES05" }
+    ];
 }
 

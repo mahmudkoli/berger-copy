@@ -164,6 +164,22 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
   }
 
+  getPainterList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getPainterList');
+  }
+
+  getMonthList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getMonthList');
+  }
+
+  getYearList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getYearList');
+  }
+
+  getCreditControlAreaList() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/AppCommon/GetCreditControlAreaList');
+  }
+
   public getDealerList(userCategory: string, userCategoryIds: string[]) {
     var params = new HttpParams();
     params = params.append("userCategory", userCategory);

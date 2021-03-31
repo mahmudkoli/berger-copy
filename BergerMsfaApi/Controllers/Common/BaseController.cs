@@ -65,7 +65,7 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
-        protected IActionResult ExceptionResult(Exception ex)
+        protected IActionResult ExceptionResult(Exception ex, string msg = null)
         {
             ex.ToWriteLog();
             
@@ -73,7 +73,7 @@ namespace BergerMsfaApi.Controllers.Common
             {
                 StatusCode = 500,
                 Status = "Error",
-                Msg = ex.Message,
+                Msg = msg ?? ex.Message,
                 Data = new object()
             };
             return ObjectResult(apiResult);

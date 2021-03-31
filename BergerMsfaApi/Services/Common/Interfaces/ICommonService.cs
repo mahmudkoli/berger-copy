@@ -3,6 +3,7 @@ using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Common.Implementation;
 using System.Collections.Generic;
@@ -21,7 +22,11 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<Zone>> GetZoneList();
         Task<IEnumerable<DepotModel>> GetDepotList();
         Task<IEnumerable<RoleModel>> GetRoleList();
-        Task<IEnumerable<Division>> GetDivisionList(); 
+        Task<IEnumerable<Division>> GetDivisionList();
+        Task<IEnumerable<PainterModel>> GetPainterList();
+        IEnumerable<MonthModel> GetMonthList();
+        IEnumerable<YearModel> GetYearList();
+        //Task<IEnumerable<Division>> GetDivisionList(); 
         Task<IEnumerable<CreditControlArea>> GetCreditControlAreaList();
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory);
         Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId);
@@ -30,5 +35,6 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
         Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
         Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds);
+        void SetEmptyString<T>(List<T> items, params string[] propNames);
     }
 }

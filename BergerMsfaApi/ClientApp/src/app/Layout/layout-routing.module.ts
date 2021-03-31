@@ -11,12 +11,13 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
 
-            { path: '', redirectTo: 'menu' },
+            { path: '', redirectTo: 'journey-plan' },
             // { path: '', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
 
+            { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
             { path: 'menu', loadChildren: () => import('./menu-details/menu-details.module').then(m => m.MenuDetailsModule) },
             // tslint:disable-next-line:max-line-length
-            { path: 'product', loadChildren: () => import('./product-details/product-details.module').then(m => m.ProductDetailsModule) },
+            // { path: 'product', loadChildren: () => import('./product-details/product-details.module').then(m => m.ProductDetailsModule) },
             // tslint:disable-next-line:max-line-length
             { path: 'role', loadChildren: () => import('./role-details/role-details.module').then(m => m.RoleDetailsModule) },
             { path: 'demo', loadChildren: () => import('./DemoPages/demo.module').then(m => m.DemoModule) },

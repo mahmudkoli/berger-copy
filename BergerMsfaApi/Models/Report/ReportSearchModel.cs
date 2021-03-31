@@ -45,4 +45,73 @@ namespace BergerMsfaApi.Models.Report
         public string ProjectCode { get; set; }
         public int? ProjectStatusId { get; set; }
     }
+
+    public class PainterRegistrationReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public string PainterName { get; set; }
+        public string PainterMobileNo { get; set; }
+        public int? PainterType { get; set; }
+    }
+
+    public class DealerOpeningReportSearchModel : ReportBaseSearchModel
+    {
+
+    }
+
+    public class TintingMachineReportSearchModel : ReportBaseSearchModel
+    {
+     
+    }
+
+    public class ActiveSummeryReportSearchModel : ReportBaseSearchModel
+    {
+
+    }
+
+    public class CollectionReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PaymentMethodId { get; set; }
+        public int? DealerId { get; set; }
+    }
+
+    public class PainterCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public int? PainterType { get; set; }
+    }
+
+    public class DealerVisitReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
+    }
+
+    public class DealerSalesCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class SubDealerSalesCallReportSearchModel : ReportBaseSearchModel
+    {
+        public int? SubDealerId { get; set; }
+    }
+
+    public class DealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class SubDealerIssueReportSearchModel : ReportBaseSearchModel
+    {
+        public int? SubDealerId { get; set; }
+    }
+    public class OsOver90daysTrendReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+        public string CreditControlArea { get; set; }
+        public string AccountGroup { get; set; }
+        public string SalesOffice { get; set; }
+    }
 }

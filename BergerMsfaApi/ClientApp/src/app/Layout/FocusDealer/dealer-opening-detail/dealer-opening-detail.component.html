@@ -1,6 +1,4 @@
-<p-table  [value]="dealerOpen.dealerOpeningAttachments">
 
-    <ng-template pTemplate="caption">
         <div class="table-header">
             <div class="row">
               
@@ -28,9 +26,21 @@
                         <p> <label>Employee Id :{{dealerOpen.employeeId}}</label> </p>
                     </div>
 
+                    
+
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <button *ngIf="dealerOpen" (click)="onStatusChange(1,dealerOpen)" class="btn btn-sm btn-primary">Approve</button>
+                        <button *ngIf="dealerOpen" (click)="onStatusChange(3,dealerOpen)" class="btn btn-sm btn-danger ml-2">Reject</button>
+                    </div>
+                    <div class="col-md-5">
+                        <textarea style="display:inline"  [(ngModel)]="dealeropening.comment" placeholder="comment...." class="form-control"></textarea>
+                    </div>
+            
                 </div>
         </div>
-    </ng-template>
+    <p-table  [value]="dealerOpen.dealerOpeningAttachments">
 
     <ng-template pTemplate="header">
         <tr>
@@ -38,26 +48,71 @@
             <th pSortableColumn="path">Image</th>
         </tr>
     </ng-template>
-
-    <ng-template pTemplate="body" let-dealerOpen>
+<br/>
+    <ng-template pTemplate="body" let-attachment>
         <tr>
             <td>
                 <!-- <img [alt]="dealerOpen.name" src="{{baseUrl}}/{{dealerOpen.path}}" width="60"
                 style="vertical-align: middle; border-radius: 50%;" /> -->
                 <span class="">
                     <strong>
-                        <a href="{{dealerOpen.path}}" target="_self" download [class.disabled]="!dealerOpen.path" >{{dealerOpen.name}} </a>
+                        <a href="{{attachment.path}}" target="_self" download [class.disabled]="!attachment.path" >{{attachment.name}} </a>
                     </strong>
                 </span>
             </td>
-            <td><img [alt]="dealerOpen.name" src="{{dealerOpen.path}}" width="60"
+            <td><img [alt]="attachment.name" src="{{attachment.path}}" width="60"
                 style="vertical-align: middle; border-radius: 5%;" /></td>
 
         </tr>
     </ng-template>
+
+
+ 
+
+    
+
+</p-table>
+<div *ngIf="dealerOpen.dealerOpeningLogs.length>0">
+
+<p-table  [value]="dealerOpen.dealerOpeningLogs">
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="userName">User Name</th>
+            <!-- <th pSortableColumn="dealerOpeningId">Dealer Opening Id</th> -->
+            <th pSortableColumn="propertyName">Property Name</th>
+            <th pSortableColumn="propertyValue">Property Value</th>
+            <th pSortableColumn="propertyValue">Created Time</th>
+
+
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-dealerOpenlog>
+        <tr>
+            <td>
+                {{dealerOpenlog.user.userName}}
+            </td>
+            <!-- <td>
+                {{dealerOpenlog.dealerOpeningId}}
+            </td> -->
+            <td>
+                Approve
+            </td>
+            <td>
+                <p *ngIf="dealerOpenlog.propertyValue==1">Yes</p>
+                <p *ngIf="dealerOpenlog.propertyValue==3">No</p>
+            </td>
+            <td>
+                {{dealerOpenlog.createdTime | date:'medium'}}
+            </td>
+
+        </tr>
+    </ng-template>
+
     <ng-template pTemplate="footer">
         <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
     </ng-template>
-
 </p-table>
+</div>
+
 <!--{{dealerOpen|json}}-->

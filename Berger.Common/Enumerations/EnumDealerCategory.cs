@@ -10,5 +10,7 @@ namespace Berger.Common.Enumerations
     {
         All=1,
         Focus=2,
+        //TODO: need to work
+        //Top=3,
     }
 }

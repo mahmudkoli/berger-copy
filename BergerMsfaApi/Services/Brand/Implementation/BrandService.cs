@@ -104,6 +104,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsMTS"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsPremium"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["isEnamel"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
             };
 
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
@@ -117,10 +118,11 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
                     case "IsMTS": find.IsMTS = !find.IsMTS; break;
                     case "IsPremium": find.IsPremium = !find.IsPremium; break;
+                    case "isEnamel": find.IsEnamel = !find.IsEnamel; break;
                     default: break;
                 }
             }
-
+            
             if (findAll.Any())
                 await _brandInfoRepository.UpdateListAsync(findAll);
 
@@ -134,6 +136,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         
         private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
         {
+            
             foreach (var brandInfoItem in findAll)
             {
 
@@ -142,7 +145,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     UserId = userId,
                     BrandInfoId = brandInfoItem.Id,
                     PropertyValue = GetPropertyValue(brandStatus.PropertyName, brandInfoItem),
-                    PropertyName = brandStatus.PropertyName
+                    PropertyName = brandStatus.PropertyName.Remove(0,2) // ISMTS -> MTS
 
                 };
                 
@@ -156,9 +159,10 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             string value="";
             switch (propertyName)
             {
-                case "IsCBInstalled": value = (brandInfo.IsCBInstalled == true? "CBI" : "NonCBI"); break;
-                case "IsMTS": value = (brandInfo.IsMTS == true ? "MTS" : "NonMTS"); break;
-                case "IsPremium": value = (brandInfo.IsPremium == true ? "PREMIUM" : "NonPREMIUM"); break;
+                case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "Yes" : "No"); break;
+                case "IsMTS": value = (brandInfo.IsMTS ? "Yes" : "No"); break;
+                case "IsPremium": value = (brandInfo.IsPremium ? "Yes" : "No"); break;
+                case "isEnamel": value = (brandInfo.IsEnamel ? "Yes" : "No"); break;
                 default: break;
             }
             return value;
@@ -173,7 +177,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                         brand => brand.OrderByDescending(b => b.CreatedTime),
                         brand => brand.Include(i => i.BrandInfo).Include(i => i.User),
                         true
-                ) ;
+                );
             var modelResult = _mapper.Map<IEnumerable<BrandInfoStatusLogModel>>(result);
             return modelResult;
         }

@@ -14,5 +14,7 @@ namespace Berger.Odata.Common
         public const string CollectionMoneyReceipt = "MR";
         public const string CollectionInvoice = "IN";
         //public const string CollectionCreditNote = "CN";
+        public const string CustomerClassificationExclusive = "01";
+        public const string CustomerClassificationNonExclusive = "02";
     }
 }
