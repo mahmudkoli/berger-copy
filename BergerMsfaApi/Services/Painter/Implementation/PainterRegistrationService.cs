@@ -104,7 +104,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     painter => painter
                                       .Include(i => i.Attachments)
                                       .Include(i => i.AttachedDealers)
-                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue),
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue).ThenInclude(i=>i.Company),
 
                     true
                 );
@@ -112,8 +112,47 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             
             var painterModel = _mapper.Map<PainterModel>(result);
             
+            //calculate painter call mtd value
+            foreach (var painterCall in painterModel.PainterCalls)
+            {
+                decimal sum = 0;
+                foreach (var mtdvalue in painterCall.PainterCompanyMTDValue)
+                {
+                    sum += Convert.ToDecimal(mtdvalue.Value);
+                }
+                if (sum == 0)
+                {
+                    foreach (var item in painterCall.PainterCompanyMTDValue)
+                    {
+                        item.CountInPercent = 0;
+                        item.CumelativeInPercent = 0;
+                    }
+                }
+                else
+                {
+                    //for percent
+                    foreach (var item in painterCall.PainterCompanyMTDValue)
+                    {
+                        float cal = (float)(item.Value / sum * 100);
+                        item.CountInPercent = (float)Math.Round(cal, 2);
+                    }
+                    //for cumulative percent
+                    for (int it = 0;it < painterCall.PainterCompanyMTDValue.Count; it++)
+                    {
+                        if (it < painterCall.PainterCompanyMTDValue.Count - 1)
+                        {
+                            var item = painterCall.PainterCompanyMTDValue[it];
+                            var forwardItem = painterCall.PainterCompanyMTDValue[it + 1];
+                            float cal = ((float)(item.CountInPercent * forwardItem.CountInPercent) / 100);
+                            item.CumelativeInPercent = (float)Math.Round(cal, 2);
 
+                            painterCall.PainterCompanyMTDValue[it].CumelativeInPercent = item.CumelativeInPercent;
+                        }
+                       
+                    }
 
+                }
+            }
 
             //dummy data
 

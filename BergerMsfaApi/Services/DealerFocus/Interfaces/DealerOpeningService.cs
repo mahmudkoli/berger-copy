@@ -125,12 +125,18 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
         {
-            var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync());
-
-
-            return await result.ToPagedListAsync(index, pageSize);
-
-
+            var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString()).FirstOrDefault();
+            if (emailConfig != null)
+            {
+                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.GetAllAsync());
+                return await result.ToPagedListAsync(index, pageSize);
+            }
+            else
+            {
+                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync());
+                return await result.ToPagedListAsync(index, pageSize);
+            }
         }
 
 
@@ -220,6 +226,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             dealerOpening.NextApprovarId = managerUser.Id;
             dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
+            dealerOpening.Code = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+
+
             foreach (var attach in dealerOpening.DealerOpeningAttachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
@@ -300,13 +309,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //}).CreateMapper();
 
             var result = await _dealerOpeningSvc.FindIncludeAsync(f => f.Id == id, f => f.DealerOpeningAttachments, f => f.dealerOpeningLogs);
-            //foreach (var item in result.dealerOpeningLogs)
-            //{
-            //    var user = _userInfoSvc.Find(p => p.Id == item.UserId);
-            //    item.User = user;
-            //}
-
-            //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); ;
+            foreach (var item in result.dealerOpeningLogs)
+            {
+                var user = _userInfoSvc.Find(p => p.Id == item.UserId);
+                item.User = user;
+            }
+            //var data = result.dealerOpeningLogs.OrderByDescending(p => p.CreatedTime);
+            //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); 
             return _mapper.Map<DealerOpeningModel>(result);
 
         }
@@ -320,7 +329,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 DealerOpening = dealerInfoId,
                 UserId = AppIdentity.AppUser.UserId,
                 PropertyName = propertyName,
-                PropertyValue = propertyValue
+                PropertyValue = propertyValue,
+                CreatedTime = DateTime.UtcNow
             };
             var res = await _dealerOpeningLog.CreateAsync(DealerStatusLog);
 
@@ -333,15 +343,23 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             try
             {
                 var dealer = _dealerOpeningSvc.Find(p => p.Id == dealeropeningId);
-                var attachment = await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.Id == dealeropeningId);
+                var attachment = await _dealerOpeningAttachmentSvc.FindAllAsync(p => p.DealerOpeningId == dealeropeningId);
                 List<System.Net.Mail.Attachment> lstAttachment = new List<System.Net.Mail.Attachment>();
-                if (lstAttachment.Count > 0)
+                if (attachment.Count > 0)
                 {
                     foreach (var item in attachment)
                     {
-                        string path = Path.Combine(_env.ContentRootPath, item.Path);
-                        var url = new System.Net.Mail.Attachment(path);
-                        lstAttachment.Add(url);
+                        if (!string.IsNullOrEmpty(item.Path))
+                        {
+                            string path = Path.Combine(_env.WebRootPath, item.Path);
+                            if (File.Exists(path))
+                            {
+                                var url = new System.Net.Mail.Attachment(path);
+                                lstAttachment.Add(url);
+                            }
+
+                        }
+
                     }
 
                 }
@@ -351,11 +369,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 foreach (var item in lstemail)
                 {
                     var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
-                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); ;
-                    //string messageBody = string.Format(ConstantsLeadValue.OpeningMailBody, createdBy.UserName, LastApprovar.UserName);
-                    //string subject = string.Format(ConstantsLeadValue.OpeningMailSubject, dealeropeningId);
+                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); 
+                    string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
+                    string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
 
-                    await _emailSender.SendEmailWithAttachmentAsync(item, ConstantsLeadValue.OpeningMailSubject, ConstantsLeadValue.OpeningMailBody, lstAttachment);
+                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
                 }
             }
             catch (System.Exception ex)
@@ -367,7 +385,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<List<DealerOpening>> GetDealerOpeningPendingListForNotificationAsync()
         {
-            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.Status == (int)DealerOpeningStatus.Pending).ToListAsync();
+            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync();
             return result;
         }
     }

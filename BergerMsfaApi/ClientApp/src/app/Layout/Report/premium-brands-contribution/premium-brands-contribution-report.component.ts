@@ -315,7 +315,7 @@ export class PremiumBrandsContributionReportComponent implements OnInit, OnDestr
 
 		//set default to date
 		td.setMonth(td.getMonth()-1)
-		this.tomonth=td.getMonth()+1;
+		this.tomonth=td.getMonth();
 		this.toyear=td.getFullYear();
 	}
 

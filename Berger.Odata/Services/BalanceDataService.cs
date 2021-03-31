@@ -83,7 +83,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(BalanceColDef.CustomerNo)
                                 .AddProperty(BalanceColDef.CustomerName)
                                 .AddProperty(BalanceColDef.CreditControlArea)
-                                .AddProperty(BalanceColDef.PostingDate)
+                                .AddProperty(BalanceColDef.PostingDateDoc)
                                 .AddProperty(BalanceColDef.Amount);
 
             var selectCollectionQueryBuilder = new SelectQueryOptionBuilder();
@@ -102,8 +102,10 @@ namespace Berger.Odata.Services
 
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                var dataBal = dataBalance.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date == date.Date);
-                var dataCol = dataCollection.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date == date.Date);
+                IEnumerable<DateTime> dateTimes = dataBalance.Select(x =>CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc));
+
+                var dataBal = dataBalance.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc).Date == date.Date).ToList();
+                var dataCol = dataCollection.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date == date.Date).ToList();
 
                 if (dataBal.Any() || dataCol.Any())
                 {

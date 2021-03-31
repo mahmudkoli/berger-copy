@@ -8,11 +8,11 @@ namespace BergerMsfaApi.Models.PainterRegistration
     {
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>()
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.DropdownName))
-                .ForMember(dest => dest.CumelativeInPercent, opt => opt.MapFrom(src => src.CountInPercent));
+            profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>();
+                //.ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src!=null? $"{src.Company.DropdownName}":string.Empty))
+                //.ForMember(dest => dest.CumelativeInPercent, opt => opt.MapFrom(src => src.CountInPercent));
             
-
+            
         }
 
         public int Id { get; set; }

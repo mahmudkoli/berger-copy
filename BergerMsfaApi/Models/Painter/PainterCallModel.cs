@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PainterCall, PainterCallModel>();
-
+                 
         }
         
         public int Id { get; set; }
