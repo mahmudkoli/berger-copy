@@ -285,7 +285,7 @@ namespace Berger.Odata.Services
 
             return await ToPortalModel(result);
         }
-        
+
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
@@ -358,7 +358,7 @@ namespace Berger.Odata.Services
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = _odataService.GetGrowthNew(res.TotalTarget, res.TotalActual);
+                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalActual, res.TotalTarget);
 
                 result.Add(res);
             }
@@ -373,6 +373,7 @@ namespace Berger.Odata.Services
             var monthCount = 3;
             var brands = new List<string>();
             var monthlyDictTarget = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyActData = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
@@ -381,6 +382,9 @@ namespace Berger.Odata.Services
                 .AddProperty(DataColumnDef.NetAmount);
 
             brands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            Division division = await _oDataDivisionRepository.FindAsync(x => x.Description == "Decorative");
+            string divisionCode = division != null ? division.DivisionCode.ToString() : "";
 
             for (var i = 0; i < monthCount; i++)
             {
@@ -393,6 +397,11 @@ namespace Berger.Odata.Services
 
                 var monthName = fromDate.GetMonthName(number);
 
+                monthlyActData.Add(monthName, data);
+
+
+                data = data.Where(x => x.Division == divisionCode).ToList();
+
                 monthlyDictTarget.Add(monthName, data);
             }
 
@@ -401,14 +410,7 @@ namespace Berger.Odata.Services
                 int number = i;
 
                 var monthName = fromDate.GetMonthName(number);
-
-                var data = monthlyDictTarget[monthName];
-
-
-                Division division = await _oDataDivisionRepository.FindAsync(x => x.Description == "Decorative");
-                string divisionCode = division != null ? division.DivisionCode.ToString() : "";
-
-                data = data.Where(x => x.Division == divisionCode).ToList();
+                var data = monthlyActData[monthName];
 
                 monthlyDictActual.Add(monthName, data);
             }
@@ -429,13 +431,13 @@ namespace Berger.Odata.Services
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
                     {
-                        MonthName = $"{monthName} (Premium Brand actual Sales at his Territory)",
+                        MonthName = $"{monthName} (Total Deco Sales at his Territory)",
                         Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
                     });
 
                     res.MonthlyActualData.Add(new MonthlyDataModel()
                     {
-                        MonthName = $"{monthName} (Total Deco Sales at his Territory)",
+                        MonthName = $"{monthName} (Premium Brand actual Sales at his Territory)",
                         Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
                     });
                 }
@@ -523,14 +525,14 @@ namespace Berger.Odata.Services
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = _odataService.GetGrowthNew(res.TotalTarget, res.TotalActual);
+                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalActual, res.TotalTarget);
 
                 result.Add(res);
             }
 
             return await ToPortalModel(result);
         }
-        
+
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> ToPortalModel(List<QuarterlyPerformanceDataResultModel> data)
         {
             var result = new List<PortalQuarterlyPerformanceDataResultModel>();
