@@ -37,7 +37,9 @@ export class LeadGeneration {
     expectedMonthlyBusinessValue: number;
     expectedMonthlyBusinessValueChangeCount: number;
     requirementOfColorScheme: boolean;
+    requirementOfColorSchemeText: string;
     productSamplingRequired: boolean;
+    productSamplingRequiredText: string;
     nextFollowUpDate: Date;
     nextFollowUpDateText: string;
     remarks: string;
@@ -154,7 +156,7 @@ export class LeadBusinessAchievement {
     nextVisitDateText: string;
     remarksOrOutcome: string;
     photoCaptureUrl: string;
-    
+
     constructor(init?: Partial<LeadBusinessAchievement>) {
         Object.assign(this, init);
     }
