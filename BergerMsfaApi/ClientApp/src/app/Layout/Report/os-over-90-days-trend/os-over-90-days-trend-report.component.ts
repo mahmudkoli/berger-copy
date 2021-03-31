@@ -133,7 +133,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 	
     populateDropdownDataList() {
         forkJoin([
-            this.commonService.getUserInfoList(),
+            this.commonService.getUserInfoListByLoggedInManager(),
             this.commonService.getDepotList(),
             this.commonService.getSaleGroupList(),
             this.commonService.getTerritoryList(),
@@ -312,7 +312,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 
 		//set default to date
 		td.setMonth(td.getMonth()-1)
-		this.tomonth=td.getMonth()+1;
+		this.tomonth=td.getMonth();
 		this.toyear=td.getFullYear();
 	}
 

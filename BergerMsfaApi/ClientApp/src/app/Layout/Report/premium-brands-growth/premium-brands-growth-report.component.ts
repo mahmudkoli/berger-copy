@@ -270,6 +270,16 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
     this.ptableSettings.tableColDef
       .filter(
         (x) =>
+          x.internalName == 'totalTarget' || x.internalName == 'totalActual'
+      )
+      .forEach((element) => {
+        element.headerName =
+          element.internalName == 'totalActual' ? 'Total CY' : 'Total LY';
+      });
+
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) =>
           x.internalName == 'firstMonthTargetAmount' ||
           x.internalName == 'secondMonthTargetAmount' ||
           x.internalName == 'thirdMonthTargetAmount' ||

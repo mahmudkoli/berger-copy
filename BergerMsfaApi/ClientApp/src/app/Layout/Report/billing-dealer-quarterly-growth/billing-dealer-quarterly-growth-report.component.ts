@@ -289,6 +289,16 @@ export class BillingDealerQuarterlyGrowthReportComponent
         element.headerName = this.data[0][propertyName];
       });
 
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) =>
+          x.internalName == 'totalTarget' || x.internalName == 'totalActual'
+      )
+      .forEach((element) => {
+        element.headerName =
+          element.internalName == 'totalActual' ? 'Total CY' : 'Total LY';
+      });
+
     this.ptableSettings.tableColDef = this.ptableSettings.tableColDef.filter(
       (x) =>
         !(
