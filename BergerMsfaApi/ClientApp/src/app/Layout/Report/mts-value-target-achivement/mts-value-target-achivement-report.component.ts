@@ -344,11 +344,11 @@ export class MtsValueTargetAchivementReportComponent
     this.frommonth = fd.getMonth() + 1;
     this.fromyear = fd.getFullYear();
 
-    //set default to date
-    td.setMonth(td.getMonth() - 1);
-    this.tomonth = td.getMonth() + 1;
-    this.toyear = td.getFullYear();
-  }
+		//set default to date
+		td.setMonth(td.getMonth()-1)
+		this.tomonth=td.getMonth();
+		this.toyear=td.getFullYear();
+	}
 
   private leapYear(year) {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;

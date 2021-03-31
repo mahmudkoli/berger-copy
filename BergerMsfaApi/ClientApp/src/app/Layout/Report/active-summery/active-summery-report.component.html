@@ -44,6 +44,31 @@
                     </ng-select>
                 </div>
             </div>
+
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">From Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" [(ngModel)]="fromDate" 
+                            ngbDatepicker #dpFromDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpFromDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative form-group">
+                    <label class="">To Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" [(ngModel)]="toDate" 
+                            ngbDatepicker #dpToDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpToDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
         </div>
         <div class="row">
