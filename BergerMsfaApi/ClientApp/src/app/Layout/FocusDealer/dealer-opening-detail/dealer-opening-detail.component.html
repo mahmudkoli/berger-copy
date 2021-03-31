@@ -1,6 +1,4 @@
-<p-table  [value]="dealerOpen.dealerOpeningAttachments">
 
-    <ng-template pTemplate="caption">
         <div class="table-header">
             <div class="row">
               
@@ -42,7 +40,7 @@
             
                 </div>
         </div>
-    </ng-template>
+    <p-table  [value]="dealerOpen.dealerOpeningAttachments">
 
     <ng-template pTemplate="header">
         <tr>
@@ -51,18 +49,18 @@
         </tr>
     </ng-template>
 <br/>
-    <ng-template pTemplate="body" let-dealerOpen>
+    <ng-template pTemplate="body" let-attachment>
         <tr>
             <td>
                 <!-- <img [alt]="dealerOpen.name" src="{{baseUrl}}/{{dealerOpen.path}}" width="60"
                 style="vertical-align: middle; border-radius: 50%;" /> -->
                 <span class="">
                     <strong>
-                        <a href="{{dealerOpen.path}}" target="_self" download [class.disabled]="!dealerOpen.path" >{{dealerOpen.name}} </a>
+                        <a href="{{attachment.path}}" target="_self" download [class.disabled]="!attachment.path" >{{attachment.name}} </a>
                     </strong>
                 </span>
             </td>
-            <td><img [alt]="dealerOpen.name" src="{{dealerOpen.path}}" width="60"
+            <td><img [alt]="attachment.name" src="{{attachment.path}}" width="60"
                 style="vertical-align: middle; border-radius: 5%;" /></td>
 
         </tr>
@@ -74,14 +72,16 @@
     
 
 </p-table>
+<div *ngIf="dealerOpen.dealerOpeningLogs.length>0">
 
 <p-table  [value]="dealerOpen.dealerOpeningLogs">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="userName">User Name</th>
-            <th pSortableColumn="dealerOpeningId">Dealer Opening Id</th>
-            <th pSortableColumn="propertyValue">Property Value</th>
+            <!-- <th pSortableColumn="dealerOpeningId">Dealer Opening Id</th> -->
             <th pSortableColumn="propertyName">Property Name</th>
+            <th pSortableColumn="propertyValue">Property Value</th>
+            <th pSortableColumn="propertyValue">Created Time</th>
 
 
         </tr>
@@ -90,16 +90,20 @@
     <ng-template pTemplate="body" let-dealerOpenlog>
         <tr>
             <td>
-                {{dealerOpenlog.userid}}
+                {{dealerOpenlog.user.userName}}
+            </td>
+            <!-- <td>
+                {{dealerOpenlog.dealerOpeningId}}
+            </td> -->
+            <td>
+                Approve
             </td>
             <td>
-{{dealerOpenlog.dealerOpeningId}}
+                <p *ngIf="dealerOpenlog.propertyValue==1">Yes</p>
+                <p *ngIf="dealerOpenlog.propertyValue==3">No</p>
             </td>
             <td>
-                {{dealerOpenlog.propertyValue}}
-            </td>
-            <td>
-                {{dealerOpenlog.propertyName}}
+                {{dealerOpenlog.createdTime | date:'medium'}}
             </td>
 
         </tr>
@@ -109,4 +113,6 @@
         <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
     </ng-template>
 </p-table>
+</div>
+
 <!--{{dealerOpen|json}}-->

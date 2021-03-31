@@ -32,7 +32,7 @@ namespace BergerMsfaApi.Models.Brand
                 .ForMember(dest => dest.CreatedBy,
                     opt => opt.MapFrom(src => src.User != null ? $"{src.User.FullName}" : string.Empty))
                 .ForMember(dest => dest.CreatedTime,
-                    opt => opt.MapFrom(src => src.CreatedTime.ToLongDateString()))
+                    opt => opt.MapFrom(src => src.CreatedTime.ToString()))
                 .ForMember(dest => dest.MaterialGroupOrBrand,
                     opt => opt.MapFrom(src => src.BrandInfo.MaterialGroupOrBrand))
                 .ForMember(dest => dest.PackSize,
@@ -42,7 +42,9 @@ namespace BergerMsfaApi.Models.Brand
                 .ForMember(dest => dest.Division,
                     opt => opt.MapFrom(src => src.BrandInfo.Division))
                 .ForMember(dest => dest.MaterialDescription,
-                    opt => opt.MapFrom(src => src.BrandInfo.MaterialDescription));
+                    opt => opt.MapFrom(src => src.BrandInfo.MaterialDescription))
+                .ForMember(dest => dest.PropertyName,
+                    opt => opt.MapFrom(src => src.PropertyName== "CBInstalled" ? "CB Installed" : src.PropertyName));
 
 
         }

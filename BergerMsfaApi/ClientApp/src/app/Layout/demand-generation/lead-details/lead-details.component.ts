@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { finalize } from 'rxjs/operators';
@@ -19,18 +19,20 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 
   lead: LeadGeneration;
   leadFollowUps: LeadFollowUp[];
-	
+	public baseUrl: string;
 	private subscriptions: Subscription[] = [];
 
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private alertService: AlertService,
-    private leadService: LeadService,
-	private modalService: NgbModal
+	private router: Router,
+	private activatedRoute: ActivatedRoute,
+	private alertService: AlertService,
+	private leadService: LeadService,
+	  private modalService: NgbModal,
+	  @Inject('BASE_URL') baseUrl: string
   ) { 
-    this.lead = new LeadGeneration();
-    this.lead.clear();
+	this.lead = new LeadGeneration();
+	  this.lead.clear();
+	  this.baseUrl = baseUrl;
   }
 
   ngOnInit() {
@@ -45,15 +47,17 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 					.subscribe(res => {
 						if (res) {
 							this.lead = res.data as LeadGeneration;
-              this.leadFollowUps = this.lead.leadFollowUps || [];
-              console.log(this.lead);
-              this.leadFollowUps.forEach((x) => {
-                x.detailsBtnText = "View FollowUp";
-              });
+							this.lead.requirementOfColorSchemeText = this.lead.requirementOfColorScheme ? "Yes" : "No";
+							this.lead.productSamplingRequiredText = this.lead.productSamplingRequired ? "Yes" : "No";
+							this.leadFollowUps = this.lead.leadFollowUps || [];
+							console.log(this.lead);
+							this.leadFollowUps.forEach((x) => {
+								x.detailsBtnText = "View FollowUp";
+							});
 						}
 					});
 			} else {
-        
+		
 			}
 		});
 		this.subscriptions.push(routeSubscription);
@@ -64,7 +68,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 	}
 
   public backToTheList() {
-    this.router.navigate(['/lead']);
+	this.router.navigate(['/lead']);
   }
   
 	public ptableSettings: IPTableSetting = {
@@ -108,7 +112,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	public detailsLeadFollowUp(leadFollowUp: LeadFollowUp) {
-    	console.log(leadFollowUp);
+		console.log(leadFollowUp);
 		this.openLeadFollowUpDetailsModal(leadFollowUp);
 	}
 	
@@ -125,12 +129,12 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 		modalRef.componentInstance.leadFollowUp = leadFollowUp;
 	
 		modalRef.result.then(
-		  	(result) => {
+			(result) => {
 				console.log(result);
-		  	},
-		  	(reason) => {
+			},
+			(reason) => {
 				console.log(reason);
-		  	}
+			}
 		);
 	}
 }
