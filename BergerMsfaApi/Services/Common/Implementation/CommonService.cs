@@ -513,6 +513,24 @@ namespace BergerMsfaApi.Services.Common.Implementation
             if (item == null) return;
             item.Name = name;
         }
+
+        public void SetEmptyString<T>(List<T> items, params string[] propNames)
+        {
+            var entity = typeof(T);
+            foreach (var item in items)
+            {
+                foreach (var propName in propNames)
+                {
+                    var prop = entity.GetProperty(propName);
+                    if (prop != null)
+                    {
+                        prop.SetValue(item, string.Empty);
+                    }
+                }
+            }
+
+        }
+
     }
 
     public class DepotModel
@@ -549,4 +567,6 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    
 }

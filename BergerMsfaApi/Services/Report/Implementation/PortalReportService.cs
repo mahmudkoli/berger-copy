@@ -2116,8 +2116,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
-                    //Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
-                    Actual ="0",
+                    Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
+                    //Actual ="0",
                     Variance="N/A",
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
