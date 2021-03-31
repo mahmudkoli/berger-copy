@@ -69,6 +69,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
         private readonly IFinancialDataService _financialDataService;
+        private readonly ICollectionDataService _collectionDataService;
+
 
         private readonly ApplicationDbContext _context;
         private readonly IAuthService _service;
@@ -102,7 +104,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IMapper mapper,
                 IFinancialDataService financialDataService,
                 ApplicationDbContext context,
-                IAuthService service
+                IAuthService service,
+                ICollectionDataService collectionDataService
             )
         {
             this._leadGenerationRepository = leadGenerationRepository;
@@ -137,6 +140,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             this._context = context;
             _service = service;
+            _collectionDataService = collectionDataService;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -1908,54 +1912,67 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)
         {
-            var data = await (from master in _context.JourneyPlanMasters
-                              join details in _context.JourneyPlanDetails on master.Id equals details.PlanId into detailsLeftJoin
-                              from detailsInfo in detailsLeftJoin.DefaultIfEmpty()
-                              join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
-                              from dscInfo in dscLeftJoin.DefaultIfEmpty()
-                              join painterCall in _context.PainterCalls on master.EmployeeId equals painterCall.EmployeeId into
-                                  painterCallLeftJoin
-                              from painterCallInfo in painterCallLeftJoin.DefaultIfEmpty()
+            UserInfo userinfo = new UserInfo();
 
-                              join painterRegistration in _context.Painters on master.EmployeeId equals painterRegistration.EmployeeId into
-                                 painterRegistrationLeftJoin
-                              from painterRegistration in painterRegistrationLeftJoin.DefaultIfEmpty()
+            IList<int> dealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            if (query.UserId.HasValue)
+            {
+                userinfo = _context.UserInfos.Where(p => p.Id == query.UserId).FirstOrDefault();
 
-                              join userInfo in _context.UserInfos on master.EmployeeId equals userInfo.EmployeeId into
-                                 userinfoLeftJoin
-                              from userInfo in userinfoLeftJoin.DefaultIfEmpty()
+            }
+            else
+            {
+                userinfo = _context.UserInfos.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
 
-                              join dsc2 in _context.DealerSalesCalls on new
-                              {
-                                  EmployeeId = AppIdentity.AppUser.UserId.ToString(),
-                                  Date = DateTime.Now.Date,
-                                  JourneyPlanId = 0
-                              }
-                                  equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date, JourneyPlanId = dsc2.JourneyPlanId ?? 0 } into dsc2LeftJoin
-                              from dsc2Info in dsc2LeftJoin.DefaultIfEmpty()
-                              join ld in _context.LeadGenerations on new { master.EmployeeId, Date = DateTime.Now.Date }
-                                  equals new { EmployeeId = ld.UserId.ToString(), Date = ld.CreatedTime.Date } into ldLeftJoin
-                              from ldInfo in ldLeftJoin.DefaultIfEmpty()
-                              join lfu in _context.LeadFollowUps on new { ldInfo.Id, Date = DateTime.Now.Date }
-                                  equals new { Id = lfu.LeadGenerationId, Date = lfu.CreatedTime.Date }
-                                  into lfuLeftJoin
-                              from lfuInfo in lfuLeftJoin.DefaultIfEmpty()
-                              where (master.PlanDate.Date == DateTime.Now.Date
+            }
 
-                              && (!query.UserId.HasValue || query.UserId == userInfo.Id)
 
-                              )
-                              select new
-                              {
-                                  DelarId = detailsInfo.Id,
-                                  dscInfo.IsSubDealerCall,
-                                  PainterCallInfoId = painterCallInfo.Id,
-                                  dsc2InfoId = dsc2Info.Id,
-                                  LdInfoId = ldInfo.Id,
-                                  lfuInfoId = lfuInfo.Id,
-                                  PainterRegistration = painterRegistration.Id,
-                                  UserEmail = userInfo.Email,
-                              }).Distinct().ToListAsync();
+            var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
+                        .Join(_context.DealerSalesCalls.Include(p=>p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
+                        .Where( p=> 
+                        
+                            (!query.UserId.HasValue?true:userinfo.EmployeeId==p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
+
+                            && (!query.FromDate.HasValue?true:p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime>=query.FromDate)
+                            && (!query.ToDate.HasValue?true:p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime<=query.ToDate)
+
+                            && (query.Zones.Count==0?true:query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
+                            && (query.Territories.Count==0?true:query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
+                )
+                        .Select(p => new {
+                            JourneyPlanMaster = p.JourneyPlanMaster.JourneyPlanMaster,
+                            JourneyPlanDetail = p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
+                            DealerSalesCall = p.DealerSalesCall
+                        }).ToList();
+
+
+            var painter = _context.JourneyPlanMasters.Join(_context.Painters, jpm => jpm.EmployeeId, p => p.EmployeeId, (JourneyPlanMaster, Painter) => new { JourneyPlanMaster, Painter })
+
+                                .Join(_context.PainterCalls, p => p.Painter.Id, pc => pc.PainterId, (JourneyPlanMaster, PainterCall) => new { JourneyPlanMaster, PainterCall })
+                                .Where(p=>
+                              (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime >= query.FromDate)
+                            && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime <= query.ToDate)
+                            && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.Painter.CreatedTime >= query.FromDate)
+                            && (!query.ToDate.HasValue ? true : p.JourneyPlanMaster.Painter.CreatedTime <= query.ToDate)
+                                )
+                                .Select(p => new {
+                                    PainterRegistration = p.JourneyPlanMaster.Painter,
+                                    PainterCalls = p.PainterCall
+                                }).ToList();
+
+
+            var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
+                .Where( p=>
+                (!query.FromDate.HasValue ? true : p.LeadGeneration.CreatedTime >= query.FromDate)
+                            && (!query.ToDate.HasValue ? true : p.LeadGeneration.CreatedTime <= query.ToDate)
+                            && (!query.FromDate.HasValue ? true : p.LeadFollowUp.CreatedTime >= query.FromDate)
+                            && (!query.ToDate.HasValue ? true : p.LeadFollowUp.CreatedTime <= query.ToDate)
+                )
+                
+                .Select(p => new {
+                    LeadGeneration = p.LeadGeneration,
+                    LeadFollowUp = p.LeadFollowUp
+                }).ToList();
 
 
             var reportResult = new List<ActiveSummaryReportResultModel>()
@@ -1963,11 +1980,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
                     Activity="Journey Plan",
-                    Target=data.Select(x => x.DelarId).Distinct().Count(x=>x>0).ToString(),
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0).ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count(x=>x>0)-data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0)).ToString(),
+                    Target=data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count().ToString(),
+                    Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
+                    Variance=(data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count()-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
                 new ActiveSummaryReportResultModel
@@ -1975,10 +1992,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="SALES CALL- SUB DEALER",
                     Target="0",
-                    Actual = data.Count(x => x.IsSubDealerCall).ToString(),
+                    Actual = data.Where(p=>p.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.Id).Count().ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
 
@@ -1986,31 +2003,31 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
 
                     Activity="SALES CALL- DIRECT DEALER",
-                    Target=data.Select(x => x.DelarId).Distinct().Count(x=>x>0).ToString(),
-                    Actual = data.Count(x => !x.IsSubDealerCall).ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count(x=>x>0)-data.Count(x => !x.IsSubDealerCall)).ToString(),
+                    Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
+                    Actual = data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count().ToString(),
+                    Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="PAINTER CALL",
-                    Target="0",
-                    Actual = data.Select(x => x.PainterCallInfoId).Distinct().Count(x=>x>0).ToString(),
-                    Variance="0",
+                    Target="N/A",
+                    Actual = painter.Select(x => x.PainterCalls.Id).Distinct().Count(x=>x>0).ToString(),
+                    Variance="N/A",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="PAINTER REGISTRATION",
-                    Target="0",
-                    Actual = data.Select(x => x.PainterRegistration).Distinct().Count(x=>x>0).ToString(),
+                    Target="N/A",
+                    Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2018,10 +2035,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="DEALER ADHOC VISIT",
                     Target="N/A",
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count(x=>x>0).ToString(),
+                    Actual = data.Where(p=>p.DealerSalesCall.JourneyPlanId==null).Select(x => x.DealerSalesCall.Id).Distinct().Count().ToString(),
                     Variance="N/A",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
 
                 },
@@ -2030,31 +2047,33 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="LEAD GENERATION",
                     Target="N/A",
-                    Actual =data.Select(x => x.LdInfoId).Distinct().Count(x=>x>0).ToString(),
+                    Actual =lead.Select(p=>p.LeadGeneration.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="LEAD FOLLOWUP",
                     Target="N/A",
-                    Actual =data.Select(x => x.lfuInfoId).Distinct().Count(x=>x>0).ToString(),
+                    Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
 
                 },
                 new ActiveSummaryReportResultModel
                 {
+
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
+                    //Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
                     Actual ="0",
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
                 }
             }
@@ -2067,6 +2086,171 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
 
             return queryResult;
+        }
+
+
+
+        private void activesummery()
+        {
+            //var journeyPlanMasters = _journeyPlanMasterRepository.GetAllInclude(p => p.JourneyPlanDetail).ToList();
+
+            //var user = _context.UserInfos.Where(p => journeyPlanMasters.Select(p => p.EmployeeId).ToArray().Contains(p.EmployeeId)).ToList();
+
+            //var dealerSalesCall = _dealerSalesCallRepository.GetAllInclude(p => p.JourneyPlan).ToList();
+
+
+            //var lead = _leadGenerationRepository.GetAllInclude(p => p.LeadFollowUps).ToList();
+
+
+
+
+
+            //var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
+            //            .Join(_context.DealerSalesCalls, jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
+                        
+            //            .Select(p=> new {
+            //                JourneyPlanMaster=p.JourneyPlanMaster.JourneyPlanMaster,
+            //                JourneyPlanDetail=p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
+            //                DealerSalesCall=p.DealerSalesCall
+            //            }).ToList();
+
+
+            //var painter = _context.JourneyPlanMasters.Join(_context.Painters, jpm => jpm.EmployeeId, p => p.EmployeeId, (JourneyPlanMaster, Painter) => new { JourneyPlanMaster, Painter })
+
+            //                    .Join(_context.PainterCalls, p => p.Painter.Id, pc => pc.PainterId, (JourneyPlanMaster, PainterCall) => new { JourneyPlanMaster, PainterCall })
+            //                    .Select(p => new {
+            //                        PainterRegistration=p.JourneyPlanMaster.Painter,
+            //                        PainterCalls=p.PainterCall
+            //                    }).ToList();
+
+
+            //var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
+            //    .Select(p => new {
+            //        LeadGeneration = p.LeadGeneration,
+            //        LeadFollowUp = p.LeadFollowUp
+            //    }).ToList();
+
+
+            //var reportResult = new List<ActiveSummaryReportResultModel>()
+            //{
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="Journey Plan",
+            //        Target=data.Select(p=>p.DealerSalesCall.DealerId).Count(x=>x>0).ToString(),
+            //        Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
+            //        Variance=(data.Select(p=>p.DealerSalesCall.DealerId).Count(x=>x>0)-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count(x=>x>0)).ToString(),
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="SALES CALL- SUB DEALER",
+            //        Target="0",
+            //        Actual = data.Select(x => x.DealerSalesCall).Count(x=>x.IsSubDealerCall).ToString(),
+            //        Variance="0",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="SALES CALL- DIRECT DEALER",
+            //        Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
+            //        Actual = data.Select(x => x.DealerSalesCall).Count(x => !x.IsSubDealerCall).ToString(),
+            //        Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Select(x => x.DealerSalesCall).Count(x => !x.IsSubDealerCall)).ToString(),
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="PAINTER CALL",
+            //        Target="N/A",
+            //        Actual = painter.Select(x => x.PainterCalls.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="PAINTER REGISTRATION",
+            //        Target="N/A",
+            //        Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="0",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="DEALER ADHOC VISIT",
+            //        Target="N/A",
+            //        Actual = data.Where(p=>p.DealerSalesCall.JourneyPlanId!=0).Select(x => x.DealerSalesCall).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="LEAD GENERATION",
+            //        Target="N/A",
+            //        Actual =lead.Select(p=>p.LeadGeneration.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="LEAD FOLLOWUP",
+            //        Target="N/A",
+            //        Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="TOTAL COLLECTION VALUE",
+            //        Target="N/A",
+            //        //Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
+            //        Actual ="0",
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    }
+            //}
+
+            //.Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+            //var queryResult = new QueryResultModel<ActiveSummaryReportResultModel>();
+            //queryResult.Items = reportResult;
+            //queryResult.TotalFilter = reportResult.Count();
+            //queryResult.Total = reportResult.Count();
+
+
+            //return queryResult;
+
+
+
+
+
+
+
+
+
         }
     }
 }
