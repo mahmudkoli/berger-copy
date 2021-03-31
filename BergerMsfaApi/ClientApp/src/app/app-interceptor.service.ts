@@ -28,7 +28,7 @@ export class AppInterceptorService implements HttpInterceptor {
       //this.alertService.fnLoading(false);
       let statusCode = error.status;
       let errorMsg =
-        (error.error == null ? error.message : error.error.message) ||
+        (error.error == null ? error.message : error.error.msg) ||
         'Something went wrong.';
       if (statusCode == 0) {
         errorMsg =

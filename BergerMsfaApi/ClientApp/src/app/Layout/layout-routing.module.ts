@@ -11,7 +11,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
 
-            { path: '', redirectTo: 'dashboard' },
+            { path: '', redirectTo: 'journey-plan' },
             // { path: '', component: MenuListComponent,data: {extraParameter: 'dashboardsMenu'} },
 
             { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },

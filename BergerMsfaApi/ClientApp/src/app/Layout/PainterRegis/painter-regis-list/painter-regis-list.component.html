@@ -43,7 +43,7 @@
             <tr>
                 <td>{{painter.painterName}}</td>
                 <td>
-                    <img [alt]="painter.name" src="{{baseUrl}}/{{painter.painterImageUrl}}" width="60"
+                    <img [alt]="painter.name" *ngIf='painter.painterImageUrl' [src]="painter.painterImageUrl" width="60"
                         style="vertical-align: middle; border-radius: 50%;" />
                 </td>
                 <td>{{painter.phone}}</td>
