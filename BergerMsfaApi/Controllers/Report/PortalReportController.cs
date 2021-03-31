@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BergerMsfaApi.Services.Common.Interfaces;
 
 namespace BergerMsfaApi.Controllers.Report
 {
@@ -19,12 +20,15 @@ namespace BergerMsfaApi.Controllers.Report
     public class PortalReportController : BaseController
     {
         private readonly IPortalReportService _portalReportService;
+        private readonly ICommonService _commonService;
 
         public PortalReportController(
-                IPortalReportService portalReportService
+                IPortalReportService portalReportService,
+                ICommonService commonService
             )
         {
             this._portalReportService = portalReportService;
+            this._commonService = commonService;
         }
 
         [HttpGet("GetLeadSummary")]
@@ -79,6 +83,9 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetLeadGenerationDetailsReportAsync(query);
+                
+                _commonService.SetEmptyString(result.Items.ToList(), nameof(LeadGenerationDetailsReportResultModel.ImageUrl));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
@@ -109,6 +116,9 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetLeadFollowUpDetailsReportAsync(query);
+                
+                _commonService.SetEmptyString(result.Items.ToList(), nameof(LeadFollowUpDetailsReportResultModel.ImageUrl));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
@@ -141,6 +151,9 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetPainterRegistrationReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(), nameof(PainterRegistrationReportResultModel.PainterImageUrl));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
@@ -171,6 +184,16 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetDealerOpeningReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(), 
+                    nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),
+                    nameof(DealerOpeningReportResultModel.NomineePhotograph),
+                    nameof(DealerOpeningReportResultModel.PhotographOfproprietor),
+                    nameof(DealerOpeningReportResultModel.Cheque),
+                    nameof(DealerOpeningReportResultModel.TradeLicensee),
+                    nameof(DealerOpeningReportResultModel.IdentificationNo),
+                    nameof(DealerOpeningReportResultModel.NomineeIdentificationNo));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
@@ -381,6 +404,11 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(), 
+                    nameof(DealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(DealerSalesCallReportResultModel.SchemeModalityImage));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
@@ -411,6 +439,11 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(SubDealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(SubDealerSalesCallReportResultModel.SchemeModalityImage));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)
