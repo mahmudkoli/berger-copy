@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -140,7 +141,7 @@ namespace Berger.Odata.Services
             selectActualQueryBuilder
                                 //.AddProperty(DataColumnDef.Territory)
                                 //.AddProperty(DataColumnDef.CustomerNo)
-                                //.AddProperty(DataColumnDef.CustomerName)
+                                .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
             mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
@@ -157,13 +158,18 @@ namespace Berger.Odata.Services
                 monthlyDictTarget.Add(monthName, data);
             }
 
+            DateTime toDate = fromDate.AddMonths(2);
+            toDate = toDate.AddDays(DateTime.DaysInMonth(toDate.Year, toDate.Month)).AddDays(-1);
+
+            var sellsData = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, fromDate.DateFormat(), toDate.DateFormat(), territory: model.Territory, brands: mtsBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetCYFD();
+                var endDate = fromDate.GetMonthDate(number).GetCYLD();
 
-                var data = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: mtsBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+                var data = sellsData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictActual.Add(monthName, data);
@@ -218,31 +224,43 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
                                     .AddProperty(DataColumnDef.CustomerNo)
-                                    .AddProperty(DataColumnDef.NetAmount);
+                                    .AddProperty(DataColumnDef.NetAmount)
+                                    .AddProperty(DataColumnDef.Date);
 
             enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
+
+
+            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var lyData = await _odataService.GetSalesDataByArea(selectQueryBuilder, lyFd, lyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
 
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
 
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetLYFD();
+                var endDate = fromDate.GetMonthDate(number).GetLYLD();
 
-                var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
 
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictLY.Add(monthName, data);
             }
 
+            var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var cyData = (await _odataService.GetSalesDataByArea(selectQueryBuilder, cyFd, cyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetCYFD();
+                var endDate = fromDate.GetMonthDate(number).GetCYLD();
 
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+                var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictCY.Add(monthName, data);
@@ -297,32 +315,42 @@ namespace Berger.Odata.Services
 
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
             selectActualQueryBuilder
-                //.AddProperty(DataColumnDef.CustomerNo)
+                .AddProperty(DataColumnDef.Date)
                 .AddProperty(DataColumnDef.Volume);
 
             enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
+
+            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
 
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
 
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetCYFD();
+                var endDate = fromDate.GetMonthDate(number).GetCYLD();
 
-                var data = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
 
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictTarget.Add(monthName, data);
             }
 
+            var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var cyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, cyFd, cyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetLYFD();
+                var endDate = fromDate.GetMonthDate(number).GetLYLD();
 
-                var data = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+                var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictActual.Add(monthName, data);
@@ -379,21 +407,27 @@ namespace Berger.Odata.Services
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
             selectActualQueryBuilder
                 .AddProperty(DataColumnDef.Division)
-                .AddProperty(DataColumnDef.NetAmount);
+                .AddProperty(DataColumnDef.NetAmount) 
+                .AddProperty(DataColumnDef.Date);
 
             brands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
 
             Division division = await _oDataDivisionRepository.FindAsync(x => x.Description == "Decorative");
             string divisionCode = division != null ? division.DivisionCode.ToString() : "";
 
+            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+            
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
 
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetCYFD();
+                var endDate = fromDate.GetMonthDate(number).GetCYLD();
 
-                var data = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
 
                 var monthName = fromDate.GetMonthName(number);
 
@@ -464,32 +498,46 @@ namespace Berger.Odata.Services
 
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
             selectActualQueryBuilder
-                //.AddProperty(DataColumnDef.CustomerNo)
+                .AddProperty(DataColumnDef.Date)
                 .AddProperty(DataColumnDef.Volume);
 
             brands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+
+
 
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
 
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetCYFD();
+                var endDate = fromDate.GetMonthDate(number).GetCYLD();
 
-                var data = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
 
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictTarget.Add(monthName, data);
             }
 
+            var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
+            var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+
+            var cyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, cyFd, cyEd, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
+
+
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
+                var startDate = fromDate.GetMonthDate(number).GetLYFD();
+                var endDate = fromDate.GetMonthDate(number).GetLYLD();
 
-                var data = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territory: model.Territory, brands: brands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
+                var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
+
                 var monthName = fromDate.GetMonthName(number);
 
                 monthlyDictActual.Add(monthName, data);
