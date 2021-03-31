@@ -227,7 +227,7 @@ export class MtsValueTargetAchivementReportComponent
       );
       this.loadReportsPage();
     } else {
-      this.alertService.alert('Both month defference must be 3 Month');
+      this.alertService.alert('From and To month difference must be 3 months.');
     }
   }
 
@@ -364,7 +364,6 @@ export class MtsValueTargetAchivementReportComponent
     // var frmdate = fromYear + "-" + fromMonth + "-" + 1+"T00:00:00";
 
     this.query.fromDate = new Date(fromYear, fromMonth - 1, 1);
-    console.log(this.query.fromDate, 'From Date');
 
     //Set To Date from Month and Year
     var day = Lastday[toMonth - 1];
@@ -375,8 +374,6 @@ export class MtsValueTargetAchivementReportComponent
     // var todate=toYear + "-" + toMonth + "-" + day+"T00:00:00";
 
     this.query.toDate = new Date(toYear, toMonth - 1, day);
-
-    console.log(this.query.toDate, 'To Date');
   }
 
   private currentDateRangeSet() {
@@ -387,12 +384,11 @@ export class MtsValueTargetAchivementReportComponent
     fd.setMonth(fd.getMonth() - 2);
     this.frommonth = fd.getMonth() + 1;
     this.fromyear = fd.getFullYear();
-
-		//set default to date
-		td.setMonth(td.getMonth()-1)
-		this.tomonth=td.getMonth();
-		this.toyear=td.getFullYear();
-	}
+    //set default to date
+    td.setMonth(td.getMonth());
+    this.tomonth = td.getMonth() + 1;
+    this.toyear = td.getFullYear();
+  }
 
   private leapYear(year) {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
