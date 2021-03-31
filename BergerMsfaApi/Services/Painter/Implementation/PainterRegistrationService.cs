@@ -290,6 +290,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
+            _painterImageFileName = _painterImageFileName.Replace(" ", "_");
             if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
                 _painter.PainterImageUrl =
                                   await _fileUploadSvc
