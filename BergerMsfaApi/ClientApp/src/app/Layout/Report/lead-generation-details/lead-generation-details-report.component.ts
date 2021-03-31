@@ -198,6 +198,8 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		var columName = this.ptableSettings.tableColDef.filter(x => x.internalName == 'imageUrl');
 		if(columName.length > 0){
 			columName[0].type = 'image';
+
+			// columName[0].visible = false;
 		}
 
 		// console.log(this.ptableSettings.tableColDef); 
