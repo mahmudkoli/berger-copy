@@ -667,7 +667,7 @@
                         <span class="slider round"></span>
                       </label>
                     </div>
-                    
+
                     <div *ngIf="dispCol.type == 'image'">
                       <img
                         src="{{ body[dispCol.internalName] }}"
@@ -861,26 +861,26 @@
                       pTableSetting.enabledDeleteBtn
                     "
                   >
-                  <div class="items-center">
-                    <a
-                    *ngIf="
-                      pTableSetting.enabledEditDeleteBtn ||
-                      pTableSetting.enabledEditBtn
-                    "
-                    class="p-table-edit-icon"
-                    (click)="fnActivityOnRecord('edit-item', body)"
-                    ><em class="fa fa-edit"></em
-                  ></a>
-                  <a
-                    *ngIf="
-                      pTableSetting.enabledEditDeleteBtn ||
-                      pTableSetting.enabledDeleteBtn
-                    "
-                    class="p-table-delete-icon"
-                    (click)="fnActivityOnRecord('delete-item', body)"
-                    ><em class="fa fa-trash"></em
-                  ></a>
-                  </div>
+                    <div class="items-center">
+                      <a
+                        *ngIf="
+                          pTableSetting.enabledEditDeleteBtn ||
+                          pTableSetting.enabledEditBtn
+                        "
+                        class="p-table-edit-icon"
+                        (click)="fnActivityOnRecord('edit-item', body)"
+                        ><em class="fa fa-edit"></em
+                      ></a>
+                      <a
+                        *ngIf="
+                          pTableSetting.enabledEditDeleteBtn ||
+                          pTableSetting.enabledDeleteBtn
+                        "
+                        class="p-table-delete-icon"
+                        (click)="fnActivityOnRecord('delete-item', body)"
+                        ><em class="fa fa-trash"></em
+                      ></a>
+                    </div>
                   </td>
                 </tr>
                 <tr

@@ -242,10 +242,9 @@ export class MtsValueTargetAchivementReportComponent
       )
       .subscribe(
         (res) => {
-          console.log('res.data', res.data);
-          this.data = res.data.items;
-          this.totalDataLength = res.data.total;
-          this.totalFilterDataLength = res.data.totalFilter;
+          this.data = res.data;
+          this.totalDataLength = res.data.length;
+          this.totalFilterDataLength = res.data.length;
           this.ptableColDefGenerate();
         },
         (error) => {
@@ -269,7 +268,52 @@ export class MtsValueTargetAchivementReportComponent
           : this.totalKeys.includes(key),
       } as colDef;
     });
-    console.log(this.ptableSettings.tableColDef);
+
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) =>
+          x.internalName == 'totalTarget' || x.internalName == 'totalActual'
+      )
+      .forEach((element) => {
+        element.headerName =
+          element.internalName == 'totalActual'
+            ? 'Total Actual'
+            : 'Total Target';
+      });
+
+    this.ptableSettings.tableColDef
+      .filter(
+        (x) =>
+          x.internalName == 'firstMonthTargetAmount' ||
+          x.internalName == 'secondMonthTargetAmount' ||
+          x.internalName == 'thirdMonthTargetAmount' ||
+          x.internalName == 'firstMonthActualAmount' ||
+          x.internalName == 'secondMonthActualAmount' ||
+          x.internalName == 'thirdMonthActualAmount'
+      )
+      .forEach((element) => {
+        let propertyName = element.internalName.replace('Amount', 'Name');
+        element.headerName = this.data[0][propertyName];
+      });
+
+    this.ptableSettings.tableColDef = this.ptableSettings.tableColDef.filter(
+      (x) =>
+        !(
+          x.internalName == 'firstMonthTargetName' ||
+          x.internalName == 'secondMonthTargetName' ||
+          x.internalName == 'thirdMonthTargetName' ||
+          x.internalName == 'firstMonthActualName' ||
+          x.internalName == 'secondMonthActualName' ||
+          x.internalName == 'thirdMonthActualName'
+        )
+    );
+
+    let ach = this.ptableSettings.tableColDef.find(
+      (x) => x.internalName == 'achivementOrGrowth'
+    );
+    if (ach) {
+      ach.headerName = 'Achv%';
+    }
   }
 
   public ptableSettings: IPTableSetting = {
@@ -340,15 +384,15 @@ export class MtsValueTargetAchivementReportComponent
     var td = new Date();
 
     //set default from month
-    fd.setMonth(fd.getMonth() - 3);
+    fd.setMonth(fd.getMonth() - 2);
     this.frommonth = fd.getMonth() + 1;
     this.fromyear = fd.getFullYear();
 
-    //set default to date
-    td.setMonth(td.getMonth() - 1);
-    this.tomonth = td.getMonth() + 1;
-    this.toyear = td.getFullYear();
-  }
+		//set default to date
+		td.setMonth(td.getMonth()-1)
+		this.tomonth=td.getMonth();
+		this.toyear=td.getFullYear();
+	}
 
   private leapYear(year) {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;

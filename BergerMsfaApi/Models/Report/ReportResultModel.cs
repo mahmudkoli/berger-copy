@@ -478,7 +478,7 @@ namespace BergerMsfaApi.Models.Report
 
         public string UserID { get; set; }
         public string DepotID { get; set; }
-        public string DepotName { get; set; }
+        //public string DepotName { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
         public string Activity { get; set; }
