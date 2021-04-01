@@ -1004,7 +1004,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
                                      from jpminfo in jpmleftjoin.DefaultIfEmpty()
-                                     join dsc in _context.DealerSalesCalls on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
                                      from dscinfo in dscleftjoin.DefaultIfEmpty()
                                      join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
                                      from userInfo in uleftjoin.DefaultIfEmpty()
@@ -1035,7 +1035,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          zoneName = zinfo.Name,
                                          diInfo.CustomerName,
                                          jpminfo.PlanDate,
-                                         dscinfo.JourneyPlanId
+                                         JourneyPlanId = dscinfo.JourneyPlanId
                                      }).ToListAsync();
 
             var dealerVisitGroup = dealerVisit.GroupBy(x => new { x.EmployeeId, x.DealerId }).Select(x => new
@@ -1109,9 +1109,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 d30 = x.Count(c => c?.PlanDate.Day == 30) > 0 ?
                                         x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
                 d31 = x.Count(c => c?.PlanDate.Day == 31) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
+                                        x.Count(c => c?.JourneyPlanId != 0 && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
                 targetVisits = tvist = x.Count(c => c?.PlanDate.Month == month && c?.PlanDate.Year == year),
-                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != null && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
+                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != 0 && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
                 notVisits = (tvist - avisit)
             }).ToList();
 
