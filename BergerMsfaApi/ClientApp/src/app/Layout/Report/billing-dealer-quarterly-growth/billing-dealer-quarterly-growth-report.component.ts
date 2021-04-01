@@ -228,7 +228,7 @@ export class BillingDealerQuarterlyGrowthReportComponent
       );
       this.loadReportsPage();
     } else {
-      this.alertService.alert('Month difference must be 3 Month.');
+      this.alertService.alert('From and To month difference must be 3 months.');
     }
   }
 
@@ -392,7 +392,7 @@ export class BillingDealerQuarterlyGrowthReportComponent
     this.fromyear = fd.getFullYear();
 
     //set default to date
-    td.setMonth(td.getMonth() - 1);
+    td.setMonth(td.getMonth());
     this.tomonth = td.getMonth() + 1;
     this.toyear = td.getFullYear();
   }

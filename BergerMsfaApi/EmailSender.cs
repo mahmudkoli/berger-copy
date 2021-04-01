@@ -70,10 +70,10 @@ namespace Berger.Common
                     try
                     {
                         smtpClient.Host = _smtpSettings.Server;
-                        smtpClient.Port = 587; // Google smtp port
-                        smtpClient.EnableSsl = true;
-                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;// disable it
+                        if (_smtpSettings.Port > 0)
+                            smtpClient.Port = _smtpSettings.Port;
+                        smtpClient.EnableSsl = _smtpSettings.EnableSSL;
+                        smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
                         smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
@@ -127,10 +127,10 @@ namespace Berger.Common
                     try
                     {
                         smtpClient.Host = _smtpSettings.Server;
-                        smtpClient.Port = 587; // Google smtp port
-                        smtpClient.EnableSsl = true;
-                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;// disable it
+                        if (_smtpSettings.Port > 0)
+                            smtpClient.Port = _smtpSettings.Port;
+                        smtpClient.EnableSsl = _smtpSettings.EnableSSL;
+                        smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
                         smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
 

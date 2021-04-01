@@ -1866,6 +1866,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 result.Add(res);
             }
 
+            if (monthList.Any())
+            {
+                result.ForEach(x =>
+                {
+                    x.Month1Name = monthList[0].MonthName;
+                    x.Month2Name = monthList[1].MonthName;
+                    x.Month3Name = monthList[2].MonthName;
+                });
+            }
+
             var returnResult = new QueryResultModel<OsOver90daysTrendReportResultModel>
             {
                 Items = result.OrderBy(x => x.DealerName).Skip(SkipCount(query)).Take(query.PageSize).ToList(),
@@ -1914,8 +1924,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         {
             UserInfo userinfo = new UserInfo();
 
-            string territory = query.Territories.Count > 0 ? query.Territories[0]:string.Empty;
-            string zone = query.Zones.Count > 0 ? query.Zones[0]:string.Empty;
+            string territory = query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
+            string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
 
             IList<int> dealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
             if (query.UserId.HasValue)
@@ -1950,7 +1960,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                               && (!query.ToDate.HasValue ? true : p.CreatedTime.Date <= query.ToDate.Value.Date)
             ).ToList();
 
-            var painter =  _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (Painter, PainterCall) => new { Painter, PainterCall })
+            var painter = _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (Painter, PainterCall) => new { Painter, PainterCall })
                                 .Where(p =>
                               (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime.Date >= query.FromDate.Value.Date)
                             && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime.Date <= query.ToDate.Value.Date)

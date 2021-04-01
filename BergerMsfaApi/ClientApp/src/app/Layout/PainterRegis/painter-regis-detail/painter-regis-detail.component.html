@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-sm-3 border bg-light p-2">
                 <div class="text-center">
-                    <img src="{{baseUrl}}/{{painterImageUrl}}" style="border-radius: 50%;"
+                    <img *ngIf='painter.painterImageUrl' [src]="painter.painterImageUrl" style="border-radius: 50%;"
                          class="avatar img-circle img-thumbnail" alt="avatar">
                 </div>
                 <br>
