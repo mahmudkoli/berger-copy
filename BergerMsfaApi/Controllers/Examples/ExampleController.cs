@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Berger.Common;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Examples;
@@ -13,17 +14,20 @@ namespace BergerMsfaApi.Controllers.Examples
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    [JwtAuthorize]
+    //[JwtAuthorize]
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ExampleController : BaseController
     {
         private readonly ILogger<ExampleController> _logger;
         private readonly IExampleService _example;
+        private readonly IEmailSender _emailSender;
+
         public ExampleController(ILogger<ExampleController> logger
-            , IExampleService example)
+            , IExampleService example, IEmailSender emailSender)
         {
             _logger = logger;
             _example = example;
+            this._emailSender = emailSender;
         }
 
         /// <summary>
@@ -186,6 +190,21 @@ namespace BergerMsfaApi.Controllers.Examples
             {
                 var result = await _example.DeleteAsync(id);
                 return OkResult(result);
+
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("Email/{email}")]
+        public async Task<IActionResult> Email(string email)
+        {
+            try
+            {
+                await _emailSender.SendEmailAsync(email, "Berger Test","Berger Test");
+                return Ok(true);
 
             }
             catch (Exception ex)
