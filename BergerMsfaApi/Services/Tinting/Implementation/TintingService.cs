@@ -88,7 +88,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
 
         public async Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId)
         {
-            var allCompanies = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetition);
+            var allCompanies = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.Company);
 
             var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x, 
                                     x => x.Territory == territory && x.UserInfoId == userInfoId, 

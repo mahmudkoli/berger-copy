@@ -72,7 +72,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IEnumerable<EmailConfigForDealerSalesCall>> GetEmailConfigDealerSalesCall()
         {
-            var result = await _emailConfigDealerSalesCall.GetAllAsync();
+            var result = _emailConfigDealerSalesCall.FindAllInclude(x => true, x => x.DealerSalesIssueCategory);
             return result;
         }
 

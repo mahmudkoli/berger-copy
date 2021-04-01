@@ -29,47 +29,47 @@ namespace Berger.Common.Constants
 
     public static class ConstantsCustomerTypeValue
     {
-        public const string CustomerTypeDealer = "Dealer";
-        public const string CustomerTypeSubDealer = "Sub-Dealer";
-        public const string CustomerTypeCustomer = "Customer";
-        public const string CustomerTypeDirectProject = "Direct Project";
+        public const string Dealer = "Dealer";
+        public const string SubDealer = "Sub-Dealer";
+        public const string Customer = "Customer";
+        public const string DirectProject = "Direct Project";
     }
 
-    public static class SwappingCompetitionValue
+    public static class ConstantPaintUsageMTDValue
     {
-        public const string CompetitorBpbl = "BPBL";
-        public const string CompetitorAsianPaints = "Asian Paints";
-        public const string CompetitorNerolac = "Nerolac";
-        public const string CompetitorElitePaints = "Elite Paints";
-        public const string CompetitorNippon = "Nippon";
-        public const string CompetitorDulux = "Dulux";
-        public const string CompetitorMoonstar = "Moonstar";
-        public const string CompetitorOthers = "Others";
+        public const string BPBL = "BPBL";
+        public const string AP = "AP";
+        public const string Nerolac = "Nerolac";
+        public const string Nippon = "Nippon";
+        public const string Elite = "Elite";
+        //public const string Dulux = "Dulux";
+        //public const string Moonstar = "Moonstar";
+        public const string Others = "Others";
     }
 
-    public static class ConstantCompanyValue
+    public static class ConstantSwappingCompetitionValue
     {
-        public const string companyAP = "AP";
-        public const string companyNippon = "Nippon";
-        public const string companyNerolac = "Nerolac";
-        public const string companyDulux = "Dulux";
-        public const string companyJotun = "Jotun";
-        public const string companyElite = "Elite";
-        public const string companyMoonstar = "Moonstar";
-        public const string companyAlKarim = "Al- Karim";
-        public const string companyOthers = "Others";
+        public const string AP = "AP";
+        public const string Nippon = "Nippon";
+        public const string Nerolac = "Nerolac";
+        public const string Dulux = "Dulux";
+        public const string Jotun = "Jotun";
+        public const string Elite = "Elite";
+        public const string Moonstar = "Moonstar";
+        public const string AlKarim = "Al- Karim";
+        public const string Others = "Others";
     }
 
     public static class ConstantIssuesValue
     {
-        public const string IssuePosMaterialShort = "POS Material Short";
-        public const string IssueShadeCard = "Shade Card";
-        public const string IssueShopSignComplain = "Shop Sign Complain";
-        public const string IssueDelivery = "Delivery Issue";
-        public const string IssueOthers = "Others";
-        public const string IssueDamageProduct = "Damage Product";
-        public const string IssueCBMachine = "CB Machine Mantainance";
-        public const string IssueProductComplaint = "Product Complaint";
+        public const string POSMaterialShort = "POS Material Short";
+        public const string ShadeCard = "Shade Card";
+        public const string ShopSignComplain = "Shop Sign Complain";
+        public const string DeliveryIssue = "Delivery Issue";
+        public const string Others = "Others";
+        public const string DamageProduct = "Damage Product";
+        public const string CBMachineMantainance = "CB Machine Mantainance";
+        public const string ProductComplaint = "Product Complaint";
     }
 
 

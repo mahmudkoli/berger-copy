@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Berger.Data.Migrations;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using BergerMsfaApi.Mappings;
 using BergerMsfaApi.Models.Painter;
