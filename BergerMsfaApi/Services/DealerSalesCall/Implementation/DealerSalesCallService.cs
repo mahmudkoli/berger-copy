@@ -4,6 +4,7 @@ using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
@@ -35,7 +36,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IRepository<UserInfo> _userInfo;
-
+        private readonly IRepository<DealerInfo> dealerInfo;
 
         public DealerSalesCallService(
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
@@ -44,6 +45,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IMapper mapper,
                 IRepository<EmailConfigForDealerSalesCall> repository,
                 IRepository<UserInfo> userInfo,
+                IRepository<DealerInfo> dealerInfo,
                 IEmailSender emailSender
             )
         {
@@ -54,6 +56,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             _repository = repository;
             _emailSender = emailSender;
            _userInfo= userInfo;
+            this.dealerInfo = dealerInfo;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -77,7 +80,14 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
             var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
             var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-            string body = string.Format("Customer No: ", dealerSalesCall.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", dealerSalesCall.Dealer.CustomerName, "Zone: ", dealerSalesCall.Dealer.CustZone);
+            var resultDealer = dealerInfo.FindAll(x => x.Id == dealerSalesCall.DealerId).FirstOrDefault();
+            string body = "Customer No: " + resultDealer.CustomerNo + Environment.NewLine +
+                "Customer Name: " + resultDealer.CustomerName + Environment.NewLine +
+                "Depot: " + resultDealer.BusinessArea + Environment.NewLine +
+                "Sales Group: " + resultDealer.SalesGroup + Environment.NewLine +
+                "Sales Office: " + resultDealer.SalesOffice + Environment.NewLine +
+                "Territory: " + resultDealer.Territory + Environment.NewLine +
+                "Zone: " + resultDealer.CustZone;
             for (int i = 0; i < res.Length; i++)
             {
                 var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
@@ -119,7 +129,15 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
             foreach (var item in dealerSalesCalls)
             {
-                string body = string.Format("Customer No: ", item.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", item.Dealer.CustomerName, "Zone: ", item.Dealer.CustZone);
+                var resultDealer = dealerInfo.FindAll(x => x.Id == item.DealerId).FirstOrDefault();
+                string body = "Customer No: " + resultDealer.CustomerNo + Environment.NewLine +
+                    "Customer Name: " + resultDealer.CustomerName + Environment.NewLine +
+                    "Depot: " + resultDealer.BusinessArea + Environment.NewLine +
+                    "Sales Group: " + resultDealer.SalesGroup + Environment.NewLine +
+                    "Sales Office: " + resultDealer.SalesOffice + Environment.NewLine +
+                    "Territory: " + resultDealer.Territory + Environment.NewLine +
+                    "Zone: " + resultDealer.CustZone;
+                //string body = string.Format("Customer No: ", item.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", item.Dealer.CustomerName, "Zone: ", item.Dealer.CustZone);
                 var res = item.DealerSalesIssues.Select(c => c.DealerSalesIssueCategoryId).Distinct().ToArray();
 
                 var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
@@ -336,7 +354,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                 foreach (var item in lstemail)
                 {
-                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby,Environment.NewLine)+ body;
+                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby)+ Environment.NewLine + body;
                     string messagesubject = string.Format(ConstantsLeadValue.IssueCategoryMailSubject,issue);
 
                     await _emailSender.SendEmailAsync(item, messagesubject, messageBody);
