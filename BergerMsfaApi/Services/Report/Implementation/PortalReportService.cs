@@ -1109,9 +1109,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 d30 = x.Count(c => c?.PlanDate.Day == 30) > 0 ?
                                         x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
                 d31 = x.Count(c => c?.PlanDate.Day == 31) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != 0 && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
                 targetVisits = tvist = x.Count(c => c?.PlanDate.Month == month && c?.PlanDate.Year == year),
-                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != 0 && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
+                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != null && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
                 notVisits = (tvist - avisit)
             }).ToList();
 
