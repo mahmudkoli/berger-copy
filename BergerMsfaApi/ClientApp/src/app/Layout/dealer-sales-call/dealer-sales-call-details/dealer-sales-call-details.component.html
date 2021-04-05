@@ -141,7 +141,7 @@
             <div class="col-sm-6">
                 <p><span><strong>Competition Product Display Image:</strong></span> 
                     <!-- {{dealerSalesCall.competitionProductDisplayImageUrl}} -->
-                    <img [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px">
+                    <img *ngIf='dealerSalesCall.competitionProductDisplayImageUrl' [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px">
                 </p>
             </div>
             <div class="col-sm-6">
@@ -153,7 +153,7 @@
             <div class="col-sm-6">
                 <p><span><strong>Competition Scheme Modality Image:</strong></span> 
                     <!-- {{dealerSalesCall.competitionSchemeModalityImageUrl}} -->
-                    <img [src]="dealerSalesCall.competitionSchemeModalityImageUrl" alt="Photo" width="150px" height="180px">
+                    <img *ngIf='dealerSalesCall.competitionSchemeModalityImageUrl' [src]="dealerSalesCall.competitionSchemeModalityImageUrl" alt="Photo" width="150px" height="180px">
                 </p>
             </div>
             <div class="col-sm-6">

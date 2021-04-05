@@ -69,6 +69,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IDropdownService _dropdownService;
         private readonly IMapper _mapper;
         private readonly IFinancialDataService _financialDataService;
+        private readonly ICollectionDataService _collectionDataService;
+
 
         private readonly ApplicationDbContext _context;
         private readonly IAuthService _service;
@@ -102,7 +104,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IMapper mapper,
                 IFinancialDataService financialDataService,
                 ApplicationDbContext context,
-                IAuthService service
+                IAuthService service,
+                ICollectionDataService collectionDataService
             )
         {
             this._leadGenerationRepository = leadGenerationRepository;
@@ -137,6 +140,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             this._context = context;
             _service = service;
+            _collectionDataService = collectionDataService;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -549,7 +553,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
                                  from depinfo in depleftjoin.DefaultIfEmpty()
                                  where (
-                                   dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDealer
+                                   dctinfo.DropdownName == ConstantsCustomerTypeValue.Dealer
                                    && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                    && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                    && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
@@ -632,7 +636,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
                                     from depinfo in depleftjoin.DefaultIfEmpty()
                                     where (
-                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeSubDealer
+                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.SubDealer
                                       && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                       && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                       && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
@@ -709,7 +713,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                    from cainfo in caleftjoin.DefaultIfEmpty()
                                    where (
-                                     dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeCustomer
+                                     dctinfo.DropdownName == ConstantsCustomerTypeValue.Customer
                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                      && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
                                      && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
@@ -778,7 +782,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                         from cainfo in caleftjoin.DefaultIfEmpty()
                                         where (
-                                          dctinfo.DropdownName == ConstantsCustomerTypeValue.CustomerTypeDirectProject
+                                          dctinfo.DropdownName == ConstantsCustomerTypeValue.DirectProject
                                           && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                           && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
                                           && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
@@ -942,39 +946,39 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 PainterAppUsage = x.painterAppUsage,
                 WorkInHandNo = x.workInHandNo,
 
-                BpblMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorBpbl).Sum(x => x.Value).ToString(),
-                BpblCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorBpbl).Sum(x => x.CountInPercent).ToString(),
-                ApMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.Value).ToString(),
-                ApCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints).Sum(x => x.CountInPercent).ToString(),
-                NerolacMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.Value).ToString(),
-                NerolacCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNerolac).Sum(x => x.CountInPercent).ToString(),
-                EliteMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.Value).ToString(),
-                EliteCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorElitePaints).Sum(x => x.CountInPercent).ToString(),
-                NipponMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.Value).ToString(),
-                NipponCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorNippon).Sum(x => x.CountInPercent).ToString(),
-                DuluxMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.Value).ToString(),
-                DuluxCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorDulux).Sum(x => x.CountInPercent).ToString(),
-                MoonstarMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.Value).ToString(),
-                MoonstarCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorMoonstar).Sum(x => x.CountInPercent).ToString(),
-                OthersMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.Value).ToString(),
-                OthersCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.CountInPercent).ToString(),
+                BpblMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.BPBL).Sum(x => x.Value).ToString(),
+                BpblCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.BPBL).Sum(x => x.CountInPercent).ToString(),
+                ApMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.AP).Sum(x => x.Value).ToString(),
+                ApCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.AP).Sum(x => x.CountInPercent).ToString(),
+                NerolacMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Nerolac).Sum(x => x.Value).ToString(),
+                NerolacCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Nerolac).Sum(x => x.CountInPercent).ToString(),
+                EliteMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Elite).Sum(x => x.Value).ToString(),
+                EliteCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Elite).Sum(x => x.CountInPercent).ToString(),
+                NipponMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Nippon).Sum(x => x.Value).ToString(),
+                NipponCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Nippon).Sum(x => x.CountInPercent).ToString(),
+                //DuluxMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Dulux).Sum(x => x.Value).ToString(),
+                //DuluxCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Dulux).Sum(x => x.CountInPercent).ToString(),
+                //MoonstarMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Moonstar).Sum(x => x.Value).ToString(),
+                //MoonstarCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Moonstar).Sum(x => x.CountInPercent).ToString(),
+                OthersMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Others).Sum(x => x.Value).ToString(),
+                OthersCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.Others).Sum(x => x.CountInPercent).ToString(),
 
-                TotalMtdValue = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorNerolac
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorElitePaints
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorNippon
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorDulux
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorMoonstar
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorBpbl
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.Value).ToString(),
-                TotalCount = paintersCallMtd.Where(x => x.companyName == SwappingCompetitionValue.CompetitorAsianPaints
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorNerolac
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorElitePaints
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorNippon
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorDulux
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorMoonstar
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorBpbl
-                                                    || x.companyName == SwappingCompetitionValue.CompetitorOthers).Sum(x => x.CountInPercent).ToString(),
+                TotalMtdValue = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.AP
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Nerolac
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Elite
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Nippon
+                                                    //|| x.companyName == ConstantPaintUsageMTDValue.Dulux
+                                                    //|| x.companyName == ConstantPaintUsageMTDValue.Moonstar
+                                                    || x.companyName == ConstantPaintUsageMTDValue.BPBL
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Others).Sum(x => x.Value).ToString(),
+                TotalCount = paintersCallMtd.Where(x => x.companyName == ConstantPaintUsageMTDValue.AP
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Nerolac
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Elite
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Nippon
+                                                    //|| x.companyName == ConstantPaintUsageMTDValue.Dulux
+                                                    //|| x.companyName == ConstantPaintUsageMTDValue.Moonstar
+                                                    || x.companyName == ConstantPaintUsageMTDValue.BPBL
+                                                    || x.companyName == ConstantPaintUsageMTDValue.Others).Sum(x => x.CountInPercent).ToString(),
 
                 IssueWithDbblAccount = x.issueWithDbblAccount,
                 RemarkIssueWithDbblAccount = "",
@@ -1000,7 +1004,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
                                      from jpminfo in jpmleftjoin.DefaultIfEmpty()
-                                     join dsc in _context.DealerSalesCalls on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
                                      from dscinfo in dscleftjoin.DefaultIfEmpty()
                                      join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
                                      from userInfo in uleftjoin.DefaultIfEmpty()
@@ -1031,7 +1035,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          zoneName = zinfo.Name,
                                          diInfo.CustomerName,
                                          jpminfo.PlanDate,
-                                         dscinfo.JourneyPlanId
+                                         JourneyPlanId = dscinfo.JourneyPlanId
                                      }).ToListAsync();
 
             var dealerVisitGroup = dealerVisit.GroupBy(x => new { x.EmployeeId, x.DealerId }).Select(x => new
@@ -1299,24 +1303,24 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 SchemeModalityImage = x.CompetitionSchemeModalityImageUrl,
                 ShopBoy = x.CompetitionShopBoysComments,
 
-                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.AverageMonthlySales.ToString() ?? string.Empty,
-                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.ActualMTDSales.ToString() ?? string.Empty,
-                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
-                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.ActualMTDSales.ToString() ?? string.Empty,
-                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.AverageMonthlySales.ToString() ?? string.Empty,
-                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.ActualMTDSales.ToString() ?? string.Empty,
-                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.AverageMonthlySales.ToString() ?? string.Empty,
-                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.ActualMTDSales.ToString() ?? string.Empty,
-                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.AverageMonthlySales.ToString() ?? string.Empty,
-                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.ActualMTDSales.ToString() ?? string.Empty,
-                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
-                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.ActualMTDSales.ToString() ?? string.Empty,
-                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.AverageMonthlySales.ToString() ?? string.Empty,
-                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.ActualMTDSales.ToString() ?? string.Empty,
-                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
-                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
-                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.AverageMonthlySales.ToString() ?? string.Empty,
-                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.ActualMTDSales.ToString() ?? string.Empty,
+                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AP)?.AverageMonthlySales.ToString() ?? string.Empty,
+                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AP)?.ActualMTDSales.ToString() ?? string.Empty,
+                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nerolac)?.ActualMTDSales.ToString() ?? string.Empty,
+                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nippon)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nippon)?.ActualMTDSales.ToString() ?? string.Empty,
+                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Dulux)?.AverageMonthlySales.ToString() ?? string.Empty,
+                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Dulux)?.ActualMTDSales.ToString() ?? string.Empty,
+                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Jotun)?.AverageMonthlySales.ToString() ?? string.Empty,
+                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Jotun)?.ActualMTDSales.ToString() ?? string.Empty,
+                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Moonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
+                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Moonstar)?.ActualMTDSales.ToString() ?? string.Empty,
+                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Elite)?.AverageMonthlySales.ToString() ?? string.Empty,
+                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Elite)?.ActualMTDSales.ToString() ?? string.Empty,
+                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
+                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
+                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Others)?.AverageMonthlySales.ToString() ?? string.Empty,
+                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Others)?.ActualMTDSales.ToString() ?? string.Empty,
                 TotalAvrgMonthlySales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.AverageMonthlySales).ToString(),
                 TotalActualMtdSales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.ActualMTDSales).ToString(),
 
@@ -1459,24 +1463,24 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 SchemeModalityImage = x.CompetitionSchemeModalityImageUrl,
                 ShopBoy = x.CompetitionShopBoysComments,
 
-                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.AverageMonthlySales.ToString() ?? string.Empty,
-                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAP)?.ActualMTDSales.ToString() ?? string.Empty,
-                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
-                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNerolac)?.ActualMTDSales.ToString() ?? string.Empty,
-                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.AverageMonthlySales.ToString() ?? string.Empty,
-                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyNippon)?.ActualMTDSales.ToString() ?? string.Empty,
-                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.AverageMonthlySales.ToString() ?? string.Empty,
-                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyDulux)?.ActualMTDSales.ToString() ?? string.Empty,
-                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.AverageMonthlySales.ToString() ?? string.Empty,
-                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyJotun)?.ActualMTDSales.ToString() ?? string.Empty,
-                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
-                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyMoonstar)?.ActualMTDSales.ToString() ?? string.Empty,
-                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.AverageMonthlySales.ToString() ?? string.Empty,
-                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyElite)?.ActualMTDSales.ToString() ?? string.Empty,
-                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
-                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyAlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
-                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.AverageMonthlySales.ToString() ?? string.Empty,
-                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantCompanyValue.companyOthers)?.ActualMTDSales.ToString() ?? string.Empty,
+                ApAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AP)?.AverageMonthlySales.ToString() ?? string.Empty,
+                ApActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AP)?.ActualMTDSales.ToString() ?? string.Empty,
+                NerolacAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nerolac)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NerolacActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nerolac)?.ActualMTDSales.ToString() ?? string.Empty,
+                NipponAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nippon)?.AverageMonthlySales.ToString() ?? string.Empty,
+                NipponActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Nippon)?.ActualMTDSales.ToString() ?? string.Empty,
+                DuluxAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Dulux)?.AverageMonthlySales.ToString() ?? string.Empty,
+                DuluxActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Dulux)?.ActualMTDSales.ToString() ?? string.Empty,
+                JotunAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Jotun)?.AverageMonthlySales.ToString() ?? string.Empty,
+                JotunActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Jotun)?.ActualMTDSales.ToString() ?? string.Empty,
+                MoonstarAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Moonstar)?.AverageMonthlySales.ToString() ?? string.Empty,
+                MoonstarActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Moonstar)?.ActualMTDSales.ToString() ?? string.Empty,
+                EliteAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Elite)?.AverageMonthlySales.ToString() ?? string.Empty,
+                EliteActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Elite)?.ActualMTDSales.ToString() ?? string.Empty,
+                AlkarimAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AlKarim)?.AverageMonthlySales.ToString() ?? string.Empty,
+                AlkarimActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.AlKarim)?.ActualMTDSales.ToString() ?? string.Empty,
+                OthersAvrgMonthlySales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Others)?.AverageMonthlySales.ToString() ?? string.Empty,
+                OthersActualMtdSales = dealerCompititions.FirstOrDefault(y => y.DealerSalesCallId == x?.Id && y.companyName == ConstantSwappingCompetitionValue.Others)?.ActualMTDSales.ToString() ?? string.Empty,
                 TotalAvrgMonthlySales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.AverageMonthlySales).ToString(),
                 TotalActualMtdSales = dealerCompititions.Where(y => y.DealerSalesCallId == x?.Id).Sum(y => y.ActualMTDSales).ToString(),
 
@@ -1560,31 +1564,31 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 dealerId = x.FirstOrDefault()?.DealerId,
                 dealerName = x.FirstOrDefault()?.CustomerName,
                 visitDate = x.FirstOrDefault()?.CreatedTime,
-                pcMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.MaterialName,
-                pcMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.MaterialGroup,
-                pcQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.Quantity,
-                pcBatchNumber = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.BatchNumber,
-                pcComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.Comments,
-                pcPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueProductComplaint)?.priority,
-                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.Comments,
-                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.priority,
-                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.Comments,
-                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.priority,
-                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.Comments,
-                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.priority,
-                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.Comments,
-                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.priority,
-                damageMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.MaterialName,
-                damageMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.MaterialGroup,
-                damageQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.Quantity,
-                damageComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.Comments,
-                damagePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDamageProduct)?.priority,
-                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.HasCBMachineMantainance ?? false,
-                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.maintinaceFrequency,
-                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.CBMachineMantainanceRegularReason,
-                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.priority,
-                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.Comments,
-                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.priority
+                pcMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.MaterialName,
+                pcMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.MaterialGroup,
+                pcQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.Quantity,
+                pcBatchNumber = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.BatchNumber,
+                pcComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.Comments,
+                pcPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.priority,
+                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.POSMaterialShort)?.Comments,
+                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.POSMaterialShort)?.priority,
+                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShadeCard)?.Comments,
+                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShadeCard)?.priority,
+                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShopSignComplain)?.Comments,
+                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShopSignComplain)?.priority,
+                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DeliveryIssue)?.Comments,
+                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DeliveryIssue)?.priority,
+                damageMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DamageProduct)?.MaterialName,
+                damageMaterialGroup = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DamageProduct)?.MaterialGroup,
+                damageQuantity = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DamageProduct)?.Quantity,
+                damageComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DamageProduct)?.Comments,
+                damagePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DamageProduct)?.priority,
+                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.HasCBMachineMantainance ?? false,
+                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.maintinaceFrequency,
+                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.CBMachineMantainanceRegularReason,
+                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.priority,
+                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.Comments,
+                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.priority
             }).ToList();
 
             reportResult = groupdealerIssue.Select(x => new DealerIssueReportResultModel
@@ -1699,20 +1703,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 dealerId = x.FirstOrDefault()?.DealerId,
                 dealerName = x.FirstOrDefault()?.CustomerName,
                 visitDate = x.FirstOrDefault()?.CreatedTime,
-                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.Comments,
-                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssuePosMaterialShort)?.priority,
-                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.Comments,
-                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShadeCard)?.priority,
-                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.Comments,
-                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueShopSignComplain)?.priority,
-                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.Comments,
-                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueDelivery)?.priority,
-                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.HasCBMachineMantainance ?? false,
-                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.maintinaceFrequency,
-                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.CBMachineMantainanceRegularReason,
-                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueCBMachine)?.priority,
-                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.Comments,
-                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.IssueOthers)?.priority
+                posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.POSMaterialShort)?.Comments,
+                posPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.POSMaterialShort)?.priority,
+                shadeComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShadeCard)?.Comments,
+                shadePriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShadeCard)?.priority,
+                shopsignComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShopSignComplain)?.Comments,
+                shopsignPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ShopSignComplain)?.priority,
+                deliveryComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DeliveryIssue)?.Comments,
+                deliveryPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.DeliveryIssue)?.priority,
+                cbmStatus = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.HasCBMachineMantainance ?? false,
+                cbmMaintatinanceFrequency = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.maintinaceFrequency,
+                cbmRemarks = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.CBMachineMantainanceRegularReason,
+                cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.priority,
+                othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.Comments,
+                othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.priority
             }).ToList();
 
             reportResult = groupSubDealerIssue.Select(x => new SubDealerIssueReportResultModel
@@ -1862,6 +1866,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 result.Add(res);
             }
 
+            if (monthList.Any())
+            {
+                result.ForEach(x =>
+                {
+                    x.Month1Name = monthList[0].MonthName;
+                    x.Month2Name = monthList[1].MonthName;
+                    x.Month3Name = monthList[2].MonthName;
+                });
+            }
+
             var returnResult = new QueryResultModel<OsOver90daysTrendReportResultModel>
             {
                 Items = result.OrderBy(x => x.DealerName).Skip(SkipCount(query)).Take(query.PageSize).ToList(),
@@ -1878,8 +1892,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<TintingMachineReportResultModel>();
 
-            reportResult = (await _tintingMachine
-                .FindAllAsync(p =>
+            reportResult = (_tintingMachine
+                .GetAllInclude(x => x.Company).Where(p =>
            (query.Territories.Count > 0 ? query.Territories.Contains(p.Territory) : true)
             && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
                                  && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)))
@@ -1908,50 +1922,77 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)
         {
-            var data = await (from master in _context.JourneyPlanMasters
-                              join details in _context.JourneyPlanDetails on master.Id equals details.PlanId
-                              join dsc in _context.DealerSalesCalls on master.Id equals dsc.JourneyPlanId into dscLeftJoin
-                              from dscInfo in dscLeftJoin.DefaultIfEmpty()
-                              join painterCall in _context.PainterCalls on master.EmployeeId equals painterCall.EmployeeId into
-                                  painterCallLeftJoin
-                              from painterCallInfo in painterCallLeftJoin.DefaultIfEmpty()
+            UserInfo userinfo = new UserInfo();
 
-                              join painterRegistration in _context.Painters on master.EmployeeId equals painterRegistration.EmployeeId into
-                                 painterRegistrationLeftJoin
-                              from painterRegistration in painterRegistrationLeftJoin.DefaultIfEmpty()
+            string territory = query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
+            string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
 
-                              join userinfo in _context.UserInfos on master.EmployeeId equals userinfo.EmployeeId into
-                                 userinfoLeftJoin
-                              from userinfo in userinfoLeftJoin.DefaultIfEmpty()
+            IList<int> dealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            if (query.UserId.HasValue)
+            {
+                userinfo = _context.UserInfos.Where(p => p.Id == query.UserId).FirstOrDefault();
+
+            }
 
 
-                              join dsc2 in _context.DealerSalesCalls on new { master.EmployeeId, Date = DateTime.Now.Date }
-                                  equals new { EmployeeId = dsc2.UserId.ToString(), Date = dsc2.CreatedTime.Date } into dsc2LeftJoin
-                              from dsc2Info in dsc2LeftJoin.DefaultIfEmpty()
-                              join ld in _context.LeadGenerations on new { master.EmployeeId, Date = DateTime.Now.Date }
-                                  equals new { EmployeeId = ld.UserId.ToString(), Date = ld.CreatedTime.Date } into ldLeftJoin
-                              from ldInfo in ldLeftJoin.DefaultIfEmpty()
-                              join lfu in _context.LeadFollowUps on new { ldInfo.Id, Date = DateTime.Now.Date }
-                                  equals new { Id = lfu.LeadGenerationId, Date = lfu.CreatedTime.Date }
-                                  into lfuLeftJoin
-                              from lfuInfo in lfuLeftJoin.DefaultIfEmpty()
-                              where (master.PlanDate.Date == DateTime.Now.Date 
-                              
-                              && (!query.UserId.HasValue || query.UserId==userinfo.Id)
 
-                              )
-                              select new
-                              {
-                                  DelarId = details.Id,
-                                  dscInfo.IsSubDealerCall,
-                                  PainterCallInfoId = painterCallInfo.Id,
-                                  dsc2InfoId = dsc2Info.Id,
-                                  LdInfoId = ldInfo.Id,
-                                  lfuInfoId = lfuInfo.Id,
-                                  PainterRegistration= painterRegistration.Id,
-                                  UserEmail=userinfo.Email,
-                                  
-                              }).ToListAsync();
+            var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
+                        .Join(_context.DealerSalesCalls.Include(p => p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
+                        .Where(p =>
+
+                           (!query.UserId.HasValue ? true : userinfo.EmployeeId == p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
+
+                           && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime >= query.FromDate)
+                           && (!query.ToDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime <= query.ToDate)
+
+                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
+                )
+                        .Select(p => new
+                        {
+                            JourneyPlanMaster = p.JourneyPlanMaster.JourneyPlanMaster,
+                            JourneyPlanDetail = p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
+                            DealerSalesCall = p.DealerSalesCall
+                        }).ToList();
+            var dealerSalesCall = _context.DealerSalesCalls.Where(p => p.JourneyPlanId == null
+
+               && (!query.FromDate.HasValue ? true : p.CreatedTime.Date >= query.FromDate.Value.Date)
+                              && (!query.ToDate.HasValue ? true : p.CreatedTime.Date <= query.ToDate.Value.Date)
+            ).ToList();
+
+            var painter = _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (Painter, PainterCall) => new { Painter, PainterCall })
+                                .Where(p =>
+                              (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (!query.FromDate.HasValue ? true : p.Painter.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue ? true : p.Painter.CreatedTime.Date <= query.ToDate.Value.Date)
+
+                            && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.Painter.Zone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.Painter.Territory))
+                                )
+                                .Select(p => new
+                                {
+                                    PainterRegistration = p.Painter,
+                                    PainterCalls = p.PainterCall
+                                }).ToList();
+
+
+            var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
+                .Where(p =>
+               (!query.FromDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date >= query.FromDate.Value.Date)
+                           && (!query.ToDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date <= query.ToDate.Value.Date)
+                           && (!query.FromDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date >= query.FromDate.Value.Date)
+                           && (!query.ToDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date <= query.ToDate.Value.Date)
+
+                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.LeadGeneration.Zone))
+                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.LeadGeneration.Territory))
+                )
+
+                .Select(p => new
+                {
+                    LeadGeneration = p.LeadGeneration,
+                    LeadFollowUp = p.LeadFollowUp
+                }).ToList();
 
 
             var reportResult = new List<ActiveSummaryReportResultModel>()
@@ -1959,11 +2000,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
                     Activity="Journey Plan",
-                    Target=data.Select(x => x.DelarId).Distinct().Count().ToString(),
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count().ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count()-data.Select(x => x.dsc2InfoId).Distinct().Count()).ToString(),
+                    Target=data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count().ToString(),
+                    Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
+                    Variance=(data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count()-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -1971,10 +2015,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="SALES CALL- SUB DEALER",
                     Target="0",
-                    Actual = data.Count(x => x.IsSubDealerCall).ToString(),
+                    Actual = data.Where(p=>p.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.Id).Count().ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
 
@@ -1982,31 +2030,43 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
 
                     Activity="SALES CALL- DIRECT DEALER",
-                    Target=data.Select(x => x.DelarId).Distinct().Count().ToString(),
-                    Actual = data.Count(x => !x.IsSubDealerCall).ToString(),
-                    Variance=(data.Select(x => x.DelarId).Distinct().Count()-data.Count(x => !x.IsSubDealerCall)).ToString(),
+                    Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
+                    Actual = data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count().ToString(),
+                    Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="PAINTER CALL",
-                    Target="0",
-                    Actual = data.Select(x => x.PainterCallInfoId).Distinct().Count().ToString(),
-                    Variance="0",
+                    Target="N/A",
+                    Actual = painter.Select(x => x.PainterCalls.Id).Distinct().Count(x=>x>0).ToString(),
+                    Variance="N/A",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="PAINTER REGISTRATION",
-                    Target="0",
-                    Actual = data.Select(x => x.PainterRegistration).Distinct().Count().ToString(),
+                    Target="N/A",
+                    Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="0",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2014,43 +2074,57 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                     Activity="DEALER ADHOC VISIT",
                     Target="N/A",
-                    Actual = data.Select(x => x.dsc2InfoId).Distinct().Count().ToString(),
+                    Actual = dealerSalesCall.Count().ToString(),
                     Variance="N/A",
                     BusinessGeneration="N/A",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
 
                 },
                 new ActiveSummaryReportResultModel
                 {
 
-                    Activity="LEAD GENARATION",
+                    Activity="LEAD GENERATION",
                     Target="N/A",
-                    Actual =data.Select(x => x.LdInfoId).Distinct().Count().ToString(),
+                    Actual =lead.Select(p=>p.LeadGeneration.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
                 {
                     Activity="LEAD FOLLOWUP",
                     Target="N/A",
-                    Actual =data.Select(x => x.lfuInfoId).Distinct().Count().ToString(),
+                    Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
 
 
                 },
                 new ActiveSummaryReportResultModel
                 {
+
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
-                    Actual ="0",
+                    Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
+                    //Actual ="0",
                     Variance="N/A",
                     BusinessGeneration="0",
-                    UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.DepotId,
+                    Territory=territory,
+                    Zone=zone
 
                 }
             }
@@ -2063,6 +2137,171 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
 
             return queryResult;
+        }
+
+
+
+        private void activesummery()
+        {
+            //var journeyPlanMasters = _journeyPlanMasterRepository.GetAllInclude(p => p.JourneyPlanDetail).ToList();
+
+            //var user = _context.UserInfos.Where(p => journeyPlanMasters.Select(p => p.EmployeeId).ToArray().Contains(p.EmployeeId)).ToList();
+
+            //var dealerSalesCall = _dealerSalesCallRepository.GetAllInclude(p => p.JourneyPlan).ToList();
+
+
+            //var lead = _leadGenerationRepository.GetAllInclude(p => p.LeadFollowUps).ToList();
+
+
+
+
+
+            //var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
+            //            .Join(_context.DealerSalesCalls, jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
+
+            //            .Select(p=> new {
+            //                JourneyPlanMaster=p.JourneyPlanMaster.JourneyPlanMaster,
+            //                JourneyPlanDetail=p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
+            //                DealerSalesCall=p.DealerSalesCall
+            //            }).ToList();
+
+
+            //var painter = _context.JourneyPlanMasters.Join(_context.Painters, jpm => jpm.EmployeeId, p => p.EmployeeId, (JourneyPlanMaster, Painter) => new { JourneyPlanMaster, Painter })
+
+            //                    .Join(_context.PainterCalls, p => p.Painter.Id, pc => pc.PainterId, (JourneyPlanMaster, PainterCall) => new { JourneyPlanMaster, PainterCall })
+            //                    .Select(p => new {
+            //                        PainterRegistration=p.JourneyPlanMaster.Painter,
+            //                        PainterCalls=p.PainterCall
+            //                    }).ToList();
+
+
+            //var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
+            //    .Select(p => new {
+            //        LeadGeneration = p.LeadGeneration,
+            //        LeadFollowUp = p.LeadFollowUp
+            //    }).ToList();
+
+
+            //var reportResult = new List<ActiveSummaryReportResultModel>()
+            //{
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="Journey Plan",
+            //        Target=data.Select(p=>p.DealerSalesCall.DealerId).Count(x=>x>0).ToString(),
+            //        Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
+            //        Variance=(data.Select(p=>p.DealerSalesCall.DealerId).Count(x=>x>0)-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count(x=>x>0)).ToString(),
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="SALES CALL- SUB DEALER",
+            //        Target="0",
+            //        Actual = data.Select(x => x.DealerSalesCall).Count(x=>x.IsSubDealerCall).ToString(),
+            //        Variance="0",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="SALES CALL- DIRECT DEALER",
+            //        Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
+            //        Actual = data.Select(x => x.DealerSalesCall).Count(x => !x.IsSubDealerCall).ToString(),
+            //        Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Select(x => x.DealerSalesCall).Count(x => !x.IsSubDealerCall)).ToString(),
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="PAINTER CALL",
+            //        Target="N/A",
+            //        Actual = painter.Select(x => x.PainterCalls.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="PAINTER REGISTRATION",
+            //        Target="N/A",
+            //        Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="0",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="DEALER ADHOC VISIT",
+            //        Target="N/A",
+            //        Actual = data.Where(p=>p.DealerSalesCall.JourneyPlanId!=0).Select(x => x.DealerSalesCall).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="N/A",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="LEAD GENERATION",
+            //        Target="N/A",
+            //        Actual =lead.Select(p=>p.LeadGeneration.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+            //        Activity="LEAD FOLLOWUP",
+            //        Target="N/A",
+            //        Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+
+            //    },
+            //    new ActiveSummaryReportResultModel
+            //    {
+
+            //        Activity="TOTAL COLLECTION VALUE",
+            //        Target="N/A",
+            //        //Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
+            //        Actual ="0",
+            //        Variance="N/A",
+            //        BusinessGeneration="0",
+            //        //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+
+            //    }
+            //}
+
+            //.Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+            //var queryResult = new QueryResultModel<ActiveSummaryReportResultModel>();
+            //queryResult.Items = reportResult;
+            //queryResult.TotalFilter = reportResult.Count();
+            //queryResult.Total = reportResult.Count();
+
+
+            //return queryResult;
+
+
+
+
+
+
+
+
+
         }
     }
 }

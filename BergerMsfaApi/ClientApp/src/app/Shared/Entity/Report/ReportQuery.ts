@@ -217,22 +217,42 @@ export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
 
 export class MtsValueTargetAchivementReportQuery extends ReportBaseQuery {
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }
 
 
 export class BillingDealerQuarterlyGrowthReportQuery extends ReportBaseQuery {
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }
 
 
 export class EnamelPaintsQuarterlyGrowthReportQuery extends ReportBaseQuery {
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }
 
 export class PremiumBrandsGrowthReportQuery extends ReportBaseQuery {
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }
 
 export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 }

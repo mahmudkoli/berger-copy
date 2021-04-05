@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-sm-3 border bg-light p-2">
                 <div class="text-center">
-                    <img src="{{baseUrl}}/{{painterImageUrl}}" style="border-radius: 50%;"
+                    <img *ngIf='painter.painterImageUrl' [src]="painter.painterImageUrl" style="border-radius: 50%;"
                          class="avatar img-circle img-thumbnail" alt="avatar">
                 </div>
                 <br>
@@ -14,9 +14,9 @@
                     <h6 class="font-weight-bold">{{painter.address}}</h6>
                 </div>
             </div>
-            <div class="col-sm-9 bg-secondary p-2">
+            <div class="col-sm-9 bg-secondary pt-2">
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Depot:</strong></span> {{painter.depot}}</p>
                     </div>
                     <div class="col-sm-4">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Sale Group:</strong></span> {{painter.saleGroup}}</p>
                     </div>
                     <div class="col-sm-4">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Zone:</strong></span> {{painter.zone}}</p>
                     </div>
                     <div class="col-sm-4">
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Territory:</strong></span> {{painter.territory}}</p>
 
                     </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Has Dbbl:</strong></span> {{painter.hasDbbl}}</p>
 
                     </div>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Acc Dbbl Number:</strong></span> {{painter.accDbblNumber}}</p>
 
                     </div>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Passport No:</strong></span> {{painter.passportNo}}</p>
 
                     </div>
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>BrithCertificateNo No:</strong></span> {{painter.brithCertificateNo}}</p>
 
                     </div>
@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>PainterCat Id:</strong></span> {{painter.painterCatId}}</p>
 
                     </div>
@@ -95,7 +95,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Average Monthly Value:</strong></span> {{painter.avgMonthlyVal}}</p>
 
                     </div>
@@ -104,7 +104,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p><span><strong>Loyality:</strong></span> {{painter.loyality}}</p>
                     </div>
                     <div class="col-sm-4">
@@ -113,43 +113,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <br />
-    <!--<hr class="divider" style="background:#2196F3" />-->
-
-
-    <div class="col col-md-12">
-        <h5><span>Attachments:</span></h5>
-        <br />
-        <p-table [value]="attachments">
-
-            <ng-template pTemplate="header">
-                <tr>
-                    <th pSortableColumn="name">Name</th>
-                    <th pSortableColumn="path">Image</th>
-                </tr>
-            </ng-template>
-
-            <ng-template pTemplate="body" let-attachment>
-                <tr>
-                    <td>
-                        <span>
-                            <strong>
-                                <a href="{{attachment.path}}" target="_self" download [class.disabled]="!painter.path">{{attachment.name}} </a>
-                            </strong>
-                        </span>
-                    </td>
-                    <td>
-                        <img [alt]="attachment.name" src="{{attachment.path}}" width="60"
-                             style="vertical-align: middle; border-radius: 5%;" />
-                    </td>
-
-                </tr>
-            </ng-template>
-
-
-        </p-table>
-
     </div>
 
 

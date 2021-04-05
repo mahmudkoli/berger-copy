@@ -49,6 +49,7 @@ namespace Berger.Common
                     To = email,
                     Body = body,
                     Subject = subject,
+                    
 
                 };
 
@@ -69,14 +70,16 @@ namespace Berger.Common
                     try
                     {
                         smtpClient.Host = _smtpSettings.Server;
-                        smtpClient.Port = 587; // Google smtp port
-                        smtpClient.EnableSsl = true;
+                        if (_smtpSettings.Port > 0)
+                            smtpClient.Port = _smtpSettings.Port;
+                        smtpClient.EnableSsl = _smtpSettings.EnableSSL;
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;// disable it
+                        smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
-                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
+                        emailLog.LogStatus = (int)EmailStatus.Success;
                     }
                     catch (Exception e)
                     {
@@ -125,14 +128,17 @@ namespace Berger.Common
                     try
                     {
                         smtpClient.Host = _smtpSettings.Server;
-                        smtpClient.Port = 587; // Google smtp port
-                        smtpClient.EnableSsl = true;
+                        if (_smtpSettings.Port > 0)
+                            smtpClient.Port = _smtpSettings.Port;
+                        smtpClient.EnableSsl = _smtpSettings.EnableSSL;
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtpClient.UseDefaultCredentials = false;// disable it
+                        smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
-                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
+                        emailLog.LogStatus = (int)EmailStatus.Success;
+
                     }
                     catch (Exception e)
                     {

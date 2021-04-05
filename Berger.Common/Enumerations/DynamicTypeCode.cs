@@ -3,9 +3,9 @@ namespace Berger.Common.Enumerations
 {
     public static class DynamicTypeCode
     {
-        public const string Dealer = "D01";
-        public const string Employee = "E01";
-        public const string Company = "C01"; // not used from app
+        //public const string Dealer = "D01";
+        //public const string Employee = "E01";
+        public const string Company = "C01";
         public const string Payment = "P01";
         public const string Ratings = "R01";
         public const string ProductLifting = "PL01";
@@ -28,5 +28,6 @@ namespace Berger.Common.Enumerations
         public const string Customer = "Customer01";
         public const string ELearningCategory = "ELC01";
         public const string ProductSourcing = "PS03";
+        public const string PaintUsage = "PU01";
     }
 }

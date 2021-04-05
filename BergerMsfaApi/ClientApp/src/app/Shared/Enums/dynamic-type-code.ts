@@ -1,8 +1,8 @@
 import { MapObject } from "./mapObject";
 
 export enum EnumDynamicTypeCode {
-    Dealer = "D01",
-    Employee = "E01",
+    // Dealer = "D01",
+    // Employee = "E01",
     Company = "C01",
     Payment = "P01",
     Ratings = "R01",
@@ -26,6 +26,7 @@ export enum EnumDynamicTypeCode {
     Customer = "Customer01",
     ELearningCategory = "ELC01",
     ProductSourcing = "PS03",
+    PaintUsage = "PU01",
 }
 
 

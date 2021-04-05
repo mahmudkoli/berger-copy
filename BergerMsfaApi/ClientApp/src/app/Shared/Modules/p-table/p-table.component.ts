@@ -1195,4 +1195,11 @@ export class PTableComponent implements OnInit, DoCheck {
     });
     return cc;
   }
+
+  isParentHeaderExists() {
+    return (
+      this.pTableSetting.tableColDef.filter((x) => x.parentHeaderName != '')
+        .length > 0
+    );
+  }
 }

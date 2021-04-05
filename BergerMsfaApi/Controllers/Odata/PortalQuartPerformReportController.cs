@@ -34,7 +34,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return ExceptionResult(ex, "Failed to fetched from SAP.");
             }
         }
 
@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return ExceptionResult(ex, "Failed to fetched from SAP.");
             }
         }
 
@@ -90,7 +90,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return ExceptionResult(ex, "Failed to fetched from SAP.");
             }
         }
 
@@ -118,7 +118,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return ExceptionResult(ex, "Failed to fetched from SAP.");
             }
         }
 
@@ -146,7 +146,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return ExceptionResult(ex, "Failed to fetched from SAP.");
             }
         }
         

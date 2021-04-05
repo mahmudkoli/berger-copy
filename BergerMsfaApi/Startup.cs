@@ -100,7 +100,7 @@ namespace BergerMsfaApi
             services.AddScoped<IReportDataService, ReportDataService>();
             services.AddScoped<ICollectionDataService, CollectionDataService>();
             //services.Configure<AuthMessageSenderOptions>(Configuration);
-            services.Configure<SmtpSettings>(Configuration);
+            //services.Configure<SmtpSettings>(Configuration);
 
             services.AddTransient<IEmailSender, EmailSender>();
 

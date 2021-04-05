@@ -278,10 +278,10 @@ namespace BergerMsfaApi.Models.Report
         public string EliteCount { get; set; }
         public string NipponMtdValue { get; set; }
         public string NipponCount { get; set; }
-        public string DuluxMtdValue { get; set; }
-        public string DuluxCount { get; set; }
-        public string MoonstarMtdValue { get; set; }
-        public string MoonstarCount { get; set; }
+        //public string DuluxMtdValue { get; set; }
+        //public string DuluxCount { get; set; }
+        //public string MoonstarMtdValue { get; set; }
+        //public string MoonstarCount { get; set; }
         public string OthersMtdValue { get; set; }
         public string OthersCount { get; set; }
         public string TotalMtdValue { get; set; }
@@ -478,7 +478,7 @@ namespace BergerMsfaApi.Models.Report
 
         public string UserID { get; set; }
         public string DepotID { get; set; }
-        public string DepotName { get; set; }
+        //public string DepotName { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
         public string Activity { get; set; }

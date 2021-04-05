@@ -13,7 +13,7 @@
         position: absolute;
         left: 4px;
         bottom: -20px;
-        color: #3ab4e5;
+        color: $white;
         font-size: 30px;
         font-weight: bold;
       }
@@ -190,7 +190,15 @@
     -moz-appearance: none;
     -webkit-appearance:none;
 }
+.p-datatable-wrapper{
+  width: 100%;
+  overflow: auto;
+  table{
+    table-layout: auto!important;
+  }
+}
 .p-datatable .p-datatable-thead > tr > th {
+  white-space: nowrap;
   font-size: 14px;
   border: 1px solid #2196F3;
   color: #fff;

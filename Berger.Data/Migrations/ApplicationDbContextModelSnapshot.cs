@@ -107,6 +107,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -3358,7 +3361,7 @@ namespace Berger.Data.Migrations
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.PainterCall", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", "Painter")
-                        .WithMany()
+                        .WithMany("PainterCalls")
                         .HasForeignKey("PainterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

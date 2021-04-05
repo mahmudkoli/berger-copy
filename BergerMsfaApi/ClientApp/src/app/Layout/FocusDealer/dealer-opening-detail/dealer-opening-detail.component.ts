@@ -34,9 +34,12 @@ export class DealerOpeningDetailComponent implements OnInit {
   private getDealerOpenDetailById(id) {
     this.dealerOpeningSvc.GetDealerOpeningDetailById(id).subscribe(
       (result: any) => {
+        if(result){
+          this.dealerOpen = result.data;
+
+        }
         // debugger;
-        this.dealerOpen = result.data;
-        console.log("dealeropeningLog",result.data)
+        // console.log("dealeropeningLog",result.data)
       },
       (err: any) => console.log(err)
     );
@@ -73,7 +76,7 @@ export class DealerOpeningDetailComponent implements OnInit {
             
                 this.router.navigate(["/dealer/openingList"]).then(
                     () => {
-                        this.alertService.tosterSuccess(`status successfully.`);
+                        this.alertService.tosterSuccess(`Dealer Opening status approved successfully .`);
                     });
               
             },

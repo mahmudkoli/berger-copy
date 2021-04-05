@@ -59,6 +59,7 @@
     <Compile Remove="Models\Reports\**" />
     <Compile Remove="Services\DailyPOSM\**" />
     <Compile Remove="Services\Examples\**" />
+    <Compile Remove="wwwroot\uploads\images\**" />
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <Content Remove="Interfaces\**" />
@@ -66,12 +67,14 @@
     <Content Remove="Models\Reports\**" />
     <Content Remove="Services\DailyPOSM\**" />
     <Content Remove="Services\Examples\**" />
+    <Content Remove="wwwroot\uploads\images\**" />
     <EmbeddedResource Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <EmbeddedResource Remove="Interfaces\**" />
     <EmbeddedResource Remove="Models\DailyActivities\**" />
     <EmbeddedResource Remove="Models\Reports\**" />
     <EmbeddedResource Remove="Services\DailyPOSM\**" />
     <EmbeddedResource Remove="Services\Examples\**" />
+    <EmbeddedResource Remove="wwwroot\uploads\images\**" />
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <None Remove="Interfaces\**" />
@@ -79,6 +82,7 @@
     <None Remove="Models\Reports\**" />
     <None Remove="Services\DailyPOSM\**" />
     <None Remove="Services\Examples\**" />
+    <None Remove="wwwroot\uploads\images\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
@@ -124,8 +128,9 @@
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="Models\NewFolder\" />
+    <Folder Include="Logs\" />
     <Folder Include="wwwroot\Logs\" />
-    <Folder Include="wwwroot\uploads\images\POSMProducts\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
   <ItemGroup>

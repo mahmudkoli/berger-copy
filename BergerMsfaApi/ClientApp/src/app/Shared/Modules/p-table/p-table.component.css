@@ -21,8 +21,9 @@
     padding-bottom: 15px;
     background: #fff;
     margin-bottom: 20px;
-    border-top: 5px solid #3ab4e5;
     border-radius: 5px;
+    border-top: 5px solid #3ab4e5;
+    border: 1px solid #ddd;
 }
 
 .p-table {
@@ -91,6 +92,7 @@
 }
 
 .p-table thead th {
+    white-space: nowrap;
     vertical-align: middle;
     padding-left: 5px!important;
 }
@@ -118,7 +120,7 @@
 span.sort-icon {
     display: block;
     position: absolute;
-    top: 33%;
+    top: 20%;
     right: -4px;
     margin: 0;
     width: 18px;
@@ -136,12 +138,14 @@ span.sort-icon {
     background-image: url("/assets/images/sort_asc.png")!important;
     background-repeat: no-repeat!important;
     background-position: center right!important;
+    filter: brightness(0) invert(1);
 }
 
 .p-table thead th.sorting-down span.sort-icon {
     background-image: url("/assets/images/sort_desc.png")!important;
     background-repeat: no-repeat!important;
     background-position: center right!important;
+    filter: brightness(0) invert(1);
 }
 
 .p-table-content .panel-title {
@@ -163,12 +167,13 @@ span.sort-icon {
     background: #3ab4e5;
     color: #fff;
     border: none;
-    padding: 0px;
-    padding-top: 9px;
-    padding-bottom: 8px;
-    border-right: 1px solid #fff;
+    padding: 5px 25px 5px 5px;
+    border: 1px solid #fff;
     text-align: center;
     font-size: 12px;
+}
+.p-table-body .p-table thead th.setting-update {
+    padding-right: 5px;
 }
 
 .p-table-overflow-x {

@@ -288,9 +288,18 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 			x.parentHeaderName = 'Dealer Satisfaction';
 		});
 
-	}
+		// Show Image
+		var columName = this.ptableSettings.tableColDef.filter(x => 
+						x.internalName == 'productDisplayAndMerchendizingImage' ||
+						x.internalName == 'schemeModalityImage'
+			);
+		if(columName.length > 0){
+			columName[0].type = 'image';
+			columName[1].type = 'image';
+		}
 
-	
+		// console.log(this.ptableSettings.tableColDef);
+	}
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "reports-table",
