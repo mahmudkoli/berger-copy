@@ -793,17 +793,17 @@ namespace Berger.Odata.Services
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             var filter = new List<(string Prop, string Value)>();
 
-            if (string.IsNullOrEmpty(plant))
+            if (!string.IsNullOrEmpty(plant))
             {
                 filter.Add((nameof(StockDataModel.Plant), plant));
             }
 
-            if (string.IsNullOrEmpty(materialGroup))
+            if (!string.IsNullOrEmpty(materialGroup))
             {
                 filter.Add((nameof(StockDataModel.MaterialGroup), materialGroup));
             }
 
-            if (string.IsNullOrEmpty(materialCode))
+            if (!string.IsNullOrEmpty(materialCode))
             {
                 filter.Add((nameof(StockDataModel.MaterialCode), materialCode));
             }
