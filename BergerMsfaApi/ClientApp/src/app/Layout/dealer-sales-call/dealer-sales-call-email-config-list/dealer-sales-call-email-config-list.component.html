@@ -13,7 +13,7 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="dealerSalesIssueCategoryId">Issue Category<p-sortIcon field="dealerSalesIssueCategoryId"></p-sortIcon>
+                <th pSortableColumn="dealerSalesIssueCategory.dropdownName">Issue Category<p-sortIcon field="dealerSalesIssueCategory.dropdownName"></p-sortIcon>
                 </th>
                 <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon>
                 </th>
@@ -23,7 +23,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-emailconfig>
             <tr>
-                <td>{{emailconfig.dealerSalesIssueCategoryId }}</td>
+                <td>{{emailconfig.dealerSalesIssueCategory?.dropdownName }}</td>
                 <td>{{emailconfig.email}}</td>
 
                 <td>

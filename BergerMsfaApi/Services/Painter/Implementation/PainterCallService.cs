@@ -126,7 +126,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<List<PainterCallModel>> AppGetPainterByPainterIdAsync(string employeeId,int PainterId)
         {
-            var companys = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.SwappingCompetition);
+            var companys = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.PaintUsageCompany);
             var result = await _painterCallSvc.GetAllIncludeAsync(
                                         s => s, f => f.EmployeeId == employeeId && f.PainterId == PainterId,
                                         null, f => f.Include(i => i.PainterCompanyMTDValue),
@@ -188,7 +188,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         }
         public async Task<PainterCallModel> AppCreatePainterCallAsync(int PainterId)
         {
-            var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.SwappingCompetition);
+            var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.PaintUsageCompany);
             if (await _painterCallSvc.AnyAsync(p => p.PainterId == PainterId))
             {
                 var _painterCall = _painterCallSvc

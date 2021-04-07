@@ -122,7 +122,8 @@ export class UserInfoFormComponent implements OnInit {
         let managerId= data.managerId;
         let fullName = data.firstName + data.middleName + data.lastName;
         fullName = fullName.replace('  ', ' ');
-        managerId = managerId.toString().indexOf('E') > -1 ? managerId.replace('E', '') : managerId;
+        if (managerId)
+            managerId = managerId.toString().indexOf('E') > -1 ? managerId.replace('E', '') : managerId;
 
         this.userForm.controls.userName.setValue(userName);
         this.userForm.controls.fullName.setValue(fullName);
@@ -158,7 +159,7 @@ export class UserInfoFormComponent implements OnInit {
            managerId: [this.user.managerId, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
            managerName: [this.user.managerName],
            status: [this.user.status, Validators.required],
-           roleIds: [this.user.roleIds, Validators.required],
+           roleIds: [this.user.roleIds && this.user.roleIds.length > 0 ? this.user.roleIds[0] : null, Validators.required],
            plantIds: [this.user.plantIds],
            saleOfficeIds: [this.user.saleOfficeIds],
            areaIds: [this.user.areaIds],
@@ -230,7 +231,7 @@ export class UserInfoFormComponent implements OnInit {
        _user.managerId = controls['managerId'].value;
        _user.managerName = controls['managerName'].value;
        _user.status = controls['status'].value;
-       _user.roleIds = controls['roleIds'].value;
+       _user.roleIds = [controls['roleIds'].value];
        _user.plantIds = controls['plantIds'].value;
        _user.saleOfficeIds = controls['saleOfficeIds'].value;
        _user.areaIds = controls['areaIds'].value;

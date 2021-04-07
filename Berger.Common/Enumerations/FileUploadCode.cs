@@ -9,5 +9,6 @@ namespace Berger.Common.Enumerations
         RegisterPainter=4,
         LeadGeneration=5,
         ELearning=6,
+        MerchandisingSnapShot = 7,
     }
 }

@@ -172,7 +172,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             var result = from dt in _dropdownType.GetAll()
                          join dd in _dropdownDetail.GetAll()
                          on dt.Id equals dd.TypeId
-                         where dt.TypeCode == DynamicTypeCode.SwappingCompetition
+                         where dt.TypeCode == DynamicTypeCode.PaintUsageCompany
                          select dd;
             //TypeId will change
            // var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
