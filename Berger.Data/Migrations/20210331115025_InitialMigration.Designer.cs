@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210331115025_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -569,57 +571,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DealerSalesIssueCategoryId");
-
                     b.ToTable("EmailConfigForDealerSalesCalls");
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.MerchandisingSnapShot", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DealerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MerchandisingSnapShotCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DealerId");
-
-                    b.HasIndex("MerchandisingSnapShotCategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("MerchandisingSnapShots");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", b =>
@@ -2779,9 +2731,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("BusinessArea")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
@@ -2861,35 +2810,6 @@ namespace Berger.Data.Migrations
                     b.HasIndex("UserInfoId");
 
                     b.ToTable("TintingMachines");
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.Users.LoginLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FCMToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsLoggedIn")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LoggedInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LoggedOutTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("LoginLogs");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Users.Role", b =>
@@ -3221,36 +3141,6 @@ namespace Berger.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.EmailConfigForDealerSalesCall", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "DealerSalesIssueCategory")
-                        .WithMany()
-                        .HasForeignKey("DealerSalesIssueCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.DealerSalesCall.MerchandisingSnapShot", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.SAPTables.DealerInfo", "Dealer")
-                        .WithMany()
-                        .HasForeignKey("DealerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "MerchandisingSnapShotCategory")
-                        .WithMany()
-                        .HasForeignKey("MerchandisingSnapShotCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", "BusinessAchievement")
@@ -3553,15 +3443,6 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.Users.LoginLog", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

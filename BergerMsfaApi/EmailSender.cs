@@ -73,9 +73,10 @@ namespace Berger.Common
                         if (_smtpSettings.Port > 0)
                             smtpClient.Port = _smtpSettings.Port;
                         smtpClient.EnableSsl = _smtpSettings.EnableSSL;
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
-                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
                         emailLog.LogStatus = (int)EmailStatus.Success;
@@ -130,9 +131,10 @@ namespace Berger.Common
                         if (_smtpSettings.Port > 0)
                             smtpClient.Port = _smtpSettings.Port;
                         smtpClient.EnableSsl = _smtpSettings.EnableSSL;
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.UseDefaultCredentials = _smtpSettings.UseDefaultCredentials;
                         /// Now specify the credentials 
-                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+                        smtpClient.Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password);
 
                         await smtpClient.SendMailAsync(message);
                         emailLog.LogStatus = (int)EmailStatus.Success;

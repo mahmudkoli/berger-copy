@@ -118,6 +118,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
+        public DbSet<LoginLog> LoginLogs { get; set; }
         #endregion
 
         #region Setup
@@ -175,6 +176,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<DealerCompetitionSales> DealerCompetitionSales { get; set; }
         public DbSet<DealerSalesIssue> DealerSalesIssues { get; set; }
         public DbSet<Berger.Data.MsfaEntity.EmailLog.EmailLog> EmailLogs { get; set; }
+        public DbSet<MerchandisingSnapShot> MerchandisingSnapShots { get; set; }
         #endregion
 
         #region Demand Generation
