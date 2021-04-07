@@ -2,6 +2,7 @@
 {
     public enum EnumEmployeeRole
     {
+        Admin = 0,
         DIC = 1, // Plant, BusinessArea, Depot
         BIC = 2, // SalesOffice
         AM = 3, // SalesGroup, Area

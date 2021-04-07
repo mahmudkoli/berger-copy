@@ -169,6 +169,9 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 case FileUploadCode.ELearning:
                     filePath = Path.Combine(filePath, "ELearning");
                     break;
+                case FileUploadCode.MerchandisingSnapShot:
+                    filePath = Path.Combine(filePath, "MerchandisingSnapShot");
+                    break;
                 default:
                     break;
             }

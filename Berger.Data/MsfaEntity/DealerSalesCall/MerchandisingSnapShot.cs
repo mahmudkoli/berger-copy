@@ -16,6 +16,7 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
         public UserInfo User { get; set; }
         public int MerchandisingSnapShotCategoryId { get; set; }
         public DropdownDetail MerchandisingSnapShotCategory { get; set; }
+        public string OthersSnapShotCategoryName { get; set; }
         public string Remarks { get; set; }
         public string ImageUrl { get; set; }
     }

@@ -222,11 +222,12 @@ namespace BergerMsfaApi.Services.Users.Implementation
             finalResult.TerritoryIds = territoryIds;
             finalResult.ZoneIds = zoneIds;
 
-            var userRoleMapping = await _userRoleMappingRepo.FindAsync(u => u.UserInfoId == result.Id);
+            var userRoleMapping = await _userRoleMappingRepo.FindAllInclude(u => u.UserInfoId == result.Id, i=> i.Role).FirstOrDefaultAsync();
 
             if (userRoleMapping != null)
             {
                 finalResult.RoleId = userRoleMapping.RoleId;
+                finalResult.RoleName = userRoleMapping.Role?.Name;
             }
 
             return finalResult;
