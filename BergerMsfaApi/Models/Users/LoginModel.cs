@@ -8,5 +8,6 @@ namespace BergerMsfaApi.Models.Users
         public string UserName { get; set; }
         [Required]
         public string Password { get; set; }
+        public string FCMToken { get; set; }
     }
 }
