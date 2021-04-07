@@ -216,7 +216,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
             modelResult.DealerId = id;
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetition);
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetitionCompany);
 
             foreach (var item in companyList)
             {
@@ -261,7 +261,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var modelResults = new List<SaveDealerSalesCallModel>();
 
-            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetition);
+            var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetitionCompany);
 
             foreach (var id in ids)
             {
