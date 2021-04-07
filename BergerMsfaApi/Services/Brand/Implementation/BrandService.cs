@@ -83,7 +83,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             query.MaterialDescription = query.MaterialDescription ?? string.Empty;
 
             var result = await _brandInfoRepository.GetAllIncludeAsync(
-                                x => new { x.Id, x.MaterialCode, x.MaterialDescription },
+                                x => new { x.Id, x.MaterialCode, x.MaterialDescription, x.MaterialGroupOrBrand },
                                 x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || x.MaterialDescription.Contains(query.MaterialDescription)),
                                 x => x.OrderBy(o => o.MaterialDescription),
                                 null,
