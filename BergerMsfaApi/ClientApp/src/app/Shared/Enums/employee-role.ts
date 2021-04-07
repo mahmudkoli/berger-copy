@@ -1,6 +1,7 @@
 import { MapObject } from './mapObject';
 
 export enum EnumEmployeeRole {
+    Admin = 0,
     DIC = 1,
     BIC = 2,
     AM = 3,
@@ -10,6 +11,7 @@ export enum EnumEmployeeRole {
 
 export class EnumEmployeeRoleLabel{
     public static EmployeeRoles :  MapObject[] = [
+        { id : 0, label : "Admin" },
         { id : 1, label : "DIC" },
         { id : 2, label : "BIC" },
         { id : 3, label : "AM" },

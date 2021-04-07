@@ -95,7 +95,7 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Application Role</label>
-                        <ng-select formControlName="roleIds" multiple="multiple">
+                        <ng-select formControlName="roleIds" >
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of roles;" [value]="ur.id">{{ur.name}}</ng-option>
                         </ng-select>
