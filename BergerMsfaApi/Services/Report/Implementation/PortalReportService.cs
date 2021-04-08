@@ -1794,12 +1794,31 @@ namespace BergerMsfaApi.Services.Report.Implementation
             IList<FinancialDataModel> secondMonthData = new List<FinancialDataModel>();
             IList<FinancialDataModel> thirdMonthData = new List<FinancialDataModel>();
 
+            #region data call by single customer
+            var dataAll = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var fDate = monthList[0];
+                var lDate = monthList[2];
+                var startDate = new DateTime(fDate.Year, fDate.Month, 1);
+                var endDate = new DateTime(lDate.Year, lDate.Month, DateTime.DaysInMonth(lDate.Year, lDate.Month));
+                var dataSingle = (await _financialDataService.GetOsOver90DaysTrend(dealerIds, startDate, endDate)).ToList();
+                if (dataSingle.Any())
+                {
+                    dataAll.AddRange(dataSingle);
+                }
+            }
+            #endregion
+
             for (int i = 0; i < monthList.Take(3).Count(); i++)
             {
                 var item = monthList[i];
                 var startDate = new DateTime(item.Year, item.Month, 1);
                 var endDate = new DateTime(item.Year, item.Month, DateTime.DaysInMonth(item.Year, item.Month));
-                IList<FinancialDataModel> data = await _financialDataService.GetOsOver90DaysTrend(dealerIds, startDate, endDate);
+                //IList<FinancialDataModel> data = await _financialDataService.GetOsOver90DaysTrend(dealerIds, startDate, endDate);
+                IList<FinancialDataModel> data = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= startDate.Date
+                                                    && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= endDate.Date).ToList();
 
                 switch (i)
                 {
