@@ -477,7 +477,7 @@ namespace Berger.Odata.Services
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000")
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode)
                                 .And()
                                 .Equal(FinancialColDef.CustomerLow, customerNo);
 
@@ -520,7 +520,7 @@ namespace Berger.Odata.Services
             IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000");
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode);
 
             if (dealerIds.Any())
             {
@@ -793,17 +793,17 @@ namespace Berger.Odata.Services
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             var filter = new List<(string Prop, string Value)>();
 
-            if (string.IsNullOrEmpty(plant))
+            if (!string.IsNullOrEmpty(plant))
             {
                 filter.Add((nameof(StockDataModel.Plant), plant));
             }
 
-            if (string.IsNullOrEmpty(materialGroup))
+            if (!string.IsNullOrEmpty(materialGroup))
             {
                 filter.Add((nameof(StockDataModel.MaterialGroup), materialGroup));
             }
 
-            if (string.IsNullOrEmpty(materialCode))
+            if (!string.IsNullOrEmpty(materialCode))
             {
                 filter.Add((nameof(StockDataModel.MaterialCode), materialCode));
             }

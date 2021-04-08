@@ -99,6 +99,7 @@ namespace BergerMsfaApi
             services.AddScoped<IQuarterlyPerformanceDataService, QuarterlyPerformanceDataService>();
             services.AddScoped<IReportDataService, ReportDataService>();
             services.AddScoped<ICollectionDataService, CollectionDataService>();
+            services.AddScoped<IStockDataService, StockDataService>();
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
 
