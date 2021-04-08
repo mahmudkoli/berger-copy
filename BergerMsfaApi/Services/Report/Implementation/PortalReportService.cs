@@ -1803,7 +1803,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var lDate = monthList[2];
                 var startDate = new DateTime(fDate.Year, fDate.Month, 1);
                 var endDate = new DateTime(lDate.Year, lDate.Month, DateTime.DaysInMonth(lDate.Year, lDate.Month));
-                var dataSingle = (await _financialDataService.GetOsOver90DaysTrend(dealerIds, startDate, endDate)).ToList();
+                var dataSingle = (await _financialDataService.GetOsOver90DaysTrend(dealerId, startDate, endDate)).ToList();
                 if (dataSingle.Any())
                 {
                     dataAll.AddRange(dataSingle);
