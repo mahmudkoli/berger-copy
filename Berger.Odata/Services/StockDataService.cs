@@ -30,11 +30,10 @@ namespace Berger.Odata.Services
         public async Task<IList<StocksResultModel>> GetStockDetails(StocksSearchModel model)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(nameof(StockDataModel.MaterialCode))
-                                .AddProperty(nameof(StockDataModel.MaterialDiscription))
-                                .AddProperty(nameof(StockDataModel.MaterialGroup))
-                                .AddProperty(nameof(StockDataModel.StorageLocation))
-                                .AddProperty(nameof(StockDataModel.CurrentStock));
+            foreach (var prop in typeof(StockDataModel).GetProperties())
+            {
+                selectQueryBuilder.AddProperty(prop.Name);
+            }
 
             var data = (await _odataService.GetStockData(selectQueryBuilder, plant: model.Plant, materialGroup: model.MaterialGroup, materialCode: model.MaterialCode)).ToList();
 

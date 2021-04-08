@@ -95,7 +95,8 @@ namespace Berger.Odata.Services
                                         var osModel = new OutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.DaysLimit = x.FirstOrDefault()?.DayLimit ?? string.Empty;
-                                        osModel.ValueLimit = customerData.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0;
+                                        osModel.ValueLimit = customerData.Where(f => f.CreditControlArea == osModel.CreditControlArea)
+                                                                            .GroupBy(g => g.CreditLimit).Sum(c => c.Key);
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
                                                             .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
@@ -144,7 +145,8 @@ namespace Berger.Odata.Services
                                         var osModel = new ReportOutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.ValueLimit = customerData.GroupBy(g => g.CustomerNo)
-                                                                .Sum(s => s.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0);
+                                                                .Sum(s => s.Where(f => f.CreditControlArea == osModel.CreditControlArea)
+                                                                .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
@@ -212,6 +214,12 @@ namespace Berger.Odata.Services
             //var currentDate = DateTime.Now;
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            {
+                selectCustomerQueryBuilder.AddProperty(prop.Name);
+            }
+
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                                 .AddProperty(FinancialColDef.CustomerName)
@@ -219,6 +227,22 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.DayLimit);
+
+            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+
+            if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS)
+            {
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
+                                                        x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
+                dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+            }
+            else if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.FastPayCarry)
+            {
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
+                                                        (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer || 
+                                                        x.PriceGroup == ConstantsValue.PriceGroupFastPayCarry)).ToList();
+                dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+            }
 
             var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
 
