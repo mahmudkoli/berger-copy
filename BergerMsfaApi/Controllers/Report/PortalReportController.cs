@@ -512,9 +512,6 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
-
-
-
         [HttpGet("GetTintingMachine")]
         public async Task<IActionResult> GetTintingMachine([FromQuery] TintingMachineReportSearchModel query)
         {
@@ -567,6 +564,76 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetActiveSummeryReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetLogInReport")]
+        public async Task<IActionResult> GetLogInReport([FromQuery] LogInReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetLogInReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadLogInReport")]
+        public async Task<IActionResult> DownloadLogInReport([FromQuery] LogInReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetLogInReportAsync(query);
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetSnapShotReport")]
+        public async Task<IActionResult> GetSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetSnapShotReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadSnapShotReport")]
+        public async Task<IActionResult> DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetSnapShotReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
+                    nameof(MerchendizingSnapShotReportResultModel.GlowSignBoard),
+                    nameof(MerchendizingSnapShotReportResultModel.ProductDisplay),
+                    nameof(MerchendizingSnapShotReportResultModel.Scheme),
+                    nameof(MerchendizingSnapShotReportResultModel.Brochure),
+                    nameof(MerchendizingSnapShotReportResultModel.Others));
+
                 return Ok(result.Items);
             }
             catch (Exception ex)

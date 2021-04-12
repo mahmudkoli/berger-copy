@@ -30,6 +30,8 @@ import { BillingDealerQuarterlyGrowthReportComponent } from './billing-dealer-qu
 import { EnamelPaintsQuarterlyGrowthReportComponent } from './enamel-paints-quarterly-growth/enamel-paints-quarterly-growth-report.component';
 import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/premium-brands-growth-report.component';
 import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
+import { MerchendizingSnapshotReportComponent } from './merchendizing-snapshot/merchendizing-snapshot-report.component';
+import { LoginLogReportComponent } from './login-log/login-log-report.component';
 
 @NgModule({
     declarations: [
@@ -57,7 +59,9 @@ import { PremiumBrandsContributionReportComponent } from './premium-brands-contr
       BillingDealerQuarterlyGrowthReportComponent,
       EnamelPaintsQuarterlyGrowthReportComponent,
       PremiumBrandsGrowthReportComponent,
-      PremiumBrandsContributionReportComponent
+      PremiumBrandsContributionReportComponent,
+      MerchendizingSnapshotReportComponent,
+      LoginLogReportComponent
     ],
   imports: [
       CommonModule,
