@@ -256,3 +256,27 @@ export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
 	toMonth:any;
 	toYear:any;
 }
+
+export class SnapShotReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    
+    constructor(init?: Partial<SnapShotReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class LogInReportQuery extends ReportBaseQuery {
+    status: number;
+    
+    constructor(init?: Partial<SnapShotReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

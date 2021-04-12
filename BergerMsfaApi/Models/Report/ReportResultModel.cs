@@ -552,6 +552,34 @@ namespace BergerMsfaApi.Models.Report
         public string Othersriority { get; set; }
     }
 
+    public class MerchendizingSnapShotReportResultModel
+    {
+        public string UserId { get; set; }
+        public string DealerId { get; set; }
+        public string DealerName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string SnapShotDate { get; set; }
+        public string CompetitionDisplay { get; set; }
+        public string GlowSignBoard { get; set; }
+        public string ProductDisplay { get; set; }
+        public string Scheme { get; set; }
+        public string Brochure { get; set; }
+        public string Others { get; set; }
+        public string OtherSnapshotTypeName { get; set; }
+        public string Remarks { get; set; }
+    }
+
+    public class LogInReportResultModel
+    {
+        public string UserId { get; set; }
+        public string StartDate { get; set; }
+        public string StartTime { get; set; }
+        public string ClosedDate { get; set; }
+        public string ClosedTime { get; set; }
+        public decimal TotalUseTime { get; set; }
+    }
+
     #endregion
 
     public class OsOver90daysTrendReportResultModel
