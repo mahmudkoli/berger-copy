@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ControlContainer } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { FocusDealer } from 'src/app/Shared/Entity/FocusDealer/JourneyPlan';
@@ -44,9 +45,10 @@ export class EmailConfigAddComponent implements OnInit {
         }
 
         
-        this.commonSvc.getDepotList().subscribe((plants) => {
-            this.plants = plants.data;
-
+        this.commonSvc.getDepotList().subscribe((p) => {
+            this.plants = p.data;
+            
+            
         }), (err: any) => console.log(err);
 
     }
@@ -69,9 +71,9 @@ export class EmailConfigAddComponent implements OnInit {
 
     public fnSave() {
         // debugger;
+
+       // console.log(this.emailConfigModel);
         
-
-
         this.emailConfigModel.id == 0 ? this.insert(this.emailConfigModel) : this.update(this.emailConfigModel);
     }
 
