@@ -20,7 +20,7 @@ export class EmailConfigAddComponent implements OnInit {
     dealerList: any[] = [];
     employeeList: any[] = [];
     employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
-
+    plants: any[] = [];
 
     constructor(
         private alertService: AlertService,
@@ -40,7 +40,14 @@ export class EmailConfigAddComponent implements OnInit {
             console.log("id", this.route.snapshot.params.id);
             let id = this.route.snapshot.params.id;
             this.getEmailConfigById(id);
+            
         }
+
+        
+        this.commonSvc.getDepotList().subscribe((plants) => {
+            this.plants = plants.data;
+
+        }), (err: any) => console.log(err);
 
     }
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
@@ -49,6 +56,7 @@ export class EmailConfigAddComponent implements OnInit {
         this.commonSvc.getUserInfoListByLoggedInManager().subscribe(
             (result: any) => {
                 this.employeeList = result.data;
+                console.log(this.employeeList);
             },
             (err: any) => console.log(err)
         );
@@ -100,6 +108,7 @@ export class EmailConfigAddComponent implements OnInit {
         this.focusDealerService.getEmailConfigById(id).subscribe(
             (result: any) => {
                 let emailconfig = result.data as EmailConfigForDealerOpening;
+                console.log(emailconfig);
                 this.editForm(emailconfig);
             },
             (err: any) => console.log(err)

@@ -100,7 +100,7 @@ export class JourneyPlanAddComponent implements OnInit {
                 this.journeyPlanService.delete(this.journeyPlanModel.id).subscribe(
                     (res: any) => {
                         console.log('res from del func', res);
-                        this.alertService.tosterSuccess("journey plan has been deleted successfully.");
+                        this.alertService.tosterSuccess("Journey plan has been deleted successfully.");
 
                         // this.onLoadJourneyPlans(this.first, this.rows, this.search);
                     },
@@ -113,7 +113,7 @@ export class JourneyPlanAddComponent implements OnInit {
 
             });
         }
-        else this.alertService.alert("can not delete pervious plan");
+        else this.alertService.alert("Can not delete pervious plan.");
     }
     private getJourneyPlanById(date) {
         this.alertService.fnLoading(true);
@@ -166,7 +166,7 @@ export class JourneyPlanAddComponent implements OnInit {
         this.journeyPlanService.update(model).subscribe(res => {
             console.log("Journey update res: ", res);
             this.router.navigate(['/journey-plan/list']).then(() => {
-                this.alertService.tosterSuccess("journey-plan has been edited successfully.");
+                this.alertService.tosterSuccess("Journey-plan has been edited successfully.");
             });
         },
             (error) => {

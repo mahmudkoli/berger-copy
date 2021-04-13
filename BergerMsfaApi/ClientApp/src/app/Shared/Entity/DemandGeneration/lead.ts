@@ -133,6 +133,9 @@ export class LeadFollowUp {
     businessAchievement: LeadBusinessAchievement;
 
     detailsBtnText: string;
+    deleteBtnText: string;
+    deleteBtnClass: string;
+    deleteBtnIcon: string;
     
     constructor(init?: Partial<LeadFollowUp>) {
         Object.assign(this, init);
