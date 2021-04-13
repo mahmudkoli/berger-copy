@@ -124,7 +124,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 		}
 	}
 	deleteLeadFollowUp(id) {
-		this.alertService.confirm("Are you sure want to delete this lead follow up?",
+		this.alertService.confirm("Are you sure to delete this?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.leadService.deleteLeadFollowUp(id)

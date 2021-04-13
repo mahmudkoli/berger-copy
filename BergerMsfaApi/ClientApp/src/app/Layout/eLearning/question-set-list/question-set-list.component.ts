@@ -98,7 +98,7 @@ export class QuestionSetListComponent implements OnInit, OnDestroy {
 	}
 
 	deleteQuestionSet(id) {
-		this.alertService.confirm("Are you sure want to delete this QuestionSet?",
+		this.alertService.confirm("Are you sure to delete this QuestionSet?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.questionSetService.delete(id)
