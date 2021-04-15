@@ -80,7 +80,7 @@ export class DropdownAddComponent implements OnInit {
         this.dynamicDropdownService.create(model).subscribe(res => {
             console.log("Dropdown res: ", res);
             this.router.navigate(['/setup/dropdown-list']).then(() => {
-                this.alertService.tosterSuccess("dropdown has been created successfully.");
+                this.alertService.tosterSuccess("Dropdown has been created successfully.");
             });
         },
             (error) => {
@@ -94,7 +94,7 @@ export class DropdownAddComponent implements OnInit {
         this.dynamicDropdownService.update(model).subscribe(res => {
             console.log("Dropdown update res: ", res);
             this.router.navigate(['/setup/dropdown-list']).then(() => {
-                this.alertService.tosterSuccess("dropdown has been edited successfully.");
+                this.alertService.tosterSuccess("Dropdown has been edited successfully.");
             });
         },
             (error) => {

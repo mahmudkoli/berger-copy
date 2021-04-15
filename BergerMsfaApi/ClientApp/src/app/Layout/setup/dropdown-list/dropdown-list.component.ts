@@ -85,7 +85,7 @@ export class DropdownListComponent implements OnInit {
             this.dnamiynDropdownService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);
-                    this.alertService.tosterSuccess("dropdown has been deleted successfully.");
+                    this.alertService.tosterSuccess("Dropdown has been deleted successfully.");
                     this.fnDropdownList();
                 },
                 (error) => {

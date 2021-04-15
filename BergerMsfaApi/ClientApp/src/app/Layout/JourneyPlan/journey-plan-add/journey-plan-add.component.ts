@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JourneyPlanService } from '../../../Shared/Services/JourneyPlan/journey-plan.service';
 import { NgbDateParserFormatter, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from '../../../Shared/Services/Common/common.service';
+import { of } from 'rxjs';
+import { delay, take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-journey-plan-add',
@@ -17,7 +19,12 @@ export class JourneyPlanAddComponent implements OnInit {
 
     journeyPlanModel: JourneyPlan = new JourneyPlan();
     dealerList: any[] = [];
+    dealerSelection: any;
+    dealers: any[] = [];
+    subDealers: any[] = [];
     readonly: boolean = false;
+    dealerClass: any;
+    subDealerClass: any;
     constructor(
         private commonSvc: CommonService,
         private calender: NgbCalendar,
@@ -30,7 +37,9 @@ export class JourneyPlanAddComponent implements OnInit {
 
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
     ngOnInit() {
-
+        
+        this.dealerClass = "btn btn-primary active";
+        this.subDealerClass = "btn btn-secondary";
         this.getDealerList();
         // debugger;
         console.log("param", this.route.snapshot.params, Object.keys(this.route.snapshot.params).length);
@@ -53,9 +62,15 @@ export class JourneyPlanAddComponent implements OnInit {
             this.commonSvc.getDealerList(this._loggedUser.userCategory, this._loggedUser.userCategoryIds).subscribe(
                 (result: any) => {
                     this.dealerList = result.data;
-                    this.dealerList.forEach(p=>{
-                        p.customerName=p.customerName+'-'+p.customerNo
-                    })
+                    
+                    this.dealerList.forEach(p => {
+                        p.customerName = p.customerName + '-' + p.customerNo;
+                        (p.isSubdealer) ? this.subDealers.push(p) : this.dealers.push(p);
+
+                    });
+                    this.dealerList = this.dealers;
+                    //console.log(this.dealerList);
+                    /*console.log("dealers: " + this.dealers.length + " -- subdealser: " + this.subDealers.length);*/
                    
                 },
                 (err: any) => console.log(err)
@@ -85,7 +100,7 @@ export class JourneyPlanAddComponent implements OnInit {
                 this.journeyPlanService.delete(this.journeyPlanModel.id).subscribe(
                     (res: any) => {
                         console.log('res from del func', res);
-                        this.alertService.tosterSuccess("journey plan has been deleted successfully.");
+                        this.alertService.tosterSuccess("Journey plan has been deleted successfully.");
 
                         // this.onLoadJourneyPlans(this.first, this.rows, this.search);
                     },
@@ -98,7 +113,7 @@ export class JourneyPlanAddComponent implements OnInit {
 
             });
         }
-        else this.alertService.alert("can not delete pervious plan");
+        else this.alertService.alert("Can not delete pervious plan.");
     }
     private getJourneyPlanById(date) {
         this.alertService.fnLoading(true);
@@ -151,7 +166,7 @@ export class JourneyPlanAddComponent implements OnInit {
         this.journeyPlanService.update(model).subscribe(res => {
             console.log("Journey update res: ", res);
             this.router.navigate(['/journey-plan/list']).then(() => {
-                this.alertService.tosterSuccess("journey-plan has been edited successfully.");
+                this.alertService.tosterSuccess("Journey-plan has been edited successfully.");
             });
         },
             (error) => {
@@ -178,5 +193,29 @@ export class JourneyPlanAddComponent implements OnInit {
         } else {
             this.alertService.tosterDanger(errorDetails.error.msg);
         }
+    }
+
+    private displayDealersData() {
+        this.alertService.fnLoading(true);
+        of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+            
+            this.dealerClass = "btn btn-primary";
+            this.subDealerClass = "btn btn-secondary";
+            this.dealerList = this.dealers;
+            
+        }).add(() => this.alertService.fnLoading(false)); 
+
+    }
+    private displaySubDealersData() {
+        this.alertService.fnLoading(true);
+        of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+
+            this.dealerClass = "btn btn-secondary";
+            this.subDealerClass = "btn btn-primary";
+
+            this.dealerList = this.subDealers;
+
+        }).add(() => this.alertService.fnLoading(false)); 
+        
     }
 }

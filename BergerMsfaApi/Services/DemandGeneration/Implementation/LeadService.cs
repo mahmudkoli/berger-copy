@@ -308,5 +308,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             return result.Id;
         }
+
+        public async Task<int> DeleteAsync(int id) => await _leadFollowUpRepository.DeleteAsync(s => s.Id == id);
+        public async Task<bool> IsExistAsync(int id) => await _leadFollowUpRepository.IsExistAsync(f => f.Id == id);
     }
 }
