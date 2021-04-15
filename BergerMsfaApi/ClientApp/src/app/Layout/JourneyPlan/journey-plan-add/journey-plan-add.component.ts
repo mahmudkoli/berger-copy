@@ -195,7 +195,7 @@ export class JourneyPlanAddComponent implements OnInit {
         }
     }
 
-    private displayDealersData() {
+    public displayDealersData() {
         this.alertService.fnLoading(true);
         of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
             
@@ -206,7 +206,7 @@ export class JourneyPlanAddComponent implements OnInit {
         }).add(() => this.alertService.fnLoading(false)); 
 
     }
-    private displaySubDealersData() {
+    public displaySubDealersData() {
         this.alertService.fnLoading(true);
         of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 
