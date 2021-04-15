@@ -54,13 +54,13 @@ export class DealerOpeningDetailComponent implements OnInit {
   
     if (this.dealeropening.status == 3) {
         if (!this.dealeropening.comment) {
-            this.alertService.alert("please leave a comment");
+            this.alertService.alert("Please leave a comment");
             return;
         }
     }
 
 
-    this.alertService.confirm(`are you sure to change status?`, () => {
+    this.alertService.confirm(`Are you sure to change status?`, () => {
 
         //if (PlanStatus.Rejected == Number(mySelect)) {
         //    alert("Rejected");
