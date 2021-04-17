@@ -76,6 +76,7 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
                                 .AddProperty(nameof(CustomerDataModel.CustomerName))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
                                 .AddProperty(nameof(CustomerDataModel.CreditControlArea))
                                 .AddProperty(nameof(CustomerDataModel.CreditLimit))
                                 .AddProperty(nameof(CustomerDataModel.TotalDue));
@@ -90,8 +91,8 @@ namespace Berger.Odata.Services
                 notifyModel.CustomerNo = x.Key.CustomerNo.ToString();
                 notifyModel.CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty;
                 notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
-                notifyModel.CreditLimit = x.GroupBy(g => g.CreditLimit).Sum(c => c.Key);
-                notifyModel.TotalDue = x.GroupBy(g => g.TotalDue).Sum(c => c.Key);
+                notifyModel.CreditLimit = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => g.CreditLimit).Sum(c => c.Key);
+                notifyModel.TotalDue = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => g.TotalDue).Sum(c => c.Key);
                 return notifyModel;
             }).ToList();
 

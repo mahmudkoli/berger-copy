@@ -72,10 +72,14 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            {
-                selectCustomerQueryBuilder.AddProperty(prop.Name);
-            }
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+                                .AddProperty(nameof(CustomerDataModel.CreditLimit));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
@@ -95,7 +99,7 @@ namespace Berger.Odata.Services
                                         var osModel = new OutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.DaysLimit = x.FirstOrDefault()?.DayLimit ?? string.Empty;
-                                        osModel.ValueLimit = customerData.Where(f => f.CreditControlArea == osModel.CreditControlArea)
+                                        osModel.ValueLimit = customerData.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer && f.CreditControlArea == osModel.CreditControlArea)
                                                                             .GroupBy(g => g.CreditLimit).Sum(c => c.Key);
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
@@ -122,10 +126,14 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            {
-                selectCustomerQueryBuilder.AddProperty(prop.Name);
-            }
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+                                .AddProperty(nameof(CustomerDataModel.CreditLimit));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
@@ -158,7 +166,7 @@ namespace Berger.Odata.Services
                                         var osModel = new ReportOutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.ValueLimit = customerData.GroupBy(g => g.CustomerNo)
-                                                                .Sum(s => s.Where(f => f.CreditControlArea == osModel.CreditControlArea)
+                                                                .Sum(s => s.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer && f.CreditControlArea == osModel.CreditControlArea)
                                                                 .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
@@ -251,10 +259,13 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            {
-                selectCustomerQueryBuilder.AddProperty(prop.Name);
-            }
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.PriceGroup));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
