@@ -19,4 +19,9 @@ namespace BergerMsfaApi.Models.Common
         public string Audience { get; set; }
         public int ExpiresHours { get; set; }
     }
+
+    public class FCMSettingsModel
+    {
+        public string FileName { get; set; }
+    }
 }

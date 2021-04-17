@@ -2132,7 +2132,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 },
                 new ActiveSummaryReportResultModel
                 {
-
+                    //TODO: need to update collection value
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
                     Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),

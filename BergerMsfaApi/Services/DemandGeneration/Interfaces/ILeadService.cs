@@ -1,5 +1,6 @@
 ﻿using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
+using BergerMsfaApi.Models.Notification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<AppSaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);
         Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId);
+        Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync(int userId);
     }
 }
