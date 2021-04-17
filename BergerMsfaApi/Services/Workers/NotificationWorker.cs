@@ -78,8 +78,8 @@ namespace BergerMsfaApi.Services.Workers
                                         await this.SendPaymentFollowUpNotification(loggedInUser.UserId, loggedInUser.FCMToken, dealerIds);
                                     }
 
-                                    _logger.LogInformation($"Notification successfully send for User Id ({loggedInUser.UserId}) at: {DateTimeOffset.Now}, {string.Empty}");
-                                    LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({loggedInUser.UserId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+                                    //_logger.LogInformation($"Notification successfully send for User Id ({loggedInUser.UserId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                                    //LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({loggedInUser.UserId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
                                     
                                 }
                                 catch (Exception ex)

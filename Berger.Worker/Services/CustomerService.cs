@@ -60,7 +60,15 @@ namespace Berger.Worker.Services
                     _logger.LogInformation($"Total data fetched from database is {dealerInfos.Count()}");
 
                     var fromDatabase = dealerInfos.ToList();
-                    mappedDataFromApi = mappedDataFromApi.GroupBy(x=>x.CompositeKey).Select(y => y.FirstOrDefault()).ToList();
+                    mappedDataFromApi = mappedDataFromApi.GroupBy(x=>x.CompositeKey).Select(y =>
+                    {
+                        var res = y.FirstOrDefault();
+                        res.CreditLimit = y.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer)
+                                            .GroupBy(g => new { g.CreditControlArea, g.CreditLimit }).Sum(c => c.Key.CreditLimit);
+                        res.TotalDue = y.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer)
+                                            .GroupBy(g => new { g.CreditControlArea, g.TotalDue }).Sum(c => c.Key.TotalDue);
+                        return res;
+                    }).ToList();
                     List<string> insertDeleteKeys = new List<string>();
                     if (fromDatabase.Count != mappedDataFromApi.Count)
                     {

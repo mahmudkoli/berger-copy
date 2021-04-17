@@ -131,6 +131,7 @@
     <Folder Include="Models\NewFolder\" />
     <Folder Include="Logs\" />
     <Folder Include="wwwroot\Logs\" />
+    <Folder Include="wwwroot\Logs\Worker\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
