@@ -58,4 +58,18 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class AppCustomerOccasionNotificationModel
+    {
+        public string CustomerNo { get; internal set; }
+        public string CustomerName { get; internal set; }
+        public string DOB { get; internal set; }
+        public string SpouseDOB { get; internal set; }
+        public string ChildDOB { get; internal set; }
+
+        public AppCustomerOccasionNotificationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

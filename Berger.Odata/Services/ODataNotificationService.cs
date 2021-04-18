@@ -29,9 +29,10 @@ namespace Berger.Odata.Services
 
         public async Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBouncesByDealerIds(List<int> dealerIds)
         {
-            var currentDate = DateTime.Now;
-            var fromDate = currentDate.DateTimeFormat();
-            var toDate = currentDate.DateTimeFormat();
+            var today = DateTime.Now;
+            var resultDateFormat = "dd MMM yyyy";
+            var fromDate = today.DateTimeFormat();
+            var toDate = today.DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
@@ -48,7 +49,7 @@ namespace Berger.Odata.Services
             var result = data.Select(x =>
                                 new AppChequeBounceNotificationModel()
                                 {
-                                    ReversalDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
+                                    ReversalDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat(resultDateFormat),
                                     CustomerNo = x.CustomerNo,
                                     CustomerName = x.CustomerName,
                                     CreditControlArea = x.CreditControlArea,
@@ -112,15 +113,12 @@ namespace Berger.Odata.Services
 
         public async Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUpByDealerIds(List<int> dealerIds)
         {
-            //var currentDate = DateTime.Now;
             var today = DateTime.Now;
+            var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+            var resultDateFormat = "dd MMM yyyy";
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            //{
-            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
-            //}
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
                                 .AddProperty(nameof(CustomerDataModel.Channel))
                                 .AddProperty(nameof(CustomerDataModel.PriceGroup));
@@ -156,7 +154,7 @@ namespace Berger.Odata.Services
                                     CustomerNo = x.CustomerNo,
                                     CustomerName = x.CustomerName,
                                     InvoiceNo = x.InvoiceNo,
-                                    InvoiceDate = x.PostingDate.DateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ").DateFormat("dd.MM.yyyy"),
+                                    InvoiceDate = x.PostingDate.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat),
                                     InvoiceAge = x.Age,
                                     DayLimit = x.DayLimit
                                 }).ToList();
@@ -177,11 +175,11 @@ namespace Berger.Odata.Services
                                                 CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
                 var dayNotifyCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
                                                 CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.NotificationDays ?? 0;
-                item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
-                item.NotificationDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayNotifyCount).DateFormat("dd.MM.yyyy");
+                item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
+                item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
                 item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.RPRS;
 
-                if (item.NotificationDate == today.ToString("dd.MM.yyyy"))
+                if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
                     resultRPRS.Add(item);
             }
             #endregion
@@ -196,16 +194,53 @@ namespace Berger.Odata.Services
             {
                 //var dayCount = 5;
                 var dayNotifyCount = 3;
-                //item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
-                item.NotificationDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayNotifyCount).DateFormat("dd.MM.yyyy");
+                //item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
+                item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
                 item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.FastPayCarry;
 
-                if (item.NotificationDate == today.ToString("dd.MM.yyyy"))
+                if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
                     resultFastPayCarry.Add(item);
             }
             #endregion
 
             result = resultRPRS.Concat(resultFastPayCarry).ToList();
+
+            return result;
+        }
+
+        public async Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasionsByDealerIds(List<int> dealerIds)
+        {
+            var today = DateTime.Now;
+            var oldDate = new DateTime(1000, 01, 01);
+            var dateFormat = "yyyyMMdd";
+            var resultDateFormat = "dd MMM yyyy";
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(CustomerOccasionColDef.Customer)
+                                .AddProperty(CustomerOccasionColDef.Name)
+                                .AddProperty(CustomerOccasionColDef.DOB);
+
+            var data = (await _odataService.GetCustomerOccasionData(selectQueryBuilder, dealerIds)).ToList();
+
+            var result = data.Select(x =>
+                                new AppCustomerOccasionNotificationModel()
+                                {
+                                    CustomerNo = x.Customer,
+                                    CustomerName = x.Name,
+                                    DOB = !string.IsNullOrEmpty(x.DOB) ? x.DOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) : 
+                                                                        oldDate.DateFormat(resultDateFormat),
+                                    SpouseDOB = !string.IsNullOrEmpty(x.SpouseDOB) ? x.SpouseDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) : 
+                                                                                    oldDate.DateFormat(resultDateFormat),
+                                    
+                                    ChildDOB = !string.IsNullOrEmpty(x.FirstChildDOB) ? x.FirstChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
+                                                    !string.IsNullOrEmpty(x.SecondChildDOB) ? x.SecondChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
+                                                        !string.IsNullOrEmpty(x.ThirdChildDOB) ? x.ThirdChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
+                                                            oldDate.DateFormat(resultDateFormat),
+                                }).ToList();
+
+            result = result.Where(x => x.DOB.DateFormatDate(format: resultDateFormat).Date == today.Date ||
+                                        x.SpouseDOB.DateFormatDate(format: resultDateFormat).Date == today.Date ||
+                                        x.ChildDOB.DateFormatDate(format: resultDateFormat).Date == today.Date).ToList();
 
             return result;
         }

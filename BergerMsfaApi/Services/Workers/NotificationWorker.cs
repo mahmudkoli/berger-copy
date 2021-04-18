@@ -1,4 +1,5 @@
-﻿using Berger.Odata.Model;
+﻿using Berger.Common.Extensions;
+using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -48,6 +50,8 @@ namespace BergerMsfaApi.Services.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 try
                 {
                     using (var scope = _serviceScopeFactory.CreateScope())
@@ -76,6 +80,7 @@ namespace BergerMsfaApi.Services.Workers
                                         await this.SendCheckBounceNotification(loggedInUser.UserId, loggedInUser.FCMToken, dealerIds);
                                         await this.SendCreditLimitCrossNotification(loggedInUser.UserId, loggedInUser.FCMToken, dealerIds);
                                         await this.SendPaymentFollowUpNotification(loggedInUser.UserId, loggedInUser.FCMToken, dealerIds);
+                                        await this.SendCustomerOccasionNotification(loggedInUser.UserId, loggedInUser.FCMToken, dealerIds);
                                     }
 
                                     //_logger.LogInformation($"Notification successfully send for User Id ({loggedInUser.UserId}) at: {DateTimeOffset.Now}, {string.Empty}");
@@ -84,8 +89,8 @@ namespace BergerMsfaApi.Services.Workers
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.LogError(ex, $"Notification failed to send for User Id: {loggedInUser.UserId}");
-                                    LoggerExtension.ToWriteLog($"Notification failed to send for User Id ({loggedInUser.UserId}): {ex}", _rootPath);
+                                    _logger.LogError(ex, $"Single Notification failed to send for User Id: {loggedInUser.UserId}");
+                                    LoggerExtension.ToWriteLog($"Single Notification failed to send for User Id ({loggedInUser.UserId}): {ex}", _rootPath);
                                 }
                             }
                         }
@@ -97,11 +102,17 @@ namespace BergerMsfaApi.Services.Workers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Notification failed to send");
-                    LoggerExtension.ToWriteLog($"Notification failed to send: {ex}", _rootPath);
+                    _logger.LogError(ex, $"All Notification failed to send");
+                    LoggerExtension.ToWriteLog($"All Notification failed to send: {ex}", _rootPath);
+                }
+                finally
+                {
+                    stopwatch.Stop();
                 }
 
-                await Task.Delay(TimeSpan.FromHours(_timeOutHours), stoppingToken);
+                TimeSpan actualTime = TimeSpan.FromHours(_timeOutHours) - stopwatch.Elapsed;
+
+                await Task.Delay(actualTime, stoppingToken);
             }
         }
 
@@ -120,21 +131,21 @@ namespace BergerMsfaApi.Services.Workers
 
                 foreach (var leadFollowUp in leadFollowUps)
                 {
-                    var title = $"You have lead follow up.";
+                    var title = $"Today you have lead follow up.";
                     var body = $"Lead follow up - Territory: {leadFollowUp.Territory}, Zone: {leadFollowUp.Zone}, " +
                         $"Project Name: {leadFollowUp.ProjectName}, Project Address: {leadFollowUp.ProjectAddress}";
 
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
 
-                _logger.LogInformation($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
-                LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+                _logger.LogInformation($"Notification successfully send for Lead FollowUp for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                LoggerExtension.ToWriteLog($"Notification successfully send for Lead FollowUp for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Notification failed to send for User Id: {userId}");
-                LoggerExtension.ToWriteLog($"Notification failed to send for User Id ({userId}): {ex}", _rootPath);
+                _logger.LogError(ex, $"Notification failed for Lead FollowUp to send for User Id: {userId}");
+                LoggerExtension.ToWriteLog($"Notification failed for Lead FollowUp to send for User Id ({userId}): {ex}", _rootPath);
             }
         }
 
@@ -146,21 +157,21 @@ namespace BergerMsfaApi.Services.Workers
 
                 foreach (var checkBounce in checkBounces)
                 {
-                    var title = $"You have check bounce.";
+                    var title = $"Today you have check bounce.";
                     var body = $"Check Bounce - Customer No: {checkBounce.CustomerNo}, Customer Name: {checkBounce.CustomerName}, " +
                         $"Credit Control Area: {checkBounce.CreditControlArea}, Amount: {checkBounce.Amount}";
 
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
 
-                _logger.LogInformation($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
-                LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+                _logger.LogInformation($"Notification successfully send for Check Bounce for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                LoggerExtension.ToWriteLog($"Notification successfully send for Check Bounce for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Notification failed to send for User Id: {userId}");
-                LoggerExtension.ToWriteLog($"Notification failed to send for User Id ({userId}): {ex}", _rootPath);
+                _logger.LogError(ex, $"Notification failed for Check Bounce to send for User Id: {userId}");
+                LoggerExtension.ToWriteLog($"Notification failed for Check Bounce to send for User Id ({userId}): {ex}", _rootPath);
             }
         }
 
@@ -168,12 +179,11 @@ namespace BergerMsfaApi.Services.Workers
         {
             try
             {
-
                 var creditLimitCrosses = await _oDataNotificationService.GetAllTodayCreditLimitCrossByDealerIds(dealerIds);
 
                 foreach (var creditLimitCross in creditLimitCrosses)
                 {
-                    var title = $"You have Credit Limit Cross.";
+                    var title = $"Today you have Credit Limit Cross.";
                     var body = $"Credit Limit Cross - Customer No: {creditLimitCross.CustomerNo}, Customer Name: {creditLimitCross.CustomerName}, " +
                         $"Credit Control Area: {creditLimitCross.CreditControlArea}, Credit Limit: {creditLimitCross.CreditLimit}, " +
                         $"Total Due: {creditLimitCross.TotalDue}";
@@ -181,14 +191,14 @@ namespace BergerMsfaApi.Services.Workers
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
 
-                _logger.LogInformation($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
-                LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+                _logger.LogInformation($"Notification successfully send for Credit Limit Cross for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                LoggerExtension.ToWriteLog($"Notification successfully send for Credit Limit Cross for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Notification failed to send for User Id: {userId}");
-                LoggerExtension.ToWriteLog($"Notification failed to send for User Id ({userId}): {ex}", _rootPath);
+                _logger.LogError(ex, $"Notification failed for Credit Limit Cross to send for User Id: {userId}");
+                LoggerExtension.ToWriteLog($"Notification failed for Credit Limit Cross to send for User Id ({userId}): {ex}", _rootPath);
             }
         }
 
@@ -196,34 +206,77 @@ namespace BergerMsfaApi.Services.Workers
         {
             try
             {
-
                 var paymentFollowUps = await _oDataNotificationService.GetAllTodayPaymentFollowUpByDealerIds(dealerIds);
 
                 foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS))
                 {
-                    var title = $"You have RPRS Follow Up.";
-                    var body = $"RPRS Follow Up - Invoice No: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
+                    var title = $"Today you have RPRS Follow Up.";
+                    var body = $"RPRS Follow Up - Customer No: {paymentFollowUp.CustomerNo}, Customer Name: {paymentFollowUp.CustomerName}, " +
+                        $"Invoice No: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
                         $"Invoice Age: {paymentFollowUp.InvoiceAge}, RPRS Date: {paymentFollowUp.RPRSDate}";
 
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
+
                 foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.FastPayCarry))
                 {
-                    var title = $"You have Fast Pay Carry Follow Up.";
-                    var body = $"Fast Pay Carry Follow Up - Invoice No: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
+                    var title = $"Today you have Fast Pay Carry Follow Up.";
+                    var body = $"Fast Pay Carry Follow Up - Customer No: {paymentFollowUp.CustomerNo}, Customer Name: {paymentFollowUp.CustomerName}, " +
+                        $"Invoice No: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
                         $"Invoice Age: {paymentFollowUp.InvoiceAge}";
 
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
 
-                _logger.LogInformation($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
-                LoggerExtension.ToWriteLog($"Notification successfully send for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+                _logger.LogInformation($"Notification successfully send for Payment FollowUp for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                LoggerExtension.ToWriteLog($"Notification successfully send for Payment FollowUp for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Notification failed to send for User Id: {userId}");
-                LoggerExtension.ToWriteLog($"Notification failed to send for User Id ({userId}): {ex}", _rootPath);
+                _logger.LogError(ex, $"Notification failed for Payment FollowUp to send for User Id: {userId}");
+                LoggerExtension.ToWriteLog($"Notification failed for Payment FollowUp to send for User Id ({userId}): {ex}", _rootPath);
+            }
+        }
+
+        private async Task SendCustomerOccasionNotification(int userId, string fcmToken, List<int> dealerIds)
+        {
+            try
+            {
+                var customerOccasions = await _oDataNotificationService.GetAllTodayCustomerOccasionsByDealerIds(dealerIds);
+
+                foreach (var customerOccasion in customerOccasions)
+                {
+                    var title = string.Empty;
+                    var body = string.Empty;
+                    var today = DateTime.Now;
+
+                    title = $"Dealer's Occasion.";
+
+                    if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.DOB).Date)
+                    {
+                        body = $"Today have {customerOccasion.CustomerName}'s ({customerOccasion.CustomerNo}) Birthdays.";
+                    }
+                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Date)
+                    {
+                        body = $"Today have {customerOccasion.CustomerName}'s ({customerOccasion.CustomerNo}) spouse Birthdays.";
+                    }
+                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.ChildDOB).Date)
+                    {
+                        body = $"Today have {customerOccasion.CustomerName}'s ({customerOccasion.CustomerNo}) child Birthdays.";
+                    }
+
+                    await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
+                }
+
+                _logger.LogInformation($"Notification successfully send for Dealer Occasion for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}");
+                LoggerExtension.ToWriteLog($"Notification successfully send for Dealer Occasion for User Id ({userId}) at: {DateTimeOffset.Now}, {string.Empty}", _rootPath);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Notification failed for Dealer Occasion to send for User Id: {userId}");
+                LoggerExtension.ToWriteLog($"Notification for Dealer Occasion failed to send for User Id ({userId}): {ex}", _rootPath);
             }
         }
     }
