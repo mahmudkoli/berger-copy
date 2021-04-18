@@ -96,6 +96,8 @@ namespace Berger.Odata.Services
                 return notifyModel;
             }).ToList();
 
+            result = result.Where(x => x.TotalDue > x.CreditLimit).ToList();
+
             #region Credit Control Area 
             //var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
 
