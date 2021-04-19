@@ -155,7 +155,7 @@ export class ELearningFormEditComponent implements OnInit, OnDestroy {
 		const createSubscription = this.eLearningDocumentService.create(_eLearningDocument)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`New ELearning has been added successfully.`);
+				this.alertService.tosterSuccess(`New E-Learning has been added successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -169,7 +169,7 @@ export class ELearningFormEditComponent implements OnInit, OnDestroy {
 		const updateSubscription = this.eLearningDocumentService.update(_eLearningDocument)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`ELearning has been saved successfully.`);
+				this.alertService.tosterSuccess(`E-Learning has been saved successfully.`);
 				this.goBack();
 			},
 				error => {

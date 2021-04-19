@@ -108,13 +108,13 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
       
         if (this.journeyPlanStatus.status == PlanStatus.Rejected) {
             if (!this.journeyPlanStatus.comment) {
-                this.alertService.alert("please leave a comment");
+                this.alertService.alert("Please leave a comment.");
                 return;
             }
         }
 
 
-        this.alertService.confirm(`are you sure to change status?`, () => {
+        this.alertService.confirm(`Are you sure to change status?`, () => {
 
             //if (PlanStatus.Rejected == Number(mySelect)) {
             //    alert("Rejected");
@@ -130,7 +130,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
                 
                     this.router.navigate(["/journey-plan/line-manager"]).then(
                         () => {
-                            this.alertService.tosterSuccess(`status successfully.`);
+                            this.alertService.tosterSuccess(`Status changed successfully.`);
                         });
                   
                 },

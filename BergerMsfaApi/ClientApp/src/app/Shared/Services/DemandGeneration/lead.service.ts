@@ -26,7 +26,10 @@ export class LeadService {
     getLeads(filter?) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }
-  
+
+    deleteLeadFollowUp(id) {
+        return this.http.delete<APIResponse>(`${this.LeadsEndpoint}/DeleteLeadFollowUp/${id}`);
+    }
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.LeadsEndpoint}/activeInactive/${id}`, null);
     // }

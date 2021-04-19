@@ -114,4 +114,14 @@ namespace BergerMsfaApi.Models.Report
         public string AccountGroup { get; set; }
         public string SalesOffice { get; set; }
     }
+
+    public class MerchendizingSnapShotReportSearchModel : ReportBaseSearchModel
+    {
+        public int? DealerId { get; set; }
+    }
+
+    public class LogInReportSearchModel : ReportBaseSearchModel
+    {
+        public int? Status { get; set; }
+    }
 }

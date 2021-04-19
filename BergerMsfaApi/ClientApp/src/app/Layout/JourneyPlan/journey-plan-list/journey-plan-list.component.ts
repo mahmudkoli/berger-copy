@@ -306,7 +306,7 @@ export class JourneyPlanListComponent implements OnInit {
             console.log('edit plan', jPlan.id);
             this.router.navigate(['/journey-plan/add/' + jPlan.planDate]);
         }
-        else this.alertService.alert("can not modify pervious plan");
+        else this.alertService.alert("Can not modify pervious plan");
     }
 
     delete(jPlan) {
@@ -318,7 +318,7 @@ export class JourneyPlanListComponent implements OnInit {
                 this.journeyPlanService.delete(jPlan.id).subscribe(
                     (res: any) => {
                         console.log('res from del func', res);
-                        this.alertService.tosterSuccess("journey plan has been deleted successfully.");
+                        this.alertService.tosterSuccess("Journey plan has been deleted successfully.");
 
                         this.onLoadJourneyPlans(this.first, this.rows, this.search);
                     },
@@ -331,7 +331,7 @@ export class JourneyPlanListComponent implements OnInit {
 
             });
         }
-        else this.alertService.alert("can not delete pervious plan");
+        else this.alertService.alert("Can not delete pervious plan");
 
     }
     private displayError(errorDetails: any) {

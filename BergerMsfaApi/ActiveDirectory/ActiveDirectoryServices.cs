@@ -41,6 +41,8 @@ namespace BergerMsfaApi.ActiveDirectory
         {
             bool ret;
 
+            if (_settings.Value.IsIgnoreADLogin) return true;
+
             try
             {
                 DirectoryEntry de = new DirectoryEntry(LDAPPath, loginUsername, loginPassword);
