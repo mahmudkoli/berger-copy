@@ -54,7 +54,7 @@ namespace Berger.Odata.Services
                                     InstrumentNo = x.ChequeNo,
                                     BankName = x.BankName,
                                     CreditControlArea = x.CreditControlArea,
-                                    PostingDate = x.PostingDate,
+                                    PostingDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
@@ -143,7 +143,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.CreditControlArea);
 
-            var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: fromDate, endClearDate: toDate, bounceStatus: "Z1")).ToList();
+            var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: fromDate, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             var result = data.Select(x =>
                                 new ChequeBounceResultModel()
@@ -196,9 +196,9 @@ namespace Berger.Odata.Services
 
             dataCy = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, cfyfd, toDate)).ToList();
 
-            dataBounceCm = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: cmfd, endClearDate: toDate, bounceStatus: "Z1")).ToList();
+            dataBounceCm = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: cmfd, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
-            dataBounceCy = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: cfyfd, endClearDate: toDate, bounceStatus: "Z1")).ToList();
+            dataBounceCy = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: cfyfd, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             var result = new ChequeSummaryResultModel();
 

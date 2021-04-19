@@ -30,6 +30,8 @@ using Berger.Odata.Services;
 using Berger.Odata.Repositories;
 using Berger.Common;
 using BergerMsfaApi.Models.EmailVm;
+using BergerMsfaApi.Services.Workers;
+using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi
 {
@@ -48,9 +50,10 @@ namespace BergerMsfaApi
             services.Configure<ActiveDirectorySettingsModel>(options => Configuration.GetSection("ActiveDirectorySettings").Bind(options));
             services.Configure<TokensSettingsModel>(options => Configuration.GetSection("TokensSettings").Bind(options));
             services.Configure<Berger.Odata.Model.ODataSettingsModel>(options => Configuration.GetSection("ODataSettings").Bind(options));
+            services.Configure<FCMSettingsModel>(options => Configuration.GetSection("FCMSettings").Bind(options));
             //services.Configure<AuthMessageSenderOptions>(options =>
             //           Configuration.GetSection("SendGridEmailSettings").Bind(options));
-            
+
             services.Configure<SmtpSettings>(options =>
                        Configuration.GetSection("SmtpSettings").Bind(options));
            
@@ -100,8 +103,15 @@ namespace BergerMsfaApi
             services.AddScoped<IReportDataService, ReportDataService>();
             services.AddScoped<ICollectionDataService, CollectionDataService>();
             services.AddScoped<IStockDataService, StockDataService>();
+            services.AddScoped<IODataNotificationService, ODataNotificationService>();
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
+
+            services.AddHostedService(serviceProvider =>
+                new NotificationWorker(
+                    serviceProvider.GetService<ILogger<NotificationWorker>>(),
+                    serviceProvider.GetService<IServiceScopeFactory>(),
+                    serviceProvider.GetService<IWebHostEnvironment>().WebRootPath, 24));
 
             services.AddTransient<IEmailSender, EmailSender>();
 
