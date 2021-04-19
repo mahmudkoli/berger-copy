@@ -1755,7 +1755,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<OsOver90daysTrendReportResultModel>> GetOsOver90daysTrendReport(OsOver90daysTrendReportSearchModel query)
         {
-            var userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            //var userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            var userDealerIds = new List<int>();
+
+            if (query.UserId.HasValue)
+                userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();
 
             var dbResult = await _dealerInfoRepository.FindByCondition(x =>
                 (!query.Territories.Any() || query.Territories.Contains(x.Territory))
@@ -1765,8 +1769,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 && (string.IsNullOrWhiteSpace(query.AccountGroup) || query.AccountGroup == x.AccountGroup)
                 && (string.IsNullOrWhiteSpace(query.SalesOffice) || query.SalesOffice == x.SalesOffice)
                 && (string.IsNullOrWhiteSpace(query.CreditControlArea) || query.CreditControlArea == x.CreditControlArea)
-                && (!query.DealerId.HasValue || query.DealerId == x.CustomerNo)
-                && userDealerIds.Contains(x.CustomerNo)
+                && (!query.DealerId.HasValue || query.DealerId == x.Id)
+                && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
             ).Select(x => new
             {
                 x.Territory,
@@ -1777,7 +1781,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             }).ToListAsync();
 
             var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
-            dealerIds = new List<int> { 24 };
+            //dealerIds = new List<int> { 24 };
 
 
             var monthList = Enumerable.Range(0, Int32.MaxValue)
@@ -1946,7 +1950,29 @@ namespace BergerMsfaApi.Services.Report.Implementation
             string territory = query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
             string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
 
-            IList<int> dealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            //IList<int> userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
+            var userDealerIds = new List<int>();
+
+            if (query.UserId.HasValue)
+                userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();
+
+            var dbResult = await _dealerInfoRepository.FindByCondition(x =>
+                (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
+                && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
+                && (string.IsNullOrWhiteSpace(query.DepotId) || query.DepotId == x.BusinessArea)
+                && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
+            ).Select(x => new
+            {
+                //x.Territory,
+                x.CustomerNo,
+                //x.CustZone,
+                //x.CreditControlArea,
+                x.CustomerName,
+            }).ToListAsync();
+
+            var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
+
             if (query.UserId.HasValue)
             {
                 userinfo = _context.UserInfos.Where(p => p.Id == query.UserId).FirstOrDefault();
@@ -2135,7 +2161,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     //TODO: need to update collection value
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
-                    Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds)).ToString(),
+                    Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds, query.FromDate, query.ToDate)).ToString(),
                     //Actual ="0",
                     Variance="N/A",
                     BusinessGeneration="0",
