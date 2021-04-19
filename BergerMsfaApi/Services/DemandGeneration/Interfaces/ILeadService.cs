@@ -18,5 +18,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<AppLeadGenerationModel>> GetAllByUserIdAsync(int userId);
         Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync(int userId);
+        Task<int> DeleteAsync(int id);
+        Task<bool> IsExistAsync(int id);
     }
 }

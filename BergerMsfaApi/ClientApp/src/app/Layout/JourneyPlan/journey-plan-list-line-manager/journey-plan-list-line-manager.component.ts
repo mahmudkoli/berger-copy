@@ -175,7 +175,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             this.alertService.fnLoading(true);
             this.journeyPlanService.ChangePlanStatus(this.journeyPlanStatus).subscribe(
                 (res) => {
-                    this.alertService.tosterSuccess(`Status Successfully.`);
+                    this.alertService.tosterSuccess(`Status changed Successfully.`);
                     //  this.fnJourneyPlanList();
                     this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },

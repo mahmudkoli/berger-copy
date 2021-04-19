@@ -99,14 +99,14 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 	}
 
 	deleteELearningDocument(id) {
-		this.alertService.confirm("Are you sure want to delete this ELearning?",
+		this.alertService.confirm("Are you sure want to delete this E-Learning?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.eLearningDocumentService.delete(id)
 					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 					.subscribe((res: any) => {
 						console.log('res from del func', res);
-						this.alertService.tosterSuccess("ELearning has been deleted successfully.");
+						this.alertService.tosterSuccess("E-Learning has been deleted successfully.");
 						this.loadELearningDocumentsPage();
 					},
 						(error) => {

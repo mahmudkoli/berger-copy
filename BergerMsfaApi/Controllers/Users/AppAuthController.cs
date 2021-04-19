@@ -56,12 +56,12 @@ namespace BergerMsfaApi.Controllers.Users
                     return ValidationResult(ModelState);
 
                 //TODO: need to uncomment 
-                //bool isAdLoginSuccess = _adservice.AuthenticateUser(model.UserName, model.Password);
-                //if (!isAdLoginSuccess)
-                //{
-                //    ModelState.AddModelError("", "UserName or password is invalid.");
-                //    return ValidationResult(ModelState);
-                //}
+                bool isAdLoginSuccess = _adservice.AuthenticateUser(model.UserName, model.Password);
+                if (!isAdLoginSuccess)
+                {
+                    ModelState.AddModelError("", "UserName or password is invalid.");
+                    return ValidationResult(ModelState);
+                }
 
                 bool loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
                 if (!loginSuccess)

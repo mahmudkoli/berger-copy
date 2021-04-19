@@ -9,6 +9,7 @@ import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.servi
 import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ModalLeadFollowUpDetailsComponent } from '../modal-lead-followup-details/modal-lead-followup-details.component';
+import { AuthService } from '../../../Shared/Services/Users';
 
 @Component({
   selector: 'app-lead-details',
@@ -18,7 +19,8 @@ import { ModalLeadFollowUpDetailsComponent } from '../modal-lead-followup-detail
 export class LeadDetailsComponent implements OnInit, OnDestroy {
 
   lead: LeadGeneration;
-  leadFollowUps: LeadFollowUp[];
+	leadFollowUps: LeadFollowUp[];
+	userRole: string;
 	public baseUrl: string;
 	private subscriptions: Subscription[] = [];
 
@@ -28,6 +30,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 	private alertService: AlertService,
 	private leadService: LeadService,
 	  private modalService: NgbModal,
+	  private authService: AuthService,
 	  @Inject('BASE_URL') baseUrl: string
   ) { 
 	this.lead = new LeadGeneration();
@@ -35,7 +38,8 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 	  this.baseUrl = baseUrl;
   }
 
-  ngOnInit() {
+	ngOnInit() {
+		
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
@@ -53,6 +57,9 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 							console.log(this.lead);
 							this.leadFollowUps.forEach((x) => {
 								x.detailsBtnText = "View FollowUp";
+								//x.deleteBtnText = "Delete";
+								//x.deleteBtnClass = 'btn-transition btn btn-sm btn-outline-danger d-flex align-items-center';
+								//x.deleteBtnIcon = 'fa fa-trash';
 							});
 						}
 					});
@@ -61,7 +68,11 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 			}
 		});
 		this.subscriptions.push(routeSubscription);
-  }
+
+		this.addLeadFollowUpDeleteBtn();
+	}
+
+	
 
 	ngOnDestroy() {
 		this.subscriptions.forEach(sb => sb.unsubscribe());
@@ -86,31 +97,74 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 			{ headerName: 'Paint Contractor Name', width: '10%', internalName: 'paintContractorName', sort: false, type: "" },
 			{ headerName: 'Paint Contractor Mobile', width: '10%', internalName: 'paintContractorMobile', sort: false, type: "" },
 			{ headerName: 'Expected Value', width: '10%', internalName: 'expectedValue', sort: false, type: "" },
-			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" }
+			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" },
+			
 		],
 		// enabledSearch: true,
 		enabledSerialNo: true,
 		// pageSize: 10,
 		// enabledPagination: true,
-		// enabledDeleteBtn: true,
+		 //enabledDeleteBtn: true,
 		// enabledEditBtn: true,
 		enabledCellClick: true,
 		// enabledColumnFilter: false,
 		// enabledRecordCreateBtn: true,
 		// enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
+		
+		
 	};
+	public fnCustomTrigger(event) {
+		console.log("custom  click: ", event);
 
+		
+		if (event.action == "delete-item") {
+			this.deleteLeadFollowUp(event.record.id);
+			
+		}
+	}
+	deleteLeadFollowUp(id) {
+		this.alertService.confirm("Are you sure to delete this?",
+			() => {
+				this.alertService.fnLoading(true);
+				const deleteSubscription = this.leadService.deleteLeadFollowUp(id)
+					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+					.subscribe((res: any) => {
+						console.log('res from del func', res);
+						this.alertService.tosterSuccess("Lead follow up has been deleted successfully.");
+							this.leadFollowUps.forEach((value, index) => {
+								if (value.id == id) this.leadFollowUps.splice(index, 1);
+							});
+						},
+						(error) => {
+							console.log(error);
+						});
+				this.subscriptions.push(deleteSubscription);
+			},
+			() => { });
+	}
 	public cellClickCallbackFn(event: any) {
 		console.log(event);
+		
 		let leadFollowUp = event.record;
 		let cellName = event.cellName;
 
 		if (cellName == "detailsBtnText") {
 			this.detailsLeadFollowUp(leadFollowUp);
 		}
+		if (cellName == "deleteBtnText") {
+			this.deleteLeadFollowUp(leadFollowUp);
+		}
 	}
-
+	//private deleteLeadFollowUp(leadFollowUp: LeadFollowUp) {
+	//	//alert('delete' + leadFollowUp.id);
+	//	this.leadService.deleteLeadFollowUp(leadFollowUp.id).subscribe(res => {
+	//		this.leadFollowUps.forEach((value, index) => {
+	//			if (value.id == leadFollowUp.id) this.leadFollowUps.splice(index, 1);
+	//		});
+	//	});
+	//}
+	
 	public detailsLeadFollowUp(leadFollowUp: LeadFollowUp) {
 		console.log(leadFollowUp);
 		this.openLeadFollowUpDetailsModal(leadFollowUp);
@@ -136,5 +190,16 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 				console.log(reason);
 			}
 		);
+	}
+
+	private addLeadFollowUpDeleteBtn() {
+		this.userRole = this.authService.currentUserValue.roleName;
+		//console.log("Role: " + userRole);
+		if (this.userRole == "Admin") {
+			this.ptableSettings.enabledDeleteBtn = true;
+			//this.ptableSettings.tableColDef.push(
+			//	{ headerName: '', width: '10%', internalName: 'deleteBtnText', className: 'deleteBtnClass', sort: false, type: "dynamic-button", onClick: 'true', innerBtnIcon: "deleteBtnIcon" }
+			//);
+		}
 	}
 }

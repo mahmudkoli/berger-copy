@@ -100,7 +100,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 	}
 
 	deleteQuestion(id) {
-		this.alertService.confirm("Are you sure want to delete this Question?",
+		this.alertService.confirm("Are you sure to delete this Question?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.questionService.delete(id)

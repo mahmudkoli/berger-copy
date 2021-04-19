@@ -3,17 +3,19 @@
         <ng-template pTemplate="caption">
             <div class="table-header">
                 <h5 class="mb-3">Email Config</h5>
-                <!-- <div class="row">
+                <div class="row">
                     
-                    <div class="col-md-6 text-right">
+                    <div class="col-md-12 text-right">
                         <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
                     </div>
-                </div> -->
+                </div>
             </div>
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="designation">Role<p-sortIcon field="designation"></p-sortIcon>
+                </th>
+                <th pSortableColumn="businessArea">Business Area <p-sortIcon field="businessArea"></p-sortIcon>
                 </th>
                 <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon>
                 </th>
@@ -24,6 +26,7 @@
         <ng-template pTemplate="body" let-emailconfig>
             <tr>
                 <td>{{emailconfig.designation }}</td>
+                <td>{{emailconfig.businessArea}}</td>
                 <td>{{emailconfig.email}}</td>
 
                 <td>
