@@ -132,7 +132,8 @@ namespace Berger.Worker.Services
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message, ex);
+                //throw new ArgumentException(ex.Message, ex);
+                _logger.LogError(ex, $"Failed to update Customer data.");
             }
           
 

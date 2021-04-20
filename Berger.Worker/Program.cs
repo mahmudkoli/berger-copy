@@ -1,63 +1,65 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Berger.Common.HttpClient;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity;
 using Berger.Worker.Common;
 using Berger.Worker.Services;
 using BergerMsfaApi.Repositories;
-using Coravel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using Berger.Worker.Model;
+using System.IO;
+using Serilog;
+using Serilog.Events;
 
 namespace Berger.Worker
 {
     public class Program
     {
-        
         public static void Main(string[] args)
         {
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddConsole()
-                    .AddEventLog();
-                    
-            });
-            ILogger logger = loggerFactory.CreateLogger<Program>();
-            
+            var _configuration = new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("appsettings.json", false, true)
+                                .AddEnvironmentVariables()
+                                .Build();
+
+            var workerSettings = _configuration.GetSection("WorkerSettings").Get<WorkerSettingsModel>();
+
+            Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Debug()
+                        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console()
+                        .WriteTo.File(workerSettings.LogUrl, rollingInterval: RollingInterval.Day)
+                        .CreateLogger();
+
             try
             {
-                IHost host = CreateHostBuilder(args).Build();
-                //host.Services.UseScheduler(scheduler => {
-                //    scheduler
-                //        .Schedule<Worker>()
-                //        .EveryFiveMinutes();
-                //});
-                host.Run();
+                Log.Information("Application Starting up");
+                CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                logger.LogInformation($"{ex.Message}");
+                Log.Fatal(ex, "Application start-up failed");
             }
-            
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                //.UseConsoleLifetime()
+                .UseWindowsService()
+                .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<WorkerSettingsModel>(options => hostContext.Configuration.GetSection("WorkerSettings").Bind(options));
-
                     services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext))));
-
                     services.AddScoped<DbContext, ApplicationDbContext>();
                     services.AddScoped<ICustomerService, CustomerService>();
                     services.AddScoped<IBrandService, BrandService>();
@@ -66,12 +68,7 @@ namespace Berger.Worker
                     services.AddScoped(typeof(IDataEqualityComparer<>), typeof(DataEqualityComparer<>));
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
                     services.AddScoped<IUnitOfWork, ApplicationDbContext>();
-                    services.AddScheduler();
-
                     services.AddHostedService<Worker>();
-                    
-                    
-                })
-        ;
+                });
     }
 }
