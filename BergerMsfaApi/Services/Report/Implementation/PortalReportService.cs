@@ -1768,7 +1768,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 && (string.IsNullOrWhiteSpace(query.DepotId) || query.DepotId == x.BusinessArea)
                 && (string.IsNullOrWhiteSpace(query.AccountGroup) || query.AccountGroup == x.AccountGroup)
                 && (string.IsNullOrWhiteSpace(query.SalesOffice) || query.SalesOffice == x.SalesOffice)
-                && (string.IsNullOrWhiteSpace(query.CreditControlArea) || query.CreditControlArea == x.CreditControlArea)
+                //&& (string.IsNullOrWhiteSpace(query.CreditControlArea) || query.CreditControlArea == x.CreditControlArea)
                 && (!query.DealerId.HasValue || query.DealerId == x.Id)
                 && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
             ).Select(x => new
@@ -1776,7 +1776,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 x.Territory,
                 x.CustomerNo,
                 x.CustZone,
-                x.CreditControlArea,
+                //x.CreditControlArea,
                 x.CustomerName,
             }).ToListAsync();
 
@@ -1807,7 +1807,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var lDate = monthList[2];
                 var startDate = new DateTime(fDate.Year, fDate.Month, 1);
                 var endDate = new DateTime(lDate.Year, lDate.Month, DateTime.DaysInMonth(lDate.Year, lDate.Month));
-                var dataSingle = (await _financialDataService.GetOsOver90DaysTrend(dealerId, startDate, endDate)).ToList();
+                var dataSingle = (await _financialDataService.GetOsOver90DaysTrend(dealerId, startDate, endDate, query.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
                     dataAll.AddRange(dataSingle);
@@ -1859,18 +1859,24 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     res.Month1Value = firstMonthData.Where(x => predicateFunc(x, item)).Sum(calcFunc);
                     res.Month1Name = monthList[0].MonthName;
+                    res.CreditControlArea = string.IsNullOrEmpty(res.CreditControlArea) ? 
+                        firstMonthData.Where(x => predicateFunc(x, item)).Select(x => x.CreditControlArea).FirstOrDefault() : string.Empty;
                 }
 
                 if (secondMonthData.Any(x => predicateFunc(x, item)))
                 {
                     res.Month2Value = secondMonthData.Where(x => predicateFunc(x, item)).Sum(calcFunc);
                     res.Month2Name = monthList[1].MonthName;
+                    res.CreditControlArea = string.IsNullOrEmpty(res.CreditControlArea) ?
+                        secondMonthData.Where(x => predicateFunc(x, item)).Select(x => x.CreditControlArea).FirstOrDefault() : string.Empty;
                 }
 
                 if (thirdMonthData.Any(x => predicateFunc(x, item)))
                 {
                     res.Month3Value = thirdMonthData.Where(x => predicateFunc(x, item)).Sum(calcFunc);
                     res.Month3Name = monthList[2].MonthName;
+                    res.CreditControlArea = string.IsNullOrEmpty(res.CreditControlArea) ?
+                        thirdMonthData.Where(x => predicateFunc(x, item)).Select(x => x.CreditControlArea).FirstOrDefault() : string.Empty;
                 }
 
                 if (dbResult.Any(x => x.CustomerNo.ToString() == item))
@@ -1880,7 +1886,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     res.Zone = dbItem.CustZone;
                     res.DealerName = dbItem.CustomerName;
                     res.DealerId = dbItem.CustomerNo.ToString();
-                    res.CreditControlArea = dbItem.CreditControlArea;
+                    //res.CreditControlArea = dbItem.CreditControlArea;
                 }
 
                 res.Change1 = (res.Month2Value - res.Month1Value);

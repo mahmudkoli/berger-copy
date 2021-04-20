@@ -47,7 +47,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 
   // ptable settings
   enabledTotal: boolean = true;
-  tableName: string = 'Active Summery Report';
+  tableName: string = 'OS over 90 days Trend Report';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
   allTotalKeysOfNumberType: boolean = true;
@@ -57,7 +57,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
   // initial dropdown data
   employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
   users: any[] = [];
-  creditControllArea: any[] = [];
+  creditControlArea: any[] = [];
   depots: any[] = [];
   salesGroups: any[] = [];
   territories: any[] = [];
@@ -162,7 +162,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
         areaGroups,
         territories,
         zones,
-        creditZoneControll,
+        creditZoneControl,
         month,
         year,
       ]) => {
@@ -171,7 +171,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
         this.salesGroups = areaGroups.data;
         this.territories = territories.data;
         this.zones = zones.data;
-        this.creditControllArea = creditZoneControll.data;
+        this.creditControlArea = creditZoneControl.data;
         this.monthList = month.data;
         this.yearList = year.data;
       },

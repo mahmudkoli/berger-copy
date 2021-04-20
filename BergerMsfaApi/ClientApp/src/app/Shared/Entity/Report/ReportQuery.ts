@@ -203,7 +203,7 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
 }
 
 export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
-    creditControllAreaName: number;
+    creditControlArea: number;
     dealerId: number;
 
     
