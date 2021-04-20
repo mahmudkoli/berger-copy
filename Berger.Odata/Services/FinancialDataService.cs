@@ -347,17 +347,18 @@ namespace Berger.Odata.Services
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         }
 
-        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate)
+        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "")
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
                             .AddProperty(FinancialColDef.CustomerNo)
                             .AddProperty(FinancialColDef.Amount)
                             .AddProperty(FinancialColDef.PostingDate)
+                            .AddProperty(FinancialColDef.CreditControlArea)
                             .AddProperty(FinancialColDef.Age);
 
             var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(),
-                fromDate.DateTimeFormat(), toDate.DateTimeFormat())).ToList();
+                fromDate.DateTimeFormat(), toDate.DateTimeFormat(), creditControlArea: creditControlArea)).ToList();
 
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         }
