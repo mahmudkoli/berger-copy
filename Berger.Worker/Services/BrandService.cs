@@ -125,7 +125,7 @@ namespace Berger.Worker.Services
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                throw new ArgumentException(ex.Message, ex);
             }
           
 

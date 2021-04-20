@@ -13,5 +13,6 @@ namespace Berger.Worker.Model
         public string Password { get; set; }
         public string CustomerUrl { get; set; }
         public string BrandUrl { get; set; }
+        public string BrandFamilyUrl { get; set; }
     }
 }

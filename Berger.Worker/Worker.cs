@@ -15,6 +15,7 @@ namespace Berger.Worker
         private readonly ILogger<Worker> _logger;
         private  ICustomerService _customerService;
         private  IBrandService _brandService;
+        private  IBrandFamilyService _brandFamilyService;
         private readonly IServiceProvider _serviceProvider;
 /*
         private readonly Timer _timer;
@@ -48,29 +49,33 @@ namespace Berger.Worker
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = _serviceProvider.CreateScope();
-                try
-                { 
-                    Stopwatch st = new Stopwatch();
-                    st.Start();
-                    _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
-                    _brandService = scope.ServiceProvider.GetRequiredService<IBrandService>();
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                    await _customerService.GetCustomerData();
-                    await _brandService.GetBrandData();
-                    st.Stop();
-
-                    TimeSpan actualTime = TimeSpan.FromHours(24)- st.Elapsed;
-                    _logger.LogInformation($"______Next Service will run after: {actualTime}");
-                    //await Task.Delay(actualTime, stoppingToken);
-                    await Task.Delay(5000, stoppingToken);
-
-                }
-                catch (Exception ex)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    _logger.LogCritical($"{ex.Message}");
-                    await Task.Delay(5000, stoppingToken);
+                    try
+                    {
+                        Stopwatch st = new Stopwatch();
+                        st.Start();
+                        _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                        _brandService = scope.ServiceProvider.GetRequiredService<IBrandService>();
+                        _brandFamilyService = scope.ServiceProvider.GetRequiredService<IBrandFamilyService>();
+                        _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                        await _brandFamilyService.GetBrandFamilyData();
+                        await _brandService.GetBrandData();
+                        await _customerService.GetCustomerData();
+                        st.Stop();
 
+                        TimeSpan actualTime = TimeSpan.FromHours(24) - st.Elapsed;
+                        _logger.LogInformation($"______Next Service will run after: {actualTime}");
+                        //await Task.Delay(actualTime, stoppingToken);
+                        await Task.Delay(5000, stoppingToken);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogCritical($"{ex.Message}");
+                        await Task.Delay(5000, stoppingToken);
+
+                    }
                 }
                 //await Task.Delay(5000, stoppingToken);
             }

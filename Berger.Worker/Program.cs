@@ -61,6 +61,7 @@ namespace Berger.Worker
                     services.AddScoped<DbContext, ApplicationDbContext>();
                     services.AddScoped<ICustomerService, CustomerService>();
                     services.AddScoped<IBrandService, BrandService>();
+                    services.AddScoped<IBrandFamilyService, BrandFamilyService>();
                     services.AddScoped<IHttpClientService, HttpClientService>();
                     services.AddScoped(typeof(IDataEqualityComparer<>), typeof(DataEqualityComparer<>));
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
