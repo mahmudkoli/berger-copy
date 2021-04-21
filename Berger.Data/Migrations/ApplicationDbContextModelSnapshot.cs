@@ -15,7 +15,7 @@ namespace Berger.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -2316,6 +2316,51 @@ namespace Berger.Data.Migrations
                     b.HasIndex("PainterCallId");
 
                     b.ToTable("PainterCompanyMTDValues");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.BrandFamilyInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MatarialGroupOrBrand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandFamily")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandFamilyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BrandFamilyInfos");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.BrandInfo", b =>

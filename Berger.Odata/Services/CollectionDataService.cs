@@ -32,5 +32,21 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<decimal> GetTotalCollectionValue(IList<int> dealerIds, DateTime? startDate, DateTime? endDate)
+        {
+            var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
+
+            selectQueryOptionBuilder.AddProperty(DataColumnDef.Collection_Amount);
+
+            string startDateStr = startDate.HasValue ? startDate.Value.DateTimeFormat() : string.Empty;
+            string endDateStr = endDate.HasValue ? endDate.Value.DateTimeFormat() : string.Empty;
+
+            var data = await _oDataService.GetCollectionData(selectQueryOptionBuilder, dealerIds, startDateStr, endDateStr);
+
+            var result = data.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+
+            return result;
+        }
     }
 }
