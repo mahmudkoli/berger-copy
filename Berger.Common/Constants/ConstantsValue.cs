@@ -73,5 +73,15 @@ namespace Berger.Common.Constants
         public const string ProductComplaint = "Product Complaint";
     }
 
+    public static class ConstantSnapShotValue
+    {
+        public const string CompetitionDisplay = "Competition Display";
+        public const string GlowSignBoard = "Glow Sign Board";
+        public const string ProductDisplay = "Product Display";
+        public const string Scheme = "Scheme";
+        public const string Brochure = "Brochure";
+        public const string Others = "Others";
+    }
+
 
 }

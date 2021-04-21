@@ -72,10 +72,14 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            {
-                selectCustomerQueryBuilder.AddProperty(prop.Name);
-            }
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+                                .AddProperty(nameof(CustomerDataModel.CreditLimit));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
@@ -95,7 +99,8 @@ namespace Berger.Odata.Services
                                         var osModel = new OutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.DaysLimit = x.FirstOrDefault()?.DayLimit ?? string.Empty;
-                                        osModel.ValueLimit = customerData.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0;
+                                        osModel.ValueLimit = customerData.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer && f.CreditControlArea == osModel.CreditControlArea)
+                                                                            .GroupBy(g => g.CreditLimit).Sum(c => c.Key);
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
                                                             .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
@@ -121,10 +126,14 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            {
-                selectCustomerQueryBuilder.AddProperty(prop.Name);
-            }
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+                                .AddProperty(nameof(CustomerDataModel.CreditLimit));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
@@ -135,7 +144,20 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Amount);
 
             var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
-            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+            //var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+
+            #region data call by single customer
+            var data = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                if(dataSingle.Any())
+                {
+                    data.AddRange(dataSingle);
+                }
+            }
+            #endregion
 
             var groupData = data.GroupBy(x => x.CreditControlArea).ToList();
 
@@ -144,7 +166,8 @@ namespace Berger.Odata.Services
                                         var osModel = new ReportOutstandingSummaryResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.ValueLimit = customerData.GroupBy(g => g.CustomerNo)
-                                                                .Sum(s => s.FirstOrDefault(f => f.CreditControlArea == osModel.CreditControlArea)?.CreditLimit ?? (decimal)0);
+                                                                .Sum(s => s.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer && f.CreditControlArea == osModel.CreditControlArea)
+                                                                .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) > CustomConvertExtension.ObjectToInt(w.Age))
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
@@ -180,16 +203,39 @@ namespace Berger.Odata.Services
             var toDateTM = tmDate.GetCYLD().DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
-                                .AddProperty(FinancialColDef.CustomerName)
-                                .AddProperty(FinancialColDef.CreditControlArea)
-                                .AddProperty(FinancialColDef.DayLimit)
+            selectQueryBuilder
+                                //.AddProperty(FinancialColDef.CustomerNo)
+                                //.AddProperty(FinancialColDef.CustomerName)
+                                //.AddProperty(FinancialColDef.CreditControlArea)
+                                //.AddProperty(FinancialColDef.DayLimit)
                                 .AddProperty(FinancialColDef.Age)
+                                .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var dataFM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateFM, toDateFM, model.CreditControlArea)).ToList();
-            var dataSM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateSM, toDateSM, model.CreditControlArea)).ToList();
-            var dataTM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateTM, toDateTM, model.CreditControlArea)).ToList();
+            //var dataFM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateFM, toDateFM, model.CreditControlArea)).ToList();
+            //var dataSM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateSM, toDateSM, model.CreditControlArea)).ToList();
+            //var dataTM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateTM, toDateTM, model.CreditControlArea)).ToList();
+
+            #region data call by single customer
+            var dataAll = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDateFM, toDateTM)).ToList();
+                if (dataSingle.Any())
+                {
+                    dataAll.AddRange(dataSingle);
+                }
+            }
+            var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= fmDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= fmDate.GetCYLD().Date).ToList();
+
+            var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= smDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= smDate.GetCYLD().Date).ToList();
+
+            var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= tmDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= tmDate.GetCYLD().Date).ToList();
+            #endregion
 
             var result = new List<ReportOSOver90DaysResultModel>();
 
@@ -212,6 +258,15 @@ namespace Berger.Odata.Services
             //var currentDate = DateTime.Now;
             var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
+            //{
+            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
+            //}
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.PriceGroup));
+
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                                 .AddProperty(FinancialColDef.CustomerName)
@@ -220,7 +275,36 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.DayLimit);
 
-            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+
+            if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS)
+            {
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
+                                                        x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
+                dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+            }
+            else if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.FastPayCarry)
+            {
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
+                                                        (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer || 
+                                                        x.PriceGroup == ConstantsValue.PriceGroupFastPayCarry)).ToList();
+                dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+            }
+
+            //var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+
+            #region data call by single customer
+            var data = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                if (dataSingle.Any())
+                {
+                    data.AddRange(dataSingle);
+                }
+            }
+            #endregion
 
             var result = data.Select(x =>
                                 new ReportPaymentFollowUpResultModel()
@@ -251,12 +335,30 @@ namespace Berger.Odata.Services
         public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
-                .AddProperty(FinancialColDef.CustomerNo).AddProperty(FinancialColDef.Amount)
-                .AddProperty(FinancialColDef.Age);
+            selectQueryBuilder
+                            .AddProperty(FinancialColDef.CustomerNo)
+                            .AddProperty(FinancialColDef.Amount)
+                            .AddProperty(FinancialColDef.PostingDate)
+                            .AddProperty(FinancialColDef.Age);
 
             var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds,
                 fromDate.DateTimeFormat(), toDate.DateTimeFormat())).ToList();
+
+            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
+        }
+
+        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "")
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                            .AddProperty(FinancialColDef.CustomerNo)
+                            .AddProperty(FinancialColDef.Amount)
+                            .AddProperty(FinancialColDef.PostingDate)
+                            .AddProperty(FinancialColDef.CreditControlArea)
+                            .AddProperty(FinancialColDef.Age);
+
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(),
+                fromDate.DateTimeFormat(), toDate.DateTimeFormat(), creditControlArea: creditControlArea)).ToList();
 
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         }

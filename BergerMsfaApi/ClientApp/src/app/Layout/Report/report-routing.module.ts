@@ -26,6 +26,8 @@ import { BillingDealerQuarterlyGrowthReportComponent } from './billing-dealer-qu
 import { EnamelPaintsQuarterlyGrowthReportComponent } from './enamel-paints-quarterly-growth/enamel-paints-quarterly-growth-report.component';
 import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
 import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/premium-brands-growth-report.component';
+import { MerchendizingSnapshotReportComponent } from './merchendizing-snapshot/merchendizing-snapshot-report.component';
+import { LoginLogReportComponent } from './login-log/login-log-report.component';
 
 const routes: Routes = [
   {
@@ -185,11 +187,26 @@ const routes: Routes = [
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Premium Brands Contribution', },
       },
+
+      {
+        path: 'merchendizing-snapshot-report',
+        component: MerchendizingSnapshotReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Merchendizing Snapshot Report', },
+      },
+
+      {
+        path: 'login-log-report',
+        component: LoginLogReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Login Log Report', },
+      },
+
     ],
   }
 ];
 
-// DealerSalescallReportComponent
+// LoginLogReportComponent
 
 @NgModule({
 

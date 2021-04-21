@@ -360,4 +360,34 @@ export class ReportService {
       filter
     )}`;
   }
+
+  getMerchendizingSnapShot(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetSnapShotReport?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadMerchendizingSnapShot(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadSnapShotReport?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getLogInReport(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetLogInReport?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadLogInReport(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadLogInReport?${this.commonService.toQueryString(filter)}`;
+  }
+  
+
 }

@@ -133,7 +133,7 @@ export class FocusdealerListComponent implements OnInit {
             this.focusDealerService.delete(id).subscribe(
                 (res: any) => {
                     console.log('res from del func', res);
-                    this.alertService.tosterSuccess("dropdown has been deleted successfully.");
+                    this.alertService.tosterSuccess("Dropdown has been deleted successfully.");
                     //this.fnFocusDealerList();
                     this.OnLoadFocusDealer(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
                 },

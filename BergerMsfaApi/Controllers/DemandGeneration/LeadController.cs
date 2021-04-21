@@ -52,5 +52,24 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
                 return ExceptionResult(ex);
             }
         }
+        [HttpDelete("DeleteLeadFollowUp/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        { 
+
+            try
+            {
+                if (!await _leadService.IsExistAsync(id))
+                {
+                    ModelState.AddModelError(nameof(id), "Focus Dealer Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _leadService.DeleteAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

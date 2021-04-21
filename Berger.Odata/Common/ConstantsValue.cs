@@ -16,5 +16,11 @@ namespace Berger.Odata.Common
         //public const string CollectionCreditNote = "CN";
         public const string CustomerClassificationExclusive = "01";
         public const string CustomerClassificationNonExclusive = "02";
+        public const string DistrbutionChannelDealer = "10";
+        public const string PriceGroupCreditBuyer = "01";
+        public const string PriceGroupCashBuyer = "02";
+        public const string PriceGroupFastPayCarry = "04";
+        public const string BergerCompanyCode = "1000";
+        public const string ChequeBounceStatus = "Z1";
     }
 }

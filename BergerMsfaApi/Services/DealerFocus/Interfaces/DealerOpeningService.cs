@@ -144,7 +144,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
             var dealer = _dealerOpeningSvc.Where(p => p.Id == model.DealerOpeningId).FirstOrDefault();
-            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString()).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString() && p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
             if (model.Status == (int)DealerOpeningStatus.Approved)
             {
                 if (emailConfig != null)

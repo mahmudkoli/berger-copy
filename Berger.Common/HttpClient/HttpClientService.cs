@@ -38,19 +38,22 @@ namespace Berger.Common.HttpClient
                     else
                     {
                         _logger.LogInformation($"Something Wrong with host STATUS CODE: {response.StatusCode}");
-                        return "";
+                        //return "";
+                        throw new Exception("Failed to fetch data from SAP.");
                     }
 
                 }
                 catch (HTTP.HttpRequestException httpEx)
                 {
                     _logger.LogCritical(httpEx.Message);
-                    throw;
+                    //throw;
+                    throw new Exception("Failed to fetch data from SAP.", httpEx);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical(ex.InnerException.Message);
-                    throw;
+                    //throw;
+                    throw new Exception("Failed to fetch data from SAP.", ex);
                 }
 
             }

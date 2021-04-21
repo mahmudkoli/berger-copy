@@ -33,5 +33,19 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("BrandFamily")]
+        public async Task<IActionResult> GetBrandFamily()
+        {
+            try
+            {
+                var result = await _brandService.GetBrandsFamilyAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

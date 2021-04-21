@@ -52,6 +52,17 @@ namespace Berger.Common.Extensions
             return value.HasValue ? value.Value.ToString(_dateTimeStringFormat) : string.Empty;
         }
 
+        public static string ObjectToTimeString(DateTime? value)
+        {
+            return value.HasValue ? value.Value.ToString("HH:mm:ss") : string.Empty;
+        }
+
+        public static DateTime ObjectToCurrentDateTime(object value)
+        {
+            if (value == null) return DateTime.Now;
+            return DateTime.TryParse(value.ToString(), out DateTime result) ? result : DateTime.Now;
+        }
+
         public static DateTime ObjectToDateTime(object value)
         {
             if (value == null) return default(DateTime);

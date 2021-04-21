@@ -203,7 +203,7 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
 }
 
 export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
-    creditControllAreaName: number;
+    creditControlArea: number;
     dealerId: number;
 
     
@@ -255,4 +255,28 @@ export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+}
+
+export class SnapShotReportQuery extends ReportBaseQuery {
+    dealerId: number;
+    
+    constructor(init?: Partial<SnapShotReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class LogInReportQuery extends ReportBaseQuery {
+    status: number;
+    
+    constructor(init?: Partial<SnapShotReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }

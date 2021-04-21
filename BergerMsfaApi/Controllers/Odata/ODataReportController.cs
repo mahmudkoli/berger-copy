@@ -22,19 +22,22 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IODataReportService _oDataReportService;
         private readonly ISalesDataService _salesDataService;
         private readonly IFinancialDataService _financialDataService;
+        private readonly IStockDataService _stockDataService;
 
         public ODataReportController(
             IReportDataService reportDataService, 
             IAuthService authService,
             IODataReportService oDataReportService,
             ISalesDataService salesDataService,
-            IFinancialDataService financialDataService)
+            IFinancialDataService financialDataService,
+            IStockDataService stockDataService)
         {
             _reportDataService = reportDataService;
             _authService = authService;
             _oDataReportService = oDataReportService;
             _salesDataService = salesDataService;
             _financialDataService = financialDataService;
+            this._stockDataService = stockDataService;
         }
 
         [HttpGet("MyTargetReport")]
@@ -168,6 +171,20 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportPaymentFollowUp(model, dealerIds);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("StockDetails")]
+        public async Task<IActionResult> GetStockDetails([FromQuery] StocksSearchModel model)
+        {
+            try
+            {
+                var result = await _stockDataService.GetStockDetails(model);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -20,10 +20,23 @@ namespace Berger.Worker.Model
         public string Territory { get; set; }
         public string CreditControlArea { get; set; }
 
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsExclusive { get; set; }
-        public bool IsCBInstalled { get; set; }
+        //public bool IsDeleted { get; set; }
+        //public bool IsActive { get; set; }
+        //public bool IsExclusive { get; set; }
+        //public bool IsCBInstalled { get; set; }
+
+        [NotMapped]
+        public string CreatedOn { get; set; }
+        [NotMapped]
+        public string CustomerGroup { get; set; }
+        [NotMapped]
+        public string District { get; set; }
+        [NotMapped]
+        public string PriceGroup { get; set; }
+        [NotMapped]
+        public string SalesOrg { get; set; }
+        [NotMapped]
+        public string Channel { get; set; }
 
         private string compositeKey;
         [NotMapped]
