@@ -125,7 +125,8 @@ namespace Berger.Worker.Services
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                //throw new ArgumentException(ex.Message, ex);
+                _logger.LogError(ex, $"Failed to update Brand data.");
             }
           
 

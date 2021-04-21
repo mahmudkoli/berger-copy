@@ -21,6 +21,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
     public class BrandService:IBrandService
     {
         private readonly IRepository<BrandInfo> _brandInfoRepository;
+        private readonly IRepository<BrandFamilyInfo> _brandFamilyInfoRepository;
         private readonly IRepository<UserInfo> _userInfoRepository;
         private readonly IRepository<DealerInfo> _dealerInfoRepository;
         private readonly IRepository<BrandInfoStatusLog> _brandInfoStatusLogRepository;
@@ -28,6 +29,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
         public BrandService(
             IRepository<BrandInfo> brandInfoRepository,
+            IRepository<BrandFamilyInfo> brandFamilyInfoRepository,
             IRepository<UserInfo> userInfoRepository,
             IRepository<DealerInfo> dealerInfoRepository,
             IRepository<BrandInfoStatusLog> brandInfoStatusLogRepository,
@@ -35,6 +37,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             )
         {
             _brandInfoRepository = brandInfoRepository;
+            _brandFamilyInfoRepository = brandFamilyInfoRepository;
             _userInfoRepository = userInfoRepository;
             _dealerInfoRepository = dealerInfoRepository;
             _brandInfoStatusLogRepository = brandInfoStatusLogRepository;
@@ -95,6 +98,19 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return result.Items;
         }
        
+        public async Task<object> GetBrandsFamilyAsync()
+        {
+            var result = await _brandFamilyInfoRepository.GetAllIncludeAsync(
+                                x => new { x.Id, x.MatarialGroupOrBrand, x.MatarialGroupOrBrandName },
+                                null,
+                                x => x.OrderBy(o => o.MatarialGroupOrBrandName),
+                                null,
+                                true
+                            );
+
+            return result;
+        }
+       
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
             var userId = AppIdentity.AppUser.UserId;
@@ -132,8 +148,6 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return true;
         }
 
-
-        
         private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
         {
             

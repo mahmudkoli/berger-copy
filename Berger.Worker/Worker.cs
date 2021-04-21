@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Berger.Worker.Services;
-using Coravel.Invocable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -15,10 +14,9 @@ namespace Berger.Worker
         private readonly ILogger<Worker> _logger;
         private  ICustomerService _customerService;
         private  IBrandService _brandService;
+        private  IBrandFamilyService _brandFamilyService;
         private readonly IServiceProvider _serviceProvider;
-/*
-        private readonly Timer _timer;
-*/
+        private readonly int _timeOutHours = 24;
 
         public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
         {
@@ -28,58 +26,57 @@ namespace Berger.Worker
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            
-            _logger.LogInformation("Worker Started {date}", DateTime.Now);
-            var delayTime = DateTime.Now.Date.AddDays(1)
-                .Subtract(DateTime.Parse(DateTime.Now.TimeOfDay.ToString(@"hh\:mm")));
-            _logger.LogInformation($"Total Delay Time: {delayTime}");
-            //Task.Delay(TimeSpan.Parse(delayTime.ToString())).Wait(cancellationToken);
-            
+            _logger.LogInformation($"Worker started at {DateTime.Now}");
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Worker Stopped {date}", DateTime.Now);
+            _logger.LogInformation($"Worker stopped at {DateTime.Now}");
             return base.StopAsync(cancellationToken);
+        }
+
+        public override void Dispose()
+        {
+            _logger.LogInformation($"Worker disposed at: {DateTime.Now}");
+            base.Dispose();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = _serviceProvider.CreateScope();
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 try
-                { 
-                    Stopwatch st = new Stopwatch();
-                    st.Start();
-                    _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
-                    _brandService = scope.ServiceProvider.GetRequiredService<IBrandService>();
+                {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                    await _customerService.GetCustomerData();
-                    await _brandService.GetBrandData();
-                    st.Stop();
 
-                    TimeSpan actualTime = TimeSpan.FromHours(24)- st.Elapsed;
-                    _logger.LogInformation($"______Next Service will run after: {actualTime}");
-                    //await Task.Delay(actualTime, stoppingToken);
-                    await Task.Delay(5000, stoppingToken);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        _customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                        _brandService = scope.ServiceProvider.GetRequiredService<IBrandService>();
+                        _brandFamilyService = scope.ServiceProvider.GetRequiredService<IBrandFamilyService>();
 
+                        await _brandFamilyService.GetBrandFamilyData();
+                        await _brandService.GetBrandData();
+                        await _customerService.GetCustomerData();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical($"{ex.Message}");
-                    await Task.Delay(5000, stoppingToken);
-
+                    _logger.LogError(ex, $"Failed to update all data.");
                 }
-                //await Task.Delay(5000, stoppingToken);
+                finally
+                {
+                    stopwatch.Stop();
+                }
+
+                TimeSpan actualTime = TimeSpan.FromHours(_timeOutHours) - stopwatch.Elapsed;
+                _logger.LogInformation($"______Next Service will run after: {actualTime}");
+
+                await Task.Delay(actualTime, stoppingToken);
             }
         }
-
-        //public Task Invoke()
-        //{
-        //    StartAsync(cancellationToken: CancellationToken.None);
-        //    return Task.CompletedTask;
-        //}
     }
 }
