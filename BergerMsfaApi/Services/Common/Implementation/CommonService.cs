@@ -244,7 +244,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userId = AppIdentity.AppUser.UserId;
             var userInfo = await _userService.GetUserAsync(userId);
 
-            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
+                x.Division == ConstantsODataValue.DivisionDecorative && 
                 ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
@@ -329,7 +331,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var userId = AppIdentity.AppUser.UserId;
             var userInfo = await _userService.GetUserAsync(userId);
 
-            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
                 ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&

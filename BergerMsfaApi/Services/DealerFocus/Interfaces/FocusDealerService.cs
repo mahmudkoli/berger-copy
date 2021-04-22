@@ -99,7 +99,10 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
         {
 
-            var dealers = _dealerInfo.FindAll(x => !x.IsDeleted && x.Channel == ConstantsODataValue.DistrbutionChannelDealer).Select(s => new DealerModel
+            var dealers = _dealerInfo.FindAll(x => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
+                x.Division == ConstantsODataValue.DivisionDecorative)
+            .Select(s => new DealerModel
             {
                 Id = s.Id, CustomerName = s.CustomerName,CustomerNo = s.CustomerNo, Address = s.Address,
                 AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.SalesGroup, CustZone = s.CustZone,
