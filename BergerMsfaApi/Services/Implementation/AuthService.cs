@@ -139,7 +139,8 @@ namespace BergerMsfaApi.Services.Implementation
             //userCat = UserCat(userInfo, userCat, ref userCatIds);
 
             //var result = await _commonService.AppGetDealerInfoListByUserCategory(userCat, userCatIds);
-            var result = await _commonService.AppGetDealerInfoListByCurrentUser();
+
+            var result = await _commonService.AppGetDealerInfoListByCurrentUser(userId);
             return result.Select(x => x.CustomerNo).Distinct().ToList();
         }
 

@@ -76,7 +76,9 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 //}
 
                 //var result = await _commonSvc.AppGetDealerInfoListByUserCategory(userCategory.Trim(), userCategoryIds);
-                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser();
+
+                var userId = AppIdentity.AppUser.UserId;
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId);
                 return OkResult(result);
             }
             catch (Exception ex)

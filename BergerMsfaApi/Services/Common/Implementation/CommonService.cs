@@ -239,9 +239,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
         
-        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser()
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId)
         {
-            var userId = AppIdentity.AppUser.UserId;
+            //var userId = AppIdentity.AppUser.UserId;
             var userInfo = await _userService.GetUserAsync(userId);
 
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
