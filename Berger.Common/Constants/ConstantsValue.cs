@@ -28,6 +28,11 @@ namespace Berger.Common.Constants
 
     }
 
+    public static class ConstantsODataValue
+    {
+        public const string DistrbutionChannelDealer = "10";
+    }
+
     public static class ConstantsCustomerTypeValue
     {
         public const string Dealer = "Dealer";
