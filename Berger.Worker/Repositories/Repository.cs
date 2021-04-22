@@ -297,7 +297,7 @@ namespace BergerMsfaApi.Repositories
             await SaveChangesAsync();
             return items;
         }
-        public async Task<List<TEntity>> UpdateListAsync(List<TEntity> items)
+        public async Task<List<TEntity>> UpdateListAsync(List<TEntity> items, params string[] ignoreProperties)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
@@ -308,7 +308,7 @@ namespace BergerMsfaApi.Repositories
                     DbSet.Attach(item);
                     entry.State = EntityState.Modified;
                 }
-                var result = await SaveChangesAsync();
+                var result = await SaveChangesAsync(ignoreProperties);
                 return result > 0 ? items : null;
             }
             catch (Exception ex)
@@ -318,15 +318,21 @@ namespace BergerMsfaApi.Repositories
             }
         }
 
-        public async Task<int> UpdateListiAsync(List<TEntity> items)
+        public async Task<int> UpdateListiAsync(List<TEntity> items, params string[] ignoreProperties)
         {
             
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
                 //_context.Entry(await _context.FirstOrDefaultAsync(x => x.Id == item.Id)).CurrentValues.SetValues(item);
-                _context.UpdateRange(items);
-                var result = await SaveChangesAsync();
+                foreach (var item in items)
+                {
+                    var entry = _context.Entry(item);
+                    DbSet.Attach(item);
+                    entry.State = EntityState.Modified;
+                }
+                //_context.UpdateRange(items);
+                var result = await SaveChangesAsync(ignoreProperties);
                 return result;
             }
             catch (Exception ex)
@@ -589,7 +595,7 @@ namespace BergerMsfaApi.Repositories
             }
         }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync(params string[] ignoreProperties)
         {
 
             try
@@ -598,14 +604,15 @@ namespace BergerMsfaApi.Repositories
                 int result;
                 var addedEntries = _context.ChangeTracker.Entries().Where(e => e.State == EntityState.Added).ToList();
 
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                using (var scope = new TransactionScope(TransactionScopeOption.Required,
+                        new System.TimeSpan(0, 30, 0), TransactionScopeAsyncFlowOption.Enabled))
                 {
                     bool saveFailed;
                     do
                     {
                         try
                         {
-                            resultLog = CreateLog();
+                            resultLog = CreateLog(ignoreProperties);
                             result = await _context.SaveChangesAsync();
                             saveFailed = false;
                         }
@@ -641,7 +648,7 @@ namespace BergerMsfaApi.Repositories
             }
         }
 
-        private int CreateLog()
+        private int CreateLog(params string[] ignoreProperties)
         {
             var time = DateTime.Now;
             var userId = 1;
@@ -683,6 +690,12 @@ namespace BergerMsfaApi.Repositories
                     foreach (var property in properties)
                     {
                         entry.Property(property).IsModified = false;
+                    }
+
+                    foreach (var property in ignoreProperties)
+                    {
+                        if (typeof(TEntity).GetProperty(property) != null)
+                            entry.Property(property).IsModified = false;
                     }
                 }
             }

@@ -3,10 +3,12 @@
     public enum EnumEmployeeRole
     {
         Admin = 0,
-        DIC = 1, // Plant, BusinessArea, Depot
-        BIC = 2, // SalesOffice
-        AM = 3, // SalesGroup, Area
-        TM_TO = 4, // Territory
-        ZO = 5, // Zone, CustZone
+        GM = 1,
+        DIC = 2,
+        RSM = 3,
+        BIC = 4,
+        AM = 5,
+        TM_TO = 6,
+        ZO = 7,
     }
 }
