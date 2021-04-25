@@ -19,7 +19,7 @@ namespace Berger.Odata.Common
         public const string DocType = "Blart";
         public const string Dzblart = "Dzblart";
         public const string Amount = "Dmbtr";
-        public const string Sgtxt = "Sgtxt"; // Transaction Details
+        public const string TransactionDescription = "Sgtxt";
         public const string LineText = "Linetext";
         public const string ChequeBounceStatus = "Bouncestatus";
         public const string BankNo = "Bank";

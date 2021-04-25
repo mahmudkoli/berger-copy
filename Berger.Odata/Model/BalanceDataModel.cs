@@ -19,7 +19,7 @@ namespace Berger.Odata.Model
         public string DocType { get; set; }
         public string Dzblart { get; set; }
         public string Amount { get; set; }
-        public string Sgtxt { get; set; }
+        public string TransactionDescription { get; set; }
         public string LineText { get; set; }
         public string ChequeBounceStatus { get; set; }
         public string BankNo { get; set; }
