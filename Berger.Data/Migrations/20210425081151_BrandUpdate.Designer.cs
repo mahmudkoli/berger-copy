@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210425081151_BrandUpdate")]
+    partial class BrandUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2394,13 +2396,13 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("IsEnamel")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsLiquid")
+                    b.Property<bool>("IsGallon")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsKG")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsMTS")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPowder")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsPremium")
