@@ -24,6 +24,7 @@ namespace Berger.Odata.Common
         public const string PriceGroupCashBuyer = "02";
         public const string PriceGroupFastPayCarry = "04";
         public const string BergerCompanyCode = "1000";
+        public const string BergerSourceClient = "REP";
         public const string ChequeBounceStatus = "Z1";
     }
 }

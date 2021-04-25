@@ -600,7 +600,9 @@ namespace Berger.Odata.Services
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(BalanceColDef.CompanyCode, "1000")
+            filterQueryBuilder.Equal(BalanceColDef.CompanyCode, ConstantsValue.BergerCompanyCode)
+                                .And()
+                                .Equal(BalanceColDef.SourceClient, ConstantsValue.BergerSourceClient)
                                 .And()
                                 .Equal(BalanceColDef.CustomerLow, customerNo);
 
