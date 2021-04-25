@@ -20,6 +20,7 @@ namespace Berger.Odata.Services
         Task<IList<CustomerDataModel>> GetCustomerData(string query);
         Task<IList<StockDataModel>> GetStockData(string query);
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(string query);
+        Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(string query);
         #endregion
 
         #region get selectable data
@@ -66,6 +67,8 @@ namespace Berger.Odata.Services
             IList<int> dealerIds, string fromDate, string endDate);
 
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds);
+        Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string creditControlArea);
         #endregion
 
         #region calculate data

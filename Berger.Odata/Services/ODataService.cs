@@ -148,6 +148,18 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerCreditUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<CustomerCreditDataModel>.ParseJson(responseBody);
+            var data = parsedData.Results.ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -985,6 +997,26 @@ namespace Berger.Odata.Services
                 .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetCustomerOccasionData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string creditControlArea)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(nameof(CustomerCreditDataModel.Customer), customerNo)
+                                .And()
+                                .Equal(nameof(CustomerCreditDataModel.CreditControlArea), creditControlArea);
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerCreditData(queryBuilder.Query)).ToList();
 
             return data;
         }
