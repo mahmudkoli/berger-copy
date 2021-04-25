@@ -25,6 +25,7 @@
     <PackageReference Include="EfCore.GenericServices" Version="3.2.2" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+    <PackageReference Include="FirebaseAdmin" Version="2.0.0" />
     <PackageReference Include="MailKit" Version="2.11.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -130,6 +131,7 @@
     <Folder Include="Models\NewFolder\" />
     <Folder Include="Logs\" />
     <Folder Include="wwwroot\Logs\" />
+    <Folder Include="wwwroot\Logs\Worker\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

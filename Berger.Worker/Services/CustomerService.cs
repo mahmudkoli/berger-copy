@@ -60,7 +60,16 @@ namespace Berger.Worker.Services
                     _logger.LogInformation($"Total data fetched from database is {dealerInfos.Count()}");
 
                     var fromDatabase = dealerInfos.ToList();
-                    mappedDataFromApi = mappedDataFromApi.GroupBy(x=>x.CompositeKey).Select(y => y.FirstOrDefault()).ToList();
+                    mappedDataFromApi = mappedDataFromApi.GroupBy(x => x.CompositeKey).Select(y => y.FirstOrDefault()).ToList();
+                    //mappedDataFromApi = mappedDataFromApi.GroupBy(x=>x.CompositeKey).Select(y =>
+                    //{
+                    //    var res = y.FirstOrDefault();
+                    //    res.CreditLimit = y.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer)
+                    //                        .GroupBy(g => new { g.CreditControlArea, g.CreditLimit }).Sum(c => c.Key.CreditLimit);
+                    //    res.TotalDue = y.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer)
+                    //                        .GroupBy(g => new { g.CreditControlArea, g.TotalDue }).Sum(c => c.Key.TotalDue);
+                    //    return res;
+                    //}).ToList();
                     List<string> insertDeleteKeys = new List<string>();
                     if (fromDatabase.Count != mappedDataFromApi.Count)
                     {
@@ -85,7 +94,7 @@ namespace Berger.Worker.Services
                             dealerInfo.IsActive = false;
                         }
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2);
+                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(DealerInfo.IsCBInstalled), nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.IsClubSupreme), nameof(DealerInfo.IsAP));
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
                         insertDeleteKeys.AddRange(deletedList.Item1);
@@ -98,7 +107,7 @@ namespace Berger.Worker.Services
                                 .ToList();
                             if (updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData);
+                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(DealerInfo.IsCBInstalled), nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.IsClubSupreme), nameof(DealerInfo.IsAP));
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -117,14 +126,15 @@ namespace Berger.Worker.Services
                                 dealerInfo.Id = IsMatch.Id;
                             }
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi);
+                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(DealerInfo.IsCBInstalled), nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.IsClubSupreme), nameof(DealerInfo.IsAP));
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                //throw new ArgumentException(ex.Message, ex);
+                _logger.LogError(ex, $"Failed to update Customer data.");
             }
           
 

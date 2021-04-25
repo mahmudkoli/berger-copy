@@ -86,7 +86,7 @@ namespace Berger.Worker.Services
                             dealerInfo.IsActive = false;
                         }
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2);
+                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium));
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
                         insertDeleteKeys.AddRange(deletedList.Item1);
@@ -99,7 +99,7 @@ namespace Berger.Worker.Services
                                 .ToList();
                             if(updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData);
+                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium));
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -118,14 +118,15 @@ namespace Berger.Worker.Services
                                 dealerInfo.Id = IsMatch.Id;
                             }
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi);
+                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium));
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                //throw new ArgumentException(ex.Message, ex);
+                _logger.LogError(ex, $"Failed to update Brand data.");
             }
           
 

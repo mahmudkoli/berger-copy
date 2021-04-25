@@ -2318,6 +2318,51 @@ namespace Berger.Data.Migrations
                     b.ToTable("PainterCompanyMTDValues");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.BrandFamilyInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MatarialGroupOrBrand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandFamily")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandFamilyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatarialGroupOrBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BrandFamilyInfos");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.SAPTables.BrandInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -2446,11 +2491,17 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Channel")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContactNo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
+
+                    b.Property<string>("CreatedOn")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
@@ -2464,6 +2515,12 @@ namespace Berger.Data.Migrations
                     b.Property<string>("CustZone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CustomerClasification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerGroup")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
@@ -2473,8 +2530,14 @@ namespace Berger.Data.Migrations
                     b.Property<string>("DayLimit")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Division")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsAP")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2500,10 +2563,16 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PriceGroup")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SalesGroup")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOrg")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")

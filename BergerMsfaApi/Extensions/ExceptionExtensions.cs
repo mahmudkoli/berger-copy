@@ -84,7 +84,7 @@ namespace BergerMsfaApi.Extensions
         }
         public static void ToTextFileLog(this Exception ex)
         {
-            var startupPath = Directory.GetCurrentDirectory();
+            var startupPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
             ToTextFileLog(ex, startupPath);
         }

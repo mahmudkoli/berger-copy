@@ -9,14 +9,18 @@
         <form #dropdownForm="ngForm" (submit)="fnSave()">
             <div class="form-row">
                 <div class="col-md-6">
+                    <div class="btn-group btn-group-toggle mb-1" data-toggle="buttons">
+                        <button type="button" [ngClass]="dealerClass" (click)="displayDealersData()">Dealers</button>
+                        <button type="button" [ngClass]="subDealerClass" (click)="displaySubDealersData()">SubDealers</button>
+
+
+                    </div>
                     <div class="position-relative form-group">
-                        <label for="name">Dealer</label>
-
-
                         <ng-select [items]="dealerList" bindLabel="customerName" bindValue="id" [multiple]="true"
-                            [(ngModel)]="journeyPlanModel.dealers" name="dealers" #dealers="ngModel">
+                                   [(ngModel)]="journeyPlanModel.dealers" name="dealers" #dealers="ngModel">
                         </ng-select>
                     </div>
+
                 </div>
 
                 <div class="col-md-6">
@@ -30,14 +34,17 @@
                             Visit Date is required
                         </small>
                     </div>-->
-                    <label for="name">Visit Date</label>
-                    <div class="input-group">
-                        <input class="form-control" placeholder="yyyy-mm-dd" name="visitDate"
-                        [disabled]="readonly"  [(ngModel)]="journeyPlanModel.visitDDate" ngbDatepicker #d="ngbDatepicker">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary calendar" [disabled]="readonly" (click)="d.toggle()" type="button">
-                                <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
-                            </button>
+                   
+                    <div class="mt-2">
+                        <label for="name">Visit Date</label>
+                        <div class="input-group">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="visitDate"
+                                   [disabled]="readonly" [(ngModel)]="journeyPlanModel.visitDDate" ngbDatepicker #d="ngbDatepicker">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" [disabled]="readonly" (click)="d.toggle()" type="button">
+                                    <i class="pe-7s-back icon-gradient bg-love-kiss"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

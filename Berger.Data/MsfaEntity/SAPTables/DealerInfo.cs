@@ -30,12 +30,29 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsCBInstalled { get; set; }
         public bool IsLastYearAppointed { get; set; }
         public bool IsClubSupreme { get; set; }
+        public bool IsAP { get; set; }
+
+        //[NotMapped]
+        public string CreatedOn { get; set; }
+        //[NotMapped]
+        public string CustomerGroup { get; set; }
+        //[NotMapped]
+        public string District { get; set; }
+        //[NotMapped]
+        public string PriceGroup { get; set; }
+        //[NotMapped]
+        public string SalesOrg { get; set; }
+        //[NotMapped]
+        public string Channel { get; set; }
+        //[NotMapped]
+        public string CustomerClasification { get; set; }
 
         private string compositeKey;
         [NotMapped] 
         public string CompositeKey
         {
-            get => CustomerNo.ToString() + AccountGroup + BusinessArea;
+            //get => CustomerNo.ToString() + AccountGroup + BusinessArea;
+            get => CustomerNo.ToString() + Channel + Division;
             set => compositeKey = value;
         }
     }

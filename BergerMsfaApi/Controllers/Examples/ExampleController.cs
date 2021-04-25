@@ -5,6 +5,8 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Examples;
 using BergerMsfaApi.Services.Interfaces;
+using BergerMsfaApi.Services.Notification.Interfaces;
+using BergerMsfaApi.Services.Users.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,13 +22,21 @@ namespace BergerMsfaApi.Controllers.Examples
     {
         private readonly ILogger<ExampleController> _logger;
         private readonly IExampleService _example;
+        private readonly INotificationService _notificationService;
+        private readonly ILoginLogService _loginLogService;
         private readonly IEmailSender _emailSender;
 
-        public ExampleController(ILogger<ExampleController> logger
-            , IExampleService example, IEmailSender emailSender)
+        public ExampleController(
+            ILogger<ExampleController> logger, 
+            IExampleService example,
+            INotificationService notificationService,
+            ILoginLogService loginLogService, 
+            IEmailSender emailSender)
         {
             _logger = logger;
             _example = example;
+            this._notificationService = notificationService;
+            this._loginLogService = loginLogService;
             this._emailSender = emailSender;
         }
 
@@ -204,6 +214,25 @@ namespace BergerMsfaApi.Controllers.Examples
             try
             {
                 await _emailSender.SendEmailAsync(email, "Berger Test","Berger Test");
+                return Ok(true);
+
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("PushNotification")]
+        public async Task<IActionResult> PushNotification()
+        {
+            try
+            {
+                foreach (var item in (await _loginLogService.GetAllLoggedInUsersAsync()))
+                {
+                    if (!string.IsNullOrEmpty(item.FCMToken))
+                        await _notificationService.SendPushNotificationAsync(item.FCMToken, "Berger Test", "Berger Test");
+                }
                 return Ok(true);
 
             }

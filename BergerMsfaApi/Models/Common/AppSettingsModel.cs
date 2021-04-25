@@ -10,6 +10,7 @@ namespace BergerMsfaApi.Models.Common
         public string Domain { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool IsIgnoreADLogin { get; set; }
     }
 
     public class TokensSettingsModel
@@ -18,5 +19,10 @@ namespace BergerMsfaApi.Models.Common
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public int ExpiresHours { get; set; }
+    }
+
+    public class FCMSettingsModel
+    {
+        public string FileName { get; set; }
     }
 }

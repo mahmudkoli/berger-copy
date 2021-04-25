@@ -12,6 +12,7 @@ namespace BergerMsfaApi.Services.Brand.Interfaces
     {
         Task<QueryResultModel<BrandInfoModel>> GetBrandsAsync(QueryObjectModel query);
         Task<object> GetBrandsAsync(AppBrandSearchModel query);
+        Task<object> GetBrandsFamilyAsync();
         Task<BrandInfoModel> GetBrandById(int id);
         Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus);
         public Task<IEnumerable<BrandInfoStatusLogModel>> GetBrandInfoStatusLog(int brandInfoId);

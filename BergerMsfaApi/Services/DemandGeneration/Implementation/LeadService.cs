@@ -7,6 +7,7 @@ using Berger.Data.MsfaEntity.Master;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
+using BergerMsfaApi.Models.Notification;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
@@ -308,5 +309,42 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             return result.Id;
         }
+
+        public async Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync(int userId)
+        {
+            var today = DateTime.Now;
+
+            var result = await _leadGenerationRepository.GetAllIncludeAsync(
+                                   x => x,
+                                   x => x.UserId == userId &&
+                                    (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
+                                   null,
+                                   x => x.Include(i => i.LeadFollowUps),
+                                   true
+                               );
+
+            var modelResult = new List<AppLeadFollowUpNotificationModel>();
+
+            foreach (var lead in result)
+            {
+                //if (lead.NextFollowUpDate.Date == today.Date || lead.LeadFollowUps.Any(x => x.NextVisitDatePlan.Date == today.Date))
+                //{
+                    var modelRes = new AppLeadFollowUpNotificationModel();
+                    modelRes.UserId = userId;
+                    modelRes.Depot = lead.Depot;
+                    modelRes.Territory = lead.Territory;
+                    modelRes.Zone = lead.Zone;
+                    modelRes.ProjectName = lead.ProjectName;
+                    modelRes.ProjectAddress = lead.ProjectAddress;
+
+                    modelResult.Add(modelRes);
+                //}
+            }
+
+            return modelResult;
+        }
+
+        public async Task<int> DeleteAsync(int id) => await _leadFollowUpRepository.DeleteAsync(s => s.Id == id);
+        public async Task<bool> IsExistAsync(int id) => await _leadFollowUpRepository.IsExistAsync(f => f.Id == id);
     }
 }
