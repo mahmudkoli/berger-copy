@@ -24,8 +24,8 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsMTS { get; set; }
         public bool IsPremium { get; set; }
         public bool IsEnamel { get; set; }
-        public bool IsKG { get; set; }
-        public bool IsGallon { get; set; }
+        public bool IsPowder { get; set; }
+        public bool IsLiquid { get; set; }
 
         private string compositeKey;
         [NotMapped]
