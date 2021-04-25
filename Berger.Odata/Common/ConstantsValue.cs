@@ -11,6 +11,9 @@ namespace Berger.Odata.Common
         public const string BalanceLineTextOpening = "A Opening";
         //public const string BalanceLineTextTransaction = "B Transaction";
         public const string BalanceLineTextClosing = "C Closing";
+        public const string BalanceDocTypeMoneyReceipt = "MR";
+        public const string BalanceDocTypeInvoice = "IN";
+        //public const string BalanceDocTypeCreditNote = "CN";
         public const string CollectionMoneyReceipt = "MR";
         public const string CollectionInvoice = "IN";
         //public const string CollectionCreditNote = "CN";
