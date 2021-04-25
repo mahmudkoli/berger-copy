@@ -36,8 +36,8 @@ namespace Berger.Odata.Services
             string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
-        Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
+        //Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+        //    IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
