@@ -229,5 +229,40 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<CustomerCreditResultModel> GetCustomerCredit(CustomerCreditSearchModel model)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            foreach (var prop in typeof(CustomerCreditDataModel).GetProperties())
+            {
+                selectQueryBuilder.AddProperty(prop.Name);
+            }
+
+            var data = (await _odataService.GetCustomerCreditData(selectQueryBuilder, model.CustomerNo, model.CreditControlArea)).ToList();
+
+            var result = data.FirstOrDefault();
+
+            var modelResult = new CustomerCreditResultModel();
+
+            if (result != null)
+            {
+                modelResult.CreditLimit = CustomConvertExtension.ObjectToDecimal(result.CreditLimit);
+                modelResult.LastPayment = CustomConvertExtension.ObjectToDecimal(result.LastPayment);
+                modelResult.Receivables = CustomConvertExtension.ObjectToDecimal(result.Receivable);
+                modelResult.OpenDeliveryValue = CustomConvertExtension.ObjectToDecimal(result.OpenDelivery);
+                modelResult.OpenSalesOrderValue = CustomConvertExtension.ObjectToDecimal(result.OpenOrder);
+                modelResult.OpenBillDocValue = CustomConvertExtension.ObjectToDecimal(result.OpenBill);
+                modelResult.LastPaymentDate = string.IsNullOrEmpty(result.LastPaymentDate) || result.LastPaymentDate == "00000000" ? string.Empty :
+                                                result.LastPaymentDate.DateFormatDate("yyyyMMdd").DateFormat("dd.MM.yyyy");
+
+                modelResult.CreditLimitUsed = modelResult.Receivables + modelResult.OpenDeliveryValue +
+                                                modelResult.OpenSalesOrderValue + modelResult.OpenBillDocValue;
+                modelResult.Delta = modelResult.CreditLimit - modelResult.CreditLimitUsed;
+                modelResult.CreditLimitUsedPercentage = modelResult.CreditLimit == 0 ? 0 : (modelResult.CreditLimitUsed / modelResult.CreditLimit) * 100;
+                modelResult.CreditHorizonDate = DateTime.Now.DateFormat("dd.MM.yyyy");
+            }
+
+            return modelResult;
+        }
     }
 }

@@ -116,7 +116,7 @@ namespace Berger.Odata.Services
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
             var resultDateFormat = "dd MMM yyyy";
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
@@ -140,7 +140,8 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
