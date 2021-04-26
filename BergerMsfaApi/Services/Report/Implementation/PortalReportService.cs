@@ -1821,8 +1821,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var startDate = new DateTime(item.Year, item.Month, 1);
                 var endDate = new DateTime(item.Year, item.Month, DateTime.DaysInMonth(item.Year, item.Month));
                 //IList<FinancialDataModel> data = await _financialDataService.GetOsOver90DaysTrend(dealerIds, startDate, endDate);
-                IList<FinancialDataModel> data = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= startDate.Date
-                                                    && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= endDate.Date).ToList();
+                //IList<FinancialDataModel> data = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= startDate.Date
+                //                                    && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= endDate.Date).ToList();
+                IList<FinancialDataModel> data = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= startDate.Date
+                                                    && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= endDate.Date).ToList();
 
                 switch (i)
                 {

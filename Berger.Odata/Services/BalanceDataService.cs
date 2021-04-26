@@ -78,51 +78,33 @@ namespace Berger.Odata.Services
             var fromDateStr = fromDate.DateTimeFormat();
             var toDateStr = toDate.DateTimeFormat();
 
-            var selectBalanceQueryBuilder = new SelectQueryOptionBuilder();
-            selectBalanceQueryBuilder.AddProperty(BalanceColDef.LineText)
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(BalanceColDef.LineText)
+                                .AddProperty(BalanceColDef.DocType)
+                                .AddProperty(BalanceColDef.TransactionDescription)
                                 .AddProperty(BalanceColDef.CustomerNo)
                                 .AddProperty(BalanceColDef.CustomerName)
                                 .AddProperty(BalanceColDef.CreditControlArea)
                                 .AddProperty(BalanceColDef.PostingDateDoc)
                                 .AddProperty(BalanceColDef.Amount);
 
-            var selectCollectionQueryBuilder = new SelectQueryOptionBuilder();
-            selectCollectionQueryBuilder.AddProperty(CollectionColDef.CollectionType)
-                                .AddProperty(CollectionColDef.CustomerNo)
-                                .AddProperty(CollectionColDef.CustomerName)
-                                .AddProperty(CollectionColDef.CreditControlArea)
-                                .AddProperty(CollectionColDef.PostingDate)
-                                .AddProperty(CollectionColDef.Amount);
-
-            var dataBalance = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectBalanceQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
+            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
             
-            var dataCollection = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectCollectionQueryBuilder, model.CustomerNo, startPostingDate: fromDateStr, endPostingDate: toDateStr, creditControlArea: model.CreditControlArea)).ToList();
-
-            var result = new List<BalanceConfirmationSummaryResultModel>();
-
-            for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
+            var result = data.Select(x => 
             {
-                IEnumerable<DateTime> dateTimes = dataBalance.Select(x =>CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc));
+                var res = new BalanceConfirmationSummaryResultModel();
 
-                var dataBal = dataBalance.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc).Date == date.Date).ToList();
-                var dataCol = dataCollection.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date == date.Date).ToList();
+                res.Date = CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc).DateFormat("dd-MM-yyyy");
+                res.OpeningBalance = x.LineText == ConstantsValue.BalanceLineTextOpening ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
+                res.ClosingBalance = x.LineText == ConstantsValue.BalanceLineTextClosing ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
+                res.InvoiceBalance = x.DocType == ConstantsValue.BalanceDocTypeInvoice ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
+                res.PaymentBalance = x.DocType == ConstantsValue.BalanceDocTypeMoneyReceipt ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
+                res.TransactionDescription = x.TransactionDescription;
 
-                if (dataBal.Any() || dataCol.Any())
-                {
-                    var res = new BalanceConfirmationSummaryResultModel();
-                    res.Date = date.DateFormat("dd-MM-yyyy");
-                    res.OpeningBalance = (dataBal.Where(w => w.LineText == ConstantsValue.BalanceLineTextOpening)
-                                            .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)));
-                    res.ClosingBalance = (dataBal.Where(w => w.LineText == ConstantsValue.BalanceLineTextClosing)
-                                            .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)));
-                    res.InvoiceBalance = dataCol.Where(w => w.blart == ConstantsValue.CollectionInvoice)
-                                            .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-                    res.PaymentBalance = dataCol.Where(w => w.blart == ConstantsValue.CollectionMoneyReceipt)
-                                            .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+                return res;
+            }).ToList();
 
-                    result.Add(res);
-                }
-            }
+            result = result.OrderBy(x => x.Date.DateFormatDate("dd-MM-yyyy")).ToList();
 
             return result;
         }
@@ -246,6 +228,41 @@ namespace Berger.Odata.Services
             #endregion
 
             return result;
+        }
+
+        public async Task<CustomerCreditResultModel> GetCustomerCredit(CustomerCreditSearchModel model)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            foreach (var prop in typeof(CustomerCreditDataModel).GetProperties())
+            {
+                selectQueryBuilder.AddProperty(prop.Name);
+            }
+
+            var data = (await _odataService.GetCustomerCreditData(selectQueryBuilder, model.CustomerNo, model.CreditControlArea)).ToList();
+
+            var result = data.FirstOrDefault();
+
+            var modelResult = new CustomerCreditResultModel();
+
+            if (result != null)
+            {
+                modelResult.CreditLimit = CustomConvertExtension.ObjectToDecimal(result.CreditLimit);
+                modelResult.LastPayment = CustomConvertExtension.ObjectToDecimal(result.LastPayment);
+                modelResult.Receivables = CustomConvertExtension.ObjectToDecimal(result.Receivable);
+                modelResult.OpenDeliveryValue = CustomConvertExtension.ObjectToDecimal(result.OpenDelivery);
+                modelResult.OpenSalesOrderValue = CustomConvertExtension.ObjectToDecimal(result.OpenOrder);
+                modelResult.OpenBillDocValue = CustomConvertExtension.ObjectToDecimal(result.OpenBill);
+                modelResult.LastPaymentDate = string.IsNullOrEmpty(result.LastPaymentDate) || result.LastPaymentDate == "00000000" ? string.Empty :
+                                                result.LastPaymentDate.DateFormatDate("yyyyMMdd").DateFormat("dd.MM.yyyy");
+
+                modelResult.CreditLimitUsed = modelResult.Receivables + modelResult.OpenDeliveryValue +
+                                                modelResult.OpenSalesOrderValue + modelResult.OpenBillDocValue;
+                modelResult.Delta = modelResult.CreditLimit - modelResult.CreditLimitUsed;
+                modelResult.CreditLimitUsedPercentage = modelResult.CreditLimit == 0 ? 0 : (modelResult.CreditLimitUsed / modelResult.CreditLimit) * 100;
+                modelResult.CreditHorizonDate = DateTime.Now.DateFormat("dd.MM.yyyy");
+            }
+
+            return modelResult;
         }
     }
 }

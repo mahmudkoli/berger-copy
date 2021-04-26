@@ -31,6 +31,7 @@ namespace Berger.Odata.Model
         public decimal InvoiceBalance { get; set; }
         public decimal PaymentBalance { get; set; }
         public decimal ClosingBalance { get; set; }
+        public string TransactionDescription { get; set; }
 
         public BalanceConfirmationSummaryResultModel()
         {

@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly ISalesDataService _salesDataService;
         private readonly IFinancialDataService _financialDataService;
         private readonly IStockDataService _stockDataService;
+        private readonly IBalanceDataService _balanceDataService;
 
         public ODataReportController(
             IReportDataService reportDataService, 
@@ -30,7 +31,8 @@ namespace BergerMsfaApi.Controllers.Odata
             IODataReportService oDataReportService,
             ISalesDataService salesDataService,
             IFinancialDataService financialDataService,
-            IStockDataService stockDataService)
+            IStockDataService stockDataService,
+            IBalanceDataService balanceDataService)
         {
             _reportDataService = reportDataService;
             _authService = authService;
@@ -38,6 +40,7 @@ namespace BergerMsfaApi.Controllers.Odata
             _salesDataService = salesDataService;
             _financialDataService = financialDataService;
             this._stockDataService = stockDataService;
+            this._balanceDataService = balanceDataService;
         }
 
         [HttpGet("MyTargetReport")]
@@ -185,6 +188,20 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _stockDataService.GetStockDetails(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("CustomerCredit")]
+        public async Task<IActionResult> GetCustomerCredit([FromQuery] CustomerCreditSearchModel model)
+        {
+            try
+            {
+                var result = await _balanceDataService.GetCustomerCredit(model);
                 return OkResult(result);
             }
             catch (Exception ex)
