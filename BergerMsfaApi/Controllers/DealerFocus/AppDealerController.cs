@@ -8,6 +8,7 @@ using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
@@ -62,18 +63,22 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
         }
 
+        [Authorize]
         [HttpGet("GetDealerList")]
         public async Task<IActionResult> GetDealerList([FromQuery] string userCategory, [FromQuery] List<string> userCategoryIds)
         {
             try
             {
-                if (string.IsNullOrEmpty(userCategory))
-                {
-                    ModelState.AddModelError(nameof(userCategory), "User Category can not be null");
-                    return ValidationResult(ModelState);
-                }
+                //if (string.IsNullOrEmpty(userCategory))
+                //{
+                //    ModelState.AddModelError(nameof(userCategory), "User Category can not be null");
+                //    return ValidationResult(ModelState);
+                //}
 
-                var result = await _commonSvc.AppGetDealerInfoListByUserCategory(userCategory.Trim(), userCategoryIds);
+                //var result = await _commonSvc.AppGetDealerInfoListByUserCategory(userCategory.Trim(), userCategoryIds);
+
+                var userId = AppIdentity.AppUser.UserId;
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -83,12 +88,14 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
         }
 
+        [Authorize]
         [HttpGet("GetDealerListByCategory")]
         public async Task<IActionResult> GetDealerListByCategory([FromQuery] AppDealerSearchModel model)
         {
             try
             {
-                var result = await _commonSvc.AppGetDealerInfoListByDealerCategory(model);
+                //var result = await _commonSvc.AppGetDealerInfoListByDealerCategory(model);
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(model);
                 return OkResult(result);
             }
             catch (Exception ex)

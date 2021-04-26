@@ -64,8 +64,8 @@ namespace BergerMsfaApi.Repositories
 
         Task<TEntity> CreateAsync(TEntity entity);
         Task<List<TEntity>> CreateListAsync(List<TEntity> items);
-        Task<List<TEntity>> UpdateListAsync(List<TEntity> items);
-        Task<int> UpdateListiAsync(List<TEntity> items);
+        Task<List<TEntity>> UpdateListAsync(List<TEntity> items, params string[] ignoreProperties);
+        Task<int> UpdateListiAsync(List<TEntity> items, params string[] ignoreProperties);
         Task<int> DeleteListAsync(List<TEntity> item);
         Task<TEntity> UpdateAsync(TEntity item);
         Task<TEntity> CreateOrUpdateAsync(TEntity item);
@@ -107,7 +107,7 @@ namespace BergerMsfaApi.Repositories
 
         int SaveChanges();
 
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(params string[] ignoreProperties);
 
         #endregion
 

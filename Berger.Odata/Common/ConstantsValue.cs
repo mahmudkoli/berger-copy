@@ -11,6 +11,9 @@ namespace Berger.Odata.Common
         public const string BalanceLineTextOpening = "A Opening";
         //public const string BalanceLineTextTransaction = "B Transaction";
         public const string BalanceLineTextClosing = "C Closing";
+        public const string BalanceDocTypeMoneyReceipt = "MR";
+        public const string BalanceDocTypeInvoice = "IN";
+        //public const string BalanceDocTypeCreditNote = "CN";
         public const string CollectionMoneyReceipt = "MR";
         public const string CollectionInvoice = "IN";
         //public const string CollectionCreditNote = "CN";
@@ -21,6 +24,7 @@ namespace Berger.Odata.Common
         public const string PriceGroupCashBuyer = "02";
         public const string PriceGroupFastPayCarry = "04";
         public const string BergerCompanyCode = "1000";
+        public const string BergerSourceClient = "REP";
         public const string ChequeBounceStatus = "Z1";
     }
 }

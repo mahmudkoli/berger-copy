@@ -7,6 +7,7 @@ namespace Berger.Odata.Model
     public class BalanceDataModel
     {
         public string CompanyCode { get; set; }
+        public string SourceClient { get; set; }
         public string CustomerLow { get; set; }
         public string CustomerHigh { get; set; }
         public string PostingDate { get; set; }
@@ -19,7 +20,7 @@ namespace Berger.Odata.Model
         public string DocType { get; set; }
         public string Dzblart { get; set; }
         public string Amount { get; set; }
-        public string Sgtxt { get; set; }
+        public string TransactionDescription { get; set; }
         public string LineText { get; set; }
         public string ChequeBounceStatus { get; set; }
         public string BankNo { get; set; }

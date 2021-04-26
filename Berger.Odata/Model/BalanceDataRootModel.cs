@@ -41,7 +41,7 @@ namespace Berger.Odata.Model
             model.DocType = this.Blart;
             model.Dzblart = this.Dzblart;
             model.Amount = this.Dmbtr;
-            model.Sgtxt = this.Sgtxt;
+            model.TransactionDescription = this.Sgtxt;
             model.LineText = this.Linetext;
             model.ChequeBounceStatus = this.Bouncestatus;
             model.BankNo = this.Bank;

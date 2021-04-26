@@ -12,5 +12,6 @@ namespace Berger.Odata.Services
         Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model);
         Task<IList<ChequeBounceResultModel>> GetChequeBounce(ChequeBounceSearchModel model);
         Task<ChequeSummaryResultModel> GetChequeSummary(ChequeSummarySearchModel model);
+        Task<CustomerCreditResultModel> GetCustomerCredit(CustomerCreditSearchModel model);
     }
 }

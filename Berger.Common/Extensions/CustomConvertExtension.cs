@@ -75,17 +75,17 @@ namespace Berger.Common.Extensions
             return DateTime.TryParse(value.ToString(), out DateTime result) ? result : (DateTime?)null;
         }
 
-        public static EnumUserCategory EmployeeRoleToUserCategory(EnumEmployeeRole employeeRole)
-        {
-            return employeeRole switch
-            {
-                EnumEmployeeRole.DIC => EnumUserCategory.Plant,
-                EnumEmployeeRole.BIC => EnumUserCategory.SalesOffice,
-                EnumEmployeeRole.AM => EnumUserCategory.Area,
-                EnumEmployeeRole.TM_TO => EnumUserCategory.Territory,
-                EnumEmployeeRole.ZO => EnumUserCategory.Zone,
-                _ => EnumUserCategory.Zone,
-            };
-        }
+        //public static EnumUserCategory EmployeeRoleToUserCategory(EnumEmployeeRole employeeRole)
+        //{
+        //    return employeeRole switch
+        //    {
+        //        EnumEmployeeRole.DIC => EnumUserCategory.Plant,
+        //        EnumEmployeeRole.BIC => EnumUserCategory.SalesOffice,
+        //        EnumEmployeeRole.AM => EnumUserCategory.Area,
+        //        EnumEmployeeRole.TM_TO => EnumUserCategory.Territory,
+        //        EnumEmployeeRole.ZO => EnumUserCategory.Zone,
+        //        _ => EnumUserCategory.Zone,
+        //    };
+        //}
     }
 }

@@ -77,5 +77,31 @@ namespace Berger.Odata.Services
 
             return result.Distinct().ToList();
         }
+
+        public async Task<IList<string>> GetPowderBrandCodesAsync()
+        {
+            var result = await _brandInfoRepository.GetAllIncludeAsync(
+                                x => x.MaterialGroupOrBrand,
+                                x => x.IsPowder,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result.Distinct().ToList();
+        }
+
+        public async Task<IList<string>> GetLiquidBrandCodesAsync()
+        {
+            var result = await _brandInfoRepository.GetAllIncludeAsync(
+                                x => x.MaterialGroupOrBrand,
+                                x => x.IsLiquid,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result.Distinct().ToList();
+        }
     }
 }

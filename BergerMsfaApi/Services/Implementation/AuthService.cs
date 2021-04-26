@@ -132,13 +132,15 @@ namespace BergerMsfaApi.Services.Implementation
         public async Task<IList<int>> GetDealerByUserId(int userId)
         {
 
-            var userInfo = await _userService.GetUserAsync(userId);
-            var userCat = string.Empty;
-            var userCatIds = new List<string>();
+            //var userInfo = await _userService.GetUserAsync(userId);
+            //var userCat = string.Empty;
+            //var userCatIds = new List<string>();
 
-            userCat = UserCat(userInfo, userCat, ref userCatIds);
+            //userCat = UserCat(userInfo, userCat, ref userCatIds);
 
-            var result = await _commonService.AppGetDealerInfoListByUserCategory(userCat, userCatIds);
+            //var result = await _commonService.AppGetDealerInfoListByUserCategory(userCat, userCatIds);
+
+            var result = await _commonService.AppGetDealerInfoListByCurrentUser(userId);
             return result.Select(x => x.CustomerNo).Distinct().ToList();
         }
 
