@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
 using Microsoft.EntityFrameworkCore;
+using Berger.Common.Constants;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -98,7 +99,10 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
         {
 
-            var dealers = _dealerInfo.GetAll().Select(s => new DealerModel
+            var dealers = _dealerInfo.FindAll(x => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
+                x.Division == ConstantsODataValue.DivisionDecorative)
+            .Select(s => new DealerModel
             {
                 Id = s.Id, CustomerName = s.CustomerName,CustomerNo = s.CustomerNo, Address = s.Address,
                 AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.SalesGroup, CustZone = s.CustZone,
@@ -118,7 +122,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
        
         public async Task<bool> DealerStatusUpdate(DealerInfo dealer)
         {
-            var find = await _dealerInfo.FindAsync(f => f.CustomerNo == dealer.CustomerNo);
+            var find = await _dealerInfo.FindAsync(f => f.Id == dealer.Id);
             if (find == null) return false;
 
             await CreateDealerInfoStatusLog(dealer);
@@ -132,7 +136,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
         public async Task<bool> CreateDealerInfoStatusLog(DealerInfo dealer)
         {
-            var find = await _dealerInfo.FindAsync(f => f.CustomerNo == dealer.CustomerNo);
+            var find = await _dealerInfo.FindAsync(f => f.Id == dealer.Id);
             if (find == null) return false;
             try
             {

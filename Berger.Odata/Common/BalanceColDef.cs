@@ -7,6 +7,7 @@ namespace Berger.Odata.Common
     public static class BalanceColDef
     {
         public const string CompanyCode = "CompanyCode";
+        public const string SourceClient = "SourceClient";
         public const string CustomerLow = "CustomerLow";
         public const string CustomerHigh = "CustomerHigh";
         public const string PostingDate = "PostingDate";
@@ -19,7 +20,7 @@ namespace Berger.Odata.Common
         public const string DocType = "Blart";
         public const string Dzblart = "Dzblart";
         public const string Amount = "Dmbtr";
-        public const string Sgtxt = "Sgtxt"; // Transaction Details
+        public const string TransactionDescription = "Sgtxt";
         public const string LineText = "Linetext";
         public const string ChequeBounceStatus = "Bouncestatus";
         public const string BankNo = "Bank";

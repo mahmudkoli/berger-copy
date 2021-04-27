@@ -25,5 +25,6 @@ namespace Berger.Odata.Model
         public string PriceGroup { get; set; }
         public string SalesOrg { get; set; }
         public string Channel { get; set; }
+        public string CustomerClasification { get; set; }
     }
 }
