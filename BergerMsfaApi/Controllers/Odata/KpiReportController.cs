@@ -1,6 +1,8 @@
 ﻿using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Report;
+using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,10 +18,15 @@ namespace BergerMsfaApi.Controllers.Odata
     public class KpiReportController : BaseController
     {
         private readonly IKpiDataService _kpiDataService;
+        private readonly IKPIReportService _kpiReportService;
 
-        public KpiReportController(IKpiDataService kpiDataService)
+        public KpiReportController(
+            IKpiDataService kpiDataService,
+            IKPIReportService kpiReportService
+            )
         {
             _kpiDataService = kpiDataService;
+            this._kpiReportService = kpiReportService;
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]
@@ -106,6 +113,60 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("GetBusinessCallAnalysis")]
+        public async Task<IActionResult> GetBusinessCallKPIReport([FromQuery] BusinessCallKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
+        [HttpGet("DownloadBusinessCallAnalysis")]
+        public async Task<IActionResult> DownloadBusinessCallKPIReport([FromQuery] BusinessCallKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetStrikeRateOnBusinessCall")]
+        public async Task<IActionResult> GetStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadStrikeRateOnBusinessCall")]
+        public async Task<IActionResult> DownloadStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

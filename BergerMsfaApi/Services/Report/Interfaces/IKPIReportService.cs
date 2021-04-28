@@ -12,5 +12,6 @@ namespace BergerMsfaApi.Services.Report.Interfaces
     public interface IKPIReportService
     {
         Task<IList<StrikeRateKPIReportResultModel>> GetStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query);
+        Task<IList<BusinessCallKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query);
     }
 }
