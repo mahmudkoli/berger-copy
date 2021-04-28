@@ -7,6 +7,8 @@ using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.OData.Interfaces;
+using BergerMsfaApi.Services.Report.Interfaces;
+using BergerMsfaApi.Models.Report;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
@@ -16,12 +18,15 @@ namespace BergerMsfaApi.Controllers.Odata
     public class PortalQuartPerformReportController : BaseController
     {
         private readonly IQuarterlyPerformanceDataService _quarterlyPerformanceDataService;
+        private readonly IKPIReportService _kpiReportService;
 
         public PortalQuartPerformReportController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService,
+            IKPIReportService kpiReportService
             )
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
+            this._kpiReportService = kpiReportService;
         }
 
         [HttpGet("GetMTSValueTargetAchivement")]
@@ -161,6 +166,20 @@ namespace BergerMsfaApi.Controllers.Odata
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("StrikeRateKPIReport")]
+        public async Task<IActionResult> GetStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
             }
         }
     }
