@@ -18,15 +18,12 @@ namespace BergerMsfaApi.Controllers.Odata
     public class PortalQuartPerformReportController : BaseController
     {
         private readonly IQuarterlyPerformanceDataService _quarterlyPerformanceDataService;
-        private readonly IKPIReportService _kpiReportService;
 
         public PortalQuartPerformReportController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService,
-            IKPIReportService kpiReportService
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService
             )
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
-            this._kpiReportService = kpiReportService;
         }
 
         [HttpGet("GetMTSValueTargetAchivement")]
@@ -166,20 +163,6 @@ namespace BergerMsfaApi.Controllers.Odata
             catch (Exception ex)
             {
                 return BadRequest(ex);
-            }
-        }
-
-        [HttpGet("StrikeRateKPIReport")]
-        public async Task<IActionResult> GetStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
-        {
-            try
-            {
-                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
             }
         }
     }

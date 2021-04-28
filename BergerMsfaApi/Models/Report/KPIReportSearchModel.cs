@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Report
 {
-    public class KPIReportBaseSearchModel : QueryObjectModel
+    public class KPIReportBaseSearchModel
+        //: QueryObjectModel
     {
         public string Depot { get; set; }
         public List<string> Territories { get; set; }
@@ -33,5 +34,10 @@ namespace BergerMsfaApi.Models.Report
         All=1,
         Exclusive=2,
         NonExclusive=3
+    }
+
+    public class BusinessCallKPIReportSearchModel : KPIReportBaseSearchModel
+    {
+
     }
 }
