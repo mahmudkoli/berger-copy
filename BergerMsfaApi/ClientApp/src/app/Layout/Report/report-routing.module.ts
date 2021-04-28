@@ -28,6 +28,9 @@ import { PremiumBrandsContributionReportComponent } from './premium-brands-contr
 import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/premium-brands-growth-report.component';
 import { MerchendizingSnapshotReportComponent } from './merchendizing-snapshot/merchendizing-snapshot-report.component';
 import { LoginLogReportComponent } from './login-log/login-log-report.component';
+import { TerritoryWiseKpiTargetAchivementReportComponent } from './territory-wise-kpi-target-achivement/territory-wise-kpi-target-achivement-report.component';
+import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-target-achivement/dealer-wise-kpi-target-achivement-report.component';
+import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
 
 const routes: Routes = [
   {
@@ -202,11 +205,32 @@ const routes: Routes = [
         data: { title: 'Login Log Report', },
       },
 
+      {
+        path: 'territory-target-achievemt',
+        component: TerritoryWiseKpiTargetAchivementReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Territory Target Achievement Report', },
+      },
+
+      {
+        path: 'dealer-target-achievemt',
+        component: DealerWiseKpiTargetAchivementReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Target Achievement Report', },
+      },
+
+      {
+        path: 'product-target-achievemt',
+        component: ProductWiseKpiTargetAchivementReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Dealer Target Achievement Report', },
+      },
+
     ],
   }
 ];
 
-// LoginLogReportComponent
+// ProductWiseKpiTargetAchivementReportComponent
 
 @NgModule({
 
