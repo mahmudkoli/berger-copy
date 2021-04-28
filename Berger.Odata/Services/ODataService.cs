@@ -408,6 +408,90 @@ namespace Berger.Odata.Services
 
             return data;
         }
+        
+        public async Task<IList<SalesDataModel>> GetSalesDataByMultipleArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string depot, List<string> salesOffices = null, List<string> salesGroups = null, List<string> territories = null, List<string> zones = null, List<string> brands = null)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(DataColumnDef.PlantOrBusinessArea, depot)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqual(DataColumnDef.Date, startDate)
+                                .And()
+                                .LessThanOrEqual(DataColumnDef.Date, endDate)
+                                .EndGroup();
+
+            if (salesOffices != null && salesOffices.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesOffice, salesOffices.FirstOrDefault());
+
+                foreach (var salesOffice in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesOffice, salesOffice);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (salesGroups != null && salesGroups.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesGroup, salesGroups.FirstOrDefault());
+
+                foreach (var salesGroup in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesGroup, salesGroup);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (territories != null && territories.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.Territory, territories.FirstOrDefault());
+
+                foreach (var territory in territories.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.Territory, territory);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (zones != null && zones.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.Zone, zones.FirstOrDefault());
+
+                foreach (var zone in zones.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.Zone, zone);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetSalesData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
 
         public async Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null)
