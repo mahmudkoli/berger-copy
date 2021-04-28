@@ -30,6 +30,11 @@ export class Enums {
     
     ];
 
+    public static resultType : MapObject[] = [
+        { id : 1, label : "value" },
+        { id : 2, label : "volume" },
+    ]
+
 
     constructor() {
 

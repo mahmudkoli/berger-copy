@@ -32,6 +32,9 @@ import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/prem
 import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
 import { MerchendizingSnapshotReportComponent } from './merchendizing-snapshot/merchendizing-snapshot-report.component';
 import { LoginLogReportComponent } from './login-log/login-log-report.component';
+import { TerritoryWiseKpiTargetAchivementReportComponent } from './territory-wise-kpi-target-achivement/territory-wise-kpi-target-achivement-report.component';
+import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-target-achivement/dealer-wise-kpi-target-achivement-report.component';
+import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
 
 @NgModule({
     declarations: [
@@ -61,7 +64,10 @@ import { LoginLogReportComponent } from './login-log/login-log-report.component'
       PremiumBrandsGrowthReportComponent,
       PremiumBrandsContributionReportComponent,
       MerchendizingSnapshotReportComponent,
-      LoginLogReportComponent
+      LoginLogReportComponent,
+      TerritoryWiseKpiTargetAchivementReportComponent,
+      DealerWiseKpiTargetAchivementReportComponent,
+      ProductWiseKpiTargetAchivementReportComponent
     ],
   imports: [
       CommonModule,

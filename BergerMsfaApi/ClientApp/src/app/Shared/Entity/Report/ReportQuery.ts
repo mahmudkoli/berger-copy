@@ -280,3 +280,15 @@ export class LogInReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
+    
+}
+
+export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
+    resutType: number;
+}
