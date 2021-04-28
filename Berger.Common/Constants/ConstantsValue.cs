@@ -32,6 +32,8 @@ namespace Berger.Common.Constants
     {
         public const string DistrbutionChannelDealer = "10";
         public const int DivisionDecorative = 10;
+        public const string CustomerClassificationExclusive = "01";
+        public const string CustomerClassificationNonExclusive = "02";
     }
 
     public static class ConstantsCustomerTypeValue
