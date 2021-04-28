@@ -31,8 +31,8 @@ namespace Berger.Odata.Services
         Task<IList<SalesDataModel>> GetSalesDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
 
-        Task<IList<SalesDataModel>> GetSalesDataByDealer(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string territory = "", string dealerId="", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
+        Task<IList<SalesDataModel>> GetSalesDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string depot, List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "");
 
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
@@ -70,11 +70,8 @@ namespace Berger.Odata.Services
         Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<int> dealerIds, string fromDate, string endDate);
 
-        Task<IList<MTSDataModel>> GetMTSDataByTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string territory="", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
-
-        Task<IList<MTSDataModel>> GetMTSDataByDealer(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string territory="", string dealerId="", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
+        Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "");
 
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds);
         Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(SelectQueryOptionBuilder selectQueryBuilder,

@@ -78,6 +78,34 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("GetProductWiseTargetAchivement")]
+        public async Task<IActionResult> GetProductWiseTargetAchivement([FromQuery] ProductWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                var data = await _kpiDataService.GetProductWiseTargetAchivement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadProductWiseTargetAchivement")]
+        public async Task<IActionResult> DownloadProductWiseTargetAchivement([FromQuery] ProductWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                var data = await _kpiDataService.GetProductWiseTargetAchivement(model);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
 
     }
 }
