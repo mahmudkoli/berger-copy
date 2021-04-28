@@ -20,6 +20,7 @@ namespace Berger.Odata.Services
         Task<IList<CustomerDataModel>> GetCustomerData(string query);
         Task<IList<StockDataModel>> GetStockData(string query);
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(string query);
+        Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(string query);
         #endregion
 
         #region get selectable data
@@ -39,8 +40,8 @@ namespace Berger.Odata.Services
             string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
-        Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
+        //Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+        //    IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
@@ -73,6 +74,8 @@ namespace Berger.Odata.Services
             string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "");
 
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds);
+        Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string creditControlArea);
         #endregion
 
         #region calculate data

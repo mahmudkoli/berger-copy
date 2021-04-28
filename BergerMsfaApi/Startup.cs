@@ -214,6 +214,14 @@ namespace BergerMsfaApi
                 app.UseHsts();
             }
 
+            app.Use(next => new RequestDelegate(
+                async context =>
+                {
+                    context.Request.EnableBuffering();
+                    await next(context);
+                }
+            ));
+
             HttpHelper.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             app.UseHttpsRedirection();
             app.UseStaticFiles();

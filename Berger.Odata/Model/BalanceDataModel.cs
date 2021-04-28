@@ -7,6 +7,7 @@ namespace Berger.Odata.Model
     public class BalanceDataModel
     {
         public string CompanyCode { get; set; }
+        public string SourceClient { get; set; }
         public string CustomerLow { get; set; }
         public string CustomerHigh { get; set; }
         public string PostingDate { get; set; }

@@ -30,7 +30,7 @@ namespace Berger.Odata.Services
         public async Task<IList<OutstandingDetailsResultModel>> GetOutstandingDetails(OutstandingDetailsSearchModel model)
         {
             //var currentDate = DateTime.Now;
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
@@ -39,7 +39,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
+            //var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo)).ToList();
 
             Func<FinancialDataModel, bool> predicateFunc = x => (model.Days switch
             {
@@ -69,7 +70,7 @@ namespace Berger.Odata.Services
         public async Task<IList<OutstandingSummaryResultModel>> GetOutstandingSummary(OutstandingSummarySearchModel model)
         {
             //var currentDate = DateTime.Now;
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             //foreach (var prop in typeof(CustomerDataModel).GetProperties())
@@ -90,7 +91,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Amount);
 
             var customerData = (await _odataService.GetCustomerDataByCustomerNo(selectCustomerQueryBuilder, model.CustomerNo)).ToList();
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
+            //var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo)).ToList();
 
             var groupData = data.GroupBy(x => x.CreditControlArea).ToList();
 
@@ -123,7 +125,7 @@ namespace Berger.Odata.Services
         public async Task<IList<ReportOutstandingSummaryResultModel>> GetReportOutstandingSummary(IList<int> dealerIds)
         {
             //var currentDate = DateTime.Now;
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             //foreach (var prop in typeof(CustomerDataModel).GetProperties())
@@ -151,7 +153,8 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
                 if(dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -209,7 +212,8 @@ namespace Berger.Odata.Services
                                 //.AddProperty(FinancialColDef.CreditControlArea)
                                 //.AddProperty(FinancialColDef.DayLimit)
                                 .AddProperty(FinancialColDef.Age)
-                                .AddProperty(FinancialColDef.PostingDate)
+                                //.AddProperty(FinancialColDef.PostingDate)
+                                .AddProperty(FinancialColDef.Date)
                                 .AddProperty(FinancialColDef.Amount);
 
             //var dataFM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateFM, toDateFM, model.CreditControlArea)).ToList();
@@ -221,20 +225,29 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDateFM, toDateTM)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDateFM, toDateTM, model.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
                     dataAll.AddRange(dataSingle);
                 }
             }
-            var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= fmDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= fmDate.GetCYLD().Date).ToList();
+            //var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= fmDate.GetCYFD().Date
+            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= fmDate.GetCYLD().Date).ToList();
 
-            var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= smDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= smDate.GetCYLD().Date).ToList();
+            //var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= smDate.GetCYFD().Date
+            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= smDate.GetCYLD().Date).ToList();
 
-            var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= tmDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= tmDate.GetCYLD().Date).ToList();
+            //var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= tmDate.GetCYFD().Date
+            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= tmDate.GetCYLD().Date).ToList();
+
+            var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= fmDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= fmDate.GetCYLD().Date).ToList();
+
+            var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= smDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= smDate.GetCYLD().Date).ToList();
+
+            var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= tmDate.GetCYFD().Date
+                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= tmDate.GetCYLD().Date).ToList();
             #endregion
 
             var result = new List<ReportOSOver90DaysResultModel>();
@@ -256,7 +269,7 @@ namespace Berger.Odata.Services
         public async Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<int> dealerIds)
         {
             //var currentDate = DateTime.Now;
-            var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             //foreach (var prop in typeof(CustomerDataModel).GetProperties())
@@ -298,7 +311,8 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -332,20 +346,20 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder
-                            .AddProperty(FinancialColDef.CustomerNo)
-                            .AddProperty(FinancialColDef.Amount)
-                            .AddProperty(FinancialColDef.PostingDate)
-                            .AddProperty(FinancialColDef.Age);
+        //public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate)
+        //{
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder
+        //                    .AddProperty(FinancialColDef.CustomerNo)
+        //                    .AddProperty(FinancialColDef.Amount)
+        //                    .AddProperty(FinancialColDef.PostingDate)
+        //                    .AddProperty(FinancialColDef.Age);
 
-            var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds,
-                fromDate.DateTimeFormat(), toDate.DateTimeFormat())).ToList();
+        //    var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds,
+        //        fromDate.DateTimeFormat(), toDate.DateTimeFormat())).ToList();
 
-            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
-        }
+        //    return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
+        //}
 
         public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "")
         {
@@ -353,7 +367,8 @@ namespace Berger.Odata.Services
             selectQueryBuilder
                             .AddProperty(FinancialColDef.CustomerNo)
                             .AddProperty(FinancialColDef.Amount)
-                            .AddProperty(FinancialColDef.PostingDate)
+                            //.AddProperty(FinancialColDef.PostingDate)
+                            .AddProperty(FinancialColDef.Date)
                             .AddProperty(FinancialColDef.CreditControlArea)
                             .AddProperty(FinancialColDef.Age);
 
