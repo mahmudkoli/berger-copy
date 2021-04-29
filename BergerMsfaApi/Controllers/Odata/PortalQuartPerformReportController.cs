@@ -7,6 +7,8 @@ using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.OData.Interfaces;
+using BergerMsfaApi.Services.Report.Interfaces;
+using BergerMsfaApi.Models.Report;
 
 namespace BergerMsfaApi.Controllers.Odata
 {

@@ -223,7 +223,7 @@ namespace Berger.Odata.Services
                                                             CustomerName = s.CustomerName,
                                                             ReversalDate = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
                                                             ChequeNo = s.ChequeNo,
-                                                            Amount = s.Amount
+                                                            Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
                                                         }).ToList();
             #endregion
 
