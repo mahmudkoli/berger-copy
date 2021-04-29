@@ -8,9 +8,9 @@ namespace Berger.Odata.Model
     {
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
-        public string Depot { get; set; }
-        public List<string> Territory { get; set; }
-        public List<string> Zone { get; set; }
+        public string DepotId { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> Zones { get; set; }
     }
 
     public class TerritoryTargetAchievementSearchModel : KpiDataSearchModel

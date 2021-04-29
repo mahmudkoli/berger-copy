@@ -35,6 +35,12 @@ export class Enums {
         { id : 2, label : "volume" },
     ]
 
+    public static reportType : MapObject[] = [
+        { id : 1, label : "All" },
+        { id : 2, label : "Exclusive" },
+        { id : 3, label : "NonExclusive" },
+    ]
+
 
     constructor() {
 

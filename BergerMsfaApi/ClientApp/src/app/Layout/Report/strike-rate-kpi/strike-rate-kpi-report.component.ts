@@ -6,21 +6,21 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { finalize } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { ProductWiseTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { StrikeRateKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { Enums } from 'src/app/Shared/Enums/enums';
 
 @Component({
-    selector: 'app-product-wise-kpi-target-achivement-report',
-    templateUrl: './product-wise-kpi-target-achivement-report.component.html',
-    styleUrls: ['./product-wise-kpi-target-achivement-report.component.css']
+    selector: 'app-strike-rate-kpi-report',
+    templateUrl: './strike-rate-kpi-report.component.html',
+    styleUrls: ['./strike-rate-kpi-report.component.css']
 })
-export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, OnDestroy {
+export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: ProductWiseTargetAchivementQuery;
+	query: StrikeRateKpiReportQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
@@ -29,9 +29,10 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	// for filter
 	fromDate: NgbDate;
 	toDate: NgbDate;
+
 	// ptable settings
-	enabledTotal: boolean = true;
-	tableName: string = 'Product Wise Target Achievement Report';
+	enabledTotal: boolean = false;
+	tableName: string = 'Strike rate on business call Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -42,7 +43,9 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
     depots: any[] = [];
     territories:any[]=[]
     zones: any[] = [];
-    resultTypes: any[] = Enums.resultType;
+	monthList: any[] = [];
+	yearList: any[] = [];
+	reportTypes: any[] = Enums.reportType;
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -74,11 +77,11 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	}
 
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.DownloadProductWiseTargetAchivement(query);
-	getData = (query) => this.reportService.getProductWiseTargetAchivement(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadStrikeRateOnBusinessCall(query);
+	getData = (query) => this.reportService.getStrikeRateOnBusinessCall(query);
 	
 	searchConfiguration() {
-		this.query = new ProductWiseTargetAchivementQuery({
+		this.query = new StrikeRateKpiReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -97,10 +100,14 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
             this.commonService.getDepotList(),
             this.commonService.getTerritoryList(),
             this.commonService.getZoneList(),
-        ]).subscribe(([plants, territories, zones]) => {
+			this.commonService.getMonthList(),
+            this.commonService.getYearList(),
+        ]).subscribe(([plants, territories, zones, months, years]) => {
             this.depots = plants.data;
             this.territories = territories.data;
             this.zones = zones.data;
+			this.monthList = months.data;
+            this.yearList = years.data;
         }, (err) => { }, () => { });
     }
 	
@@ -142,7 +149,6 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
-		
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -153,7 +159,7 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 		tableColDef: [],
 		// enabledSearch: true,
 		enabledSerialNo: true,
-		// pageSize: 10,
+		pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
