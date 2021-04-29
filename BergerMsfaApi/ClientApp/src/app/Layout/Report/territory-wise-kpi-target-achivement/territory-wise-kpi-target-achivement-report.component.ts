@@ -59,7 +59,7 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 		// server side paggination
 		this.PAGE_SIZE = commonService.PAGE_SIZE;
 		this.ptableSettings.pageSize = this.PAGE_SIZE;
-		this.ptableSettings.enabledServerSitePaggination = true;
+		this.ptableSettings.enabledServerSitePaggination = false;
 	}
 
 	ngOnInit() {

@@ -433,5 +433,32 @@ export class ReportService {
     }/DownloadProductWiseTargetAchivement?${this.commonService.toQueryString(filter)}`;
   }
 
+  getBusinessCallAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetBusinessCallAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadBusinessCallAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadBusinessCallAnalysis?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getStrikeRateOnBusinessCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadStrikeRateOnBusinessCall(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`;
+  }
 
 }
