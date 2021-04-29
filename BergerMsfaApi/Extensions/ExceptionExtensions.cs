@@ -7,6 +7,7 @@ using System.Reflection;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace BergerMsfaApi.Extensions
@@ -189,10 +190,19 @@ namespace BergerMsfaApi.Extensions
         {
             var httpContext = context;
             var request = httpContext.Request;
-            request.Body.Position = 0;
-            StreamReader sr = new StreamReader(request.Body);
-            string body = AsyncHelper.RunSync<string>(()=> sr.ReadToEndAsync());
-            request.Body.Position = 0;
+            string body = "";
+            if (request.Form.Any())
+            {
+                var dictionary = request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+                body += JsonConvert.SerializeObject(dictionary, Formatting.Indented);
+            }
+            else
+            {
+                request.Body.Position = 0;
+                StreamReader sr = new StreamReader(request.Body);
+                AsyncHelper.RunSync<string>(() => sr.ReadToEndAsync());
+                request.Body.Position = 0;
+            }
             return body;
         }
     }
