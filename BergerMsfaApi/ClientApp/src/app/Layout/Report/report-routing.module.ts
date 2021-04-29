@@ -31,6 +31,8 @@ import { LoginLogReportComponent } from './login-log/login-log-report.component'
 import { TerritoryWiseKpiTargetAchivementReportComponent } from './territory-wise-kpi-target-achivement/territory-wise-kpi-target-achivement-report.component';
 import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-target-achivement/dealer-wise-kpi-target-achivement-report.component';
 import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
+import { BusinessCallAnalysisReportComponent } from './business-call-analysis/business-call-analysis-report.component';
+import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
 
 const routes: Routes = [
   {
@@ -226,11 +228,25 @@ const routes: Routes = [
         data: { title: 'Dealer Target Achievement Report', },
       },
 
+      {
+        path: 'business-call-analysis',
+        component: BusinessCallAnalysisReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Business Call Analysis Report', },
+      },
+
+      {
+        path: 'strike-rate-kpi',
+        component: StrikeRateKpiReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Strike Rate KPI Report', },
+      },
+
     ],
   }
 ];
 
-// ProductWiseKpiTargetAchivementReportComponent
+// StrikeRateKpiReportComponent
 
 @NgModule({
 
