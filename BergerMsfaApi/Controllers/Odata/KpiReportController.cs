@@ -168,5 +168,33 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("GetBillingAnalysis")]
+        public async Task<IActionResult> GetBillingAnalysisKPIReport([FromQuery] BillingAnalysisKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetBillingAnalysisKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadBillingAnalysis")]
+        public async Task<IActionResult> DownloadBillingAnalysisKPIReport([FromQuery] BillingAnalysisKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetBillingAnalysisKPIReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

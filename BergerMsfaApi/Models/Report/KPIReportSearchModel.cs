@@ -40,4 +40,9 @@ namespace BergerMsfaApi.Models.Report
     {
 
     }
+
+    public class BillingAnalysisKPIReportSearchModel : KPIReportBaseSearchModel
+    {
+
+    }
 }

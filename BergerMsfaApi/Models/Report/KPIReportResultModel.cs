@@ -43,4 +43,42 @@ namespace BergerMsfaApi.Models.Report
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class BillingAnalysisKPIReportResultModel
+    {
+        public EnumBillingAnalysisType BillingAnalysisType { get; set; }
+        public string BillingAnalysisTypeText { get; set; }
+        public int NoOfDealer { get; set; }
+        public int NoOfBillingDealer { get; set; }
+        public decimal BillingPercentage { get; set; }
+        public IList<BillingAnalysisDetailsKPIReportResultModel> Details { get; set; }
+
+        public BillingAnalysisKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.Details = new List<BillingAnalysisDetailsKPIReportResultModel>();
+        }
+    }
+
+    public class BillingAnalysisDetailsKPIReportResultModel
+    {
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public bool IsBilling { get; set; }
+        public string IsBillingText { get; set; }
+
+        public BillingAnalysisDetailsKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public enum EnumBillingAnalysisType
+    {
+        Exclusive=1,
+        NonAPNonExclusive=2,
+        NonExclusive=3,
+        New=4,
+        Total=5,
+    }
 }
