@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Berger.Common.Extensions;
 using Microsoft.OData.Edm;
+using Newtonsoft.Json;
 
 namespace Berger.Odata.Model
 {
@@ -100,6 +101,33 @@ namespace Berger.Odata.Model
         public decimal GrowthYTD { get; internal set; }
 
         public BrandOrDivisionWiseMTDResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class KPIStrikRateKPIReportResultModel
+    {
+        [JsonIgnore]
+        public DateTime DateTime { get; set; }
+        public string CustomerNo { get; internal set; }
+        public string InvoiceNoOrBillNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal NetAmount { get; internal set; }
+        public string CustomerClassification { get; internal set; }
+        public string MatarialGroupOrBrand { get; internal set; }
+
+        public KPIStrikRateKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class KPIBusinessAnalysisKPIReportResultModel
+    {
+        public string CustomerNo { get; internal set; }
+
+        public KPIBusinessAnalysisKPIReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

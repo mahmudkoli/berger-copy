@@ -40,4 +40,10 @@ namespace Berger.Common.Enumerations
         Fail = 2,
         
     }
+
+    public enum KpiResultType
+    {
+        value = 1,
+        volume = 2,
+    }
 }

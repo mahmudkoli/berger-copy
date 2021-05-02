@@ -22,5 +22,7 @@ namespace Berger.Odata.Services
         Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<int> dealerIds);
         Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType);
         Task<int> NoOfBillingDealer(IList<int> dealerIds);
+        Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> territories, List<string> zones, List<string> brands);
+        Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> territories, List<string> zones);
     }
 }

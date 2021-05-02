@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BergerMsfaApi.Core;
+using BergerMsfaApi.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace BergerMsfaApi.Extensions
@@ -94,6 +97,9 @@ namespace BergerMsfaApi.Extensions
             string message = string.Empty;
             var toDay = DateTime.Now.ToString("yyyy-MM-dd");
             var filePath = startupPath + "\\" + folderName + "\\" + fileName + "_" + toDay + extention;
+            var context = HttpHelper.HttpContext;
+            var userId = AppIdentity.AppUser.UserId;
+            var userName = AppIdentity.AppUser.UserName;
 
             foreach (var item in ex.GetAll())
             {
@@ -101,14 +107,23 @@ namespace BergerMsfaApi.Extensions
                 var msg = "--------------------------------------------------" + Environment.NewLine;
 
                 msg += "Date: " + toDay + Environment.NewLine
-                        + "Time: " + DateTime.Now.ToString("hh:mm:ss") + Environment.NewLine
+                        + "Time: " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine
                         + "File Name: " + item.FileName + Environment.NewLine
                         + "Entity Name: " + item.EntityFullName + Environment.NewLine
                         + "Method Name: " + item.MethodName + Environment.NewLine
                         + "Line Number: " + item.LineNumber + Environment.NewLine
                         + "Column Number: " + item.ColumnNumber + Environment.NewLine
                         + "Message : " + item.Message + Environment.NewLine
+                        + "Request------------------------- : " + Environment.NewLine +
+                            $"User Id: {userId} {Environment.NewLine}" +
+                            $"User Name: {userName} {Environment.NewLine}" +
+                            $"Client IP: {context.Connection.RemoteIpAddress} {Environment.NewLine}" +
+                            $"URL: {context.Request.Host} {context.Request.Path} {Environment.NewLine}" +
+                            $"Path: {context.Request.Path} {Environment.NewLine}" +
+                            $"QueryString: {context.Request.QueryString} {Environment.NewLine}" +
+                            $"Request Body: {FormatRequestBody(context)} {Environment.NewLine}"
                         + "Stack Trace : " + item.StackTrace + Environment.NewLine;
+                msg += "--------------------------------------------------" + Environment.NewLine;
                 msg += "--------------------------------------------------" + Environment.NewLine;
                 message += msg;
 
@@ -171,6 +186,25 @@ namespace BergerMsfaApi.Extensions
         }
 
 
+        public static string FormatRequestBody(HttpContext context)
+        {
+            var httpContext = context;
+            var request = httpContext.Request;
+            string body = "";
+            if (request.Form.Any())
+            {
+                var dictionary = request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
+                body += JsonConvert.SerializeObject(dictionary, Formatting.Indented);
+            }
+            else
+            {
+                request.Body.Position = 0;
+                StreamReader sr = new StreamReader(request.Body);
+                AsyncHelper.RunSync<string>(() => sr.ReadToEndAsync());
+                request.Body.Position = 0;
+            }
+            return body;
+        }
     }
 
 }

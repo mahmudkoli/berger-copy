@@ -280,3 +280,48 @@ export class LogInReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
+    
+}
+
+export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
+    dealerId: number;
+}
+
+export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
+    resutType: number;
+}
+
+export class BusinessCallAnalysisReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+    depot: string;
+
+    constructor(init?: Partial<BusinessCallAnalysisReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class StrikeRateKpiReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+    depot: string;
+    reportType: number;
+
+    constructor(init?: Partial<StrikeRateKpiReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}

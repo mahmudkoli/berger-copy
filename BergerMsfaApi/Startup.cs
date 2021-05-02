@@ -104,6 +104,7 @@ namespace BergerMsfaApi
             services.AddScoped<ICollectionDataService, CollectionDataService>();
             services.AddScoped<IStockDataService, StockDataService>();
             services.AddScoped<IODataNotificationService, ODataNotificationService>();
+            services.AddScoped<IKpiDataService, KpiDataService>();
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
 
@@ -212,6 +213,14 @@ namespace BergerMsfaApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.Use(next => new RequestDelegate(
+                async context =>
+                {
+                    context.Request.EnableBuffering();
+                    await next(context);
+                }
+            ));
 
             HttpHelper.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             app.UseHttpsRedirection();
