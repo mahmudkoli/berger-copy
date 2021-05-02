@@ -794,6 +794,26 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> territories, List<string> zones)
+        {
+            var currentDate = new DateTime(year, month, 01);
+            var fromDate = currentDate.GetCYFD().DateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
+
+            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, territories: territories, zones: zones)).ToList();
+
+            var result = data.Select(x =>
+                                new KPIBusinessAnalysisKPIReportResultModel()
+                                {
+                                    CustomerNo = x.CustomerNoOrSoldToParty,
+                                }).ToList();
+
+            return result;
+        }
     }
 }
 
