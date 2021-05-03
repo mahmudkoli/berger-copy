@@ -802,7 +802,10 @@ namespace Berger.Odata.Services
             var toDate = currentDate.GetCYLD().DateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
+            selectQueryBuilder.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.NetAmount);
 
             var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, territories: territories, zones: zones)).ToList();
 
