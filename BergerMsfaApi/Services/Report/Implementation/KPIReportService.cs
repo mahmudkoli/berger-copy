@@ -367,6 +367,40 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return reportResult;
         }
 
+        public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
+        {
+            var reportResult = new List<CollectionPlanKPIReportResultModel>();
+
+            var dealerIds = await (from diInfo in _context.DealerInfos
+                                 where (
+                                     (diInfo.BusinessArea == query.Depot)
+                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 )
+                                 select diInfo.CustomerNo).Distinct().ToListAsync();
+
+            var fromDate = new DateTime(query.Year, query.Month, 01);
+            var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
+            var lastMonthToDate = (new DateTime(query.Year, query.Month, 01)).AddDays(-1);
+
+            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+            var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
+
+            var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
+                                    && x.BusinessArea == query.Depot && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                                    && x.Year == query.Year && x.Month == query.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
+
+            reportResult.Add(new CollectionPlanKPIReportResultModel
+            {
+                SlippageAmount = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
+                CollectionTargetAmount = targetAmount,
+                CollectionActualAmount = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
+                CollectionActualSlippageAmount = collectionData.Where(x => slippageData.Any(y => x.CustomerNo == y.CustomerNo)).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount))
+            });
+
+            return reportResult;
+        }
+
         public decimal GetPercentage(decimal total, decimal value)
         {
             return (value * 100) / (total == 0 ? 1 : total);
