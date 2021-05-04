@@ -764,7 +764,7 @@ namespace Berger.Odata.Services
             return salesDataByMultipleCustomerAndDivision.Select(x => x.CustomerNo).Distinct().Count();
         }
 
-        public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> territories, List<string> zones, List<string> brands)
+        public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands)
         {
             var currentDate = new DateTime(year, month, 01);
             var fromDate = currentDate.GetCYFD().DateFormat();
@@ -778,7 +778,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.CustomerClassification)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
-            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, territories: territories, zones: zones, brands: brands)).ToList();
+            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones, brands: brands)).ToList();
 
             var result = data.Select(x =>
                                 new KPIStrikRateKPIReportResultModel()
@@ -795,7 +795,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> territories, List<string> zones)
+        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones)
         {
             var currentDate = new DateTime(year, month, 01);
             var fromDate = currentDate.GetCYFD().DateFormat();
@@ -807,7 +807,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
-            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, territories: territories, zones: zones)).ToList();
+            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones)).ToList();
 
             var result = data.Select(x =>
                                 new KPIBusinessAnalysisKPIReportResultModel()

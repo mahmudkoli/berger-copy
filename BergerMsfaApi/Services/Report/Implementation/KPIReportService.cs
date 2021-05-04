@@ -100,6 +100,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     where (
                                         (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                         && (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
@@ -127,7 +128,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             var premiumBrands = _context.BrandInfos.Where(x => x.IsPremium).Select(x => x.MaterialGroupOrBrand).Distinct().ToList();
-            var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.Territories, query.Zones, premiumBrands);
+            var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
             
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
@@ -201,6 +202,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     where (
                                         (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                         && (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
@@ -300,6 +302,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealers = await (from diInfo in _context.DealerInfos 
                                     where (
                                         (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                     )
@@ -309,7 +312,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             //TODO: need to recheck
-            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.Territories, query.Zones);
+            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones);
             //var billingOData = new List<KPIBusinessAnalysisKPIReportResultModel>();
             var tempDealer = new List<string>();
             var tempNoOfDealer = 0;
@@ -374,6 +377,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealerIds = await (from diInfo in _context.DealerInfos
                                  where (
                                      (diInfo.BusinessArea == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                      && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                      && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                  )
