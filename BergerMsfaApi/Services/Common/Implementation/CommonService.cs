@@ -262,7 +262,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          { 
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} - {dealer.CustomerNo}",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
@@ -361,7 +361,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           {
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} - {dealer.CustomerNo}",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
