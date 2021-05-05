@@ -100,7 +100,7 @@ export class RoleAddComponent implements OnInit {
 
     validateInput(){
 
-        let letters = /^[A-Za-z]+$/;
+        let letters = /^[A-Za-z\s0-9]+$/;
 
         if(!this.roleModel.name.match(letters)){
             this.roleModel.name = null;
