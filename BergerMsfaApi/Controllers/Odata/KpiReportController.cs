@@ -196,5 +196,33 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("GetFinancialCollectionPlan")]
+        public async Task<IActionResult> GetFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetFinancialCollectionPlanKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadFinancialCollectionPlan")]
+        public async Task<IActionResult> DownloadFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetFinancialCollectionPlanKPIReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

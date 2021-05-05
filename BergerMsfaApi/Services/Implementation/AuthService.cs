@@ -47,12 +47,18 @@ namespace BergerMsfaApi.Services.Implementation
                     ActiveRoleId = userInfo.RoleId,
                     RoleIdList = userInfo.RoleIds,
                     Avatar = "/img/user.png",
-                    FullName = $"{userInfo.FullName}",
+                    FullName = userInfo.FullName,
                     EmployeeId = userInfo.EmployeeId,
                     Phone = userInfo.PhoneNumber,
                     UserAgentInfo = "127.0.0.1",
                     //NodeId = userInfo.NodeId,
                     ActiveRoleName = userInfo.RoleName,
+                    EmployeeRole = (int)userInfo.EmployeeRole,
+                    PlantIdList = userInfo.PlantIds,
+                    SalesOfficeIdList = userInfo.SaleOfficeIds,
+                    SalesAreaIdList = userInfo.AreaIds,
+                    TerritoryIdList = userInfo.TerritoryIds,
+                    ZoneIdList = userInfo.ZoneIds,
                 };
 
                 var appClaimes = userPrincipal.GetByName().Select(item => new Claim(item.Key, item.Value));

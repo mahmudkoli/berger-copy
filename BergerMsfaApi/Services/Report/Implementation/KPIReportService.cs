@@ -100,6 +100,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     where (
                                         (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                         && (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
@@ -127,7 +128,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             var premiumBrands = _context.BrandInfos.Where(x => x.IsPremium).Select(x => x.MaterialGroupOrBrand).Distinct().ToList();
-            var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.Territories, query.Zones, premiumBrands);
+            var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
             
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
@@ -201,6 +202,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     where (
                                         (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                         && (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
@@ -300,6 +302,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealers = await (from diInfo in _context.DealerInfos 
                                     where (
                                         (diInfo.BusinessArea == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                     )
@@ -309,7 +312,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             //TODO: need to recheck
-            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.Territories, query.Zones);
+            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones);
             //var billingOData = new List<KPIBusinessAnalysisKPIReportResultModel>();
             var tempDealer = new List<string>();
             var tempNoOfDealer = 0;
@@ -362,6 +365,41 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
                     return dt;
                 }).ToList()
+            });
+
+            return reportResult;
+        }
+
+        public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
+        {
+            var reportResult = new List<CollectionPlanKPIReportResultModel>();
+
+            var dealerIds = await (from diInfo in _context.DealerInfos
+                                 where (
+                                     (diInfo.BusinessArea == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 )
+                                 select diInfo.CustomerNo).Distinct().ToListAsync();
+
+            var fromDate = new DateTime(query.Year, query.Month, 01);
+            var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
+            var lastMonthToDate = (new DateTime(query.Year, query.Month, 01)).AddDays(-1);
+
+            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+            var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
+
+            var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
+                                    && x.BusinessArea == query.Depot && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                                    && x.Year == query.Year && x.Month == query.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
+
+            reportResult.Add(new CollectionPlanKPIReportResultModel
+            {
+                SlippageAmount = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
+                CollectionTargetAmount = targetAmount,
+                CollectionActualAmount = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
+                CollectionActualSlippageAmount = collectionData.Where(x => slippageData.Any(y => x.CustomerNo == y.CustomerNo)).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount))
             });
 
             return reportResult;

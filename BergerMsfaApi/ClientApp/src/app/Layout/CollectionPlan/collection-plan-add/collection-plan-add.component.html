@@ -1,0 +1,66 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="collectionPlanForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                
+                <input type="hidden" formControlName="hiddenchunk"
+                        [ngClass]="{'is-valid':formControls.hiddenchunk.touched && !formControls.hiddenchunk.errors,
+                        'is-invalid':formControls.hiddenchunk.touched && formControls.hiddenchunk.errors }" />
+                        
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label class="required">Business Area</label>
+                        <ng-select formControlName="businessArea">
+                            <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.businessArea.touched && formControls.businessArea.errors">
+                            <span *ngIf="formControls.businessArea.errors.required">Business Area is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select formControlName="territory">
+                            <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.territory.touched && formControls.territory.errors">
+                            <span *ngIf="formControls.territory.errors.required">Territory is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="position-relative form-group">
+                        <label class="required">Collection Target Amount</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="collectionTargetAmount"
+                                [ngClass]="{'is-valid':formControls.collectionTargetAmount.touched && !formControls.collectionTargetAmount.errors,
+                                'is-invalid':formControls.collectionTargetAmount.touched && formControls.collectionTargetAmount.errors }" />
+                        <small class="text-danger" *ngIf="formControls.collectionTargetAmount.touched && formControls.collectionTargetAmount.errors">
+                            <span *ngIf="formControls.collectionTargetAmount.errors.required">Collection Target Amount is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="collectionPlanForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>
