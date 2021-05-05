@@ -64,7 +64,7 @@ export class JourneyPlanAddComponent implements OnInit {
                     this.dealerList = result.data;
                     
                     this.dealerList.forEach(p => {
-                        p.customerName = p.customerName + '-' + p.customerNo;
+                        // p.customerName = p.customerName + '-' + p.customerNo;
                         (p.isSubdealer) ? this.subDealers.push(p) : this.dealers.push(p);
 
                     });

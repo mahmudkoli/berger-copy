@@ -10,6 +10,7 @@ import { APIModel } from '../../../Shared/Entity';
 import { Paginator } from 'primeng/paginator';
 import { CalendarOptions, DateSelectArg } from '@fullcalendar/angular';
 import { FullCalendar } from 'primeng-lts/fullcalendar';
+import { AuthService } from 'src/app/Shared/Services/Users';
 
 
 @Component({
@@ -41,7 +42,8 @@ export class JourneyPlanListComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private alertService: AlertService,
-        private journeyPlanService: JourneyPlanService
+        private journeyPlanService: JourneyPlanService,
+        private authService: AuthService
     ) {
         this.pagingConfig = new APIModel(1, 10);
         this._initPermissionGroup();
@@ -255,9 +257,7 @@ export class JourneyPlanListComponent implements OnInit {
                         //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
                         events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
-                        if(plan.editCount<2){
-                            events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
-                        }
+                        events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
                         events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
                     });
                     events.sort()
@@ -296,6 +296,12 @@ export class JourneyPlanListComponent implements OnInit {
     }
 
     add(date) {
+
+        if (this.authService.isAdmin) {
+            this.alertService.alert("Admin can not create journey plan.");
+            return;
+        }
+
         this.router.navigate(['/journey-plan/add',date]);
     }
 
@@ -304,15 +310,37 @@ export class JourneyPlanListComponent implements OnInit {
         // debugger;
         if (this.compareDate(jPlan.planDate)) {
             console.log('edit plan', jPlan.id);
+
+            if (jPlan.planStatus==PlanStatus.Approved) {
+                this.alertService.alert("Can not modify approved plan.");
+                return;
+            }
+
+            if (jPlan.planStatus==PlanStatus.Pending || jPlan.planStatus==PlanStatus.Edited) {
+                this.alertService.alert("Already waiting for approval. So can not modify before reject the plan.");
+                return;
+            }
+
+            if (jPlan.editCount>=2) {
+                this.alertService.alert("Can not modify more than 2 times.");
+                return;
+            }
+
             this.router.navigate(['/journey-plan/add/' + jPlan.planDate]);
         }
-        else this.alertService.alert("Can not modify pervious plan");
+        else this.alertService.alert("Can not modify pervious plan.");
     }
 
     delete(jPlan) {
         console.log("Id:", jPlan.id);
 
         if (this.compareDate(jPlan.planDate)) {
+
+            if (jPlan.planStatus==PlanStatus.Approved) {
+                this.alertService.alert("Can not delete approved plan.");
+                return;
+            }
+
             this.alertService.confirm("Are you sure you want to delete this item?", () => {
                 this.alertService.fnLoading(true);
                 this.journeyPlanService.delete(jPlan.id).subscribe(
@@ -331,7 +359,7 @@ export class JourneyPlanListComponent implements OnInit {
 
             });
         }
-        else this.alertService.alert("Can not delete pervious plan");
+        else this.alertService.alert("Can not delete pervious plan.");
 
     }
     private displayError(errorDetails: any) {

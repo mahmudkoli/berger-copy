@@ -140,7 +140,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
             var employeeIds = _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
 
-            var plans = (from plan in _journeyPlanMasterSvc.GetAll().Where(p=>p.PlanStatus==PlanStatus.Pending).ToList()
+            var plans = (from plan in _journeyPlanMasterSvc.GetAll().Where(p=>p.PlanStatus==PlanStatus.Pending || p.PlanStatus==PlanStatus.Edited).ToList()
                          join emp in employeeIds on plan.EmployeeId equals emp.EmployeeId
                          orderby plan.PlanDate.Date descending
                          select new { plan, emp });
@@ -175,6 +175,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Status = plan.Status,
                 PlanStatus = plan.PlanStatus,
                 Comment = plan.Comment,
+                EditCount = plan.EditCount,
 
                 Employee = _userInfoSvc.Where(f => f.EmployeeId == plan.EmployeeId)
                              .Select(s => new EmployeeModel
@@ -199,6 +200,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
                                         Territory = dealer.Territory,
+                                        Zone = dealer.CustZone,
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
                                         IsFocused = (fd.Code > 0 && fd.ValidTo.Date >= DateTime.Now.Date) ? true : false,
