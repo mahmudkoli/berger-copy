@@ -36,7 +36,7 @@ const routes: Routes = [
             { path: 'lead', loadChildren: () => import('./demand-generation/lead.module').then(m => m.LeadModule) },
             { path: 'report', loadChildren: () => import('./report/report.module').then(m => m.ReportModule) },
             { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
-
+            { path: 'collection-plan', loadChildren: () => import('./CollectionPlan/collection-plan.module').then(m => m.CollectionPlanModule) },
         ]
     }
 ];

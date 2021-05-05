@@ -7,6 +7,7 @@ using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
+using Berger.Data.MsfaEntity.KPI;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.PainterRegistration;
@@ -202,6 +203,11 @@ namespace Berger.Data.MsfaEntity
         public DbSet<QuestionSetCollection> QuestionSetCollections { get; set; }
         public DbSet<UserQuestionAnswer> UserQuestionAnswers { get; set; }
         public DbSet<UserQuestionAnswerCollection> UserQuestionAnswerCollections { get; set; }
+        #endregion
+
+        #region Collection Plan
+        public DbSet<CollectionConfig> CollectionConfigs { get; set; }
+        public DbSet<CollectionPlan> CollectionPlans { get; set; }
         #endregion
     }
 }

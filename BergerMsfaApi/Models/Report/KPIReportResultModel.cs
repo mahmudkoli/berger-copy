@@ -81,4 +81,17 @@ namespace BergerMsfaApi.Models.Report
         New=4,
         Total=5,
     }
+
+    public class CollectionPlanKPIReportResultModel
+    {
+        public decimal SlippageAmount { get; set; }
+        public decimal CollectionTargetAmount { get; set; }
+        public decimal CollectionActualAmount { get; set; }
+        public decimal CollectionActualSlippageAmount { get; set; }
+
+        public CollectionPlanKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

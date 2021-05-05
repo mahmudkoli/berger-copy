@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
+using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
 {
@@ -47,6 +48,20 @@ namespace Berger.Odata.Services
             var result = data.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
 
             return result;
+        }
+
+        public async Task<IList<CollectionDataModel>> GetCustomerCollectionAmount(IList<int> dealerIds, DateTime startDate, DateTime endDate)
+        {
+            string startDateStr = startDate.DateTimeFormat();
+            string endDateStr = endDate.DateTimeFormat();
+
+            var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
+            selectQueryOptionBuilder.AddProperty(DataColumnDef.Collection_Customer)
+                                    .AddProperty(DataColumnDef.Collection_Amount);
+
+            var data = await _oDataService.GetCollectionData(selectQueryOptionBuilder, dealerIds, startDateStr, endDateStr);
+
+            return data;
         }
     }
 }

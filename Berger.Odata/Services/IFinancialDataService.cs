@@ -15,5 +15,6 @@ namespace Berger.Odata.Services
         Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<int> dealerIds);
         //Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate);
         Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "");
+        Task<IList<FinancialDataModel>> GetCustomerSlippageAmount(IList<int> dealerIds, DateTime endDate);
     }
 }
