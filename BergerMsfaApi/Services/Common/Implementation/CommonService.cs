@@ -148,32 +148,36 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
             var appUser = AppIdentity.AppUser;
-            return await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.PlantIdList.Contains(x.Werks)));
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = s.Name1 }).ToList();
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} - {s.Werks}" }).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             var appUser = AppIdentity.AppUser;
-            return await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesOfficeIdList.Contains(x.Code)));
+            var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesOfficeIdList.Contains(x.Code)));
+            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
             var appUser = AppIdentity.AppUser;
-            return await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.TerritoryIdList.Contains(x.Code)));
+            var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.TerritoryIdList.Contains(x.Code)));
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             var appUser = AppIdentity.AppUser;
-            return await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.ZoneIdList.Contains(x.Code)));
+            var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.ZoneIdList.Contains(x.Code)));
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()

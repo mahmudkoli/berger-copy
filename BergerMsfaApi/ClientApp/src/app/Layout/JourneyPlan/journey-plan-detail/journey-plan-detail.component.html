@@ -1,11 +1,20 @@
 
 <div *ngIf="journeyPlan" class="container bootstrap snippet">
     <div class="row">
-        <div class="col-sm-10"><p>Plan Date : {{journeyPlan.planDate|date}} <button class="btn-sm btn btn-primary">{{PlanStatusEnum[journeyPlan.planStatus]}}</button></p></div>
+        <div class="col-sm-10"><p>Plan Date : {{journeyPlan.planDate|date}}</p></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10"><p>Edit Count : {{journeyPlan.editCount}} times edited. Can edit maximum 2 times.</p></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10"><p>Current Status :  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p></div>
+    </div>
+    <div class="row" *ngIf="journeyPlan.planStatus==3">
+        <div class="col-sm-10"><p>Comment : {{journeyPlan.comment}}</p></div>
     </div>
     <div class="row">
 
-        <p-table #dt [value]="journeyPlan.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','visitDate']">
+        <p-table #dt [value]="journeyPlan.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','zone','visitDate']">
             <ng-template pTemplate="caption">
                 <div class="table-header">
 
@@ -36,6 +45,7 @@
                     <th pSortableColumn="'contactNo'">Contact No <p-sortIcon field="'contactNo'"></p-sortIcon></th>
                     <th pSortableColumn="'address'">Address <p-sortIcon field="'address'"></p-sortIcon></th>
                     <th pSortableColumn="territory">Territory<p-sortIcon field="territory"></p-sortIcon></th>
+                    <th pSortableColumn="zone">Zone<p-sortIcon field="zone"></p-sortIcon></th>
 
                 </tr>
             </ng-template>
@@ -47,6 +57,7 @@
                     <td>{{jplan.contactNo}}</td>
                     <td>{{jplan.address}}</td>
                     <td>{{jplan.territory}}</td>
+                    <td>{{jplan.zone}}</td>
 
 
                 </tr>

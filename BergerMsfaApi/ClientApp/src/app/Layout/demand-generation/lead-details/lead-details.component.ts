@@ -69,7 +69,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 		});
 		this.subscriptions.push(routeSubscription);
 
-		this.addLeadFollowUpDeleteBtn();
+		this.ptableSettings.enabledDeleteBtn = this.authService.isAdmin;
 	}
 
 	
@@ -190,16 +190,5 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 				console.log(reason);
 			}
 		);
-	}
-
-	private addLeadFollowUpDeleteBtn() {
-		this.userRole = this.authService.currentUserValue.roleName;
-		//console.log("Role: " + userRole);
-		if (this.userRole == "Admin") {
-			this.ptableSettings.enabledDeleteBtn = true;
-			//this.ptableSettings.tableColDef.push(
-			//	{ headerName: '', width: '10%', internalName: 'deleteBtnText', className: 'deleteBtnClass', sort: false, type: "dynamic-button", onClick: 'true', innerBtnIcon: "deleteBtnIcon" }
-			//);
-		}
 	}
 }
