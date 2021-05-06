@@ -1,14 +1,13 @@
 
     <div *ngIf="journeyPlan" class="container bootstrap snippet">
         <div class="row">
-            <div class="col-sm-10">
-                Plan Date : {{journeyPlan?.planDate|date}}
+            <div class="col-sm-12">
                 <div class="row">
                     <div class="col-md-6">
-                        <p>Employee Name: {{journeyPlan.employee.firstName}}</p>
-                        <p>Phone: {{journeyPlan.employee.PhoneNumber}}</p>
-                        <p>Current Status:  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
-    
+                        <p>Plan Date : {{journeyPlan?.planDate|date}}</p>
+                        <p>Edit Count: {{journeyPlan.editCount}} times edited. Employee can edit maximum 2 times.</p>
+                        <p>Current Status :  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
+                        <p>Comment : {{journeyPlan.comment}}</p>
                         <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
                         <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->
                         <!--<div>
@@ -19,9 +18,10 @@
                         </div>-->
                     </div>
                     <div class="col-md-6">
-                        <p> <label>Department: {{journeyPlan.employee.department}}</label></p>
-                        <p> <label>Designation: {{journeyPlan.employee.designation}}</label> </p>
-                        <p> <label>Comment: {{journeyPlan.comment}}</label> </p>
+                        <p>Employee Name : {{journeyPlan.employee.firstName}}</p>
+                        <p>Phone : {{journeyPlan.employee.PhoneNumber}}</p>
+                        <p>Department : {{journeyPlan.employee.department}}</p>
+                        <p>Designation : {{journeyPlan.employee.designation}}</p>
     
                     </div>
                 </div>
@@ -41,7 +41,7 @@
         <br />
         <div class="row">
     
-            <p-table #dt [value]="journeyPlan?.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','visitDate']">
+            <p-table #dt [value]="journeyPlan?.dealerInfoModels" [globalFilterFields]="['customerNo','customerName','territory','zone','visitDate']">
                 <ng-template pTemplate="caption">
                     <div class="table-header">
     
@@ -72,6 +72,7 @@
                         <th pSortableColumn="'contactNo'">Contact No <p-sortIcon field="'contactNo'"></p-sortIcon></th>
                         <th pSortableColumn="'address'">Address <p-sortIcon field="'address'"></p-sortIcon></th>
                         <th pSortableColumn="territory">Territory<p-sortIcon field="territory"></p-sortIcon></th>
+                        <th pSortableColumn="zone">Zone<p-sortIcon field="zone"></p-sortIcon></th>
     
                     </tr>
                 </ng-template>
@@ -83,6 +84,7 @@
                         <td>{{jplan.contactNo}}</td>
                         <td>{{jplan.address}}</td>
                         <td>{{jplan.territory}}</td>
+                        <td>{{jplan.zone}}</td>
     
     
                     </tr>

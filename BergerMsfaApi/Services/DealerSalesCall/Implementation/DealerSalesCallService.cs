@@ -240,6 +240,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
                 modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
 
+                modelResult.IsCBInstalled = result.IsCBInstalled;
+
                 if (result.DealerCompetitionSales != null)
                 {
                     foreach (var item in result.DealerCompetitionSales)
@@ -300,6 +302,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     modelResult.HasBPBLSales = result.HasBPBLSales;
                     modelResult.BPBLAverageMonthlySales = result.BPBLAverageMonthlySales;
                     modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
+
+                    modelResult.IsCBInstalled = result.IsCBInstalled;
 
                     if (result.DealerCompetitionSales != null)
                     {
