@@ -399,7 +399,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         public async Task<IEnumerable<AppJourneyPlanDetailModel>> AppGetJourneyPlanList(string employeeId)
         {
 
-            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >= DateTime.Now.Date);
+            var planList = await _journeyPlanMasterSvc.FindAllAsync(f => f.EmployeeId == employeeId && f.PlanDate.Date >= DateTime.Now.Date && f.PlanStatus == PlanStatus.Approved);
 
 
             var result = planList.Select(s => new AppJourneyPlanDetailModel

@@ -170,8 +170,9 @@ export class JourneyPlanListComponent implements OnInit {
     handleDateClick(arg) {
         // debugger;
         var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
-        if (arg.dateStr >= utc) {
-            this.add(arg.dateStr);
+        // if (arg.dateStr >= utc) {
+        if (this.compareDate(arg.dateStr)) {
+            this.add(arg);
         }
         // let find = this.journeyPlanList.find(f => f.planDate == arg.dateStr);
         // this.edit(find);
@@ -295,14 +296,20 @@ export class JourneyPlanListComponent implements OnInit {
         this.router.navigate(["/journey-plan/detail", plan.id]);
     }
 
-    add(date) {
+    add(arg) {
+
+        let find = this.journeyPlanList.find(f => f.planDate == arg.dateStr);
+        if(find) {
+            this.alertService.alert("Already have a journey plan.");
+            return;
+        }
 
         if (this.authService.isAdmin) {
             this.alertService.alert("Admin can not create journey plan.");
             return;
         }
 
-        this.router.navigate(['/journey-plan/add',date]);
+        this.router.navigate(['/journey-plan/add',arg.dateStr]);
     }
 
     edit(jPlan) {

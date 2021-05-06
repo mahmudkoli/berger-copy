@@ -72,52 +72,52 @@ namespace BergerMsfaApi.Controllers.Journey
 
         }
 
-        [HttpPost("UpdateJourneyPlan/{employeeId}")]
-        public async Task<IActionResult> UpdateJourneyPlan([BindRequired]string employeeId, [FromBody] List<AppCreateJourneyModel> model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.AppUpdateJourneyPlan(employeeId, model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPost("UpdateJourneyPlan/{employeeId}")]
+        //public async Task<IActionResult> UpdateJourneyPlan([BindRequired]string employeeId, [FromBody] List<AppCreateJourneyModel> model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _journeyService.AppUpdateJourneyPlan(employeeId, model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
 
-        [HttpDelete("DeleteJourneyPlan")]
-        public async Task<IActionResult> DeleteJourneyPlan([BindRequired]int PlanId)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.DeleteJourneyAsync(PlanId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpDelete("DeleteJourneyPlan")]
+        //public async Task<IActionResult> DeleteJourneyPlan([BindRequired]int PlanId)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _journeyService.DeleteJourneyAsync(PlanId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpGet("GetJouneyPlanDealerList/{employeeId}")]
-        public async Task<IActionResult> GetJouneyPlanDealerList([BindRequired] string employeeId)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _journeyService.AppGetJourneyPlanDealerList(employeeId);
-                return OkResult(result);
+        //[HttpGet("GetJouneyPlanDealerList/{employeeId}")]
+        //public async Task<IActionResult> GetJouneyPlanDealerList([BindRequired] string employeeId)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _journeyService.AppGetJourneyPlanDealerList(employeeId);
+        //        return OkResult(result);
 
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
 
-        }
+        //}
     }
 }
