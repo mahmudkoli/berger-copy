@@ -85,7 +85,7 @@ export class BusinessCallAnalysisReportComponent implements OnInit, OnDestroy {
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
+			depot: '',
 			territories: [],
 			zones: [],
 			fromDate: null,

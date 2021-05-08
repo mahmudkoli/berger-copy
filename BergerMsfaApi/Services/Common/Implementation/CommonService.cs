@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == AppIdentity.AppUser.EmployeeId));
+            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 

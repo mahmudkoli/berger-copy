@@ -27,6 +27,7 @@ namespace BergerMsfaApi.Models.Users
         public int RoleId { get; set; }
         public string RoleName { get; set; }
         public string EmployeeId { get; set; }
+        public int EmployeeRole { get; set; }
         public string UserCategory { get; set; }
         public List<string> UserCategoryIds { get; set; }
         public string Token { get; set; }

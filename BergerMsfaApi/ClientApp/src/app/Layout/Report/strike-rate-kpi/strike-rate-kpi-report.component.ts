@@ -87,7 +87,7 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
+			depot: '',
 			territories: [],
 			zones: [],
 			fromDate: null,

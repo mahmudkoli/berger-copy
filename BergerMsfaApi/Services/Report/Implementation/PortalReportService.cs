@@ -157,7 +157,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
                                 //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
+                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -216,7 +216,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
                                 //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.Depot == query.DepotId)
+                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -282,7 +282,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leads = await _leadFollowUpRepository.GetAllIncludeAsync(x => x,
                             x => (!query.UserId.HasValue || x.LeadGeneration.UserId == query.UserId.Value)
                                 //&& (!query.EmployeeRole.HasValue || x.LeadGeneration.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.DepotId) || x.LeadGeneration.Depot == query.DepotId)
+                                && (string.IsNullOrWhiteSpace(query.Depot) || x.LeadGeneration.Depot == query.Depot)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.LeadGeneration.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.LeadGeneration.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -381,7 +381,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   from zinfo in zleftjoin.DefaultIfEmpty()
                                   where (
                                      (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                     && (string.IsNullOrWhiteSpace(query.DepotId) || p.Depot == query.DepotId)
+                                     && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
                                      && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
                                      && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
                                      && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -473,7 +473,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  from zinfo in zleftjoin.DefaultIfEmpty()
                                  where (
                                    (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
-                                   && (string.IsNullOrWhiteSpace(query.DepotId) || d.BusinessArea == query.DepotId)
+                                   && (string.IsNullOrWhiteSpace(query.Depot) || d.BusinessArea == query.Depot)
                                    && (!query.Territories.Any() || query.Territories.Contains(d.Territory))
                                    && (!query.Zones.Any() || query.Zones.Contains(d.Zone))
                                    && (!query.FromDate.HasValue || d.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -862,7 +862,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        from diInfo in dileftjoin.DefaultIfEmpty()
                                        where (
                                        (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                       && (string.IsNullOrWhiteSpace(query.DepotId) || pinfo.Depot == query.DepotId)
+                                       && (string.IsNullOrWhiteSpace(query.Depot) || pinfo.Depot == query.Depot)
                                        && (!query.Territories.Any() || query.Territories.Contains(pinfo.Territory))
                                        && (!query.Zones.Any() || query.Zones.Contains(pinfo.Zone))
                                        && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -1019,7 +1019,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      where (
                                        (jpminfo.PlanDate.Month == month && jpminfo.PlanDate.Year == year)
                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                       && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                       && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                        && (!query.DealerId.HasValue || jpd.DealerId == query.DealerId.Value)
@@ -1199,7 +1199,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      where (
                                         (dsc.IsSubDealerCall == false)
                                         && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
@@ -1367,7 +1367,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      where (
                                         (dsc.IsSubDealerCall == true)
                                         && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
@@ -1523,7 +1523,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      where (
                                         (dscInfo.IsSubDealerCall == false)
                                         && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                        && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
@@ -1662,7 +1662,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         where (
                                            (dscInfo.IsSubDealerCall == true)
                                            && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
-                                           && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                           && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                            && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
                                            && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
                                            && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
@@ -1765,7 +1765,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                 && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
                 && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
-                && (string.IsNullOrWhiteSpace(query.DepotId) || query.DepotId == x.BusinessArea)
+                && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == x.BusinessArea)
                 && (string.IsNullOrWhiteSpace(query.AccountGroup) || query.AccountGroup == x.AccountGroup)
                 && (string.IsNullOrWhiteSpace(query.SalesOffice) || query.SalesOffice == x.SalesOffice)
                 //&& (string.IsNullOrWhiteSpace(query.CreditControlArea) || query.CreditControlArea == x.CreditControlArea)
@@ -1783,6 +1783,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
             //dealerIds = new List<int> { 24 };
 
+            query.FromDate = query.FromDate ?? new DateTime(query.FromYear, query.FromMonth, 1);
+            query.ToDate = query.ToDate ?? new DateTime(query.ToYear, query.ToMonth, 1);
 
             var monthList = Enumerable.Range(0, Int32.MaxValue)
                 .Select(e => query.FromDate.Value.AddMonths(e))
@@ -1968,7 +1970,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                 && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
                 && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
-                && (string.IsNullOrWhiteSpace(query.DepotId) || query.DepotId == x.BusinessArea)
+                && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == x.BusinessArea)
                 && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
             ).Select(x => new
             {
@@ -2058,7 +2060,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance=(data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count()-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2073,7 +2075,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2089,7 +2091,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2103,7 +2105,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2117,7 +2119,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2132,7 +2134,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2148,7 +2150,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2175,7 +2177,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.DepotId,
+                    DepotID=query.Depot,
                     Territory=territory,
                     Zone=zone
 
@@ -2405,7 +2407,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         from ddcatInfo in ddcatleft.DefaultIfEmpty()
                                         where (
                                             (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
-                                            && (string.IsNullOrWhiteSpace(query.DepotId) || diInfo.BusinessArea == query.DepotId)
+                                            && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                             && (!query.FromDate.HasValue || ms.CreatedTime.Date >= query.FromDate.Value.Date)
                                             && (!query.ToDate.HasValue || ms.CreatedTime.Date <= query.ToDate.Value.Date)
                                             && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))

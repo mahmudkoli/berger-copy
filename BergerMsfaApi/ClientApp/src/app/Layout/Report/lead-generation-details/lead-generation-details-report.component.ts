@@ -13,6 +13,7 @@ import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/em
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from '../../../Shared/Modules/search-option';
 
 @Component({
     selector: 'app-lead-generation-details-report',
@@ -23,17 +24,11 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 
 	// data list
 	query: LeadGenerationDetailsQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
-	// for filter
-	fromDate: NgbDate;
-	toDate: NgbDate;
-	isSalesGroupFieldShow: boolean = false;
-	isTerritoryFieldShow: boolean = false;
-	isZoneFieldShow: boolean = false;
 
 	// ptable settings
 	enabledTotal: boolean = true;
@@ -43,15 +38,6 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
-
-	// initial dropdown data
-	employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
-    users: any[] = [];
-    depots: any[] = [];
-    salesGroups: any[] = [];
-    territories:any[]=[]
-    zones: any[] = [];
-    paintingStages: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -75,10 +61,6 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.searchConfiguration();
-		this.populateDropdownDataList();
-		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
-		// 	this.loadReportsPage();
-		// });
 	}
 
 	ngOnDestroy() {
@@ -96,8 +78,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
-			employeeRole: null,
+			depot: '',
 			salesGroups: [],
 			territories: [],
 			zones: [],
@@ -107,69 +88,41 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 			projectName: '',
 			paintingStageId: null
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
 	}
-	
-    populateDropdownDataList() {
-        forkJoin([
-            this.commonService.getUserInfoList(),
-            this.commonService.getDepotList(),
-            this.commonService.getSaleGroupList(),
-            this.commonService.getTerritoryList(),
-            this.commonService.getZoneList(),
-            this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.PaintingStage),
-        ]).subscribe(([users, plants, areaGroups, territories, zones, paintingStages]) => {
-            this.users = users.data;
-            this.depots = plants.data;
-            this.salesGroups = areaGroups.data;
-            this.territories = territories.data;
-            this.zones = zones.data;
-            this.paintingStages = paintingStages.data;
-        }, (err) => { }, () => { });
-    }
 
-	onEmployeeRoleChange(event) {
-		this.query.salesGroups = [];
-		this.query.territories = [];
-		this.query.zones = [];
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.PaintingStageId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
+		]});
 
-		switch (event) {
-			case EnumEmployeeRole.DIC:
-			case EnumEmployeeRole.BIC:
-			case EnumEmployeeRole.AM:
-				this.isSalesGroupFieldShow = true;
-				this.isTerritoryFieldShow = true;
-				this.isZoneFieldShow = true;
-				break;
-			case EnumEmployeeRole.TM_TO:
-				this.isSalesGroupFieldShow = false;
-				this.isTerritoryFieldShow = true;
-				this.isZoneFieldShow = true;
-				break;
-				case EnumEmployeeRole.ZO:
-					this.isSalesGroupFieldShow = false;
-					this.isTerritoryFieldShow = false;
-					this.isZoneFieldShow = true;
-					break;
-			default:
-				this.isSalesGroupFieldShow = false;
-				this.isTerritoryFieldShow = false;
-				this.isZoneFieldShow = false;
-				break;
-		}
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.depot = queryObj.depot;
+		this.query.salesGroups = queryObj.salesGroups;
+		this.query.territories = queryObj.territories;
+		this.query.zones = queryObj.zones;
+		this.query.fromDate = queryObj.fromDate;
+		this.query.toDate = queryObj.toDate;
+		this.query.userId = queryObj.userId;
+		this.query.paintingStageId = queryObj.paintingStageId;
+		this.query.projectName = queryObj.text1;
+		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
+		this.loadReportsPage();
 	}
 	//#endregion
 
 	//#region no need to change for another report
-	onSubmitSearch() {
-		this.query.page = 1;
-		this.query.fromDate = this.ngbDateToDate(this.fromDate);
-		this.query.toDate = this.ngbDateToDate(this.toDate);
-		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
-		this.loadReportsPage();
-	}
-
 	loadReportsPage() {
-		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
 		const reportsSubscription = this.getData(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
@@ -236,12 +189,6 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
-	}
-
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
 	}
 	//#endregion
 }

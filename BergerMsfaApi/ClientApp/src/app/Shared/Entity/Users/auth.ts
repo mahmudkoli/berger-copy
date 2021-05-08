@@ -24,6 +24,7 @@ export interface IAuthUser {
     roleId: number;
     roleName: string;
     employeeId: string;
+    employeeRole: number;
     userCategory: string;
     userCategoryIds: string[];
     token: string;

@@ -123,6 +123,7 @@ namespace BergerMsfaApi.Services.Implementation
                     RoleId = userInfo.RoleId,
                     RoleName = userInfo.RoleName ?? string.Empty,
                     EmployeeId = userInfo.EmployeeId ?? string.Empty,
+                    EmployeeRole = (int)userInfo.EmployeeRole,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
                 };
