@@ -36,6 +36,8 @@ export class SearchOptionQuery extends QueryObject {
 
 export class SearchOptionSettings {
     searchOptionDef: SearchOptionDef[];
+    hasMonthDifference: boolean;
+    monthDifferenceCount: number;
     
     constructor(init?: Partial<SearchOptionSettings>) {
         Object.assign(this, init);

@@ -75,8 +75,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			salesGroups: [this.searchOptionQuery.salesGroups],
 			territories: [this.searchOptionQuery.territories],
 			zones: [this.searchOptionQuery.zones],
-			fromDate: [this.searchOptionQuery.fromDate],
-			toDate: [this.searchOptionQuery.toDate],
+			fromDate: [],
+			toDate: [],
 			userId: [this.searchOptionQuery.userId],
 			dealerId: [this.searchOptionQuery.dealerId],
 			creditControlArea: [this.searchOptionQuery.creditControlArea],
@@ -95,6 +95,25 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			text2: [this.searchOptionQuery.text2],
 			text3: [this.searchOptionQuery.text3],
 		});
+
+		if (this.searchOptionQuery.fromDate) {
+			const fromDate = new Date(this.searchOptionQuery.fromDate);
+			this.searchOptionForm.controls.fromDate.setValue({
+				year: fromDate.getFullYear(),
+				month: fromDate.getMonth()+1,
+				day: fromDate.getDate()
+			});
+		}
+
+		if (this.searchOptionQuery.toDate) {
+			const toDate = new Date(this.searchOptionQuery.toDate);
+			this.searchOptionForm.controls.toDate.setValue({
+				year: toDate.getFullYear(),
+				month: toDate.getMonth()+1,
+				day: toDate.getDate()
+			});
+		}
+
 		this.addValidation();
 	}
 
@@ -184,14 +203,6 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.salesGroups = controls['salesGroups'].value;
 		this.searchOptionQuery.territories = controls['territories'].value;
 		this.searchOptionQuery.zones = controls['zones'].value;
-		const fromDate = controls['fromDate'].value;
-		if(fromDate && fromDate.year && fromDate.month && fromDate.day) {
-			this.searchOptionQuery.fromDate = new Date(fromDate.year,fromDate.month-1,fromDate.day);
-		}
-		const toDate = controls['toDate'].value;
-		if(toDate && toDate.year && toDate.month && toDate.day) {
-			this.searchOptionQuery.toDate = new Date(toDate.year,toDate.month-1,toDate.day);
-		}
 		this.searchOptionQuery.userId = controls['userId'].value;
 		this.searchOptionQuery.dealerId = controls['dealerId'].value;
 		this.searchOptionQuery.creditControlArea = controls['creditControlArea'].value;
@@ -210,7 +221,29 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.text2 = controls['text2'].value;
 		this.searchOptionQuery.text3 = controls['text3'].value;
 
+		const fromDate = controls['fromDate'].value;
+		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
+			this.searchOptionQuery.fromDate = new Date(fromDate.year,fromDate.month-1,fromDate.day);
+		}
+		const toDate = controls['toDate'].value;
+		if (toDate && toDate.year && toDate.month && toDate.day) {
+			this.searchOptionQuery.toDate = new Date(toDate.year,toDate.month-1,toDate.day);
+		}
+
+		if (!this.checkSearchOptionValidity()) return;
+
 		this.searchOptionQueryCallbackFn.emit(this.searchOptionQuery);
+	}
+
+	checkSearchOptionValidity() : boolean | true {
+		let validity = true;
+		if (this.searchOptionSettings.hasMonthDifference && 
+			!this.checkDifferenceMonth(this.searchOptionQuery.fromYear, this.searchOptionQuery.fromMonth, 
+				this.searchOptionQuery.toYear, this.searchOptionQuery.toMonth, this.searchOptionSettings.monthDifferenceCount)) {
+			this.alertService.alert(`Month difference must be ${this.searchOptionSettings.monthDifferenceCount} months.`);
+			validity = false;
+		}
+		return validity;
 	}
 
 	hasSearchOption(searchOption) {
@@ -265,7 +298,23 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	}
 
 	getYears(): any[] {
-		const years = [{'id':2020,'name':'2020'}, {'id':2021,'name':'2021'}, {'id':2022,'name':'2022'}];
+		let years: any[] = [];
+		let currentYear: number = new Date().getFullYear();
+		for(let i = (currentYear - 10); i < (currentYear + 3); i++) {
+			years.push({'id':i,'name':i.toString()});
+		}
 		return years;
+	}
+
+	checkDifferenceMonth(fromYear:number,fromMonth:number,toYear:number,toMonth:number,monthDiffCount:number) : boolean | false {
+		var fromDate = new Date(fromYear, fromMonth-1);
+		var toDate = new Date(toYear, toMonth-1);
+		// let monthCount = 0;
+		// 	monthCount = (toDate.getFullYear() - fromDate.getFullYear()) * 12;
+		// 	monthCount -= fromDate.getMonth()+1;
+		// 	monthCount += toDate.getMonth()+1;
+		// 	monthCount += 1;
+		// return (monthCount <= 0 ? 0 : monthCount)===monthDiffCount;
+		return ((toDate.getMonth()+1) - (fromDate.getMonth()+1) + (12 * (toDate.getFullYear() - fromDate.getFullYear())) + 1)===monthDiffCount;
 	}
 }

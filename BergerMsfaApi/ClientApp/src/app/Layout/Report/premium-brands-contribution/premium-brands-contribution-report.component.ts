@@ -102,6 +102,8 @@ export class PremiumBrandsContributionReportComponent
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+    hasMonthDifference: true,
+    monthDifferenceCount: 3,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
