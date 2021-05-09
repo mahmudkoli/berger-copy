@@ -84,7 +84,13 @@
             </div>
             <div class="col-md-3" *ngIf="hasSearchOption('dealerId')">
                 <div class="position-relative form-group">
-                    <label [ngClass]="{'required':isSearchOptionRequired('dealerId')}">Dealer Id</label>
+                    <label [ngClass]="{'required':isSearchOptionRequired('dealerId')}">
+                        <label class="switch" *ngIf="searchOptionSettings.isDealerSubDealerOptionShow">
+                            <input type="checkbox" [checked]="searchOptionSettings.isDealerShow" (change)="changeDealerSubDealerShow()" />
+                            <span class="slider round"></span>
+                        </label>
+                        {{searchOptionSettings.isDealerShow?'Dealer':'Sub Dealer'}} Id
+                    </label>
                     <ng-select [items]="dealers" formControlName="dealerId" bindValue="id" bindLabel="customerName" [multiple]="false">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.dealerId.touched && formControls.dealerId.errors">
