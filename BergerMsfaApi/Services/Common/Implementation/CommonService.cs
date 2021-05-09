@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == AppIdentity.AppUser.EmployeeId));
+            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -178,6 +178,40 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.ZoneIdList.Contains(x.Code)));
             return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
+        {
+            var result = await _saleGroupSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _depotSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} - {s.Werks}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _saleOfficeSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _territorySvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _zoneSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()

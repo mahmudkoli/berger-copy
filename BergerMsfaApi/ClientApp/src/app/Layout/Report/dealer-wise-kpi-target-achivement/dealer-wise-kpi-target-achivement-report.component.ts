@@ -100,7 +100,7 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
+			depot: '',
 			territories: [],
 			zones: [],
 			fromDate: null,

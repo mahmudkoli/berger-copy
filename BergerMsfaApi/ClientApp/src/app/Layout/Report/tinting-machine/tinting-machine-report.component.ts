@@ -13,6 +13,7 @@ import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/em
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 
 @Component({
     selector: 'app-tinting-machine-report',
@@ -23,16 +24,11 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 
 	// data list
 	query: TintingMachineReportQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
-	// for filter
-	fromDate: NgbDate;
-	toDate: NgbDate;
-	isSalesGroupFieldShow: boolean = false;
-	isTerritoryFieldShow: boolean = false;
 
 	// ptable settings
 	enabledTotal: boolean = true;
@@ -42,13 +38,6 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
-
-	// initial dropdown data
-	employeeRoles: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
-    depots: any[] = [];
-    salesGroups: any[] = [];
-    territories:any[]=[]
-    
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -72,12 +61,7 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.searchConfiguration();
-		this.populateDropdownDataList();
-		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
-		// 	this.loadReportsPage();
-		// });
 	}
-	private get _loggedUser() { return this.commonService.getUserInfoFromLocalStorage(); }
 
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
@@ -86,7 +70,6 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadTintingMachine(query);
 	getData = (query) => this.reportService.getTintingMachine(query);
-	
 
 	searchConfiguration() {
 		this.query = new TintingMachineReportQuery({
@@ -95,69 +78,36 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
-			employeeRole: null,
+			depot: '',
 			salesGroups: [],
 			territories: [],
-			
-			fromDate: null,
-			toDate: null,
+			userId: null
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
 	}
-	
-    populateDropdownDataList() {
-        forkJoin([
-            this.commonService.getDepotList(),
-            this.commonService.getSaleGroupList(),
-            this.commonService.getTerritoryList()
-            
-        ]).subscribe(([plants, areaGroups, territories]) => {
-            this.depots = plants.data;
-            this.salesGroups = areaGroups.data;
-            this.territories = territories.data;
-            
-        }, (err) => { }, () => { });
-    }
 
-	onEmployeeRoleChange(event) {
-		this.query.salesGroups = [];
-		this.query.territories = [];
-		this.query.zones = [];
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:true}),
+		]});
 
-		switch (event) {
-			case EnumEmployeeRole.DIC:
-			case EnumEmployeeRole.BIC:
-			case EnumEmployeeRole.AM:
-				this.isSalesGroupFieldShow = true;
-				this.isTerritoryFieldShow = true;
-				break;
-			case EnumEmployeeRole.TM_TO:
-				this.isSalesGroupFieldShow = false;
-				this.isTerritoryFieldShow = true;
-				break;
-				case EnumEmployeeRole.ZO:
-					this.isSalesGroupFieldShow = false;
-					this.isTerritoryFieldShow = false;
-					break;
-			default:
-				this.isSalesGroupFieldShow = false;
-				this.isTerritoryFieldShow = false;
-				break;
-		}
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.depot = queryObj.depot;
+		this.query.salesGroups = queryObj.salesGroups;
+		this.query.territories = queryObj.territories;
+		this.query.userId = queryObj.userId;
+		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
+		this.loadReportsPage();
 	}
 	//#endregion
 
 	//#region no need to change for another report
-	onSubmitSearch() {
-		this.query.page = 1;
-		this.query.fromDate = this.ngbDateToDate(this.fromDate);
-		this.query.toDate = this.ngbDateToDate(this.toDate);
-		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
-		this.loadReportsPage();
-	}
-
 	loadReportsPage() {
-		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
 		const reportsSubscription = this.getData(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
@@ -215,12 +165,6 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
-	}
-
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
 	}
 	//#endregion
 }

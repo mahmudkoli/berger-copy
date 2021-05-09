@@ -84,7 +84,7 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: '',
-			depotId: '',
+			depot: '',
 			territories: [],
 			zones: [],
 			fromDate: null,
