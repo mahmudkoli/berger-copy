@@ -6,7 +6,9 @@ using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Common.Implementation;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.Common.Interfaces
@@ -21,6 +23,11 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<Territory>> GetTerritoryList();
         Task<IEnumerable<Zone>> GetZoneList();
         Task<IEnumerable<DepotModel>> GetDepotList();
+        Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate);
+        Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate);
+        Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate);
+        Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate);
+        Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate);
         Task<IEnumerable<RoleModel>> GetRoleList();
         Task<IEnumerable<Division>> GetDivisionList();
         Task<IEnumerable<PainterModel>> GetPainterList();

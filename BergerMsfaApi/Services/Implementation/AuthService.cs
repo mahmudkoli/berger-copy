@@ -93,10 +93,17 @@ namespace BergerMsfaApi.Services.Implementation
                 userCat = UserCat(userInfo, userCat, ref userCatIds);
                 #endregion
 
+                #region only use for mobile
                 var dealerOpeningsHierarchyList = await _commonService.GetPSATZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
 
+                var plants = await _commonService.GetDepotList(x => userInfo.PlantIds != null && userInfo.PlantIds.Any(y => y == x.Werks));
+                var saleOffices = await _commonService.GetSaleOfficeList(x => userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any(y => y == x.Code));
+                var areas = await _commonService.GetSaleGroupList(x => userInfo.AreaIds != null && userInfo.AreaIds.Any(y => y == x.Code));
+                var territories = await _commonService.GetTerritoryList(x => userInfo.TerritoryIds != null && userInfo.TerritoryIds.Any(y => y == x.Code));
+                var zones = await _commonService.GetZoneList(x => userInfo.ZoneIds != null && userInfo.ZoneIds.Any(y => y == x.Code));
+                #endregion
 
                 var results = new AuthenticateUserModel()
                 {
@@ -104,10 +111,15 @@ namespace BergerMsfaApi.Services.Implementation
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
                     FullName = userInfo.FullName ?? string.Empty,
-                    Plants = leadGenerationsHierarchyList,
-                    DealerOpeningsHierarchyList = dealerOpeningsHierarchyList,
-                    PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList,
-                    LeadGenerationsHierarchyList = leadGenerationsHierarchyList,
+                    //Plants = leadGenerationsHierarchyList,
+                    DealerOpeningsHierarchyList = dealerOpeningsHierarchyList, // only for app end
+                    PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList, // only for app end
+                    LeadGenerationsHierarchyList = leadGenerationsHierarchyList, // only for app end
+                    Plants = plants, // only for app end
+                    SalesOffices = saleOffices, // only for app end
+                    Areas = areas, // only for app end
+                    Territories = territories, // only for app end
+                    Zones = zones, // only for app end
                     PlantIds = userInfo.PlantIds,
                     PlantId = userInfo.PlantIds.FirstOrDefault() ?? string.Empty,
                     SalesOfficeIds = userInfo.SaleOfficeIds,
