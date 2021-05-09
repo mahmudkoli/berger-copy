@@ -47,6 +47,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	months: any[] = [];
 	years: any[] = [];
 
+	private _allDealers: any[] = []
+
 	private subscriptions: Subscription[] = [];
 
 	constructor(
@@ -187,6 +189,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.painters = painters.data;
             this.painterTypes = painterTypes.data;
             this.paymentMethods = paymentMethods.data;
+			this._allDealers = dealers.data;
+			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
 		
 		this.subscriptions.push(forkJoinSubscription1);
@@ -233,6 +237,23 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		if (!this.checkSearchOptionValidity()) return;
 
 		this.searchOptionQueryCallbackFn.emit(this.searchOptionQuery);
+	}
+
+	updateDealerSubDealerShow() {
+		if (this.searchOptionSettings.isDealerShow) {
+			this.dealers = this._allDealers.filter(x => !x.isSubdealer);
+		} else if (this.searchOptionSettings.isSubDealerShow) {
+			this.dealers = this._allDealers.filter(x => x.isSubdealer);
+		} else {
+			this.searchOptionSettings.isDealerShow = true;
+			this.searchOptionSettings.isSubDealerShow = false;
+		}
+	}
+
+	changeDealerSubDealerShow() {
+		this.searchOptionSettings.isDealerShow = !this.searchOptionSettings.isDealerShow;
+		this.searchOptionSettings.isSubDealerShow = !this.searchOptionSettings.isSubDealerShow;
+		this.updateDealerSubDealerShow();
 	}
 
 	checkSearchOptionValidity() : boolean | true {

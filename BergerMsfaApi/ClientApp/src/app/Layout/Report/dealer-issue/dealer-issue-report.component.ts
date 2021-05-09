@@ -118,6 +118,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		isDealerShow: true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),

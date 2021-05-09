@@ -88,15 +88,12 @@ namespace BergerMsfaApi.Controllers.Users
         }
         
         [Authorize]
-        [HttpPost("logout/{userId}")]
-        public async Task<IActionResult> Logout(int userId)
+        [HttpPost("activity")]
+        public async Task<IActionResult> UserActivity()
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return ValidationResult(ModelState);
-
-                var loginLog = await _loginLogService.UserLoggedOutLogEntryAsync(userId);
+                var loginLog = await _loginLogService.UserActivityAsync();
 
                 return OkResult(loginLog);
             }
