@@ -241,6 +241,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
 
                 modelResult.IsCBInstalled = result.IsCBInstalled;
+                modelResult.HasCompetitionPresence = result.HasCompetitionPresence;
 
                 if (result.DealerCompetitionSales != null)
                 {
@@ -304,6 +305,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     modelResult.BPBLActualMTDSales = result.BPBLActualMTDSales;
 
                     modelResult.IsCBInstalled = result.IsCBInstalled;
+                    modelResult.HasCompetitionPresence = result.HasCompetitionPresence;
 
                     if (result.DealerCompetitionSales != null)
                     {
