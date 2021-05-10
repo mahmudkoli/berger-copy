@@ -6,6 +6,7 @@ using Berger.Data.MsfaEntity.DealerSalesCall;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
+using Berger.Odata.Services;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DealerSalesCall;
@@ -35,6 +36,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         private readonly IFileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
+        private readonly IFinancialDataService _financialDataService;
         private readonly IRepository<UserInfo> _userInfo;
         private readonly IRepository<DealerInfo> dealerInfo;
 
@@ -46,7 +48,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IRepository<EmailConfigForDealerSalesCall> repository,
                 IRepository<UserInfo> userInfo,
                 IRepository<DealerInfo> dealerInfo,
-                IEmailSender emailSender
+                IEmailSender emailSender,
+                IFinancialDataService financialDataService
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
@@ -55,7 +58,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             this._mapper = mapper;
             _repository = repository;
             _emailSender = emailSender;
-           _userInfo= userInfo;
+            this._financialDataService = financialDataService;
+            _userInfo = userInfo;
             this.dealerInfo = dealerInfo;
         }
 
@@ -216,6 +220,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
             modelResult.DealerId = id;
 
+            var odata = await _financialDataService.CheckCustomerOSSlippage(id);
+            modelResult.HasOS = odata.HasOS;
+            modelResult.HasSlippage = odata.HasSlippage;
+
             var companyList = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.SwappingCompetitionCompany);
 
             foreach (var item in companyList)
@@ -281,6 +289,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.DealerCompetitionSales = new List<SaveDealerCompetitionSalesModel>();
                 modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
                 modelResult.DealerId = id;
+
+                var odata = await _financialDataService.CheckCustomerOSSlippage(id);
+                modelResult.HasOS = odata.HasOS;
+                modelResult.HasSlippage = odata.HasSlippage;
 
                 foreach (var item in companyList)
                 {
