@@ -38,6 +38,9 @@ export class SearchOptionSettings {
     searchOptionDef: SearchOptionDef[];
     hasMonthDifference: boolean;
     monthDifferenceCount: number;
+    isDealerShow: boolean;
+    isSubDealerShow: boolean;
+    isDealerSubDealerOptionShow: boolean;
     
     constructor(init?: Partial<SearchOptionSettings>) {
         Object.assign(this, init);

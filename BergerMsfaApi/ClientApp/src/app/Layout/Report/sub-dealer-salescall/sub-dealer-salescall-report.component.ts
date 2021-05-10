@@ -100,6 +100,7 @@ export class SubDealerSalescallReportComponent implements OnInit, OnDestroy {
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		isSubDealerShow: true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
