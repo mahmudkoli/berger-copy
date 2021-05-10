@@ -764,7 +764,7 @@ namespace Berger.Odata.Services
             return salesDataByMultipleCustomerAndDivision.Select(x => x.CustomerNo).Distinct().Count();
         }
 
-        public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> territories, List<string> zones, List<string> brands)
+        public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands)
         {
             var currentDate = new DateTime(year, month, 01);
             var fromDate = currentDate.GetCYFD().DateFormat();
@@ -778,7 +778,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.CustomerClassification)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
-            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, territories: territories, zones: zones, brands: brands)).ToList();
+            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones, brands: brands)).ToList();
 
             var result = data.Select(x =>
                                 new KPIStrikRateKPIReportResultModel()
@@ -790,6 +790,29 @@ namespace Berger.Odata.Services
                                     NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
                                     CustomerClassification = x.CustomerClassification,
                                     MatarialGroupOrBrand = x.MatarialGroupOrBrand,
+                                }).ToList();
+
+            return result;
+        }
+
+        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones)
+        {
+            var currentDate = new DateTime(year, month, 01);
+            var fromDate = currentDate.GetCYFD().DateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.Date)
+                                .AddProperty(DataColumnDef.NetAmount);
+
+            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones)).ToList();
+
+            var result = data.Select(x =>
+                                new KPIBusinessAnalysisKPIReportResultModel()
+                                {
+                                    CustomerNo = x.CustomerNoOrSoldToParty,
                                 }).ToList();
 
             return result;

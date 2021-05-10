@@ -11,5 +11,6 @@ namespace BergerMsfaApi.Services.Users.Interfaces
         Task<int> UserLoggedInLogEntryAsync(int userId, string fcmToken);
         Task<bool> UserLoggedOutLogEntryAsync(int userId);
         Task<IList<LoginLog>> GetAllLoggedInUsersAsync();
+        Task<bool> UserActivityAsync(int? userIdp = null, string fcmToken = null);
     }
 }

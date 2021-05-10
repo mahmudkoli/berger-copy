@@ -1,0 +1,36 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="collectionConfigForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                
+                <input type="hidden" formControlName="hiddenchunk"
+                        [ngClass]="{'is-valid':formControls.hiddenchunk.touched && !formControls.hiddenchunk.errors,
+                        'is-invalid':formControls.hiddenchunk.touched && formControls.hiddenchunk.errors }" />
+                        
+                <div class="col-md-12">
+                    <div class="position-relative form-group">
+                        <label class="">Changeable Max Date</label>
+                        <div class="input-group w-100">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="changeableMaxDate" 
+                                ngbDatepicker #d="ngbDatepicker" [startDate]="startDate" [placement]="'bottom'">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                            </div>
+                        </div>
+                        <small class="text-danger" *ngIf="formControls.changeableMaxDate.touched && formControls.changeableMaxDate.errors">
+                            <span *ngIf="formControls.changeableMaxDate.errors.required">Changeable Max Date is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="collectionConfigForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -109,10 +109,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
             // var u = _userInfosvc.GetAll().ToList();
             //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
 
-            var userId = AppIdentity.AppUser.UserId;
-            var userInfo = await _userService.GetUserAsync(userId);
+            //var userId = AppIdentity.AppUser.UserId;
+            //var userInfo = await _userService.GetUserAsync(userId);
+            var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => userInfo.EmployeeRole == EnumEmployeeRole.Admin || f.ManagerId == AppIdentity.AppUser.EmployeeId);
+            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -146,28 +147,71 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
-            return await _saleGroupSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
-            var result = await _depotSvc.GetAllAsync();
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = s.Name1 }).ToList();
+            var appUser = AppIdentity.AppUser;
+            var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.PlantIdList.Contains(x.Werks)));
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} - {s.Werks}" }).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
-            return await _saleOfficeSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesOfficeIdList.Contains(x.Code)));
+            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
-            return await _territorySvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.TerritoryIdList.Contains(x.Code)));
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
-            return await _zoneSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.ZoneIdList.Contains(x.Code)));
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
+        {
+            var result = await _saleGroupSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _depotSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} - {s.Werks}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _saleOfficeSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _territorySvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _zoneSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
@@ -262,7 +306,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          { 
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} - {dealer.CustomerNo}",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
@@ -361,7 +405,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           {
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} - {dealer.CustomerNo}",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,

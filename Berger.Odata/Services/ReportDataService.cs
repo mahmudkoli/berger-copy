@@ -19,6 +19,7 @@ namespace Berger.Odata.Services
 
         public async Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model, IList<int> dealerIds)
         {
+            //TODO: need to modify
             int monthDay = DateTime.DaysInMonth(model.Year, model.Month);
             DateTime fromDate = new DateTime(model.Year, model.Month, 1);
             DateTime endDate = new DateTime(model.Year, model.Month, DateTime.Now.Day);

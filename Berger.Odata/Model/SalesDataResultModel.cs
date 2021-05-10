@@ -122,4 +122,14 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class KPIBusinessAnalysisKPIReportResultModel
+    {
+        public string CustomerNo { get; internal set; }
+
+        public KPIBusinessAnalysisKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

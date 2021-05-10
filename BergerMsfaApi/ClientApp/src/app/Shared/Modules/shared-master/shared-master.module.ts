@@ -14,6 +14,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { SearchOptionModule } from '../search-option/search-option.module';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -38,7 +39,8 @@ FullCalendarModule.registerPlugins([
         PaginatorModule,
         ButtonModule,
         ToggleButtonModule,
-        FullCalendarModule
+        FullCalendarModule,
+        SearchOptionModule
     ],
     exports: [PageTitleComponent,
         ImageUploaderComponent,
@@ -49,7 +51,8 @@ FullCalendarModule.registerPlugins([
         ButtonModule,
         TableModule,
         ToggleButtonModule,
-        FullCalendarModule
+        FullCalendarModule,
+        SearchOptionModule
     ]
 })
 export class SharedMasterModule { }

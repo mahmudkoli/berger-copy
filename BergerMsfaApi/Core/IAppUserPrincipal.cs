@@ -17,6 +17,17 @@ namespace BergerMsfaApi.Core
         string RoleIds { get; set; }
         string UserAgentInfo { get; set; }
         int NodeId { get; set; }
+        int EmployeeRole { get; set; }
+        List<string> PlantIdList { get; set; }
+        string PlantIds { get; set; }
+        List<string> SalesOfficeIdList { get; set; }
+        string SalesOfficeIds { get; set; }
+        List<string> SalesAreaIdList { get; set; }
+        string SalesAreaIds { get; set; }
+        List<string> TerritoryIdList { get; set; }
+        string TerritoryIds { get; set; }
+        List<string> ZoneIdList { get; set; }
+        string ZoneIds { get; set; }
         Dictionary<string, string> GetByName();
     }
 }

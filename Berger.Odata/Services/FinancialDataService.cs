@@ -378,6 +378,30 @@ namespace Berger.Odata.Services
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         }
 
+        public async Task<IList<FinancialDataModel>> GetCustomerSlippageAmount(IList<int> dealerIds, DateTime endDate)
+        {
+            var endDateStr = endDate.DateTimeFormat();
+            
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.Amount)
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age);
 
+            #region data call by single customer
+            var data = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), endDate: endDateStr)).ToList();
+                if (dataSingle.Any())
+                {
+                    data.AddRange(dataSingle);
+                }
+            }
+            #endregion
+
+            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
+        }
     }
 }

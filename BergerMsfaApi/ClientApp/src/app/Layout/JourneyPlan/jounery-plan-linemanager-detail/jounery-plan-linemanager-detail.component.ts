@@ -56,7 +56,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
                     }
                     if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Approved) {
                         this.showStatusBtn = false;
-                        this.showRejectedBtn = true;
+                        this.showRejectedBtn = false;
                         this.showApprovedBtn = false;
                     }
                     else if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Edited || (this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Pending) {

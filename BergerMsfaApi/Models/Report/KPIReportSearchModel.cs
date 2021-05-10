@@ -12,6 +12,7 @@ namespace BergerMsfaApi.Models.Report
         //: QueryObjectModel
     {
         public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
         public List<string> Territories { get; set; }
         public List<string> Zones { get; set; }
         public int Year { get; set; }
@@ -19,6 +20,7 @@ namespace BergerMsfaApi.Models.Report
 
         public KPIReportBaseSearchModel()
         {
+            this.SalesGroups = new List<string>();
             this.Territories = new List<string>();
             this.Zones = new List<string>();
         }
@@ -37,6 +39,16 @@ namespace BergerMsfaApi.Models.Report
     }
 
     public class BusinessCallKPIReportSearchModel : KPIReportBaseSearchModel
+    {
+
+    }
+
+    public class BillingAnalysisKPIReportSearchModel : KPIReportBaseSearchModel
+    {
+
+    }
+
+    public class CollectionPlanKPIReportSearchModel : KPIReportBaseSearchModel
     {
 
     }
