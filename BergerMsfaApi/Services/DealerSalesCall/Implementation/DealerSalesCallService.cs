@@ -3,6 +3,7 @@ using Berger.Common;
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.DealerSalesCall;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
@@ -39,6 +40,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         private readonly IFinancialDataService _financialDataService;
         private readonly IRepository<UserInfo> _userInfo;
         private readonly IRepository<DealerInfo> dealerInfo;
+        private readonly IRepository<Depot> _plantSvc;
 
         public DealerSalesCallService(
                 IRepository<DSC.DealerSalesCall> dealerSalesCallRepository,
@@ -48,6 +50,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IRepository<EmailConfigForDealerSalesCall> repository,
                 IRepository<UserInfo> userInfo,
                 IRepository<DealerInfo> dealerInfo,
+                IRepository<Depot> plantSvc,
                 IEmailSender emailSender,
                 IFinancialDataService financialDataService
             )
@@ -61,6 +64,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             this._financialDataService = financialDataService;
             _userInfo = userInfo;
             this.dealerInfo = dealerInfo;
+            this._plantSvc = plantSvc;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -79,29 +83,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
 
-            dealerSalesCall.CreatedTime = DateTime.Now;
-
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
-            var res = model.DealerSalesIssues.ToList().Select(p => p.DealerSalesIssueCategoryId).ToArray();
-            var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-            var resultDealer = dealerInfo.FindAll(x => x.Id == dealerSalesCall.DealerId).FirstOrDefault();
-            string body = "Customer No: " + resultDealer.CustomerNo + Environment.NewLine +
-                "Customer Name: " + resultDealer.CustomerName + Environment.NewLine +
-                "Depot: " + resultDealer.BusinessArea + Environment.NewLine +
-                "Sales Group: " + resultDealer.SalesGroup + Environment.NewLine +
-                "Sales Office: " + resultDealer.SalesOffice + Environment.NewLine +
-                "Territory: " + resultDealer.Territory + Environment.NewLine +
-                "Zone: " + resultDealer.CustZone;
-            for (int i = 0; i < res.Length; i++)
-            {
-                var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
-                if (!string.IsNullOrEmpty(email))
-                {
-                    var issue = await _dropdownService.GetDropdownById(res[i]);
-                    await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
 
-                }
-            }
+            await SendIssueEmail(result.Id);
+
             return result.Id;
         }
 
@@ -125,39 +110,15 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
                 }
 
-                dealerSalesCall.CreatedTime = DateTime.Now;
-
                 dealerSalesCalls.Add(dealerSalesCall);
             }
 
             var result = await _dealerSalesCallRepository.CreateListAsync(dealerSalesCalls);
-            foreach (var item in dealerSalesCalls)
+
+            foreach (var item in result)
             {
-                var resultDealer = dealerInfo.FindAll(x => x.Id == item.DealerId).FirstOrDefault();
-                string body = "Customer No: " + resultDealer.CustomerNo + Environment.NewLine +
-                    "Customer Name: " + resultDealer.CustomerName + Environment.NewLine +
-                    "Depot: " + resultDealer.BusinessArea + Environment.NewLine +
-                    "Sales Group: " + resultDealer.SalesGroup + Environment.NewLine +
-                    "Sales Office: " + resultDealer.SalesOffice + Environment.NewLine +
-                    "Territory: " + resultDealer.Territory + Environment.NewLine +
-                    "Zone: " + resultDealer.CustZone;
-                //string body = string.Format("Customer No: ", item.Dealer.CustomerNo, Environment.NewLine, "Customer Name: ", item.Dealer.CustomerName, "Zone: ", item.Dealer.CustZone);
-                var res = item.DealerSalesIssues.Select(c => c.DealerSalesIssueCategoryId).Distinct().ToArray();
-
-                var user = _userInfo.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-                for (int i = 0; i < res.Length; i++)
-                {
-                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == Convert.ToInt32(res[i])).FirstOrDefault().Email;
-                    if (!string.IsNullOrEmpty(email))
-                    {
-                        var issue = await _dropdownService.GetDropdownById(Convert.ToInt32(res[i]));
-                        await sendEmail(email, issue.DropdownName, user?.UserName ?? string.Empty, body);
-
-                    }
-                }
+                await SendIssueEmail(item.Id);
             }
-
-            
 
             return true;
         }
@@ -361,27 +322,106 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return modelResult;
         }
 
+        private async Task SendIssueEmail(int dealerSalesCallId)
+        {
+            try
+            {
+                var salesCall = await _dealerSalesCallRepository.GetFirstOrDefaultIncludeAsync(x => x,
+                                x => x.Id == dealerSalesCallId,
+                                null,
+                                x => x.Include(y => y.User).Include(y => y.Dealer)
+                                        .Include(y => y.DealerSalesIssues).ThenInclude(y => y.DealerSalesIssueCategory)
+                                        .Include(y => y.DealerSalesIssues).ThenInclude(y => y.Priority),
+                                true);
 
+                var plantName = (await _plantSvc.FindAsync(x => x.Werks == salesCall.Dealer.BusinessArea)).Name1 ?? string.Empty;
 
-        private async Task sendEmail(string email, string issue,string createdby,string body)
+                foreach (var issue in salesCall.DealerSalesIssues)
+                {
+                    string subject = string.Empty;
+                    string body = string.Empty;
+                    string issueName = issue.DealerSalesIssueCategory.DropdownName;
+                    issueName = issueName.Contains("Complain") ? issueName : $"{issueName} Complain";
+
+                    subject = string.Format("Berger MSFA - Sales Call Issue “{0}” has been Arrived.", issueName);
+
+                    body += $"Dear Concern,{Environment.NewLine}";
+
+                    body += string.Format("A {0} has been generated by “{1} & {2}” while visiting the {3} " +
+                        $"“{4}, {5}, {6}, {7} & {8}”. " +
+                        $"Complain details are attached below. " +
+                        $"Please check the issue and give your feedback to the concern person.",
+                        issueName,
+                        salesCall.User.UserName,
+                        salesCall.User.Designation,
+                        salesCall.IsSubDealerCall ? "Sub-Dealer" : "Dealer",
+                        salesCall.Dealer.CustomerNo,
+                        salesCall.Dealer.CustomerName,
+                        plantName,
+                        salesCall.Dealer.Territory,
+                        salesCall.Dealer.CustZone);
+
+                    body += $"{Environment.NewLine}{Environment.NewLine}";
+
+                    if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ProductComplaint)
+                    {
+                        body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
+                            $"Material Group: {issue.MaterialGroup}{Environment.NewLine}"+
+                            $"Quantity: {issue.Quantity}{Environment.NewLine}"+
+                            $"Batch Number: {issue.BatchNumber}{Environment.NewLine}"+
+                            $"Comments: {issue.Comments}{Environment.NewLine}"+
+                            $"Priority: {issue.Priority.DropdownName}";
+                    }
+                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ShopSignComplain)
+                    {
+                        body += $"Comments: {issue.Comments}{Environment.NewLine}"+
+                            $"Priority: {issue.Priority.DropdownName}";
+                    }
+                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DeliveryIssue)
+                    {
+                        body += $"Comments: {issue.Comments}{Environment.NewLine}"+
+                            $"Priority: {issue.Priority.DropdownName}";
+                    }
+                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DamageProduct)
+                    {
+                        body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
+                            $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +
+                            $"Quantity: {issue.Quantity}{Environment.NewLine}" +
+                            $"Comments: {issue.Comments}{Environment.NewLine}" +
+                            $"Priority: {issue.Priority.DropdownName}";
+                    }
+
+                    body += $"{Environment.NewLine}{Environment.NewLine}";
+                    body += $"Thank You,{Environment.NewLine}";
+                    body += $"Berger Paints Bangladesh Limited";
+
+                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == issue.DealerSalesIssueCategoryId)?.FirstOrDefault()?.Email;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        await SendEmail(email, subject, body);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private async Task SendEmail(string email, string messagesubject, string messageBody)
         {
             try
             {
                 string[] lstemail = email.Split(',');
 
-
                 foreach (var item in lstemail)
                 {
-                    string messageBody =string.Format(ConstantsLeadValue.IssueCategoryMailBody,createdby)+ Environment.NewLine + body;
-                    string messagesubject = string.Format(ConstantsLeadValue.IssueCategoryMailSubject,issue);
-
                     await _emailSender.SendEmailAsync(item, messagesubject, messageBody);
                 }
             }
             catch (System.Exception ex)
             {
-
-                throw;
+                throw ex;
             }
         }
     }
