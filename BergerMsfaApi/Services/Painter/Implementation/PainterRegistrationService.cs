@@ -163,7 +163,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var id in painterModel.AttachedDealers)
             {
                 var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
-                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails.CustomerName, CustomerNo = dealerDetails.CustomerNo });
+                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails?.CustomerName??string.Empty, CustomerNo = dealerDetails?.CustomerNo??0 });
                 
             }
 
