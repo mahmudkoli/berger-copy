@@ -403,5 +403,19 @@ namespace Berger.Odata.Services
 
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
         }
+
+        public async Task<(bool HasOS, bool HasSlippage)> CheckCustomerOSSlippage(int dealerId)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age);
+
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
+
+            var hasOS = data.Any();
+            var hasSlippage = data.Any(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit));
+            
+            return (hasOS, hasSlippage);
+        }
     }
 }
