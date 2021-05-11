@@ -2425,6 +2425,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                             ms.DealerId,
                                             ms.ImageUrl,
                                             ms.OthersSnapShotCategoryName,
+                                            diInfo.CustomerNo,
                                             diInfo.CustomerName,
                                             depot = deInfo.Name1,
                                             territory = tInfo.Name,
@@ -2438,7 +2439,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 .Select(x => new
                 {
                     email = x.Key.Email,
-                    dealerId = x.Key.DealerId,
+                    dealerId = x.FirstOrDefault()?.CustomerNo,
                     dealerName = x.Key.CustomerName,
                     territoryName = x.Key.territory,
                     zoneName = x.Key.zone,
