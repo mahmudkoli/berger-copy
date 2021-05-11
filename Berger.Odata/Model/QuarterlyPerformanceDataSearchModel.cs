@@ -32,8 +32,12 @@ namespace Berger.Odata.Model
         public int ToYear { get; set; }
         public string Depot { get; set; }
         public string SalesOffice { get; set; }
-        public string SalesGroup { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string SalesGroup { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
+
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> Zones { get; set; }
     }
 }
