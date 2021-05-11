@@ -562,7 +562,7 @@
                   </th>
                 </tr>
                 <tr *ngIf="isParentHeaderExists()">
-                  <th *ngIf="pTableSetting.enabledSerialNo">AAAAAAAAAAAAA</th>
+                  <th *ngIf="pTableSetting.enabledSerialNo"></th>
                   <ng-container *ngFor="let head2 of pTableSetting.tableColDef">
                     <th *ngIf="head2.parentHeaderName">
                       {{ head2.parentHeaderName ? head2.headerName : '' }}
