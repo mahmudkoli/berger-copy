@@ -483,6 +483,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  {
                                      uinfo.Email,
                                      dealerId = d.Id.ToString(),
+                                     code = d.Code,
                                      d.BusinessArea,
                                      businessAreaName = depinfo.Name1,
                                      salesOffice = sginfo.Name,
@@ -505,7 +506,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult = dealers.Select(x => new DealerOpeningReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
-                DealrerOpeningId = x.dealerId,
+                DealrerOpeningCode = x.code,
                 BusinessArea = x.BusinessArea,
                 BusinessAreaName = x.businessAreaName,
                 SalesOffice = x.salesOffice,
@@ -583,7 +584,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      depotName = depinfo.Name1,
                                      territoryName = tinfo.Name,
                                      zoneName = zinfo.Name,
-                                     p.Code
+                                     p.Code,
+                                     dinfo.CustomerNo
                                  }).ToListAsync();
 
             reportResult = dealers.Select(x => new DealerCollectionReportResultModel
@@ -595,7 +597,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.zoneName,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
-                DealerId = x.Code,
+                DealerId = x?.CustomerNo.ToString(),
                 DealerName = x.Name,
                 PaymentMethod = x.paymentMethod,
                 CreditControlArea = x.creditControlArea,
@@ -666,7 +668,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         depotName = depinfo.Name1,
                                         territoryName = tinfo.Name,
                                         zoneName = zinfo.Name,
-                                        p.Code
+                                        p.Code,
+                                        dinfo.CustomerNo
                                     }).ToListAsync();
 
             reportResult = subDealers.Select(x => new SubDealerCollectionReportResultModel
@@ -678,7 +681,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.zoneName,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
-                SubDealerCode = x.Code,
+                SubDealerCode = x?.CustomerNo.ToString(),
                 SubDealerName = x.Name,
                 SubDealerMobileNumber = x.MobileNumber,
                 SubDealerAddress = x.Address,
@@ -1018,6 +1021,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      from zinfo in zleftjoin.DefaultIfEmpty()
                                      where (
                                        (jpminfo.PlanDate.Month == month && jpminfo.PlanDate.Year == year)
+                                       && (jpminfo.PlanStatus == PlanStatus.Approved)
                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                        && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
@@ -1033,10 +1037,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          depot = depinfo.Name1,
                                          territoryName = tinfo.Name,
                                          zoneName = zinfo.Name,
+                                         diInfo.CustomerNo,
                                          diInfo.CustomerName,
                                          jpminfo.PlanDate,
                                          JourneyPlanId = dscinfo.JourneyPlanId
-                                     }).ToListAsync();
+                                     }).Distinct().ToListAsync();
 
             var dealerVisitGroup = dealerVisit.GroupBy(x => new { x.EmployeeId, x.DealerId }).Select(x => new
             {
@@ -1045,7 +1050,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 depotName = x.FirstOrDefault()?.depot ?? string.Empty,
                 territory = x.FirstOrDefault()?.territoryName,
                 zone = x.FirstOrDefault()?.zoneName,
-                dealerId = x.Key?.DealerId.ToString() ?? string.Empty,
+                dealerId = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty,
                 dealerName = x.FirstOrDefault()?.CustomerName,
 
                 d1 = x.Count(c => c?.PlanDate.Day == 1) > 0 ?
@@ -1215,6 +1220,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          territory = tinfo.Name,
                                          zone = zinfo.Name,
                                          dsc.DealerId,
+                                         diInfo.CustomerNo,
                                          diInfo.CustomerName,
                                          dsc.CreatedTime,
                                          dsc.IsTargetPromotionCommunicated,
@@ -1271,7 +1277,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 DepotName = x.depot,
                 Territory = x.territory,
                 Zone = x.zone,
-                DealerId = x.DealerId.ToString(),
+                DealerId = x.CustomerNo.ToString(),
                 DealerName = x.CustomerName,
                 VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
@@ -1294,9 +1300,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 SalesTechniques = x.IsShopManSalesTechniquesDiscussed ? "Yes" : "No",
                 MerchendisingImprovement = x.IsShopManMerchendizingImprovementDiscussed ? "Yes" : "No",
                 CompetitionPresence = x.HasCompetitionPresence ? "Yes" : "No",
-                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Yes" : "No",
+                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Better than BPBL" : "Less than BPBL",
                 CsRemarks = x.CompetitionServiceBetterThanBPBLRemarks,
-                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Yes" : "No",
+                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Better than BPBL" : "Less than BPBL",
                 PdmRemarks = x.CompetitionProductDisplayBetterThanBPBLRemarks,
                 ProductDisplayAndMerchendizingImage = x.CompetitionProductDisplayImageUrl,
                 SchemeModality = x.CompetitionSchemeModalityComments,
@@ -1383,6 +1389,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          territory = tinfo.Name,
                                          zone = zinfo.Name,
                                          dsc.DealerId,
+                                         diInfo.CustomerNo,
                                          diInfo.CustomerName,
                                          dsc.CreatedTime,
                                          dsc.IsTargetPromotionCommunicated,
@@ -1434,7 +1441,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 DepotName = x.depot,
                 Territory = x.territory,
                 Zone = x.zone,
-                SubDealerId = x.DealerId.ToString(),
+                SubDealerId = x.CustomerNo.ToString(),
                 SubDealerName = x.CustomerName,
                 VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
@@ -1454,9 +1461,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 BergerAvrgMonthlySales = x.BPBLAverageMonthlySales.ToString(),
                 BergerActualMtdSales = x.BPBLActualMTDSales.ToString(),
                 CompetitionPresence = x.HasCompetitionPresence ? "Yes" : "No",
-                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Yes" : "No",
+                CompetitionService = x.IsCompetitionServiceBetterThanBPBL ? "Better than BPBL" : "Less than BPBL",
                 CsRemarks = x.CompetitionServiceBetterThanBPBLRemarks,
-                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Yes" : "No",
+                ProductDisplayAndMerchendizingStatus = x.IsCompetitionProductDisplayBetterThanBPBL ? "Better than BPBL" : "Less than BPBL",
                 PdmRemarks = x.CompetitionProductDisplayBetterThanBPBLRemarks,
                 ProductDisplayAndMerchendizingImage = x.CompetitionProductDisplayImageUrl,
                 SchemeModality = x.CompetitionSchemeModalityComments,
@@ -1538,6 +1545,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          territory = tInfo.Name,
                                          zone = zInfo.Name,
                                          dscInfo.DealerId,
+                                         diInfo.CustomerNo,
                                          diInfo.CustomerName,
                                          dscInfo.CreatedTime,
                                          dsi.MaterialName,
@@ -1561,7 +1569,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 depotName = x.FirstOrDefault()?.depot,
                 territoryName = x.FirstOrDefault()?.territory,
                 zoneName = x.FirstOrDefault()?.zone,
-                dealerId = x.FirstOrDefault()?.DealerId,
+                dealerId = x.FirstOrDefault()?.CustomerNo,
                 dealerName = x.FirstOrDefault()?.CustomerName,
                 visitDate = x.FirstOrDefault()?.CreatedTime,
                 pcMaterial = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.ProductComplaint)?.MaterialName,
@@ -1677,6 +1685,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                             territory = tInfo.Name,
                                             zone = zInfo.Name,
                                             dscInfo.DealerId,
+                                            diInfo.CustomerNo,
                                             diInfo.CustomerName,
                                             dscInfo.CreatedTime,
                                             dsi.MaterialName,
@@ -1700,7 +1709,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 depotName = x.FirstOrDefault()?.depot,
                 territoryName = x.FirstOrDefault()?.territory,
                 zoneName = x.FirstOrDefault()?.zone,
-                dealerId = x.FirstOrDefault()?.DealerId,
+                dealerId = x.FirstOrDefault()?.CustomerNo,
                 dealerName = x.FirstOrDefault()?.CustomerName,
                 visitDate = x.FirstOrDefault()?.CreatedTime,
                 posComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.POSMaterialShort)?.Comments,
@@ -1927,30 +1936,26 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             reportResult = (_tintingMachine
                 .GetAllInclude(x => x.Company).Where(p =>
-           (query.Territories.Count > 0 ? query.Territories.Contains(p.Territory) : true)
-            && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
-                                 && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)))
-                .Select(c => new TintingMachineReportResultModel()
-                {
+                    (query.Territories.Count > 0 ? query.Territories.Contains(p.Territory) : true)
+                    && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                    && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)))
+                    .Select(c => new TintingMachineReportResultModel()
+                    {
+                        ActiveMachineNO = c.NoOfActiveMachine,
+                        Company = c.Company.DropdownName,
+                        Contribution = c.Contribution,
+                        InactiveMachineNO = c.NoOfInactiveMachine,
+                        Territory = c.Territory,
+                        TotalCBMachineNO = c.No
 
-                    ActiveMachineNO = c.NoOfActiveMachine,
-                    Company = c.Company.Description,
-                    Contribution = c.Contribution,
-                    InactiveMachineNO = c.NoOfInactiveMachine,
-                    Territory = c.Territory,
-                    TotalCBMachineNO = c.No
-
-                })
-                        .Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+                    }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<TintingMachineReportResultModel>();
             queryResult.Items = reportResult;
             queryResult.TotalFilter = reportResult.Count();
             queryResult.Total = reportResult.Count();
 
-
             return queryResult;
-
         }
 
         public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)

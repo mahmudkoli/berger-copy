@@ -31,6 +31,9 @@ namespace Berger.Odata.Services
         Task<IList<SalesDataModel>> GetSalesDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
 
+        Task<IList<SalesDataModel>> GetSalesDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, List<string> territories = null, List<string> brands = null, string depot = "", List<string> salesGroups = null, List<string> zones = null);
+
         Task<IList<SalesDataModel>> GetSalesDataByMultipleArea(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, string depot, List<string> salesOffices = null, List<string> salesGroups = null, List<string> territories = null, List<string> zones = null, List<string> brands = null);
 
@@ -39,8 +42,13 @@ namespace Berger.Odata.Services
 
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
+        
         Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
+        
+        Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string date, List<string> territories = null, List<string> brands = null, string depot = "", List<string> salesGroups = null, List<string> zones = null);
+
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         //Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
