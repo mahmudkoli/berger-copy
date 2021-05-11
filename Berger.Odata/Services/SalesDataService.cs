@@ -33,7 +33,7 @@ namespace Berger.Odata.Services
         {
             var currentDate = DateTime.Now;
             var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
-            var toDate = currentDate.AddMonths(-1).GetCYLD().DateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -369,7 +369,7 @@ namespace Berger.Odata.Services
         #endregion
 
         public async Task<IList<SalesDataModel>> GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
-            MyTargetReportType targetReportType, IList<int> dealerIds)
+            MyTargetReportType targetReportType, IList<int> dealerIds, EnumMyTargetBrandType brandType)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
@@ -379,6 +379,7 @@ namespace Berger.Odata.Services
                     selectQueryBuilder.AddProperty(DataColumnDef.Territory);
                     break;
                 case MyTargetReportType.ZoneWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.Territory);
                     selectQueryBuilder.AddProperty(DataColumnDef.Zone);
                     break;
                 case MyTargetReportType.BrandWise:
@@ -394,7 +395,14 @@ namespace Berger.Odata.Services
             var cyfd = fromDate.GetCYFD().DateFormat();
             var cyed = endDate.DateFormat();
 
-            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division);
+
+            var mtsBrands = new List<string>();
+            if (targetReportType == MyTargetReportType.BrandWise && EnumMyTargetBrandType.MTS_Brands == brandType)
+            {
+                mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
+
+            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division, brands: mtsBrands);
 
         }
 
@@ -426,7 +434,7 @@ namespace Berger.Odata.Services
 
         public async Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<int> dealerIds)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.Now.AddMonths(-1);
             var mtsBrandCodes = new List<string>();
 
             var cyfd = currentDate.GetCYFD().DateFormat();
@@ -552,8 +560,8 @@ namespace Berger.Odata.Services
                 _ => "-1"
             };
 
-            var fromDate = currentDate.AddDays(-30);
-            var toDate = currentDate;
+            var fromDate = currentDate.AddMonths(-1);
+            var toDate = currentDate.AddMonths(-1);
 
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
