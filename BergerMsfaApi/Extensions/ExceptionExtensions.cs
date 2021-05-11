@@ -191,7 +191,7 @@ namespace BergerMsfaApi.Extensions
             var httpContext = context;
             var request = httpContext.Request;
             string body = "";
-            if (request.Form.Any())
+            if (request.HasFormContentType && request.Form.Any())
             {
                 var dictionary = request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
                 body += JsonConvert.SerializeObject(dictionary, Formatting.Indented);
