@@ -49,10 +49,6 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                //dealerIds = new List<int>
-                //{
-                //    24,48,1852,1861,1835,1826,1796,1692,1681,1677,1610,4,8
-                //};
                 var result = await _reportDataService.MyTarget(model, dealerIds);
 
                 return OkResult(result);
@@ -68,8 +64,8 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-             
-                var result = await _oDataReportService.MySummaryReport();
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _oDataReportService.MySummaryReport(dealerIds);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -128,7 +124,8 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _oDataReportService.ReportDealerPerformance(model);
+                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
                 return OkResult(result);
             }
             catch (Exception ex)
