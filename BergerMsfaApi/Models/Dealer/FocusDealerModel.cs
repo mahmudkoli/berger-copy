@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BergerMsfaApi.Models.FocusDealer
+﻿namespace BergerMsfaApi.Models.FocusDealer
 {
     public class FocusDealerModel
     {
@@ -13,9 +7,11 @@ namespace BergerMsfaApi.Models.FocusDealer
         public string DealerName { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeId { get; set; }
-
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public string ValidFrom { get; set; }
        
         public string ValidTo { get; set; }
+        public string DepoId { get; set; }
     }
 }

@@ -562,7 +562,7 @@
                   </th>
                 </tr>
                 <tr *ngIf="isParentHeaderExists()">
-                  <th></th>
+                  <th *ngIf="pTableSetting.enabledSerialNo">AAAAAAAAAAAAA</th>
                   <ng-container *ngFor="let head2 of pTableSetting.tableColDef">
                     <th *ngIf="head2.parentHeaderName">
                       {{ head2.parentHeaderName ? head2.headerName : '' }}
@@ -670,6 +670,7 @@
 
                     <div *ngIf="dispCol.type == 'image'">
                       <img
+                        *ngIf="body[dispCol.internalName]"
                         src="{{ body[dispCol.internalName] }}"
                         width="50"
                         height="50"
