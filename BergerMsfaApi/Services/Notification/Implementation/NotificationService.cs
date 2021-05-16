@@ -142,7 +142,8 @@ namespace BergerMsfaApi.Services.Notification.Implementation
                 foreach (var leadFollowUp in leadFollowUps)
                 {
                     var title = $"Today you have lead follow up.";
-                    var body = $"Lead follow up - Territory: {leadFollowUp.Territory}, Zone: {leadFollowUp.Zone}, " +
+                    var body = $"Lead follow up - Depot: {leadFollowUp.Depot}, Territory: {leadFollowUp.Territory}, " +
+                        $"Zone: {leadFollowUp.Zone}, Code: {leadFollowUp.Code}, " +
                         $"Project Name: {leadFollowUp.ProjectName}, Project Address: {leadFollowUp.ProjectAddress}";
 
                     notifications.Add(new AppNotificationModel() { Title = title, Body = body });

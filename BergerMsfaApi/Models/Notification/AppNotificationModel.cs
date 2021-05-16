@@ -9,6 +9,7 @@ namespace BergerMsfaApi.Models.Notification
     public class AppLeadFollowUpNotificationModel
     {
         public int UserId { get; set; }
+        public string Code { get; set; }
         public string Depot { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }

@@ -47,8 +47,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string ProductSourcing { get; set; }
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
-        //public string ProductSamplingBrandName { get; set; }
-        public IList<string> ProductSamplingBrandName { get; set; }
+        public string ProductSamplingBrandName { get; set; }
+        public IList<string> ProductSamplingBrandNames { get; set; }
         public string NextVisitDate { get; set; }
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
@@ -60,14 +60,14 @@ namespace BergerMsfaApi.Models.DemandGeneration
 
         public void StringToList(LeadBusinessAchievement src, SaveLeadBusinessAchievementModel dest)
         {
-            dest.ProductSamplingBrandName = string.IsNullOrEmpty(src.ProductSamplingBrandName) ? new List<string>() :
+            dest.ProductSamplingBrandNames = string.IsNullOrEmpty(src.ProductSamplingBrandName) ? new List<string>() :
                                                 src.ProductSamplingBrandName.Split(',').ToList();
         }
 
         public void ListToString(SaveLeadBusinessAchievementModel src, LeadBusinessAchievement dest)
         {
-            dest.ProductSamplingBrandName = src.ProductSamplingBrandName == null || !src.ProductSamplingBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.ProductSamplingBrandName);
+            dest.ProductSamplingBrandName = src.ProductSamplingBrandNames == null || !src.ProductSamplingBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.ProductSamplingBrandNames);
         }
 
         public void Mapping(Profile profile)

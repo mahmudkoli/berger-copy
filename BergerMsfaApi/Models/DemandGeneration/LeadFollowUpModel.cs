@@ -120,6 +120,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public int Id { get; set; }
         public int LeadGenerationId { get; set; }
         //public LeadGenerationModel LeadGeneration { get; set; }
+        public string Code { get; set; }
         public string Depot { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
@@ -170,18 +171,18 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int TotalPaintingAreaSqftExterior { get; set; }
         public int TotalPaintingAreaSqftExteriorChangeCount { get; set; }
         public string TotalPaintingAreaSqftExteriorChangeReason { get; set; }
-        //public string UpTradingFromBrandName { get; set; }
-        //public string UpTradingToBrandName { get; set; }
-        //public string BrandUsedInteriorBrandName { get; set; }
-        //public string BrandUsedExteriorBrandName { get; set; }
-        //public string BrandUsedUnderCoatBrandName { get; set; }
-        //public string BrandUsedTopCoatBrandName { get; set; }
-        public IList<string> UpTradingFromBrandName { get; set; }
-        public IList<string> UpTradingToBrandName { get; set; }
-        public IList<string> BrandUsedInteriorBrandName { get; set; }
-        public IList<string> BrandUsedExteriorBrandName { get; set; }
-        public IList<string> BrandUsedUnderCoatBrandName { get; set; }
-        public IList<string> BrandUsedTopCoatBrandName { get; set; }
+        public string UpTradingFromBrandName { get; set; }
+        public string UpTradingToBrandName { get; set; }
+        public string BrandUsedInteriorBrandName { get; set; }
+        public string BrandUsedExteriorBrandName { get; set; }
+        public string BrandUsedUnderCoatBrandName { get; set; }
+        public string BrandUsedTopCoatBrandName { get; set; }
+        public IList<string> UpTradingFromBrandNames { get; set; }
+        public IList<string> UpTradingToBrandNames { get; set; }
+        public IList<string> BrandUsedInteriorBrandNames { get; set; }
+        public IList<string> BrandUsedExteriorBrandNames { get; set; }
+        public IList<string> BrandUsedUnderCoatBrandNames { get; set; }
+        public IList<string> BrandUsedTopCoatBrandNames { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
         public decimal ActualVolumeSoldInteriorGallon { get; set; }
@@ -200,34 +201,34 @@ namespace BergerMsfaApi.Models.DemandGeneration
 
         public void StringToList(LeadFollowUp src, AppSaveLeadFollowUpModel dest)
         {
-            dest.UpTradingFromBrandName = string.IsNullOrEmpty(src.UpTradingFromBrandName) ? new List<string>() :
+            dest.UpTradingFromBrandNames = string.IsNullOrEmpty(src.UpTradingFromBrandName) ? new List<string>() :
                                                 src.UpTradingFromBrandName.Split(',').ToList();
-            dest.UpTradingToBrandName = string.IsNullOrEmpty(src.UpTradingToBrandName) ? new List<string>() :
+            dest.UpTradingToBrandNames = string.IsNullOrEmpty(src.UpTradingToBrandName) ? new List<string>() :
                                                 src.UpTradingToBrandName.Split(',').ToList();
-            dest.BrandUsedInteriorBrandName = string.IsNullOrEmpty(src.BrandUsedInteriorBrandName) ? new List<string>() :
+            dest.BrandUsedInteriorBrandNames = string.IsNullOrEmpty(src.BrandUsedInteriorBrandName) ? new List<string>() :
                                                 src.BrandUsedInteriorBrandName.Split(',').ToList();
-            dest.BrandUsedExteriorBrandName = string.IsNullOrEmpty(src.BrandUsedExteriorBrandName) ? new List<string>() :
+            dest.BrandUsedExteriorBrandNames = string.IsNullOrEmpty(src.BrandUsedExteriorBrandName) ? new List<string>() :
                                                 src.BrandUsedExteriorBrandName.Split(',').ToList();
-            dest.BrandUsedTopCoatBrandName = string.IsNullOrEmpty(src.BrandUsedTopCoatBrandName) ? new List<string>() :
+            dest.BrandUsedTopCoatBrandNames = string.IsNullOrEmpty(src.BrandUsedTopCoatBrandName) ? new List<string>() :
                                                 src.BrandUsedTopCoatBrandName.Split(',').ToList();
-            dest.BrandUsedUnderCoatBrandName = string.IsNullOrEmpty(src.BrandUsedUnderCoatBrandName) ? new List<string>() :
+            dest.BrandUsedUnderCoatBrandNames = string.IsNullOrEmpty(src.BrandUsedUnderCoatBrandName) ? new List<string>() :
                                                 src.BrandUsedUnderCoatBrandName.Split(',').ToList();
         }
 
         public void ListToString(AppSaveLeadFollowUpModel src, LeadFollowUp dest)
         {
-            dest.UpTradingFromBrandName = src.UpTradingFromBrandName == null || !src.UpTradingFromBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.UpTradingFromBrandName);
-            dest.UpTradingToBrandName = src.UpTradingToBrandName == null || !src.UpTradingToBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.UpTradingToBrandName);
-            dest.BrandUsedInteriorBrandName = src.BrandUsedInteriorBrandName == null || !src.BrandUsedInteriorBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.BrandUsedInteriorBrandName);
-            dest.BrandUsedExteriorBrandName = src.BrandUsedExteriorBrandName == null || !src.BrandUsedExteriorBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.BrandUsedExteriorBrandName);
-            dest.BrandUsedTopCoatBrandName = src.BrandUsedTopCoatBrandName == null || !src.BrandUsedTopCoatBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.BrandUsedTopCoatBrandName);
-            dest.BrandUsedUnderCoatBrandName = src.BrandUsedUnderCoatBrandName == null || !src.BrandUsedUnderCoatBrandName.Any() ? string.Empty :
-                                                string.Join(',', src.BrandUsedUnderCoatBrandName);
+            dest.UpTradingFromBrandName = src.UpTradingFromBrandNames == null || !src.UpTradingFromBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.UpTradingFromBrandNames);
+            dest.UpTradingToBrandName = src.UpTradingToBrandNames == null || !src.UpTradingToBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.UpTradingToBrandNames);
+            dest.BrandUsedInteriorBrandName = src.BrandUsedInteriorBrandNames == null || !src.BrandUsedInteriorBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedInteriorBrandNames);
+            dest.BrandUsedExteriorBrandName = src.BrandUsedExteriorBrandNames == null || !src.BrandUsedExteriorBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedExteriorBrandNames);
+            dest.BrandUsedTopCoatBrandName = src.BrandUsedTopCoatBrandNames == null || !src.BrandUsedTopCoatBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedTopCoatBrandNames);
+            dest.BrandUsedUnderCoatBrandName = src.BrandUsedUnderCoatBrandNames == null || !src.BrandUsedUnderCoatBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedUnderCoatBrandNames);
         }
 
         public void Mapping(Profile profile)

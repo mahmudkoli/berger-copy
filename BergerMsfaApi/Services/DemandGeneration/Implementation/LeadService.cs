@@ -189,6 +189,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var modelResult = new AppSaveLeadFollowUpModel();
 
             modelResult.LeadGenerationId = result.Id;
+            modelResult.Code = result.Code;
             modelResult.Depot = result.Depot;
             modelResult.Territory = result.Territory;
             modelResult.Zone = result.Zone;
@@ -240,13 +241,19 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
 
                 modelResult.ProjectStatusPartialBusinessPercentage = leadFollowUp.ProjectStatusPartialBusinessPercentage;
-                //modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
-                //modelResult.UpTradingToBrandName = leadFollowUp.UpTradingToBrandName;
-                //modelResult.BrandUsedInteriorBrandName = leadFollowUp.BrandUsedInteriorBrandName;
-                //modelResult.BrandUsedExteriorBrandName = leadFollowUp.BrandUsedExteriorBrandName;
-                //modelResult.BrandUsedTopCoatBrandName = leadFollowUp.BrandUsedTopCoatBrandName;
-                //modelResult.BrandUsedUnderCoatBrandName = leadFollowUp.BrandUsedUnderCoatBrandName;
+                modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
+                modelResult.UpTradingToBrandName = leadFollowUp.UpTradingToBrandName;
+                modelResult.BrandUsedInteriorBrandName = leadFollowUp.BrandUsedInteriorBrandName;
+                modelResult.BrandUsedExteriorBrandName = leadFollowUp.BrandUsedExteriorBrandName;
+                modelResult.BrandUsedTopCoatBrandName = leadFollowUp.BrandUsedTopCoatBrandName;
+                modelResult.BrandUsedUnderCoatBrandName = leadFollowUp.BrandUsedUnderCoatBrandName;
                 modelResult.StringToList(leadFollowUp, modelResult);
+
+                if (leadFollowUp.BusinessAchievement != null)
+                {
+                    modelResult.BusinessAchievement.ProductSamplingBrandName = leadFollowUp.BusinessAchievement.ProductSamplingBrandName;
+                    modelResult.BusinessAchievement.StringToList(leadFollowUp.BusinessAchievement, modelResult.BusinessAchievement);
+                }
             }
 
             #region Depot, Territory, Zone
@@ -340,6 +347,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 //{
                     var modelRes = new AppLeadFollowUpNotificationModel();
                     modelRes.UserId = userId;
+                    modelRes.Code = lead.Code;
                     modelRes.Depot = lead.Depot;
                     modelRes.Territory = lead.Territory;
                     modelRes.Zone = lead.Zone;
