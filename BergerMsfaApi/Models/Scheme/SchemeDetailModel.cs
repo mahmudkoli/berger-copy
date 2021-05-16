@@ -26,7 +26,8 @@ namespace BergerMsfaApi.Models.Scheme
         public string TargetVolume { get; set; }
 
         //Common
-        public string Benefit { get; set; }
+        public DateTime BenefitStartDate { get; set; }
+        public DateTime? BenefitEndDate { get; set; }
 
         public int SchemeMasterId { get; set; }
         public string SchemeMasterName { get; set; }
