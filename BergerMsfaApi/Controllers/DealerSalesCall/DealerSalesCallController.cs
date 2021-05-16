@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] QueryObjectModel query)
+        public async Task<IActionResult> Get([FromQuery] DealerSalesCallQueryObjectModel query)
         {
             try
             {
