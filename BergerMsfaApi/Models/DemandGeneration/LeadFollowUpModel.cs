@@ -30,6 +30,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int TypeOfClientId { get; set; }
         //public DropdownDetail TypeOfClient { get; set; }
         public string TypeOfClientText { get; set; }
+        public string OtherClientName { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonNameChangeReason { get; set; }
         public string KeyContactPersonMobile { get; set; }
@@ -133,6 +134,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int? TypeOfClientId { get; set; }
         //public DropdownDetail TypeOfClient { get; set; }
         public string TypeOfClientText { get; set; }
+        public string OtherClientName { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonNameChangeReason { get; set; }
         public string KeyContactPersonMobile { get; set; }
@@ -168,12 +170,18 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int TotalPaintingAreaSqftExterior { get; set; }
         public int TotalPaintingAreaSqftExteriorChangeCount { get; set; }
         public string TotalPaintingAreaSqftExteriorChangeReason { get; set; }
-        public string UpTradingFromBrandName { get; set; }
-        public string UpTradingToBrandName { get; set; }
-        public string BrandUsedInteriorBrandName { get; set; }
-        public string BrandUsedExteriorBrandName { get; set; }
-        public string BrandUsedUnderCoatBrandName { get; set; }
-        public string BrandUsedTopCoatBrandName { get; set; }
+        //public string UpTradingFromBrandName { get; set; }
+        //public string UpTradingToBrandName { get; set; }
+        //public string BrandUsedInteriorBrandName { get; set; }
+        //public string BrandUsedExteriorBrandName { get; set; }
+        //public string BrandUsedUnderCoatBrandName { get; set; }
+        //public string BrandUsedTopCoatBrandName { get; set; }
+        public IList<string> UpTradingFromBrandName { get; set; }
+        public IList<string> UpTradingToBrandName { get; set; }
+        public IList<string> BrandUsedInteriorBrandName { get; set; }
+        public IList<string> BrandUsedExteriorBrandName { get; set; }
+        public IList<string> BrandUsedUnderCoatBrandName { get; set; }
+        public IList<string> BrandUsedTopCoatBrandName { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
         public decimal ActualVolumeSoldInteriorGallon { get; set; }
@@ -188,6 +196,38 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public AppSaveLeadFollowUpModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+        }
+
+        public void StringToList(LeadFollowUp src, AppSaveLeadFollowUpModel dest)
+        {
+            dest.UpTradingFromBrandName = string.IsNullOrEmpty(src.UpTradingFromBrandName) ? new List<string>() :
+                                                src.UpTradingFromBrandName.Split(',').ToList();
+            dest.UpTradingToBrandName = string.IsNullOrEmpty(src.UpTradingToBrandName) ? new List<string>() :
+                                                src.UpTradingToBrandName.Split(',').ToList();
+            dest.BrandUsedInteriorBrandName = string.IsNullOrEmpty(src.BrandUsedInteriorBrandName) ? new List<string>() :
+                                                src.BrandUsedInteriorBrandName.Split(',').ToList();
+            dest.BrandUsedExteriorBrandName = string.IsNullOrEmpty(src.BrandUsedExteriorBrandName) ? new List<string>() :
+                                                src.BrandUsedExteriorBrandName.Split(',').ToList();
+            dest.BrandUsedTopCoatBrandName = string.IsNullOrEmpty(src.BrandUsedTopCoatBrandName) ? new List<string>() :
+                                                src.BrandUsedTopCoatBrandName.Split(',').ToList();
+            dest.BrandUsedUnderCoatBrandName = string.IsNullOrEmpty(src.BrandUsedUnderCoatBrandName) ? new List<string>() :
+                                                src.BrandUsedUnderCoatBrandName.Split(',').ToList();
+        }
+
+        public void ListToString(AppSaveLeadFollowUpModel src, LeadFollowUp dest)
+        {
+            dest.UpTradingFromBrandName = src.UpTradingFromBrandName == null || !src.UpTradingFromBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.UpTradingFromBrandName);
+            dest.UpTradingToBrandName = src.UpTradingToBrandName == null || !src.UpTradingToBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.UpTradingToBrandName);
+            dest.BrandUsedInteriorBrandName = src.BrandUsedInteriorBrandName == null || !src.BrandUsedInteriorBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedInteriorBrandName);
+            dest.BrandUsedExteriorBrandName = src.BrandUsedExteriorBrandName == null || !src.BrandUsedExteriorBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedExteriorBrandName);
+            dest.BrandUsedTopCoatBrandName = src.BrandUsedTopCoatBrandName == null || !src.BrandUsedTopCoatBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedTopCoatBrandName);
+            dest.BrandUsedUnderCoatBrandName = src.BrandUsedUnderCoatBrandName == null || !src.BrandUsedUnderCoatBrandName.Any() ? string.Empty :
+                                                string.Join(',', src.BrandUsedUnderCoatBrandName);
         }
 
         public void Mapping(Profile profile)
@@ -207,7 +247,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
                 .ForMember(dest => dest.NextVisitDatePlan,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDatePlan)))
                 .ForMember(dest => dest.ActualVisitDate,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)))
+                .AfterMap((src, dest) => dest.StringToList(src, dest));
 
             profile.CreateMap<AppSaveLeadFollowUpModel, LeadFollowUp>()
                 .ForMember(dest => dest.LastVisitedDate,
@@ -215,7 +256,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
                 .ForMember(dest => dest.NextVisitDatePlan,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDatePlan)))
                 .ForMember(dest => dest.ActualVisitDate,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.ActualVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.ActualVisitDate)))
+                .AfterMap((src, dest) => src.ListToString(src, dest));
 
             //profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>();
             //profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>();

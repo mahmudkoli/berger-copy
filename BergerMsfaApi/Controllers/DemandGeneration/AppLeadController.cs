@@ -29,7 +29,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         {
             try
             {
-                var result = await _leadService.GetAllByUserIdAsync(id);
+                var result = await _leadService.GetAllPendingProjectByUserIdAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)
