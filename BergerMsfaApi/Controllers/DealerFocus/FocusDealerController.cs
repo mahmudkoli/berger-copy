@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,13 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             _focusDealerService = focusDealerService;
         }
 
-       
-        [HttpGet("GetFocusdealerListPaging/{index}/{pageSize}")]
-        public async Task<IActionResult> GetFocusDealerList(int index,int pageSize,string search)
+
+        [HttpPost("GetFocusdealerListPaging")]
+        public async Task<IActionResult> GetFocusDealerList(FocusDealerSearchModel focusDealerSearchModel)
         {
             try
             {
-                var result = await _focusDealerService.GetFocusdealerListPaging(index,pageSize, search);
+                var result = await _focusDealerService.GetFocusdealerListPaging(focusDealerSearchModel.Index, focusDealerSearchModel.PageSize, focusDealerSearchModel.Search, focusDealerSearchModel.DepoId, focusDealerSearchModel.Territories, focusDealerSearchModel.CustZones);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -71,7 +72,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         {
 
             try
-            { 
+            {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 else if (!await _focusDealerService.IsExistAsync(model.Id))
                 {
@@ -109,13 +110,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
         }
 
-        [HttpGet("GetDealerList")]
-        public async Task<IActionResult> GetDealerList(int index,int pageSize,string search)
+        [HttpPost("GetDealerList")]
+        public async Task<IActionResult> GetDealerList(DealerListSearchModel model)
         {
             try
             {
-                
-                var result = await _focusDealerService.GetDalerListPaging(index,pageSize,search);
+                var result = await _focusDealerService.GetDalerListPaging(model.Index, model.PageSize, model.Search, model.DepoId,  model.Territories, model.CustZones,model.SalesGroup);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -124,11 +124,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
         }
         [HttpPut("UpdateDealerStatus")]
-        public async Task<IActionResult> DealerStatusUpdate([FromBody]DealerInfo dealer)
+        public async Task<IActionResult> DealerStatusUpdate([FromBody] DealerInfo dealer)
         {
             try
             {
-               
+
                 var result = await _focusDealerService.DealerStatusUpdate(dealer);
                 return OkResult(result);
             }

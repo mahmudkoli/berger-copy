@@ -138,7 +138,7 @@ namespace BergerMsfaApi.Models.Report
     public class DealerOpeningReportResultModel
     {
         public string UserId { get; set; }
-        public string DealrerOpeningId { get; set; }
+        public string DealrerOpeningCode { get; set; }
         public string BusinessArea { get; set; }
         public string BusinessAreaName { get; set; }
         public string SalesOffice { get; set; }
