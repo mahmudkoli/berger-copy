@@ -28,6 +28,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int TypeOfClientId { get; set; }
         //public DropdownModel TypeOfClient { get; set; }
         public string TypeOfClientText { get; set; }
+        public string OtherClientName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectAddress { get; set; }
         public string KeyContactPersonName { get; set; }
@@ -128,6 +129,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string Zone { get; set; }
         public int TypeOfClientId { get; set; }
         //public DropdownDetail TypeOfClient { get; set; }
+        public string OtherClientName { get; set; }
         public string ProjectName { get; set; }
         public string ProjectAddress { get; set; }
         public string KeyContactPersonName { get; set; }

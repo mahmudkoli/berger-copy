@@ -20,6 +20,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DateTime ActualVisitDate { get; set; }
         public int TypeOfClientId { get; set; }
         public DropdownDetail TypeOfClient { get; set; }
+        public string OtherClientName { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonNameChangeReason { get; set; }
         public string KeyContactPersonMobile { get; set; }
@@ -48,12 +49,12 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public string TotalPaintingAreaSqftInteriorChangeReason { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
         public string TotalPaintingAreaSqftExteriorChangeReason { get; set; }
-        public string UpTradingFromBrandName { get; set; }
-        public string UpTradingToBrandName { get; set; }
-        public string BrandUsedInteriorBrandName { get; set; }
-        public string BrandUsedExteriorBrandName { get; set; }
-        public string BrandUsedUnderCoatBrandName { get; set; }
-        public string BrandUsedTopCoatBrandName { get; set; }
+        public string UpTradingFromBrandName { get; set; } // multiple brand name separated by comma
+        public string UpTradingToBrandName { get; set; } // multiple brand name separated by comma
+        public string BrandUsedInteriorBrandName { get; set; } // multiple brand name separated by comma
+        public string BrandUsedExteriorBrandName { get; set; } // multiple brand name separated by comma
+        public string BrandUsedUnderCoatBrandName { get; set; } // multiple brand name separated by comma
+        public string BrandUsedTopCoatBrandName { get; set; } // multiple brand name separated by comma
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
         public decimal ActualVolumeSoldInteriorGallon { get; set; }
