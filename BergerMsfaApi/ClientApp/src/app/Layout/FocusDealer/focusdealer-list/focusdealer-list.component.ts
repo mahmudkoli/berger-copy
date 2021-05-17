@@ -5,14 +5,14 @@ import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { APIModel } from '../../../Shared/Entity';
 import { FocusDealer } from '../../../Shared/Entity/FocusDealer/JourneyPlan';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import {
   ActivityPermissionService,
-  PermissionGroup,
+  PermissionGroup
 } from '../../../Shared/Services/Activity-Permission/activity-permission.service';
 import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
 
@@ -48,7 +48,7 @@ export class FocusdealerListComponent implements OnInit {
     searchOptionDef: [
       new SearchOptionDef({
         searchOption: EnumSearchOption.Depot,
-        isRequiredBasedOnEmployeeRole: false,
+        isRequiredBasedOnEmployeeRole: true,
       }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.Territory,

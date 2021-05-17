@@ -14,7 +14,7 @@
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Scheme Master</label>
+                        <label class="required">Scheme Name</label>
                         <ng-select formControlName="schemeMasterId">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let sm of schemeMasters;" [value]="sm.id">{{sm.label}}</ng-option>
@@ -101,7 +101,7 @@
                       <label class="required">Benefit Start Date</label>
                       <div class="input-group w-100">
                         <input
-                          type="date"
+                          type="text"
                           class="form-control"
                           formControlName="benefitStartDate"
                           [ngClass]="{
@@ -112,9 +112,11 @@
                               formControls.benefitStartDate.touched &&
                               formControls.benefitStartDate.errors
                           }"
+                          name="dpFromDate"
                           ngbDatepicker
                           #dpFromDate="ngbDatepicker"
                           [placement]="'bottom'"
+                          placeholder="yyyy-mm-dd"
                         />
                         <div class="input-group-append">
                           <button
@@ -137,7 +139,7 @@
                           >Benefit Date is <strong>required</strong></span
                         >
                         <span *ngIf="formControls.benefitStartDate.invalid"
-                          >Please, Enter valid date (Ex: mm/dd/yyyy)</span
+                          >Please, Enter valid date (Ex: yyyy/mm/dd)</span
                         >
                       </small>
                     </div>
@@ -148,9 +150,10 @@
                       <label>Benefit End Date</label>
                       <div class="input-group w-100">
                         <input
-                          type="date"
+                          type="text"
                           class="form-control"
                           formControlName="benefitEndDate"
+                          name="dpToDate"
                           [ngClass]="{
                             'is-valid':
                               formControls.benefitEndDate.touched &&
@@ -162,6 +165,7 @@
                           ngbDatepicker
                           #dpToDate="ngbDatepicker"
                           [placement]="'bottom'"
+                          placeholder="yyyy-mm-dd"
                         />
                         <div class="input-group-append">
                           <button
@@ -179,10 +183,10 @@
                         "
                       >
                         <span *ngIf="formControls.benefitEndDate.errors.required"
-                          >Benefit Date is <strong>required</strong></span
+                          >Benefit End Date is <strong>required</strong></span
                         >
                         <span *ngIf="formControls.benefitEndDate.errors.pattern"
-                          >Please, Enter valid characters (not only spaces)</span
+                          >Please, Enter valid date(yyyy-mm-dd)</span
                         >
                       </small>
                     </div>

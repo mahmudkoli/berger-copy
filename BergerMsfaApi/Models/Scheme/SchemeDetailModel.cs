@@ -33,6 +33,7 @@ namespace BergerMsfaApi.Models.Scheme
         public string SchemeMasterName { get; set; }
         public string SchemeMasterCondition { get; set; }
         public Status Status { get; set; }
+        public string Benefit { get; set; }
 
         public void Mapping(Profile profile)
         {
