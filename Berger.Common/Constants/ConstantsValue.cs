@@ -78,7 +78,7 @@ namespace Berger.Common.Constants
         public const string Others = "Others";
         public const string DamageProduct = "Damage Product";
         public const string CBMachineMantainance = "CB Machine Mantainance";
-        public const string ProductComplaint = "Product Complaint";
+        public const string ProductComplaint = "Product Complain";
     }
 
     public static class ConstantSnapShotValue

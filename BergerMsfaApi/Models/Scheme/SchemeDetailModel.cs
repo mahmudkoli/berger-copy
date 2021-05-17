@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Mappings;
@@ -25,7 +26,8 @@ namespace BergerMsfaApi.Models.Scheme
         public string TargetVolume { get; set; }
 
         //Common
-        public string Benefit { get; set; }
+        public DateTime BenefitStartDate { get; set; }
+        public DateTime? BenefitEndDate { get; set; }
 
         public int SchemeMasterId { get; set; }
         public string SchemeMasterName { get; set; }
@@ -68,6 +70,8 @@ namespace BergerMsfaApi.Models.Scheme
 
         public int SchemeMasterId { get; set; }
         public Status Status { get; set; }
+        public DateTime BenefitStartDate { get; set; }
+        public DateTime? BenefitEndDate { get; set; }
 
         public void Mapping(Profile profile)
         {

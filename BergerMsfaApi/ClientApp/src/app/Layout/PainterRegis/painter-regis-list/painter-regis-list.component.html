@@ -32,7 +32,7 @@
                 </th>
                 <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon>
                 </th>
-                <th pSortableColumn="depotName">Depot Name <p-sortIcon field="depotName"></p-sortIcon>
+                <th pSortableColumn="depot">Depot <p-sortIcon field="depot"></p-sortIcon>
                 </th>
                 <th>
                     View Details
@@ -47,7 +47,7 @@
                         style="vertical-align: middle; border-radius: 50%;" />
                 </td>
                 <td>{{painter.phone}}</td>
-                <td>{{painter.depotName }}</td>
+                <td>{{painter.depot }}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View
                         Detail</button>

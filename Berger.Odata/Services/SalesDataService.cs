@@ -33,7 +33,7 @@ namespace Berger.Odata.Services
         {
             var currentDate = DateTime.Now;
             var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
-            var toDate = currentDate.AddMonths(-1).GetCYLD().DateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -369,7 +369,7 @@ namespace Berger.Odata.Services
         #endregion
 
         public async Task<IList<SalesDataModel>> GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
-            MyTargetReportType targetReportType, IList<int> dealerIds)
+            MyTargetReportType targetReportType, IList<int> dealerIds, EnumMyTargetBrandType brandType)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
@@ -379,6 +379,7 @@ namespace Berger.Odata.Services
                     selectQueryBuilder.AddProperty(DataColumnDef.Territory);
                     break;
                 case MyTargetReportType.ZoneWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.Territory);
                     selectQueryBuilder.AddProperty(DataColumnDef.Zone);
                     break;
                 case MyTargetReportType.BrandWise:
@@ -394,7 +395,14 @@ namespace Berger.Odata.Services
             var cyfd = fromDate.GetCYFD().DateFormat();
             var cyed = endDate.DateFormat();
 
-            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division);
+
+            var mtsBrands = new List<string>();
+            if (targetReportType == MyTargetReportType.BrandWise && EnumMyTargetBrandType.MTS_Brands == brandType)
+            {
+                mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
+
+            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division, brands: mtsBrands);
 
         }
 
@@ -426,7 +434,7 @@ namespace Berger.Odata.Services
 
         public async Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<int> dealerIds)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.Now.AddMonths(-1);
             var mtsBrandCodes = new List<string>();
 
             var cyfd = currentDate.GetCYFD().DateFormat();
@@ -552,8 +560,8 @@ namespace Berger.Odata.Services
                 _ => "-1"
             };
 
-            var fromDate = currentDate.AddDays(-30);
-            var toDate = currentDate;
+            var fromDate = currentDate.AddMonths(-1);
+            var toDate = currentDate.AddMonths(-1);
 
             var lfyfd = currentDate.GetLFYFD().DateFormat();
             var lfylcd = currentDate.GetLFYLCD().DateFormat();
@@ -585,20 +593,20 @@ namespace Berger.Odata.Services
                                             LYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
                                         });
 
+            var dataCyGroup = dataCy.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
+                                        new DealerPerformanceResultModel()
+                                        {
+                                            CustomerNo = s.Key,
+                                            CustomerName = s.FirstOrDefault()?.CustomerName ?? string.Empty,
+                                            CYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                                        });
+
             var result = new List<DealerPerformanceResultModel>();
 
             if (model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Top_10_Performer || model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Bottom_10_Performer)
             {
-                var dataCyGroup = dataCy.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
-                                            new DealerPerformanceResultModel()
-                                            {
-                                                CustomerNo = s.Key,
-                                                CustomerName = s.FirstOrDefault()?.CustomerName ?? string.Empty,
-                                                CYSales = s.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                                            });
-
                 var performerData = model.DealerPerformanceCategory == EnumDealerPerformanceCategory.Top_10_Performer ?
-                            dataCyGroup.OrderByDescending(o => o.CYSales).Take(customerCount) : dataCyGroup.OrderBy(o => o.CYSales).Take(customerCount);
+                            dataLyGroup.OrderByDescending(o => o.LYSales).Take(customerCount) : dataLyGroup.OrderBy(o => o.LYSales).Take(customerCount);
 
                 var slNo = 1;
 
@@ -608,17 +616,20 @@ namespace Berger.Odata.Services
                     res.SLNo = slNo++;
                     res.CustomerNo = item.CustomerNo;
                     res.CustomerName = item.CustomerName;
-                    res.CYSales = item.CYSales;
-                    res.LYSales = dataLyGroup.FirstOrDefault(f => f.CustomerNo == item.CustomerNo)?.LYSales ?? decimal.Zero;
+                    res.CYSales = dataCyGroup.FirstOrDefault(f => f.CustomerNo == item.CustomerNo)?.CYSales ?? decimal.Zero;
+                    res.LYSales = item.LYSales;
                     res.Growth = _odataService.GetGrowth(res.LYSales, res.CYSales);
                     result.Add(res);
                 }
             }
             else if (model.DealerPerformanceCategory == EnumDealerPerformanceCategory.NotPurchasedLastMonth)
             {
+                // without sales last month
                 var notPurchasedCyData = dataCy.Where(x => !(x.Date.DateFormatDate("yyyyMMdd") >= fromDate && x.Date.DateFormatDate("yyyyMMdd") <= toDate));
 
-                var notPurchasedCyGroupData = notPurchasedCyData.GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
+                // not sales only last month
+                var notPurchasedCyGroupData = dataCy.Where(x => !notPurchasedCyData.Any(y => y.CustomerNoOrSoldToParty == x.CustomerNoOrSoldToParty))
+                                            .GroupBy(x => x.CustomerNoOrSoldToParty).Select(s =>
                                             new DealerPerformanceResultModel()
                                             {
                                                 CustomerNo = s.Key,
@@ -646,7 +657,7 @@ namespace Berger.Odata.Services
 
         public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.Now.AddMonths(-1);
             var mtsBrandCodes = new List<string>();
 
             var cyfd = currentDate.GetCYFD().DateFormat();

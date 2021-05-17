@@ -78,15 +78,22 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
             return queryResult;
         }
-       
-        public async Task<object> GetBrandsAsync(AppBrandSearchModel query)
+
+        public async Task<IList<AppMaterialBrandModel>> GetBrandsAsync(AppBrandSearchModel query)
         {
             query.PageNo = query.PageNo ?? 1;
             query.PageSize = query.PageSize ?? int.MaxValue;
             query.MaterialDescription = query.MaterialDescription ?? string.Empty;
 
             var result = await _brandInfoRepository.GetAllIncludeAsync(
-                                x => new { x.Id, x.MaterialCode, x.MaterialDescription, x.MaterialGroupOrBrand },
+                                x => new AppMaterialBrandModel 
+                                { 
+                                    Id = x.Id, 
+                                    MaterialCode = x.MaterialCode, 
+                                    MaterialDescription = x.MaterialDescription, 
+                                    MaterialGroupOrBrand = x.MaterialGroupOrBrand, 
+                                    MaterialGroupOrBrandName = string.Empty 
+                                },
                                 x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || x.MaterialDescription.Contains(query.MaterialDescription)),
                                 x => x.OrderBy(o => o.MaterialDescription),
                                 null,
@@ -94,6 +101,13 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                                 query.PageSize.Value,
                                 true
                             );
+
+            var materialGroups = await _brandFamilyInfoRepository.GetAllIncludeAsync(x => x, null, null, null, true);
+
+            foreach (var item in result.Items)
+            {
+                item.MaterialGroupOrBrandName = materialGroups.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MaterialGroupOrBrand)?.MatarialGroupOrBrandName ?? string.Empty;
+            }
 
             return result.Items;
         }
@@ -196,6 +210,15 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return modelResult;
         }
 
+    }
+
+    public class AppMaterialBrandModel
+    {
+        public int Id { get; set; }
+        public string MaterialCode { get; set; }
+        public string MaterialDescription { get; set; }
+        public string MaterialGroupOrBrand { get; set; }
+        public string MaterialGroupOrBrandName { get; set; }
     }
 }
 

@@ -228,10 +228,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		const fromDate = controls['fromDate'].value;
 		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
 			this.searchOptionQuery.fromDate = new Date(fromDate.year,fromDate.month-1,fromDate.day);
+		} else {
+			this.searchOptionQuery.fromDate = null;
 		}
+
 		const toDate = controls['toDate'].value;
 		if (toDate && toDate.year && toDate.month && toDate.day) {
 			this.searchOptionQuery.toDate = new Date(toDate.year,toDate.month-1,toDate.day);
+		} else {
+			this.searchOptionQuery.toDate = null;
 		}
 
 		if (!this.checkSearchOptionValidity()) return;
@@ -240,6 +245,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	}
 
 	updateDealerSubDealerShow() {
+		this.searchOptionForm.controls.dealerId.setValue(null);
+
 		if (this.searchOptionSettings.isDealerShow) {
 			this.dealers = this._allDealers.filter(x => !x.isSubdealer);
 		} else if (this.searchOptionSettings.isSubDealerShow) {

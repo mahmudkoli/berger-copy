@@ -7,7 +7,7 @@
         public EnumVolumeOrValue VolumeOrValue { get; set; }
         public MyTargetReportType ReportType { get; set; }
         public string Division { get; set; }
-        public EnumMyTargetBrandTypeTypeModel BrandType { get; set; }
+        public EnumMyTargetBrandType BrandType { get; set; }
     }
 
     public enum MyTargetReportType
@@ -82,7 +82,7 @@
         FastPayCarry = 2
     }
 
-    public enum EnumMyTargetBrandTypeTypeModel
+    public enum EnumMyTargetBrandType
     {
         All_Brands = 1,
         MTS_Brands = 2

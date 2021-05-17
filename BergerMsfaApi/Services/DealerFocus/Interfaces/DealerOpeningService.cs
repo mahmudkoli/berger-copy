@@ -369,11 +369,30 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 foreach (var item in lstemail)
                 {
                     var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
-                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); 
-                    string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
-                    string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
+                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId);
+                    //string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
+                    //string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
 
-                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
+                    string subject = string.Empty;
+                    string body = string.Empty;
+
+                    subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
+
+                    body += $"Dear Concern,{Environment.NewLine}";
+
+                    body += string.Format("A new dealer open request has been generated from " +
+                        "“{0} & {1}” and got approved by “{2} & {3}”. " +
+                        "You are requested to open the new dealer in SAP by using the attached information.",
+                        createdBy.UserName,
+                        createdBy.Designation,
+                        LastApprovar.UserName,
+                        LastApprovar.Designation);
+
+                    body += $"{Environment.NewLine}{Environment.NewLine}";
+                    body += $"Thank You,{Environment.NewLine}";
+                    body += $"Berger Paints Bangladesh Limited";
+
+                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, body, lstAttachment);
                 }
             }
             catch (System.Exception ex)

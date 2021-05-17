@@ -108,11 +108,11 @@ namespace BergerMsfaApi
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
 
-            services.AddHostedService(serviceProvider =>
-                new NotificationWorker(
-                    serviceProvider.GetService<ILogger<NotificationWorker>>(),
-                    serviceProvider.GetService<IServiceScopeFactory>(),
-                    serviceProvider.GetService<IWebHostEnvironment>().WebRootPath, 24));
+            //services.AddHostedService(serviceProvider =>
+            //    new NotificationWorker(
+            //        serviceProvider.GetService<ILogger<NotificationWorker>>(),
+            //        serviceProvider.GetService<IServiceScopeFactory>(),
+            //        serviceProvider.GetService<IWebHostEnvironment>().WebRootPath, 24));
 
             services.AddTransient<IEmailSender, EmailSender>();
 

@@ -37,7 +37,7 @@
                         <label for="name">Business Area</label>
                         <ng-select  [multiple]="false"  [(ngModel)]="emailConfigModel.businessArea"  name="businessArea">
                              <!--<ng-option>--Select--</ng-option>--> 
-                            <ng-option *ngFor="let ur of plants;" [value]="ur.name">{{ur.name}}</ng-option>
+                            <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>
 
                     </div>

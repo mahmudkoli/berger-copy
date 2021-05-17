@@ -14,10 +14,11 @@ using System.Threading.Tasks;
 using X.PagedList;
 using Microsoft.EntityFrameworkCore;
 using Berger.Common.Constants;
+using String = EllipticCurve.Utils.String;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
-    public class FocusDealerService:IFocusDealerService
+    public class FocusDealerService : IFocusDealerService
     {
         private readonly IRepository<FocusDealer> _focusDealer;
         private readonly IRepository<UserInfo> _userInfoSvc;
@@ -39,15 +40,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _mapper = mapper;
         }
 
-        public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index,int pageSize,string search)
+        public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize, string search, string depoId, string[] territories = null, string[] zones = null)
 
         {
+
+            territories ??= new string[] { };
+            zones ??= new string[] { };
+
             var focusDealers = (from f in _focusDealer.GetAll()
                                 join u in _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId)
                                 on f.EmployeeId equals u.EmployeeId
                                 join d in _dealerInfo.GetAll()
                                 on f.Code equals d.Id
-                                orderby f.ValidTo.Date   descending
+                                orderby f.ValidTo.Date descending
                                 select new FocusDealerModel
                                 {
                                     Id = f.Id,
@@ -56,15 +61,20 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                     DealerName = d.CustomerName,
                                     EmployeeId = f.EmployeeId,
                                     ValidFrom = f.ValidFrom.ToString("yyyy/MM/dd"),
-                                    ValidTo = f.ValidTo.ToString("yyyy/MM/dd")
-                                }).ToList();
+                                    ValidTo = f.ValidTo.ToString("yyyy/MM/dd"),
+                                    Territory = d.Territory,
+                                    Zone = d.CustZone,
+                                    DepoId = d.BusinessArea
+                                }).Where(x => (!territories.Any() || territories.Contains(x.Territory)) &&
+                                              (!zones.Any() || zones.Contains(x.Zone)) &&
+                                              (string.IsNullOrWhiteSpace(depoId) || x.DepoId == depoId)).ToList();
 
 
             if (!string.IsNullOrEmpty(search))
                 focusDealers = focusDealers.Search(search);
             var result = await focusDealers.ToPagedListAsync(index, pageSize);
             return result;
-           
+
 
         }
         public async Task<FocusDealerModel> CreateAsync(FocusDealerModel model)
@@ -96,30 +106,55 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
 
         #region Dealer
-        public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search)
+        public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search, string depoId = null, string[] territories = null, string[] custZones = null, string[] salesGroup = null)
         {
 
-            var dealers = _dealerInfo.FindAll(x => !x.IsDeleted && 
-                x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
-                x.Division == ConstantsODataValue.DivisionDecorative)
+            territories ??= new string[] { };
+            custZones ??= new string[] { };
+            salesGroup ??= new string[] { };
+
+
+            var dealers =  _dealerInfo.FindAll(x => !x.IsDeleted &&
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
+                (string.IsNullOrWhiteSpace(depoId) || x.BusinessArea == depoId) &&
+                (!territories.Any() || territories.Contains(x.Territory)) &&
+                (!custZones.Any() || custZones.Contains(x.CustZone)) &&
+                (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup))
+                )
             .Select(s => new DealerModel
             {
-                Id = s.Id, CustomerName = s.CustomerName,CustomerNo = s.CustomerNo, Address = s.Address,
-                AccountGroup = s.AccountGroup,ContactNo = s.ContactNo,Area = s.SalesGroup, CustZone = s.CustZone,
-                BusinessArea = s.BusinessArea,IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
-                IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed", IsCBInstalled = s.IsCBInstalled,
-                IsExclusive = s.IsExclusive, IsLastYearAppointedLabel = s.IsLastYearAppointed ? "Last Year Appointed" : "Not Appointed",
-                IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme", IsLastYearAppointed = s.IsLastYearAppointed,
-                IsClubSupreme = s.IsClubSupreme
+                Id = s.Id,
+                CustomerName = s.CustomerName,
+                CustomerNo = s.CustomerNo,
+                Address = s.Address,
+                AccountGroup = s.AccountGroup,
+                ContactNo = s.ContactNo,
+                Area = s.SalesGroup,
+                CustZone = s.CustZone,
+                BusinessArea = s.BusinessArea,
+                IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
+                IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed",
+                IsCBInstalled = s.IsCBInstalled,
+                IsExclusive = s.IsExclusive,
+                IsLastYearAppointedLabel = s.IsLastYearAppointed ? "Last Year Appointed" : "Not Appointed",
+                IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
+                IsLastYearAppointed = s.IsLastYearAppointed,
+                IsClubSupreme = s.IsClubSupreme,
+                Territory = s.Territory,
+                IsAp = s.IsAP,
+                IsApLabel = s.IsAP ? "Yes" : "No",
+                SalesGroup = s.SalesGroup,
+                SalesOffice = s.SalesOffice
             }).ToList();
 
             if (!string.IsNullOrEmpty(search)) dealers = dealers.Search(search);
-          
 
-            var result= dealers.OrderBy(o=>o.CustomerNo).ToPagedList(index,pazeSize);
+
+            var result = dealers.OrderBy(o => o.CustomerNo).ToPagedList(index, pazeSize);
             return result;
         }
-       
+
         public async Task<bool> DealerStatusUpdate(DealerInfo dealer)
         {
             var find = await _dealerInfo.FindAsync(f => f.Id == dealer.Id);
@@ -131,6 +166,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             find.IsExclusive = dealer.IsExclusive;
             find.IsLastYearAppointed = dealer.IsLastYearAppointed;
             find.IsClubSupreme = dealer.IsClubSupreme;
+            find.IsAP = dealer.IsAP;
             await _dealerInfo.UpdateAsync(find);
             return true;
         }
@@ -147,7 +183,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     PropertyName = GetPropertyName(dealer, find),
                     PropertyValue = GetPropertyValue(dealer, find)
                 };
-                
+
                 await _dealerInfoStatusLog.CreateAsync(dealerInfoStatusLog);
             }
             catch (Exception ex)
@@ -158,7 +194,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
         public string GetPropertyName(DealerInfo dealer, DealerInfo find)
         {
-            string propertyName="";
+            string propertyName = "";
             if (find.IsExclusive != dealer.IsExclusive)
                 propertyName = "Exclusive";
             else if (find.IsCBInstalled != dealer.IsCBInstalled)
@@ -167,6 +203,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 propertyName = "Last Year Appointed";
             else if (find.IsClubSupreme != dealer.IsClubSupreme)
                 propertyName = "Club Supreme";
+            else if (find.IsAP != dealer.IsAP)
+                propertyName = "AP";
 
             return propertyName;
         }
@@ -175,31 +213,23 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string propertyValue = "";
             if (find.IsExclusive != dealer.IsExclusive)
             {
-                if (dealer.IsExclusive)
-                    propertyValue = "Yes";
-                else
-                    propertyValue = "No";
-            }    
+                propertyValue = dealer.IsExclusive ? "Yes" : "No";
+            }
             else if (find.IsCBInstalled != dealer.IsCBInstalled)
             {
-                if (dealer.IsCBInstalled)
-                    propertyValue = "Yes";
-                else
-                    propertyValue = "No";
+                propertyValue = dealer.IsCBInstalled ? "Yes" : "No";
             }
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
             {
-                if (dealer.IsLastYearAppointed)
-                    propertyValue = "Yes";
-                else
-                    propertyValue = "No";
+                propertyValue = dealer.IsLastYearAppointed ? "Yes" : "No";
             }
             else if (find.IsClubSupreme != dealer.IsClubSupreme)
             {
-                if (dealer.IsClubSupreme)
-                    propertyValue = "Yes";
-                else
-                    propertyValue = "No";
+                propertyValue = dealer.IsClubSupreme ? "Yes" : "No";
+            }
+            else if (find.IsAP != dealer.IsAP)
+            {
+                propertyValue = dealer.IsAP ? "Yes" : "No";
             }
 
             return propertyValue;
