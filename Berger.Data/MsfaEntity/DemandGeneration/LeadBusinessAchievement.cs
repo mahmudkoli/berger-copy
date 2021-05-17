@@ -15,7 +15,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public string ProductSourcing { get; set; }
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
-        public string ProductSamplingBrandName { get; set; }
+        public string ProductSamplingBrandName { get; set; } // multiple brand name separated by comma
         public DateTime NextVisitDate { get; set; }
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
