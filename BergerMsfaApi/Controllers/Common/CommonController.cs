@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +13,13 @@ namespace BergerMsfaApi.Controllers.Common
     public class CommonController : BaseController
     {
         private readonly ICommonService _commonSvc;
+        private readonly IBrandService _brandService;
 
         public CommonController(
-            ICommonService commonSvc)
+            ICommonService commonSvc, IBrandService brandService)
         {
             _commonSvc = commonSvc;
+            _brandService = brandService;
         }
 
         [HttpGet("GetDealList")]
@@ -193,6 +196,34 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = _commonSvc.GetYearList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetBrandDropDown")]
+        public async Task<IActionResult> GetBrandDropDown()
+        {
+            try
+            {
+                var result = await _brandService.GetBrandFamilyDropDownAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        } 
+        
+        [HttpGet("GetMaterialGroupOrBrand")]
+        public async Task<IActionResult> GetMaterialGroupOrBrand()
+        {
+            try
+            {
+                var result = await _brandService.GetBrandDropDownAsync();
                 return OkResult(result);
             }
             catch (Exception ex)

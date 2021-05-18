@@ -1,6 +1,6 @@
-import { Injectable, Inject } from '@angular/core';
-import { APIResponse } from '../../Entity';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { APIResponse } from '../../Entity';
 import { IAuthUser } from '../../Entity/Users/auth';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class CommonService {
       console.log("baseUrl: ", baseUrl);
       this.baseUrl = baseUrl + 'api/';
   }
-  
+
   toQueryString(obj) {
     let parts = [];
     for (const property in obj) {
@@ -30,7 +30,7 @@ export class CommonService {
             parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(val));
           });
         } else if (value instanceof Date) {
-          const newValue = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), 
+          const newValue = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(),
                                               value.getHours(), value.getMinutes(), value.getSeconds()))
           parts.push(encodeURIComponent(property) + '=' + newValue.toISOString());
         } else {
@@ -79,7 +79,7 @@ export class CommonService {
           // let value = obj[key];
           let keyText = key+postFixText;
           if (typeof value === "boolean") {
-            obj[keyText] = value ? trueText : falseText; 
+            obj[keyText] = value ? trueText : falseText;
           }
       });
   }
@@ -88,11 +88,11 @@ export class CommonService {
 		return value.replace(/(_|-)/g, ' ').trim()
                 .replace(/\w\S*/g, function(str) {
                   return str.charAt(0).toUpperCase() + str.substr(1)
-                })   
+                })
                 .replace(/([a-z])([A-Z])/g, '$1 $2')
                 .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') ;
 	}
-  
+
   renameKeys(obj, keysMap) {
     return Object.keys(obj).reduce(
       (acc, key) => ({
@@ -178,6 +178,14 @@ export class CommonService {
 
   getCreditControlAreaList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/AppCommon/GetCreditControlAreaList');
+  }
+
+  getBrandDropDown() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/GetBrandDropDown');
+  }
+
+  getMaterialGroupOrBrand() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/GetMaterialGroupOrBrand');
   }
 
   public getDealerList(userCategory: string, userCategoryIds: string[]) {

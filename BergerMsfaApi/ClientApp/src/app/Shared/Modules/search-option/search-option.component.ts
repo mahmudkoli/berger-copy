@@ -1,21 +1,14 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { AlertService } from '../alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadSummaryQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
-import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from '.';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { APIResponse } from 'src/app/Shared/Entity';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { EnumEmployeeRole } from 'src/app/Shared/Enums/employee-role';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from '.';
+import { AlertService } from '../alert/alert.service';
 
 @Component({
     selector: 'app-search-option',
@@ -25,10 +18,10 @@ import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 export class SearchOptionComponent implements OnInit, OnDestroy {
 
 	@Input() searchOptionQuery: SearchOptionQuery;
-	@Input() searchOptionSettings: SearchOptionSettings; 
-	@Output() searchOptionQueryCallbackFn: EventEmitter<SearchOptionQuery> = 
+	@Input() searchOptionSettings: SearchOptionSettings;
+	@Output() searchOptionQueryCallbackFn: EventEmitter<SearchOptionQuery> =
 											new EventEmitter<SearchOptionQuery>() || null;
-	
+
 	searchOptionForm: FormGroup;
 	employeeRole: EnumEmployeeRole;
 
@@ -44,6 +37,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     painters: any[] = [];
     painterTypes: any[] = [];
     paymentMethods: any[] = [];
+    brands: any[] = [];
+    materialCodes: any[] = [];
 	months: any[] = [];
 	years: any[] = [];
 
@@ -52,10 +47,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	private subscriptions: Subscription[] = [];
 
 	constructor(
-		private router: Router,
 		private alertService: AlertService,
-		private reportService: ReportService,
-		private modalService: NgbModal,
 		private formBuilder: FormBuilder,
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
@@ -87,6 +79,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			painterId: [this.searchOptionQuery.painterId],
 			painterTypeId: [this.searchOptionQuery.painterTypeId],
 			paymentMethodId: [this.searchOptionQuery.paymentMethodId],
+			brands:[this.searchOptionQuery.brands],
+			materialCodes:[this.searchOptionQuery.materialCodes],
 			fromMonth: [this.searchOptionQuery.fromMonth],
 			toMonth: [this.searchOptionQuery.toMonth],
 			fromYear: [this.searchOptionQuery.fromYear],
@@ -157,7 +151,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	get formControls() { return this.searchOptionForm.controls; }
 
 	private get _loggedUser() { return this.commonService.getUserInfoFromLocalStorage(); }
-	
+
     populateDropdownDataList() {
         const forkJoinSubscription1 = forkJoin([
             this.hasSearchOption(EnumSearchOption.Depot)?this.commonService.getDepotList():of(APIResponse),
@@ -181,7 +175,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.ProjectStatusId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ProjectStatus):of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterId)?this.commonService.getPainterList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterTypeId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Painter):of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse)
+
         ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods]) => {
             this.dealers = dealers.data;
             this.paintingStages = paintingStages.data;
@@ -192,14 +187,24 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			this._allDealers = dealers.data;
 			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
-		
+
+        const forkJoinSubscription3 = forkJoin([
+            this.hasSearchOption(EnumSearchOption.Brand)?this.commonService.getBrandDropDown():of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.MaterialCode)?this.commonService.getMaterialGroupOrBrand():of(APIResponse),
+        ]).subscribe(([brands,materialCodes]) => {
+            this.brands = brands.data;
+            this.materialCodes = materialCodes.data;
+			this.updateDealerSubDealerShow();
+        }, (err) => { }, () => { });
+
 		this.subscriptions.push(forkJoinSubscription1);
 		this.subscriptions.push(forkJoinSubscription2);
+		this.subscriptions.push(forkJoinSubscription3);
 
 		this.months = this.getMonths();
 		this.years = this.getYears();
     }
-	
+
 	onSubmitSearch() {
 		const controls = this.searchOptionForm.controls;
 		this.searchOptionQuery.page = 1;
@@ -224,6 +229,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.text1 = controls['text1'].value;
 		this.searchOptionQuery.text2 = controls['text2'].value;
 		this.searchOptionQuery.text3 = controls['text3'].value;
+		this.searchOptionQuery.brands = controls['brands'].value;
+		this.searchOptionQuery.materialCodes = controls['materialCodes'].value;
 
 		const fromDate = controls['fromDate'].value;
 		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
@@ -265,8 +272,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 
 	checkSearchOptionValidity() : boolean | true {
 		let validity = true;
-		if (this.searchOptionSettings.hasMonthDifference && 
-			!this.checkDifferenceMonth(this.searchOptionQuery.fromYear, this.searchOptionQuery.fromMonth, 
+		if (this.searchOptionSettings.hasMonthDifference &&
+			!this.checkDifferenceMonth(this.searchOptionQuery.fromYear, this.searchOptionQuery.fromMonth,
 				this.searchOptionQuery.toYear, this.searchOptionQuery.toMonth, this.searchOptionSettings.monthDifferenceCount)) {
 			this.alertService.alert(`Month difference must be ${this.searchOptionSettings.monthDifferenceCount} months.`);
 			validity = false;
@@ -298,12 +305,12 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot;
 				break;
 			case EnumEmployeeRole.AM:
-				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot || 
-							searchOptionDef.searchOption==EnumSearchOption.SalesGroup || 
+				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot ||
+							searchOptionDef.searchOption==EnumSearchOption.SalesGroup ||
 							searchOptionDef.searchOption==EnumSearchOption.Territory;
 				break;
 			case EnumEmployeeRole.TM_TO:
-				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot || 
+				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot ||
 							searchOptionDef.searchOption==EnumSearchOption.Territory;
 				break;
 		}
@@ -313,14 +320,14 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	}
 
 	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
+		return date && date.year && date.month && date.day ?
+				new Date(date.year,date.month-1,date.day) :
 				null;
 	}
 
 	getMonths(): any[] {
-		const months = [{'id':1,'name':'January'}, {'id':2,'name':'February'}, {'id':3,'name':'March'}, {'id':4,'name':'April'}, 
-				{'id':5,'name':'May'}, {'id':6,'name':'June'}, {'id':7,'name':'July'}, {'id':8,'name':'August'}, 
+		const months = [{'id':1,'name':'January'}, {'id':2,'name':'February'}, {'id':3,'name':'March'}, {'id':4,'name':'April'},
+				{'id':5,'name':'May'}, {'id':6,'name':'June'}, {'id':7,'name':'July'}, {'id':8,'name':'August'},
 				{'id':9,'name':'September'}, {'id':10,'name':'October'}, {'id':11,'name':'November'}, {'id':12,'name':'December'}];
 		return months;
 	}
