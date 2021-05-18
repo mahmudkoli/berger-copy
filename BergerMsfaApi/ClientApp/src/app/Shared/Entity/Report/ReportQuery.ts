@@ -331,11 +331,11 @@ export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
 }
 
 export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
-    dealerId: number;
+    customerNo: number;
 }
 
 export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
-    resutType: number;
+    resultType: number;
 }
 
 export class BusinessCallAnalysisReportQuery extends ReportBaseQuery {

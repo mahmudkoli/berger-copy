@@ -8,7 +8,8 @@ namespace Berger.Odata.Model
     {
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
-        public string DepotId { get; set; }
+        public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
         public List<string> Territories { get; set; }
         public List<string> Zones { get; set; }
     }
@@ -20,12 +21,12 @@ namespace Berger.Odata.Model
     
     public class DealerWiseTargetAchievementSearchModel : KpiDataSearchModel
     {
-        public int DealerId { get; set; }
+        public int CustomerNo { get; set; }
     }
 
     public class ProductWiseTargetAchievementSearchModel : KpiDataSearchModel
     {
-        public int resutType { get; set; }
+        public int ResultType { get; set; }
     }
 
 }
