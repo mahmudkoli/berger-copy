@@ -257,9 +257,10 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             }
 
             #region Depot, Territory, Zone
-            modelResult.DepotName = _depotRepository.Find(f => f.Werks == modelResult.Depot)?.Name1 ?? string.Empty;
-            modelResult.TerritoryName = _territoryRepository.Find(f => f.Code == modelResult.Territory)?.Name ?? string.Empty;
-            modelResult.ZoneName = _zoneRepository.Find(f => f.Code == modelResult.Zone)?.Name ?? string.Empty;
+            var depot = _depotRepository.Find(f => f.Werks == modelResult.Depot);
+            modelResult.DepotName = depot != null ? $"{depot.Name1} ({depot.Werks})" : string.Empty;
+            modelResult.TerritoryName = modelResult.Territory ?? string.Empty;
+            modelResult.ZoneName = modelResult.Zone ?? string.Empty;
             #endregion
 
             return modelResult;
