@@ -197,6 +197,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public AppSaveLeadFollowUpModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.UpTradingFromBrandNames = new List<string>();
+            this.UpTradingToBrandNames = new List<string>();
+            this.BrandUsedInteriorBrandNames = new List<string>();
+            this.BrandUsedExteriorBrandNames = new List<string>();
+            this.BrandUsedTopCoatBrandNames = new List<string>();
+            this.BrandUsedUnderCoatBrandNames = new List<string>();
         }
 
         public void StringToList(LeadFollowUp src, AppSaveLeadFollowUpModel dest)

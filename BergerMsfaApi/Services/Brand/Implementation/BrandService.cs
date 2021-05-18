@@ -94,7 +94,8 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                                     MaterialGroupOrBrand = x.MaterialGroupOrBrand, 
                                     MaterialGroupOrBrandName = string.Empty 
                                 },
-                                x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || x.MaterialDescription.Contains(query.MaterialDescription)),
+                                x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || 
+                                    x.MaterialDescription.Contains(query.MaterialDescription) || x.MaterialGroupOrBrand.Contains(query.MaterialDescription)),
                                 x => x.OrderBy(o => o.MaterialDescription),
                                 null,
                                 query.PageNo.Value,
@@ -115,7 +116,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         public async Task<object> GetBrandsFamilyAsync()
         {
             var result = await _brandFamilyInfoRepository.GetAllIncludeAsync(
-                                x => new { x.Id, x.MatarialGroupOrBrand, x.MatarialGroupOrBrandName },
+                                x => new { x.Id, x.MatarialGroupOrBrand, MatarialGroupOrBrandName = $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})" },
                                 null,
                                 x => x.OrderBy(o => o.MatarialGroupOrBrandName),
                                 null,
