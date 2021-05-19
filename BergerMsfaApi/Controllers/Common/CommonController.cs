@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -216,8 +218,8 @@ namespace BergerMsfaApi.Controllers.Common
             {
                 return ExceptionResult(ex);
             }
-        } 
-        
+        }
+
         [HttpGet("GetMaterialGroupOrBrand")]
         public async Task<IActionResult> GetMaterialGroupOrBrand()
         {
@@ -225,6 +227,61 @@ namespace BergerMsfaApi.Controllers.Common
             {
                 var result = await _brandService.GetBrandDropDownAsync();
                 return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetActivitySummaryDropDown")]
+        public IActionResult GetActivitySummaryDropDown()
+        {
+            try
+            {
+
+                var list = new List<KeyValuePairObjectModel>
+                {
+                    new KeyValuePairObjectModel()
+                    {
+                        Text = "JOURNEY PLAN",
+                        Value = "JOURNEY PLAN"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "SALES CALL- SUB DEALER",
+                        Value = "SALES CALL- SUB DEALER"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "SALES CALL- DIRECT DEALER",
+                        Value = "SALES CALL- DIRECT DEALER"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "PAINTER CALL",
+                        Value = "PAINTER CALL"
+                    },
+                    new KeyValuePairObjectModel()
+                    {
+                        Text = "PAINTER REGISTRATION",
+                        Value = "PAINTER REGISTRATION"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "AD HOC VISIT IN DEALERS POINT",
+                        Value = "AD HOC VISIT IN DEALERS POINT"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "LEAD GENERATION",
+                        Value = "LEAD GENERATION"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "LEAD FOLLOWUP",
+                        Value = "LEAD FOLLOWUP"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "TOTAL COLLECTION VALUE",
+                        Value = "TOTAL COLLECTION VALUE"
+                    },
+                }.OrderBy(x => x.Text).ToList();
+                return OkResult(list);
             }
             catch (Exception ex)
             {

@@ -178,6 +178,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('activitySummary')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('activitySummary')}">Activity</label>
+                    <ng-select [items]="activitySummaries" formControlName="activitySummary" bindValue="value" bindLabel="text" [multiple]="false"  [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.activitySummary.touched && formControls.activitySummary.errors">
+                        <span *ngIf="formControls.activitySummary.errors.required">Activity is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
 
             <div class="col-md-3" *ngIf="hasSearchOption('fromMonth')">
                 <div class="position-relative form-group">

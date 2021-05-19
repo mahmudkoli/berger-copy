@@ -26,7 +26,7 @@ export class SearchOptionQuery extends QueryObject {
     text1: string;
     text2: string;
     text3: string;
-
+    activitySummary:string;
     constructor(init?: Partial<SearchOptionQuery>) {
         super();
         Object.assign(this, init);
@@ -82,6 +82,7 @@ export enum EnumSearchOption {
     PainterTypeId='painterTypeId',
     PaymentMethodId='paymentMethodId',
     MaterialCode='materialCodes',
+    ActivitySummary='activitySummary',
     Brand='brands',
     FromMonth='fromMonth',
     ToMonth='toMonth',

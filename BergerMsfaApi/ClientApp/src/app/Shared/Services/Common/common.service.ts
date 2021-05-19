@@ -188,6 +188,10 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/GetMaterialGroupOrBrand');
   }
 
+  getActivitySummaryDropDown() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/GetActivitySummaryDropDown');
+  }
+
   public getDealerList(userCategory: string, userCategoryIds: string[]) {
     var params = new HttpParams();
     params = params.append("userCategory", userCategory);

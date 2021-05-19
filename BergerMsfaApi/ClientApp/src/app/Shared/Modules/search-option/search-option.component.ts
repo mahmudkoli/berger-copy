@@ -41,6 +41,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     materialCodes: any[] = [];
 	months: any[] = [];
 	years: any[] = [];
+	activitySummaries: any[] = [];
 
 	private _allDealers: any[] = []
 
@@ -90,6 +91,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			text1: [this.searchOptionQuery.text1],
 			text2: [this.searchOptionQuery.text2],
 			text3: [this.searchOptionQuery.text3],
+			activitySummary: [this.searchOptionQuery.activitySummary],
 		});
 
 		if (this.searchOptionQuery.fromDate) {
@@ -191,9 +193,11 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
         const forkJoinSubscription3 = forkJoin([
             this.hasSearchOption(EnumSearchOption.Brand)?this.commonService.getBrandDropDown():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.MaterialCode)?this.commonService.getMaterialGroupOrBrand():of(APIResponse),
-        ]).subscribe(([brands,materialCodes]) => {
+            this.hasSearchOption(EnumSearchOption.ActivitySummary)?this.commonService.getActivitySummaryDropDown():of(APIResponse),
+        ]).subscribe(([brands,materialCodes,activitySummary]) => {
             this.brands = brands.data;
             this.materialCodes = materialCodes.data;
+            this.activitySummaries = activitySummary.data;
 			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
 
@@ -231,6 +235,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.text3 = controls['text3'].value;
 		this.searchOptionQuery.brands = controls['brands'].value;
 		this.searchOptionQuery.materialCodes = controls['materialCodes'].value;
+		this.searchOptionQuery.activitySummary = controls['activitySummary'].value;
 
 		const fromDate = controls['fromDate'].value;
 		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
