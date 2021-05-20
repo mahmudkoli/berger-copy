@@ -13,7 +13,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
     public interface IDealerOpeningService
     {
         #region App
-        Task<IEnumerable<DealerOpeningModel>> AppGetDealerOpeningListAsync();
+        Task<IEnumerable<AppDealerOpeningModel>> AppGetDealerOpeningListByCurrentUserAsync();
         Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model);
         Task<DealerOpeningModel> AppUpdateDealerOpeningAsync(DealerOpeningModel model);
         #endregion
