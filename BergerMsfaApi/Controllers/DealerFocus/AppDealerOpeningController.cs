@@ -5,6 +5,7 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -31,29 +33,30 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         {
             try
             {
-                var result = await _dealerOpeningSvc.AppGetDealerOpeningListAsync();
+                var result = await _dealerOpeningSvc.AppGetDealerOpeningListByCurrentUserAsync();
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
         }
-        [HttpGet("GetDealerOpening/{DealerOpeningId}")]
-        public async Task<IActionResult> GetDealerOpeningListAsync(int DealerOpeningId)
-        {
-            try
-            {
-                var result = await _dealerOpeningSvc.GetDealerOpeningDetailById(DealerOpeningId);
-                return OkResult(result);
 
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetDealerOpening/{DealerOpeningId}")]
+        //public async Task<IActionResult> GetDealerOpeningListAsync(int DealerOpeningId)
+        //{
+        //    try
+        //    {
+        //        var result = await _dealerOpeningSvc.GetDealerOpeningDetailById(DealerOpeningId);
+        //        return OkResult(result);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
+
         [HttpPost("CreateDealerOpening")]
         //[RequestSizeLimit(40000000)]
         public async Task<IActionResult> CreateDealerOpeningAsync([FromBody] DealerOpeningModel model)
@@ -73,36 +76,36 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
         }
 
-        [HttpPut("UpdateDealerOpening")]
-        public async Task<IActionResult> UpdateDealerOpeningAsync([FromBody] DealerOpeningModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _dealerOpeningSvc.AppUpdateDealerOpeningAsync(model);
-                return OkResult(result);
+        //[HttpPut("UpdateDealerOpening")]
+        //public async Task<IActionResult> UpdateDealerOpeningAsync([FromBody] DealerOpeningModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _dealerOpeningSvc.AppUpdateDealerOpeningAsync(model);
+        //        return OkResult(result);
 
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpPut("DeleteDealerOpening/{DealerOpeningId}")]
-        public async Task<IActionResult> DeleteDealerOpening(int DealerOpeningId)
-        {
-            try
-            {
-                var result = await _dealerOpeningSvc.DeleteDealerOpeningAsync(DealerOpeningId);
-                return OkResult(result);
+        //[HttpPut("DeleteDealerOpening/{DealerOpeningId}")]
+        //public async Task<IActionResult> DeleteDealerOpening(int DealerOpeningId)
+        //{
+        //    try
+        //    {
+        //        var result = await _dealerOpeningSvc.DeleteDealerOpeningAsync(DealerOpeningId);
+        //        return OkResult(result);
 
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
     }
 }
