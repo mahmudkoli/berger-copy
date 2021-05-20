@@ -48,8 +48,9 @@ namespace BergerMsfaApi.Models.Report
 
     }
 
-    public class CollectionPlanKPIReportSearchModel : KPIReportBaseSearchModel
+    public class CollectionPlanKPIReportSearchModel
     {
-
+        public string Depot { get; set; }
+        public string Territory { get; set; }
     }
 }

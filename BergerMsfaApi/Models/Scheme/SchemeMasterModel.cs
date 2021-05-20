@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Mappings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Scheme
 {
@@ -13,6 +9,8 @@ namespace BergerMsfaApi.Models.Scheme
         public int Id { get; set; }
         public string SchemeName { get; set; }
         public string Condition { get; set; }
+        public string BusinessArea { get; set; }
+        public string BusinessAreaName { get; set; }
 
         //public IList<SchemeDetailModel> SchemeDetails { get; set; }
 
@@ -33,6 +31,7 @@ namespace BergerMsfaApi.Models.Scheme
         public int Id { get; set; }
         public string SchemeName { get; set; }
         public string Condition { get; set; }
+        public string BusinessArea { get; set; }
 
         public void Mapping(Profile profile)
         {

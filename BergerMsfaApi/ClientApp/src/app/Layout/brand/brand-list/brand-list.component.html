@@ -1,6 +1,10 @@
-
+<div class="col col-12">
+    <app-search-option  [searchOptionQuery]="searchOptionQuery"
+    [searchOptionSettings]="searchOptionSettings"
+    (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"></app-search-option>
+</div>
 <div class="col col-md-12">
-    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="brands" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="brands" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
         (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
     </app-p-table>
 </div>

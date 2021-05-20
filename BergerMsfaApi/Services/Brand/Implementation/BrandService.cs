@@ -1,8 +1,6 @@
-﻿using Berger.Data.MsfaEntity.DealerFocus;
-using Berger.Data.MsfaEntity.SAPTables;
+﻿using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.Brand;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Brand.Interfaces;
@@ -10,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
 using AutoMapper;
 using BergerMsfaApi.Models.Common;
 using System.Linq.Expressions;
@@ -18,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.Brand.Implementation
 {
-    public class BrandService:IBrandService
+    public class BrandService : IBrandService
     {
         private readonly IRepository<BrandInfo> _brandInfoRepository;
         private readonly IRepository<BrandFamilyInfo> _brandFamilyInfoRepository;
@@ -50,7 +47,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return _mapper.Map<BrandInfoModel>(result);
         }
 
-        public async Task<QueryResultModel<BrandInfoModel>> GetBrandsAsync(QueryObjectModel query)
+        public async Task<QueryResultModel<BrandInfoModel>> GetBrandsAsync(BrandQueryObjectModel query)
         {
             var columnsMap = new Dictionary<string, Expression<Func<BrandInfo, object>>>()
             {
@@ -59,9 +56,17 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 ["materialGroupOrBrand"] = v => v.MaterialGroupOrBrand,
             };
 
+            query.MatrialCodes ??= new string[] { };
+            query.Brands ??= new string[] { };
+
             var result = await _brandInfoRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.MaterialGroupOrBrand.Contains(query.GlobalSearchValue) || x.MaterialCode.Contains(query.GlobalSearchValue) || x.MaterialDescription.Contains(query.GlobalSearchValue)),
+                                x =>
+                                    ((string.IsNullOrEmpty(query.GlobalSearchValue) || x.MaterialGroupOrBrand.Contains(query.GlobalSearchValue) ||
+                                     x.MaterialCode.Contains(query.GlobalSearchValue) || x.MaterialDescription.Contains(query.GlobalSearchValue)) &&
+                                     !x.IsDeleted &&
+                                     (!query.Brands.Any() || query.Brands.Contains(x.MaterialGroupOrBrand)) &&
+                                     (!query.MatrialCodes.Any() || query.MatrialCodes.Contains(x.MaterialCode))),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,
                                 query.Page,
@@ -86,15 +91,16 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             query.MaterialDescription = query.MaterialDescription ?? string.Empty;
 
             var result = await _brandInfoRepository.GetAllIncludeAsync(
-                                x => new AppMaterialBrandModel 
-                                { 
-                                    Id = x.Id, 
-                                    MaterialCode = x.MaterialCode, 
-                                    MaterialDescription = x.MaterialDescription, 
-                                    MaterialGroupOrBrand = x.MaterialGroupOrBrand, 
-                                    MaterialGroupOrBrandName = string.Empty 
+                                x => new AppMaterialBrandModel
+                                {
+                                    Id = x.Id,
+                                    MaterialCode = x.MaterialCode,
+                                    MaterialDescription = x.MaterialDescription,
+                                    MaterialGroupOrBrand = x.MaterialGroupOrBrand,
+                                    MaterialGroupOrBrandName = string.Empty
                                 },
-                                x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || x.MaterialDescription.Contains(query.MaterialDescription)),
+                                x => (string.IsNullOrEmpty(query.MaterialDescription) || x.MaterialCode.Contains(query.MaterialDescription) || 
+                                    x.MaterialDescription.Contains(query.MaterialDescription) || x.MaterialGroupOrBrand.Contains(query.MaterialDescription)),
                                 x => x.OrderBy(o => o.MaterialDescription),
                                 null,
                                 query.PageNo.Value,
@@ -111,11 +117,11 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
             return result.Items;
         }
-       
+
         public async Task<object> GetBrandsFamilyAsync()
         {
             var result = await _brandFamilyInfoRepository.GetAllIncludeAsync(
-                                x => new { x.Id, x.MatarialGroupOrBrand, x.MatarialGroupOrBrandName },
+                                x => new { x.Id, x.MatarialGroupOrBrand, MatarialGroupOrBrandName = $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})" },
                                 null,
                                 x => x.OrderBy(o => o.MatarialGroupOrBrandName),
                                 null,
@@ -124,7 +130,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
             return result;
         }
-       
+
         public async Task<bool> BrandStatusUpdate(BrandStatusModel brandStatus)
         {
             var userId = AppIdentity.AppUser.UserId;
@@ -134,7 +140,9 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                 ["IsCBInstalled"] = f => f.MaterialCode.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsMTS"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
                 ["IsPremium"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
-                ["isEnamel"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["IsEnamel"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["IsPowder"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
+                ["IsLiquid"] = f => f.MaterialGroupOrBrand.ToLower() == brandStatus.MaterialOrBrandCode.ToLower(),
             };
 
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
@@ -148,11 +156,13 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
                     case "IsMTS": find.IsMTS = !find.IsMTS; break;
                     case "IsPremium": find.IsPremium = !find.IsPremium; break;
-                    case "isEnamel": find.IsEnamel = !find.IsEnamel; break;
+                    case "IsEnamel": find.IsEnamel = !find.IsEnamel; break;
+                    case "IsLiquid": find.IsLiquid = !find.IsLiquid; break;
+                    case "IsPowder": find.IsPowder = !find.IsPowder; break;
                     default: break;
                 }
             }
-            
+
             if (findAll.Any())
                 await _brandInfoRepository.UpdateListAsync(findAll);
 
@@ -164,7 +174,7 @@ namespace BergerMsfaApi.Services.Brand.Implementation
 
         private async Task CreateBrandInfoStatusLog(BrandStatusModel brandStatus, int userId, List<BrandInfo> findAll)
         {
-            
+
             foreach (var brandInfoItem in findAll)
             {
 
@@ -173,24 +183,26 @@ namespace BergerMsfaApi.Services.Brand.Implementation
                     UserId = userId,
                     BrandInfoId = brandInfoItem.Id,
                     PropertyValue = GetPropertyValue(brandStatus.PropertyName, brandInfoItem),
-                    PropertyName = brandStatus.PropertyName.Remove(0,2) // ISMTS -> MTS
+                    PropertyName = brandStatus.PropertyName.Remove(0, 2) // ISMTS -> MTS
 
                 };
-                
+
                 await _brandInfoStatusLogRepository.CreateAsync(brandStatusLog);
-                
+
             }
         }
 
-        private string GetPropertyValue(string propertyName,BrandInfo brandInfo)
+        private string GetPropertyValue(string propertyName, BrandInfo brandInfo)
         {
-            string value="";
+            string value = "";
             switch (propertyName)
             {
                 case "IsCBInstalled": value = (brandInfo.IsCBInstalled ? "Yes" : "No"); break;
                 case "IsMTS": value = (brandInfo.IsMTS ? "Yes" : "No"); break;
                 case "IsPremium": value = (brandInfo.IsPremium ? "Yes" : "No"); break;
-                case "isEnamel": value = (brandInfo.IsEnamel ? "Yes" : "No"); break;
+                case "IsEnamel": value = (brandInfo.IsEnamel ? "Yes" : "No"); break;
+                case "IsLiquid": value = (brandInfo.IsLiquid ? "Yes" : "No"); break;
+                case "IsPowder": value = (brandInfo.IsPowder ? "Yes" : "No"); break;
                 default: break;
             }
             return value;
@@ -210,6 +222,23 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             return modelResult;
         }
 
+        public async Task<IList<KeyValuePairObjectModel>> GetBrandFamilyDropDownAsync()
+        {
+            return await _brandFamilyInfoRepository.GetAllIncludeAsync(x => new KeyValuePairObjectModel()
+            {
+                Text = x.MatarialGroupOrBrandName + " (" + x.MatarialGroupOrBrand + ")",
+                Value = x.MatarialGroupOrBrand
+            }, null, x => x.OrderBy(y => y.MatarialGroupOrBrandName), null, true);
+        }
+
+        public async Task<IList<KeyValuePairObjectModel>> GetBrandDropDownAsync()
+        {
+            return await _brandInfoRepository.GetAllIncludeAsync(x => new KeyValuePairObjectModel()
+            {
+                Text = x.MaterialDescription + " (" + x.MaterialCode + ")",
+                Value = x.MaterialCode
+            }, null, x => x.OrderBy(y => y.MaterialDescription), null, true);
+        }
     }
 
     public class AppMaterialBrandModel

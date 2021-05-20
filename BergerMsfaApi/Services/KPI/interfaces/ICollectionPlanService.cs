@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Services.KPI.interfaces
         Task<int> UpdateCollectionPlansAsync(SaveCollectionPlanModel model);
         Task<int> DeleteCollectionPlansAsync(int id);
         Task<bool> IsExitsCollectionPlansAsync(int id, int userId, string businessArea, string territory, int year = 0, int month = 0);
+        Task<decimal> GetCustomerSlippageAmountToLastMonth(CustomerSlippageQueryModel query);
         #endregion
     }
 }

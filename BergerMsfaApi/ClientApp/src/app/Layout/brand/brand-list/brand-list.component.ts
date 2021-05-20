@@ -1,13 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Subscription, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { of, Subscription } from 'rxjs';
+import { delay, finalize, take } from 'rxjs/operators';
 import { Brand, BrandQuery, BrandStatus } from 'src/app/Shared/Entity/Brand/brand';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from './../../../Shared/Modules/search-option/search-option';
 
 @Component({
 	selector: 'app-brand-list',
@@ -15,13 +15,24 @@ import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
 	styleUrls: ['./brand-list.component.css']
 })
 export class BrandListComponent implements OnInit, OnDestroy {
-
+	searchOptionQuery: SearchOptionQuery;
 	query: BrandQuery;
 	PAGE_SIZE: number;
 	brands: Brand[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef: [
+		  new SearchOptionDef({
+			searchOption: EnumSearchOption.MaterialCode,
+			isRequired: false,
+		  }),
+		  new SearchOptionDef({
+			searchOption: EnumSearchOption.Brand,
+			isRequired: false,
+		  }),
+		],
+	  });
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
 
@@ -29,18 +40,21 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private alertService: AlertService,
 		private brandService: BrandService,
-		private modalService: NgbModal,
 		private commonService: CommonService) {
 			// this.PAGE_SIZE = 5000;
 			// this.ptableSettings.pageSize = 10;
 			// this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
+			this.PAGE_SIZE = this.commonService.PAGE_SIZE;
 			this.ptableSettings.pageSize = this.PAGE_SIZE;
 			this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
+
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
+
 		this.searchConfiguration();
 		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 			this.loadBrandsPage();
@@ -62,7 +76,6 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			)
 			.subscribe(
 				(res) => {
-					console.log("res.data", res.data);
 					this.brands = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
@@ -83,9 +96,17 @@ export class BrandListComponent implements OnInit, OnDestroy {
 						obj.isEnamelBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isEnamel ? 'primary' : 'warning') + ' d-flex align-items-center';
 						obj.isEnamelBtnIcon = 'fa fa-' + (obj.isEnamel ? 'check' : 'ban');
 
+						obj.isLiquidText = obj.isLiquid ? 'Liquid' : 'Non Liquid';
+						obj.isLiquidBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isLiquid ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isLiquidBtnIcon = 'fa fa-' + (obj.isLiquid ? 'check' : 'ban');
+
+						obj.isPowderText = obj.isPowder ? 'Powder' : 'Non Powder';
+						obj.isPowderBtnClass = 'btn-transition btn btn-sm btn-outline-' + (obj.isPowder ? 'primary' : 'warning') + ' d-flex align-items-center';
+						obj.isPowderBtnIcon = 'fa fa-' + (obj.isPowder ? 'check' : 'ban');
+
 						obj.viewDetailsText = 'View Log Details';
 						obj.viewDetailsBtnclass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
-						
+
 					});
 				},
 				(error) => {
@@ -100,7 +121,9 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'matrialCode',
 			isSortAscending: true,
-			globalSearchValue: ''
+			globalSearchValue: '',
+			brands:[],
+			matrialCodes:[]
 		});
 	}
 
@@ -126,6 +149,8 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Is MTS', width: '10%', internalName: 'isMTSText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isMTSBtnClass', innerBtnIcon: 'isMTSBtnIcon' },
 			{ headerName: 'Is Premium', width: '10%', internalName: 'isPremiumText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isPremiumBtnClass', innerBtnIcon: 'isPremiumBtnIcon' },
 			{ headerName: 'Is Enamel', width: '10%', internalName: 'isEnamelText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isEnamelBtnClass', innerBtnIcon: 'isEnamelBtnIcon' },
+			{ headerName: 'Is Liquid', width: '10%', internalName: 'isLiquidText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isLiquidBtnClass', innerBtnIcon: 'isLiquidBtnIcon' },
+			{ headerName: 'Is Powder', width: '10%', internalName: 'isPowderText', sort: false, type: "dynamic-button", onClick: 'true', className: 'isPowderBtnClass', innerBtnIcon: 'isPowderBtnIcon' },
 			{ headerName: 'Details', width: '5%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnclass', innerBtnIcon: '' }
 		],
 		enabledSearch: true,
@@ -140,26 +165,36 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
-		console.log('server site : ', queryObj);
-		this.query = new BrandQuery({
-			page: queryObj.pageNo,
-			pageSize: queryObj.pageSize,
-			sortBy: queryObj.orderBy,
-			isSortAscending: queryObj.isOrderAsc,
-			globalSearchValue: queryObj.searchVal
-		});
+		// this.query = new BrandQuery({
+		// 	page: queryObj.pageNo,
+		// 	pageSize: queryObj.pageSize,
+		// 	sortBy: queryObj.orderBy,
+		// 	isSortAscending: queryObj.isOrderAsc,
+		// 	globalSearchValue: queryObj.searchVal
+		// });
+
+		this.query.page= queryObj.pageNo;
+		this.query.pageSize= queryObj.pageSize;
+		this.query.sortBy= queryObj.orderBy;
+		this.query.isSortAscending= queryObj.isOrderAsc;
+		this.query.globalSearchValue= queryObj.searchVal;
+
+
 		this.loadBrandsPage();
 	}
 
 	public cellClickCallbackFn(event) {
-		console.log("cell click: ", event);
 
-		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText" || event.cellName =="isEnamelText") {
+		if (event.cellName == "isCBInstalledText" || event.cellName == "isMTSText" || event.cellName == "isPremiumText"
+		|| event.cellName =="isEnamelText"
+		|| event.cellName =="isPowderText"
+		|| event.cellName =="isLiquidText"
+		) {
 			let brandStatus = new BrandStatus();
 			brandStatus.clear();
-	
+
 			if (event.cellName == "isCBInstalledText") {
 				brandStatus.propertyName = 'IsCBInstalled';
 				brandStatus.materialOrBrandCode = event.record.materialCode;
@@ -173,7 +208,15 @@ export class BrandListComponent implements OnInit, OnDestroy {
 				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
 			}
 			else if (event.cellName == "isEnamelText") {
-				brandStatus.propertyName = 'isEnamel';
+				brandStatus.propertyName = 'IsEnamel';
+				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
+			}
+			else if (event.cellName == "isPowderText") {
+				brandStatus.propertyName = 'IsPowder';
+				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
+			}
+			else if (event.cellName == "isLiquidText") {
+				brandStatus.propertyName = 'IsLiquid';
 				brandStatus.materialOrBrandCode = event.record.materialGroupOrBrand;
 			}
 
@@ -181,7 +224,6 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		}
 		if (event.cellName == 'viewDetailsText') {
 			let id = event.record.id;
-			console.log("id: "+id);
 			this.detailsBrandInfoStatusLogCall(id);
 		}
 	}
@@ -195,7 +237,6 @@ export class BrandListComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
-					console.log("res.data", res.data);
 					this.loadBrandsPage();
 				},
 				(error) => {
@@ -203,4 +244,12 @@ export class BrandListComponent implements OnInit, OnDestroy {
 				});
 		this.subscriptions.push(brandsSubscription);
 	}
+
+
+	searchOptionQueryCallbackFn(queryObj: SearchOptionQuery) {
+		this.query.brands = queryObj.brands;
+		this.query.matrialCodes = queryObj.materialCodes;
+
+		this.loadBrandsPage();
+	  }
 }

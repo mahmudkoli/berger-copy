@@ -92,7 +92,7 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			rateInDrum: [this.schemeDetail.rateInDrum],
 			slab: [this.schemeDetail.slab],
 			condition: [this.schemeDetail.condition],
-			benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString())],
+			benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
 			benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
 			schemeId: [this.schemeDetail.schemeId],
 			material: [this.schemeDetail.material],

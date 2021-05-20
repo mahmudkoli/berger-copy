@@ -15,6 +15,8 @@ export class SearchOptionQuery extends QueryObject {
     painterId: number;
     painterTypeId: number;
     paymentMethodId: number;
+    materialCodes:string[];
+    brands:string[];
     fromMonth: number;
     toMonth: number;
     fromYear: number;
@@ -24,7 +26,7 @@ export class SearchOptionQuery extends QueryObject {
     text1: string;
     text2: string;
     text3: string;
-    
+    activitySummary:string;
     constructor(init?: Partial<SearchOptionQuery>) {
         super();
         Object.assign(this, init);
@@ -41,7 +43,7 @@ export class SearchOptionSettings {
     isDealerShow: boolean;
     isSubDealerShow: boolean;
     isDealerSubDealerOptionShow: boolean;
-    
+
     constructor(init?: Partial<SearchOptionSettings>) {
         Object.assign(this, init);
     }
@@ -55,7 +57,7 @@ export class SearchOptionDef {
     isRequiredBasedOnEmployeeRole: boolean;
     isRequired: boolean;
     textLabel: string;
-    
+
     constructor(init?: Partial<SearchOptionDef>) {
         Object.assign(this, init);
     }
@@ -79,6 +81,9 @@ export enum EnumSearchOption {
     PainterId='painterId',
     PainterTypeId='painterTypeId',
     PaymentMethodId='paymentMethodId',
+    MaterialCode='materialCodes',
+    ActivitySummary='activitySummary',
+    Brand='brands',
     FromMonth='fromMonth',
     ToMonth='toMonth',
     FromYear='fromYear',

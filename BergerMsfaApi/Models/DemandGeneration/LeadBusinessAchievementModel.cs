@@ -56,6 +56,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public SaveLeadBusinessAchievementModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.ProductSamplingBrandNames = new List<string>();
         }
 
         public void StringToList(LeadBusinessAchievement src, SaveLeadBusinessAchievementModel dest)

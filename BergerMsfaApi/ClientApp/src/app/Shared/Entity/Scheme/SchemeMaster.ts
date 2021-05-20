@@ -4,6 +4,7 @@ export class SchemeMaster {
     id: number;
     schemeName: string;
     condition: string;
+    businessArea: string;
 
     constructor(init?: Partial<SchemeMaster>) {
         Object.assign(this, init);
@@ -20,6 +21,7 @@ export class SaveSchemeMaster {
     id: number;
     schemeName: string;
     condition: string;
+    businessArea: string;
 
     constructor(init?: Partial<SchemeMaster>) {
         Object.assign(this, init);
