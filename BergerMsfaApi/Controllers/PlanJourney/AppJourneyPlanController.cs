@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BergerMsfaApi.Controllers.Journey
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -70,6 +72,49 @@ namespace BergerMsfaApi.Controllers.Journey
             }
            
 
+        }
+
+        [HttpGet("GetLineManagerJourneyPlanList")]
+        public async Task<IActionResult> GetJourneyPlanDetailForLineManager()
+        {
+            try
+            {
+                var result = await _journeyService.GetAppJourneyPlanListForLineManager();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetJourneyPlanDetailById/{PlanId}")]
+        public async Task<IActionResult> GetJourneyPlanDetailById(int PlanId)
+        {
+            try
+            {
+                var result = await _journeyService.GetAppJourneyPlanDetailById(PlanId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("ChangeJourneyPlanStatus")]
+        public async Task<IActionResult> ChangePlanStatus(JourneyPlanStatusChangeModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _journeyService.AppChangePlanStatus(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            };
         }
 
         //[HttpPost("UpdateJourneyPlan/{employeeId}")]
