@@ -19,7 +19,10 @@ namespace BergerMsfaApi.Models.KPI
         public int Year { get; set; }
         public int Month { get; set; }
         public string YearMonthText { get; set; }
+        public decimal SlippageAmount { get; set; }
         public decimal CollectionTargetAmount { get; set; }
+        public decimal CollectionActualAmount { get; set; }
+        public decimal SlippageCollectionActualAmount { get; set; }
         public int ChangeableMaxDateDay { get; set; }
         public DateTime ChangeableMaxDate { get; set; }
         public string ChangeableMaxDateText { get; set; }
@@ -43,6 +46,7 @@ namespace BergerMsfaApi.Models.KPI
         public string Territory { get; set; }
         //public int Year { get; set; }
         //public int Month { get; set; }
+        public decimal SlippageAmount { get; set; }
         public decimal CollectionTargetAmount { get; set; }
 
         public void Mapping(Profile profile)
@@ -50,5 +54,11 @@ namespace BergerMsfaApi.Models.KPI
             profile.CreateMap<CollectionPlan, SaveCollectionPlanModel>();
             profile.CreateMap<SaveCollectionPlanModel, CollectionPlan>();
         }
+    }
+
+    public class CustomerSlippageQueryModel
+    {
+        public string BusinessArea { get; set; }
+        public string Territory { get; set; }
     }
 }

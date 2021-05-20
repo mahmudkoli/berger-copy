@@ -38,7 +38,10 @@ export class CollectionPlan {
     year: number;
     month: number;
     yearMonthText: string;
+    slippageAmount: number;
     collectionTargetAmount: number;
+    collectionActualAmount: number;
+    slippageCollectionActualAmount: number;
     
     changeableMaxDateDay: number;
     changeableMaxDate: Date;
@@ -57,6 +60,7 @@ export class SaveCollectionPlan {
     id: number;
     businessArea: string;
     territory: string;
+    slippageAmount: number;
     collectionTargetAmount: number;
     
     constructor(init?: Partial<CollectionPlan>) {
