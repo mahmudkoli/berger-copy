@@ -20,8 +20,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             _brandService = brandService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] QueryObjectModel query)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] BrandQueryObjectModel query)
         {
             try
             {

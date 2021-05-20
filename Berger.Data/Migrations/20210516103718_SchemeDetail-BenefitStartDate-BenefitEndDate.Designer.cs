@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210516103718_SchemeDetail-BenefitStartDate-BenefitEndDate")]
+    partial class SchemeDetailBenefitStartDateBenefitEndDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -770,9 +772,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("NumberOfStoriedBuildingChangeReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OtherClientName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PaintContractorMobile")
                         .HasColumnType("nvarchar(max)");
 
@@ -895,9 +894,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("NumberOfStoriedBuilding")
                         .HasColumnType("int");
-
-                    b.Property<string>("OtherClientName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaintContractorMobile")
                         .HasColumnType("nvarchar(max)");
@@ -1622,9 +1618,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("CollectionActualAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("CollectionTargetAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1642,12 +1635,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("Month")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("SlippageAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("SlippageCollectionActualAmount")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -2846,10 +2833,6 @@ namespace Berger.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("BusinessArea")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
 
                     b.Property<string>("Condition")
                         .HasColumnType("nvarchar(max)");

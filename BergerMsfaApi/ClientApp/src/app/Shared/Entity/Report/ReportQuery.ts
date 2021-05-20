@@ -1,5 +1,4 @@
-﻿import { EnumEmployeeRole } from '../../Enums/employee-role';
-import { QueryObject } from '../Common/query-object';
+﻿import { QueryObject } from '../Common/query-object';
 
 export class ReportBaseQuery extends QueryObject {
     depot: string;
@@ -9,7 +8,7 @@ export class ReportBaseQuery extends QueryObject {
     userId: number;
     fromDate: Date;
     toDate: Date;
-    
+
     constructor(init?: Partial<ReportBaseQuery>) {
         super();
         Object.assign(this, init);
@@ -20,7 +19,7 @@ export class ReportBaseQuery extends QueryObject {
 }
 
 export class LeadSummaryQuery extends ReportBaseQuery {
-    
+
     constructor(init?: Partial<LeadSummaryQuery>) {
         super();
         Object.assign(this, init);
@@ -72,7 +71,7 @@ export class PainterRegisterQuery extends ReportBaseQuery {
 }
 
 export class DealerOpeningQuery extends ReportBaseQuery {
-    
+
     constructor(init?: Partial<DealerOpeningQuery>) {
         super();
         Object.assign(this, init);
@@ -83,7 +82,7 @@ export class DealerOpeningQuery extends ReportBaseQuery {
 }
 
 export class CollectionReportQuery extends ReportBaseQuery {
-    
+
     paymentMethodId: number;
     dealerId: number;
 
@@ -191,7 +190,7 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
     dealerId: number;
     month: number;
     year: number;
-
+    activitySummary:string;
     constructor(init?: Partial<ActiveSummeryReportQuery>) {
         super();
         Object.assign(this, init);
@@ -304,7 +303,7 @@ export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
 
 export class SnapShotReportQuery extends ReportBaseQuery {
     dealerId: number;
-    
+
     constructor(init?: Partial<SnapShotReportQuery>) {
         super();
         Object.assign(this, init);
@@ -316,7 +315,7 @@ export class SnapShotReportQuery extends ReportBaseQuery {
 
 export class LogInReportQuery extends ReportBaseQuery {
     status: number;
-    
+
     constructor(init?: Partial<LogInReportQuery>) {
         super();
         Object.assign(this, init);
@@ -327,7 +326,7 @@ export class LogInReportQuery extends ReportBaseQuery {
 }
 
 export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
-    
+
 }
 
 export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {

@@ -123,7 +123,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return true;
         }
 
-        public async Task<QueryResultModel<DealerSalesCallModel>> GetAllAsync(QueryObjectModel query)
+        public async Task<QueryResultModel<DealerSalesCallModel>> GetAllAsync(DealerSalesCallQueryObjectModel query)
         {
             var columnsMap = new Dictionary<string, Expression<Func<DSC.DealerSalesCall, object>>>()
             {
@@ -133,7 +133,13 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
             var result = await _dealerSalesCallRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue) || x.Dealer.CustomerName.Contains(query.GlobalSearchValue)),
+                                x => (
+                                      (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue) || x.Dealer.CustomerName.Contains(query.GlobalSearchValue)) &&
+                                      (!query.Territories.Any() || query.Territories.Contains(x.Dealer.Territory)) &&
+                                      (!query.SalesGroup.Any() || query.SalesGroup.Contains(x.Dealer.SalesGroup)) &&
+                                      (!query.CustZones.Any() || query.SalesGroup.Contains(x.Dealer.CustZone)) &&
+                                      (string.IsNullOrWhiteSpace(query.DepoId) || x.Dealer.BusinessArea == query.DepoId) &&
+                                      (!query.CustomerNo.HasValue || x.Dealer.CustomerNo == query.CustomerNo)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User).Include(i => i.Dealer),
                                 query.Page,
@@ -143,10 +149,12 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
             var modelResult = _mapper.Map<IList<DealerSalesCallModel>>(result.Items);
 
-            var queryResult = new QueryResultModel<DealerSalesCallModel>();
-            queryResult.Items = modelResult;
-            queryResult.TotalFilter = result.TotalFilter;
-            queryResult.Total = result.Total;
+            var queryResult = new QueryResultModel<DealerSalesCallModel>
+            {
+                Items = modelResult,
+                TotalFilter = result.TotalFilter,
+                Total = result.Total
+            };
 
             return queryResult;
         }
@@ -291,12 +299,12 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     modelResult.IsCBInstalled = result.IsCBInstalled;
                     modelResult.HasCompetitionPresence = result.HasCompetitionPresence;
 
-                    if(result.SubDealerInfluenceId.HasValue)
+                    if (result.SubDealerInfluenceId.HasValue)
                     {
                         var subDealerInfluence = await _dropdownService.GetDropdownById(result.SubDealerInfluenceId.Value);
                         if (subDealerInfluence != null) modelResult.SubDealerInfluenceDropDownName = subDealerInfluence.DropdownName;
                     }
-                    if(result.PainterInfluenceId.HasValue)
+                    if (result.PainterInfluenceId.HasValue)
                     {
                         var painterInfluence = await _dropdownService.GetDropdownById(result.PainterInfluenceId.Value);
                         if (painterInfluence != null) modelResult.PainterInfluenceDropDownName = painterInfluence.DropdownName;
@@ -388,20 +396,20 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ProductComplaint)
                     {
                         body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
-                            $"Material Group: {issue.MaterialGroup}{Environment.NewLine}"+
-                            $"Quantity: {issue.Quantity}{Environment.NewLine}"+
-                            $"Batch Number: {issue.BatchNumber}{Environment.NewLine}"+
-                            $"Comments: {issue.Comments}{Environment.NewLine}"+
+                            $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +
+                            $"Quantity: {issue.Quantity}{Environment.NewLine}" +
+                            $"Batch Number: {issue.BatchNumber}{Environment.NewLine}" +
+                            $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
                     else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ShopSignComplain)
                     {
-                        body += $"Comments: {issue.Comments}{Environment.NewLine}"+
+                        body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
                     else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DeliveryIssue)
                     {
-                        body += $"Comments: {issue.Comments}{Environment.NewLine}"+
+                        body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
                     else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DamageProduct)

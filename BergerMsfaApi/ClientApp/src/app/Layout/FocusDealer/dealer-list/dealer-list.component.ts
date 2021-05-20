@@ -23,7 +23,6 @@ export class DealerListComponent implements OnInit {
   data: any[];
   filterObj: any;
   searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
-    isDealerSubDealerOptionShow: true,
     searchOptionDef: [
       new SearchOptionDef({
         searchOption: EnumSearchOption.Depot,
