@@ -1,10 +1,12 @@
-﻿using Berger.Data.MsfaEntity.CollectionEntry;
+﻿using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +100,28 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
                 throw ex ;
             }
-          
+
+        }
+
+        public async Task<IEnumerable<AppCollectionEntryModel>> GetAppCollectionListByCurrentUserAsync()
+        {
+            var employeeId = AppIdentity.AppUser.EmployeeId;
+            var result = await _payment.GetAllIncludeAsync(x => 
+                            new AppCollectionEntryModel 
+                            { 
+                                Id = x.Id,
+                                CollectionDate = x.CollectionDate.ToString("yyyy_MM-dd"),
+                                CustomerType = x.CustomerType.DropdownName,
+                                PaymentMethod = x.PaymentMethod.DropdownName,
+                                CreditControlArea = $"{x.CreditControlArea.Description} ({x.CreditControlAreaId})"
+                            },
+                            x => x.EmployeeId == employeeId,
+                            //x => x.OrderByDescending(o => CustomConvertExtension.ObjectToDateTime(o.CollectionDate)),
+                            x => x.OrderByDescending(o => o.CreatedTime),
+                            x => x.Include(i => i.PaymentMethod).Include(i => i.CustomerType).Include(i => i.CreditControlArea),
+                            true);
+
+            return result;
         }
 
         public async Task<IEnumerable<CreditControlArea>> GetCreditControlAreaList()

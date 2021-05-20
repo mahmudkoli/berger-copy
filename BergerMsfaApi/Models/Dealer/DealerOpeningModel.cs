@@ -45,4 +45,27 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
         }
     }
+
+    public class AppDealerOpeningModel : IMapFrom<DealerOpening>
+    {
+        public int Id { get; set; }
+        public string BusinessArea { get; set; }
+        public string SaleOffice { get; set; }
+        public string SaleGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public int DealerOpeningStatus { get; set; }
+        public string DealerOpeningStatusText { get; set; }
+        public string Code { get; set; }
+        public string OpeningDate { get; set; }
+
+        public AppDealerOpeningModel()
+        {
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<DealerOpening, AppDealerOpeningModel>().ReverseMap();
+        }
+    }
 }

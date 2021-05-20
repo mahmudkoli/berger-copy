@@ -17,5 +17,6 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Interfaces
         Task<SaveMerchandisingSnapShotModel> GetMerchandisingSnapShotByDealerIdAsync(int id);
         Task<IList<SaveMerchandisingSnapShotModel>> GetMerchandisingSnapShotListByDealerIdsAsync(IList<int> ids);
         Task<IList<AppMerchandisingSnapShotModel>> GetAllByUserIdAsync(int userId);
+        Task<IList<AppMerchandisingSnapShotLogModel>> GetAppMerchandisingSnapShotListByCurrentUser(int dealerId);
     }
 }
