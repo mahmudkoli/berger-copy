@@ -57,7 +57,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public int DealerOpeningStatus { get; set; }
         public string DealerOpeningStatusText { get; set; }
         public string Code { get; set; }
-        public string Date { get; set; }
+        public string OpeningDate { get; set; }
 
         public AppDealerOpeningModel()
         {

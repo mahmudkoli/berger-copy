@@ -30,4 +30,13 @@ namespace BergerMsfaApi.Models.CollectionEntry
         public string CreditControlAreaName { get; set; }
         public string EmployeeId { get; set; }
     }
+
+    public class AppCollectionEntryModel
+    {
+        public int Id { get; set; }
+        public string CollectionDate { get; set; }
+        public string CustomerType { get; set; }
+        public string PaymentMethod { get; set; }
+        public string CreditControlArea { get; set; }
+    }
 }

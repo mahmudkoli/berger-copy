@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
 {
-
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

@@ -330,7 +330,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                              Territory = $"{tinfo.Code}",
                              Zone = $"{zinfo.Code}",
                              Code = d.Code,
-                             Date = d.CreatedTime.ToString("yyyy-MM-dd"),
+                             OpeningDate = d.CreatedTime.ToString("yyyy-MM-dd"),
                              DealerOpeningStatus = d.DealerOpeningStatus,
                              DealerOpeningStatusText = ((DealerOpeningStatus)d.DealerOpeningStatus).ToString()
                          }).ToListAsync();

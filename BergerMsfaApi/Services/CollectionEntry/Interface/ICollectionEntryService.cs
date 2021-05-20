@@ -11,6 +11,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Interface
     {
         
         Task<IEnumerable<PaymentModel>> GetCollectionList();
+        Task<IEnumerable<AppCollectionEntryModel>> GetAppCollectionListByCurrentUserAsync();
         Task<IEnumerable<CreditControlArea>> GetCreditControlAreaList();
         Task<IEnumerable<PaymentModel>> GetCollectionByType(int customerTypeId);
 
