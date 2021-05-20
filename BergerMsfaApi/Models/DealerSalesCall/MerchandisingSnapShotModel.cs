@@ -108,4 +108,34 @@ namespace BergerMsfaApi.Models.MerchandisingSnapShot
             profile.CreateMap<SaveMerchandisingSnapShotModel, DSC.MerchandisingSnapShot>();
         }
     }
+
+    public class AppMerchandisingSnapShotLogModel : IMapFrom<DSC.MerchandisingSnapShot>
+    {
+        public int Id { get; set; }
+        public string SnapShotDate { get; set; }
+        public string MerchandisingSnapShotCategory { get; set; }
+        public string OthersSnapShotCategoryName { get; set; }
+        public string Remarks { get; set; }
+        public string ImageUrl { get; set; }
+
+        public AppMerchandisingSnapShotLogModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<DSC.MerchandisingSnapShot, AppMerchandisingSnapShotLogModel>()
+                .ForMember(dest => dest.SnapShotDate,
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.CreatedTime)))
+                .ForMember(dest => dest.MerchandisingSnapShotCategory,
+                    opt => opt.MapFrom(src => src.MerchandisingSnapShotCategory != null ? src.MerchandisingSnapShotCategory.DropdownName : string.Empty))
+                .ForMember(dest => dest.ImageUrl,
+                    opt => opt.MapFrom(src => src.ImageUrl ?? string.Empty))
+                .ForMember(dest => dest.OthersSnapShotCategoryName,
+                    opt => opt.MapFrom(src => src.OthersSnapShotCategoryName ?? string.Empty))
+                .ForMember(dest => dest.Remarks,
+                    opt => opt.MapFrom(src => src.Remarks ?? string.Empty));
+        }
+    }
 }

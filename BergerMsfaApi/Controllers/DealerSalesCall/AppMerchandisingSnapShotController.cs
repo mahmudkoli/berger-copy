@@ -6,11 +6,13 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.MerchandisingSnapShot;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.MerchandisingSnapShot.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -25,19 +27,19 @@ namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
             this._merchandisingSnapShotService = merchandisingSnapShotService;
         }
 
-        //[HttpGet("GetAllByUserId/{id}")]
-        //public async Task<IActionResult> GetAllByUserId(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _merchandisingSnapShotService.GetAllByUserIdAsync(id);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
+        [HttpGet("MerchandisingSnapShotList")]
+        public async Task<IActionResult> GetMerchandisingSnapShotList([FromQuery] int dealerId)
+        {
+            try
+            {
+                var result = await _merchandisingSnapShotService.GetAppMerchandisingSnapShotListByCurrentUser(dealerId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
         //[HttpGet("GetMerchandisingSnapShotByDealerId/{id}")]
         //public async Task<IActionResult> GetMerchandisingSnapShotByDealerId(int id)

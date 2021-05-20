@@ -154,6 +154,22 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Implementation
             return modelResult;
         }
 
+        public async Task<IList<AppMerchandisingSnapShotLogModel>> GetAppMerchandisingSnapShotListByCurrentUser(int dealerId)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var result = await _merchandisingSnapShotRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserId == userId && x.DealerId == dealerId,
+                                x => x.OrderByDescending(o => o.CreatedTime),
+                                x => x.Include(i => i.MerchandisingSnapShotCategory),
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<AppMerchandisingSnapShotLogModel>>(result);
+
+            return modelResult;
+        }
+
         public async Task<SaveMerchandisingSnapShotModel> GetMerchandisingSnapShotByDealerIdAsync(int id)
         {
             //var result = await _merchandisingSnapShotRepository.GetFirstOrDefaultIncludeAsync(
