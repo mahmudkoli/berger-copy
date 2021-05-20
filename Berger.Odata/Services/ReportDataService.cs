@@ -123,7 +123,7 @@ namespace Berger.Odata.Services
                     var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand);
                     if (brandFamilyData != null)
                     {
-                        item.Brand = $"{brandFamilyData.MatarialGroupOrBrandName} - {item.Brand}";
+                        item.Brand = $"{brandFamilyData.MatarialGroupOrBrandName} ({item.Brand})";
                     }
                 }
             }

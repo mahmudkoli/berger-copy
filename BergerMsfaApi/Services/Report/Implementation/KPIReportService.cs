@@ -373,26 +373,25 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
         {
             var reportResult = new List<CollectionPlanKPIReportResultModel>();
+            var currentDate = DateTime.Now;
 
             var dealerIds = await (from diInfo in _context.DealerInfos
                                  where (
-                                     (diInfo.BusinessArea == query.Depot)
-                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                     && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                     diInfo.BusinessArea == query.Depot
+                                     && query.Territory == diInfo.Territory
                                  )
                                  select diInfo.CustomerNo).Distinct().ToListAsync();
 
-            var fromDate = new DateTime(query.Year, query.Month, 01);
-            var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
-            var lastMonthToDate = (new DateTime(query.Year, query.Month, 01)).AddDays(-1);
+            var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
+            var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+            var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
 
             var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
             var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
 
             var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
-                                    && x.BusinessArea == query.Depot && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
-                                    && x.Year == query.Year && x.Month == query.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
+                                    && x.BusinessArea == query.Depot && query.Territory == x.Territory
+                                    && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
 
             reportResult.Add(new CollectionPlanKPIReportResultModel
             {

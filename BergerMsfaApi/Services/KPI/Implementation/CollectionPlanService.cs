@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
+using Berger.Odata.Services;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.KPI;
@@ -24,16 +27,25 @@ namespace BergerMsfaApi.Services.KPI.Implementation
     {
         public readonly IRepository<CollectionConfig> _collectionConfigSvc;
         public readonly IRepository<CollectionPlan> _collectionPlanSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IFinancialDataService _financialDataService;
+        private readonly ICollectionDataService _collectionDataService;
         public readonly IMapper _mapper;
 
         public CollectionPlanService(
             IRepository<CollectionConfig> collectionConfigSvc,
             IRepository<CollectionPlan> collectionPlanSvc,
+            IRepository<DealerInfo> dealerInfoSvc,
+            IFinancialDataService financialDataService,
+            ICollectionDataService collectionDataService,
             IMapper mapper
             )
         {
             _collectionConfigSvc = collectionConfigSvc;
             _collectionPlanSvc = collectionPlanSvc;
+            this._dealerInfoSvc = dealerInfoSvc;
+            this._financialDataService = financialDataService;
+            this._collectionDataService = collectionDataService;
             _mapper = mapper;
         }
 
@@ -177,6 +189,21 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var result = await _collectionPlanSvc.IsExistAsync(f => f.Id != id && f.UserId == userId && 
                                                     f.BusinessArea == businessArea && f.Territory == territory &&
                                                     (f.Year == 0 || f.Year == year) && (f.Month == 0 || f.Month == month));
+            return result;
+        }
+
+        public async Task<decimal> GetCustomerSlippageAmountToLastMonth(CustomerSlippageQueryModel query)
+        {
+            var currentDate = DateTime.Now;
+            var dealerIds = (await _dealerInfoSvc.FindAllAsync(x => x.BusinessArea == query.BusinessArea && x.Territory == query.Territory))
+                                                    .Select(x => x.CustomerNo).Distinct().ToList();
+
+            var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
+
+            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+
+            var result = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+
             return result;
         }
         #endregion
