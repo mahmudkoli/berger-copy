@@ -193,21 +193,21 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
         {
             var result = await _saleGroupSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} - {s.Werks}" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} - {s.Code}" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
