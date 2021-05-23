@@ -213,59 +213,107 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<LeadGenerationDetailsReportResultModel>();
 
-            var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
-                            x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
-                                //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
-                                && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
-                                && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
-                                && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
-                                && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
-                                && (string.IsNullOrWhiteSpace(query.ProjectName) || x.ProjectName.Contains(query.ProjectName))
-                                && (!query.PaintingStageId.HasValue || x.PaintingStageId == query.PaintingStageId.Value),
-                            x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
-                            x => x.Include(i => i.User).Include(i => i.TypeOfClient).Include(i => i.PaintingStage),
-                            query.Page,
-                            query.PageSize,
-                            true);
+            var leads = await (from lg in _context.LeadGenerations
+                                join u in _context.UserInfos on lg.UserId equals u.Id into uleftjoin
+                                from uinfo in uleftjoin.DefaultIfEmpty()
+                                join tc in _context.DropdownDetails on lg.TypeOfClientId equals tc.Id into tcleftjoin
+                                from tcinfo in tcleftjoin.DefaultIfEmpty()
+                                join ps in _context.DropdownDetails on lg.PaintingStageId equals ps.Id into psleftjoin
+                                from psinfo in psleftjoin.DefaultIfEmpty()
+                                join d in _context.Depots on lg.Depot equals d.Werks into dleftjoin
+                                from dinfo in dleftjoin.DefaultIfEmpty()
+                                where (
+                                 (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
+                                 && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
+                                 && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
+                                 && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
+                                 && (!query.FromDate.HasValue || lg.CreatedTime.Date >= query.FromDate.Value.Date)
+                                 && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date)
+                                 && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
+                                 && (!query.PaintingStageId.HasValue || lg.PaintingStageId == query.PaintingStageId.Value)
+                                )
+                                select new
+                                {
+                                    uinfo.Email,
+                                    lg.Code,
+                                    lg.ProjectName,
+                                    lg.Depot,
+                                    depotName = dinfo.Name1,
+                                    lg.Territory,
+                                    lg.Zone,
+                                    lg.CreatedTime,
+                                    typeOfClient = tcinfo.DropdownName,
+                                    lg.ProjectAddress,
+                                    lg.KeyContactPersonName,
+                                    lg.KeyContactPersonMobile,
+                                    lg.PaintContractorName,
+                                    lg.PaintContractorMobile,
+                                    paintingStage = psinfo.DropdownName,
+                                    lg.ExpectedDateOfPainting,
+                                    lg.NumberOfStoriedBuilding,
+                                    lg.TotalPaintingAreaSqftInterior,
+                                    lg.TotalPaintingAreaSqftExterior,
+                                    lg.ExpectedValue,
+                                    lg.ExpectedMonthlyBusinessValue,
+                                    lg.RequirementOfColorScheme,
+                                    lg.ProductSamplingRequired,
+                                    lg.NextFollowUpDate,
+                                    lg.Remarks,
+                                    lg.PhotoCaptureUrl,
+                                    lg.OtherClientName
+                                }).ToListAsync();
 
-            reportResult = leads.Items.Select(x =>
+            //var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
+            //                x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
+            //                    //&& (!query.EmployeeRole.HasValue || x.User.EmployeeRole == query.EmployeeRole.Value)
+            //                    && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
+            //                    && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+            //                    && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
+            //                    && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
+            //                    && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
+            //                    && (string.IsNullOrWhiteSpace(query.ProjectName) || x.ProjectName.Contains(query.ProjectName))
+            //                    && (!query.PaintingStageId.HasValue || x.PaintingStageId == query.PaintingStageId.Value),
+            //                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+            //                x => x.Include(i => i.User).Include(i => i.TypeOfClient).Include(i => i.PaintingStage),
+            //                query.Page,
+            //                query.PageSize,
+            //                true);
+
+            reportResult = leads.Select(x => new LeadGenerationDetailsReportResultModel
             {
-                var reportModel = new LeadGenerationDetailsReportResultModel();
-                reportModel.UserId = x.User?.Email ?? string.Empty;
-                reportModel.ProjectCode = x.Code;
-                reportModel.ProjectName = x.ProjectName;
-                reportModel.Depot = x.Depot;
-                //reportModel.DepotName = x.DepotName;
-                reportModel.Territory = x.Territory;
-                reportModel.Zone = x.Zone;
-                reportModel.LeadCreatedDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime);
-                reportModel.TypeOfClient = x.TypeOfClient?.DropdownName ?? string.Empty;
-                reportModel.ProjectAddress = x.ProjectAddress;
-                reportModel.KeyContactPersonName = x.KeyContactPersonName;
-                reportModel.KeyContactPersonMobile = x.KeyContactPersonMobile;
-                reportModel.PaintContractorName = x.PaintContractorName;
-                reportModel.PaintContractorMobile = x.PaintContractorMobile;
-                reportModel.PaintContractorMobile = x.PaintContractorMobile;
-                reportModel.PaintingStage = x.PaintingStage?.DropdownName ?? string.Empty;
-                reportModel.ExpectedDateOfPainting = CustomConvertExtension.ObjectToDateString(x.ExpectedDateOfPainting);
-                reportModel.NumberOfStoriedBuilding = x.NumberOfStoriedBuilding;
-                reportModel.TotalPaintingAreaSqftInterior = x.TotalPaintingAreaSqftInterior;
-                reportModel.TotalPaintingAreaSqftExterior = x.TotalPaintingAreaSqftExterior;
-                reportModel.ExpectedValue = x.ExpectedValue;
-                reportModel.ExpectedMonthlyBusinessValue = x.ExpectedMonthlyBusinessValue;
-                reportModel.RequirementOfColorScheme = x.RequirementOfColorScheme ? "YES" : "NO";
-                reportModel.ProductSamplingRequired = x.ProductSamplingRequired ? "YES" : "NO";
-                reportModel.NextFollowUpDate = CustomConvertExtension.ObjectToDateString(x.NextFollowUpDate);
-                reportModel.Remarks = x.Remarks;
-                reportModel.ImageUrl = x.PhotoCaptureUrl;
-                return reportModel;
-            }).ToList();
+                UserId = x?.Email ?? string.Empty,
+                ProjectCode = x.Code,
+                ProjectName = x.ProjectName,
+                Depot = x.Depot,
+                DepotName = x.depotName,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                LeadCreatedDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                TypeOfClient = x.typeOfClient ?? string.Empty,
+                ProjectAddress = x.ProjectAddress,
+                KeyContactPersonName = x.KeyContactPersonName,
+                KeyContactPersonMobile = x.KeyContactPersonMobile,
+                PaintContractorName = x.PaintContractorName,
+                PaintContractorMobile = x.PaintContractorMobile,
+                PaintingStage = x.paintingStage ?? string.Empty,
+                ExpectedDateOfPainting = CustomConvertExtension.ObjectToDateString(x.ExpectedDateOfPainting),
+                NumberOfStoriedBuilding = x.NumberOfStoriedBuilding,
+                TotalPaintingAreaSqftInterior = x.TotalPaintingAreaSqftInterior,
+                TotalPaintingAreaSqftExterior = x.TotalPaintingAreaSqftExterior,
+                ExpectedValue = x.ExpectedValue,
+                ExpectedMonthlyBusinessValue = x.ExpectedMonthlyBusinessValue,
+                RequirementOfColorScheme = x.RequirementOfColorScheme ? "YES" : "NO",
+                ProductSamplingRequired = x.ProductSamplingRequired ? "YES" : "NO",
+                NextFollowUpDate = CustomConvertExtension.ObjectToDateString(x.NextFollowUpDate),
+                Remarks = x.Remarks,
+                ImageUrl = x.PhotoCaptureUrl,
+                OtherClientName = x.OtherClientName
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<LeadGenerationDetailsReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = leads.TotalFilter;
-            queryResult.Total = leads.Total;
+            queryResult.TotalFilter = leads.Count();
+            queryResult.Total = leads.Count();
 
             return queryResult;
         }
@@ -2474,13 +2522,18 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     zoneName = x.Key.zone,
                     snapShotDate = x.FirstOrDefault()?.CreatedTime,
                     competitionDisplay = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.CompetitionDisplay)?.ImageUrl,
+                    cDRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.CompetitionDisplay)?.Remarks,
                     glowSignBoard = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.GlowSignBoard)?.ImageUrl,
+                    gSRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.GlowSignBoard)?.Remarks,
                     productDisplay = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.ProductDisplay)?.ImageUrl,
+                    pDRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.ProductDisplay)?.Remarks,
                     scheme = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Scheme)?.ImageUrl,
+                    sRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Scheme)?.Remarks,
                     brochure = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Brochure)?.ImageUrl,
+                    bRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Brochure)?.Remarks,
                     others = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Others)?.ImageUrl,
-                    otherSnapshotTypeName = x.FirstOrDefault()?.OthersSnapShotCategoryName,
-                    remarks = x.FirstOrDefault()?.Remarks
+                    oRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Others)?.Remarks,
+                    otherSnapshotTypeName = x.FirstOrDefault()?.OthersSnapShotCategoryName
                 });
 
             reportResult = groupmerchendizingSnapShot.Select(x => new MerchendizingSnapShotReportResultModel
@@ -2492,14 +2545,18 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.zoneName,
                 SnapShotDate = CustomConvertExtension.ObjectToDateString(x.snapShotDate),
                 CompetitionDisplay = x.competitionDisplay,
+                CRemarks = x.cDRemarks,
                 GlowSignBoard = x.glowSignBoard,
+                GRemarks = x.gSRemarks,
                 ProductDisplay = x.productDisplay,
+                PRemarks = x.pDRemarks,
                 Scheme = x.scheme,
+                SRemarks = x.sRemarks,
                 Brochure = x.brochure,
+                BRemarks = x.bRemarks,
                 Others = x.others,
+                ORemarks = x.oRemarks,
                 OtherSnapshotTypeName = x.otherSnapshotTypeName,
-                Remarks = x.remarks
-
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<MerchendizingSnapShotReportResultModel>();
@@ -2509,7 +2566,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return queryResult;
         }
-
 
     }
 }
