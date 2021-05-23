@@ -1872,7 +1872,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     res.Month1Value = firstMonthData.Where(x => predicateFunc(x, item)).Sum(calcFunc);
                     res.Month1Name = monthList[0].MonthName;
-                    res.CreditControlArea = string.IsNullOrEmpty(res.CreditControlArea) ? 
+                    res.CreditControlArea = string.IsNullOrEmpty(res.CreditControlArea) ?
                         firstMonthData.Where(x => predicateFunc(x, item)).Select(x => x.CreditControlArea).FirstOrDefault() : string.Empty;
                 }
 
@@ -1962,9 +1962,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
         {
             UserInfo userinfo = new UserInfo();
 
-            string territory = query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
-            string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
-
+            string territory = string.Join(",", query.Territories);//    query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
+            string zone = string.Join(",", query.Zones);//    query.Territories.Count > 0 ? query.Territories[0] : string.Empty;
+            //string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
+            query.ActivitySummary = string.IsNullOrWhiteSpace(query.ActivitySummary) ? "" : query.ActivitySummary;
             //IList<int> userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
             var userDealerIds = new List<int>();
 
@@ -1990,7 +1991,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             if (query.UserId.HasValue)
             {
-                userinfo = _context.UserInfos.Where(p => p.Id == query.UserId).FirstOrDefault();
+                userinfo = _context.UserInfos.FirstOrDefault(p => p.Id == query.UserId);
 
             }
 
@@ -1999,7 +2000,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
                         .Join(_context.DealerSalesCalls.Include(p => p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
                         .Where(p =>
-
+                            p.JourneyPlanMaster.JourneyPlanMaster.PlanStatus == PlanStatus.Approved &&
                            (!query.UserId.HasValue ? true : userinfo.EmployeeId == p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
 
                            && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime >= query.FromDate)
@@ -2059,7 +2060,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 new ActiveSummaryReportResultModel
                 {
-                    Activity="Journey Plan",
+                    Activity="JOURNEY PLAN",
                     Target=data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count().ToString(),
                     Actual = data.Select(p=>p.DealerSalesCall.Id).Distinct().Count().ToString(),
                     Variance=(data.Select(p=>p.JourneyPlanDetail.Where(q=>q.PlanId==p.JourneyPlanMaster.Id).Select(p=>p.DealerId)).Count()-data.Select(p=>p.DealerSalesCall.Id).Distinct().Count()).ToString(),
@@ -2132,9 +2133,25 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
 
-                    Activity="DEALER ADHOC VISIT",
+                    Activity="AD HOC VISIT IN DEALERS POINT",
                     Target="N/A",
-                    Actual = dealerSalesCall.Count().ToString(),
+                    Actual = dealerSalesCall.Count(x=>!x.IsSubDealerCall).ToString(),
+                    Variance="N/A",
+                    BusinessGeneration="N/A",
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.Depot,
+                    Territory=territory,
+                    Zone=zone
+
+
+                },
+                new ActiveSummaryReportResultModel
+                {
+
+                    Activity="AD HOC VISIT IN SUB-DEALERS POINT",
+                    Target="N/A",
+                    Actual = dealerSalesCall.Count(x=>x.IsSubDealerCall).ToString(),
                     Variance="N/A",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
@@ -2168,7 +2185,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Variance="N/A",
                     BusinessGeneration="0",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
-
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.Depot,
+                    Territory=territory,
+                    Zone=zone
 
                 },
                 new ActiveSummaryReportResultModel
@@ -2176,7 +2196,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     //TODO: need to update collection value
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
-                    Actual =(await _collectionDataService.GetTotalCollectionValue(dealerIds, query.FromDate, query.ToDate)).ToString(),
+                    Actual =  (string.IsNullOrWhiteSpace(query.ActivitySummary) || query.ActivitySummary.ToLower()=="TOTAL COLLECTION VALUE".ToLower())?
+                        (await _collectionDataService.GetTotalCollectionValue(dealerIds, query.FromDate, query.ToDate)).ToString():"0",
                     //Actual ="0",
                     Variance="N/A",
                     BusinessGeneration="0",
@@ -2187,13 +2208,21 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Zone=zone
 
                 }
-            }
+            };
 
-            .Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
-            var queryResult = new QueryResultModel<ActiveSummaryReportResultModel>();
-            queryResult.Items = reportResult;
-            queryResult.TotalFilter = reportResult.Count();
-            queryResult.Total = reportResult.Count();
+
+            reportResult = reportResult
+                .Where(x => x.Activity.ToLower().Contains(query.ActivitySummary.ToLower()))
+         .Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+
+
+            var queryResult = new QueryResultModel<ActiveSummaryReportResultModel>
+            {
+                Items = reportResult,
+                TotalFilter = reportResult.Count(),
+                Total = reportResult.Count()
+            };
 
 
             return queryResult;
@@ -2359,20 +2388,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<LogInReportResultModel>();
 
             var loginInfo = await (from ll in _context.LoginLogs
-                                        join u in _context.UserInfos on ll.UserId equals u.Id into uleft
-                                        from uInfo in uleft.DefaultIfEmpty()
-                                        where (
-                                           (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
-                                           && (!query.FromDate.HasValue || ll.LoggedInTime.Date >= query.FromDate.Value.Date)
-                                           && (!query.ToDate.HasValue || ll.LoggedInTime <= query.ToDate.Value.Date)
-                                        )
-                                        select new
-                                        {
-                                            uInfo.Email,
-                                            ll.LoggedInTime,
-                                            ll.LoggedOutTime,
-                                            ll.IsLoggedIn
-                                        }).ToListAsync();
+                                   join u in _context.UserInfos on ll.UserId equals u.Id into uleft
+                                   from uInfo in uleft.DefaultIfEmpty()
+                                   where (
+                                      (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
+                                      && (!query.FromDate.HasValue || ll.LoggedInTime.Date >= query.FromDate.Value.Date)
+                                      && (!query.ToDate.HasValue || ll.LoggedInTime <= query.ToDate.Value.Date)
+                                   )
+                                   select new
+                                   {
+                                       uInfo.Email,
+                                       ll.LoggedInTime,
+                                       ll.LoggedOutTime,
+                                       ll.IsLoggedIn
+                                   }).ToListAsync();
 
             reportResult = loginInfo.Select(x => new LogInReportResultModel
             {
@@ -2398,42 +2427,42 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<MerchendizingSnapShotReportResultModel>();
 
             var merchendizingSnapShot = await (from ms in _context.MerchandisingSnapShots
-                                        join di in _context.DealerInfos on ms.DealerId equals di.Id into dileft
-                                        from diInfo in dileft.DefaultIfEmpty()
-                                        join de in _context.Depots on diInfo.BusinessArea equals de.Werks into deleft
-                                        from deInfo in deleft.DefaultIfEmpty()
-                                        join t in _context.Territory on diInfo.Territory equals t.Code into tleft
-                                        from tInfo in tleft.DefaultIfEmpty()
-                                        join z in _context.Zone on diInfo.CustZone equals z.Code into zleft
-                                        from zInfo in zleft.DefaultIfEmpty()
-                                        join u in _context.UserInfos on ms.UserId equals u.Id into uleft
-                                        from uInfo in uleft.DefaultIfEmpty()
-                                        join ddcat in _context.DropdownDetails on ms.MerchandisingSnapShotCategoryId equals ddcat.Id into ddcatleft
-                                        from ddcatInfo in ddcatleft.DefaultIfEmpty()
-                                        where (
-                                            (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
-                                            && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
-                                            && (!query.FromDate.HasValue || ms.CreatedTime.Date >= query.FromDate.Value.Date)
-                                            && (!query.ToDate.HasValue || ms.CreatedTime.Date <= query.ToDate.Value.Date)
-                                            && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                            && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
-                                            && (!query.DealerId.HasValue || ms.DealerId == query.DealerId.Value)
-                                        )
-                                        select new
-                                        {
-                                            ms.CreatedTime,
-                                            ms.DealerId,
-                                            ms.ImageUrl,
-                                            ms.OthersSnapShotCategoryName,
-                                            diInfo.CustomerNo,
-                                            diInfo.CustomerName,
-                                            depot = deInfo.Name1,
-                                            territory = tInfo.Name,
-                                            zone = zInfo.Name,
-                                            uInfo.Email,
-                                            categoryName = ddcatInfo.DropdownName,
-                                            ms.Remarks
-                                       }).ToListAsync();
+                                               join di in _context.DealerInfos on ms.DealerId equals di.Id into dileft
+                                               from diInfo in dileft.DefaultIfEmpty()
+                                               join de in _context.Depots on diInfo.BusinessArea equals de.Werks into deleft
+                                               from deInfo in deleft.DefaultIfEmpty()
+                                               join t in _context.Territory on diInfo.Territory equals t.Code into tleft
+                                               from tInfo in tleft.DefaultIfEmpty()
+                                               join z in _context.Zone on diInfo.CustZone equals z.Code into zleft
+                                               from zInfo in zleft.DefaultIfEmpty()
+                                               join u in _context.UserInfos on ms.UserId equals u.Id into uleft
+                                               from uInfo in uleft.DefaultIfEmpty()
+                                               join ddcat in _context.DropdownDetails on ms.MerchandisingSnapShotCategoryId equals ddcat.Id into ddcatleft
+                                               from ddcatInfo in ddcatleft.DefaultIfEmpty()
+                                               where (
+                                                   (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
+                                                   && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
+                                                   && (!query.FromDate.HasValue || ms.CreatedTime.Date >= query.FromDate.Value.Date)
+                                                   && (!query.ToDate.HasValue || ms.CreatedTime.Date <= query.ToDate.Value.Date)
+                                                   && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                                   && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                                   && (!query.DealerId.HasValue || ms.DealerId == query.DealerId.Value)
+                                               )
+                                               select new
+                                               {
+                                                   ms.CreatedTime,
+                                                   ms.DealerId,
+                                                   ms.ImageUrl,
+                                                   ms.OthersSnapShotCategoryName,
+                                                   diInfo.CustomerNo,
+                                                   diInfo.CustomerName,
+                                                   depot = deInfo.Name1,
+                                                   territory = tInfo.Name,
+                                                   zone = zInfo.Name,
+                                                   uInfo.Email,
+                                                   categoryName = ddcatInfo.DropdownName,
+                                                   ms.Remarks
+                                               }).ToListAsync();
 
             var groupmerchendizingSnapShot = merchendizingSnapShot.GroupBy(x => new { x.Email, x.DealerId, x.CustomerName, x.territory, x.zone })
                 .Select(x => new

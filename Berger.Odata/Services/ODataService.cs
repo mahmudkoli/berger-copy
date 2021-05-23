@@ -231,7 +231,7 @@ namespace Berger.Odata.Services
                                 .LessThanOrEqual(DataColumnDef.Date, endDate)
                                 .EndGroup();
 
-            if (division != "-1")
+            if (division != "-1" && !string.IsNullOrEmpty(division))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
             }
@@ -299,17 +299,17 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (division != "-1")
+            if (division != "-1" && !string.IsNullOrEmpty(division))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
             }
 
-            if (customerClassification != "-1")
+            if (customerClassification != "-1" && !string.IsNullOrEmpty(customerClassification))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.CustomerClassification, customerClassification);
             }
 
-            if (territory != "-1")
+            if (territory != "-1" && !string.IsNullOrEmpty(territory))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Territory, territory);
             }
@@ -1233,7 +1233,7 @@ namespace Berger.Odata.Services
             filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, customerNo)
                 .And().Equal(DataColumnDef.MTS_Date, compareMonth);
 
-            if (division != "-1")
+            if (division != "-1" && !string.IsNullOrEmpty(division))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
             }
@@ -1248,7 +1248,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1")
+        public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1", List<string> brands = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.MTS_Date, compareMonth);
@@ -1268,9 +1268,21 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (division != "-1")
+            if (division != "-1" && !string.IsNullOrEmpty(division))
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.Division, division);
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_Division, division);
+            }
+
+            if (brands != null && brands.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brands.FirstOrDefault());
+
+                foreach (var brand in brands.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_MatarialGroupOrBrand, brand);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
             var queryBuilder = new QueryOptionBuilder();

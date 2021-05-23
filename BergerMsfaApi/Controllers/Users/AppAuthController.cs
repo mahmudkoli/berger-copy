@@ -72,13 +72,6 @@ namespace BergerMsfaApi.Controllers.Users
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
 
-                #region Login Log
-                //if(!string.IsNullOrWhiteSpace(model.FCMToken))
-                //{
-                var loginLogId = await _loginLogService.UserLoggedInLogEntryAsync(authUser.UserId, model.FCMToken);
-                //}
-                #endregion
-
                 return OkResult(authUser);
             }
             catch (Exception ex)

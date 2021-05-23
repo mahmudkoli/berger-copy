@@ -16,9 +16,9 @@ namespace Berger.Data.MsfaEntity.KPI
         public string Territory { get; set; }
         public int Year { get; set; }
         public int Month { get; set; }
-        //public decimal SlippageAmount { get; set; }
+        public decimal SlippageAmount { get; set; }
         public decimal CollectionTargetAmount { get; set; }
-        //public decimal CollectionActualAmount { get; set; }
-        //public decimal SlippageCollectionActualAmount { get; set; }
+        public decimal CollectionActualAmount { get; set; }
+        public decimal SlippageCollectionActualAmount { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Berger.Common.Enumerations;
 using Berger.Data.Common;
 
 
@@ -27,7 +27,7 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public bool IsExclusive { get; set; }
-        public bool IsCBInstalled { get; set; }
+        public bool IsCBInstalled { get; set; } // unnecessary field
         public bool IsLastYearAppointed { get; set; }
         public bool IsClubSupreme { get; set; }
         public bool IsAP { get; set; }
@@ -47,6 +47,8 @@ namespace Berger.Data.MsfaEntity.SAPTables
         //[NotMapped]
         public string CustomerClasification { get; set; }
 
+        public EnumClubSupreme ClubSupremeType { get; set; }
+
         private string compositeKey;
         [NotMapped] 
         public string CompositeKey
@@ -56,4 +58,6 @@ namespace Berger.Data.MsfaEntity.SAPTables
             set => compositeKey = value;
         }
     }
+
+  
 }

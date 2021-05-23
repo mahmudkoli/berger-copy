@@ -770,6 +770,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("NumberOfStoriedBuildingChangeReason")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OtherClientName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PaintContractorMobile")
                         .HasColumnType("nvarchar(max)");
 
@@ -892,6 +895,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("NumberOfStoriedBuilding")
                         .HasColumnType("int");
+
+                    b.Property<string>("OtherClientName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaintContractorMobile")
                         .HasColumnType("nvarchar(max)");
@@ -1616,6 +1622,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BusinessArea")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("CollectionActualAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("CollectionTargetAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1633,6 +1642,12 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("Month")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("SlippageAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SlippageCollectionActualAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -2577,6 +2592,9 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Channel")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ClubSupremeType")
+                        .HasColumnType("int");
+
                     b.Property<string>("ContactNo")
                         .HasColumnType("nvarchar(max)");
 
@@ -2767,6 +2785,12 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BenefitDate")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("BenefitEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("BenefitStartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
@@ -2825,6 +2849,10 @@ namespace Berger.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BusinessArea")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Condition")
                         .HasColumnType("nvarchar(max)");

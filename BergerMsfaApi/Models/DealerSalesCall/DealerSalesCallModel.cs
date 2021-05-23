@@ -287,11 +287,13 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         //public EnumSubDealerInfluence? SubDealerInfluence { get; set; }
         public int? SubDealerInfluenceId { get; set; }
         //public DropdownDetail SubDealerInfluence { get; set; }
+        public string SubDealerInfluenceDropDownName { get; set; }
 
         public bool HasPainterInfluence { get; set; }
         //public EnumPainterInfluence? PainterInfluence { get; set; }
         public int? PainterInfluenceId { get; set; }
         //public DropdownDetail PainterInfluence { get; set; }
+        public string PainterInfluenceDropDownName { get; set; }
 
         public bool IsShopManProductKnowledgeDiscussed { get; set; }
         public bool IsShopManSalesTechniquesDiscussed { get; set; }

@@ -22,6 +22,8 @@ using X.PagedList;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Common.Constants;
 using System;
+using Berger.Data.MsfaEntity.Master;
+using Berger.Data.MsfaEntity.Hirearchy;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -33,6 +35,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private readonly IRepository<Attachment> _attachmentSvc;
         private readonly IMapper _mapper;
         private readonly IRepository<UserInfo> _userInfoSvc;
+        private readonly IRepository<Depot> _depotSvc;
+        private readonly IRepository<SaleOffice> _saleOfficeSvc;
+        private readonly IRepository<SaleGroup> _saleGroupSvc;
+        private readonly IRepository<Territory> _territorySvc;
+        private readonly IRepository<Zone> _zoneSvc;
         private readonly IRepository<EmailConfigForDealerOppening> _emailconfig;
         private readonly IRepository<DealerOpeningLog> _dealerOpeningLog;
         private readonly IEmailSender _emailSender;
@@ -45,6 +52,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
               IRepository<DealerOpeningAttachment> dealerOpeningAttachmentSvc,
               IMapper mapper,
               IRepository<UserInfo> userInfoSvc,
+              IRepository<Depot> depotSvc,
+              IRepository<SaleOffice> saleOfficeSvc,
+              IRepository<SaleGroup> saleGroupSvc,
+              IRepository<Territory> territorySvc,
+              IRepository<Zone> zoneSvc,
               IRepository<EmailConfigForDealerOppening> emailconfig,
               IRepository<DealerOpeningLog> dealerOpeningLog,
               IEmailSender emailSender,
@@ -59,6 +71,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _attachmentSvc = attachmentSvc;
             _mapper = mapper;
             _userInfoSvc = userInfoSvc;
+            this._depotSvc = depotSvc;
+            this._saleOfficeSvc = saleOfficeSvc;
+            this._saleGroupSvc = saleGroupSvc;
+            this._territorySvc = territorySvc;
+            this._zoneSvc = zoneSvc;
             _emailconfig = emailconfig;
             _dealerOpeningLog = dealerOpeningLog;
             _emailSender = emailSender;
@@ -290,16 +307,37 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             return _mapper.Map<DealerOpeningModel>(result);
         }
 
-        public async Task<IEnumerable<DealerOpeningModel>> AppGetDealerOpeningListAsync()
+        public async Task<IEnumerable<AppDealerOpeningModel>> AppGetDealerOpeningListByCurrentUserAsync()
         {
-            //var mapper = new MapperConfiguration(cfg =>
-            //{
-            //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
-            //    cfg.CreateMap<DealerOpeningModel, DealerOpening>().ReverseMap();
-            //}).CreateMapper();
-            var result = await Task.Run(() => _dealerOpeningSvc.GetAllInclude(f => f.DealerOpeningAttachments));
-            return _mapper.Map<List<DealerOpeningModel>>(result);
+            var result = await (from d in _dealerOpeningSvc.FindAll(x => x.EmployeeId == AppIdentity.AppUser.EmployeeId)
+                         join dep in _depotSvc.GetAll() on d.BusinessArea equals dep.Werks into depleftjoin
+                         from depinfo in depleftjoin.DefaultIfEmpty()
+                         join so in _saleOfficeSvc.GetAll() on d.SaleOffice equals so.Code into soleftjoin
+                         from soinfo in soleftjoin.DefaultIfEmpty()
+                         join sg in _saleGroupSvc.GetAll() on d.SaleGroup equals sg.Code into sgleftjoin
+                         from sginfo in sgleftjoin.DefaultIfEmpty()
+                         join t in _territorySvc.GetAll() on d.Territory equals t.Code into tleftjoin
+                         from tinfo in tleftjoin.DefaultIfEmpty()
+                         join z in _zoneSvc.GetAll() on d.Zone equals z.Code into zleftjoin
+                         from zinfo in zleftjoin.DefaultIfEmpty()
+                         orderby d.CreatedTime descending
+                         select new AppDealerOpeningModel
+                         {
+                             Id = d.Id,
+                             BusinessArea = $"{depinfo.Name1} ({depinfo.Werks})",
+                             SaleOffice = $"{soinfo.Name} ({soinfo.Code})",
+                             SaleGroup = $"{sginfo.Name} ({sginfo.Code})",
+                             Territory = $"{tinfo.Code}",
+                             Zone = $"{zinfo.Code}",
+                             Code = d.Code,
+                             OpeningDate = d.CreatedTime.ToString("yyyy-MM-dd"),
+                             DealerOpeningStatus = d.DealerOpeningStatus,
+                             DealerOpeningStatusText = ((DealerOpeningStatus)d.DealerOpeningStatus).ToString()
+                         }).ToListAsync();
+
+            return result;
         }
+
         public async Task<DealerOpeningModel> GetDealerOpeningDetailById(int id)
         {
             //var mapper = new MapperConfiguration(cfg =>
@@ -369,11 +407,30 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 foreach (var item in lstemail)
                 {
                     var createdBy = _userInfoSvc.Find(p => p.Id == dealer.CreatedBy);
-                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId); 
-                    string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
-                    string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
+                    var LastApprovar = _userInfoSvc.Find(p => p.Id == dealer.CurrentApprovarId);
+                    //string messageBody = string.Format(ConstantsLeadValue.DealerOpeningMailBody, createdBy?.FullName??string.Empty, LastApprovar?.FullName??string.Empty);
+                    //string subject = string.Format(ConstantsLeadValue.DealerOpeningMailSubject, dealer.Code??string.Empty);
 
-                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, messageBody, lstAttachment);
+                    string subject = string.Empty;
+                    string body = string.Empty;
+
+                    subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
+
+                    body += $"Dear Concern,{Environment.NewLine}";
+
+                    body += string.Format("A new dealer open request has been generated from " +
+                        "“{0} & {1}” and got approved by “{2} & {3}”. " +
+                        "You are requested to open the new dealer in SAP by using the attached information.",
+                        createdBy.UserName,
+                        createdBy.Designation,
+                        LastApprovar.UserName,
+                        LastApprovar.Designation);
+
+                    body += $"{Environment.NewLine}{Environment.NewLine}";
+                    body += $"Thank You,{Environment.NewLine}";
+                    body += $"Berger Paints Bangladesh Limited";
+
+                    await _emailSender.SendEmailWithAttachmentAsync(item, subject, body, lstAttachment);
                 }
             }
             catch (System.Exception ex)

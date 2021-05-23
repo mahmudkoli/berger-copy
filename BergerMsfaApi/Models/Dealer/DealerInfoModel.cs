@@ -47,7 +47,9 @@ namespace BergerMsfaApi.Models.Dealer
         public string IsLastYearAppointedLabel { get; set; }
         public bool IsClubSupreme { get; set; }
         public string IsClubSupremeLabel { get; set; }
-
-
+        public bool IsAp { get; set; }
+        public string IsApLabel { get; set; }
+        public string SalesGroup { get; set; }
+        public string SalesOffice { get; set; }
     }
 }

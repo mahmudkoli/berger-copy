@@ -5,7 +5,7 @@
             <div class="col-md-3">
                 <div class="position-relative form-group">
                     <label class="">Depot Id</label>
-                    <ng-select [items]="depots" [(ngModel)]="query.depotId" bindValue="code" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="depots" [(ngModel)]="query.depot" bindValue="code" bindLabel="name" [multiple]="false">
                     </ng-select>
                 </div>
             </div>
@@ -50,7 +50,7 @@
             <div class="col-md-3">
                 <div class="position-relative form-group">
                     <label class="">Dealer</label>
-                    <ng-select [items]="dealerList" [(ngModel)]="query.dealerId" bindValue="id" bindLabel="customerName" [multiple]="false">
+                    <ng-select [items]="dealerList" [(ngModel)]="query.customerNo" bindValue="customerNo" bindLabel="customerName" [multiple]="false">
                     </ng-select>
                 </div>
             </div>

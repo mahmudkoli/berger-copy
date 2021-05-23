@@ -100,5 +100,19 @@ namespace BergerMsfaApi.Controllers.KPI
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("SlippageAmount")]
+        public async Task<IActionResult> GetSlippageAmount([FromQuery]CustomerSlippageQueryModel query)
+        {
+            try
+            {
+                var result = await _collectionPlanService.GetCustomerSlippageAmountToLastMonth(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

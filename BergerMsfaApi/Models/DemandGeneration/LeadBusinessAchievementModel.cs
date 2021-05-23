@@ -48,6 +48,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
         public string ProductSamplingBrandName { get; set; }
+        public IList<string> ProductSamplingBrandNames { get; set; }
         public string NextVisitDate { get; set; }
         public string RemarksOrOutcome { get; set; }
         public string PhotoCaptureUrl { get; set; }
@@ -55,6 +56,19 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public SaveLeadBusinessAchievementModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.ProductSamplingBrandNames = new List<string>();
+        }
+
+        public void StringToList(LeadBusinessAchievement src, SaveLeadBusinessAchievementModel dest)
+        {
+            dest.ProductSamplingBrandNames = string.IsNullOrEmpty(src.ProductSamplingBrandName) ? new List<string>() :
+                                                src.ProductSamplingBrandName.Split(',').ToList();
+        }
+
+        public void ListToString(SaveLeadBusinessAchievementModel src, LeadBusinessAchievement dest)
+        {
+            dest.ProductSamplingBrandName = src.ProductSamplingBrandNames == null || !src.ProductSamplingBrandNames.Any() ? string.Empty :
+                                                string.Join(',', src.ProductSamplingBrandNames);
         }
 
         public void Mapping(Profile profile)
@@ -62,11 +76,13 @@ namespace BergerMsfaApi.Models.DemandGeneration
             profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>()
                 .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
                 .ForMember(dest => dest.NextVisitDate,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)))
+                .AfterMap((src, dest) => dest.StringToList(src, dest));
 
             profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>()
                 .ForMember(dest => dest.NextVisitDate,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDate)))
+                .AfterMap((src, dest) => src.ListToString(src, dest));
         }
     }
 }

@@ -10,11 +10,14 @@ namespace Berger.Odata.Services
     {
         private readonly ISalesDataService _salesDataService;
         private readonly IMTSDataService _mtsDataService;
+        private readonly IODataService _odataService;
 
-        public ReportDataService(ISalesDataService salesDataService, IMTSDataService mtsDataService)
+        public ReportDataService(ISalesDataService salesDataService, IMTSDataService mtsDataService,
+            IODataService odataService)
         {
             _salesDataService = salesDataService;
             _mtsDataService = mtsDataService;
+            this._odataService = odataService;
         }
 
         public async Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model, IList<int> dealerIds)
@@ -29,10 +32,10 @@ namespace Berger.Odata.Services
 
 
             IEnumerable<SalesDataModel> salesTargetData = await _salesDataService
-                .GetMyTargetSales(fromDate, endDate, model.Division, model.VolumeOrValue, model.ReportType, dealerIds);
+                .GetMyTargetSales(fromDate, endDate, model.Division, model.VolumeOrValue, model.ReportType, dealerIds, model.BrandType);
 
             var previousYearSalesData = await _salesDataService
-                .GetMyTargetSales(previousYearFromDate, previousYearEndDate, model.Division, model.VolumeOrValue, model.ReportType, dealerIds);
+                .GetMyTargetSales(previousYearFromDate, previousYearEndDate, model.Division, model.VolumeOrValue, model.ReportType, dealerIds, model.BrandType);
 
 
             var result = salesTargetData.Select(x => new TargetReportResultModel
@@ -42,7 +45,7 @@ namespace Berger.Odata.Services
                 Brand = x.MatarialGroupOrBrand
             }).ToList();
 
-            var mtsTargetData = await _mtsDataService.GetMyTargetMts(fromDate, dealerIds, model.Division, model.ReportType, model.VolumeOrValue);
+            var mtsTargetData = await _mtsDataService.GetMyTargetMts(fromDate, dealerIds, model.Division, model.ReportType, model.VolumeOrValue, model.BrandType);
 
             mtsTargetData = mtsTargetData.GroupBy(x => new { x.Territory, x.Zone, x.MatarialGroupOrBrand })
                 .Select(x => new MTSDataModel()
@@ -107,6 +110,25 @@ namespace Berger.Odata.Services
                 item.TillDateMTSAchieved = decimal.Parse(item.TillDateMTSAchieved.ToString("0.##"));
                 item.TotalMTSTarget = decimal.Parse(item.TotalMTSTarget.ToString("0.##"));
             }
+
+            #region get brand data
+            if (result.Any() && model.ReportType == MyTargetReportType.BrandWise)
+            {
+                var brands = result.Select(x => x.Brand).Distinct().ToList();
+
+                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands)).ToList();
+
+                foreach (var item in result)
+                {
+                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand);
+                    if (brandFamilyData != null)
+                    {
+                        item.Brand = $"{brandFamilyData.MatarialGroupOrBrandName} ({item.Brand})";
+                    }
+                }
+            }
+            #endregion
+
             return result;
         }
 

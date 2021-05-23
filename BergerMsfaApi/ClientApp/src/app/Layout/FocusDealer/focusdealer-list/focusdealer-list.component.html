@@ -1,50 +1,86 @@
 <div class="p-3 mb-3 bg-white">
-    <p-table #dt [value]="focusDealerList" [globalFilterFields]="['planDate','status']">
-        <ng-template pTemplate="caption">
-            <div class="table-header">
-                <h5 class="mb-3">Focus Dealer List</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <span class="p-input-icon-right">
+  <p-table
+    #dt
+    [value]="focusDealerList"
+    [globalFilterFields]="['planDate', 'status']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+        <h5 class="mb-3">Focus Dealer List</h5>
+        <div class="row">
+          <div class="col col-12">
+            <app-search-option
+              [searchOptionQuery]="searchOptionQuery"
+              [searchOptionSettings]="searchOptionSettings"
+              (searchOptionQueryCallbackFn)="
+                searchOptionQueryCallbackFn($event)
+              "
+            ></app-search-option>
+            <!-- <span class="p-input-icon-right">
                             <i class="pi pi-search" (click)="onSearch()"></i>
                             <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
                                 [(ngModel)]="search" placeholder="Search" />
-                        </span>
-                    </div>
-                    <div class="col-md-6 text-right">
-                        <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="dealerName">Dealer<p-sortIcon field="dealerName"></p-sortIcon>
-                </th>
-                <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon>
-                </th>
-                <th pSortableColumn="validFrom">Valid From <p-sortIcon field="validFrom"></p-sortIcon>
-                </th>
-                <th pSortableColumn="validTo">Valid To <p-sortIcon field="validTo"></p-sortIcon>
-                </th>
-                <th></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-focus>
-            <tr>
-                <td>{{focus.dealerName }}</td>
-                <td>{{focus.employeeName}}</td>
-                <td>{{focus.validFrom }}</td>
-                <td>{{focus.validTo }}</td>
-                <td>
-                    <i class="fa fa-edit mr-2" (click)="edit(focus.id)"> </i>
-                    <i class="fa fa-trash" (click)="delete(focus.id)"> </i>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <p-paginator #paginator [rows]="rows" [totalRecords]="pagingConfig?.totalItemCount" [pageLinkSize]="10"
-                [rowsPerPageOptions]="[10,20]" (onPageChange)="paginate($event)"></p-paginator>
-        </ng-template>
-    </p-table>
+                        </span> -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-right">
+            <button
+              class="btn btn-sm btn-primary mr-2 pull-right"
+              (click)="add()"
+            >
+              New Record
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="territory">
+          Territory<p-sortIcon field="territory"></p-sortIcon>
+        </th>
+        <th pSortableColumn="zone">
+          Zone<p-sortIcon field="zone"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dealerName">
+          Dealer<p-sortIcon field="dealerName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="employeeName">
+          Employee <p-sortIcon field="employeeName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="validFrom">
+          Valid From <p-sortIcon field="validFrom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="validTo">
+          Valid To <p-sortIcon field="validTo"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-focus>
+      <tr>
+        <td>{{ focus.territory }}</td>
+        <td>{{ focus.zone }}</td>
+        <td>{{ focus.dealerName }}</td>
+        <td>{{ focus.employeeName }}</td>
+        <td>{{ focus.validFrom }}</td>
+        <td>{{ focus.validTo }}</td>
+        <td>
+          <i class="fa fa-edit mr-2" (click)="edit(focus.id)"> </i>
+          <i class="fa fa-trash" (click)="delete(focus.id)"> </i>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <p-paginator
+        #paginator
+        [rows]="rows"
+        [totalRecords]="pagingConfig?.totalItemCount"
+        [pageLinkSize]="10"
+        [rowsPerPageOptions]="[10, 20]"
+        (onPageChange)="paginate($event)"
+      ></p-paginator>
+    </ng-template>
+  </p-table>
 </div>

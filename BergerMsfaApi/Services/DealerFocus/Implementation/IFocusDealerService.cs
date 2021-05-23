@@ -9,7 +9,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
 {
     public interface IFocusDealerService
     {
-        Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize,string search);
+        Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize, string search, string depoId, string[] territories = null, string[] zones = null);
         Task<FocusDealerModel> GetFocusDealerById(int id);
         Task<FocusDealerModel> CreateAsync(FocusDealerModel model);
         Task<FocusDealerModel> UpdateAsync(FocusDealerModel model);
@@ -17,10 +17,10 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         Task<bool> IsExistAsync(int id);
 
         #region Dealer
-        public Task<bool> DealerStatusUpdate( DealerInfo dealer);
-        public Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search);
-        public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
+        public Task<bool> DealerStatusUpdate(DealerInfo dealer);
 
+        public Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search, string depoId = null, string[] territories = null, string[] custZones = null, string[] salesGroup = null);
+        public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
         #endregion
 
     }

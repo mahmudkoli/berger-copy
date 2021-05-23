@@ -64,6 +64,7 @@ namespace BergerMsfaApi.Models.Report
 
     public class ActiveSummeryReportSearchModel : ReportBaseSearchModel
     {
+        public string ActivitySummary { get; set; }
 
     }
 

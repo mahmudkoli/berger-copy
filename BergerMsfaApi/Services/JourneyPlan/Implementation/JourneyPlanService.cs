@@ -70,6 +70,31 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             }
             return false;
         }
+
+        public async Task<bool> AppChangePlanStatus(JourneyPlanStatusChangeModel model)
+        {
+            var find = await _journeyPlanMasterSvc.FindAsync(f => f.Id == model.PlanId);
+            if (find != null)
+            {
+                find.PlanStatus = (PlanStatus)model.Status;
+                if (PlanStatus.Approved == (PlanStatus)model.Status)
+                {
+                    find.ApprovedDate = DateTime.Now;
+                    find.ApprovedById = AppIdentity.AppUser.UserId;
+                }
+                else if (PlanStatus.Rejected == (PlanStatus)model.Status)
+                {
+                    find.RejectedDate = DateTime.Now;
+                    find.RejectedBy = AppIdentity.AppUser.UserId;
+                }
+                find.Comment = model.Comment;
+
+                await _journeyPlanMasterSvc.UpdateAsync(find);
+                return true;
+            }
+            return false;
+        }
+
         public async Task<int> DeleteJourneyAsync(int id)
         {
             await _journeyPlanDetailSvc.DeleteAsync(s => s.PlanId == id);
@@ -132,6 +157,33 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
             var result = await final.ToPagedListAsync(index, pageSize);
             return result;
+        }
+
+        public async Task<IList<JourneyPlanDetailModel>> GetAppJourneyPlanListForLineManager()
+        {
+            var currentDate = DateTime.Now;
+            var employeeIds = _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId);
+
+            var plans = (from plan in _journeyPlanMasterSvc.GetAll()
+                         join emp in employeeIds on plan.EmployeeId equals emp.EmployeeId
+                         where plan.PlanDate.Date >= currentDate.Date
+                         orderby plan.PlanDate.Date descending
+                         select new { plan, emp });
+
+
+            var final = plans.Select(s => new JourneyPlanDetailModel
+            {
+                Id = s.plan.Id,
+                EmployeeId = s.emp.EmployeeId,
+                Comment = s.plan.Comment??string.Empty,
+                PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
+                Status = s.plan.Status,
+                PlanStatus = s.plan.PlanStatus,
+                PlanStatusInText = s.plan.PlanStatus.ToString(),
+                EmployeeName = $"{s.emp.FullName}"
+            }).ToList();
+
+            return final;
         }
 
 
@@ -214,6 +266,62 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
 
         }
+
+        public async Task<JourneyPlanDetailModel> GetAppJourneyPlanDetailById(int PlanId)
+        {
+            var tempEmployee = (EmployeeModel)null;
+            var plan = await _journeyPlanMasterSvc.FindAsync(f => f.Id == PlanId);
+
+            var result = new JourneyPlanDetailModel
+            {
+
+                Id = plan.Id,
+                EmployeeId = plan.EmployeeId,
+                PlanDate = plan.PlanDate.ToString("yyyy-MM-dd"),
+                Status = plan.Status,
+                PlanStatus = plan.PlanStatus,
+                Comment = plan.Comment ?? string.Empty,
+                EditCount = plan.EditCount,
+
+                Employee = tempEmployee = _userInfoSvc.Where(f => f.EmployeeId == plan.EmployeeId)
+                             .Select(s => new EmployeeModel
+                             {
+                                 FirstName = $"{s.FullName}",
+                                 Department = s.Department,
+                                 Designation = s.Designation,
+                                 PhoneNumber = s.PhoneNumber
+
+                             }).FirstOrDefault(),
+
+                EmployeeName = tempEmployee.FirstName ?? string.Empty,
+                PlanStatusInText = plan.PlanStatus.ToString(),
+
+                DealerInfoModels = (from dealer in _dealerInforSvc.GetAll()
+                                    join planDetail in _journeyPlanDetailSvc.FindAll(f => f.PlanId == plan.Id)
+                                    on dealer.Id equals planDetail.DealerId
+                                    join f in _focusDealerSvc.GetAll() on new { a = planDetail.DealerId, b = AppIdentity.AppUser.EmployeeId } equals new { a = f.Code, b = f.EmployeeId } into leftJoin
+                                    //join f in _focusDealerSvc.GetAll() on planDetail.DealerId equals f.Code into leftJoin
+                                    from fd in leftJoin.DefaultIfEmpty()
+                                    select new DealerInfoModel
+                                    {
+                                        Id = dealer.Id,
+                                        CustomerName = dealer.CustomerName,
+                                        CustomerNo = dealer.CustomerNo,
+                                        Territory = dealer.Territory,
+                                        Zone = dealer.CustZone,
+                                        ContactNo = dealer.ContactNo,
+                                        Address = dealer.Address,
+                                        IsFocused = (fd.Code > 0 && fd.ValidTo.Date >= DateTime.Now.Date) ? true : false,
+                                        VisitDate = planDetail.VisitDate,
+                                        AccountGroup = dealer.AccountGroup,
+                                        PlanDate = plan.PlanDate.ToString("yyyy-MM-dd")
+                                    }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
+
+            };
+
+            return result;
+        }
+
         public async Task<PortalPlanDetailModel> PortalCreateJourneyPlan(PortalCreateJouneryModel model)
         {
             var result = new PortalPlanDetailModel();

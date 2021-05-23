@@ -1,10 +1,20 @@
 <div class="p-3 mb-3 bg-white">
-    <p-table #dt [value]="dealerList">
-        <ng-template class="adfs" pTemplate="caption">
-            <div class="table-header">
-                <h5 class="mb-3">Dealer List</h5>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+  <p-table #dt [value]="dealerList">
+    <ng-template class="adfs" pTemplate="caption">
+      <div class="table-header">
+        <h5 class="mb-3">Dealer List</h5>
+        <div class="row align-items-center">
+          <div class="col-12">
+            <app-search-option
+              [searchOptionQuery]="searchOptionQuery"
+              [searchOptionSettings]="searchOptionSettings"
+              (searchOptionQueryCallbackFn)="
+                searchOptionQueryCallbackFn($event)
+              "
+            ></app-search-option>
+          </div>
+
+          <!-- <div class="col-md-6">
                         <div>
                             <span class="p-input-icon-right">
                                 <i class="pi pi-search" (click)="onSearch()"></i>
@@ -12,58 +22,124 @@
                                     [(ngModel)]="search" placeholder="Search" />
                             </span>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="customerNo" style="width:139px">Customer No<p-sortIcon field="customerNo"></p-sortIcon></th>
-                <th pSortableColumn="customerName" style="width:163px">Customer Name <p-sortIcon field="customerName"></p-sortIcon></th>
-                <th pSortableColumn="contactNo" style="width:132px">ContactNo <p-sortIcon field="contactNo"></p-sortIcon></th>
-                <th pSortableColumn="address" style="width:115px">Address <p-sortIcon field="address"></p-sortIcon></th>
-                <th pSortableColumn="isExclusiveLabel" style="width:118px">Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon></th>
-                <th pSortableColumn="isCBInstalled" style="width:116px">Installed <p-sortIcon field="isCBInstalled"></p-sortIcon></th>
-                <th pSortableColumn="isLastYearAppointed" style="width:132px">Last Year Appointed <p-sortIcon field="isLastYearAppointed"></p-sortIcon></th>
-                <th pSortableColumn="isClubSupreme" style="width:150px">Club Supreme <p-sortIcon field="isClubSupreme"></p-sortIcon></th>
-                <th></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-dealer>
-            <tr>
-                <td>{{dealer.customerNo }}</td>
-                <td>{{dealer.customerName}}</td>
-                <td>{{dealer.contactNo}}</td>
-                <td>{{dealer.address}}</td>
-                <td>
-                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isExclusive')" onLabel="{{dealer.isExclusiveLabel}}" offLabel="{{dealer.isExclusiveLabel}}" [(ngModel)]="dealer.isExclusive"></p-toggleButton>
-                </td>
-                <td>
-                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isCBInstalled')" onLabel="{{dealer.isCBInstalledLabel}}" offLabel="{{dealer.isCBInstalledLabel}}" [(ngModel)]="dealer.isCBInstalled"></p-toggleButton>
-                </td>
-                <td>
-                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isLastYearAppointed')" onLabel="{{dealer.isLastYearAppointedLabel}}" offLabel="{{dealer.isLastYearAppointedLabel}}" [(ngModel)]="dealer.isLastYearAppointed"></p-toggleButton>
-                </td>
-                <td>
-                    <p-toggleButton styleClass="p-button-sm" (ngModelChange)="onChange($event,dealer,'isClubSupreme')" onLabel="{{dealer.isClubSupremeLabel}}" offLabel="{{dealer.isClubSupremeLabel}}" [(ngModel)]="dealer.isClubSupreme"></p-toggleButton>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-primary" type="button" (click)="detail(dealer.id)">View Detail</button>
-                </td>
+                    </div> -->
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="territory" style="width: 115px">
+          Territory <p-sortIcon field="territory"></p-sortIcon>
+        </th>
+        <th pSortableColumn="custZone" style="width: 115px">
+          Zone <p-sortIcon field="custZone"></p-sortIcon>
+        </th>
+        <th pSortableColumn="customerNo" style="width: 139px">
+          Customer No<p-sortIcon field="customerNo"></p-sortIcon>
+        </th>
+        <th pSortableColumn="customerName" style="width: 163px">
+          Customer Name <p-sortIcon field="customerName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="contactNo" style="width: 132px">
+          ContactNo <p-sortIcon field="contactNo"></p-sortIcon>
+        </th>
+        <th pSortableColumn="address" style="width: 115px">
+          Address <p-sortIcon field="address"></p-sortIcon>
+        </th>
+        <th pSortableColumn="isExclusiveLabel" style="width: 118px">
+          Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon>
+        </th>
+        <th pSortableColumn="isCBInstalled" style="width: 116px">
+          Color Bank Installed <p-sortIcon field="isCBInstalled"></p-sortIcon>
+        </th>
+        <th pSortableColumn="isLastYearAppointed" style="width: 132px">
+          Last Year Appointed
+          <p-sortIcon field="isLastYearAppointed"></p-sortIcon>
+        </th>
+        <th pSortableColumn="isClubSupreme" style="width: 150px">
+          Club Supreme <p-sortIcon field="isClubSupreme"></p-sortIcon>
+        </th>
+        <th pSortableColumn="isAp" style="width: 150px">
+          AP <p-sortIcon field="isAp"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dealer>
+      <tr>
+        <td>{{ dealer.territory }}</td>
+        <td>{{ dealer.custZone }}</td>
+        <td>{{ dealer.customerNo }}</td>
+        <td>{{ dealer.customerName }}</td>
+        <td>{{ dealer.contactNo }}</td>
+        <td>{{ dealer.address }}</td>
 
-            </tr>
-        </ng-template>
-         <ng-template pTemplate="summary">
-            <p-paginator
-            
-                      
-                         #paging
-                         [rows]="rows"
-                         [totalRecords]="pagingConfig?.totalItemCount"
-                         [pageLinkSize]="10"
-                         [rowsPerPageOptions]="[10,20]"
-                         (onPageChange)="paginate($event)"></p-paginator>
-        </ng-template> 
-    </p-table>
+        <td>
+          <p-toggleButton
+            styleClass="p-button-sm"
+            (ngModelChange)="onChange($event, dealer, 'isExclusive')"
+            onLabel="{{ dealer.isExclusiveLabel }}"
+            offLabel="{{ dealer.isExclusiveLabel }}"
+            [(ngModel)]="dealer.isExclusive"
+          ></p-toggleButton>
+        </td>
+        <td>
+          <p-toggleButton
+            styleClass="p-button-sm"
+            (ngModelChange)="onChange($event, dealer, 'isCBInstalled')"
+            onLabel="{{ dealer.isCBInstalledLabel }}"
+            offLabel="{{ dealer.isCBInstalledLabel }}"
+            [(ngModel)]="dealer.isCBInstalled"
+          ></p-toggleButton>
+        </td>
+        <td>
+          <p-toggleButton
+            styleClass="p-button-sm"
+            (ngModelChange)="onChange($event, dealer, 'isLastYearAppointed')"
+            onLabel="{{ dealer.isLastYearAppointedLabel }}"
+            offLabel="{{ dealer.isLastYearAppointedLabel }}"
+            [(ngModel)]="dealer.isLastYearAppointed"
+          ></p-toggleButton>
+        </td>
+        <td>
+          <p-toggleButton
+            styleClass="p-button-sm"
+            (ngModelChange)="onChange($event, dealer, 'isClubSupreme')"
+            onLabel="{{ dealer.isClubSupremeLabel }}"
+            offLabel="{{ dealer.isClubSupremeLabel }}"
+            [(ngModel)]="dealer.isClubSupreme"
+          ></p-toggleButton>
+        </td>
+        <td>
+          <p-toggleButton
+            styleClass="p-button-sm"
+            (ngModelChange)="onChange($event, dealer, 'isAp')"
+            onLabel="{{ dealer.isApLabel }}"
+            offLabel="{{ dealer.isApLabel }}"
+            [(ngModel)]="dealer.isAp"
+          ></p-toggleButton>
+        </td>
+        <td>
+          <button
+            class="btn btn-sm btn-primary"
+            type="button"
+            (click)="detail(dealer.id)"
+          >
+            View Detail
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <p-paginator
+        #paging
+        [rows]="rows"
+        [totalRecords]="pagingConfig?.totalItemCount"
+        [pageLinkSize]="10"
+        [rowsPerPageOptions]="[10, 20]"
+        (onPageChange)="paginate($event)"
+      ></p-paginator>
+    </ng-template>
+  </p-table>
 </div>
 <!-- <pre>{{pagingConfig|json}}</pre> -->

@@ -59,16 +59,8 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _collectionDataService = collectionDataService;
         }
 
-        public async Task<MySummaryReportResultModel> MySummaryReport()
+        public async Task<MySummaryReportResultModel> MySummaryReport(IList<int> dealerIds)
         {
-
-            IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-            //dealerIds = new List<int>
-            //{
-            //    24,48,1852,1861,1835,1826,1796,1692,1681,1677,1610,4,8
-            //};
-
-
             var query = await (from master in _context.JourneyPlanMasters
                                join details in _context.JourneyPlanDetails on master.Id equals details.PlanId into detailsLeftJoin
                                from detailsInfo in detailsLeftJoin.DefaultIfEmpty()
@@ -121,20 +113,20 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model)
+        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<int> dealerIds)
         {
             var customerNoList = new List<int>();
 
             if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
             {
                 customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory)
+                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
                     .Select(x => x.CustomerNo).ToListAsync();
             }
             else
             {
                 customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory)
+                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
                     .Select(x => x.CustomerNo).ToListAsync();
             }
 
