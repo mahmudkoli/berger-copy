@@ -160,6 +160,10 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManager');
   }
 
+  getUserInfoListByLoggedInManagerWithoutZoUser() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManagerWithoutZoUser');
+  }
+
   getUserInfoList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoList');
   }

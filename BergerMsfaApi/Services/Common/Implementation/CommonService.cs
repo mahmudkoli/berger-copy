@@ -117,6 +117,16 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManagerWithoutZoUser()
+        {
+            var appUser = AppIdentity.AppUser;
+
+            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || 
+                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
+                                && (f.EmployeeRole != EnumEmployeeRole.ZO));
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
+
         public async Task<IEnumerable<Division>> GetDivisionList()
         {
             // var result1 = new List<UserInfoModel>();

@@ -18,6 +18,7 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<DealerInfoModel>> GetDealerInfoList();
         Task<IEnumerable<UserInfoModel>> GetUserInfoList();
         Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager();
+        Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManagerWithoutZoUser();
         Task<IEnumerable<SaleOffice>> GetSaleOfficeList();
         Task<IEnumerable<SaleGroup>> GetSaleGroupList();
         Task<IEnumerable<Territory>> GetTerritoryList();

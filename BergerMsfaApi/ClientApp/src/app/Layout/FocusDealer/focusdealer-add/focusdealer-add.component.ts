@@ -42,7 +42,7 @@ export class FocusdealerAddComponent implements OnInit {
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 
     private getEmpList() {
-        this.commonSvc.getUserInfoListByLoggedInManager().subscribe(
+        this.commonSvc.getUserInfoListByLoggedInManagerWithoutZoUser().subscribe(
             (result: any) => {
                 this.employeeList = result.data;
             },
