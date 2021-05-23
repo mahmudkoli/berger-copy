@@ -49,9 +49,6 @@
         <th pSortableColumn="isExclusiveLabel" style="width: 118px">
           Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon>
         </th>
-        <th pSortableColumn="isCBInstalled" style="width: 116px">
-          Color Bank Installed <p-sortIcon field="isCBInstalled"></p-sortIcon>
-        </th>
         <th pSortableColumn="isLastYearAppointed" style="width: 132px">
           Last Year Appointed
           <p-sortIcon field="isLastYearAppointed"></p-sortIcon>
@@ -81,15 +78,6 @@
             onLabel="{{ dealer.isExclusiveLabel }}"
             offLabel="{{ dealer.isExclusiveLabel }}"
             [(ngModel)]="dealer.isExclusive"
-          ></p-toggleButton>
-        </td>
-        <td>
-          <p-toggleButton
-            styleClass="p-button-sm"
-            (ngModelChange)="onChange($event, dealer, 'isCBInstalled')"
-            onLabel="{{ dealer.isCBInstalledLabel }}"
-            offLabel="{{ dealer.isCBInstalledLabel }}"
-            [(ngModel)]="dealer.isCBInstalled"
           ></p-toggleButton>
         </td>
         <td>
