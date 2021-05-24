@@ -103,7 +103,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
-        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager()
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUser()
         {
             // var result1 = new List<UserInfoModel>();
             // var u = _userInfosvc.GetAll().ToList();
@@ -117,7 +117,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
-        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManagerWithoutZoUser()
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUserWithoutZoUser()
         {
             var appUser = AppIdentity.AppUser;
 
