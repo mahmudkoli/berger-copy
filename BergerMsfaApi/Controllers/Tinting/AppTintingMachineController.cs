@@ -57,5 +57,21 @@ namespace BergerMsfaApi.Controllers.Tinting
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpPost("GetAllTintingMachineList")]
+        public async Task<IActionResult> GetTintingMachineList([FromQuery] AppTintingMachineSearchModel query)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _tintiningService.GetAllAsync(query);
+                return OkResult(result);
+            }
+            catch (System.Exception ex)
+            {
+
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

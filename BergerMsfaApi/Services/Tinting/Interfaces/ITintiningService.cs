@@ -14,5 +14,6 @@ namespace BergerMsfaApi.Services.Tinting.Interfaces
         Task<QueryResultModel<TintingMachineModel>> GetAllAsync(QueryObjectModel query);
         Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId);
         Task<bool> UpdateAsync(List<SaveTintingMachineModel> model);
+        Task<IList<AppTintingMachineModel>> GetAllAsync(AppTintingMachineSearchModel model);
     }
 }
