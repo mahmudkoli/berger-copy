@@ -194,10 +194,12 @@ export class CommonService {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getDepotList');
   }
 
-  getUserInfoListByLoggedInManager() {
-    return this.http.get<APIResponse>(
-      this.baseUrl + 'v1/Common/getUserInfoListByLoggedInManager'
-    );
+  getUserInfoListByCurrentUser() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser');
+  }
+
+  getUserInfoListByCurrentUserWithoutZoUser() {
+    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser');
   }
 
   getUserInfoList() {
