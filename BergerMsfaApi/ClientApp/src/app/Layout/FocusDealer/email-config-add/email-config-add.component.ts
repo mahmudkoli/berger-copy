@@ -55,7 +55,7 @@ export class EmailConfigAddComponent implements OnInit {
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 
     private getEmpList() {
-        this.commonSvc.getUserInfoListByLoggedInManager().subscribe(
+        this.commonSvc.getUserInfoListByCurrentUser().subscribe(
             (result: any) => {
                 this.employeeList = result.data;
                 console.log(this.employeeList);

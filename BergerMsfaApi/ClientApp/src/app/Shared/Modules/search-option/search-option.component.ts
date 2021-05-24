@@ -161,7 +161,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.Territory)?this.commonService.getTerritoryList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.Zone)?this.commonService.getZoneList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.CreditControlArea)?this.commonService.getCreditControlAreaList():of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.UserId)?this.commonService.getUserInfoListByLoggedInManager():of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.UserId)?this.commonService.getUserInfoListByCurrentUser():of(APIResponse),
         ]).subscribe(([plants, areaGroups, territories, zones, creditControlAreas, users]) => {
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
