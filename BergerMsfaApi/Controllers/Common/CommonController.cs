@@ -150,6 +150,20 @@ namespace BergerMsfaApi.Controllers.Common
             }
         }
 
+        [HttpGet("GetUserInfoListByLoggedInManagerWithoutZoUser")]
+        public async Task<IActionResult> GetUserInfoListByLoggedInManagerWithoutZoUser()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByLoggedInManagerWithoutZoUser();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("GetDivisionList")]
         public async Task<IActionResult> GetDivisionList()
         {
