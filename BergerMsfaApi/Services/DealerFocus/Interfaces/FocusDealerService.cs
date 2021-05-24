@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 using X.PagedList;
 using Microsoft.EntityFrameworkCore;
 using Berger.Common.Constants;
+using Berger.Common.Enumerations;
+using BergerMsfaApi.Services.Excel.Interface;
+using Microsoft.AspNetCore.Http;
 using String = EllipticCurve.Utils.String;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
@@ -25,12 +28,15 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         private readonly IRepository<DealerInfo> _dealerInfo;
         private readonly IRepository<DealerInfoStatusLog> _dealerInfoStatusLog;
         private readonly IMapper _mapper;
+        private readonly IExcelReaderService _excelReaderService;
+
         public FocusDealerService(
             IRepository<FocusDealer> focusDealer,
             IRepository<UserInfo> userInfoSvc,
             IRepository<DealerInfo> dealerInfo,
             IRepository<DealerInfoStatusLog> dealerInfoStatusLog,
-            IMapper mapper
+            IMapper mapper,
+            IExcelReaderService excelReaderService
             )
         {
             _focusDealer = focusDealer;
@@ -38,6 +44,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             _dealerInfo = dealerInfo;
             _dealerInfoStatusLog = dealerInfoStatusLog;
             _mapper = mapper;
+            _excelReaderService = excelReaderService;
         }
 
         public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize, string search, string depoId, string[] territories = null, string[] zones = null)
@@ -114,13 +121,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             salesGroup ??= new string[] { };
 
 
-            var dealers =  _dealerInfo.FindAll(x => !x.IsDeleted &&
-                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
-                x.Division == ConstantsODataValue.DivisionDecorative &&
-                (string.IsNullOrWhiteSpace(depoId) || x.BusinessArea == depoId) &&
-                (!territories.Any() || territories.Contains(x.Territory)) &&
-                (!custZones.Any() || custZones.Contains(x.CustZone)) &&
-                (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup))
+            var dealers = _dealerInfo.FindAll(x => !x.IsDeleted &&
+               x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+               x.Division == ConstantsODataValue.DivisionDecorative &&
+               (string.IsNullOrWhiteSpace(depoId) || x.BusinessArea == depoId) &&
+               (!territories.Any() || territories.Contains(x.Territory)) &&
+               (!custZones.Any() || custZones.Contains(x.CustZone)) &&
+               (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup))
                 )
             .Select(s => new DealerModel
             {
@@ -138,9 +145,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive,
                 IsLastYearAppointedLabel = s.IsLastYearAppointed ? "Last Year Appointed" : "Not Appointed",
-                IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
+               // IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
                 IsLastYearAppointed = s.IsLastYearAppointed,
-                IsClubSupreme = s.IsClubSupreme,
+                ClubSupremeType = s.ClubSupremeType,
                 Territory = s.Territory,
                 IsAp = s.IsAP,
                 IsApLabel = s.IsAP ? "Yes" : "No",
@@ -165,7 +172,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             find.IsCBInstalled = dealer.IsCBInstalled;
             find.IsExclusive = dealer.IsExclusive;
             find.IsLastYearAppointed = dealer.IsLastYearAppointed;
-            find.IsClubSupreme = dealer.IsClubSupreme;
+            find.ClubSupremeType = dealer.ClubSupremeType;
             find.IsAP = dealer.IsAP;
             await _dealerInfo.UpdateAsync(find);
             return true;
@@ -201,7 +208,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 propertyName = "CB Installed";
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
                 propertyName = "Last Year Appointed";
-            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+            else if (find.ClubSupremeType != dealer.ClubSupremeType)
                 propertyName = "Club Supreme";
             else if (find.IsAP != dealer.IsAP)
                 propertyName = "AP";
@@ -223,9 +230,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 propertyValue = dealer.IsLastYearAppointed ? "Yes" : "No";
             }
-            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+            else if (find.ClubSupremeType != dealer.ClubSupremeType)
             {
-                propertyValue = dealer.IsClubSupreme ? "Yes" : "No";
+                propertyValue = EnumExtension.GetEnumDescription((EnumClubSupreme) find.ClubSupremeType);
             }
             else if (find.IsAP != dealer.IsAP)
             {
@@ -248,5 +255,71 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             return modelResult;
         }
         #endregion
+
+        #region ExcelUpload
+        public async Task<ResponseObj> UploadDealerClubSupreme(IFormFile file)
+        {
+
+            var clubSupremeExcelModels = await _excelReaderService.LoadDataAsync<ClubSupremeExcelModel>(file);
+            clubSupremeExcelModels.ForEach(x => x.ClubSupremeType = x.ClubSupremeStatus.ToEnumFromDisplayName<EnumClubSupreme>());
+
+
+            var dealerIdList = clubSupremeExcelModels.Select(x => x.DealerId).ToList();
+            var dbDealerInfo = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.ClubSupremeType != 0).ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+
+            var list = clubSupremeExcelModels.Select(x => new
+            {
+                x.DealerId,
+                x.ClubSupremeStatus
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new ResponseObj
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "test"
+            };
+
+            foreach (var dealerInfo in dbDealerInfo)
+            {
+                var excelModel = clubSupremeExcelModels.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = AppIdentity.AppUser.UserId,
+                    PropertyName = "Club Supreme",
+                    PropertyValue = EnumExtension.GetEnumDescription((EnumClubSupreme)dealerInfo.ClubSupremeType)
+                };
+
+                dealerInfo.ClubSupremeType = excelModel?.ClubSupremeType ?? EnumClubSupreme.None;
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfo.UpdateListAsync(dbDealerInfo);
+            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+
+            //clubSupremeExcelModels
+
+        }
+
+
+        #endregion
+    }
+
+    public class ClubSupremeExcelModel
+    {
+        public int DealerId { get; set; }
+        public string ClubSupremeStatus { get; set; }
+        public EnumClubSupreme? ClubSupremeType { get; set; }
+    }
+
+    public class ResponseObj
+    {
+        public object File { get; set; }
+        public string FileName { get; set; }
     }
 }

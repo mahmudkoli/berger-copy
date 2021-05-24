@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Services.Excel.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +15,12 @@ namespace BergerMsfaApi.Controllers.Excel
     public class ExcelController : BaseController
     {
         private readonly IExcelReaderService _excelReaderService;
+        private readonly IFocusDealerService _focusDealerService;
 
-        public ExcelController(IExcelReaderService excelReaderService)
+        public ExcelController(IExcelReaderService excelReaderService,IFocusDealerService focusDealerService)
         {
             _excelReaderService = excelReaderService;
+            _focusDealerService = focusDealerService;
         }
 
         [AllowAnonymous]
@@ -26,8 +29,8 @@ namespace BergerMsfaApi.Controllers.Excel
         {
             try
             {
-               await _excelReaderService.LoadDataAsync(file);
-               return Ok();
+                var responseObj = await _focusDealerService.UploadDealerClubSupreme(file);
+                return Ok(responseObj);
             }
             catch (Exception e)
             {

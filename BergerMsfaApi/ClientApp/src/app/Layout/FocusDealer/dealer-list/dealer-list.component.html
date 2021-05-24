@@ -24,6 +24,23 @@
                         </div>
                     </div> -->
         </div>
+        <div class="row align-items-right">
+          <div class="col-12">
+            <button class="btn btn-info" (click)="enrolFileInput.click()">
+              Upload Excel
+              <input
+                type="file"
+                hidden
+                ng2FileSelect
+                #enrolFileInput
+                [uploader]="uploader"
+                onclick="this.value = null"
+                accept=".xls,.xlsx"
+                (change)="uploadExcel($event.target.files)"
+              />
+            </button>
+          </div>
+        </div>
       </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -90,13 +107,11 @@
           ></p-toggleButton>
         </td>
         <td>
-          <p-toggleButton
-            styleClass="p-button-sm"
-            (ngModelChange)="onChange($event, dealer, 'isClubSupreme')"
-            onLabel="{{ dealer.isClubSupremeLabel }}"
-            offLabel="{{ dealer.isClubSupremeLabel }}"
-            [(ngModel)]="dealer.isClubSupreme"
-          ></p-toggleButton>
+          <p-dropdown
+            [(ngModel)]="dealer.clubSupremeType"
+            [options]="clubSupreme"
+            (ngModelChange)="onChange($event, dealer, 'clubSupremeType')"
+          ></p-dropdown>
         </td>
         <td>
           <p-toggleButton

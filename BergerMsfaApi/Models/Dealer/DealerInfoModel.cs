@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 
 namespace BergerMsfaApi.Models.Dealer
 {
@@ -45,7 +46,7 @@ namespace BergerMsfaApi.Models.Dealer
         public string IsExclusiveLabel { get; set; }
         public bool IsLastYearAppointed { get; set; }
         public string IsLastYearAppointedLabel { get; set; }
-        public bool IsClubSupreme { get; set; }
+        public EnumClubSupreme ClubSupremeType { get; set; }
         public string IsClubSupremeLabel { get; set; }
         public bool IsAp { get; set; }
         public string IsApLabel { get; set; }
