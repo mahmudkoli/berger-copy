@@ -52,5 +52,6 @@ namespace BergerMsfaApi.Models.Dealer
         public string IsApLabel { get; set; }
         public string SalesGroup { get; set; }
         public string SalesOffice { get; set; }
+        public EnumClubSupreme ClubSupremeType { get; set; }
     }
 }
