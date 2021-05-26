@@ -569,7 +569,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string depot, List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "")
+            string startDate, string endDate, string depot, List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.StartGroup()
@@ -624,14 +624,28 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesGroup))
+            if (salesOffices != null && salesOffices.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.SalesGroup, salesGroup);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesOffice, salesOffices.FirstOrDefault());
+
+                foreach (var so in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesOffice, so);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesOffice))
+            if (salesGroups != null && salesGroups.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.SalesOffice, salesOffice);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesGroup, salesGroups.FirstOrDefault());
+
+                foreach (var sg in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesGroup, sg);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
             //var topQuery = $"$top=5";
@@ -806,7 +820,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder, 
-            string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "")
+            string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.StartGroup()
@@ -861,14 +875,28 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesGroup))
+            if (salesOffices != null && salesOffices.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesGroup, salesGroup);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_SalesOffice, salesOffices.FirstOrDefault());
+
+                foreach (var so in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_SalesOffice, so);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesOffice))
+            if (salesGroups != null && salesGroups.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesOffice, salesOffice);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_SalesGroup, salesGroups.FirstOrDefault());
+
+                foreach (var sg in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_SalesGroup, sg);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
             //var topQuery = $"$top=5";

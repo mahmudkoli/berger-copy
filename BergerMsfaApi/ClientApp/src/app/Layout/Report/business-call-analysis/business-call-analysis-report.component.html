@@ -1,49 +1,7 @@
 
 <div class="col col-md-12">
-    <div class="p-3 bg-white mb-3 rounded">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="position-relative form-group">
-                    <label class="">Depot Id</label>
-                    <ng-select [items]="depots" [(ngModel)]="query.depot" bindValue="code" bindLabel="name" [multiple]="false">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="position-relative form-group">
-                    <label class="">Territories</label>
-                    <ng-select [items]="territories" [(ngModel)]="query.territories" bindValue="code" bindLabel="name" [multiple]="true">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="position-relative form-group">
-                    <label class="">Zones</label>
-                    <ng-select [items]="zones" [(ngModel)]="query.zones" bindValue="code" bindLabel="name" [multiple]="true">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="position-relative form-group">
-                    <label class="">Month</label>
-                    <ng-select [items]="monthList" [(ngModel)]="query.month" bindValue="id" bindLabel="name" [multiple]="false">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="position-relative form-group">
-                    <label class="">Year</label>
-                    <ng-select [items]="yearList" [(ngModel)]="query.year" bindValue="id" bindLabel="name" [multiple]="false">
-                    </ng-select>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="text-center m-3 w-100">
-                <button type="button" (click)="onSubmitSearch()" class="btn btn-primary btn-login d-block rounded-0 w-100">Search</button>
-            </div>
-        </div>
-    </div>
+    <app-search-option [searchOptionQuery]="searchOptionQuery" [searchOptionSettings]="searchOptionSettings" 
+        (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"></app-search-option>
 
     <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="data" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
         (serverSiteCallbackFn)="serverSiteCallbackFn($event)">

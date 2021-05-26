@@ -46,11 +46,12 @@ namespace BergerMsfaApi.Models.Dealer
         public string IsExclusiveLabel { get; set; }
         public bool IsLastYearAppointed { get; set; }
         public string IsLastYearAppointedLabel { get; set; }
-        public EnumClubSupreme ClubSupremeType { get; set; }
+      //  public EnumClubSupreme ClubSupremeType { get; set; }
         public string IsClubSupremeLabel { get; set; }
         public bool IsAp { get; set; }
         public string IsApLabel { get; set; }
         public string SalesGroup { get; set; }
         public string SalesOffice { get; set; }
+        public EnumClubSupreme ClubSupremeType { get; set; }
     }
 }
