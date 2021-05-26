@@ -327,20 +327,42 @@ export class LogInReportQuery extends ReportBaseQuery {
 
 export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
 
+    constructor(init?: Partial<TerritoryTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
     customerNo: number;
+
+    constructor(init?: Partial<DealerWiseTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
     resultType: number;
+
+    constructor(init?: Partial<ProductWiseTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class BusinessCallAnalysisReportQuery extends ReportBaseQuery {
     month: number;
     year: number;
-    depot: string;
 
     constructor(init?: Partial<BusinessCallAnalysisReportQuery>) {
         super();
@@ -356,7 +378,6 @@ export class BusinessCallAnalysisReportQuery extends ReportBaseQuery {
 export class StrikeRateKpiReportQuery extends ReportBaseQuery {
     month: number;
     year: number;
-    depot: string;
     reportType: number;
 
     constructor(init?: Partial<StrikeRateKpiReportQuery>) {

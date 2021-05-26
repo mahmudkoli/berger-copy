@@ -110,8 +110,8 @@ namespace BergerMsfaApi.Models.Report
     {
         public int? DealerId { get; set; }
         public string CreditControlArea { get; set; }
-        public string AccountGroup { get; set; }
-        public string SalesOffice { get; set; }
+        //public string AccountGroup { get; set; }
+        //public string SalesOffice { get; set; }
         public int FromMonth { get; set; }
         public int FromYear { get; set; }
         public int ToMonth { get; set; }
