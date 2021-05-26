@@ -141,8 +141,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 CustZone = s.CustZone,
                 BusinessArea = s.BusinessArea,
                 IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
-                IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed",
-                IsCBInstalled = s.IsCBInstalled,
+                //IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed",
+                //IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive,
                 IsLastYearAppointedLabel = s.IsLastYearAppointed ? "Last Year Appointed" : "Not Appointed",
                // IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
@@ -169,7 +169,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             await CreateDealerInfoStatusLog(dealer);
 
-            find.IsCBInstalled = dealer.IsCBInstalled;
+            //find.IsCBInstalled = dealer.IsCBInstalled;
             find.IsExclusive = dealer.IsExclusive;
             find.IsLastYearAppointed = dealer.IsLastYearAppointed;
             find.ClubSupremeType = dealer.ClubSupremeType;
@@ -204,8 +204,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string propertyName = "";
             if (find.IsExclusive != dealer.IsExclusive)
                 propertyName = "Exclusive";
-            else if (find.IsCBInstalled != dealer.IsCBInstalled)
-                propertyName = "CB Installed";
+            //else if (find.IsCBInstalled != dealer.IsCBInstalled)
+            //    propertyName = "CB Installed";
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
                 propertyName = "Last Year Appointed";
             else if (find.ClubSupremeType != dealer.ClubSupremeType)
@@ -222,10 +222,10 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 propertyValue = dealer.IsExclusive ? "Yes" : "No";
             }
-            else if (find.IsCBInstalled != dealer.IsCBInstalled)
-            {
-                propertyValue = dealer.IsCBInstalled ? "Yes" : "No";
-            }
+            //else if (find.IsCBInstalled != dealer.IsCBInstalled)
+            //{
+            //    propertyValue = dealer.IsCBInstalled ? "Yes" : "No";
+            //}
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
             {
                 propertyValue = dealer.IsLastYearAppointed ? "Yes" : "No";
