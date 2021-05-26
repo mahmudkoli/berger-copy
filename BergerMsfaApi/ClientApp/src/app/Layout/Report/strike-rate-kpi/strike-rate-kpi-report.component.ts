@@ -11,6 +11,7 @@ import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { Enums } from 'src/app/Shared/Enums/enums';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 
 @Component({
     selector: 'app-strike-rate-kpi-report',
@@ -21,15 +22,12 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 
 	// data list
 	query: StrikeRateKpiReportQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 	
-	// for filter
-	fromDate: NgbDate;
-	toDate: NgbDate;
-
 	// ptable settings
 	enabledTotal: boolean = false;
 	tableName: string = 'Strike rate on business call Report';
@@ -38,14 +36,6 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
-
-	// initial dropdown data
-    depots: any[] = [];
-    territories:any[]=[]
-    zones: any[] = [];
-	monthList: any[] = [];
-	yearList: any[] = [];
-	reportTypes: any[] = Enums.reportType;
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -58,18 +48,17 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
 		// client side paggination
-		// this.PAGE_SIZE = 2147483647; // Int32 max value
-		// this.ptableSettings.pageSize = 10;
-		// this.ptableSettings.enabledServerSitePaggination = false;
-		// server side paggination
-		this.PAGE_SIZE = commonService.PAGE_SIZE;
-		this.ptableSettings.pageSize = this.PAGE_SIZE;
+		this.PAGE_SIZE = 2147483647; // Int32 max value
+		this.ptableSettings.pageSize = 10;
 		this.ptableSettings.enabledServerSitePaggination = false;
+		// server side paggination
+		// this.PAGE_SIZE = commonService.PAGE_SIZE;
+		// this.ptableSettings.pageSize = this.PAGE_SIZE;
+		// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
 		this.searchConfiguration();
-		this.populateDropdownDataList();
 	}
 
 	ngOnDestroy() {
@@ -88,42 +77,44 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
+			salesGroups: [],
 			territories: [],
 			zones: [],
-			fromDate: null,
-			toDate: null
+			month: null,
+			year: null,
+			reportType: null,
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
 	}
-	
-    populateDropdownDataList() {
-        forkJoin([
-            this.commonService.getDepotList(),
-            this.commonService.getTerritoryList(),
-            this.commonService.getZoneList(),
-			this.commonService.getMonthList(),
-            this.commonService.getYearList(),
-        ]).subscribe(([plants, territories, zones, months, years]) => {
-            this.depots = plants.data;
-            this.territories = territories.data;
-            this.zones = zones.data;
-			this.monthList = months.data;
-            this.yearList = years.data;
-        }, (err) => { }, () => { });
-    }
-	
-	//#endregion
 
-	//#region no need to change for another report
-	onSubmitSearch() {
-		this.query.page = 1;
-		this.query.fromDate = this.ngbDateToDate(this.fromDate);
-		this.query.toDate = this.ngbDateToDate(this.toDate);
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Month, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.CustomerClassificationType, isRequired:true}),
+		]});
+
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.depot = queryObj.depot;
+		this.query.salesGroups = queryObj.salesGroups;
+		this.query.territories = queryObj.territories;
+		this.query.zones = queryObj.zones;
+		this.query.month = queryObj.month;
+		this.query.year = queryObj.year;
+		this.query.reportType = queryObj.customerClassificationType;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
+	//#endregion
 
+	//#region no need to change for another report
 	loadReportsPage() {
-		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
 		const reportsSubscription = this.getData(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
@@ -182,12 +173,6 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
-	}
-
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
 	}
 	//#endregion
 }

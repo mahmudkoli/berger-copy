@@ -1775,8 +1775,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
                 && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
                 && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == x.BusinessArea)
-                && (string.IsNullOrWhiteSpace(query.AccountGroup) || query.AccountGroup == x.AccountGroup)
-                && (string.IsNullOrWhiteSpace(query.SalesOffice) || query.SalesOffice == x.SalesOffice)
+                //&& (string.IsNullOrWhiteSpace(query.AccountGroup) || query.AccountGroup == x.AccountGroup)
+                //&& (string.IsNullOrWhiteSpace(query.SalesOffice) || query.SalesOffice == x.SalesOffice)
                 //&& (string.IsNullOrWhiteSpace(query.CreditControlArea) || query.CreditControlArea == x.CreditControlArea)
                 && (!query.DealerId.HasValue || query.DealerId == x.Id)
                 && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
@@ -1924,6 +1924,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Total = result.Count,
                 TotalFilter = result.Count
             };
+
+            #region Credit control area name
+            var creditArea = returnResult.Items.Select(x => x.CreditControlArea).Distinct().ToList();
+            var creditControlArea = await _context.CreditControlAreas.Where(x => creditArea.Contains(x.CreditControlAreaId.ToString())).ToListAsync();
+
+            foreach (var item in returnResult.Items)
+            {
+                item.CreditControlArea = creditControlArea.FirstOrDefault(x => x.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+            }
+            #endregion
 
             return returnResult;
         }
