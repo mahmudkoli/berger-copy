@@ -55,6 +55,7 @@ namespace BergerMsfaApi.Models.Report
         public string NextFollowUpDate { get; set; }
         public string Remarks { get; set; }
         public string ImageUrl { get; set; }
+        public string OtherClientName { get; set; }
     }
 
     public class LeadFollowUpDetailsReportResultModel
@@ -561,13 +562,18 @@ namespace BergerMsfaApi.Models.Report
         public string Zone { get; set; }
         public string SnapShotDate { get; set; }
         public string CompetitionDisplay { get; set; }
+        public string CRemarks { get; set; }
         public string GlowSignBoard { get; set; }
+        public string GRemarks { get; set; }
         public string ProductDisplay { get; set; }
+        public string PRemarks { get; set; }
         public string Scheme { get; set; }
+        public string SRemarks { get; set; }
         public string Brochure { get; set; }
+        public string BRemarks { get; set; }
         public string Others { get; set; }
+        public string ORemarks { get; set; }
         public string OtherSnapshotTypeName { get; set; }
-        public string Remarks { get; set; }
     }
 
     public class LogInReportResultModel

@@ -461,4 +461,32 @@ export class ReportService {
     }/DownloadStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`;
   }
 
+  getAddhocDealerSalesCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetAddhocDealerSalesCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadAddhocDealerSalesCall(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadAddhocDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getAddhocSubDealerSalesCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetAddhocSubDealerSalesCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadAddhocSubDealerSalesCall(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadAddhocSubDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+  }
+
 }
