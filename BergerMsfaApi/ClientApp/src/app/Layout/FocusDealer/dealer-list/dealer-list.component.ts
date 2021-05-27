@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { FileUploader } from 'ng2-file-upload';
 import { Paginator } from 'primeng/paginator';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
@@ -9,8 +11,12 @@ import {
   SearchOptionQuery,
   SearchOptionSettings,
 } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { AuthService } from 'src/app/Shared/Services/Users';
 import { APIModel } from '../../../Shared/Entity';
+import { FileUploaderComponent } from '../../file-upload/file-uploader/file-uploader.component';
+import { ModalExcelImportDealerStatusComponent } from '../modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 
 @Component({
   selector: 'app-dealer-list',
@@ -22,6 +28,8 @@ export class DealerListComponent implements OnInit {
   tableName: string = 'Dealer List';
   data: any[];
   filterObj: any;
+  clubSupreme: any[];
+  public uploader: FileUploader;
   searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
     searchOptionDef: [
       new SearchOptionDef({
@@ -48,17 +56,29 @@ export class DealerListComponent implements OnInit {
   pageSize: number;
   search: string = '';
   dealerList: any[] = [];
+  baseUrl: string;
   @ViewChild('paging', { static: false }) paging: Paginator;
 
   constructor(
     private dealerSvc: FocusdealerService,
     private alertSvc: AlertService,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal,
+    @Inject('BASE_URL') baseUrl: string,
+    private authService: AuthService,
+    private commonService: CommonService
   ) {
+    console.log('baseUrl: ', baseUrl);
+    this.baseUrl = baseUrl + 'api/';
     this.pagingConfig = new APIModel(1, 10);
   }
 
   ngOnInit() {
+    this.uploader = new FileUploader({
+      authTokenHeader: 'Authorization',
+      authToken: 'Bearer ' + this.authService.currentUserToken,
+    });
+
     this.searchOptionQuery = new SearchOptionQuery();
     this.searchOptionQuery.clear();
 
@@ -72,6 +92,14 @@ export class DealerListComponent implements OnInit {
       custZones: [],
       salesGroup: [],
     };
+
+    this.commonService.getEnumClubSupreme().subscribe((res) => {
+      this.clubSupreme = res.data.map((x: any) => ({
+        label: x.value,
+        value: x.id,
+      }));
+      console.log(this.clubSupreme);
+    });
   }
   next() {
     this.pagingConfig.pageNumber =
@@ -180,7 +208,6 @@ export class DealerListComponent implements OnInit {
   };
 
   searchOptionQueryCallbackFn(queryObj: SearchOptionQuery) {
-    console.log(queryObj);
     this.filterObj = {
       index: this.pagingConfig.pageNumber,
       pageSize: this.pagingConfig.pageSize,
@@ -198,5 +225,42 @@ export class DealerListComponent implements OnInit {
     this.filterObj['index'] = this.pagingConfig.pageNumber;
     this.filterObj['pageSize'] = this.pagingConfig.pageSize;
     return this.filterObj;
+  }
+
+  uploadExcel(files: File[]) {
+    this.uploader.setOptions({
+      url: this.baseUrl + 'v1/excel/SubmitExcel',
+    });
+
+    const config = {
+      backdrop: false,
+      ignoreBackdropClick: false,
+    };
+
+    const modalRef = this.modalService.open(FileUploaderComponent, config);
+    modalRef.componentInstance.uploader = this.uploader;
+    modalRef.result.then((result) => {
+      if (result === 'close') {
+        this.uploader.clearQueue(); // Refresh Data in table grid
+      }
+    });
+  }
+	
+	openExcelImportModal() {
+    let ngbModalOptions: NgbModalOptions = {
+      backdrop: 'static',
+      keyboard: false
+    };
+    const modalRef = this.modalService.open(ModalExcelImportDealerStatusComponent, ngbModalOptions);
+
+    modalRef.result.then((result) => {
+      console.log(result);
+      // this.router.navigate(['/dealer/dealerList']);
+      if (this.filterObj.depoId)
+        this.OnLoadDealer(this.getFilterObject());
+    },
+    (reason) => {
+        console.log(reason);
+    });
   }
 }

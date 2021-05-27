@@ -30,8 +30,8 @@ using Berger.Odata.Services;
 using Berger.Odata.Repositories;
 using Berger.Common;
 using BergerMsfaApi.Models.EmailVm;
-using BergerMsfaApi.Services.Workers;
-using Microsoft.Extensions.Logging;
+using BergerMsfaApi.Services.Excel.Implementation;
+using BergerMsfaApi.Services.Excel.Interface;
 
 namespace BergerMsfaApi
 {
@@ -56,7 +56,7 @@ namespace BergerMsfaApi
 
             services.Configure<SmtpSettings>(options =>
                        Configuration.GetSection("SmtpSettings").Bind(options));
-           
+
             var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
@@ -105,6 +105,8 @@ namespace BergerMsfaApi
             services.AddScoped<IStockDataService, StockDataService>();
             services.AddScoped<IODataNotificationService, ODataNotificationService>();
             services.AddScoped<IKpiDataService, KpiDataService>();
+            services.AddScoped<IExcelReaderService, ExcelReaderService>();
+
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
 
@@ -199,10 +201,13 @@ namespace BergerMsfaApi
                 });
             });
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

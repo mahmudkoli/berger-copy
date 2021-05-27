@@ -49,6 +49,7 @@
     "msal": "^1.2.2",
     "ng-bootstrap": "^1.6.3",
     "ng2-charts": "^2.2.2",
+    "ng2-file-upload": "^1.4.0",
     "ngx-perfect-scrollbar": "^7.2.1",
     "pe7-icon": "^1.0.4",
     "primeicons": "^4.0.0",

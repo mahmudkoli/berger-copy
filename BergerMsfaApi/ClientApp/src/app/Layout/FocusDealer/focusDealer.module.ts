@@ -16,6 +16,7 @@ import { DealerListComponent } from './dealer-list/dealer-list.component';
 import { DealerInfoLogDetailsComponent } from './dealer-info-log-details/dealer-info-log-details.component';
 import { EmailConfigAddComponent } from './email-config-add/email-config-add.component';
 import { EmailConfigListComponent } from './email-config-list/email-config-list.component';
+import { ModalExcelImportDealerStatusComponent } from './modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 
 
 
@@ -24,7 +25,17 @@ import { EmailConfigListComponent } from './email-config-list/email-config-list.
 
 
 @NgModule({
-    declarations: [FocusdealerAddComponent, FocusdealerListComponent, DealerOpeningListComponent, DealerOpeningDetailComponent, DealerListComponent, EmailConfigAddComponent, EmailConfigListComponent, DealerInfoLogDetailsComponent],
+    declarations: [
+        FocusdealerAddComponent, 
+        FocusdealerListComponent, 
+        DealerOpeningListComponent, 
+        DealerOpeningDetailComponent, 
+        DealerListComponent, 
+        EmailConfigAddComponent, 
+        EmailConfigListComponent, 
+        DealerInfoLogDetailsComponent,
+        ModalExcelImportDealerStatusComponent
+    ],
     imports: [
         CommonModule,
         SharedMasterModule,
@@ -34,6 +45,9 @@ import { EmailConfigListComponent } from './email-config-list/email-config-list.
         FormsModule,
         ReactiveFormsModule,
         NgSelectModule
+    ],
+    entryComponents: [
+      ModalExcelImportDealerStatusComponent
     ]
 })
 export class FocusDealerModule { }
