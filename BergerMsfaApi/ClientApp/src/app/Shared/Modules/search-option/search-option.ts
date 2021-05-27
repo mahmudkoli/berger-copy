@@ -15,8 +15,8 @@ export class SearchOptionQuery extends QueryObject {
     painterId: number;
     painterTypeId: number;
     paymentMethodId: number;
-    materialCodes:string[];
-    brands:string[];
+    materialCodes: string[];
+    brands: string[];
     fromMonth: number;
     toMonth: number;
     fromYear: number;
@@ -26,7 +26,11 @@ export class SearchOptionQuery extends QueryObject {
     text1: string;
     text2: string;
     text3: string;
-    activitySummary:string;
+    activitySummary: string;
+    valueVolumeResultType: number;
+    customerClassificationType: number;
+    customerNo: string; // assign when dealer selected
+
     constructor(init?: Partial<SearchOptionQuery>) {
         super();
         Object.assign(this, init);
@@ -93,4 +97,6 @@ export enum EnumSearchOption {
     Text1='text1',
     Text2='text2',
     Text3='text3',
+    ValueVolumeResultType='valueVolumeResultType',
+    CustomerClassificationType='customerClassificationType',
 }

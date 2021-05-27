@@ -24,6 +24,27 @@
                         </div>
                     </div> -->
         </div>
+        <div class="row align-items-right">
+          <div class="col-12">
+            <!-- <button class="btn btn-info" (click)="enrolFileInput.click()">
+              Upload Excel
+              <input
+                type="file"
+                hidden
+                ng2FileSelect
+                #enrolFileInput
+                [uploader]="uploader"
+                onclick="this.value = null"
+                accept=".xls,.xlsx"
+                (change)="uploadExcel($event.target.files)"
+              />
+            </button> -->
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-info" style="float: right;" (click)="openExcelImportModal()" >
+              <i class="mr-2 fa fa-file-excel-o"></i>
+              Dealer Status Update
+          </button>
+          </div>
+        </div>
       </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -48,9 +69,6 @@
         </th>
         <th pSortableColumn="isExclusiveLabel" style="width: 118px">
           Exclusive <p-sortIcon field="isExclusiveLabel"></p-sortIcon>
-        </th>
-        <th pSortableColumn="isCBInstalled" style="width: 116px">
-          Color Bank Installed <p-sortIcon field="isCBInstalled"></p-sortIcon>
         </th>
         <th pSortableColumn="isLastYearAppointed" style="width: 132px">
           Last Year Appointed
@@ -86,15 +104,6 @@
         <td>
           <p-toggleButton
             styleClass="p-button-sm"
-            (ngModelChange)="onChange($event, dealer, 'isCBInstalled')"
-            onLabel="{{ dealer.isCBInstalledLabel }}"
-            offLabel="{{ dealer.isCBInstalledLabel }}"
-            [(ngModel)]="dealer.isCBInstalled"
-          ></p-toggleButton>
-        </td>
-        <td>
-          <p-toggleButton
-            styleClass="p-button-sm"
             (ngModelChange)="onChange($event, dealer, 'isLastYearAppointed')"
             onLabel="{{ dealer.isLastYearAppointedLabel }}"
             offLabel="{{ dealer.isLastYearAppointedLabel }}"
@@ -102,13 +111,11 @@
           ></p-toggleButton>
         </td>
         <td>
-          <p-toggleButton
-            styleClass="p-button-sm"
-            (ngModelChange)="onChange($event, dealer, 'isClubSupreme')"
-            onLabel="{{ dealer.isClubSupremeLabel }}"
-            offLabel="{{ dealer.isClubSupremeLabel }}"
-            [(ngModel)]="dealer.isClubSupreme"
-          ></p-toggleButton>
+          <p-dropdown
+            [(ngModel)]="dealer.clubSupremeType"
+            [options]="clubSupreme"
+            (ngModelChange)="onChange($event, dealer, 'clubSupremeType')"
+          ></p-dropdown>
         </td>
         <td>
           <p-toggleButton

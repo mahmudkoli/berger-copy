@@ -81,7 +81,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
     public class AttachedDealerDetails
     {
         public string CustomerName { get; set; }
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
     }
 
     

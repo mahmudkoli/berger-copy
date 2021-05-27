@@ -59,7 +59,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _collectionDataService = collectionDataService;
         }
 
-        public async Task<MySummaryReportResultModel> MySummaryReport(IList<int> dealerIds)
+        public async Task<MySummaryReportResultModel> MySummaryReport(IList<string> dealerIds)
         {
             var query = await (from master in _context.JourneyPlanMasters
                                join details in _context.JourneyPlanDetails on master.Id equals details.PlanId into detailsLeftJoin
@@ -113,9 +113,9 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<int> dealerIds)
+        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds)
         {
-            var customerNoList = new List<int>();
+            var customerNoList = new List<string>();
 
             if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
             {
@@ -126,7 +126,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             else
             {
                 customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+                    .FindByCondition(x => x.ClubSupremeType>0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
                     .Select(x => x.CustomerNo).ToListAsync();
             }
 

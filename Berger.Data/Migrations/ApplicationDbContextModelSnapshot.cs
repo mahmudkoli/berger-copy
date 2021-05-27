@@ -2625,8 +2625,8 @@ namespace Berger.Data.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CustomerNo")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerNo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DayLimit")
                         .HasColumnType("nvarchar(max)");
@@ -2634,19 +2634,13 @@ namespace Berger.Data.Migrations
                     b.Property<string>("District")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Division")
-                        .HasColumnType("int");
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAP")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCBInstalled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsClubSupreme")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")

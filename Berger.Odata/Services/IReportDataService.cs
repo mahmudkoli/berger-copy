@@ -6,6 +6,6 @@ namespace Berger.Odata.Services
 {
     public interface IReportDataService
     {
-        Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model,IList<int> dealerIds);
+        Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model,IList<string> dealerIds);
     }
 }

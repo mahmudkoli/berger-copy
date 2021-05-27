@@ -369,7 +369,7 @@ namespace Berger.Odata.Services
         #endregion
 
         public async Task<IList<SalesDataModel>> GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
-            MyTargetReportType targetReportType, IList<int> dealerIds, EnumMyTargetBrandType brandType)
+            MyTargetReportType targetReportType, IList<string> dealerIds, EnumMyTargetBrandType brandType)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
@@ -406,7 +406,7 @@ namespace Berger.Odata.Services
 
         }
 
-        public async Task<IList<TotalInvoiceValueResultModel>> GetReportTotalInvoiceValue(TotalInvoiceValueSearchModel model, IList<int> dealerIds)
+        public async Task<IList<TotalInvoiceValueResultModel>> GetReportTotalInvoiceValue(TotalInvoiceValueSearchModel model, IList<string> dealerIds)
         {
             var currentDate = DateTime.Now;
             var fromDate = currentDate.DateFormat();
@@ -432,7 +432,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<int> dealerIds)
+        public async Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<string> dealerIds)
         {
             var currentDate = DateTime.Now.AddMonths(-1);
             var mtsBrandCodes = new List<string>();
@@ -547,7 +547,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<int> dealerIds)
+        public async Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<string> dealerIds)
         {
             var currentDate = DateTime.Now;
             var customerCount = 10;
@@ -655,7 +655,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<int> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
+        public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<string> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
         {
             var currentDate = DateTime.Now.AddMonths(-1);
             var mtsBrandCodes = new List<string>();
@@ -764,7 +764,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<int> NoOfBillingDealer(IList<int> dealerIds)
+        public async Task<int> NoOfBillingDealer(IList<string> dealerIds)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);

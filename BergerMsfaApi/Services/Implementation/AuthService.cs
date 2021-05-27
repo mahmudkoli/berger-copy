@@ -148,7 +148,7 @@ namespace BergerMsfaApi.Services.Implementation
             }
         }
 
-        public async Task<IList<int>> GetDealerByUserId(int userId)
+        public async Task<IList<string>> GetDealerByUserId(int userId)
         {
 
             //var userInfo = await _userService.GetUserAsync(userId);

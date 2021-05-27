@@ -16,9 +16,11 @@ namespace BergerMsfaApi.Models.Dealer
         public string PropertyValue { get; set; }
         public string PropertyName { get; set; }
 
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
-        public int Division { get; set; }//
+        public string ContactNo { get; set; }
+        public string Address { get; set; }
+        public string Division { get; set; }//
         public string BusinessArea { get; set; }
         public string SalesOffice { get; set; }//
         public string SalesGroup { get; set; }//
@@ -35,6 +37,10 @@ namespace BergerMsfaApi.Models.Dealer
                     opt => opt.MapFrom(src => src.DealerInfo.CustomerNo))
                 .ForMember(dest => dest.CustomerName,
                     opt => opt.MapFrom(src => src.DealerInfo.CustomerName))
+                .ForMember(dest => dest.ContactNo,
+                    opt => opt.MapFrom(src => src.DealerInfo.ContactNo))
+                .ForMember(dest => dest.Address,
+                    opt => opt.MapFrom(src => src.DealerInfo.Address))
                 .ForMember(dest => dest.Division,
                     opt => opt.MapFrom(src => src.DealerInfo.Division))
                 .ForMember(dest => dest.BusinessArea,

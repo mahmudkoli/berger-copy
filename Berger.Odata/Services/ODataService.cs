@@ -273,7 +273,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<int> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
+            IList<string> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.SalesOrgranization, "1000").And();
@@ -289,7 +289,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.And().StartGroup();
                 for (int i = 0; i < dealerList.Count; i++)
                 {
-                    filterQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, dealerList[i].ToString());
+                    filterQueryBuilder.Equal(DataColumnDef.CustomerNoOrSoldToParty, dealerList[i]);
 
                     if (i + 1 != dealerList.Count)
                     {
@@ -569,7 +569,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
-            string startDate, string endDate, string depot, List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "")
+            string startDate, string endDate, string depot, List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.StartGroup()
@@ -624,14 +624,28 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesGroup))
+            if (salesOffices != null && salesOffices.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.SalesGroup, salesGroup);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesOffice, salesOffices.FirstOrDefault());
+
+                foreach (var so in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesOffice, so);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesOffice))
+            if (salesGroups != null && salesGroups.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.SalesOffice, salesOffice);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.SalesGroup, salesGroups.FirstOrDefault());
+
+                foreach (var sg in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.SalesGroup, sg);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
             //var topQuery = $"$top=5";
@@ -806,7 +820,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder, 
-            string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, string salesGroup = "", string salesOffice = "")
+            string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.StartGroup()
@@ -861,14 +875,28 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesGroup))
+            if (salesOffices != null && salesOffices.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesGroup, salesGroup);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_SalesOffice, salesOffices.FirstOrDefault());
+
+                foreach (var so in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_SalesOffice, so);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
-            if (!string.IsNullOrEmpty(salesOffice))
+            if (salesGroups != null && salesGroups.Any())
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.MTS_SalesOffice, salesOffice);
+                filterQueryBuilder.And().StartGroup().Equal(DataColumnDef.MTS_SalesGroup, salesGroups.FirstOrDefault());
+
+                foreach (var sg in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(DataColumnDef.MTS_SalesGroup, sg);
+                }
+
+                filterQueryBuilder.EndGroup();
             }
 
             //var topQuery = $"$top=5";
@@ -1099,7 +1127,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<CollectionDataModel>> GetCollectionDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            List<int> dealerIds, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "")
+            List<string> dealerIds, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
@@ -1109,7 +1137,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.And().StartGroup();
                 for (int i = 0; i < dealerIds.Count; i++)
                 {
-                    filterQueryBuilder.Equal(CollectionColDef.CustomerNo, dealerIds[i].ToString());
+                    filterQueryBuilder.Equal(CollectionColDef.CustomerNo, dealerIds[i]);
 
                     if (i + 1 != dealerIds.Count)
                     {
@@ -1196,7 +1224,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<int> dealerIds)
+            IList<string> dealerIds)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -1205,7 +1233,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.StartGroup();
                 for (int i = 0; i < dealerIds.Count; i++)
                 {
-                    filterQueryBuilder.Equal(nameof(CustomerDataModel.CustomerNo), dealerIds[i].ToString());
+                    filterQueryBuilder.Equal(nameof(CustomerDataModel.CustomerNo), dealerIds[i]);
 
                     if (i + 1 != dealerIds.Count)
                     {
@@ -1248,7 +1276,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string compareMonth, string division = "-1", List<string> brands = null)
+        public async Task<IList<MTSDataModel>> GetMtsDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder, IList<string> dealerIds, string compareMonth, string division = "-1", List<string> brands = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.MTS_Date, compareMonth);
@@ -1258,7 +1286,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.And().StartGroup();
                 for (int i = 0; i < dealerIds.Count; i++)
                 {
-                    filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, dealerIds[i].ToString());
+                    filterQueryBuilder.Equal(DataColumnDef.MTS_CustomerNo, dealerIds[i]);
 
                     if (i + 1 != dealerIds.Count)
                     {
@@ -1340,7 +1368,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds, string fromDate, string endDate)
+        public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder, IList<string> dealerIds, string fromDate, string endDate)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             //filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000");
@@ -1349,7 +1377,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.StartGroup();
                 for (int i = 0; i < dealerIds.Count; i++)
                 {
-                    filterQueryBuilder.Equal(DataColumnDef.Collection_Customer, dealerIds[i].ToString());
+                    filterQueryBuilder.Equal(DataColumnDef.Collection_Customer, dealerIds[i]);
 
                     if (i + 1 != dealerIds.Count)
                     {
@@ -1377,7 +1405,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder, IList<int> dealerIds)
+        public async Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder, IList<string> dealerIds)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             //filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000");
@@ -1386,7 +1414,7 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.StartGroup();
                 for (int i = 0; i < dealerIds.Count; i++)
                 {
-                    filterQueryBuilder.Equal(CustomerOccasionColDef.Customer, dealerIds[i].ToString());
+                    filterQueryBuilder.Equal(CustomerOccasionColDef.Customer, dealerIds[i]);
 
                     if (i + 1 != dealerIds.Count)
                     {

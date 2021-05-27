@@ -33,7 +33,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	enabledTotal: boolean = true;
 	tableName: string = 'Merchendizing Snapshot Report';
 	// renameKeys: any = {'userId':'// User Id //'};
-	renameKeys: any = {};
+	// renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
@@ -166,12 +166,17 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionDisplay' || x.internalName == 'glowSignBoard' || x.internalName == 'productDisplay' || x.internalName == 'scheme' || x.internalName == 'brochure' || x.internalName == 'others' || x.internalName == 'otherSnapshotTypeName'
+			(x) => x.internalName == 'competitionDisplay' || x.internalName == 'cRemarks'  || x.internalName == 'glowSignBoard' || x.internalName == 'gRemarks'   || x.internalName == 'productDisplay' || x.internalName == 'pRemarks'   || x.internalName == 'scheme' || x.internalName == 'sRemarks'   || x.internalName == 'brochure' || x.internalName == 'bRemarks'   || x.internalName == 'others' || x.internalName == 'oRemarks'   || x.internalName == 'otherSnapshotTypeName'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Snapshot Type';
 		});
 	}
+
+	renameKeys: any = {
+		// 'cRemarks':'Remarks',
+		// 'gRemarks':'Remarks'
+	};
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "reports-table",

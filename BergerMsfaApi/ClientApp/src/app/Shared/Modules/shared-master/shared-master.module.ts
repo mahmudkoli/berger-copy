@@ -1,19 +1,20 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PageTitleComponent } from 'src/app/Layout/LayoutComponent/Components/page-title/page-title.component';
-import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import { AlertModule } from '../alert/alert.module';
-import { PTableModule } from '../p-table/p-table.module';
-import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
-//import { TableModule } from 'primeng-lts/table'
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { TableModule } from 'primeng/table'
-import { ButtonModule } from 'primeng-lts/button'
-import { PaginatorModule } from 'primeng/paginator';
+import { NgModule } from '@angular/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { ButtonModule } from 'primeng-lts/button';
+import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+//import { TableModule } from 'primeng-lts/table'
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { FileUploaderModule } from 'src/app/Layout/file-upload/file-uploader.module';
+import { PageTitleComponent } from 'src/app/Layout/LayoutComponent/Components/page-title/page-title.component';
+import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
+import { AlertModule } from '../alert/alert.module';
+import { PTableModule } from '../p-table/p-table.module';
 import { SearchOptionModule } from '../search-option/search-option.module';
 
 FullCalendarModule.registerPlugins([
@@ -21,14 +22,14 @@ FullCalendarModule.registerPlugins([
     timeGridPlugin,
     interactionPlugin
   ])
-  
+
 
 
 @NgModule({
     declarations: [
         PageTitleComponent,
         ImageUploaderComponent,
-   
+
     ],
     imports: [
         CommonModule,
@@ -40,11 +41,11 @@ FullCalendarModule.registerPlugins([
         ButtonModule,
         ToggleButtonModule,
         FullCalendarModule,
-        SearchOptionModule
+        SearchOptionModule,
+        FileUploaderModule
     ],
     exports: [PageTitleComponent,
         ImageUploaderComponent,
-
         AlertModule,
         PTableModule,
         PaginatorModule,
@@ -52,7 +53,8 @@ FullCalendarModule.registerPlugins([
         TableModule,
         ToggleButtonModule,
         FullCalendarModule,
-        SearchOptionModule
-    ]
+        SearchOptionModule,
+        FileUploaderModule
+    ],
 })
 export class SharedMasterModule { }

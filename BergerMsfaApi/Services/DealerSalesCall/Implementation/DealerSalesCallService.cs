@@ -139,7 +139,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                       (!query.SalesGroup.Any() || query.SalesGroup.Contains(x.Dealer.SalesGroup)) &&
                                       (!query.CustZones.Any() || query.SalesGroup.Contains(x.Dealer.CustZone)) &&
                                       (string.IsNullOrWhiteSpace(query.DepoId) || x.Dealer.BusinessArea == query.DepoId) &&
-                                      (!query.CustomerNo.HasValue || x.Dealer.CustomerNo == query.CustomerNo)),
+                                      (!query.DealerId.HasValue || x.DealerId == query.DealerId)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User).Include(i => i.Dealer),
                                 query.Page,
@@ -189,7 +189,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
             modelResult.DealerId = id;
 
-            var odata = await _financialDataService.CheckCustomerOSSlippage(id);
+            var dealer = await dealerInfo.FindAsync(x => x.Id == id);
+            var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
             modelResult.HasOS = odata.HasOS;
             modelResult.HasSlippage = odata.HasSlippage;
 
@@ -270,7 +271,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.DealerSalesIssues = new List<SaveDealerSalesIssueModel>();
                 modelResult.DealerId = id;
 
-                var odata = await _financialDataService.CheckCustomerOSSlippage(id);
+                var dealer = await dealerInfo.FindAsync(x => x.Id == id);
+                var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
                 modelResult.HasOS = odata.HasOS;
                 modelResult.HasSlippage = odata.HasSlippage;
 

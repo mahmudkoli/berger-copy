@@ -37,6 +37,8 @@ import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-
 import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
 import { BusinessCallAnalysisReportComponent } from './business-call-analysis/business-call-analysis-report.component';
 import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
+import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-salescall/addhoc-sub-dealer-salescall-report.component';
+import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
 
 @NgModule({
     declarations: [
@@ -71,7 +73,9 @@ import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-
       DealerWiseKpiTargetAchivementReportComponent,
       ProductWiseKpiTargetAchivementReportComponent,
       BusinessCallAnalysisReportComponent,
-      StrikeRateKpiReportComponent
+      StrikeRateKpiReportComponent,
+      AddhocSubDealerSalescallReportComponent,
+      AddhocDealerSalescallReportComponent,
     ],
   imports: [
       CommonModule,

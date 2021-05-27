@@ -7,6 +7,6 @@ namespace BergerMsfaApi.Services.Interfaces
     public interface IAuthService
     {
         Task<AuthenticateUserModel> GetJWTTokenByUserNameAsync(string userName);
-        Task<IList<int>> GetDealerByUserId(int userId);
+        Task<IList<string>> GetDealerByUserId(int userId);
     }
 }

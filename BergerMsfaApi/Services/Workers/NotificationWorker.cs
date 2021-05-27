@@ -151,7 +151,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCheckBounceNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCheckBounceNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCreditLimitCrossNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCreditLimitCrossNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendPaymentFollowUpNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendPaymentFollowUpNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -241,7 +241,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCustomerOccasionNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCustomerOccasionNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {

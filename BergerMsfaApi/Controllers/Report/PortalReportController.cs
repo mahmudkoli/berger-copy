@@ -452,6 +452,76 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetAddhocDealerSalesCall")]
+        public async Task<IActionResult> GetAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadAddhocDealerSalesCall")]
+        public async Task<IActionResult> DownloadAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(DealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(DealerSalesCallReportResultModel.SchemeModalityImage));
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetAddhocSubDealerSalesCall")]
+        public async Task<IActionResult> GetAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadAddhocSubDealerSalesCall")]
+        public async Task<IActionResult> DownloadAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(SubDealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(SubDealerSalesCallReportResultModel.SchemeModalityImage));
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet("GetDealerIssue")]
         public async Task<IActionResult> GetDealerIssue([FromQuery] DealerIssueReportSearchModel query)
         {
