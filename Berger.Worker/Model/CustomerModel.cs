@@ -4,8 +4,8 @@ namespace Berger.Worker.Model
 {
     class CustomerModel
     {
-        public int CustomerNo { get; set; }
-        public int Division { get; set; }
+        public string CustomerNo { get; set; }
+        public string Division { get; set; }
         public string SalesOffice { get; set; }
         public string SalesGroup { get; set; } // Area
         public string DayLimit { get; set; }

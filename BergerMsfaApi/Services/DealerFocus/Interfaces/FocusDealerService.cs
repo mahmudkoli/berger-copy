@@ -358,7 +358,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var userId = AppIdentity.AppUser.UserId;
             var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusExclusiveExcelModel>(file);
-            excelModelList.ForEach(x => x.ExclusiveStatus = x.DealerId > 0 ? "Exclusive" : "Not Exclusive");
+            excelModelList.ForEach(x => x.ExclusiveStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "Exclusive" : "Not Exclusive");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
             var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsExclusive).ToListAsync();
@@ -419,7 +419,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var userId = AppIdentity.AppUser.UserId;
             var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusLastYearAppointedExcelModel>(file);
-            excelModelList.ForEach(x => x.LastYearAppointedStatus = x.DealerId > 0 ? "Last Year Appointed" : "Not Last Year Appointed");
+            excelModelList.ForEach(x => x.LastYearAppointedStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "Last Year Appointed" : "Not Last Year Appointed");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
             var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsLastYearAppointed).ToListAsync();
@@ -480,7 +480,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var userId = AppIdentity.AppUser.UserId;
             var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusAPExcelModel>(file);
-            excelModelList.ForEach(x => x.APStatus = x.DealerId > 0 ? "AP" : "Not AP");
+            excelModelList.ForEach(x => x.APStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "AP" : "Not AP");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
             var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsAP).ToListAsync();

@@ -21,7 +21,7 @@ namespace Berger.Odata.Model
     
     public class DealerWiseTargetAchievementSearchModel : KpiDataSearchModel
     {
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
     }
 
     public class ProductWiseTargetAchievementSearchModel : KpiDataSearchModel

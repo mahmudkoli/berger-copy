@@ -10,26 +10,26 @@ namespace BergerMsfaApi.Models.Dealer
 {
     public class DealerStatusClubSupremeExcelModel
     {
-        public int DealerId { get; set; }
+        public string DealerId { get; set; }
         public string ClubSupremeStatus { get; set; }
         public EnumClubSupreme? ClubSupremeType { get; set; }
     }
 
     public class DealerStatusExclusiveExcelModel
     {
-        public int DealerId { get; set; }
+        public string DealerId { get; set; }
         public string ExclusiveStatus { get; set; }
     }
 
     public class DealerStatusLastYearAppointedExcelModel
     {
-        public int DealerId { get; set; }
+        public string DealerId { get; set; }
         public string LastYearAppointedStatus { get; set; }
     }
 
     public class DealerStatusAPExcelModel
     {
-        public int DealerId { get; set; }
+        public string DealerId { get; set; }
         public string APStatus { get; set; }
     }
 
@@ -41,7 +41,7 @@ namespace BergerMsfaApi.Models.Dealer
 
     public class DealerStatusExcelExportDataModel
     {
-        public int DealerId { get; set; }
+        public string DealerId { get; set; }
         public string Status { get; set; }
         public string Result { get; set; }
     }
