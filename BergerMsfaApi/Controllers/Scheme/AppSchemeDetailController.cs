@@ -25,7 +25,7 @@ namespace BergerMsfaApi.Controllers.Scheme
         {
             try
             {
-                var result = await _schemeService.GetAllSchemeDetailsAsync();
+                var result = await _schemeService.GetAppAllSchemeDetailsByCurrentUserAsync();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -34,63 +34,63 @@ namespace BergerMsfaApi.Controllers.Scheme
             }
         }
 
-        [HttpGet("GetSchemeDetailById/{id}")]
-        public async Task<IActionResult> GetSchemeDetailById(int id)
-        {
-            try
-            {
-                var result = await _schemeService.GetSchemeDetailsByIdAsync(id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetSchemeDetailById/{id}")]
+        //public async Task<IActionResult> GetSchemeDetailById(int id)
+        //{
+        //    try
+        //    {
+        //        var result = await _schemeService.GetSchemeDetailsByIdAsync(id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpPost("CreateSchemeDetail")]
-        public async Task<IActionResult> CreateSchemeDetail([FromBody] SaveSchemeDetailModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.AddSchemeDeatilsAsync(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPost("CreateSchemeDetail")]
+        //public async Task<IActionResult> CreateSchemeDetail([FromBody] SaveSchemeDetailModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _schemeService.AddSchemeDeatilsAsync(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpPut("UpdateSchemeDetail")]
-        public async Task<IActionResult> UpdateSchemeDetail([FromBody] SaveSchemeDetailModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.UpdateSchemeDetailsAsync(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPut("UpdateSchemeDetail")]
+        //public async Task<IActionResult> UpdateSchemeDetail([FromBody] SaveSchemeDetailModel model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _schemeService.UpdateSchemeDetailsAsync(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpDelete("DeleteSchemeDetail/{id}")]
-        public async Task<IActionResult> DeleteSchemeDetail(int Id)
-        {
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _schemeService.DeleteSchemeDetailsAsync(Id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpDelete("DeleteSchemeDetail/{id}")]
+        //public async Task<IActionResult> DeleteSchemeDetail(int Id)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid) return ValidationResult(ModelState);
+        //        var result = await _schemeService.DeleteSchemeDetailsAsync(Id);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
     }
 }

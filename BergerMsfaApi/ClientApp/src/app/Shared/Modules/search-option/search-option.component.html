@@ -52,8 +52,12 @@
                             <button class="btn btn-outline-secondary calendar" (click)="dpFromDate.toggle()" type="button"></button>
                         </div>
                     </div>
-                    <small class="text-danger" *ngIf="formControls.fromDate.touched && formControls.fromDate.errors">
+                    <small class="text-danger" *ngIf="(formControls.fromDate.touched && formControls.fromDate.errors) || 
+                                                        (formControls.fromDate.touched && formControls.fromDate.invalid)">
                         <span *ngIf="formControls.fromDate.errors.required">From Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.fromDate.errors.required && formControls.fromDate.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
                     </small>
                 </div>
             </div>
@@ -67,8 +71,12 @@
                             <button class="btn btn-outline-secondary calendar" (click)="dpToDate.toggle()" type="button"></button>
                         </div>
                     </div>
-                    <small class="text-danger" *ngIf="formControls.toDate.touched && formControls.toDate.errors">
+                    <small class="text-danger" *ngIf="(formControls.toDate.touched && formControls.toDate.errors) || 
+                                                        (formControls.toDate.touched && formControls.toDate.invalid)">
                         <span *ngIf="formControls.toDate.errors.required">To Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.toDate.errors.required && formControls.toDate.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
                     </small>
                 </div>
             </div>
