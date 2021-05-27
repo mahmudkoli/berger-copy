@@ -10,6 +10,7 @@ import { TerritoryTargetAchivementQuery } from 'src/app/Shared/Entity/Report/Rep
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 
 @Component({
     selector: 'app-territory-wise-kpi-target-achivement-report',
@@ -20,14 +21,11 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 
 	// data list
 	query: TerritoryTargetAchivementQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
-	// for filter
-	fromDate: NgbDate;
-	toDate: NgbDate;
 	// ptable settings
 	enabledTotal: boolean = true;
 	tableName: string = 'Territory Wise Target Achievement Report';
@@ -36,11 +34,6 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
-
-	// initial dropdown data
-    depots: any[] = [];
-    territories:any[]=[]
-    zones: any[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -64,7 +57,6 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 
 	ngOnInit() {
 		this.searchConfiguration();
-		this.populateDropdownDataList();
 	}
 
 	ngOnDestroy() {
@@ -83,44 +75,50 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
+			salesGroups: [],
 			territories: [],
 			zones: [],
 			fromDate: null,
 			toDate: null
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
 	}
-	
-    populateDropdownDataList() {
-        forkJoin([
-            this.commonService.getDepotList(),
-            this.commonService.getTerritoryList(),
-            this.commonService.getZoneList(),
-        ]).subscribe(([plants, territories, zones]) => {
-            this.depots = plants.data;
-            this.territories = territories.data;
-            this.zones = zones.data;
-        }, (err) => { }, () => { });
-    }
-	
-	//#endregion
 
-	//#region no need to change for another report
-	onSubmitSearch() {
-		this.query.page = 1;
-		this.query.fromDate = this.ngbDateToDate(this.fromDate);
-		this.query.toDate = this.ngbDateToDate(this.toDate);
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:true}),
+		]});
+
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.depot = queryObj.depot;
+		this.query.salesGroups = queryObj.salesGroups;
+		this.query.territories = queryObj.territories;
+		this.query.zones = queryObj.zones;
+		this.query.fromDate = queryObj.fromDate;
+		this.query.toDate = queryObj.toDate;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
+	//#endregion
 
+	//#region no need to change for another report
 	loadReportsPage() {
-		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
 		const reportsSubscription = this.getData(this.query)
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
+					// this.data = res.data.items;
+					// this.totalDataLength = res.data.total;
+					// this.totalFilterDataLength = res.data.totalFilter;
 					this.data = res.data;
 					this.totalDataLength = res.data.length;
 					this.totalFilterDataLength = res.data.length;
@@ -174,12 +172,6 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
-	}
-
-	ngbDateToDate(date: NgbDate) : Date | null {
-		return date && date.year && date.month && date.day ? 
-				new Date(date.year,date.month-1,date.day) : 
-				null;
 	}
 	//#endregion
 }

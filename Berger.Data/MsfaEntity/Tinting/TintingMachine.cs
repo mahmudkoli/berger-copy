@@ -8,6 +8,7 @@ namespace Berger.Data.MsfaEntity.Tinting
 {
     public class TintingMachine : AuditableEntity<int>
     {
+        public string Depot { get; set; }
         public string Territory { get; set; }
         public int UserInfoId { get; set; }
         public UserInfo UserInfo { get; set; }

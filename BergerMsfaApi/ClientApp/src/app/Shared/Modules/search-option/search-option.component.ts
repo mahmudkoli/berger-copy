@@ -7,7 +7,8 @@ import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { EnumEmployeeRole } from 'src/app/Shared/Enums/employee-role';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
-import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from '.';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from './search-option';
+import { Enums } from '../../Enums/enums';
 import { AlertService } from '../alert/alert.service';
 
 @Component({
@@ -42,6 +43,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	months: any[] = [];
 	years: any[] = [];
 	activitySummaries: any[] = [];
+
+    valueVolumeResultTypes: any[] = Enums.valueVolumeResultType;
+    customerClassificationTypes: any[] = Enums.customerClassificationType;
 
 	private _allDealers: any[] = []
 
@@ -92,6 +96,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			text2: [this.searchOptionQuery.text2],
 			text3: [this.searchOptionQuery.text3],
 			activitySummary: [this.searchOptionQuery.activitySummary],
+			valueVolumeResultType: [this.searchOptionQuery.valueVolumeResultType],
+			customerClassificationType: [this.searchOptionQuery.customerClassificationType],
 		});
 
 		if (this.searchOptionQuery.fromDate) {
@@ -161,7 +167,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.Territory)?this.commonService.getTerritoryList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.Zone)?this.commonService.getZoneList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.CreditControlArea)?this.commonService.getCreditControlAreaList():of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.UserId)?this.commonService.getUserInfoListByLoggedInManager():of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.UserId)?this.commonService.getUserInfoListByCurrentUser():of(APIResponse),
         ]).subscribe(([plants, areaGroups, territories, zones, creditControlAreas, users]) => {
             this.depots = plants.data;
             this.salesGroups = areaGroups.data;
@@ -236,6 +242,11 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.brands = controls['brands'].value;
 		this.searchOptionQuery.materialCodes = controls['materialCodes'].value;
 		this.searchOptionQuery.activitySummary = controls['activitySummary'].value;
+		this.searchOptionQuery.valueVolumeResultType = controls['valueVolumeResultType'].value;
+		this.searchOptionQuery.customerClassificationType = controls['customerClassificationType'].value;
+		
+		if (this._allDealers && this.searchOptionQuery.dealerId)
+			this.searchOptionQuery.customerNo = this._allDealers.find(x => x.id == this.searchOptionQuery.dealerId).customerNo;
 
 		const fromDate = controls['fromDate'].value;
 		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
@@ -257,7 +268,8 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	}
 
 	updateDealerSubDealerShow() {
-		this.searchOptionForm.controls.dealerId.setValue(null);
+		if (this.searchOptionForm)
+			this.searchOptionForm.controls.dealerId.setValue(null);
 
 		if (this.searchOptionSettings.isDealerShow) {
 			this.dealers = this._allDealers.filter(x => !x.isSubdealer);

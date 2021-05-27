@@ -126,6 +126,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                 if (existTinMac == null)
                 {
                     existTinMac = new TintingMachine();
+                    existTinMac.Depot = AppIdentity.AppUser.PlantIdList?.FirstOrDefault() ?? string.Empty;
                     existTinMac.Territory = tinMac.Territory;
                     existTinMac.CompanyId = tinMac.CompanyId;
                     existTinMac.UserInfoId = tinMac.UserInfoId;
@@ -158,6 +159,20 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             }
 
             return true;
+        }
+
+        public async Task<IList<AppTintingMachineModel>> GetAllAsync(AppTintingMachineSearchModel model)
+        {
+            var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x,
+                                    x => x.Depot == model.Depot && x.Territory == model.Territory
+                                     && (!model.UserId.HasValue || model.UserId.Value == x.UserInfoId),
+                                    null,
+                                    x => x.Include(i => i.UserInfo).Include(i => i.Company),
+                                    true);
+
+            var modelResult = _mapper.Map<IList<AppTintingMachineModel>>(result);
+
+            return modelResult;
         }
     }
 }

@@ -126,7 +126,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             else
             {
                 customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsClubSupreme && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+                    .FindByCondition(x => x.ClubSupremeType>0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
                     .Select(x => x.CustomerNo).ToListAsync();
             }
 

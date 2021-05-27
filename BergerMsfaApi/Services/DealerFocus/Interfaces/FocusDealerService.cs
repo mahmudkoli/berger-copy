@@ -138,9 +138,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive,
                 IsLastYearAppointedLabel = s.IsLastYearAppointed ? "Last Year Appointed" : "Not Appointed",
-                IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
+                //IsClubSupremeLabel = s.IsClubSupreme ? "Club Supreme" : "Not Club Supreme",
                 IsLastYearAppointed = s.IsLastYearAppointed,
-                IsClubSupreme = s.IsClubSupreme,
+                ClubSupremeType = s.ClubSupremeType,
                 Territory = s.Territory,
                 IsAp = s.IsAP,
                 IsApLabel = s.IsAP ? "Yes" : "No",
@@ -165,7 +165,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             find.IsCBInstalled = dealer.IsCBInstalled;
             find.IsExclusive = dealer.IsExclusive;
             find.IsLastYearAppointed = dealer.IsLastYearAppointed;
-            find.IsClubSupreme = dealer.IsClubSupreme;
+            find.ClubSupremeType = dealer.ClubSupremeType;
             find.IsAP = dealer.IsAP;
             await _dealerInfo.UpdateAsync(find);
             return true;
@@ -201,7 +201,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 propertyName = "CB Installed";
             else if (find.IsLastYearAppointed != dealer.IsLastYearAppointed)
                 propertyName = "Last Year Appointed";
-            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+            else if (find.ClubSupremeType != dealer.ClubSupremeType)
                 propertyName = "Club Supreme";
             else if (find.IsAP != dealer.IsAP)
                 propertyName = "AP";
@@ -223,9 +223,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 propertyValue = dealer.IsLastYearAppointed ? "Yes" : "No";
             }
-            else if (find.IsClubSupreme != dealer.IsClubSupreme)
+            else if (find.ClubSupremeType != dealer.ClubSupremeType)
             {
-                propertyValue = dealer.IsClubSupreme ? "Yes" : "No";
+               // propertyValue = dealer.ClubSupremeType ? "Yes" : "No";
             }
             else if (find.IsAP != dealer.IsAP)
             {

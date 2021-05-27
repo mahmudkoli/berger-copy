@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210523194029_TintingMachineUpdate")]
+    partial class TintingMachineUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2592,9 +2594,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Channel")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ClubSupremeType")
-                        .HasColumnType("int");
-
                     b.Property<string>("ContactNo")
                         .HasColumnType("nvarchar(max)");
 
@@ -2644,6 +2643,9 @@ namespace Berger.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsCBInstalled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsClubSupreme")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
