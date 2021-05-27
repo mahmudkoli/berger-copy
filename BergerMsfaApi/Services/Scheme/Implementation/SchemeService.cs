@@ -68,7 +68,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                           {
                               SchemeName = sm.SchemeName,
                               BusinessArea = sm.BusinessArea,
-                              BusinessAreaName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? m.Name1 + "(" + sm.BusinessArea + ")" : "",
+                              BusinessAreaName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? m.Name1 + " (" + sm.BusinessArea + ")" : "",
                               Condition = sm.Condition,
                               Id = sm.Id
                           });
@@ -220,7 +220,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                             from m in details.DefaultIfEmpty()
                             select new SchemeDetailModel
                             {
-                                SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + "-" + m.Name1 + "(" + sm.BusinessArea + ")" : sm.SchemeName,
+                                SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + " - " + m.Name1 + " (" + sm.BusinessArea + ")" : sm.SchemeName,
                                 SchemeMasterCondition = sm.Condition,
                                 Brand = det.Brand,
                                 Slab = det.Slab,
@@ -279,6 +279,24 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                             true);
 
             var modelResult = _mapper.Map<IList<SchemeDetailModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<IList<AppSchemeDetailModel>> GetAppAllSchemeDetailsByCurrentUserAsync()
+        {
+            var depots = AppIdentity.AppUser.PlantIdList;
+            var currentDate = DateTime.Now;
+
+            var result = await _schemeDetailSvc.GetAllIncludeAsync(x => x,
+                            x => (string.IsNullOrEmpty(x.SchemeMaster.BusinessArea) || depots.Contains(x.SchemeMaster.BusinessArea))
+                                && (x.BenefitStartDate.Date <= currentDate.Date && (!x.BenefitEndDate.HasValue || x.BenefitEndDate >= currentDate.Date))
+                                && x.Status == Status.Active,
+                            null,
+                            x => x.Include(i => i.SchemeMaster),
+                            true);
+
+            var modelResult = _mapper.Map<IList<AppSchemeDetailModel>>(result);
 
             return modelResult;
         }

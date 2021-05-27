@@ -58,7 +58,7 @@ namespace BergerMsfaApi.Controllers.Tinting
             }
         }
 
-        [HttpPost("GetAllTintingMachineList")]
+        [HttpGet("GetAllTintingMachineList")]
         public async Task<IActionResult> GetTintingMachineList([FromQuery] AppTintingMachineSearchModel query)
         {
             try

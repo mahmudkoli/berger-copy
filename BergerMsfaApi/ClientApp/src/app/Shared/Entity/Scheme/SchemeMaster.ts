@@ -97,8 +97,8 @@ export class SaveSchemeDetail {
     //National Scheme (Value)
     slab: string;
     condition: string;
-    benefitStartDate: string;
-    benefitEndDate: string;
+    benefitStartDate: Date;
+    benefitEndDate?: Date;
 
     //Painter Scheme
     schemeId: string;

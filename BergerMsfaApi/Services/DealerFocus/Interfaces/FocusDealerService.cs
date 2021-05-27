@@ -294,7 +294,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             );
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
-            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.ClubSupremeType != EnumClubSupreme.None).ToListAsync();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative &&
+                    (dealerIdList.Contains(x.CustomerNo) || x.ClubSupremeType != EnumClubSupreme.None))
+                .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
             List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
@@ -361,7 +365,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             excelModelList.ForEach(x => x.ExclusiveStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "Exclusive" : "Not Exclusive");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
-            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsExclusive).ToListAsync();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative && 
+                    (dealerIdList.Contains(x.CustomerNo) || x.IsExclusive))
+                .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
             List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
@@ -422,7 +430,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             excelModelList.ForEach(x => x.LastYearAppointedStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "Last Year Appointed" : "Not Last Year Appointed");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
-            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsLastYearAppointed).ToListAsync();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative && 
+                    (dealerIdList.Contains(x.CustomerNo) || x.IsLastYearAppointed))
+                .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
             List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
@@ -483,7 +495,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             excelModelList.ForEach(x => x.APStatus = !string.IsNullOrWhiteSpace(x.DealerId) ? "AP" : "Not AP");
 
             var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
-            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsAP).ToListAsync();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative && 
+                    (dealerIdList.Contains(x.CustomerNo) || x.IsAP))
+                .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
             List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();

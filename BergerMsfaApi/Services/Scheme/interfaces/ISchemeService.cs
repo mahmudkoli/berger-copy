@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Services.Scheme.interfaces
         Task<IPagedList<SchemeDetailModel>> GetAllSchemeDetailsAsync(int index, int pageSize, string search);
         Task<QueryResultModel<SchemeDetailModel>> GetAllSchemeDetailsAsync(QueryObjectModel query);
         Task<IList<SchemeDetailModel>> GetAllSchemeDetailsAsync();
+        Task<IList<AppSchemeDetailModel>> GetAppAllSchemeDetailsByCurrentUserAsync();
         Task<SchemeDetailModel> GetSchemeDetailsByIdAsync(int id);
         Task<int> AddSchemeDeatilsAsync(SaveSchemeDetailModel model);
         Task<int> UpdateSchemeDetailsAsync(SaveSchemeDetailModel model);
