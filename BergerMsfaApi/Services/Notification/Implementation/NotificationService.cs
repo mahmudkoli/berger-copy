@@ -158,7 +158,7 @@ namespace BergerMsfaApi.Services.Notification.Implementation
             return notifications;
         }
 
-        private async Task<IList<AppNotificationModel>> GetCheckBounceNotification(int userId, List<int> dealerIds)
+        private async Task<IList<AppNotificationModel>> GetCheckBounceNotification(int userId, List<string> dealerIds)
         {
             var notifications = new List<AppNotificationModel>();
 
@@ -184,7 +184,7 @@ namespace BergerMsfaApi.Services.Notification.Implementation
             return notifications;
         }
 
-        private async Task<IList<AppNotificationModel>> GetCreditLimitCrossNotification(int userId, List<int> dealerIds)
+        private async Task<IList<AppNotificationModel>> GetCreditLimitCrossNotification(int userId, List<string> dealerIds)
         {
             var notifications = new List<AppNotificationModel>();
 
@@ -211,7 +211,7 @@ namespace BergerMsfaApi.Services.Notification.Implementation
             return notifications;
         }
 
-        private async Task<IList<AppNotificationModel>> GetPaymentFollowUpNotification(int userId, List<int> dealerIds)
+        private async Task<IList<AppNotificationModel>> GetPaymentFollowUpNotification(int userId, List<string> dealerIds)
         {
             var notifications = new List<AppNotificationModel>();
 
@@ -248,7 +248,7 @@ namespace BergerMsfaApi.Services.Notification.Implementation
             return notifications;
         }
 
-        private async Task<IList<AppNotificationModel>> GetCustomerOccasionNotification(int userId, List<int> dealerIds)
+        private async Task<IList<AppNotificationModel>> GetCustomerOccasionNotification(int userId, List<string> dealerIds)
         {
             var notifications = new List<AppNotificationModel>();
 

@@ -27,7 +27,7 @@ namespace Berger.Odata.Services
             _odataCommonService = odataCommonService;
         }
 
-        public async Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBouncesByDealerIds(List<int> dealerIds)
+        public async Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBouncesByDealerIds(List<string> dealerIds)
         {
             var today = DateTime.Now;
             var resultDateFormat = "dd MMM yyyy";
@@ -72,7 +72,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppCreditLimitCrossNotificationModel>> GetAllTodayCreditLimitCrossByDealerIds(List<int> dealerIds)
+        public async Task<IList<AppCreditLimitCrossNotificationModel>> GetAllTodayCreditLimitCrossByDealerIds(List<string> dealerIds)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
@@ -111,7 +111,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUpByDealerIds(List<int> dealerIds)
+        public async Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUpByDealerIds(List<string> dealerIds)
         {
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -209,7 +209,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasionsByDealerIds(List<int> dealerIds)
+        public async Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasionsByDealerIds(List<string> dealerIds)
         {
             var today = DateTime.Now;
             var oldDate = new DateTime(1000, 01, 01);
