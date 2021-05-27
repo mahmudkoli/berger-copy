@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { FileUploader } from 'ng2-file-upload';
 import { Paginator } from 'primeng/paginator';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
@@ -16,6 +16,7 @@ import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdea
 import { AuthService } from 'src/app/Shared/Services/Users';
 import { APIModel } from '../../../Shared/Entity';
 import { FileUploaderComponent } from '../../file-upload/file-uploader/file-uploader.component';
+import { ModalExcelImportDealerStatusComponent } from '../modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 
 @Component({
   selector: 'app-dealer-list',
@@ -242,6 +243,24 @@ export class DealerListComponent implements OnInit {
       if (result === 'close') {
         this.uploader.clearQueue(); // Refresh Data in table grid
       }
+    });
+  }
+	
+	openExcelImportModal() {
+    let ngbModalOptions: NgbModalOptions = {
+      backdrop: 'static',
+      keyboard: false
+    };
+    const modalRef = this.modalService.open(ModalExcelImportDealerStatusComponent, ngbModalOptions);
+
+    modalRef.result.then((result) => {
+      console.log(result);
+      // this.router.navigate(['/dealer/dealerList']);
+      if (this.filterObj.depoId)
+        this.OnLoadDealer(this.getFilterObject());
+    },
+    (reason) => {
+        console.log(reason);
     });
   }
 }

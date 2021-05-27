@@ -26,7 +26,7 @@
         </div>
         <div class="row align-items-right">
           <div class="col-12">
-            <button class="btn btn-info" (click)="enrolFileInput.click()">
+            <!-- <button class="btn btn-info" (click)="enrolFileInput.click()">
               Upload Excel
               <input
                 type="file"
@@ -38,7 +38,11 @@
                 accept=".xls,.xlsx"
                 (change)="uploadExcel($event.target.files)"
               />
-            </button>
+            </button> -->
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-info" style="float: right;" (click)="openExcelImportModal()" >
+              <i class="mr-2 fa fa-file-excel-o"></i>
+              Dealer Status Update
+          </button>
           </div>
         </div>
       </div>

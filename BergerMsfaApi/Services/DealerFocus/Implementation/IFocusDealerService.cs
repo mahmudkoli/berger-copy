@@ -25,10 +25,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
         #endregion
 
-        #region excel
-
-        public Task<ResponseObj> UploadDealerClubSupreme(IFormFile file);
-
+        #region Excel Dealer Status Update
+        public Task<DealerStatusExcelExportModel> DealerStatusUpdate(DealerStatusExcelImportModel model);
         #endregion
     }
 }

@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Services.Excel.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using BergerMsfaApi.Services.DealerFocus.Interfaces;
+using BergerMsfaApi.Models.Dealer;
 
 namespace BergerMsfaApi.Controllers.Excel
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -17,26 +20,24 @@ namespace BergerMsfaApi.Controllers.Excel
         private readonly IExcelReaderService _excelReaderService;
         private readonly IFocusDealerService _focusDealerService;
 
-        public ExcelController(IExcelReaderService excelReaderService,IFocusDealerService focusDealerService)
+        public ExcelController(IExcelReaderService excelReaderService, IFocusDealerService focusDealerService)
         {
             _excelReaderService = excelReaderService;
             _focusDealerService = focusDealerService;
         }
 
-        [AllowAnonymous]
-        [HttpPost("SubmitExcel")]
-        public async Task<IActionResult> SubmitExcel(IFormFile file)
+        [HttpPost("DealerStatusUpdate")]
+        public async Task<IActionResult> DealerStatusUpdate([FromForm] DealerStatusExcelImportModel model)
         {
             try
             {
-                var responseObj = await _focusDealerService.UploadDealerClubSupreme(file);
-                return Ok(responseObj);
+                var responseObj = await _focusDealerService.DealerStatusUpdate(model);
+                return OkResult(responseObj);
             }
             catch (Exception e)
             {
                 return ExceptionResult(e);
             }
-
         }
     }
 }

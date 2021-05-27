@@ -8,13 +8,13 @@ namespace Berger.Common.Enumerations
         [Description("None")]
         None = 0,
 
-        [Description("Platinum Plus")]
-        PlatinumPlus = 1,
-
         [Description( "Gold")]
-        Gold = 2,
+        Gold = 1,
 
         [Description("Platinum")]
-        Platinum = 3
+        Platinum = 2,
+
+        [Description("Platinum Plus")]
+        PlatinumPlus = 3,
     }
 }

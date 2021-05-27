@@ -140,7 +140,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 Area = s.SalesGroup,
                 CustZone = s.CustZone,
                 BusinessArea = s.BusinessArea,
-                IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Non Exclusive",
+                IsExclusiveLabel = s.IsExclusive ? "Exclusive" : "Not Exclusive",
                 //IsCBInstalledLabel = s.IsCBInstalled ? "Installed" : "Not Installed",
                 //IsCBInstalled = s.IsCBInstalled,
                 IsExclusive = s.IsExclusive,
@@ -150,7 +150,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 ClubSupremeType = s.ClubSupremeType,
                 Territory = s.Territory,
                 IsAp = s.IsAP,
-                IsApLabel = s.IsAP ? "Yes" : "No",
+                IsApLabel = s.IsAP ? "AP" : "Not AP",
                 SalesGroup = s.SalesGroup,
                 SalesOffice = s.SalesOffice
             }).ToList();
@@ -232,7 +232,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             else if (find.ClubSupremeType != dealer.ClubSupremeType)
             {
-                propertyValue = EnumExtension.GetEnumDescription((EnumClubSupreme) find.ClubSupremeType);
+                propertyValue = EnumExtension.GetEnumDescription((EnumClubSupreme)dealer.ClubSupremeType);
             }
             else if (find.IsAP != dealer.IsAP)
             {
@@ -256,70 +256,286 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
         #endregion
 
-        #region ExcelUpload
-        public async Task<ResponseObj> UploadDealerClubSupreme(IFormFile file)
+        #region Excel Dealer Status Update
+        public async Task<DealerStatusExcelExportModel> DealerStatusUpdate(DealerStatusExcelImportModel model)
         {
+            var result = new DealerStatusExcelExportModel();
 
-            var clubSupremeExcelModels = await _excelReaderService.LoadDataAsync<ClubSupremeExcelModel>(file);
-            clubSupremeExcelModels.ForEach(x => x.ClubSupremeType = x.ClubSupremeStatus.ToEnumFromDisplayName<EnumClubSupreme>());
+            switch (model.Type)
+            {
+                case EnumDealerStatusExcelImportType.Exclusive:
+                    result = await this.DealerStatusExclusive(model.File);
+                    break;
+                case EnumDealerStatusExcelImportType.LastYearAppointed:
+                    result = await this.DealerStatusLastYearAppointed(model.File);
+                    break;
+                case EnumDealerStatusExcelImportType.ClubSupreme:
+                    result = await this.DealerStatusClubSupreme(model.File);
+                    break;
+                case EnumDealerStatusExcelImportType.AP:
+                    result = await this.DealerStatusAP(model.File);
+                    break;
+                default:
+                    break;
+            }
 
+            return result;
+        }
 
-            var dealerIdList = clubSupremeExcelModels.Select(x => x.DealerId).ToList();
-            var dbDealerInfo = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.ClubSupremeType != 0).ToListAsync();
+        private async Task<DealerStatusExcelExportModel> DealerStatusClubSupreme(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusClubSupremeExcelModel>(file);
+            excelModelList.ForEach(x =>
+                { 
+                    try { x.ClubSupremeType = x.ClubSupremeStatus.ToEnumFromDisplayName<EnumClubSupreme>(); }
+                    catch (Exception ex) { x.ClubSupremeType = null; } 
+                }
+            );
+
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.ClubSupremeType != EnumClubSupreme.None).ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
 
-            var list = clubSupremeExcelModels.Select(x => new
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
             {
-                x.DealerId,
-                x.ClubSupremeStatus
-            }).ToList();
-
-            byte[] writeToFile = _excelReaderService.WriteToFile(list);
-
-            return new ResponseObj
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.ClubSupremeStatus, Result = "Not Found" });
+            }
+            var typeMismatchExcelModels = excelModelList.Where(x => x.ClubSupremeType == null);
+            foreach (var item in typeMismatchExcelModels)
             {
-                File = Convert.ToBase64String(writeToFile),
-                FileName = "test"
-            };
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.ClubSupremeStatus, Result = "Type Mismatch" });
+            }
+            #endregion
 
-            foreach (var dealerInfo in dbDealerInfo)
+            foreach (var dealerInfo in dbDealerInfoList)
             {
-                var excelModel = clubSupremeExcelModels.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (excelModel != null && excelModel.ClubSupremeType == null) continue; // check if type mismatch then no need to update;
+                if (excelModel != null && dealerInfo.ClubSupremeType == excelModel.ClubSupremeType) continue; // check if already same status then no need to update;
+
+                dealerInfo.ClubSupremeType = excelModel?.ClubSupremeType ?? EnumClubSupreme.None;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
                     DealerInfoId = dealerInfo.Id,
-                    UserId = AppIdentity.AppUser.UserId,
+                    UserId = userId,
                     PropertyName = "Club Supreme",
                     PropertyValue = EnumExtension.GetEnumDescription((EnumClubSupreme)dealerInfo.ClubSupremeType)
                 };
 
-                dealerInfo.ClubSupremeType = excelModel?.ClubSupremeType ?? EnumClubSupreme.None;
+                updatedDealerInfos.Add(dealerInfo);
                 dealerInfoStatusLogs.Add(dealerInfoStatusLog);
             }
 
-            await _dealerInfo.UpdateListAsync(dbDealerInfo);
+            await _dealerInfo.UpdateListAsync(updatedDealerInfos);
             await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
 
-            //clubSupremeExcelModels
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
 
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_ClubSupreme"
+            };
         }
 
+        private async Task<DealerStatusExcelExportModel> DealerStatusExclusive(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusExclusiveExcelModel>(file);
+            excelModelList.ForEach(x => x.ExclusiveStatus = x.DealerId > 0 ? "Exclusive" : "Not Exclusive");
 
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsExclusive).ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
+
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = "Exclusive", Result = "Not Found" });
+            }
+            #endregion
+
+            foreach (var dealerInfo in dbDealerInfoList)
+            {
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (dealerInfo.IsExclusive && excelModel != null) continue; // check if already same status then no need to update;
+
+                dealerInfo.IsExclusive = excelModel != null;
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = userId,
+                    PropertyName = "AP",
+                    PropertyValue = dealerInfo.IsExclusive ? "Yes" : "No"
+                };
+
+                updatedDealerInfos.Add(dealerInfo);
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfo.UpdateListAsync(updatedDealerInfos);
+            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_Exclusive"
+            };
+        }
+
+        private async Task<DealerStatusExcelExportModel> DealerStatusLastYearAppointed(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusLastYearAppointedExcelModel>(file);
+            excelModelList.ForEach(x => x.LastYearAppointedStatus = x.DealerId > 0 ? "Last Year Appointed" : "Not Last Year Appointed");
+
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsLastYearAppointed).ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
+
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = "Last Year Appointed", Result = "Not Found" });
+            }
+            #endregion
+
+            foreach (var dealerInfo in dbDealerInfoList)
+            {
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (dealerInfo.IsLastYearAppointed && excelModel != null) continue; // check if already same status then no need to update;
+
+                dealerInfo.IsLastYearAppointed = excelModel != null;
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = userId,
+                    PropertyName = "Last Year Appointed",
+                    PropertyValue = dealerInfo.IsLastYearAppointed ? "Yes" : "No"
+                };
+
+                updatedDealerInfos.Add(dealerInfo);
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfo.UpdateListAsync(updatedDealerInfos);
+            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_LastYearAppointed"
+            };
+        }
+
+        private async Task<DealerStatusExcelExportModel> DealerStatusAP(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusAPExcelModel>(file);
+            excelModelList.ForEach(x => x.APStatus = x.DealerId > 0 ? "AP" : "Not AP");
+
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfo.FindByCondition(x => dealerIdList.Contains(x.CustomerNo) || x.IsAP).ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
+
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = "AP", Result = "Not Found" });
+            }
+            #endregion
+
+            foreach (var dealerInfo in dbDealerInfoList)
+            {
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (dealerInfo.IsAP && excelModel != null) continue; // check if already same status then no need to update;
+
+                dealerInfo.IsAP = excelModel != null;
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = userId,
+                    PropertyName = "AP",
+                    PropertyValue = dealerInfo.IsAP ? "Yes" : "No"
+                };
+
+                updatedDealerInfos.Add(dealerInfo);
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfo.UpdateListAsync(updatedDealerInfos);
+            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_AP"
+            };
+        }
         #endregion
-    }
-
-    public class ClubSupremeExcelModel
-    {
-        public int DealerId { get; set; }
-        public string ClubSupremeStatus { get; set; }
-        public EnumClubSupreme? ClubSupremeType { get; set; }
-    }
-
-    public class ResponseObj
-    {
-        public object File { get; set; }
-        public string FileName { get; set; }
     }
 }
