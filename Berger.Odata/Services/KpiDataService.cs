@@ -124,11 +124,11 @@ namespace Berger.Odata.Services
             var startDate = $"{string.Format("{0:0000}", model.FromDate.Year)}.{string.Format("{0:00}", model.FromDate.Month)}";
             var endDate = $"{string.Format("{0:0000}", model.ToDate.Year)}.{string.Format("{0:00}", model.ToDate.Month)}";
 
-            valueTarget = (await _odataService.GetMTSDataByMultipleTerritory(selectTargetQueryBuilder, startDate, endDate, model.Depot, territories: model.Territories, zones: model.Zones, salesGroups: model.SalesGroups, dealerId: model.CustomerNo.ToString())).ToList();
+            valueTarget = (await _odataService.GetMTSDataByMultipleTerritory(selectTargetQueryBuilder, startDate, endDate, model.Depot, territories: model.Territories, zones: model.Zones, salesGroups: model.SalesGroups, dealerId: model.CustomerNo)).ToList();
             liquidTarget = valueTarget.Where(x => liquidBrands.Contains(x.MatarialGroupOrBrand)).ToList();
             powderTarget = valueTarget.Where(x => powderBrands.Contains(x.MatarialGroupOrBrand)).ToList();
 
-            valueActual = (await _odataService.GetSalesDataByMultipleTerritory(selectActualQueryBuilder, model.FromDate.DateFormat(), model.ToDate.DateFormat(), model.Depot, territories: model.Territories, zones: model.Zones, salesGroups: model.SalesGroups, dealerId: model.CustomerNo.ToString())).ToList();
+            valueActual = (await _odataService.GetSalesDataByMultipleTerritory(selectActualQueryBuilder, model.FromDate.DateFormat(), model.ToDate.DateFormat(), model.Depot, territories: model.Territories, zones: model.Zones, salesGroups: model.SalesGroups, dealerId: model.CustomerNo)).ToList();
             liquidActual = valueActual.Where(x => liquidBrands.Contains(x.MatarialGroupOrBrand)).ToList();
             powderActual = valueActual.Where(x => powderBrands.Contains(x.MatarialGroupOrBrand)).ToList();
 

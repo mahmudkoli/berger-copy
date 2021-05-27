@@ -16,11 +16,11 @@ namespace BergerMsfaApi.Models.Dealer
         public string PropertyValue { get; set; }
         public string PropertyName { get; set; }
 
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
         public string ContactNo { get; set; }
         public string Address { get; set; }
-        public int Division { get; set; }//
+        public string Division { get; set; }//
         public string BusinessArea { get; set; }
         public string SalesOffice { get; set; }//
         public string SalesGroup { get; set; }//

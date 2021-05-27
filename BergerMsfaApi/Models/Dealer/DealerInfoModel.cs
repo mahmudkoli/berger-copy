@@ -10,7 +10,7 @@ namespace BergerMsfaApi.Models.Dealer
     {
         public int Id { get; set; }
         public string CustomerName { get; set; }
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Models.Dealer
     {
         public int Id { get; set; }
         public string CustomerName { get; set; }
-        public int CustomerNo { get; set; }
+        public string CustomerNo { get; set; }
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string Area { get; set; }

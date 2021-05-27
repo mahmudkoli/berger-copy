@@ -1765,7 +1765,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<QueryResultModel<OsOver90daysTrendReportResultModel>> GetOsOver90daysTrendReport(OsOver90daysTrendReportSearchModel query)
         {
             //var userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
-            var userDealerIds = new List<int>();
+            var userDealerIds = new List<string>();
 
             if (query.UserId.HasValue)
                 userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();
@@ -1977,7 +1977,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             //string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
             query.ActivitySummary = string.IsNullOrWhiteSpace(query.ActivitySummary) ? "" : query.ActivitySummary;
             //IList<int> userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
-            var userDealerIds = new List<int>();
+            var userDealerIds = new List<string>();
 
             if (query.UserId.HasValue)
                 userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();

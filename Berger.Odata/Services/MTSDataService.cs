@@ -308,7 +308,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<int> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue, EnumMyTargetBrandType brandType)
+        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<string> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue, EnumMyTargetBrandType brandType)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
