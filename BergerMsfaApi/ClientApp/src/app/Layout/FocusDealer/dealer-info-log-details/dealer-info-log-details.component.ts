@@ -33,6 +33,8 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	id: any;
 	customerNo: any;
 	customerName: any;
+	contactNo: any;
+	address: any;
 	division: any;
 	businessArea: any;
 	salesOffice: any;
@@ -68,6 +70,8 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 				this.dealerInfoLogs.forEach(obj => {
 					this.customerNo = obj.customerNo;
 					this.customerName = obj.customerName;
+					this.contactNo = obj.contactNo;
+					this.address = obj.address;
 					this.division = obj.division;
 					this.businessArea = obj.businessArea;
 					this.salesOffice = obj.salesOffice;
