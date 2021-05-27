@@ -18,7 +18,7 @@ namespace Berger.Odata.Services
             _oDataService = oDataService;
         }
 
-        public async Task<decimal> GetTotalCollectionValue(IList<int> dealerIds)
+        public async Task<decimal> GetTotalCollectionValue(IList<string> dealerIds)
         {
             var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
 
@@ -34,7 +34,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<decimal> GetTotalCollectionValue(IList<int> dealerIds, DateTime? startDate, DateTime? endDate)
+        public async Task<decimal> GetTotalCollectionValue(IList<string> dealerIds, DateTime? startDate, DateTime? endDate)
         {
             var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
 
@@ -50,7 +50,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<CollectionDataModel>> GetCustomerCollectionAmount(IList<int> dealerIds, DateTime startDate, DateTime endDate)
+        public async Task<IList<CollectionDataModel>> GetCustomerCollectionAmount(IList<string> dealerIds, DateTime startDate, DateTime endDate)
         {
             string startDateStr = startDate.DateTimeFormat();
             string endDateStr = endDate.DateTimeFormat();

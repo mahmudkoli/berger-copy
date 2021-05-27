@@ -247,7 +247,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query.territories = queryObj.territories;
     this.query.custZones = queryObj.zones;
     this.query.salesGroup = queryObj.salesGroups;
-    this.query.customerNo = queryObj.dealerId;
+    this.query.dealerId = queryObj.dealerId;
 
     this.loadDealerSalesCallsPage();
   }

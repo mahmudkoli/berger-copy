@@ -48,7 +48,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _reportDataService.MyTarget(model, dealerIds);
 
                 return OkResult(result);
@@ -64,7 +64,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _oDataReportService.MySummaryReport(dealerIds);
                 return OkResult(result);
             }
@@ -79,7 +79,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportTotalInvoiceValue(model, dealerIds);
                 return OkResult(result);
             }
@@ -94,7 +94,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportBrandOrDivisionWisePerformance(model, dealerIds);
                 return OkResult(result);
             }
@@ -109,7 +109,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportDealerPerformance(model, dealerIds);
                 return OkResult(result);
             }
@@ -124,7 +124,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
                 return OkResult(result);
             }
@@ -139,7 +139,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportOutstandingSummary(dealerIds);
                 return OkResult(result);
             }
@@ -154,7 +154,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportOSOver90Days(model, dealerIds);
                 return OkResult(result);
             }
@@ -169,7 +169,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                IList<int> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportPaymentFollowUp(model, dealerIds);
                 return OkResult(result);
             }

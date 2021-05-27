@@ -3,6 +3,8 @@ using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BergerMsfaApi.Services.DealerFocus.Interfaces;
+using Microsoft.AspNetCore.Http;
 using X.PagedList;
 
 namespace BergerMsfaApi.Services.DealerFocus.Implementation
@@ -23,5 +25,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
         #endregion
 
+        #region Excel Dealer Status Update
+        public Task<DealerStatusExcelExportModel> DealerStatusUpdate(DealerStatusExcelImportModel model);
+        #endregion
     }
 }

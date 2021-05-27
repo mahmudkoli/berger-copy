@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { DealerStatusExcelImportModel } from '../../Entity/DealerInfo/DealerStatusExcel';
 import { APIResponse } from '../../Entity/Response';
+import { CommonService } from '../Common/common.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,7 @@ import { APIResponse } from '../../Entity/Response';
 export class FocusdealerService {
   public baseUrl: string;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string, private commonService: CommonService) {
     console.log('baseUrl: ', baseUrl);
     this.baseUrl = baseUrl + 'api/';
   }
@@ -90,6 +92,12 @@ export class FocusdealerService {
   public getEmailConfigById(id) {
     return this.http.get<APIResponse>(
       this.baseUrl + 'v1/EmailConfig/GetById/' + id
+    );
+  }
+
+  public excelDealerStatusUpdate(model: DealerStatusExcelImportModel) {
+    return this.http.post<APIResponse>(
+      this.baseUrl + 'v1/Excel/DealerStatusUpdate', this.commonService.toFormData(model)
     );
   }
 }

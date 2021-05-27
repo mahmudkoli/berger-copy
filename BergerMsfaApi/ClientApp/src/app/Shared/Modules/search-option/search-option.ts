@@ -29,7 +29,7 @@ export class SearchOptionQuery extends QueryObject {
     activitySummary: string;
     valueVolumeResultType: number;
     customerClassificationType: number;
-    customerNo: number; // assign when dealer selected
+    customerNo: string; // assign when dealer selected
 
     constructor(init?: Partial<SearchOptionQuery>) {
         super();

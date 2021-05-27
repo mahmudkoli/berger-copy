@@ -337,7 +337,7 @@ export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
 }
 
 export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
-    customerNo: number;
+    customerNo: string;
 
     constructor(init?: Partial<DealerWiseTargetAchivementQuery>) {
         super();
