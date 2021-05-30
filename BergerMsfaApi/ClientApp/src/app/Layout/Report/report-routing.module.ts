@@ -33,6 +33,8 @@ import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-
 import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
 import { BusinessCallAnalysisReportComponent } from './business-call-analysis/business-call-analysis-report.component';
 import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
+import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-salescall/addhoc-sub-dealer-salescall-report.component';
+import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
 
 const routes: Routes = [
   {
@@ -136,6 +138,18 @@ const routes: Routes = [
         data: { title: 'Dealer Sales Call', },
       },
       {
+        path: 'addhoc-sub-dealer-sales-call',
+        component: AddhocSubDealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Addhoc Sub Dealer Sales Call', },
+      },
+      {
+        path: 'addhoc-dealer-sales-call',
+        component: AddhocDealerSalescallReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Addhoc Dealer Sales Call', },
+      },
+      {
         path: 'tinting-machine',
         component: TintingMachineReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
@@ -153,8 +167,6 @@ const routes: Routes = [
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'OS Over 90 Days Trend Report', },
       },
-
-
 
       {
         path: 'mts-value-target-achivement',

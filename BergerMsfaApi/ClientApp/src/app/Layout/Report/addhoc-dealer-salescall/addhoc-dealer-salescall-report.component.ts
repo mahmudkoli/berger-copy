@@ -6,7 +6,7 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { DealerIssueReportQuery, SnapShotReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { DealerSalesCallReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
@@ -16,13 +16,14 @@ import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dr
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 
 @Component({
-    selector: 'merchendizing-snapshot-report',
-    templateUrl: './merchendizing-snapshot-report.component.html',
-    styleUrls: ['./merchendizing-snapshot-report.component.css']
+    selector: 'addhoc-dealer-salescall-report',
+    templateUrl: './addhoc-dealer-salescall-report.component.html',
+    styleUrls: ['./addhoc-dealer-salescall-report.component.css']
 })
-export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
+export class AddhocDealerSalescallReportComponent implements OnInit, OnDestroy {
+
 	// data list
-	query: SnapShotReportQuery;
+	query: DealerSalesCallReportQuery;
 	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
@@ -31,9 +32,17 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Merchendizing Snapshot Report';
+	tableName: string = 'Addhoc Dealer Sales Call Report';
 	// renameKeys: any = {'userId':'// User Id //'};
-	// renameKeys: any = {};
+	renameKeys: any = {
+		'ssStatus' : 'Status',
+		'ssReasonForPourOrAverage' : 'Reason for poor or Average',
+		'sdInfluecePercent' : 'Influence %',
+		'painterInfluecePercent' : 'Influenc %',
+		'csRemarks' : 'Remarks',
+		'pdmRemarks' : 'Remark',
+		'dealerSatisfactionStatus' : 'dStatus'
+	};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
@@ -67,11 +76,11 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	}
 	
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadMerchendizingSnapShot(query);
-	getData = (query) => this.reportService.getMerchendizingSnapShot(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadAddhocDealerSalesCall(query);
+	getData = (query) => this.reportService.getAddhocDealerSalesCall(query);
 
 	searchConfiguration() {
-		this.query = new DealerIssueReportQuery({
+		this.query = new DealerSalesCallReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -91,6 +100,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		isDealerShow: true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
@@ -144,39 +154,90 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
-		var columName = this.ptableSettings.tableColDef.filter(x => 
-			x.internalName == 'competitionDisplay' ||
-			x.internalName == 'glowSignBoard' ||
-			x.internalName == 'productDisplay' ||
-			x.internalName == 'scheme' ||
-			x.internalName == 'brochure' ||
-			x.internalName == 'others'
-		);
-
-		if(columName.length > 0){
-			columName[0].type = 'image';
-			columName[1].type = 'image';
-			columName[2].type = 'image'; 
-			columName[3].type = 'image';
-			columName[4].type = 'image';
-			columName[5].type = 'image';
-		}
-
-		// console.log(this.ptableSettings.tableColDef);
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'Status' || x.internalName == 'Reason for poor or Average'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Secondary Sales';
+		});
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionDisplay' || x.internalName == 'cRemarks'  || x.internalName == 'glowSignBoard' || x.internalName == 'gRemarks'   || x.internalName == 'productDisplay' || x.internalName == 'pRemarks'   || x.internalName == 'scheme' || x.internalName == 'sRemarks'   || x.internalName == 'brochure' || x.internalName == 'bRemarks'   || x.internalName == 'others' || x.internalName == 'oRemarks'   || x.internalName == 'otherSnapshotTypeName'
+			(x) => x.internalName == 'uspCommunication' || x.internalName == 'productLiftingStatus' || x.internalName == 'reasonForNotLifting'
 		)
 		.forEach((x) => {
-			x.parentHeaderName = 'Snapshot Type';
+			x.parentHeaderName = 'Premium Product Activity';
 		});
-	}
 
-	renameKeys: any = {
-		// 'cRemarks':'Remarks',
-		// 'gRemarks':'Remarks'
-	};
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'cbMachineStatus' || x.internalName == 'cbProductivity'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Color Bank';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'subDealerInfluence' || x.internalName == 'Influence %'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Sub-Dealer Management';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'painterInfluence' || x.internalName == 'Influenc %'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Painter';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'productKnoledge' || x.internalName == 'salesTechniques' || x.internalName == 'merchendisingImprovement'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Shop Manage/Shop Boy';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'competitionService' || x.internalName == 'Remarks' || x.internalName == 'productDisplayAndMerchendizingStatus' || x.internalName == 'Remark' || x.internalName == 'productDisplayAndMerchendizingImage' || x.internalName == 'schemeModality' || x.internalName == 'schemeModalityImage' || x.internalName == 'shopBoy'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Competition Information';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'apAvrgMonthlySales' || x.internalName == 'apActualMtdSales' || x.internalName == 'nerolacAvrgMonthlySales' || x.internalName == 'nerolacActualMtdSales' || x.internalName == 'nipponAvrgMonthlySales' || x.internalName == 'nipponActualMtdSales' || x.internalName == 'duluxAvrgMonthlySales' || x.internalName == 'duluxActualMtdSales'  || x.internalName == 'jotunAvrgMonthlySales' || x.internalName == 'jotunActualMtdSales' || x.internalName == 'moonstarAvrgMonthlySales' || x.internalName == 'moonstarActualMtdSales' || x.internalName == 'eliteAvrgMonthlySales' || x.internalName == 'eliteActualMtdSales' || x.internalName == 'alkarimAvrgMonthlySales' || x.internalName == 'alkarimActualMtdSales' || x.internalName == 'othersAvrgMonthlySales' || x.internalName == 'othersActualMtdSales' || x.internalName == 'totalAvrgMonthlySales' || x.internalName == 'totalActualMtdSales'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Competition Sales';
+		});
+
+		this.ptableSettings.tableColDef
+		.filter(
+			(x) => x.internalName == 'dStatus' || x.internalName == 'dealerDissatisfactionReason'
+		)
+		.forEach((x) => {
+			x.parentHeaderName = 'Dealer Satisfaction';
+		});
+
+		// Show Image
+		var columName = this.ptableSettings.tableColDef.filter(x => 
+						x.internalName == 'productDisplayAndMerchendizingImage' ||
+						x.internalName == 'schemeModalityImage'
+			);
+		if(columName.length > 0){
+			columName[0].type = 'image';
+			columName[1].type = 'image';
+		}
+
+		// console.log(this.ptableSettings.tableColDef);
+	}
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "reports-table",
