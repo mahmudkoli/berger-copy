@@ -2328,9 +2328,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             reportResult = (_tintingMachine
                 .GetAllInclude(x => x.Company).Where(p =>
-                    (query.Territories.Count > 0 ? query.Territories.Contains(p.Territory) : true)
-                    && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
-                    && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)))
+                        (string.IsNullOrEmpty(query.Depot) || query.Depot == p.Depot)
+                        && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                        && (!query.UserId.HasValue || query.UserId.Value == p.UserInfoId))
+                    )
                     .Select(c => new TintingMachineReportResultModel()
                     {
                         ActiveMachineNO = c.NoOfActiveMachine,
