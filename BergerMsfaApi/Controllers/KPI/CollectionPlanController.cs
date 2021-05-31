@@ -30,7 +30,7 @@ namespace BergerMsfaApi.Controllers.KPI
         {
             try
             {
-                var result = await _collectionPlanService.GetAllCollectionPlansAsync(query);
+                var result = await _collectionPlanService.GetAllCollectionPlansByCurrentUserAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)
