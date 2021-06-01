@@ -780,6 +780,15 @@
                       </a>
                     </div>
                     <div
+                      *ngIf="
+                        dispCol.type == 'text' &&
+                        dispCol.displayType == 'number-format-color'
+                      "
+                      style="text-align: center"
+                    >
+                      <span [ngClass]="body[dispCol.internalName] < 0 ? 'negative-number-format-color' : ''">{{ body[dispCol.internalName] | number: '1.0-2' }}</span>
+                    </div>
+                    <div
                       *ngIf="dispCol.type == 'custom-button'"
                       style="text-align: center"
                     >
@@ -912,9 +921,9 @@
                       *ngIf="rowCounter != 0 && dispCol.showTotal"
                     >
                       <button
-                        class="btn btn-outline-success p-table-custom-button"
+                        class="btn p-table-custom-button" [ngClass]="fnSummationTotal(dispCol.internalName) < 0 ? 'btn-outline-danger': 'btn-outline-success'"
                       >
-                        {{ fnSummationTotal(dispCol.internalName) | number }}
+                        {{ fnSummationTotal(dispCol.internalName) | number : '1.0-2' }}
                       </button>
                     </div>
                   </td>
