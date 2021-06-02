@@ -41,7 +41,7 @@ export class ModalPainterCallDetailsComponent implements OnInit {
 		tableColDef: [
 			{ headerName: 'CompanyId', width: '20%', internalName: 'companyId', sort: false, type: "" },
 			{ headerName: 'CompanyName', width: '20%', internalName: 'companyName', sort: false, type: "" },
-			{ headerName: 'Value', width: '20%', internalName: 'value', sort: false, type: "" },
+			{ headerName: 'Value', width: '20%', internalName: 'value', sort: false, type: "text", displayType: 'number-format-color' },
 			{ headerName: 'Count In Percent', width: '20%', internalName: 'countInPercent', sort: false, type: "" },
 			{ headerName: 'Cumelative In Percent', width: '20%', internalName: 'cumelativeInPercent', sort: false, type: "" }
 			
