@@ -42,5 +42,25 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpDelete("DeleteCollection/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            try
+            {
+                if (!await _paymentService.IsExistAsync(id))
+                {
+                    ModelState.AddModelError(nameof(id), "Collection Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _paymentService.DeleteAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
