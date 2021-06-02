@@ -4,7 +4,7 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>User Full Name:</strong></span> {{dealerSalesCall.userFullName}}</p>
+                <p><span><strong>Employee Name:</strong></span> {{dealerSalesCall.userFullName}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Dealer Name:</strong></span> {{dealerSalesCall.dealerName}}</p>
@@ -184,13 +184,13 @@
                 <p><span><strong>Has BPBL Sales:</strong></span> {{dealerSalesCall.hasBPBLSalesText}}</p>
             </div>
             <div class="col-sm-6">
-                <p><span><strong>BPBL Average Monthly Sales:</strong></span> {{dealerSalesCall.bPBLAverageMonthlySales}}</p>
+                <p><span><strong>BPBL Average Monthly Sales: </strong></span> <span *ngIf="dealerSalesCall.bPBLAverageMonthlySales" [numberFormatColor]="dealerSalesCall.bPBLAverageMonthlySales"></span> </p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>BPBL Actual MTD Sales:</strong></span> {{dealerSalesCall.bPBLActualMTDSales}}</p>
+                <p><span><strong>BPBL Actual MTD Sales: </strong></span> <span *ngIf="dealerSalesCall.bPBLActualMTDSales" [numberFormatColor]="dealerSalesCall.bPBLActualMTDSales"></span></p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Date:</strong></span> {{dealerSalesCall.dateText}}</p>

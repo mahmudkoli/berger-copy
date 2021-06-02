@@ -191,7 +191,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search)
         {
-            var result = (await _painterSvc.GetAllAsync()).ToMap<Painter, PainterModel>();
+            var result = (await _painterSvc.GetAllAsync()).OrderBy(x => x.PainterName).ToMap<Painter, PainterModel>();
+
             if (!string.IsNullOrEmpty(search))
                 result = result.Search(search);
 
@@ -209,7 +210,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var item in result)
             {
                 item.DepotName = depots.FirstOrDefault(x => x.Werks == item.Depot)?.Name1 ?? string.Empty;
-                item.DepotName += $" ({item.Depot})";
                 item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
                 //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
                 //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;

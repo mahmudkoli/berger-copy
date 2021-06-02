@@ -70,6 +70,21 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result.Items);
 
+            #region get area mapping data
+            var depotIds = modelResult.Select(x => x.Depot).Distinct().ToList();
+
+            var depots = (await _depotRepository.FindAllAsync(x => depotIds.Contains(x.Werks)));
+
+            foreach (var item in modelResult)
+            {
+                var dep = depots.FirstOrDefault(x => x.Werks == item.Depot);
+                if (dep != null)
+                {
+                    item.Depot = $"{dep.Name1} ({dep.Werks})";
+                }
+            }
+            #endregion
+
             var queryResult = new QueryResultModel<LeadGenerationModel>();
             queryResult.Items = modelResult;
             queryResult.TotalFilter = result.TotalFilter;
@@ -150,6 +165,9 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                             );
 
             var modelResult = _mapper.Map<LeadGenerationModel>(result);
+
+            var depot = _depotRepository.Find(f => f.Werks == modelResult.Depot);
+            modelResult.Depot = depot != null ? $"{depot.Name1} ({depot.Werks})" : modelResult.Depot;
 
             return modelResult;
         }

@@ -40,7 +40,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
         public async Task<IEnumerable<PaymentModel>> GetCollectionByType(int CustomerTypeId)
         {
             
-            var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControlArea).Where(f=>f.CustomerTypeId==CustomerTypeId);
+            var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControlArea).Where(f=>f.CustomerTypeId==CustomerTypeId).OrderByDescending(x => x.CollectionDate);
             return result.Select(s => new PaymentModel()
             {
                 Id = s.Id,

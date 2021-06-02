@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Tinting;
 using BergerMsfaApi.Extensions;
@@ -21,16 +22,19 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
     public class TintingService : ITintiningService
     {
         public readonly IRepository<TintingMachine> _tintingMachineSvc;
+        private readonly IRepository<Depot> _depotSvc;
         public readonly IDropdownService _dropdownService;
         public readonly IMapper _mapper;
 
         public TintingService(
               IRepository<TintingMachine> tintingMachineSvc,
+              IRepository<Depot> depotSvc,
               IDropdownService dropdownService,
               IMapper mapper
             )
         {
             _tintingMachineSvc = tintingMachineSvc;
+            this._depotSvc = depotSvc;
             _dropdownService = dropdownService;
             _mapper = mapper;
         }
@@ -58,6 +62,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             var columnsMap = new Dictionary<string, Expression<Func<TintingMachine, object>>>()
             {
                 ["userFullName"] = v => v.UserInfo.FullName,
+                ["depot"] = v => v.Depot,
                 ["territory"] = v => v.Territory,
                 ["companyName"] = v => v.Company.DropdownName,
                 ["noOfActiveMachine"] = v => v.NoOfActiveMachine,
@@ -77,6 +82,21 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                             );
 
             var modelResult = _mapper.Map<IList<TintingMachineModel>>(result.Items);
+
+            #region get area mapping data
+            var depotIds = modelResult.Select(x => x.Depot).Distinct().ToList();
+
+            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+
+            foreach (var item in modelResult)
+            {
+                var dep = depots.FirstOrDefault(x => x.Werks == item.Depot);
+                if (dep != null)
+                {
+                    item.Depot = $"{dep.Name1} ({dep.Werks})";
+                }
+            }
+            #endregion
 
             var queryResult = new QueryResultModel<TintingMachineModel>();
             queryResult.Items = modelResult;

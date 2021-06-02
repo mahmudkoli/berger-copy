@@ -145,7 +145,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     tableRowIDInternalName: 'id',
     tableColDef: [
       {
-        headerName: 'User Full Name',
+        headerName: 'Employee Name',
         width: '15%',
         internalName: 'userFullName',
         sort: true,

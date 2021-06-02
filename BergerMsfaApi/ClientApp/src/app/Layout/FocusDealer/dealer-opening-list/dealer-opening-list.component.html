@@ -20,12 +20,14 @@
     
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="'businessArea'">Business Area <p-sortIcon field="'businessArea'"></p-sortIcon></th>
-                <th pSortableColumn="'saleOffice'">Sale Office <p-sortIcon field="'saleOffice'"></p-sortIcon></th>
-                <th pSortableColumn="saleGroup">Sale Group<p-sortIcon field="saleGroup"></p-sortIcon></th>
-                <th pSortableColumn="zone">Zone <p-sortIcon field="zone"></p-sortIcon></th>
-                <th pSortableColumn="territory">Territory <p-sortIcon field="territory"></p-sortIcon></th>
+                <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
+                <th pSortableColumn="businessAreaName">Business Area <p-sortIcon field="businessAreaName"></p-sortIcon></th>
+                <th pSortableColumn="saleOfficeName">Sale Office <p-sortIcon field="saleOfficeName"></p-sortIcon></th>
+                <th pSortableColumn="saleGroupName">Sale Group<p-sortIcon field="saleGroupName"></p-sortIcon></th>
+                <th pSortableColumn="territoryName">Territory <p-sortIcon field="territoryName"></p-sortIcon></th>
+                <th pSortableColumn="zoneName">Zone <p-sortIcon field="zoneName"></p-sortIcon></th>
                 <th pSortableColumn="employeeId">Employee Id<p-sortIcon field="employeeId"></p-sortIcon></th>
+                <th pSortableColumn="dealerOpeningStatusText">Status<p-sortIcon field="dealerOpeningStatusText"></p-sortIcon></th>
 
                 <th></th>
             </tr>
@@ -34,14 +36,16 @@
         <ng-template pTemplate="body" let-dOpen>
             <tr>
     
-                <td>{{dOpen.businessArea}}</td>
+                <td>{{dOpen.code }}</td>
+                <td>{{dOpen.businessAreaName + ' (' + dOpen.businessArea + ')'}}</td>
     
-                <td>{{dOpen.saleOffice}}</td>
-                <td>{{dOpen.saleGroup}}</td>
+                <td>{{dOpen.saleOfficeName+ ' (' + dOpen.saleOffice + ')'}}</td>
+                <td>{{dOpen.saleGroupName+ ' (' + dOpen.saleGroup + ')'}}</td>
 
-                <td>{{dOpen.zone }}</td>
-                <td>{{dOpen.territory }}</td>
+                <td>{{dOpen.territoryName }}</td>
+                <td>{{dOpen.zoneName }}</td>
                 <td>{{dOpen.employeeId }}</td>
+                <td>{{dOpen.dealerOpeningStatusText }}</td>
 
     
                 <td *ngIf="dOpen.nextApprovarId==this.auth.currentUserValue.userId">
