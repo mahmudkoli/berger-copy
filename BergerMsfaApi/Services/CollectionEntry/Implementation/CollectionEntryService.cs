@@ -110,7 +110,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                             new AppCollectionEntryModel 
                             { 
                                 Id = x.Id,
-                                CollectionDate = x.CollectionDate.ToString("yyyy_MM-dd"),
+                                CollectionDate = x.CollectionDate.ToString("yyyy-MM-dd"),
                                 CustomerType = x.CustomerType.DropdownName,
                                 PaymentMethod = x.PaymentMethod.DropdownName,
                                 CreditControlArea = $"{x.CreditControlArea.Description} ({x.CreditControlAreaId})"
