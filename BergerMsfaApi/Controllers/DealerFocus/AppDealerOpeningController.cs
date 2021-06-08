@@ -34,11 +34,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var result = await _dealerOpeningSvc.AppGetDealerOpeningListByCurrentUserAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -64,15 +64,15 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
 
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _dealerOpeningSvc.AppCreateDealerOpeningAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
 
             }
             catch (Exception ex)
             {
                 ex.ToWriteLog();
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

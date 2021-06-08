@@ -26,11 +26,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var result = await _brandService.GetBrandsAsync(query);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -40,11 +40,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var result = await _brandService.GetBrandsFamilyAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

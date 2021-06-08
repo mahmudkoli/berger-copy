@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -32,57 +33,121 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult OkResult(object data)
         {
             var apiResult = new ApiResponse
             {
-                StatusCode = 200,
+                StatusCode = (int)HttpStatusCode.OK,
                 Status = "Success",
                 Msg = "Successful",
                 Data = data
             };
             return ObjectResult(apiResult);
         }
+
+        protected IActionResult AppOkResult(object data)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = (int)HttpStatusCode.OK,
+                Status = "Success",
+                Msg = "Successful",
+                Data = data
+            };
+            return AppObjectResult(apiResult);
+        }
+
         protected IActionResult OkResult(object data, string message)
         {
             var apiResult = new ApiResponse
             {
-                StatusCode = 200,
+                StatusCode = (int)HttpStatusCode.OK,
                 Status = "Success",
                 Msg = message,
                 Data = data
             };
             return ObjectResult(apiResult);
         }
+
+        protected IActionResult AppOkResult(object data, string message)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = (int)HttpStatusCode.OK,
+                Status = "Success",
+                Msg = message,
+                Data = data
+            };
+            return AppObjectResult(apiResult);
+        }
+
         protected IActionResult ValidationResult(ModelStateDictionary modelState)
         {
             var apiResult = new ApiResponse
             {
-                StatusCode = 400,
+                StatusCode = (int)HttpStatusCode.BadRequest,
                 Status = "ValidationError",
                 Msg = "Validation Fail",
                 Errors = modelState.GetErrors()
             };
             return ObjectResult(apiResult);
         }
+
+        protected IActionResult AppValidationResult(ModelStateDictionary modelState)
+        {
+            var apiResult = new ApiResponse
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Status = "ValidationError",
+                Msg = "Validation Fail",
+                Errors = modelState.GetErrors()
+            };
+            return AppObjectResult(apiResult);
+        }
+
         protected IActionResult ExceptionResult(Exception ex, string msg = null)
         {
             ex.ToWriteLog();
             
             var apiResult = new ApiResponse
             {
-                StatusCode = 500,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Status = "Error",
                 Msg = msg ?? ex.Message,
                 Data = new object()
             };
             return ObjectResult(apiResult);
         }
+
+        protected IActionResult AppExceptionResult(Exception ex, string msg = null)
+        {
+            ex.ToWriteLog();
+
+            var apiResult = new ApiResponse
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Status = "Error",
+                Msg = msg ?? ex.Message,
+                Data = new object()
+            };
+            return AppObjectResult(apiResult);
+        }
+
         protected IActionResult ObjectResult(ApiResponse model)
         {
             var result = new ObjectResult(model)
             {
                 StatusCode = model.StatusCode
+            };
+            return result;
+        }
+
+        protected IActionResult AppObjectResult(ApiResponse model)
+        {
+            var result = new ObjectResult(model)
+            {
+                StatusCode = (int)HttpStatusCode.OK
             };
             return result;
         }

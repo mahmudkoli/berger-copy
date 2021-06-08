@@ -32,13 +32,13 @@ namespace BergerMsfaApi.Controllers.Journey
         {
             try
             {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _journeyService.AppGetJourneyPlanList(employeeId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -48,13 +48,13 @@ namespace BergerMsfaApi.Controllers.Journey
             try
             {
                 //have to check from app if there is any existing plan create same date and login employee;
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _journeyService.AppCreateJourneyPlan(employeeId,model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -62,13 +62,13 @@ namespace BergerMsfaApi.Controllers.Journey
         public async Task<IActionResult> CheckHasAlreadyPlan([BindRequired] string employeeId, [DataType(DataType.Date)] DateTime visitDate)
         {
             try { 
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                return OkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId,visitDate));
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
+                return AppOkResult(await _journeyService.AppCheckAlreadyTodayPlan(employeeId,visitDate));
             }
             catch (Exception ex)
             {
 
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
            
 
@@ -80,11 +80,11 @@ namespace BergerMsfaApi.Controllers.Journey
             try
             {
                 var result = await _journeyService.GetAppJourneyPlanListForLineManager();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -94,11 +94,11 @@ namespace BergerMsfaApi.Controllers.Journey
             try
             {
                 var result = await _journeyService.GetAppJourneyPlanDetailById(PlanId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -107,13 +107,13 @@ namespace BergerMsfaApi.Controllers.Journey
         {
             try
             {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _journeyService.AppChangePlanStatus(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             };
         }
 

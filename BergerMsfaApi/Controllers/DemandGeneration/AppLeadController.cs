@@ -30,11 +30,11 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             try
             {
                 var result = await _leadService.GetAllPendingProjectByUserIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -44,11 +44,11 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             try
             {
                 var result = await _leadService.GetLeadFollowUpByLeadGenerateIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -57,17 +57,17 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _leadService.AddLeadGenerateAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -76,17 +76,17 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _leadService.AddLeadFollowUpAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

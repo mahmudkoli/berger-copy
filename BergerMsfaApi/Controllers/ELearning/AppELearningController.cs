@@ -30,11 +30,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _eLearningService.GetAllActiveAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -44,11 +44,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _eLearningService.GetAllActiveByCategoryIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -58,11 +58,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _eLearningService.GetByIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

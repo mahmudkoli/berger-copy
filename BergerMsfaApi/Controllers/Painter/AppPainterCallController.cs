@@ -80,11 +80,11 @@ namespace BergerMsfaApi.Controllers.Painter
             try
             {
                 var result = await _paintCallSvc.AppCreatePainterCallAsync(PainterId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -94,11 +94,11 @@ namespace BergerMsfaApi.Controllers.Painter
             try
             {
                 var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId, model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

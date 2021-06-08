@@ -37,11 +37,11 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             try
             {
                var result = await _painterSvc.AppGetPainterListAsync(employeeId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -51,13 +51,13 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             try
             {
    
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _painterSvc.AppCreatePainterAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

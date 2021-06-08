@@ -33,12 +33,12 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             try
             {
                 var result = await _paymentService.GetAppCollectionListByCurrentUserAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
 
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -71,16 +71,16 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
                 if (!DateTime.TryParse(model.CollectionDate, out DateTime date))
                 {
                     ModelState.AddModelError(nameof(model.CollectionDate), "collection date not valid format");
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
                 }
                     
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _paymentService.CreateAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
         //[HttpPut("Update")]
@@ -131,12 +131,12 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             try
             {
                 var result = await _paymentService.GetCreditControlAreaList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
 
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

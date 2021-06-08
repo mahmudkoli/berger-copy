@@ -26,11 +26,11 @@ namespace BergerMsfaApi.Controllers.Scheme
             try
             {
                 var result = await _schemeService.GetAppAllSchemeDetailsByCurrentUserAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

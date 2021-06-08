@@ -25,11 +25,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetSaleOfficeList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -39,11 +39,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetSaleGroupList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -53,11 +53,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetTerritoryList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -67,11 +67,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetZoneList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -81,11 +81,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDepotList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -95,11 +95,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDivisionList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -109,11 +109,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetCreditControlAreaList();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -123,11 +123,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetUserInfoListByCurrentUser();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -137,11 +137,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetUserInfoListByCurrentUserWithoutZoUser();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

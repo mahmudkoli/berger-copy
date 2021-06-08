@@ -32,13 +32,13 @@ namespace BergerMsfaApi.Controllers.Tinting
         {
             try
             {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _tintiningService.GetAllAsync(territory, userInfoId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -47,14 +47,14 @@ namespace BergerMsfaApi.Controllers.Tinting
         {
             try
             {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _tintiningService.UpdateAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (System.Exception ex)
             {
 
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -63,14 +63,14 @@ namespace BergerMsfaApi.Controllers.Tinting
         {
             try
             {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _tintiningService.GetAllAsync(query);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (System.Exception ex)
             {
 
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

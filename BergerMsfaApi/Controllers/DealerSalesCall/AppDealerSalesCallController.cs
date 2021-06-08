@@ -45,11 +45,11 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             try
             {
                 var result = await _dealerSalesCallService.GetDealerSalesCallByDealerIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -59,11 +59,11 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             try
             {
                 var result = await _dealerSalesCallService.GetDealerSalesCallListByDealerIdsAsync(ids);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -72,17 +72,17 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _dealerSalesCallService.AddAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -91,17 +91,17 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _dealerSalesCallService.AddRangeAsync(models);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

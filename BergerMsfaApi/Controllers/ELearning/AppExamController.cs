@@ -29,11 +29,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionSetAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -43,11 +43,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionByQuestionSetIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -56,17 +56,17 @@ namespace BergerMsfaApi.Controllers.ELearning
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _examService.SaveQuestionAnswerAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

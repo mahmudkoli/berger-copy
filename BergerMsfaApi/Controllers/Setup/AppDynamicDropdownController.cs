@@ -35,14 +35,14 @@ namespace BergerMsfaApi.Controllers.Setup
                 if(string.IsNullOrEmpty(typeCode))
                 {
                     ModelState.AddModelError(nameof(typeCode), "TypeCode Can Not Be Empty");
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
                 }
                 var result = await _dropdownService.GetDropdownByTypeCd(typeCode.Trim());
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -54,14 +54,14 @@ namespace BergerMsfaApi.Controllers.Setup
                 if (!typeCodes.Any())
                 {
                     ModelState.AddModelError(nameof(typeCodes), "TypeCode Can Not Be Empty");
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
                 }
                 var result = await _dropdownService.GetDropdownByTypeCd(typeCodes);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -71,11 +71,11 @@ namespace BergerMsfaApi.Controllers.Setup
             try
             {
                 var result = await _dropdownService.GetDropdownByTypeId(typeId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -85,11 +85,11 @@ namespace BergerMsfaApi.Controllers.Setup
             try
             {
                 var result = await _dropdownService.GetCompanyList(painterCallId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

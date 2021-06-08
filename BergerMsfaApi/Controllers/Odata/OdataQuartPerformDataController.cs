@@ -57,11 +57,11 @@ namespace BergerMsfaApi.Controllers.Odata
                     result = data.ToList();
                 }
 
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }
