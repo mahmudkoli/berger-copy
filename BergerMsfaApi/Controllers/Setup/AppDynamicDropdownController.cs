@@ -49,6 +49,7 @@ namespace BergerMsfaApi.Controllers.Setup
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetDropdownByTypeCd")]
         public async Task<IActionResult> GetDropdownByTypeCd([FromQuery] IList<string> typeCodes)
         {

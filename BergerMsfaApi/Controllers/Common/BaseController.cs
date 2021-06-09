@@ -103,7 +103,8 @@ namespace BergerMsfaApi.Controllers.Common
                 StatusCode = (int)HttpStatusCode.BadRequest,
                 Status = "ValidationError",
                 Msg = errors?.FirstOrDefault()?.ErrorList?.FirstOrDefault()??"Validation Fail",
-                Errors = errors
+                Errors = errors,
+                Data = null
             };
             return AppObjectResult(apiResult);
         }
@@ -131,7 +132,7 @@ namespace BergerMsfaApi.Controllers.Common
                 StatusCode = (int)HttpStatusCode.InternalServerError,
                 Status = "Error",
                 Msg = msg ?? ex.Message,
-                Data = new object()
+                Data = null
             };
             return AppObjectResult(apiResult);
         }
