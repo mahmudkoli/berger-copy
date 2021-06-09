@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Extensions;
@@ -96,12 +97,13 @@ namespace BergerMsfaApi.Controllers.Common
 
         protected IActionResult AppValidationResult(ModelStateDictionary modelState)
         {
+            var errors = modelState.GetErrors();
             var apiResult = new ApiResponse
             {
                 StatusCode = (int)HttpStatusCode.BadRequest,
                 Status = "ValidationError",
-                Msg = "Validation Fail",
-                Errors = modelState.GetErrors()
+                Msg = errors?.FirstOrDefault()?.ErrorList?.FirstOrDefault()??"Validation Fail",
+                Errors = errors
             };
             return AppObjectResult(apiResult);
         }
