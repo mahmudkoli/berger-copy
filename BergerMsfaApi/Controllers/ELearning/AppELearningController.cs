@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

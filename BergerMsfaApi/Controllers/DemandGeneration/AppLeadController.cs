@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.DemandGeneration
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

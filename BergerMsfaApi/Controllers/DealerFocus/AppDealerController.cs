@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -63,7 +64,6 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
         }
 
-        [Authorize]
         [HttpGet("GetDealerList")]
         public async Task<IActionResult> GetDealerList([FromQuery] string userCategory, [FromQuery] List<string> userCategoryIds)
         {
@@ -88,7 +88,6 @@ namespace BergerMsfaApi.Controllers.DealerFocus
 
         }
 
-        [Authorize]
         [HttpGet("GetDealerListByCategory")]
         public async Task<IActionResult> GetDealerListByCategory([FromQuery] AppDealerSearchModel model)
         {

@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Tinting;
 using BergerMsfaApi.Services.Tinting.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Tinting
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

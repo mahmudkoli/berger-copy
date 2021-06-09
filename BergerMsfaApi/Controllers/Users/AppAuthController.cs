@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -80,7 +81,6 @@ namespace BergerMsfaApi.Controllers.Users
             }
         }
         
-        [Authorize]
         [HttpPost("activity")]
         public async Task<IActionResult> UserActivity()
         {

@@ -4,10 +4,12 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Brand;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Brand.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

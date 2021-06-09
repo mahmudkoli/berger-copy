@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Setup;
 using BergerMsfaApi.Services.Setup.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Setup
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
