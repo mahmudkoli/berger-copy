@@ -33,11 +33,11 @@ namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
             try
             {
                 var result = await _merchandisingSnapShotService.GetAppMerchandisingSnapShotListByCurrentUser(dealerId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -74,17 +74,17 @@ namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _merchandisingSnapShotService.AddAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -93,17 +93,17 @@ namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _merchandisingSnapShotService.AddRangeAsync(models);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

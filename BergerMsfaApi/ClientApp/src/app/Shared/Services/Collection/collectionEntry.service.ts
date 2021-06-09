@@ -17,7 +17,8 @@ export class CollectionEntryService {
     public getCollectionByType( paymentFrom) {
         return this.http.get<APIResponse>(this.baseUrl + 'v1/collectionEntry/getCollectionByType/' + paymentFrom);
     }
- 
 
-   
+    deleteCollection(id) {
+        return this.http.delete<APIResponse>(`${this.baseUrl}/v1/collectionEntry/DeleteCollection/${id}`);
+    }
 }

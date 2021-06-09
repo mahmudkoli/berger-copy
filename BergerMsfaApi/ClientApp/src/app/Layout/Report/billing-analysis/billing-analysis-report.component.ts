@@ -1,43 +1,43 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { TintingMachineReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { BillingAnalysisKpiReportQuery, BusinessCallAnalysisReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { ModalBillingAnalysisDetailsComponent } from '../modal-billing-analysis-details/modal-billing-analysis-details.component';
 
 @Component({
-    selector: 'app-tinting-machine-report',
-    templateUrl: './tinting-machine-report.component.html',
-    styleUrls: ['./tinting-machine-report.component.css']
+    selector: 'app-billing-analysis-report',
+    templateUrl: './billing-analysis-report.component.html',
+    styleUrls: ['./billing-analysis-report.component.css']
 })
-export class TintingMachineReportComponent implements OnInit, OnDestroy {
+export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: TintingMachineReportQuery;
+	query: BillingAnalysisKpiReportQuery;
 	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-
+	
 	// ptable settings
-	enabledTotal: boolean = true;
-	tableName: string = 'Tinting Machine Report';
-	// renameKeys: any = {'userId':'// User Id //'};
-	renameKeys: any = {};
+	enabledTotal: boolean = false;
+	tableName: string = 'Billing Analysis Report';
+	// renameKeys: any = {'userId':'User Id'};
+	renameKeys: any = {'billingAnalysisTypeText':'Billing Analysis Type'};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
+
+	ignoreKeys: any[] = ['billingAnalysisType','details','detailsBtnText'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -49,14 +49,14 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 		private modalService: NgbModal,
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
-			// client side paggination
-			// this.PAGE_SIZE = 2147483647; // Int32 max value
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
-			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+		// client side paggination
+		this.PAGE_SIZE = 2147483647; // Int32 max value
+		this.ptableSettings.pageSize = 10;
+		this.ptableSettings.enabledServerSitePaggination = false;
+		// server side paggination
+		// this.PAGE_SIZE = commonService.PAGE_SIZE;
+		// this.ptableSettings.pageSize = this.PAGE_SIZE;
+		// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -66,13 +66,13 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
-	
-	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadTintingMachine(query);
-	getData = (query) => this.reportService.getTintingMachine(query);
 
+	//#region need to change for another report
+	getDownloadDataApiUrl = (query) => this.reportService.downloadBillingAnalysis(query);
+	getData = (query) => this.reportService.getBillingAnalysis(query);
+	
 	searchConfiguration() {
-		this.query = new TintingMachineReportQuery({
+		this.query = new BillingAnalysisKpiReportQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
@@ -81,7 +81,9 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 			depot: '',
 			salesGroups: [],
 			territories: [],
-			userId: null
+			zones: [],
+			month: null,
+			year: null
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -90,9 +92,11 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Month, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -100,7 +104,9 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
-		this.query.userId = queryObj.userId;
+		this.query.zones = queryObj.zones;
+		this.query.month = queryObj.month;
+		this.query.year = queryObj.year;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -114,9 +120,12 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
-					this.data = res.data.items;
-					this.totalDataLength = res.data.total;
-					this.totalFilterDataLength = res.data.totalFilter;
+					this.data = res.data;
+					this.totalDataLength = res.data.length;
+					this.totalFilterDataLength = res.data.length;
+					this.data.forEach((x) => {
+						x.detailsBtnText = "Details";
+					});
 					this.ptableColDefGenerate();
 				},
 				(error) => {
@@ -128,10 +137,15 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	ptableColDefGenerate() {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
-		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
+		console.log(obj);
+		this.ptableSettings.tableColDef = Object.keys(obj).filter(f => !this.ignoreKeys.includes(f)).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
+		
+		this.ptableSettings.tableColDef.push(
+			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", 
+				onClick: 'true', innerBtnIcon: "" } as colDef);
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -142,10 +156,11 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 		tableColDef: [],
 		// enabledSearch: true,
 		enabledSerialNo: true,
-		// pageSize: 10,
+		pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
+		enabledCellClick: true,
 		enabledExcelDownload: true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
@@ -165,6 +180,38 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
 		this.query.globalSearchValue = queryObj.searchVal;
 		this.loadReportsPage();
+	}
+
+	public cellClickCallbackFn(event: any) {
+		console.log(event);
+		let id = event.record.id;
+		let cellName = event.cellName;
+
+		if (cellName == "detailsBtnText") {
+			this.openDetailsModal(event.record);
+		}
+	}
+	
+	openDetailsModal(details: any) {
+		let ngbModalOptions: NgbModalOptions = {
+			backdrop: "static",
+			keyboard: false,
+			size: "lg",
+		};
+		const modalRef = this.modalService.open(
+			ModalBillingAnalysisDetailsComponent,
+			ngbModalOptions
+		);
+		modalRef.componentInstance.billingAnalysis = details;
+	
+		modalRef.result.then(
+			(result) => {
+				console.log(result);
+			},
+			(reason) => {
+				console.log(reason);
+			}
+		);
 	}
 	//#endregion
 }

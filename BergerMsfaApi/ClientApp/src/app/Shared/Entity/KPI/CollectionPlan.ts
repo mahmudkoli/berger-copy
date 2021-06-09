@@ -82,3 +82,15 @@ export class CollectionPlanQuery extends QueryObject {
     clear() {
     }
 }
+
+export class CollectionPlanSlippageAmount {
+    businessArea: string;
+    territory: string;
+
+    constructor(init?: Partial<CollectionPlanSlippageAmount>) {
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

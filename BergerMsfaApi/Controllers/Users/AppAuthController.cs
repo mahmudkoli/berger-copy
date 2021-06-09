@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -53,34 +54,33 @@ namespace BergerMsfaApi.Controllers.Users
             try
             {
                 if (!ModelState.IsValid)
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
 
                 //TODO: need to uncomment 
                 bool isAdLoginSuccess = _adservice.AuthenticateUser(model.UserName, model.Password);
                 if (!isAdLoginSuccess)
                 {
                     ModelState.AddModelError("", "UserName or password is invalid.");
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
                 }
 
                 bool loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
                 if (!loginSuccess)
                 {
                     ModelState.AddModelError("", "UserName or password is invalid.");
-                    return ValidationResult(ModelState);
+                    return AppValidationResult(ModelState);
                 }
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
 
-                return OkResult(authUser);
+                return AppOkResult(authUser);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
         
-        [Authorize]
         [HttpPost("activity")]
         public async Task<IActionResult> UserActivity()
         {
@@ -88,11 +88,11 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 var loginLog = await _loginLogService.UserActivityAsync();
 
-                return OkResult(loginLog);
+                return AppOkResult(loginLog);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

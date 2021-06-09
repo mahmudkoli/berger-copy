@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -29,11 +31,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionSetAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -43,11 +45,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionByQuestionSetIdAsync(id);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -56,17 +58,17 @@ namespace BergerMsfaApi.Controllers.ELearning
         {
             if (!ModelState.IsValid)
             {
-                return ValidationResult(ModelState);
+                return AppValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _examService.SaveQuestionAnswerAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

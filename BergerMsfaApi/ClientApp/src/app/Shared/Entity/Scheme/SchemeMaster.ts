@@ -60,6 +60,8 @@ export class SchemeDetail {
     condition: string;
     benefitStartDate: Date;
     benefitEndDate?: Date;
+    benefitStartDateText: string;
+    benefitEndDateText: string;
 
     //Painter Scheme
     schemeId: string;

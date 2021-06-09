@@ -32,7 +32,13 @@
                 </th>
                 <th pSortableColumn="phone">Phone <p-sortIcon field="phone"></p-sortIcon>
                 </th>
-                <th pSortableColumn="depot">Depot <p-sortIcon field="depot"></p-sortIcon>
+                <th pSortableColumn="depotName">Depot <p-sortIcon field="depotName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="saleGroupName">Sale Group <p-sortIcon field="saleGroupName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="territoryName">Territory <p-sortIcon field="territoryName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="zoneName">Zone <p-sortIcon field="zoneName"></p-sortIcon>
                 </th>
                 <th>
                     View Details
@@ -47,7 +53,10 @@
                         style="vertical-align: middle; border-radius: 50%;" />
                 </td>
                 <td>{{painter.phone}}</td>
-                <td>{{painter.depot }}</td>
+                <td>{{painter.depotName + ' (' + painter.depot + ')'}}</td>
+                <td>{{painter.saleGroupName + ' (' + painter.saleGroup + ')'}}</td>
+                <td>{{painter.territoryName }}</td>
+                <td>{{painter.zoneName }}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View
                         Detail</button>

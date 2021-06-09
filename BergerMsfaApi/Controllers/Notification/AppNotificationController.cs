@@ -37,11 +37,11 @@ namespace BergerMsfaApi.Controllers.Notification
             try
             {
                 var result = await _notificationService.GetAllTodayNotification(AppIdentity.AppUser.UserId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

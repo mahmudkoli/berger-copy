@@ -65,7 +65,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                     Id = f.Id,
                                     EmployeeName = $"{u.FullName}",
                                     Code = f.Code,
-                                    DealerName = d.CustomerName,
+                                    DealerName = $"{d.CustomerName} ({d.CustomerNo})",
                                     EmployeeId = f.EmployeeId,
                                     ValidFrom = f.ValidFrom.ToString("yyyy/MM/dd"),
                                     ValidTo = f.ValidTo.ToString("yyyy/MM/dd"),
@@ -158,7 +158,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             if (!string.IsNullOrEmpty(search)) dealers = dealers.Search(search);
 
 
-            var result = dealers.OrderBy(o => o.CustomerNo).ToPagedList(index, pazeSize);
+            var result = dealers.OrderBy(o => o.CustomerName).ToPagedList(index, pazeSize);
             return result;
         }
 

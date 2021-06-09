@@ -3,6 +3,7 @@ using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Odata.Services;
@@ -28,6 +29,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         public readonly IRepository<CollectionConfig> _collectionConfigSvc;
         public readonly IRepository<CollectionPlan> _collectionPlanSvc;
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<Depot> _depotSvc;
         private readonly IFinancialDataService _financialDataService;
         private readonly ICollectionDataService _collectionDataService;
         public readonly IMapper _mapper;
@@ -36,6 +38,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             IRepository<CollectionConfig> collectionConfigSvc,
             IRepository<CollectionPlan> collectionPlanSvc,
             IRepository<DealerInfo> dealerInfoSvc,
+            IRepository<Depot> depotSvc,
             IFinancialDataService financialDataService,
             ICollectionDataService collectionDataService,
             IMapper mapper
@@ -44,6 +47,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             _collectionConfigSvc = collectionConfigSvc;
             _collectionPlanSvc = collectionPlanSvc;
             this._dealerInfoSvc = dealerInfoSvc;
+            this._depotSvc = depotSvc;
             this._financialDataService = financialDataService;
             this._collectionDataService = collectionDataService;
             _mapper = mapper;
@@ -132,6 +136,77 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             return queryResult;
         }
 
+        public async Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(QueryObjectModel query)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var orderby = new string[] { "yearMonthText", "slippageAmount", "collectionTargetAmount" };
+
+            #region collection config
+            var dateNow = DateTime.Now;
+            var daysInMonth = DateTime.DaysInMonth(dateNow.Year, dateNow.Month);
+            var collectionConfig = await _collectionConfigSvc.GetAll().FirstOrDefaultAsync();
+            var maxDateDay = collectionConfig?.ChangeableMaxDateDay ?? 1;
+            var maxDate = maxDateDay <= daysInMonth ? new DateTime(dateNow.Year, dateNow.Month, maxDateDay) :
+                                                        new DateTime(dateNow.Year, dateNow.Month, daysInMonth);
+            var maxDateStr = maxDate.ToString("dd-MM-yyyy");
+            #endregion
+
+            var totalCount = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId) select cpInfo).CountAsync();
+
+            var filterCount = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId)
+                               join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
+                               from dpInfo in cpdLeftJoin.DefaultIfEmpty()
+                               where (
+                                   (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                                   dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                               )
+                               select cpInfo
+                               ).CountAsync();
+
+            var result = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId)
+                          join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
+                          from dpInfo in cpdLeftJoin.DefaultIfEmpty()
+                          where (
+                              (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                              dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                          )
+                          orderby 
+                                @orderby[0] == query.SortBy && query.IsSortAscending ? cpInfo.Year : 0,
+                                @orderby[0] == query.SortBy && @orderby[1] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.Year descending,
+                                @orderby[0] == query.SortBy && query.IsSortAscending ? cpInfo.Month : 0,
+                                @orderby[0] == query.SortBy && @orderby[1] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.Month descending,
+                                @orderby[1] == query.SortBy && query.IsSortAscending ? cpInfo.SlippageAmount : 0,
+                                @orderby[1] == query.SortBy && @orderby[0] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.SlippageAmount descending,
+                                @orderby[2] == query.SortBy && query.IsSortAscending ? cpInfo.CollectionTargetAmount : 0,
+                                @orderby[2] == query.SortBy && @orderby[0] != query.SortBy && @orderby[1] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.CollectionTargetAmount descending
+                          select new CollectionPlanModel()
+                          {
+                              Id = cpInfo.Id,
+                              UserId = cpInfo.UserId,
+                              UserFullName = string.Empty,
+                              BusinessArea = $"{dpInfo.Name1} ({dpInfo.Werks})",
+                              Territory = cpInfo.Territory,
+                              Year = cpInfo.Year,
+                              Month = cpInfo.Month,
+                              YearMonthText = new DateTime(cpInfo.Year > 0 ? cpInfo.Year : 1, cpInfo.Month > 0 ? cpInfo.Month : 1, 01).ToString("yyyy MMM"),
+                              SlippageAmount = cpInfo.SlippageAmount,
+                              CollectionTargetAmount = cpInfo.CollectionTargetAmount,
+                              CollectionActualAmount = cpInfo.CollectionActualAmount,
+                              SlippageCollectionActualAmount = cpInfo.SlippageCollectionActualAmount,
+                              ChangeableMaxDateDay = maxDateDay,
+                              ChangeableMaxDate = maxDate,
+                              ChangeableMaxDateText = maxDateStr
+                          }
+                        ).Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
+
+            var queryResult = new QueryResultModel<CollectionPlanModel>();
+            queryResult.Items = result;
+            queryResult.TotalFilter = filterCount;
+            queryResult.Total = totalCount;
+
+            return queryResult;
+        }
+
         public async Task<IList<CollectionPlanModel>> GetAllCollectionPlansAsync()
         {
             var result = await _collectionPlanSvc.GetAllIncludeAsync(x => x,
@@ -173,6 +248,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var existingCollectionPlan = await _collectionPlanSvc.FindAsync(x => x.Id == model.Id);
             existingCollectionPlan.BusinessArea = model.BusinessArea;
             existingCollectionPlan.Territory = model.Territory;
+            existingCollectionPlan.SlippageAmount = model.SlippageAmount;
             existingCollectionPlan.CollectionTargetAmount = model.CollectionTargetAmount;
             var result = await _collectionPlanSvc.UpdateAsync(existingCollectionPlan);
             return result.Id;

@@ -39,6 +39,8 @@ import { BusinessCallAnalysisReportComponent } from './business-call-analysis/bu
 import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
 import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-salescall/addhoc-sub-dealer-salescall-report.component';
 import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
+import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
+import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
 
 @NgModule({
     declarations: [
@@ -74,6 +76,8 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
       ProductWiseKpiTargetAchivementReportComponent,
       BusinessCallAnalysisReportComponent,
       StrikeRateKpiReportComponent,
+      BillingAnalysisReportComponent,
+      ModalBillingAnalysisDetailsComponent,
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
     ],
@@ -87,6 +91,9 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
       FormsModule,
       ReactiveFormsModule,
       NgSelectModule,
+  ],
+  entryComponents: [
+    ModalBillingAnalysisDetailsComponent
   ]
 })
 export class ReportModule { }

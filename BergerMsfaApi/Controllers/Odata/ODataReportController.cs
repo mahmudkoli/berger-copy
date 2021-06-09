@@ -51,11 +51,11 @@ namespace BergerMsfaApi.Controllers.Odata
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _reportDataService.MyTarget(model, dealerIds);
 
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -66,11 +66,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _oDataReportService.MySummaryReport(dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -81,11 +81,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportTotalInvoiceValue(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -96,11 +96,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportBrandOrDivisionWisePerformance(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -111,11 +111,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _salesDataService.GetReportDealerPerformance(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -126,11 +126,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -141,11 +141,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportOutstandingSummary(dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -156,11 +156,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportOSOver90Days(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -171,11 +171,11 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportPaymentFollowUp(model, dealerIds);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -185,11 +185,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _stockDataService.GetStockDetails(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -199,11 +199,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _balanceDataService.GetCustomerCredit(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

@@ -79,8 +79,8 @@ export class DealerSalesCallDetailsComponent implements OnInit, OnDestroy {
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Company Name', width: '40%', internalName: 'companyName', sort: false, type: "" },
-			{ headerName: 'Average Monthly Sales', width: '30%', internalName: 'averageMonthlySales', sort: false, type: "" },
-			{ headerName: 'Actual MTD Sales', width: '30%', internalName: 'actualMTDSales', sort: false, type: "" }
+			{ headerName: 'Average Monthly Sales', width: '30%', internalName: 'averageMonthlySales', sort: false, type: "text", displayType: 'number-format-color' },
+			{ headerName: 'Actual MTD Sales', width: '30%', internalName: 'actualMTDSales', sort: false, type: "text", displayType: 'number-format-color' }
 		],
 		// enabledSearch: true,
 		enabledSerialNo: true,

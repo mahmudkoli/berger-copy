@@ -11,10 +11,10 @@
                         [ngClass]="{'is-valid':formControls.hiddenchunk.touched && !formControls.hiddenchunk.errors,
                         'is-invalid':formControls.hiddenchunk.touched && formControls.hiddenchunk.errors }" />
                         
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Business Area</label>
-                        <ng-select formControlName="businessArea">
+                        <ng-select formControlName="businessArea" (ngModelChange)="onChangeArea()">
                             <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>
                         <small class="text-danger" *ngIf="formControls.businessArea.touched && formControls.businessArea.errors">
@@ -22,10 +22,10 @@
                         </small>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Territory</label>
-                        <ng-select formControlName="territory">
+                        <ng-select formControlName="territory" (ngModelChange)="onChangeArea()">
                             <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>
                         <small class="text-danger" *ngIf="formControls.territory.touched && formControls.territory.errors">
@@ -33,7 +33,18 @@
                         </small>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Slippage Amount</label>
+                        <input type="number" autocomplete="off" class="form-control" readonly="readonly" formControlName="slippageAmount"
+                                [ngClass]="{'is-valid':formControls.slippageAmount.touched && !formControls.slippageAmount.errors,
+                                'is-invalid':formControls.slippageAmount.touched && formControls.slippageAmount.errors }" />
+                        <small class="text-danger" *ngIf="formControls.slippageAmount.touched && formControls.slippageAmount.errors">
+                            <span *ngIf="formControls.slippageAmount.errors.required">Slippage Amount is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Collection Target Amount</label>
                         <input type="number" autocomplete="off" class="form-control" formControlName="collectionTargetAmount"

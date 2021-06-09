@@ -10,7 +10,7 @@ import { forkJoin, pipe, Subscription } from 'rxjs';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { finalize } from 'rxjs/operators';
 import { CollectionPlanService } from 'src/app/Shared/Services/KPI/CollectionPlanService';
-import { CollectionPlan, SaveCollectionPlan } from 'src/app/Shared/Entity/KPI/CollectionPlan';
+import { CollectionPlan, CollectionPlanSlippageAmount, SaveCollectionPlan } from 'src/app/Shared/Entity/KPI/CollectionPlan';
 
 @Component({
   selector: 'app-collection-plan-add',
@@ -95,6 +95,7 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 			businessArea: [this.collectionPlan.businessArea, [Validators.required]],
 			territory: [this.collectionPlan.territory, [Validators.required]],
 			collectionTargetAmount: [this.collectionPlan.collectionTargetAmount, [Validators.required]],
+			slippageAmount: [this.collectionPlan.slippageAmount, [Validators.required]],
 		});
 	}
 
@@ -128,6 +129,7 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		_collectionPlan.businessArea = controls['businessArea'].value;
 		_collectionPlan.territory = controls['territory'].value;
 		_collectionPlan.collectionTargetAmount = controls['collectionTargetAmount'].value;
+		_collectionPlan.slippageAmount = controls['slippageAmount'].value;
 		
 		return _collectionPlan;
 	}
@@ -158,6 +160,33 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 					this.throwError(error);
 				});
 		this.subscriptions.push(updateSubscription);
+	}
+
+	onChangeArea() {
+		const controls = this.collectionPlanForm.controls;
+		const businessArea: string = controls['businessArea'].value;
+		const territory: string = controls['territory'].value;
+		let amount = 0;
+
+		if (!businessArea || !territory) {
+			amount = 0;
+			controls['slippageAmount'].setValue(amount);
+			return;
+		}
+
+		const model = new CollectionPlanSlippageAmount({businessArea: businessArea, territory: territory});
+
+		this.alertService.fnLoading(true);
+		const slippageAmountSubscription = this.collectionPlanService.getCollectionPlanSlippageAmount(model)
+			.pipe(finalize(() => this.alertService.fnLoading(false)))
+			.subscribe(res => {
+				amount = res.data as number;
+				controls['slippageAmount'].setValue(amount);
+			},
+				error => {
+					this.throwError(error);
+				});
+		this.subscriptions.push(slippageAmountSubscription);
 	}
 
 	getComponentTitle() {

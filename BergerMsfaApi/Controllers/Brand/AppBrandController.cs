@@ -4,10 +4,12 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Brand;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Brand.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -26,11 +28,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var result = await _brandService.GetBrandsAsync(query);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -40,11 +42,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var result = await _brandService.GetBrandsFamilyAsync();
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
     }

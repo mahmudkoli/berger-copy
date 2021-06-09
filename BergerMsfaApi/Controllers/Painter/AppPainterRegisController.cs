@@ -4,6 +4,7 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace BergerMsfaApi.Controllers.PainterRegistration1
 {
 
+    [Authorize]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -37,11 +39,11 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             try
             {
                var result = await _painterSvc.AppGetPainterListAsync(employeeId);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 
@@ -51,13 +53,13 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             try
             {
    
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                if (!ModelState.IsValid) return AppValidationResult(ModelState);
                 var result = await _painterSvc.AppCreatePainterAsync(model);
-                return OkResult(result);
+                return AppOkResult(result);
             }
             catch (Exception ex)
             {
-                return ExceptionResult(ex);
+                return AppExceptionResult(ex);
             }
         }
 

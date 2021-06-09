@@ -96,7 +96,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 			{ headerName: 'Key Contact Person Mobile', width: '10%', internalName: 'keyContactPersonMobile', sort: false, type: "" },
 			{ headerName: 'Paint Contractor Name', width: '10%', internalName: 'paintContractorName', sort: false, type: "" },
 			{ headerName: 'Paint Contractor Mobile', width: '10%', internalName: 'paintContractorMobile', sort: false, type: "" },
-			{ headerName: 'Expected Value', width: '10%', internalName: 'expectedValue', sort: false, type: "" },
+			{ headerName: 'Expected Value', width: '10%', internalName: 'expectedValue', sort: false, type: "text", displayType: 'number-format-color' },
 			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" },
 			
 		],
