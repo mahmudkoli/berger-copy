@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -9,18 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-
     public class FocusDealerController : BaseController
     {
         private readonly IFocusDealerService _focusDealerService;
-        public FocusDealerController(IFocusDealerService focusDealerService)
+        public FocusDealerController(
+            IFocusDealerService focusDealerService)
         {
             _focusDealerService = focusDealerService;
         }
-
 
         [HttpPost("GetFocusdealerListPaging")]
         public async Task<IActionResult> GetFocusDealerList(FocusDealerSearchModel focusDealerSearchModel)
@@ -32,7 +33,6 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
@@ -40,7 +40,6 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         [HttpGet("GetFocusDealerById/{id}")]
         public async Task<IActionResult> GetFocusDealerById(int id)
         {
-
             try
             {
                 var result = await _focusDealerService.GetFocusDealerById(id);
@@ -55,7 +54,6 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] FocusDealerModel model)
         {
-
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
@@ -67,10 +65,10 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] FocusDealerModel model)
         {
-
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
@@ -82,14 +80,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 }
                 var result = await _focusDealerService.UpdateAsync(model);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -123,12 +119,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
         [HttpPut("UpdateDealerStatus")]
         public async Task<IActionResult> DealerStatusUpdate([FromBody] DealerInfo dealer)
         {
             try
             {
-
                 var result = await _focusDealerService.DealerStatusUpdate(dealer);
                 return OkResult(result);
             }
@@ -137,6 +133,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetDealerInfoStatusLog/{id}")]
         public async Task<IActionResult> GetDealerInfoStatusLogDetails(int id)
         {
@@ -147,10 +144,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-
     }
 }

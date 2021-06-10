@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.OData.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -26,8 +23,7 @@ namespace BergerMsfaApi.Controllers.Odata
             ISalesDataService salesDataService,
             IMTSDataService mtsDataService,
             IFinancialDataService financialDataService,
-            IBalanceDataService balanceDataService
-            )
+            IBalanceDataService balanceDataService)
         {
             _salesDataService = salesDataService;
             _mtsDataService = mtsDataService;
@@ -42,11 +38,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _salesDataService.GetInvoiceHistory(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -56,11 +52,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _salesDataService.GetInvoiceDetails(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -70,11 +66,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _salesDataService.GetBrandWiseMTDDetails(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -84,11 +80,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _mtsDataService.GetMTSBrandsVolume(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -98,11 +94,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _mtsDataService.GetPremiumBrandPerformance(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -112,11 +108,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _mtsDataService.GetMonthlyValueTarget(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -126,11 +122,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _salesDataService.GetBrandOrDivisionWisePerformance(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
         #endregion
@@ -142,11 +138,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _financialDataService.GetOutstandingDetails(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -156,11 +152,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _financialDataService.GetOutstandingSummary(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
         #endregion
@@ -172,11 +168,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _balanceDataService.GetCollectionHistory(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -186,11 +182,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _balanceDataService.GetBalanceConfirmationSummary(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -200,11 +196,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _balanceDataService.GetChequeBounce(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -214,11 +210,11 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var data = await _balanceDataService.GetChequeSummary(model);
-                return AppOkResult(data);
+                return OkResult(data);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
         #endregion

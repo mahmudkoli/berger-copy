@@ -10,8 +10,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Menu
 {
+    [AuthorizeFilter]
     [ApiController]
-    [JwtAuthorize]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class MenuActivityPermissionController : BaseController
@@ -19,12 +19,12 @@ namespace BergerMsfaApi.Controllers.Menu
         private readonly ILogger<MenuActivityPermissionController> _logger;
         private readonly IMenuActivityPermissionService _menuActivityPermissionService;
 
-        public MenuActivityPermissionController(ILogger<MenuActivityPermissionController> logger,
+        public MenuActivityPermissionController(
+            ILogger<MenuActivityPermissionController> logger,
             IMenuActivityPermissionService menuActivityPermissionservice)
         {
             _menuActivityPermissionService = menuActivityPermissionservice;
             _logger = logger;
-
         }
 
         [HttpGet("")]
@@ -40,7 +40,6 @@ namespace BergerMsfaApi.Controllers.Menu
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpGet("activity_permission_by_role_id/{id}")]
         public async Task<IActionResult> GetAllMenuActivityPermissionByRoleIdAsync(int id)
@@ -109,30 +108,19 @@ namespace BergerMsfaApi.Controllers.Menu
             }
         }
 
-
         [HttpPost("createorupdateall")]
         public async Task<IActionResult> CreateOrUpdateAllMenuActivityPermission([FromBody] List<MenuActivityPermissionVm> modelList)
         {
-
             try
             {
-        
-                    
-                    var result = await _menuActivityPermissionService.CreateOrUpdateAllAsync(modelList);
-                    return OkResult(result);
-                    
-                
-
+                var result = await _menuActivityPermissionService.CreateOrUpdateAllAsync(modelList);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
-
-
         }
-
-
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteMenuActivityPermission(int id)
@@ -148,7 +136,6 @@ namespace BergerMsfaApi.Controllers.Menu
             }
         }
 
-
         [HttpGet("get-activity-permission/{roleId}")]
         public async Task<IActionResult> GetActivityPermissions(int roleId)
         {
@@ -162,8 +149,5 @@ namespace BergerMsfaApi.Controllers.Menu
                 return ExceptionResult(ex);
             }
         }
-
-
-
     }
 }

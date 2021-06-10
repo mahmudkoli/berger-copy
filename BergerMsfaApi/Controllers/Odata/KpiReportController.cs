@@ -1,17 +1,16 @@
 ﻿using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.Report.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -22,11 +21,10 @@ namespace BergerMsfaApi.Controllers.Odata
 
         public KpiReportController(
             IKpiDataService kpiDataService,
-            IKPIReportService kpiReportService
-            )
+            IKPIReportService kpiReportService)
         {
             _kpiDataService = kpiDataService;
-            this._kpiReportService = kpiReportService;
+            _kpiReportService = kpiReportService;
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]

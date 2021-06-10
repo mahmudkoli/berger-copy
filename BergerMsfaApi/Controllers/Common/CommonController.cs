@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -18,7 +20,8 @@ namespace BergerMsfaApi.Controllers.Common
         private readonly IBrandService _brandService;
 
         public CommonController(
-            ICommonService commonSvc, IBrandService brandService)
+            ICommonService commonSvc, 
+            IBrandService brandService)
         {
             _commonSvc = commonSvc;
             _brandService = brandService;
@@ -253,7 +256,6 @@ namespace BergerMsfaApi.Controllers.Common
         {
             try
             {
-
                 var list = new List<KeyValuePairObjectModel>
                 {
                     new KeyValuePairObjectModel()

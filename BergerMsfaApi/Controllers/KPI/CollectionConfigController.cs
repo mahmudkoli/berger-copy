@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.KPI;
-using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.KPI.interfaces;
-using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.KPI
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -17,7 +16,8 @@ namespace BergerMsfaApi.Controllers.KPI
     {
         private readonly ICollectionPlanService _collectionPlanService;
 
-        public CollectionConfigController(ICollectionPlanService collectionPlanService)
+        public CollectionConfigController(
+            ICollectionPlanService collectionPlanService)
         {
             _collectionPlanService = collectionPlanService;
         }

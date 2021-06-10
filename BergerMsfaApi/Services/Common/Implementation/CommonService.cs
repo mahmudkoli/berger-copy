@@ -334,16 +334,17 @@ namespace BergerMsfaApi.Services.Common.Implementation
             model.DealerName = model.DealerName ?? string.Empty;
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                [EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
-                [EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
-                [EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
-                [EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
-                [EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
+                //[EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
+                //[EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
+                //[EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
+                //[EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
+                //[EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
             };
 
             //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
             //var result = (from dealer in _dealerInfoSvc.GetAll()
-            var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            //var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            var result = (from dealer in _dealerInfoSvc.GetAll()
                          join custGrp in _customerGroupSvc.GetAll()
                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
                          into cust

@@ -13,11 +13,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Examples
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    //[JwtAuthorize]
-    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ExampleController : BaseController
     {
         private readonly ILogger<ExampleController> _logger;
@@ -35,25 +34,18 @@ namespace BergerMsfaApi.Controllers.Examples
         {
             _logger = logger;
             _example = example;
-            this._notificationService = notificationService;
-            this._loginLogService = loginLogService;
-            this._emailSender = emailSender;
+            _notificationService = notificationService;
+            _loginLogService = loginLogService;
+            _emailSender = emailSender;
         }
 
-        /// <summary>
-        /// Return a list of Example Model objects
-        /// </summary>
-        /// <returns>ApiResponse</returns>
         [HttpGet("")]
-       
         public async Task<IActionResult> GetExamples()
         {
-
             try
             {
                 var result = await _example.GetPagedExamplesAsync(1, 20);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
@@ -61,39 +53,25 @@ namespace BergerMsfaApi.Controllers.Examples
             }
         }
 
-        /// <summary>
-        /// return a single example object by exampleId
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>ApiResponse</returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
-
         public async Task<IActionResult> GetExample(int id)
         {
             try
             {
-
                 var result = await _example.GetExampleAsync(id);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
-
         }
-        /// <summary>
-        /// create or update Example object and Return a single of Example Model objects
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+
         [HttpPost("save")]
         [ValidationFilter]
         public async Task<IActionResult> SaveExample([FromBody]ExampleModel model)
         {
-
             try
             {
                 var isExist = await _example.IsCodeExistAsync(model.Code, model.Id);
@@ -110,19 +88,13 @@ namespace BergerMsfaApi.Controllers.Examples
                     var result = await _example.SaveAsync(model);
                     return OkResult(result);
                 }
-
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
         }
-        /// <summary>
-        /// create Example object and Return a single of Example Model objects
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+
         [HttpPost("create")]
         [ValidationFilter]
         public async Task<IActionResult> CreateExample([FromBody]ExampleModel model)
@@ -143,25 +115,17 @@ namespace BergerMsfaApi.Controllers.Examples
                     var result = await _example.CreateAsync(model);
                     return OkResult(result);
                 }
-
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
-
         }
-        /// <summary>
-        /// update Example object and Return a single of Example Model objects
-        /// </summary>
-        /// <param name="model">ExampleModel</param>
-        /// <returns></returns>
+
         [HttpPut("update")]
         [ValidationFilter]
         public async Task<IActionResult> UpdateExample([FromBody]ExampleModel model)
         {
-
             try
             {
                 var isExist = await _example.IsCodeExistAsync(model.Code, model.Id);
@@ -178,21 +142,13 @@ namespace BergerMsfaApi.Controllers.Examples
                     var result = await _example.UpdateAsync(model);
                     return OkResult(result);
                 }
-
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
-
         }
 
-        /// <summary>
-        /// delete a single example object by exampleId
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -200,7 +156,6 @@ namespace BergerMsfaApi.Controllers.Examples
             {
                 var result = await _example.DeleteAsync(id);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
@@ -215,7 +170,6 @@ namespace BergerMsfaApi.Controllers.Examples
             {
                 await _emailSender.SendEmailAsync(email, "Berger Test","Berger Test");
                 return Ok(true);
-
             }
             catch (Exception ex)
             {
