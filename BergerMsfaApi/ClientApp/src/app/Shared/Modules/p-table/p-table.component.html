@@ -782,11 +782,19 @@
                     <div
                       *ngIf="
                         dispCol.type == 'text' &&
-                        dispCol.displayType == 'number-format-color'
+                        (dispCol.displayType == 'number-format-color' || 
+                        dispCol.displayType == 'number-format-color-bg' || 
+                        dispCol.displayType == 'number-format-color-fraction' || 
+                        dispCol.displayType == 'number-format-color-bg-fraction')
                       "
                       style="text-align: center"
                     >
-                      <span [ngClass]="body[dispCol.internalName] < 0 ? 'negative-number-format-color' : ''">{{ body[dispCol.internalName] | number: '1.0-2' }}</span>
+                      <span [ngClass]="body[dispCol.internalName] < 0 ? 
+                                      (dispCol.displayType == 'number-format-color-bg' || 
+                                      dispCol.displayType == 'number-format-color-bg-fraction' ? 
+                                        'negative-number-format-color-bg' : 'negative-number-format-color') : ''">
+                        {{ numberFormatColor(body[dispCol.internalName],dispCol.displayType) }}
+                      </span>
                     </div>
                     <div
                       *ngIf="dispCol.type == 'custom-button'"

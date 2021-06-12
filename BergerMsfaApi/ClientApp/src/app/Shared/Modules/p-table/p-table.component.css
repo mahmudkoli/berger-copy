@@ -540,9 +540,12 @@ select {
 }
 
 span.negative-number-format-color {
-  /* background-color: red;
+  color: red;
+}
+
+span.negative-number-format-color-bg {
+  background-color: red;
   color: white;
   padding: 3px;
-  border-radius: 5px; */
-  color: red;
+  border-radius: 5px;
 }
