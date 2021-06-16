@@ -76,6 +76,7 @@ namespace Berger.Odata.Model
 
     public class ChequeSummaryChequeDetailsModel
     {
+        //TODO: no int type
         public string ChequeDetailsName { get; set; }
         public decimal MTDNoOfCheque { get; set; }
         public decimal MTDTotalChequeValue { get; set; }

@@ -167,11 +167,11 @@ namespace BergerMsfaApi.Services.Implementation
         {
             switch (userInfo.EmployeeRole)
             {
-                case EnumEmployeeRole.DIC:
+                case EnumEmployeeRole.DSM:
                     userCat = EnumUserCategory.Plant.ToString();
                     userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
                     break;
-                case EnumEmployeeRole.BIC:
+                case EnumEmployeeRole.BM_BSI:
                     userCat = EnumUserCategory.SalesOffice.ToString();
                     userCatIds = userInfo.SaleOfficeIds.Select(x => x.ToString()).ToList();
                     break;
