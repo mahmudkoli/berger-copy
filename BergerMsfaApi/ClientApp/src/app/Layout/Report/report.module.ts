@@ -41,6 +41,7 @@ import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-sal
 import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
+import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 
 @NgModule({
     declarations: [
@@ -78,6 +79,7 @@ import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-d
       StrikeRateKpiReportComponent,
       BillingAnalysisReportComponent,
       ModalBillingAnalysisDetailsComponent,
+      FinancialCollectionPlanReportComponent,
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
     ],

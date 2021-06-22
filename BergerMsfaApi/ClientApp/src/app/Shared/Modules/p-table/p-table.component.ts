@@ -1202,4 +1202,13 @@ export class PTableComponent implements OnInit, DoCheck {
       0
     );
   }
+
+  numberFormatColor(value,displayType) {
+    const numberFormatColorFraction = displayType == 'number-format-color-fraction' || displayType == 'number-format-color-bg-fraction';
+    const fractionDigit = numberFormatColorFraction ? 2 : 0;
+    const formatValue = Number(value).toLocaleString('en-IN', 
+                            { style: 'decimal', minimumIntegerDigits: 1, 
+                                minimumFractionDigits: fractionDigit, maximumFractionDigits: fractionDigit });
+    return formatValue;
+  }
 }

@@ -1,16 +1,14 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,10 +17,9 @@ namespace BergerMsfaApi.Controllers.ELearning
         private readonly IExamService _examService;
 
         public AppExamController(
-                IExamService examService
-            )
+            IExamService examService)
         {
-            this._examService = examService;
+            _examService = examService;
         }
 
         [HttpGet("GetAllQuestionSet")]
@@ -31,11 +28,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionSetAsync();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -45,11 +42,11 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.GetAllQuestionByQuestionSetIdAsync(id);
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -58,17 +55,17 @@ namespace BergerMsfaApi.Controllers.ELearning
         {
             if (!ModelState.IsValid)
             {
-                return AppValidationResult(ModelState);
+                return ValidationResult(ModelState);
             }
 
             try
             {
                 var result = await _examService.SaveQuestionAnswerAsync(model);
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
     }

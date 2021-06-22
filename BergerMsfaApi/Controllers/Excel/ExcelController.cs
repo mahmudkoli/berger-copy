@@ -4,14 +4,12 @@ using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Services.Excel.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using BergerMsfaApi.Services.DealerFocus.Interfaces;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Excel
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -20,7 +18,9 @@ namespace BergerMsfaApi.Controllers.Excel
         private readonly IExcelReaderService _excelReaderService;
         private readonly IFocusDealerService _focusDealerService;
 
-        public ExcelController(IExcelReaderService excelReaderService, IFocusDealerService focusDealerService)
+        public ExcelController(
+            IExcelReaderService excelReaderService, 
+            IFocusDealerService focusDealerService)
         {
             _excelReaderService = excelReaderService;
             _focusDealerService = focusDealerService;

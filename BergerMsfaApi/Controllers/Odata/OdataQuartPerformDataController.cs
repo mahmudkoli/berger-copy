@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.OData.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -20,8 +19,7 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IQuarterlyPerformanceDataService _quarterlyPerformanceDataService;
 
         public OdataQuartPerformDataController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService
-            )
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService)
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
         }
@@ -59,11 +57,11 @@ namespace BergerMsfaApi.Controllers.Odata
                     result = data.ToList();
                 }
 
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
     }

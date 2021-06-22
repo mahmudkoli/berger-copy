@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Common.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -27,11 +26,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetSaleOfficeList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -41,11 +40,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetSaleGroupList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -55,11 +54,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetTerritoryList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -69,11 +68,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetZoneList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -83,11 +82,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDepotList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -97,11 +96,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetDivisionList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -111,11 +110,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetCreditControlAreaList();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -125,11 +124,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetUserInfoListByCurrentUser();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -139,11 +138,11 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetUserInfoListByCurrentUserWithoutZoUser();
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
     }

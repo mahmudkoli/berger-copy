@@ -1,5 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Setup;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Setup
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,16 +19,15 @@ namespace BergerMsfaApi.Controllers.Setup
     {
         private readonly ILogger<AppDynamicDropdownController> _logger;
         private readonly IDropdownService _dropdownService;
-        public AppDynamicDropdownController
-            (
-              ILogger<AppDynamicDropdownController> logger
-             ,IDropdownService dropdownService
-            )
+        public AppDynamicDropdownController(
+              ILogger<AppDynamicDropdownController> logger, 
+              IDropdownService dropdownService)
         {
             _logger = logger;
             _dropdownService = dropdownService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetDropdownByTypeCd/{typeCode}")]
         public async Task<IActionResult> GetDropdownByTypeCd(string typeCode)
         {
@@ -37,17 +36,18 @@ namespace BergerMsfaApi.Controllers.Setup
                 if(string.IsNullOrEmpty(typeCode))
                 {
                     ModelState.AddModelError(nameof(typeCode), "TypeCode Can Not Be Empty");
-                    return AppValidationResult(ModelState);
+                    return ValidationResult(ModelState);
                 }
                 var result = await _dropdownService.GetDropdownByTypeCd(typeCode.Trim());
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetDropdownByTypeCd")]
         public async Task<IActionResult> GetDropdownByTypeCd([FromQuery] IList<string> typeCodes)
         {
@@ -56,14 +56,14 @@ namespace BergerMsfaApi.Controllers.Setup
                 if (!typeCodes.Any())
                 {
                     ModelState.AddModelError(nameof(typeCodes), "TypeCode Can Not Be Empty");
-                    return AppValidationResult(ModelState);
+                    return ValidationResult(ModelState);
                 }
                 var result = await _dropdownService.GetDropdownByTypeCd(typeCodes);
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -73,11 +73,11 @@ namespace BergerMsfaApi.Controllers.Setup
             try
             {
                 var result = await _dropdownService.GetDropdownByTypeId(typeId);
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
 
@@ -87,11 +87,11 @@ namespace BergerMsfaApi.Controllers.Setup
             try
             {
                 var result = await _dropdownService.GetCompanyList(painterCallId);
-                return AppOkResult(result);
+                return OkResult(result);
             }
             catch (Exception ex)
             {
-                return AppExceptionResult(ex);
+                return ExceptionResult(ex);
             }
         }
     }
