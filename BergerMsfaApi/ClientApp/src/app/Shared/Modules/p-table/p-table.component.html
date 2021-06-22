@@ -669,13 +669,15 @@
                     </div>
 
                     <div *ngIf="dispCol.type == 'image'">
-                      <img
+                      <a [href]="body[dispCol.internalName]" target="_blank">
+                        <img
                         *ngIf="body[dispCol.internalName]"
                         src="{{ body[dispCol.internalName] }}"
                         width="50"
                         height="50"
                         alt=""
-                      />
+                        />
+                      </a>
                     </div>
                     <div *ngIf="dispCol.type == 'battery-level'">
                       <i

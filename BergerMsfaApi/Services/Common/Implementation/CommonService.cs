@@ -301,7 +301,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
                 x.Division == ConstantsODataValue.DivisionDecorative && 
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
@@ -389,7 +389,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
