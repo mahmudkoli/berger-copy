@@ -185,7 +185,7 @@ export class FocusdealerListComponent implements OnInit {
           (res: any) => {
             console.log('res from del func', res);
             this.alertService.tosterSuccess(
-              'Dropdown has been deleted successfully.'
+              'Focus dealer has been deleted successfully.'
             );
             //this.fnFocusDealerList();
             this.OnLoadFocusDealer(this.getFilterObject());

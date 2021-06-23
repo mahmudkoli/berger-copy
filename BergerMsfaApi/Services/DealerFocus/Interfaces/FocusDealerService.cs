@@ -86,15 +86,28 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
         public async Task<FocusDealerModel> CreateAsync(FocusDealerModel model)
         {
+            var isAlreadyAssigned = await IsFocusDealerAlreadyAssigned(model);
+            if (isAlreadyAssigned) throw new Exception("This dealer has been already assigned within this date.");
             var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
             var result = await _focusDealer.CreateAsync(journeyPlan);
             return result.ToMap<FocusDealer, FocusDealerModel>();
         }
         public async Task<FocusDealerModel> UpdateAsync(FocusDealerModel model)
         {
+            var isAlreadyAssigned = await IsFocusDealerAlreadyAssigned(model);
+            if (isAlreadyAssigned) throw new Exception("This dealer has been already assigned within this date.");
             var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
             var result = await _focusDealer.UpdateAsync(journeyPlan);
             return result.ToMap<FocusDealer, FocusDealerModel>();
+        }
+        private async Task<bool> IsFocusDealerAlreadyAssigned(FocusDealerModel model)
+        {
+            var isExists = await _focusDealer.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.Code == model.Code
+                   && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
+                       || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
+                       || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)
+                       || (x.ValidTo.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidTo.Date <= Convert.ToDateTime(model.ValidTo).Date))));
+            return isExists;
         }
         public async Task<int> DeleteAsync(int id) => await _focusDealer.DeleteAsync(s => s.Id == id);
         public async Task<bool> IsExistAsync(int id) => await _focusDealer.IsExistAsync(f => f.Id == id);

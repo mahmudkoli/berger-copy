@@ -131,10 +131,10 @@ export class FocusdealerAddComponent implements OnInit {
         console.log("error", errorDetails);
         let errList = errorDetails.error.errors;
         if (errList.length) {
-            console.log("error", errList, errList[0].errorList[0]);
-            this.alertService.tosterDanger(errList[0].errorList[0]);
+            // console.log("error", errList, errList[0].errorList[0]);
+            // this.alertService.tosterDanger(errList[0].errorList[0]);
         } else {
-            this.alertService.tosterDanger(errorDetails.error.msg);
+            // this.alertService.tosterDanger(errorDetails.error.msg);
         }
     }
 }
