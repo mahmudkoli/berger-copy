@@ -18,112 +18,162 @@ using Berger.Common.Enumerations;
 using BergerMsfaApi.Services.Excel.Interface;
 using Microsoft.AspNetCore.Http;
 using String = EllipticCurve.Utils.String;
+using BergerMsfaApi.Models.Common;
+using System.Linq.Expressions;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
     public class FocusDealerService : IFocusDealerService
     {
-        private readonly IRepository<FocusDealer> _focusDealer;
-        private readonly IRepository<UserInfo> _userInfoSvc;
+        private readonly IRepository<FocusDealer> _focusDealerRepo;
+        private readonly IRepository<UserInfo> _userInfoRepo;
         private readonly IRepository<DealerInfo> _dealerInfo;
-        private readonly IRepository<DealerInfoStatusLog> _dealerInfoStatusLog;
+        private readonly IRepository<DealerInfoStatusLog> _dealerInfoStatusLogRepo;
         private readonly IMapper _mapper;
         private readonly IExcelReaderService _excelReaderService;
 
         public FocusDealerService(
-            IRepository<FocusDealer> focusDealer,
-            IRepository<UserInfo> userInfoSvc,
-            IRepository<DealerInfo> dealerInfo,
-            IRepository<DealerInfoStatusLog> dealerInfoStatusLog,
+            IRepository<FocusDealer> focusDealerRepo,
+            IRepository<UserInfo> userInfoRepo,
+            IRepository<DealerInfo> dealerInfoRepo,
+            IRepository<DealerInfoStatusLog> dealerInfoStatusLogRepo,
             IMapper mapper,
             IExcelReaderService excelReaderService
             )
         {
-            _focusDealer = focusDealer;
-            _userInfoSvc = userInfoSvc;
-            _dealerInfo = dealerInfo;
-            _dealerInfoStatusLog = dealerInfoStatusLog;
+            _focusDealerRepo = focusDealerRepo;
+            _userInfoRepo = userInfoRepo;
+            _dealerInfo = dealerInfoRepo;
+            _dealerInfoStatusLogRepo = dealerInfoStatusLogRepo;
             _mapper = mapper;
             _excelReaderService = excelReaderService;
         }
 
-        public async Task<IPagedList<FocusDealerModel>> GetFocusdealerListPaging(int index, int pageSize, string search, string depoId, string[] territories = null, string[] zones = null)
-
+        #region Focus Dealer
+        public async Task<QueryResultModel<FocusDealerModel>> GetAllFocusDealersAsync(FocusDealerQueryObjectModel query)
         {
+            var columnsMap = new Dictionary<string, Expression<Func<FocusDealerModel, object>>>()
+            {
+                ["createdTime"] = v => v.CreatedTime,
+                ["dealerName"] = v => v.CustomerName,
+                ["userFullName"] = v => v.FullName,
+                ["validFromText"] = v => v.ValidFrom,
+                ["validToText"] = v => v.ValidTo
+            };
+            //var loggedInUser = AppIdentity.AppUser;
+            //var isAdminOrGMEmployeeRole = loggedInUser.EmployeeRole == (int)EnumEmployeeRole.Admin || loggedInUser.EmployeeRole == (int)EnumEmployeeRole.GM;
 
-            territories ??= new string[] { };
-            zones ??= new string[] { };
+            var result = (
+                            from fd in _focusDealerRepo.GetAll()
+                            join ui in _userInfoRepo.GetAll() on fd.EmployeeId equals ui.EmployeeId
+                            join di in _dealerInfo.GetAll() on fd.Code equals di.Id
+                            //where (ui.ManagerId == loggedInUser.EmployeeId || isAdminOrGMEmployeeRole)
+                            select new FocusDealerModel
+                            {
+                                Id = fd.Id,
+                                Code = fd.Code,
+                                EmployeeId = fd.EmployeeId,
+                                ValidFrom = fd.ValidFrom,
+                                ValidTo = fd.ValidTo,
+                                CustomerNo = di.CustomerNo,
+                                CustomerName = di.CustomerName,
+                                FullName = ui.FullName,
+                                Depot = di.BusinessArea,
+                                Territory = di.Territory,
+                                Zone = di.CustZone,
+                                CreatedTime = fd.CreatedTime
+                            });
 
-            var focusDealers = (from f in _focusDealer.GetAll()
-                                join u in _userInfoSvc.FindAll(f => f.ManagerId == AppIdentity.AppUser.EmployeeId)
-                                on f.EmployeeId equals u.EmployeeId
-                                join d in _dealerInfo.GetAll()
-                                on f.Code equals d.Id
-                                orderby f.ValidTo.Date descending
-                                select new FocusDealerModel
-                                {
-                                    Id = f.Id,
-                                    EmployeeName = $"{u.FullName}",
-                                    Code = f.Code,
-                                    DealerName = $"{d.CustomerName} ({d.CustomerNo})",
-                                    EmployeeId = f.EmployeeId,
-                                    ValidFrom = f.ValidFrom.ToString("yyyy/MM/dd"),
-                                    ValidTo = f.ValidTo.ToString("yyyy/MM/dd"),
-                                    Territory = d.Territory,
-                                    Zone = d.CustZone,
-                                    DepoId = d.BusinessArea
-                                }).Where(x => (!territories.Any() || territories.Contains(x.Territory)) &&
-                                              (!zones.Any() || zones.Contains(x.Zone)) &&
-                                              (string.IsNullOrWhiteSpace(depoId) || x.DepoId == depoId)).ToList();
+            Expression<Func<FocusDealerModel, object>> keySelector = columnsMap[query.SortBy];
+
+            var total = await result.CountAsync();
+
+            result = result.Where(x =>
+                (string.IsNullOrEmpty(query.GlobalSearchValue) || x.CustomerName.Contains(query.GlobalSearchValue) || x.FullName.Contains(query.GlobalSearchValue))
+                    && (string.IsNullOrEmpty(query.Depot) || query.Depot == x.Depot)
+                    && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                    && (!query.Zones.Any() || query.Zones.Contains(x.Zone)));
+
+            var filterCount = await result.CountAsync();
 
 
-            if (!string.IsNullOrEmpty(search))
-                focusDealers = focusDealers.Search(search);
-            var result = await focusDealers.ToPagedListAsync(index, pageSize);
-            return result;
+            result = query.IsSortAscending ? result.OrderBy(keySelector) : result.OrderByDescending(keySelector);
 
+            result = result.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize);
 
+            result = result.AsNoTracking();
+
+            var items = await result.ToListAsync();
+
+            var queryResult = new QueryResultModel<FocusDealerModel>
+            {
+                Items = items,
+                TotalFilter = filterCount,
+                Total = total
+            };
+
+            return queryResult;
         }
-        public async Task<FocusDealerModel> CreateAsync(FocusDealerModel model)
+
+        public async Task<int> CreateFocusDealerAsync(SaveFocusDealerModel model)
         {
             var isAlreadyAssigned = await IsFocusDealerAlreadyAssigned(model);
             if (isAlreadyAssigned) throw new Exception("This dealer has been already assigned within this date.");
-            var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
-            var result = await _focusDealer.CreateAsync(journeyPlan);
-            return result.ToMap<FocusDealer, FocusDealerModel>();
+            var focusDealer = _mapper.Map<FocusDealer>(model);
+            var result = await _focusDealerRepo.CreateAsync(focusDealer);
+            return result.Id;
         }
-        public async Task<FocusDealerModel> UpdateAsync(FocusDealerModel model)
+
+        public async Task<int> UpdateFocusDealerAsync(SaveFocusDealerModel model)
         {
             var isAlreadyAssigned = await IsFocusDealerAlreadyAssigned(model);
             if (isAlreadyAssigned) throw new Exception("This dealer has been already assigned within this date.");
-            var journeyPlan = model.ToMap<FocusDealerModel, FocusDealer>();
-            var result = await _focusDealer.UpdateAsync(journeyPlan);
-            return result.ToMap<FocusDealer, FocusDealerModel>();
+            var focusDealer = _mapper.Map<FocusDealer>(model);
+            var result = await _focusDealerRepo.UpdateAsync(focusDealer);
+            return result.Id;
         }
-        private async Task<bool> IsFocusDealerAlreadyAssigned(FocusDealerModel model)
+
+        public async Task<int> DeleteFocusDealerAsync(int id) => await _focusDealerRepo.DeleteAsync(s => s.Id == id);
+
+        public async Task<bool> IsExistFocusDealerAsync(int id) => await _focusDealerRepo.IsExistAsync(f => f.Id == id);
+
+        public async Task<FocusDealerModel> GetFocusDealerById(int id)
         {
-            var isExists = await _focusDealer.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.Code == model.Code
+            var result = (
+                            from fd in _focusDealerRepo.GetAll()
+                            join ui in _userInfoRepo.GetAll() on fd.EmployeeId equals ui.EmployeeId
+                            join di in _dealerInfo.GetAll() on fd.Code equals di.Id
+                            select new FocusDealerModel
+                            {
+                                Id = fd.Id,
+                                Code = fd.Code,
+                                EmployeeId = fd.EmployeeId,
+                                ValidFrom = fd.ValidFrom,
+                                ValidTo = fd.ValidTo,
+                                CustomerNo = di.CustomerNo,
+                                CustomerName = di.CustomerName,
+                                FullName = ui.FullName,
+                                Depot = di.BusinessArea,
+                                Territory = di.Territory,
+                                Zone = di.CustZone,
+                                CreatedTime = fd.CreatedTime
+                            });
+
+            var returnResult = await result.FirstOrDefaultAsync(x => x.Id == id);
+
+            return returnResult;
+        }
+
+        private async Task<bool> IsFocusDealerAlreadyAssigned(SaveFocusDealerModel model)
+        {
+            var isExists = await _focusDealerRepo.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.Code == model.Code
                    && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
                        || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
                        || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)
                        || (x.ValidTo.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidTo.Date <= Convert.ToDateTime(model.ValidTo).Date))));
             return isExists;
         }
-        public async Task<int> DeleteAsync(int id) => await _focusDealer.DeleteAsync(s => s.Id == id);
-        public async Task<bool> IsExistAsync(int id) => await _focusDealer.IsExistAsync(f => f.Id == id);
-        public async Task<FocusDealerModel> GetFocusDealerById(int id)
-        {
-            var f = await _focusDealer.FindAsync(f => f.Id == id);
-            return new FocusDealerModel
-            {
-                Id = f.Id,
-                Code = f.Code,
-                EmployeeId = f.EmployeeId,
-                ValidFrom = f.ValidFrom.ToString("yyyy-MM-dd"),
-                ValidTo = f.ValidTo.ToString("yyyy-MM-dd")
-            };
-
-        }
+        #endregion
 
         #region Dealer
         public async Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search, string depoId = null, string[] territories = null, string[] custZones = null, string[] salesGroup = null)
@@ -204,7 +254,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     PropertyValue = GetPropertyValue(dealer, find)
                 };
 
-                await _dealerInfoStatusLog.CreateAsync(dealerInfoStatusLog);
+                await _dealerInfoStatusLogRepo.CreateAsync(dealerInfoStatusLog);
             }
             catch (Exception ex)
             {
@@ -257,7 +307,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId)
         {
 
-            var result = await _dealerInfoStatusLog.GetAllIncludeAsync(
+            var result = await _dealerInfoStatusLogRepo.GetAllIncludeAsync(
                         dealer => dealer,
                         dealer => dealer.DealerInfoId == dealerInfoId,
                         dealer => dealer.OrderByDescending(b => b.CreatedTime),
@@ -353,7 +403,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
 
             await _dealerInfo.UpdateListAsync(updatedDealerInfos);
-            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+            await _dealerInfoStatusLogRepo.CreateListAsync(dealerInfoStatusLogs);
 
             var list = dealerStatusExportDataModels.Select(x => new
             {
@@ -418,7 +468,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
 
             await _dealerInfo.UpdateListAsync(updatedDealerInfos);
-            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+            await _dealerInfoStatusLogRepo.CreateListAsync(dealerInfoStatusLogs);
 
             var list = dealerStatusExportDataModels.Select(x => new
             {
@@ -483,7 +533,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
 
             await _dealerInfo.UpdateListAsync(updatedDealerInfos);
-            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+            await _dealerInfoStatusLogRepo.CreateListAsync(dealerInfoStatusLogs);
 
             var list = dealerStatusExportDataModels.Select(x => new
             {
@@ -548,7 +598,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
 
             await _dealerInfo.UpdateListAsync(updatedDealerInfos);
-            await _dealerInfoStatusLog.CreateListAsync(dealerInfoStatusLogs);
+            await _dealerInfoStatusLogRepo.CreateListAsync(dealerInfoStatusLogs);
 
             var list = dealerStatusExportDataModels.Select(x => new
             {

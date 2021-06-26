@@ -12,7 +12,7 @@ import {
   SearchOptionSettings,
 } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 import { AuthService } from 'src/app/Shared/Services/Users';
 import { APIModel } from '../../../Shared/Entity';
 import { FileUploaderComponent } from '../../file-upload/file-uploader/file-uploader.component';
@@ -60,7 +60,7 @@ export class DealerListComponent implements OnInit {
   @ViewChild('paging', { static: false }) paging: Paginator;
 
   constructor(
-    private dealerSvc: FocusdealerService,
+    private dealerSvc: FocusDealerService,
     private alertSvc: AlertService,
     private router: Router,
     private modalService: NgbModal,

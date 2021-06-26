@@ -7,7 +7,7 @@ import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
 import { Subscription, of } from 'rxjs';
 import { IPTableSetting } from '../../../Shared/Modules/p-table';
 import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from '../../../Shared/Services/FocusDealer/focus-dealer.service';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	
 	constructor(
 		private router: Router,
-		private dealerService: FocusdealerService,
+		private dealerService: FocusDealerService,
 		private alertService: AlertService,
 		private activatedRoute: ActivatedRoute,
 		private commonService: CommonService,
