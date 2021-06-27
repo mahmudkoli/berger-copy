@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
-import { FocusDealerPortal, FocusDealerQuery } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
+import { FocusDealer, FocusDealerQuery } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
@@ -20,7 +20,7 @@ export class FocusDealerListComponent implements OnInit {
 	query: FocusDealerQuery;
 	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
-	focusDealers: FocusDealerPortal[];
+	focusDealers: FocusDealer[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 

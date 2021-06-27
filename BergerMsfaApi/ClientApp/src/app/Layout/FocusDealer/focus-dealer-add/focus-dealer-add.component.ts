@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { FocusDealerPortal, SaveFocusDealer } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
+import { FocusDealer, SaveFocusDealer } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 
 @Component({
@@ -18,7 +18,7 @@ import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 })
 export class FocusDealerAddComponent implements OnInit {
 
-	focusDealer: FocusDealerPortal;
+	focusDealer: FocusDealer;
 	focusDealerForm: FormGroup;
     dealers: any[] = [];
     users: any[] = [];
@@ -47,12 +47,12 @@ export class FocusDealerAddComponent implements OnInit {
 					.pipe(finalize(() => this.alertService.fnLoading(false)))
 					.subscribe(res => {
 						if (res) {
-							this.focusDealer = res.data as FocusDealerPortal;
+							this.focusDealer = res.data as FocusDealer;
 							this.initFocusDealers();
 						}
 					});
 			} else {
-				this.focusDealer = new FocusDealerPortal();
+				this.focusDealer = new FocusDealer();
 				this.focusDealer.clear();
 				this.initFocusDealers();
 			}

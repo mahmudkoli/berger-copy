@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Models.FocusDealer
 
         public string ValidFromText => ValidFrom.ToString("yyyy-MM-dd");
         public string ValidToText => ValidTo.ToString("yyyy-MM-dd");
-        public string DealerName => CustomerName;
+        public string DealerName => $"{CustomerName} ({CustomerNo})";
         public string UserFullName => FullName;
         public string Depot { get; set; }
         public string Territory { get; set; }

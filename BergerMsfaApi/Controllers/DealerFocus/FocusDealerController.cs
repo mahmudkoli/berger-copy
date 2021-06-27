@@ -109,12 +109,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         #endregion
 
         #region Dealer
-        [HttpPost("GetDealerList")]
-        public async Task<IActionResult> GetDealerList(DealerListSearchModel model)
+        [HttpGet("GetDealerList")]
+        public async Task<IActionResult> GetDealerList([FromQuery] DealerInfoQueryObjectModel model)
         {
             try
             {
-                var result = await _focusDealerService.GetDalerListPaging(model.Index, model.PageSize, model.Search, model.DepoId,  model.Territories, model.CustZones,model.SalesGroup);
+                var result = await _focusDealerService.GetAllDealersAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -123,8 +123,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             }
         }
 
-        [HttpPut("UpdateDealerStatus")]
-        public async Task<IActionResult> DealerStatusUpdate([FromBody] DealerInfo dealer)
+        [HttpPost("UpdateDealerStatus")]
+        public async Task<IActionResult> DealerStatusUpdate([FromBody] DealerInfoStatusModel dealer)
         {
             try
             {

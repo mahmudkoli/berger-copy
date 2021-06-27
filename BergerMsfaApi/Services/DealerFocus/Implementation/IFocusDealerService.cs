@@ -22,13 +22,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         #endregion
 
         #region Dealer
-        public Task<bool> DealerStatusUpdate(DealerInfo dealer);
-        public Task<IPagedList<DealerModel>> GetDalerListPaging(int index, int pazeSize, string search, string depoId = null, string[] territories = null, string[] custZones = null, string[] salesGroup = null);
-        public Task<IEnumerable<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
+        Task<QueryResultModel<DealerInfoPortalModel>> GetAllDealersAsync(DealerInfoQueryObjectModel query);
+        Task<bool> DealerStatusUpdate(DealerInfoStatusModel dealer);
+        Task<IList<DealerInfoStatusLogModel>> GetDealerInfoStatusLog(int dealerInfoId);
         #endregion
 
         #region Excel Dealer Status Update
-        public Task<DealerStatusExcelExportModel> DealerStatusUpdate(DealerStatusExcelImportModel model);
+        Task<DealerStatusExcelExportModel> DealerStatusUpdate(DealerStatusExcelImportModel model);
         #endregion
     }
 }

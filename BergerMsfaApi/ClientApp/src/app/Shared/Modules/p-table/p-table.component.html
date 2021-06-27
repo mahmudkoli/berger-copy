@@ -538,6 +538,7 @@
                         head.type == 'button' ||
                         head.type == 'custom-button' ||
                         head.type == 'dynamic-button' ||
+                        head.type == 'dynamic-dropdown' ||
                         head.type == 'hrefLink'
                       "
                     >
@@ -848,6 +849,31 @@
                         </i>
                         {{ body[dispCol.internalName] }}
                       </button>
+                    </div>
+                    <div
+                      *ngIf="dispCol.type == 'dynamic-dropdown'"
+                      style="text-align: center"
+                    >
+                      <ng-select 
+                        class="{{
+                          (body[dispCol.className] || '')
+                        }}"
+                        [(ngModel)]="body[dispCol.internalName].value" 
+                        (change)="
+                          fnClickPTableCell(
+                            $event,
+                            pTableSetting.enabledCellClick,
+                            dispCol.internalName,
+                            dispCol.onClick,
+                            body
+                          )
+                        " 
+                        [multiple]="false"
+                        [searchable]="false"
+                        [clearable]="false">
+                          <!-- <ng-option>--Select--</ng-option> -->
+                          <ng-option *ngFor="let em of body[dispCol.internalName].data;" [value]="em.id">{{em.label}}</ng-option>
+                      </ng-select>
                     </div>
                     <div *ngIf="dispCol.type == 'hyperlink'">
                       <a

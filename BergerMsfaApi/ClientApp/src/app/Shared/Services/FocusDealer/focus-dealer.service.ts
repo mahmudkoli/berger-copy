@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { DealerInfoStatus } from '../../Entity/DealerInfo/DealerInfo';
 import { DealerStatusExcelImportModel } from '../../Entity/DealerInfo/DealerStatusExcel';
 import { SaveFocusDealer } from '../../Entity/FocusDealer/FocusDealer';
 import { APIResponse } from '../../Entity/Response';
@@ -47,12 +48,12 @@ export class FocusDealerService {
   //#endregion
 
   //#region Dealer
-  public getDealerList(filerObject: any) {
-    return this.http.post<APIResponse>(`${this.focusDealersEndpoint}/GetDealerList`, filerObject);
+  public getDealerList(filter?) {
+    return this.http.get<APIResponse>(`${this.focusDealersEndpoint}/GetDealerList?${this.commonService.toQueryString(filter)}`);
   }
 
-  public updateDealerStatus(dealer) {
-    return this.http.put<any>(`${this.focusDealersEndpoint}/UpdateDealerStatus/`, dealer);
+  public updateDealerStatus(dealer: DealerInfoStatus) {
+    return this.http.post<any>(`${this.focusDealersEndpoint}/UpdateDealerStatus`, dealer);
   }
 
   public getDealerLogByDealerId(id) {

@@ -33,22 +33,21 @@ const routes: Routes = [
                 data: { title: 'Edit Focus Dealer' } 
             },
             { 
+                path: "dealer-list", 
+                component: DealerListComponent
+            },
+            { 
+                path: "dealer-log-details/:id", 
+                component: DealerInfoLogDetailsComponent, 
+                data: { title: 'Dealer Info log details' } 
+            },
+            { 
                 path: "openingList/:id", 
                 component: DealerOpeningDetailComponent 
             },
             { 
-                path: "dealerList/:id", 
-                component: DealerInfoLogDetailsComponent, 
-                data: { title: 'Dealer Info log details' } 
-            },
-            
-            { 
                 path: "openingList", 
                 component: DealerOpeningListComponent
-            },
-            { 
-                path: "dealerList", 
-                component: DealerListComponent
             },
             { 
                 path: "addEmail", 

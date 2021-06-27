@@ -93,7 +93,7 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	//}
 
 	public backToTheList() {
-		this.router.navigate(['/dealer/dealerList']);
+		this.router.navigate(['/dealer/dealer-list']);
 	}
 	public ptableSettings: IPTableSetting = {
 		tableID: "dealers-table",

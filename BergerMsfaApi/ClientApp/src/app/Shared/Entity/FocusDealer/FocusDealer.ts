@@ -1,6 +1,6 @@
 import { QueryObject } from "../Common/query-object";
 
-export class FocusDealerPortal {
+export class FocusDealer {
     id: number;
     code: number;
     employeeId: string;
@@ -14,7 +14,7 @@ export class FocusDealerPortal {
     territory: string;
     zone: string;
 
-    constructor(init?: Partial<FocusDealerPortal>) {
+    constructor(init?: Partial<FocusDealer>) {
         Object.assign(this, init);
     }
 
