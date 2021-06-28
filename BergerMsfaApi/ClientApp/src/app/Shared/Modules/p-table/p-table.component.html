@@ -302,6 +302,9 @@
                     *ngIf="pTableSetting.enabledSerialNo"
                     class="p-table-serial"
                     width="2%"
+                    [attr.rowSpan]="
+                      isParentHeaderExists() ? 2 : 1
+                    "
                   >
                     <span
                       *ngIf="pTableSetting.enabledColumnResize"
@@ -553,6 +556,9 @@
                       pTableSetting.enabledDeleteBtn
                     "
                     class="setting-update text-center"
+                    [attr.rowSpan]="
+                      isParentHeaderExists() ? 2 : 1
+                    "
                   >
                     <span
                       *ngIf="pTableSetting.enabledColumnResize"
@@ -563,12 +569,20 @@
                   </th>
                 </tr>
                 <tr *ngIf="isParentHeaderExists()">
-                  <th *ngIf="pTableSetting.enabledSerialNo"></th>
+                  <!-- <th *ngIf="pTableSetting.enabledSerialNo"></th> -->
                   <ng-container *ngFor="let head2 of pTableSetting.tableColDef">
                     <th *ngIf="head2.parentHeaderName">
                       {{ head2.parentHeaderName ? head2.headerName : '' }}
                     </th>
                   </ng-container>
+                  <!-- <th 
+                    *ngIf="
+                      pTableSetting.enabledEditDeleteBtn ||
+                      pTableSetting.enabledEditBtn ||
+                      pTableSetting.enabledDeleteBtn
+                    "
+                  >
+                  </th> -->
                 </tr>
               </thead>
               <tbody>
@@ -676,7 +690,7 @@
                         src="{{ body[dispCol.internalName] }}"
                         width="50"
                         height="50"
-                        alt=""
+                        alt="Image"
                         />
                       </a>
                     </div>
