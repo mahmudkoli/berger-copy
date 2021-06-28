@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
 import { DealerInfo, DealerInfoQuery, DealerInfoStatus } from 'src/app/Shared/Entity/DealerInfo/DealerInfo';
@@ -9,6 +10,7 @@ import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
+import { ModalExcelImportDealerStatusComponent } from '../modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from './../../../Shared/Modules/search-option/search-option';
 
 @Component({
@@ -24,7 +26,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
 	dealers: DealerInfo[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-  enumClubSupremeLabels: MapObject[] = EnumClubSupremeLabel.enumClubSupremeLabel;
+	enumClubSupremeLabels: MapObject[] = EnumClubSupremeLabel.enumClubSupremeLabel;
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -32,6 +34,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
 	constructor(
 		private router: Router,
 		private alertService: AlertService,
+		private modalService: NgbModal,
 		private dealerService: FocusDealerService,
 		private commonService: CommonService) {
 			// this.PAGE_SIZE = 5000;
@@ -157,9 +160,10 @@ export class DealerListComponent implements OnInit, OnDestroy {
 		// enabledEditBtn: true,
 		enabledCellClick: true,
 		enabledColumnFilter: false,
-		// enabledRecordCreateBtn: true,
+		enabledRecordCreateBtn: true,
 		enabledDataLength: true,
-		// newRecordButtonText: 'New ELearning'
+		newRecordButtonText: 'Dealer Status Update',
+		newRecordButtonIcon: 'fa fa-file-excel-o'
 	};
 
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
@@ -221,5 +225,30 @@ export class DealerListComponent implements OnInit, OnDestroy {
 					console.log(error);
 				});
 		this.subscriptions.push(dealersSubscription);
+	}
+
+	public fnCustomTrigger(event) {
+
+		if (event.action == "new-record") {
+			this.openExcelImportModal();
+		}
+	}
+
+	openExcelImportModal() {
+		let ngbModalOptions: NgbModalOptions = {
+			backdrop: 'static',
+			keyboard: false
+		};
+		const modalRef = this.modalService.open(ModalExcelImportDealerStatusComponent, ngbModalOptions);
+	
+		modalRef.result.then((result) => {
+			console.log(result);
+		  // this.router.navigate(['/dealer/dealer-list']);
+			if (this.query.depot)
+				this.loadDealersPage();
+		},
+		(reason) => {
+			console.log(reason);
+		});
 	}
 }

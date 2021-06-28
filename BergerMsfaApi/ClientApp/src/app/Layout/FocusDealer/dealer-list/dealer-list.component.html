@@ -4,6 +4,6 @@
   </app-search-option>
     
   <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="dealers" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
-    (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+    (customActivityOnRecord)="fnCustomTrigger($event)" (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
   </app-p-table>
 </div>

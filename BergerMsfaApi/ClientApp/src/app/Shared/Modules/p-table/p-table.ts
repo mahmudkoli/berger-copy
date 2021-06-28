@@ -40,6 +40,7 @@ export interface IPTableSetting {
   totalTitle?: string | 'Total';
   enabledServerSitePaggination?: boolean | false;
   newRecordButtonText?: string | 'New Record';
+  newRecordButtonIcon?: string | 'fa fa-plus';
   downloadDataApiUrl?: string | null;
 }
 

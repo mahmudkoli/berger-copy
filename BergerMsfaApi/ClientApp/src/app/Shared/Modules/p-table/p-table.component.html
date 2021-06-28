@@ -24,7 +24,7 @@
                   [title]="pTableSetting.newRecordButtonText || 'New Record'"
                   (click)="fnCreateNewRecord()"
                 >
-                  <i class="fa fa-plus"></i>
+                  <i [class]="pTableSetting.newRecordButtonIcon || 'fa fa-plus'"></i>
                   {{ pTableSetting.newRecordButtonText || 'New Record' }}
                 </button>
               </div>
