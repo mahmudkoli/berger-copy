@@ -114,7 +114,8 @@ export class PTableComponent implements OnInit, DoCheck {
     if (this.pTableSetting['enabledCheckbox']) {
       this.totalColspan = this.totalColspan + 1;
     }
-    if (this.pTableSetting['enabledEditDeleteBtn']) {
+    if (this.pTableSetting['enabledEditDeleteBtn'] || this.pTableSetting['enabledEditBtn'] || this.pTableSetting['enabledDeleteBtn'] || 
+        this.pTableSetting['enabledDetailsEditDeleteBtn'] || this.pTableSetting['enabledDetailsBtn']) {
       this.totalColspan = this.totalColspan + 1;
     }
 
@@ -1165,7 +1166,8 @@ export class PTableComponent implements OnInit, DoCheck {
               : rec[columnName] || 0
           ) || 0;
     });
-    return sum.toFixed(2);
+    // return sum.toFixed(2);
+    return sum;
   }
 
   public fnCreateNewRecord() {
@@ -1206,7 +1208,7 @@ export class PTableComponent implements OnInit, DoCheck {
   numberFormatColor(value,displayType) {
     const numberFormatColorFraction = displayType == 'number-format-color-fraction' || displayType == 'number-format-color-bg-fraction';
     const fractionDigit = numberFormatColorFraction ? 2 : 0;
-    const formatValue = Number(value).toLocaleString('en-IN', 
+    const formatValue = Number(value).toLocaleString('en-US', 
                             { style: 'decimal', minimumIntegerDigits: 1, 
                                 minimumFractionDigits: fractionDigit, maximumFractionDigits: fractionDigit });
     return formatValue;

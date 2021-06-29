@@ -34,8 +34,8 @@ export class DealerInfo {
     clubSupremeTypeDropdownClass: string;
 
     // log details button
-    viewDetailsText: string;
-    viewDetailsBtnClass: string;
+    // viewDetailsText: string;
+    // viewDetailsBtnClass: string;
 
     constructor(init?: Partial<DealerInfo>) {
         Object.assign(this, init);

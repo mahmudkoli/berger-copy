@@ -104,8 +104,8 @@ export class DealerListComponent implements OnInit, OnDestroy {
 						obj.clubSupremeTypeDropdown = {value: +obj.clubSupremeType||0, data: this.enumClubSupremeLabels}
 						obj.clubSupremeTypeDropdownClass = 'ng-select-' + ((+obj.clubSupremeType||0) > 0 ? 'primary' : 'warning');
 
-						obj.viewDetailsText = 'View Log Details';
-						obj.viewDetailsBtnClass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
+						// obj.viewDetailsText = 'View Log Details';
+						// obj.viewDetailsBtnClass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
 
 					});
 				},
@@ -140,9 +140,9 @@ export class DealerListComponent implements OnInit, OnDestroy {
 		tableName: 'Dealer List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Territory', width: '10%', internalName: 'territory', sort: false, type: "" },
-			{ headerName: 'Zone', width: '10%', internalName: 'zone', sort: false, type: "" },
-			{ headerName: 'Customer No', width: '10%', internalName: 'customerNo', sort: true, type: "" },
+			{ headerName: 'Territory', width: '7%', internalName: 'territory', sort: false, type: "" },
+			{ headerName: 'Zone', width: '6%', internalName: 'zone', sort: false, type: "" },
+			{ headerName: 'Customer No', width: '7%', internalName: 'customerNo', sort: true, type: "" },
 			{ headerName: 'Customer Name', width: '15%', internalName: 'customerName', sort: true, type: "" },
 			{ headerName: 'Contact No', width: '10%', internalName: 'contactNo', sort: false, type: "" },
 			{ headerName: 'Address', width: '15%', internalName: 'address', sort: false, type: "" },
@@ -150,7 +150,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Last Year Appointed', width: '10%', internalName: 'isLastYearAppointedText', sort: true, type: "dynamic-button", onClick: 'true', className: 'isLastYearAppointedBtnClass', innerBtnIcon: 'isLastYearAppointedBtnIcon' },
 			{ headerName: 'AP', width: '10%', internalName: 'isAPText', sort: true, type: "dynamic-button", onClick: 'true', className: 'isAPBtnClass', innerBtnIcon: 'isAPBtnIcon' },
 			{ headerName: 'Club Supreme', width: '10%', internalName: 'clubSupremeTypeDropdown', sort: true, type: "dynamic-dropdown", onClick: 'true', className: 'clubSupremeTypeDropdownClass', innerBtnIcon: '' },
-			{ headerName: 'Details', width: '10%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnClass', innerBtnIcon: '' }
+			// { headerName: 'Details', width: '10%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnClass', innerBtnIcon: '' }
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -158,6 +158,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
 		enabledPagination: true,
 		// enabledDeleteBtn: true,
 		// enabledEditBtn: true,
+		enabledDetailsBtn: true,
 		enabledCellClick: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
@@ -203,10 +204,10 @@ export class DealerListComponent implements OnInit, OnDestroy {
 			this.updateDealerStatus(dealerStatus);
 		}
 
-		if (event.cellName == 'viewDetailsText') {
-			let id = event.record.id;
-			this.detailsDealerInfoStatusLog(id);
-		}
+		// if (event.cellName == 'viewDetailsText') {
+		// 	let id = event.record.id;
+		// 	this.detailsDealerInfoStatusLog(id);
+		// }
 	}
 
 	detailsDealerInfoStatusLog(id: any) {
@@ -231,6 +232,9 @@ export class DealerListComponent implements OnInit, OnDestroy {
 
 		if (event.action == "new-record") {
 			this.openExcelImportModal();
+		} else if (event.action == "details-item") {
+			let id = event.record.id;
+			this.detailsDealerInfoStatusLog(id);
 		}
 	}
 

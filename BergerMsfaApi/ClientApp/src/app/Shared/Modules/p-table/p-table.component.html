@@ -553,7 +553,9 @@
                     *ngIf="
                       pTableSetting.enabledEditDeleteBtn ||
                       pTableSetting.enabledEditBtn ||
-                      pTableSetting.enabledDeleteBtn
+                      pTableSetting.enabledDeleteBtn ||
+                      pTableSetting.enabledDetailsEditDeleteBtn ||
+                      pTableSetting.enabledDetailsBtn
                     "
                     class="setting-update text-center"
                     [attr.rowSpan]="
@@ -579,7 +581,9 @@
                     *ngIf="
                       pTableSetting.enabledEditDeleteBtn ||
                       pTableSetting.enabledEditBtn ||
-                      pTableSetting.enabledDeleteBtn
+                      pTableSetting.enabledDeleteBtn ||
+                      pTableSetting.enabledDetailsEditDeleteBtn ||
+                      pTableSetting.enabledDetailsBtn
                     "
                   >
                   </th> -->
@@ -918,26 +922,42 @@
                     *ngIf="
                       pTableSetting.enabledEditDeleteBtn ||
                       pTableSetting.enabledEditBtn ||
-                      pTableSetting.enabledDeleteBtn
+                      pTableSetting.enabledDeleteBtn ||
+                      pTableSetting.enabledDetailsEditDeleteBtn ||
+                      pTableSetting.enabledDetailsBtn
                     "
                   >
                     <div class="items-center">
                       <a
                         *ngIf="
+                          pTableSetting.enabledDetailsEditDeleteBtn ||
+                          pTableSetting.enabledDetailsBtn
+                        "
+                        class="p-table-details-icon"
+                        (click)="fnActivityOnRecord('details-item', body)"
+                        title="Details"
+                        ><em class="fa fa-eye"></em
+                      ></a>
+                      <a
+                        *ngIf="
                           pTableSetting.enabledEditDeleteBtn ||
-                          pTableSetting.enabledEditBtn
+                          pTableSetting.enabledEditBtn ||
+                          pTableSetting.enabledDetailsEditDeleteBtn
                         "
                         class="p-table-edit-icon"
                         (click)="fnActivityOnRecord('edit-item', body)"
+                        title="Edit"
                         ><em class="fa fa-edit"></em
                       ></a>
                       <a
                         *ngIf="
                           pTableSetting.enabledEditDeleteBtn ||
-                          pTableSetting.enabledDeleteBtn
+                          pTableSetting.enabledDeleteBtn ||
+                          pTableSetting.enabledDetailsEditDeleteBtn
                         "
                         class="p-table-delete-icon"
                         (click)="fnActivityOnRecord('delete-item', body)"
+                        title="Delete"
                         ><em class="fa fa-trash"></em
                       ></a>
                     </div>
@@ -973,13 +993,20 @@
                       <button
                         class="btn p-table-custom-button" [ngClass]="fnSummationTotal(dispCol.internalName) < 0 ? 'btn-outline-danger': 'btn-outline-success'"
                       >
-                        {{ fnSummationTotal(dispCol.internalName) | number : '1.0-2' }}
+                        <!-- {{ fnSummationTotal(dispCol.internalName) | number : '1.0-2' }} -->
+                        {{ numberFormatColor(fnSummationTotal(dispCol.internalName),dispCol.displayType) }}
                       </button>
                     </div>
                   </td>
                   <td
                     align="left"
-                    *ngIf="pTableSetting.enabledEditDeleteBtn"
+                    *ngIf="
+                      pTableSetting.enabledEditDeleteBtn ||
+                      pTableSetting.enabledEditBtn ||
+                      pTableSetting.enabledDeleteBtn ||
+                      pTableSetting.enabledDetailsEditDeleteBtn ||
+                      pTableSetting.enabledDetailsBtn
+                    "
                   ></td>
                 </tr>
                 <tr *ngIf="pTableDatalength < 1" class="no-record-found">

@@ -382,8 +382,18 @@ ul.ul-dragable {
   font-weight: bold;
 }
 
+.p-table-details-icon {
+  font-size: 18px;
+  color: #17a2b8 !important;
+  padding: 3px;
+  background-color: transparent;
+  padding-right: 8px;
+  cursor: pointer;
+}
+
 .p-table-edit-icon {
   font-size: 18px;
+  color: #4f8cce !important;
   padding: 3px;
   background-color: transparent;
   padding-right: 8px;
