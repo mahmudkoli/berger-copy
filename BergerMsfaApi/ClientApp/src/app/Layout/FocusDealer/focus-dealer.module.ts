@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedMasterModule } from 'src/app/Shared/Modules/shared-master/shared-master.module';
-
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { NgSelectModule } from '@ng-select/ng-select';
 
-import { FocusdealerAddComponent } from './focusdealer-add/focusdealer-add.component';
-import { FocusdealerListComponent } from './focusdealer-list/focusdealer-list.component';
+import { FocusDealerAddComponent } from './focus-dealer-add/focus-dealer-add.component';
+import { FocusDealerListComponent } from './focus-dealer-list/focus-dealer-list.component';
 import { DealerOpeningListComponent } from './dealer-opening-list/dealer-opening-list.component';
-import { FocusDealerRoutingModule } from './foucusDealer-routing.module';
+import { FocusDealerRoutingModule } from './focus-dealer-routing.module';
 import { DealerOpeningDetailComponent } from './dealer-opening-detail/dealer-opening-detail.component';
 import { DealerListComponent } from './dealer-list/dealer-list.component';
 import { DealerInfoLogDetailsComponent } from './dealer-info-log-details/dealer-info-log-details.component';
@@ -18,21 +17,15 @@ import { EmailConfigAddComponent } from './email-config-add/email-config-add.com
 import { EmailConfigListComponent } from './email-config-list/email-config-list.component';
 import { ModalExcelImportDealerStatusComponent } from './modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 
-
-
-//import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
-
-
-
 @NgModule({
     declarations: [
-        FocusdealerAddComponent, 
-        FocusdealerListComponent, 
-        DealerOpeningListComponent, 
-        DealerOpeningDetailComponent, 
-        DealerListComponent, 
-        EmailConfigAddComponent, 
-        EmailConfigListComponent, 
+        FocusDealerAddComponent,
+        FocusDealerListComponent,
+        DealerOpeningListComponent,
+        DealerOpeningDetailComponent,
+        DealerListComponent,
+        EmailConfigAddComponent,
+        EmailConfigListComponent,
         DealerInfoLogDetailsComponent,
         ModalExcelImportDealerStatusComponent
     ],
@@ -47,7 +40,7 @@ import { ModalExcelImportDealerStatusComponent } from './modal-excel-import-deal
         NgSelectModule
     ],
     entryComponents: [
-      ModalExcelImportDealerStatusComponent
+        ModalExcelImportDealerStatusComponent
     ]
 })
 export class FocusDealerModule { }

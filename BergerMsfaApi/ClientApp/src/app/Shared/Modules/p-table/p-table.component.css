@@ -382,8 +382,18 @@ ul.ul-dragable {
   font-weight: bold;
 }
 
+.p-table-details-icon {
+  font-size: 18px;
+  color: #17a2b8 !important;
+  padding: 3px;
+  background-color: transparent;
+  padding-right: 8px;
+  cursor: pointer;
+}
+
 .p-table-edit-icon {
   font-size: 18px;
+  color: #4f8cce !important;
   padding: 3px;
   background-color: transparent;
   padding-right: 8px;
@@ -548,4 +558,26 @@ span.negative-number-format-color-bg {
   color: white;
   padding: 3px;
   border-radius: 5px;
+}
+
+.ng-select.ng-select-primary ::ng-deep .ng-select-container {
+  color: #3ab4e5;
+  border-color: #3ab4e5;
+}
+.ng-select.ng-select-primary:hover ::ng-deep .ng-select-container {
+  color: #ffffff;
+  border-color: #3ab4e5;
+  background-color: #3ab4e5;
+  cursor: pointer;
+}
+
+.ng-select.ng-select-warning ::ng-deep .ng-select-container {
+  color: #eea236;
+  border-color: #eea236;
+}
+.ng-select.ng-select-warning:hover ::ng-deep .ng-select-container {
+  color: #000000;
+  border-color: #eea236;
+  background-color: #eea236;
+  cursor: pointer;
 }

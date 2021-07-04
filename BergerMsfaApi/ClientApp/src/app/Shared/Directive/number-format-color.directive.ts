@@ -43,7 +43,7 @@ export class NumberFormatColorDirective implements OnInit {
         // const formatValue = this.currencyPipe.transform(value, 'INR', 'symbol', '1.0-2', 'en-IN');
         // const formatValue = Number(value).toLocaleString('en-IN');
         const fractionDigit = this.numberFormatColorFraction ? 2 : 0;
-        const formatValue = Number(value).toLocaleString('en-IN', 
+        const formatValue = Number(value).toLocaleString('en-US', 
                                 { style: 'decimal', minimumIntegerDigits: 1, 
                                     minimumFractionDigits: fractionDigit, maximumFractionDigits: fractionDigit });
 

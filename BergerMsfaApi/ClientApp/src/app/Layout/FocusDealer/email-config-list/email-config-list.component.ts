@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { ActivityPermissionService, PermissionGroup } from 'src/app/Shared/Services/Activity-Permission/activity-permission.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 import { EmailConfigForDealerOpening } from '../../../Shared/Entity/DealerOpening/EmailConfig';
 
 @Component({
@@ -20,7 +20,7 @@ export class EmailConfigListComponent implements OnInit {
       private activatedRoute: ActivatedRoute,
       private router: Router,
       private alertService: AlertService,
-      private focusDealerService: FocusdealerService
+      private focusDealerService: FocusDealerService
   ) {
       this._initPermissionGroup();
   }
@@ -84,7 +84,7 @@ export class EmailConfigListComponent implements OnInit {
   private delete(id: number) {
       console.log("Id:", id);
       this.alertService.confirm("Are you sure you want to delete this item?", () => {
-          this.focusDealerService.delete(id).subscribe(
+          this.focusDealerService.deleteFocusDealer(id).subscribe(
               (res: any) => {
                   console.log('res from del func', res);
                   this.alertService.tosterSuccess("Dropdown has been deleted successfully.");
