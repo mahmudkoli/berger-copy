@@ -3,6 +3,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Menu } from 'src/app/Shared/Entity/Menu/menu.model';
 import { Status } from 'src/app/Shared/Enums/status';
 import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
+import { EnumType, EnumTypeLabel } from 'src/app/Shared/Enums/employee-role';
+
 
 @Component({
   selector: 'app-modal-menu',
@@ -12,6 +14,8 @@ import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
 export class ModalMenuComponent implements OnInit {
 
   @Input() menuItem: Menu;
+  @Input() type: number;
+
   parentMenuList: Menu[] = [];
   enumStatus = Status;
   statusValues = [];
@@ -42,6 +46,7 @@ export class ModalMenuComponent implements OnInit {
   }
 
   create() {
+    this.menuItem.type=this.type;
     this.menuService.create(this.menuItem).subscribe(
       (res: any) => {
         console.log(res.data);

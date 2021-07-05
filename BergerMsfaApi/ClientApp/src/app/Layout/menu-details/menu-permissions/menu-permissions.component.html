@@ -6,6 +6,23 @@
     <div class="menu-list text-center">
       <div>
         <div class="role-select-wrapper m-auto" style="width: 41%;">
+          <label class="mb-0 mr-2" for="roleId">Type Select</label>
+          <ng-select class="flex-fill" id="apptype" style="width: 41%;" name="apptype" [(ngModel)]="type" [multiple]="false" (change)="ChcekType(type)" >
+              <ng-option *ngFor="let type of types" [value]="type.id" >
+                  {{type.label}}
+              </ng-option>
+          </ng-select>
+      </div>
+      <div class="role-select-wrapper m-auto" style="width: 41%;" *ngIf="type==1 || type==2">
+        <label class="mb-0 mr-2" for="empRoleId">Employee Select</label>
+        <ng-select class="flex-fill" id="emp" name="emp" [(ngModel)]="empRoleId" [multiple]="false">
+            <ng-option *ngFor="let type of empRole" [value]="type.id" >
+                {{type.label}}
+            </ng-option>
+        </ng-select>
+        <button class="btn btn-primary ml-3" type="button" (click)="CheckEmp(empRoleId)">Load</button>
+    </div>
+        <div class="role-select-wrapper m-auto" style="width: 41%;" *ngIf="type==0">
           <form #examplForm="ngForm" class="menu-form d-flex justify-content-center align-items-center">
               <label for="role-id" class="mb-0 mr-2">Select Role</label>
               <ng-select id="role-id" class="flex-fill" name="role" [multiple]="false" [(ngModel)]="selectedRole"

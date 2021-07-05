@@ -23,3 +23,17 @@ export class EnumEmployeeRoleLabel{
         { id : 7, label : "ZO" }
     ];
 }
+
+export class EnumTypeLabel{
+    public static EnumTypes :  MapObject[] = [
+        { id : 0, label : "WebPortal" },
+        { id : 1, label : "Mobile App" },
+        { id : 2, label : "Alart" },
+    ];
+}
+
+export enum EnumType {
+    WebPortal = 0,
+    MobileApp = 1,
+    Alart = 2
+}

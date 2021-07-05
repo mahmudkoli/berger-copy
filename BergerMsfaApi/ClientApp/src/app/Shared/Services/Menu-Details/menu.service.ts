@@ -15,6 +15,10 @@ export class MenuService {
     return this.http.get(`${this.url}`);
   }
 
+  public getPortal(typeId) {    
+    return this.http.get<any>(`${this.url}/get-by-portal/${typeId}`);
+  } 
+
   public getAllActive() {
     return this.http.get(`${this.url}/get-active`);
   }

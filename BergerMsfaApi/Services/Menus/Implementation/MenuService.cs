@@ -145,6 +145,43 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return hierarchyMenuData;
         }
 
+        public async Task<IEnumerable<MenuModel>> GetMenusAsync(int type)
+        {
+            var result = _menu.GetAllIncludeStrFormat(includeProperties: "MenuPermissions.Role");
+
+            var mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Menu, MenuModel>();
+                //.ForMember(m => m.MenuPermissions, opt => opt.MapFrom(x => x.MenuPermissions.Select(r => r.Role)));
+                cfg.CreateMap<MenuPermission, MenuPermissionModel>();
+                cfg.CreateMap<Role, RoleModel>();
+            }).CreateMapper();
+
+            var data = mapper.Map<List<MenuModel>>(result);
+
+            List<MenuModel> hierarchyMenuData = new List<MenuModel>();
+            hierarchyMenuData = data
+                            .Where(c => c.ParentId == 0 && ((int)c.Type)== type).OrderBy(o => o.Sequence)
+                            .Select(c => new MenuModel()
+                            {
+                                Id = c.Id,
+                                Status = c.Status,
+                                Name = c.Name,
+                                Controller = c.Controller,
+                                Action = c.Action,
+                                Url = c.Url,
+                                IconClass = c.IconClass,
+                                ParentId = c.ParentId,
+                                IsParent = c.IsParent,
+                                IsTitle = c.IsTitle,
+                                Sequence = c.Sequence,
+                                MenuPermissions = c.MenuPermissions,
+                                Children = GetChildren(data, c.Id)
+                            })
+                            .ToList();
+
+            return hierarchyMenuData;
+        }
         public static List<MenuModel> GetChildren(List<MenuModel> menus, int parentId)
         {
             return menus

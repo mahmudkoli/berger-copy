@@ -10,6 +10,8 @@ export class Menu {
     public isParent: boolean = false;
     public sequence: number = 0;
     public menuPermissions: [] = [];
+    public type:number =0;
+    public code:string = '';
     
     public isMapped: boolean = false;
     public hasParentOnCreateNew: boolean = false;

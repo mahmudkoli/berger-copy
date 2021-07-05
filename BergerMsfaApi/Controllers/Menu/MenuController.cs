@@ -38,6 +38,20 @@ namespace BergerMsfaApi.Controllers.Menu
             }
         }
 
+        [HttpGet("get-by-portal/{typeId}")]
+        public async Task<IActionResult> GetByPortal(int typeId)
+        {
+            try
+            {
+                var result = await _menu.GetMenusAsync(typeId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("get-active")]
         public async Task<IActionResult> GetActiveMenus()
         {

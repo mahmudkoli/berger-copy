@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-
+<div *ngIf="type ==0">
         <div class="form-row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
-
+    </div>
         <div class="form-row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
@@ -86,6 +86,19 @@
                     <small class="text-danger" [class.d-none]="sequence.valid || sequence.untouched">
                         Please give a positive sequence
                     </small>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" *ngIf="type!=0">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="menuName">Menu Code</label>
+                    <input class="form-control" type="text" placeholder="Menu code" id="code" name="code"
+                        [(ngModel)]="menuItem.code" required
+                        />
+                    <!-- <small class="text-danger" [class.d-none]="code.valid || code.untouched">
+                        Title is required
+                    </small> -->
                 </div>
             </div>
         </div>
