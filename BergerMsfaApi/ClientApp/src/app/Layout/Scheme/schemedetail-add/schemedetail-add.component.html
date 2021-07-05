@@ -136,10 +136,10 @@
                         "
                       >
                         <span *ngIf="formControls.benefitStartDate.errors.required"
-                          >Benefit Date is <strong>required</strong></span
+                          >Benefit Start Date is <strong>required</strong></span
                         >
-                        <span *ngIf="formControls.benefitStartDate.invalid"
-                          >Please, Enter valid date (Ex: yyyy/mm/dd)</span
+                        <span *ngIf="!formControls.benefitStartDate.errors.required && formControls.benefitStartDate.invalid"
+                          >Please, Enter valid date (Ex: yyyy-mm-dd)</span
                         >
                       </small>
                     </div>
@@ -178,15 +178,17 @@
                       <small
                         class="text-danger"
                         *ngIf="
-                          formControls.benefitEndDate.touched &&
-                          formControls.benefitEndDate.errors
+                          (formControls.benefitEndDate.touched &&
+                          formControls.benefitEndDate.errors) ||
+                          (formControls.benefitEndDate.touched &&
+                            formControls.benefitEndDate.invalid)
                         "
                       >
                         <span *ngIf="formControls.benefitEndDate.errors.required"
                           >Benefit End Date is <strong>required</strong></span
                         >
-                        <span *ngIf="formControls.benefitEndDate.errors.pattern"
-                          >Please, Enter valid date(yyyy-mm-dd)</span
+                        <span *ngIf="!formControls.benefitEndDate.errors.required && formControls.benefitEndDate.invalid"
+                          >Please, Enter valid date (Ex: yyyy-mm-dd)</span
                         >
                       </small>
                     </div>

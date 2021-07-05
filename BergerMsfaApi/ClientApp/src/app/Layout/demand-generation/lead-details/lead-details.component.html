@@ -4,77 +4,56 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>User Full Name:</strong></span> {{lead.userFullName}}</p>
+                <p><span><strong>Employee Name:</strong></span> {{lead.userFullName}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Code:</strong></span> {{lead.code}}</p>
             </div>
-        </div>
-    
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Depot:</strong></span> {{lead.depot}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Territory:</strong></span> {{lead.territory}}</p>
             </div>
-        </div>
-    
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Zone:</strong></span> {{lead.zone}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Type Of Client:</strong></span> {{lead.typeOfClientText}}</p>
             </div>
-        </div>
-    
-        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Others Client Name:</strong></span> {{lead.otherClientName}}</p>
+            </div>
             <div class="col-sm-6">
                 <p><span><strong>Project Name:</strong></span> {{lead.projectName}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Project Address:</strong></span> {{lead.projectAddress}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Key Contact Person Name:</strong></span> {{lead.keyContactPersonName}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Key Contact Person Mobile:</strong></span> {{lead.keyContactPersonMobile}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Paint Contractor Name:</strong></span> {{lead.paintContractorName}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Paint Contractor Mobile:</strong></span> {{lead.paintContractorMobile}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Painting Stage:</strong></span> {{lead.paintingStageText}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Visit Date:</strong></span> {{lead.visitDateText}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Expected Date Of Painting:</strong></span> {{lead.expectedDateOfPaintingText}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Number Of Storied Building:</strong></span> {{lead.numberOfStoriedBuilding}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Total Painting Area Interior (Sqft):</strong></span> {{lead.totalPaintingAreaSqftInterior}}</p>
             </div>
@@ -87,50 +66,36 @@
             <!-- <div class="col-sm-6">
                 <p><span><strong>Total Painting Area Exterior Change Count (Sqft):</strong></span> {{lead.totalPaintingAreaSqftExteriorChangeCount}}</p>
             </div> -->
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Expected Value:</strong></span> {{lead.expectedValue}}</p>
+                <p><span><strong>Expected Value: </strong></span> <span [numberFormatColor]="lead.expectedValue" *ngIf="lead.expectedValue"></span></p>
             </div>
             <!-- <div class="col-sm-6">
                 <p><span><strong>Expected Value Change Count:</strong></span> {{lead.expectedValueChangeCount}}</p>
             </div> -->
             <div class="col-sm-6">
-                <p><span><strong>Expected Monthly Business Value:</strong></span> {{lead.expectedMonthlyBusinessValue}}</p>
+                <p><span><strong>Expected Monthly Business Value: </strong></span> <span [numberFormatColor]="lead.expectedMonthlyBusinessValue" *ngIf="lead.expectedMonthlyBusinessValue"></span></p>
             </div>
             <!-- <div class="col-sm-6">
                 <p><span><strong>Expected Monthly Business Value Change Count:</strong></span> {{lead.expectedMonthlyBusinessValueChangeCount}}</p>
             </div> -->
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Requirement Of Color Scheme:</strong></span> {{lead.requirementOfColorSchemeText}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Product Sampling Required:</strong></span> {{lead.productSamplingRequiredText}}</p>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col-sm-6">
                 <p><span><strong>Next FollowUp Date:</strong></span> {{lead.nextFollowUpDateText}}</p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Remarks:</strong></span> {{lead.remarks}}</p>
             </div>
-        </div>
-
-        <div class="row" *ngIf="lead.photoCaptureUrl">
             <div class="col-sm-6" >
                 <p>
                     <span><strong>Photo Capture:</strong></span>
                     <!-- {{lead.photoCaptureUrl}} -->
                     <img *ngIf='lead.photoCaptureUrl' [src]="lead.photoCaptureUrl" alt="Photo" width="150px" height="180px">
                 </p>
-            </div>
-            <div class="col-sm-6">
             </div>
         </div>
     </div>

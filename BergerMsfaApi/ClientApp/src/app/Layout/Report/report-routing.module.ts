@@ -35,6 +35,8 @@ import { BusinessCallAnalysisReportComponent } from './business-call-analysis/bu
 import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
 import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-salescall/addhoc-sub-dealer-salescall-report.component';
 import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
+import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
+import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 
 const routes: Routes = [
   {
@@ -252,6 +254,20 @@ const routes: Routes = [
         component: StrikeRateKpiReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Strike Rate KPI Report', },
+      },
+
+      {
+        path: 'billing-analysis',
+        component: BillingAnalysisReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Billing Analysis Report', },
+      },
+
+      {
+        path: 'collection-plan',
+        component: FinancialCollectionPlanReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Collection Plan Report', },
       },
 
     ],

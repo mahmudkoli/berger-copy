@@ -461,6 +461,34 @@ export class ReportService {
     }/DownloadStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`;
   }
 
+  getBillingAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetBillingAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadBillingAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadBillingAnalysis?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getFinancialCollectionPlan(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetFinancialCollectionPlan?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadFinancialCollectionPlan(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadFinancialCollectionPlan?${this.commonService.toQueryString(filter)}`;
+  }
+
   getAddhocDealerSalesCall(filter?) {
     return this.http.get<APIResponse>(
       `${

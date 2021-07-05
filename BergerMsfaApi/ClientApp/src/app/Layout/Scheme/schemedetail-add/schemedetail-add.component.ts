@@ -92,14 +92,37 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			rateInDrum: [this.schemeDetail.rateInDrum],
 			slab: [this.schemeDetail.slab],
 			condition: [this.schemeDetail.condition],
-			benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
-			benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
+			benefitStartDate: [],
+			benefitEndDate: [],
+			// benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
+			// benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
 			schemeId: [this.schemeDetail.schemeId],
 			material: [this.schemeDetail.material],
 			targetVolume: [this.schemeDetail.targetVolume],
 			benefit: [this.schemeDetail.benefit],
 			status: [this.schemeDetail.status, [Validators.required]]
 		});
+
+		if (this.schemeDetail.benefitStartDate) {
+			const fromDate = new Date(this.schemeDetail.benefitStartDate);
+			this.schemeDetailForm.controls.benefitStartDate.setValue({
+				year: fromDate.getFullYear(),
+				month: fromDate.getMonth()+1,
+				day: fromDate.getDate()
+			});
+		}
+
+		if (this.schemeDetail.benefitEndDate) {
+			const toDate = new Date(this.schemeDetail.benefitEndDate);
+			this.schemeDetailForm.controls.benefitEndDate.setValue({
+				year: toDate.getFullYear(),
+				month: toDate.getMonth()+1,
+				day: toDate.getDate()
+			});
+		}
+
+		this.schemeDetailForm.controls.benefitStartDate.setValidators([Validators.required]);
+		this.schemeDetailForm.controls.benefitStartDate.updateValueAndValidity();
 	}
 
 	get formControls() { return this.schemeDetailForm.controls; }
@@ -137,17 +160,28 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		_schemeDetail.slab = controls['slab'].value;
 		_schemeDetail.condition = controls['condition'].value;
 
+		// if (controls['benefitStartDate'].value) {
+		// 	const value = controls['benefitStartDate'].value;
+		// 	_schemeDetail.benefitStartDate =  this.formatter.format(value)
+		//   }
+		// if (controls['benefitEndDate'].value) {
+		// 	const value = controls['benefitEndDate'].value;
+		// 	_schemeDetail.benefitEndDate =  this.formatter.format(value)
+		//   }
 
+		const fromDate = controls['benefitStartDate'].value;
+		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
+			_schemeDetail.benefitStartDate = new Date(fromDate.year,fromDate.month-1,fromDate.day);
+		} else {
+			_schemeDetail.benefitStartDate = null;
+		}
 
-		if (controls['benefitStartDate'].value) {
-			const value = controls['benefitStartDate'].value;
-			_schemeDetail.benefitStartDate =  this.formatter.format(value)
-		  }
-		if (controls['benefitEndDate'].value) {
-			const value = controls['benefitEndDate'].value;
-			_schemeDetail.benefitEndDate =  this.formatter.format(value)
-		  }
-
+		const toDate = controls['benefitEndDate'].value;
+		if (toDate && toDate.year && toDate.month && toDate.day) {
+			_schemeDetail.benefitEndDate = new Date(toDate.year,toDate.month-1,toDate.day);
+		} else {
+			_schemeDetail.benefitEndDate = null;
+		}
 
 		_schemeDetail.schemeId = controls['schemeId'].value;
 		_schemeDetail.material = controls['material'].value;

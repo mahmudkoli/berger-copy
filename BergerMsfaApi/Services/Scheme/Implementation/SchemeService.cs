@@ -68,7 +68,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                           {
                               SchemeName = sm.SchemeName,
                               BusinessArea = sm.BusinessArea,
-                              BusinessAreaName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? m.Name1 + "(" + sm.BusinessArea + ")" : "",
+                              BusinessAreaName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? m.Name1 + " (" + sm.BusinessArea + ")" : "",
                               Condition = sm.Condition,
                               Id = sm.Id
                           });
@@ -210,7 +210,9 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<SchemeDetailModel, object>>>()
             {
-                ["schemeMasterName"] = v => v.SchemeMasterName
+                ["schemeMasterName"] = v => v.SchemeMasterName,
+                ["benefitStartDateText"] = v => v.BenefitStartDate,
+                ["benefitEndDateText"] = v => v.BenefitEndDate
             };
 
             var result = (
@@ -220,14 +222,19 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                             from m in details.DefaultIfEmpty()
                             select new SchemeDetailModel
                             {
-                                SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + "-" + m.Name1 + "(" + sm.BusinessArea + ")" : sm.SchemeName,
+                                SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + " - " + m.Name1 + " (" + sm.BusinessArea + ")" : sm.SchemeName,
                                 SchemeMasterCondition = sm.Condition,
+                                Condition = det.Condition,
                                 Brand = det.Brand,
                                 Slab = det.Slab,
                                 Material = det.Material,
                                 Status = sm.Status,
                                 Id = det.Id,
-                                Benefit = det.Benefit
+                                Benefit = det.Benefit,
+                                BenefitStartDate = det.BenefitStartDate,
+                                BenefitEndDate = det.BenefitEndDate,
+                                BenefitStartDateText = det.BenefitStartDate.ToString("yyyy-MM-dd"),
+                                BenefitEndDateText = det.BenefitEndDate.HasValue?det.BenefitEndDate.Value.ToString("yyyy-MM-dd"):""
                             });
 
             Expression<Func<SchemeDetailModel, object>> keySelector = columnsMap[query.SortBy];
@@ -279,6 +286,24 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                             true);
 
             var modelResult = _mapper.Map<IList<SchemeDetailModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<IList<AppSchemeDetailModel>> GetAppAllSchemeDetailsByCurrentUserAsync()
+        {
+            var depots = AppIdentity.AppUser.PlantIdList;
+            var currentDate = DateTime.Now;
+
+            var result = await _schemeDetailSvc.GetAllIncludeAsync(x => x,
+                            x => (string.IsNullOrEmpty(x.SchemeMaster.BusinessArea) || depots.Contains(x.SchemeMaster.BusinessArea))
+                                && (x.BenefitStartDate.Date <= currentDate.Date && (!x.BenefitEndDate.HasValue || x.BenefitEndDate >= currentDate.Date))
+                                && x.Status == Status.Active,
+                            null,
+                            x => x.Include(i => i.SchemeMaster),
+                            true);
+
+            var modelResult = _mapper.Map<IList<AppSchemeDetailModel>>(result);
 
             return modelResult;
         }

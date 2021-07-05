@@ -86,13 +86,6 @@ namespace BergerMsfaApi.Services.Implementation
                                     signingCredentials: cred
                                 );
 
-                #region user category
-                var userCat = string.Empty;
-                var userCatIds = new List<string>();
-
-                userCat = UserCat(userInfo, userCat, ref userCatIds);
-                #endregion
-
                 #region only use for mobile
                 var dealerOpeningsHierarchyList = await _commonService.GetPSATZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
@@ -111,7 +104,6 @@ namespace BergerMsfaApi.Services.Implementation
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
                     FullName = userInfo.FullName ?? string.Empty,
-                    //Plants = leadGenerationsHierarchyList,
                     DealerOpeningsHierarchyList = dealerOpeningsHierarchyList, // only for app end
                     PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList, // only for app end
                     LeadGenerationsHierarchyList = leadGenerationsHierarchyList, // only for app end
@@ -130,8 +122,6 @@ namespace BergerMsfaApi.Services.Implementation
                     TerritoryId = userInfo.TerritoryIds.FirstOrDefault() ?? string.Empty,
                     ZoneIds = userInfo.ZoneIds,
                     ZoneId = userInfo.ZoneIds.FirstOrDefault() ?? string.Empty,
-                    UserCategory = userCat ?? string.Empty,
-                    UserCategoryIds = userCatIds,
                     RoleId = userInfo.RoleId,
                     RoleName = userInfo.RoleName ?? string.Empty,
                     EmployeeId = userInfo.EmployeeId ?? string.Empty,
@@ -150,48 +140,8 @@ namespace BergerMsfaApi.Services.Implementation
 
         public async Task<IList<string>> GetDealerByUserId(int userId)
         {
-
-            //var userInfo = await _userService.GetUserAsync(userId);
-            //var userCat = string.Empty;
-            //var userCatIds = new List<string>();
-
-            //userCat = UserCat(userInfo, userCat, ref userCatIds);
-
-            //var result = await _commonService.AppGetDealerInfoListByUserCategory(userCat, userCatIds);
-
             var result = await _commonService.AppGetDealerInfoListByCurrentUser(userId);
             return result.Select(x => x.CustomerNo).Distinct().ToList();
-        }
-
-        private  string UserCat(UserInfoModel userInfo, string userCat, ref List<string> userCatIds)
-        {
-            switch (userInfo.EmployeeRole)
-            {
-                case EnumEmployeeRole.DIC:
-                    userCat = EnumUserCategory.Plant.ToString();
-                    userCatIds = userInfo.PlantIds.Select(x => x.ToString()).ToList();
-                    break;
-                case EnumEmployeeRole.BIC:
-                    userCat = EnumUserCategory.SalesOffice.ToString();
-                    userCatIds = userInfo.SaleOfficeIds.Select(x => x.ToString()).ToList();
-                    break;
-                case EnumEmployeeRole.AM:
-                    userCat = EnumUserCategory.Area.ToString();
-                    userCatIds = userInfo.AreaIds.Select(x => x.ToString()).ToList();
-                    break;
-                case EnumEmployeeRole.TM_TO:
-                    userCat = EnumUserCategory.Territory.ToString();
-                    userCatIds = userInfo.TerritoryIds.Select(x => x.ToString()).ToList();
-                    break;
-                case EnumEmployeeRole.ZO:
-                    userCat = EnumUserCategory.Zone.ToString();
-                    userCatIds = userInfo.ZoneIds.Select(x => x.ToString()).ToList();
-                    break;
-                default:
-                    break;
-            }
-
-            return userCat;
         }
     }
 }

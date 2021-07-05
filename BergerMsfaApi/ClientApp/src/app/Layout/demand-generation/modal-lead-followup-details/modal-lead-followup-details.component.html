@@ -19,7 +19,10 @@
             <div class="col-sm-6">
                 <p><span><strong>Type Of Client:</strong></span> {{leadFollowUp.typeOfClientText}}</p>
             </div>
-        </div>4#
+            <div class="col-sm-6">
+                <p><span><strong>Others Client Name:</strong></span> {{leadFollowUp.otherClientName}}</p>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-sm-12"><h6><span><strong>Key Contact Person:</strong></span></h6></div>
@@ -64,7 +67,7 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Expected Value:</strong></span> {{leadFollowUp.expectedValue}}</p>
+                <p><span><strong>Expected Value: </strong></span> <span [numberFormatColor]="leadFollowUp.expectedValue" *ngIf="leadFollowUp.expectedValue"></span></p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Expected Value Change Reason:</strong></span> {{leadFollowUp.expectedValueChangeReason}}</p>
@@ -73,7 +76,7 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Expected Monthly Business Value:</strong></span> {{leadFollowUp.expectedMonthlyBusinessValue}}</p>
+                <p><span><strong>Expected Monthly Business Value: </strong></span> <span [numberFormatColor]="leadFollowUp.expectedMonthlyBusinessValue" *ngIf="leadFollowUp.expectedMonthlyBusinessValue"></span></p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Expected Monthly Business Value Change Reason:</strong></span> {{leadFollowUp.expectedMonthlyBusinessValueChangeReason}}</p>
@@ -200,16 +203,16 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Berger Value Sales:</strong></span> {{leadFollowUp.businessAchievement?.bergerValueSales}}</p>
+                <p><span><strong>Berger Value Sales: </strong></span> <span [numberFormatColor]="leadFollowUp.businessAchievement?.bergerValueSales" *ngIf="leadFollowUp.businessAchievement?.bergerValueSales"></span></p>
             </div>
             <div class="col-sm-6">
-                <p><span><strong>Berger Premium Brand Sales Value:</strong></span> {{leadFollowUp.businessAchievement?.bergerPremiumBrandSalesValue}}</p>
+                <p><span><strong>Berger Premium Brand Sales Value: </strong></span> <span [numberFormatColor]="leadFollowUp.businessAchievement?.bergerPremiumBrandSalesValue" *ngIf="leadFollowUp.businessAchievement?.bergerPremiumBrandSalesValue"></span></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-6">
-                <p><span><strong>Competition Value Sales:</strong></span> {{leadFollowUp.businessAchievement?.competitionValueSales}}</p>
+                <p><span><strong>Competition Value Sales: </strong></span> <span [numberFormatColor]="leadFollowUp.businessAchievement?.competitionValueSales" *ngIf="leadFollowUp.businessAchievement?.competitionValueSales"></span></p>
             </div>
             <div class="col-sm-6">
                 <p><span><strong>Product Sourcing:</strong></span> {{leadFollowUp.businessAchievement?.productSourcing}}</p>

@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ControlContainer } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
-import { FocusDealer } from 'src/app/Shared/Entity/FocusDealer/JourneyPlan';
 import { EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 import { EmailConfigForDealerOpening } from '../../../Shared/Entity/DealerOpening/EmailConfig';
 
 @Component({
@@ -27,7 +26,7 @@ export class EmailConfigAddComponent implements OnInit {
         private alertService: AlertService,
         public formatter: NgbDateParserFormatter,
         private route: ActivatedRoute,
-        private focusDealerService: FocusdealerService,
+        private focusDealerService: FocusDealerService,
         private commonSvc: CommonService,
         private router: Router
     ) { }

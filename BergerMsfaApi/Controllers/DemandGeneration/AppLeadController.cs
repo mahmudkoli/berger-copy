@@ -1,15 +1,14 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.DemandGeneration
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -18,10 +17,9 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         private readonly ILeadService _leadService;
 
         public AppLeadController(
-                ILeadService leadService
-            )
+            ILeadService leadService)
         {
-            this._leadService = leadService;
+            _leadService = leadService;
         }
 
         [HttpGet("GetAllByUserId/{id}")]

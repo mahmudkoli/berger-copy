@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.OData.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -24,8 +23,7 @@ namespace BergerMsfaApi.Controllers.Odata
             ISalesDataService salesDataService,
             IMTSDataService mtsDataService,
             IFinancialDataService financialDataService,
-            IBalanceDataService balanceDataService
-            )
+            IBalanceDataService balanceDataService)
         {
             _salesDataService = salesDataService;
             _mtsDataService = mtsDataService;

@@ -1,15 +1,15 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -18,8 +18,7 @@ namespace BergerMsfaApi.Controllers.ELearning
         private readonly IQuestionService _questionService;
 
         public QuestionController(
-                IQuestionService questionService
-            )
+            IQuestionService questionService)
         {
             this._questionService = questionService;
         }

@@ -90,8 +90,8 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:true}),
 		]});
 

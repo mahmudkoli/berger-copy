@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.Scheme.interfaces;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Scheme
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -18,7 +18,8 @@ namespace BergerMsfaApi.Controllers.Scheme
     {
         private readonly ISchemeService _schemeService;
 
-        public SchemeDetailController(ISchemeService schemeService)
+        public SchemeDetailController(
+            ISchemeService schemeService)
         {
             _schemeService = schemeService;
         }

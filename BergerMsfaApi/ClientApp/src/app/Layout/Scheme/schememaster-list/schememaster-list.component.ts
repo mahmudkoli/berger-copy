@@ -98,14 +98,14 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 	}
 
 	deleteSchemeMaster(id) {
-		this.alertService.confirm("Are you sure want to delete this Scheme Master?",
+		this.alertService.confirm("Are you sure want to delete this Scheme Category?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.schemeMasterService.deleteSchemeMaster(id)
 					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 					.subscribe((res: any) => {
 						console.log('res from del func', res);
-						this.alertService.tosterSuccess("Scheme Master has been deleted successfully.");
+						this.alertService.tosterSuccess("Scheme Category has been deleted successfully.");
 						this.loadSchemeMastersPage();
 					},
 						(error) => {
@@ -120,7 +120,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 	public ptableSettings: IPTableSetting = {
 		tableID: "schemeMasters-table",
 		tableClass: "table table-border ",
-		tableName: 'Scheme Master List',
+		tableName: 'Scheme Category List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Scheme Name', width: '50%', internalName: 'schemeName', sort: true, type: "" },
@@ -136,7 +136,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
 		enabledDataLength: true,
-		newRecordButtonText: 'New Scheme Master'
+		newRecordButtonText: 'New Scheme Category'
 	};
 
 	public fnCustomTrigger(event) {

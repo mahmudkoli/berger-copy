@@ -13,6 +13,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { FileUploaderModule } from 'src/app/Layout/file-upload/file-uploader.module';
 import { PageTitleComponent } from 'src/app/Layout/LayoutComponent/Components/page-title/page-title.component';
 import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
+import { NumberFormatColorDirective } from '../../Directive/number-format-color.directive';
 import { AlertModule } from '../alert/alert.module';
 import { PTableModule } from '../p-table/p-table.module';
 import { SearchOptionModule } from '../search-option/search-option.module';
@@ -29,7 +30,7 @@ FullCalendarModule.registerPlugins([
     declarations: [
         PageTitleComponent,
         ImageUploaderComponent,
-
+        NumberFormatColorDirective
     ],
     imports: [
         CommonModule,
@@ -54,7 +55,8 @@ FullCalendarModule.registerPlugins([
         ToggleButtonModule,
         FullCalendarModule,
         SearchOptionModule,
-        FileUploaderModule
+        FileUploaderModule,
+        NumberFormatColorDirective
     ],
 })
 export class SharedMasterModule { }

@@ -24,6 +24,7 @@ using Berger.Common.Constants;
 using System;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Hirearchy;
+using Microsoft.EntityFrameworkCore;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -142,18 +143,57 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
         {
-            var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString()).FirstOrDefault();
-            if (emailConfig != null)
+            //var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var currentUser = AppIdentity.AppUser;
+            var resultDb = new List<DealerOpening>();
+
+            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea) && p.Designation == ((EnumEmployeeRole)currentUser.EmployeeRole).ToString()).FirstOrDefault();
+            
+            if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
             {
-                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.GetAllAsync());
-                return await result.ToPagedListAsync(index, pageSize);
+                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.GetAllAsync();
+            }
+            else if (emailConfig != null)
+            {
+                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => currentUser.PlantIdList.Contains(p.BusinessArea));
             }
             else
             {
-                var result = _mapper.Map<List<DealerOpeningModel>>(await _dealerOpeningSvc.Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync());
-                return await result.ToPagedListAsync(index, pageSize);
+                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => p.NextApprovarId == currentUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending);
             }
+
+            var result = _mapper.Map<List<DealerOpeningModel>>(resultDb.OrderByDescending(o => o.CreatedTime));
+
+            if (!string.IsNullOrEmpty(search))
+                result = result.Search(search);
+
+            #region get area mapping data
+            var depotIds = result.Select(x => x.BusinessArea).Distinct().ToList();
+            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
+            var saleOfficeIds = result.Select(x => x.SaleOffice).Distinct().ToList();
+            //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
+            //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
+
+            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
+            var saleOffices = (await _saleOfficeSvc.FindAllAsync(x => saleOfficeIds.Contains(x.Code)));
+            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
+            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
+
+            foreach (var item in result)
+            {
+                item.BusinessAreaName = depots.FirstOrDefault(x => x.Werks == item.BusinessArea)?.Name1 ?? string.Empty;
+                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
+                item.SaleOfficeName = saleOffices.FirstOrDefault(x => x.Code == item.SaleOffice)?.Name ?? string.Empty;
+                //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
+                //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
+                item.TerritoryName = item.Territory;
+                item.ZoneName = item.Zone;
+                item.DealerOpeningStatusText = ((DealerOpeningStatus)item.DealerOpeningStatus).ToString();
+            }
+            #endregion
+
+            return result.ToPagedList(index, pageSize);
         }
 
 
@@ -243,6 +283,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             dealerOpening.NextApprovarId = managerUser.Id;
             dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
+            //TODO: need to generate code
             dealerOpening.Code = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
 
 
@@ -354,7 +395,34 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             //var data = result.dealerOpeningLogs.OrderByDescending(p => p.CreatedTime);
             //return _mapper.Map<DealerOpeningModel>(result.dealerOpeningLogs.OrderByDescending(p=>p.CreatedTime)); 
-            return _mapper.Map<DealerOpeningModel>(result);
+
+            //var result = await _dealerOpeningSvc.GetAllIncludeAsync(x => x,
+            //                    x => x.Id == id,
+            //                    x => x.OrderByDescending(o => o.CreatedTime),
+            //                    x => x.Include(i => i.DealerOpeningAttachments)
+            //                        .Include(i => i.dealerOpeningLogs).ThenInclude(i => i.User),
+            //                    true);
+
+            var returnResult = _mapper.Map<DealerOpeningModel>(result);
+
+            #region get area mapping data
+            var depots = (await _depotSvc.FindAllAsync(x => returnResult.BusinessArea == x.Werks));
+            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => returnResult.SaleGroup == x.Code));
+            var saleOffices = (await _saleOfficeSvc.FindAllAsync(x => returnResult.SaleOffice == x.Code));
+            //var territories = (await _territorySvc.FindAllAsync(x => returnResult.Territory == x.Code));
+            //var zones = (await _zoneSvc.FindAllAsync(x => returnResult.Zone == x.Code));
+
+            returnResult.BusinessAreaName = depots.FirstOrDefault(x => x.Werks == returnResult.BusinessArea)?.Name1 ?? string.Empty;
+            returnResult.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == returnResult.SaleGroup)?.Name ?? string.Empty;
+            returnResult.SaleOfficeName = saleOffices.FirstOrDefault(x => x.Code == returnResult.SaleOffice)?.Name ?? string.Empty;
+            //painterModel.TerritoryName = territories.FirstOrDefault(x => x.Code == returnResult.Territory)?.Code ?? string.Empty;
+            //painterModel.ZoneName = zones.FirstOrDefault(x => x.Code == returnResult.Zone)?.Code ?? string.Empty;
+            returnResult.TerritoryName = returnResult.Territory;
+            returnResult.ZoneName = returnResult.Zone;
+            returnResult.DealerOpeningStatusText = ((DealerOpeningStatus)returnResult.DealerOpeningStatus).ToString();
+            #endregion
+
+            return returnResult;
 
         }
 

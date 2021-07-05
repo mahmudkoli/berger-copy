@@ -1,20 +1,14 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Notification;
-using BergerMsfaApi.Services.DealerFocus.Implementation;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Notification.Interfaces;
-using BergerMsfaApi.Services.Setup.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Notification
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -28,7 +22,7 @@ namespace BergerMsfaApi.Controllers.Notification
             INotificationService notificationService)
         {
             _logger = logger;
-            this._notificationService = notificationService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("GetAllNotification")]

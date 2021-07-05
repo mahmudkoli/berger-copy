@@ -4,7 +4,7 @@ import { APIResponse } from 'src/app/Shared/Entity';
 import { DealerStatusExcelImportModel } from 'src/app/Shared/Entity/DealerInfo/DealerStatusExcel';
 import { EnumDealerStatusExcelImportType, EnumDealerStatusExcelImportTypeLabel } from 'src/app/Shared/Enums/dealer-info';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 
 @Component({
   selector: 'app-modal-excel-import-dealer-status',
@@ -25,7 +25,7 @@ export class ModalExcelImportDealerStatusComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private dealerService: FocusdealerService, 
+    private dealerService: FocusDealerService, 
     private alertService: AlertService
     ) { 
       

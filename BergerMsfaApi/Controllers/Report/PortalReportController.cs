@@ -1,19 +1,16 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Common;
-using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Models.Report;
-using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Report
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -24,11 +21,10 @@ namespace BergerMsfaApi.Controllers.Report
 
         public PortalReportController(
                 IPortalReportService portalReportService,
-                ICommonService commonService
-            )
+                ICommonService commonService)
         {
-            this._portalReportService = portalReportService;
-            this._commonService = commonService;
+            _portalReportService = portalReportService;
+            _commonService = commonService;
         }
 
         [HttpGet("GetLeadSummary")]
@@ -128,7 +124,6 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         #region Nasir
-
         [HttpGet("GetPainterRegistration")]
         public async Task<IActionResult> GetPainterRegistration([FromQuery] PainterRegistrationReportSearchModel query)
         {
@@ -711,11 +706,9 @@ namespace BergerMsfaApi.Controllers.Report
                 return BadRequest(ex);
             }
         }
-
         #endregion
 
         #region Os over 90 days Trend Report
-
         [HttpGet("OsOver90daysTrendReport")]
         public async Task<IActionResult> OsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
         {
@@ -745,7 +738,6 @@ namespace BergerMsfaApi.Controllers.Report
                 return BadRequest(ex);
             }
         }
-
         #endregion
     }
 }

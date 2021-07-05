@@ -390,3 +390,30 @@ export class StrikeRateKpiReportQuery extends ReportBaseQuery {
     clear() {
     }
 }
+
+export class BillingAnalysisKpiReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<BillingAnalysisKpiReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class CollectionPlanKpiReportQuery {
+    depot: string;
+    territory: string;
+
+    constructor(init?: Partial<CollectionPlanKpiReportQuery>) {
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

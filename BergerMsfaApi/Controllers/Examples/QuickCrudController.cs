@@ -8,28 +8,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Examples
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    //[JwtAuthorize]
-    //[ApiExplorerSettings(IgnoreApi = true)]
     public class QuickCrudController : BaseController
     {
         private readonly ICrudServicesAsync _service;
 
-        public QuickCrudController(ICrudServicesAsync service)
+        public QuickCrudController(
+            ICrudServicesAsync service)
         {
             _service = service;
         }
+
         [HttpGet("")]
         public async Task<IActionResult> Get()
         {
-
             try
             {
                 //var result = await _service.ReadSingleAsync()
                 return OkResult("result");
-
             }
             catch (Exception ex)
             {

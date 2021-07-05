@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.KPI.interfaces;
-using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.KPI
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -30,7 +29,7 @@ namespace BergerMsfaApi.Controllers.KPI
         {
             try
             {
-                var result = await _collectionPlanService.GetAllCollectionPlansAsync(query);
+                var result = await _collectionPlanService.GetAllCollectionPlansByCurrentUserAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)

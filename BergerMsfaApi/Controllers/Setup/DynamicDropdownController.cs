@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Setup;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Setup
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -15,11 +17,9 @@ namespace BergerMsfaApi.Controllers.Setup
     {
         private readonly ILogger<DynamicDropdownController> _logger;
         private readonly IDropdownService _dropdownService;
-        public DynamicDropdownController
-            (
-              ILogger<DynamicDropdownController> logger
-             , IDropdownService dropdownService
-            )
+        public DynamicDropdownController(
+              ILogger<DynamicDropdownController> logger, 
+              IDropdownService dropdownService)
         {
             _logger = logger;
             _dropdownService = dropdownService;
@@ -36,11 +36,9 @@ namespace BergerMsfaApi.Controllers.Setup
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpGet("GetDropdownListPaging")]
         public async Task<IActionResult> GetDropdownListPaging(int index,int pageSize)
@@ -52,7 +50,6 @@ namespace BergerMsfaApi.Controllers.Setup
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
@@ -60,7 +57,6 @@ namespace BergerMsfaApi.Controllers.Setup
         [HttpGet("GetDropdownById/{id}")]
         public async Task<IActionResult> GetDropdownById(int id)
         {
-
             try
             {
                 var result = await _dropdownService.GetDropdownById(id);
@@ -86,7 +82,6 @@ namespace BergerMsfaApi.Controllers.Setup
             }
         }
 
-
         [HttpGet("GetLastSquence/{id}/{typeId}")]
         public async Task<IActionResult> GetLastSquence(int id,int typeId)
         {
@@ -104,7 +99,6 @@ namespace BergerMsfaApi.Controllers.Setup
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] DropdownModel model)
         {
-
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
@@ -116,10 +110,10 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] DropdownModel model)
         {
-
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
@@ -127,18 +121,15 @@ namespace BergerMsfaApi.Controllers.Setup
                 {
                     ModelState.AddModelError(nameof(model), "Dropdown Not Found");
                     return ValidationResult(ModelState);
-                  
                 }
                 var result = await _dropdownService.UpdateAsync(model);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -159,11 +150,9 @@ namespace BergerMsfaApi.Controllers.Setup
             }
         }
 
-
         [HttpGet("GetDropdownByTypeCd/{typeCode}")]
         public async Task<IActionResult> GetDropdownByTypeCd(string typeCode)
         {
-
             try
             {
                 if (string.IsNullOrEmpty(typeCode))
@@ -179,10 +168,10 @@ namespace BergerMsfaApi.Controllers.Setup
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetDropdownByTypeId/{typeId}")]
         public async Task<IActionResult> GetDropdownByTypeId(int typeId)
         {
-
             try
             {
                 var result = await _dropdownService.GetDropdownByTypeId(typeId);

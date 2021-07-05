@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
+using Berger.Common.Constants;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -32,59 +35,77 @@ namespace BergerMsfaApi.Controllers.Common
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult OkResult(object data)
         {
             var apiResult = new ApiResponse
             {
-                StatusCode = 200,
+                StatusCode = (int)HttpStatusCode.OK,
                 Status = "Success",
                 Msg = "Successful",
                 Data = data
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult OkResult(object data, string message)
         {
             var apiResult = new ApiResponse
             {
-                StatusCode = 200,
+                StatusCode = (int)HttpStatusCode.OK,
                 Status = "Success",
                 Msg = message,
                 Data = data
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult ValidationResult(ModelStateDictionary modelState)
         {
+            var errors = modelState.GetErrors();
+            var isAppPlatform = IsAppPlatform();
             var apiResult = new ApiResponse
             {
-                StatusCode = 400,
+                StatusCode = (int)HttpStatusCode.BadRequest,
                 Status = "ValidationError",
-                Msg = "Validation Fail",
-                Errors = modelState.GetErrors()
+                Msg = isAppPlatform ? errors?.FirstOrDefault()?.ErrorList?.FirstOrDefault() ?? "Validation Fail" : "Validation Fail",
+                Errors = errors,
+                Data = isAppPlatform ? null : new object()
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult ExceptionResult(Exception ex, string msg = null)
         {
             ex.ToWriteLog();
             
             var apiResult = new ApiResponse
             {
-                StatusCode = 500,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Status = "Error",
                 Msg = msg ?? ex.Message,
-                Data = new object()
+                Data = IsAppPlatform() ? null : new object()
             };
             return ObjectResult(apiResult);
         }
+
         protected IActionResult ObjectResult(ApiResponse model)
         {
             var result = new ObjectResult(model)
             {
                 StatusCode = model.StatusCode
             };
+
+            if (IsAppPlatform())
+                result.StatusCode = (int)HttpStatusCode.OK;
+
             return result;
+        }
+
+        private bool IsAppPlatform()
+        {
+            var header = HttpContext.Request?.Headers[ConstantPlatformValue.PlatformHeaderName];
+            return (header.HasValue && header.Equals(ConstantPlatformValue.AppPlatformHeader));
         }
     }
 }

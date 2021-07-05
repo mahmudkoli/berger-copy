@@ -129,9 +129,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		switch(this.employeeRole) {
 			case EnumEmployeeRole.Admin:
 			case EnumEmployeeRole.GM:
-			case EnumEmployeeRole.DIC:
+			case EnumEmployeeRole.DSM:
 			case EnumEmployeeRole.RSM:
-			case EnumEmployeeRole.BIC:
+			case EnumEmployeeRole.BM_BSI:
 				conditionalRequiredOptions = [EnumSearchOption.Depot];
 				break;
 			case EnumEmployeeRole.AM:
@@ -316,9 +316,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		switch(this.employeeRole) {
 			case EnumEmployeeRole.Admin:
 			case EnumEmployeeRole.GM:
-			case EnumEmployeeRole.DIC:
+			case EnumEmployeeRole.DSM:
 			case EnumEmployeeRole.RSM:
-			case EnumEmployeeRole.BIC:
+			case EnumEmployeeRole.BM_BSI:
 				isRequired = searchOptionDef.searchOption==EnumSearchOption.Depot;
 				break;
 			case EnumEmployeeRole.AM:

@@ -4,7 +4,7 @@ import { EmailConfigForDealerSalesCall } from 'src/app/Shared/Entity/DealerSales
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { ActivityPermissionService, PermissionGroup } from 'src/app/Shared/Services/Activity-Permission/activity-permission.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 
 @Component({
   selector: 'app-email-config-list',

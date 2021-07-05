@@ -17,6 +17,7 @@ namespace BergerMsfaApi.Services.KPI.interfaces
 
         #region Collection Plan
         Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansAsync(QueryObjectModel query);
+        Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(QueryObjectModel query);
         Task<IList<CollectionPlanModel>> GetAllCollectionPlansAsync();
         Task<CollectionPlanModel> GetCollectionPlansByIdAsync(int id);
         Task<int> AddCollectionPlansAsync(SaveCollectionPlanModel model);
