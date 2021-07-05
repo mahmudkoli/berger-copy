@@ -301,11 +301,82 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return data;
         }
 
+        public async Task<List<MenuPermissionModel>> AssignEmpToMenuAsync(List<MenuPermissionModel> model, int empId,int type)
+        {
+            var result = new List<MenuPermission>();
+            var menuPermission = model.ToMap<MenuPermissionModel, MenuPermission>();
+
+            //Delete menu permissions
+            var existingMenuPermissions = await GetMenuPermissionsByEmp(empId, type);
+            var menuDeleteListModel = new List<MenuPermissionModel>();
+
+            foreach (var menuPerm in existingMenuPermissions)
+            {
+                if (!menuPermission.Any(mp => mp.Id == menuPerm.Id))
+                {
+                    menuDeleteListModel.Add(menuPerm);
+                }
+            }
+
+            var menuDeleteList = menuDeleteListModel.ToMap<MenuPermissionModel, MenuPermission>();
+            await _menuPermission.DeleteListAsync(menuDeleteList);
+
+            //Add/Update menu permissions            
+            var menuCreateList = new List<MenuPermission>();
+            var menuUpdateList = new List<MenuPermission>();
+            foreach (var item in menuPermission)
+            {
+                var menuPermissionEntity = new MenuPermission()
+                {
+                    Id = item.Id,
+                    MenuId = item.MenuId,
+                    Type = item.Type,
+                    EmpRoleId=item.EmpRoleId
+                };
+
+                if (item.Id == 0)
+                {
+                    menuCreateList.Add(menuPermissionEntity);
+                }
+                // else
+                // {
+                //     menuUpdateList.Add(menuPermissionEntity);
+                // }
+            }
+
+            if (menuCreateList.Count != 0)
+            {
+                var resultCreate = await _menuPermission.CreateListAsync(menuCreateList);
+                result.AddRange(resultCreate);
+            }
+            // if (menuUpdateList.Count != 0)
+            // {
+            //     var resultUpdate = await _menuPermission.UpdateListAsync(menuUpdateList);
+            //     result.AddRange(resultUpdate);
+            // }
+
+            var data = result.ToMap<MenuPermission, MenuPermissionModel>();
+            return data;
+        }
+
         public async Task<List<MenuPermissionModel>> GetMenuPermissionsByRoleId(int roleId)
         {
             try
             {
                 var result = await _menuPermission.FindAllAsync(mp => mp.RoleId == roleId);
+                return result.ToMap<MenuPermission, MenuPermissionModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<MenuPermissionModel>> GetMenuPermissionsByEmp(int empId,int type)
+        {
+            try
+            {
+                var result = await _menuPermission.FindAllAsync(mp => ((int)mp.EmpRoleId) == empId && ((int)mp.Type)==type);
                 return result.ToMap<MenuPermission, MenuPermissionModel>();
             }
             catch (Exception ex)

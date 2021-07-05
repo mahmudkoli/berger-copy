@@ -132,7 +132,7 @@ export class MenuPermissionsComponent implements OnInit {
   }
 
   assignRoleToMenu() {
-    this.menuService.assignRoleToMenu(this.updatedMenuPermissions, this.selectedRole).subscribe(
+    this.menuService.assignRoleToMenu(this.updatedMenuPermissions, this.selectedRole,this.type,this.empRoleId).subscribe(
       (res: any) => {
         this.alertService.tosterSuccess("Assigned role successfully.");
       },

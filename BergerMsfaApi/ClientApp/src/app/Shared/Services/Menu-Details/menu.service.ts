@@ -43,8 +43,8 @@ export class MenuService {
     return this.http.put(`${this.url}/update/`, model);
   }
 
-  public assignRoleToMenu(model: MenuPermission[], roleId) {    
-    return this.http.post<any>(`${this.url}/assignRoleToMenu/${roleId}`, model);
+  public assignRoleToMenu(model: MenuPermission[], roleId,type,emp) {    
+    return this.http.post<any>(`${this.url}/assignRoleToMenu/${roleId}/${type}/${emp}`, model);
   } 
 
   public getPermissionMenus(roleId) {    
