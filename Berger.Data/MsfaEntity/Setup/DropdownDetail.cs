@@ -6,8 +6,7 @@ namespace Berger.Data.MsfaEntity.Setup
 {
     public class DropdownDetail : AuditableEntity<int>
     {
-       
-       
+        public string DropdownCode { get; set; }
         public string DropdownName { get; set; }
         public string Description { get; set; }
         public int Sequence { get; set; }
