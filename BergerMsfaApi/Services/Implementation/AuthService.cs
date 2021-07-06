@@ -92,11 +92,16 @@ namespace BergerMsfaApi.Services.Implementation
                 var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
 
-                var plants = await _commonService.GetDepotList(x => userInfo.PlantIds != null && userInfo.PlantIds.Any(y => y == x.Werks));
-                var saleOffices = await _commonService.GetSaleOfficeList(x => userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any(y => y == x.Code));
-                var areas = await _commonService.GetSaleGroupList(x => userInfo.AreaIds != null && userInfo.AreaIds.Any(y => y == x.Code));
-                var territories = await _commonService.GetTerritoryList(x => userInfo.TerritoryIds != null && userInfo.TerritoryIds.Any(y => y == x.Code));
-                var zones = await _commonService.GetZoneList(x => userInfo.ZoneIds != null && userInfo.ZoneIds.Any(y => y == x.Code));
+                var plants = await _commonService.GetDepotList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
+                                                                    || (userInfo.PlantIds != null && userInfo.PlantIds.Any(y => y == x.Werks)));
+                var saleOffices = await _commonService.GetSaleOfficeList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
+                                                                    || (userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any(y => y == x.Code)));
+                var areas = await _commonService.GetSaleGroupList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
+                                                                    || (userInfo.AreaIds != null && userInfo.AreaIds.Any(y => y == x.Code)));
+                var territories = await _commonService.GetTerritoryList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
+                                                                    || (userInfo.TerritoryIds != null && userInfo.TerritoryIds.Any(y => y == x.Code)));
+                var zones = await _commonService.GetZoneList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
+                                                                    || (userInfo.ZoneIds != null && userInfo.ZoneIds.Any(y => y == x.Code)));
                 #endregion
 
                 var results = new AuthenticateUserModel()
