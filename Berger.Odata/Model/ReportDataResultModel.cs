@@ -21,15 +21,20 @@ namespace Berger.Odata.Model
     public class MySummaryReportResultModel
     {
         public int DealerVisitTarget { get; set; }
-        public int ActualVisited { get; set; }
-        public int SubDealerActuallyVisited { get; set; }
-        public int PainterActuallyVisited { get; set; }
-        public int AdHocVisitNo { get; set; }
+        public int DealerVisitActual { get; set; }
+        public int SubDealerVisitTarget { get; set; }
+        public int SubDealerVisitActual { get; set; }
+        public int AdHocDealerVisit { get; set; }
+        public int AdHocSubDealerVisit { get; set; }
+        public int NoOfBillingDealer { get; set; } // Division & Channel = 10
+        public int PainterCall { get; set; }
+        public int CollectionFromDealer { get; set; }
+        public int CollectionFromSubDealer { get; set; }
+        public int CollectionFromDirectProject { get; set; }
+        public int CollectionFromCustomer { get; set; }
         public int LeadGenerationNo { get; set; }
         public int LeadFollowupNo { get; set; }
-        public decimal LeadFollowupValue { get; set; }
-        public int NoOfBillingDealer { get; set; }
-        public decimal TotalCollectionValue { get; set; }
+        public decimal DGABusinessValue { get; set; }
     } 
 
     public class TotalInvoiceValueResultModel

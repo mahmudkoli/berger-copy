@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
@@ -60,12 +61,13 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("MySummaryReport")]
+        [ProducesResponseType(typeof(MySummaryReportResultModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> MySummaryReport()
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _oDataReportService.MySummaryReport(dealerIds);
+                var area = _authService.GetLoggedInUserArea();
+                var result = await _oDataReportService.MySummaryReport(area);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -75,12 +77,13 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("TotalInvoiceValue")]
+        [ProducesResponseType(typeof(IList<TotalInvoiceValueResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTotalInvoiceValue([FromQuery] TotalInvoiceValueSearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _salesDataService.GetReportTotalInvoiceValue(model, dealerIds);
+                var area = _authService.GetLoggedInUserArea();
+                var result = await _salesDataService.GetTotalInvoiceValue(model, area);
                 return OkResult(result);
             }
             catch (Exception ex)

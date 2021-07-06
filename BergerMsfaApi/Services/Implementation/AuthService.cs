@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
+using Berger.Common.Model;
 using BergerMsfaApi.Core;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
@@ -142,6 +143,20 @@ namespace BergerMsfaApi.Services.Implementation
         {
             var result = await _commonService.AppGetDealerInfoListByCurrentUser(userId);
             return result.Select(x => x.CustomerNo).Distinct().ToList();
+        }
+
+        public AreaSearchCommonModel GetLoggedInUserArea()
+        {
+            var result = new AreaSearchCommonModel();
+            var appUser = AppIdentity.AppUser;
+
+            result.Depots = appUser.PlantIdList;
+            result.SalesOffices = appUser.SalesOfficeIdList;
+            result.SalesGroups = appUser.SalesAreaIdList;
+            result.Territories = appUser.TerritoryIdList;
+            result.Zones = appUser.ZoneIdList;
+
+            return result;
         }
     }
 }

@@ -6,6 +6,8 @@ namespace Berger.Odata.Extensions
     public static class DateTimeExtension
     {
         public static string DateFormat(this DateTime date) => date.ToString("yyyy.MM.dd");
+        public static string SalesSearchDateFormat(this DateTime date) => date.ToString("dd.MM.yyyy");
+        public static string SalesResultDateFormat(this DateTime date) => date.ToString("yyyyMMdd");
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
