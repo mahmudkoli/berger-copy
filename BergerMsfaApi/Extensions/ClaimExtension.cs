@@ -115,14 +115,14 @@ namespace BergerMsfaApi.Extensions
                 Avatar = claims["Avatar"],
                 ActiveRoleId = Convert.ToInt32(claims["ActiveRoleId"]),
                 RoleIds = claims["RoleIds"],
-                //UserAgentInfo = claims["UserAgentInfo"],
-                //ActiveRoleName = claims["ActiveRoleName"],
-                //EmployeeRole = Convert.ToInt32(claims["EmployeeRole"]),
-                //PlantIds = claims["PlantIds"],
-                //SalesOfficeIds = claims["SalesOfficeIds"],
-                //SalesAreaIds = claims["SalesAreaIds"],
-                //TerritoryIds = claims["TerritoryIds"],
-                //ZoneIds = claims["ZoneIds"],
+                UserAgentInfo = claims["UserAgentInfo"],
+                ActiveRoleName = claims["ActiveRoleName"],
+                EmployeeRole = Convert.ToInt32(claims["EmployeeRole"]),
+                PlantIds = claims["PlantIds"],
+                SalesOfficeIds = claims["SalesOfficeIds"],
+                SalesAreaIds = claims["SalesAreaIds"],
+                TerritoryIds = claims["TerritoryIds"],
+                ZoneIds = claims["ZoneIds"],
             };
         }
     }

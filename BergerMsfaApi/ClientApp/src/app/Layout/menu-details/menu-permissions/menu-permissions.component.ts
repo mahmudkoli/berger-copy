@@ -49,7 +49,7 @@ export class MenuPermissionsComponent implements OnInit {
         if(this.type==EnumType.WebPortal){
           this.setCheckedToMenuNestedChildren(this.menuList);
         }
-        else if(this.type==EnumType.MobileApp || this.type==EnumType.Alart){
+        else if(this.type==EnumType.MobileApp || this.type==EnumType.Alert){
           this.setCheckedToMenuNestedChildrenByEmpId(this.menuList);
 
         }
@@ -160,22 +160,24 @@ export class MenuPermissionsComponent implements OnInit {
   }
   ChcekType(event){
     console.log("event: ", event);
-    if(this.type==0){
+    if(this.type==EnumType.WebPortal){
       this.getRoles();
     }
-    else{
+    else if(this.type==EnumType.MobileApp || this.type==EnumType.Alert){
+      this.empRoleId = this.empRole.length ? this.empRole[0].id : 0;
       this.getMenus()
     }
   }
 
   CheckEmp(){
+    console.log(this.empRoleId,this.type)
     this.getMenus();
   }
   setCheckedToMenuNestedChildrenByEmpId(arr) {
     //debugger;  
     // console.log("arr: ", arr);
     for (var i in arr) {
-      let hasPermission = arr[i].menuPermissions.length != 0 ? arr[i].menuPermissions.find(p => p.empRoleId == this.empRoleId && p.type==this.type) : null;
+      let hasPermission = arr[i].menuPermissions.length != 0 ? arr[i].menuPermissions.find(p => p.empRoleId == this.empRoleId) : null;
       let menuChecked = hasPermission != null ? "checked" : (arr[i].isParent ? "checked" : null);
       arr[i].menuChecked = menuChecked;
       // console.log("childArray: ", i, arr[i]);
@@ -193,7 +195,7 @@ export class MenuPermissionsComponent implements OnInit {
       }
 
       if (arr[i].children.length) {
-        this.setCheckedToMenuNestedChildren(arr[i].children);
+        this.setCheckedToMenuNestedChildrenByEmpId(arr[i].children);
       }
     }
   }

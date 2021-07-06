@@ -100,7 +100,7 @@ namespace BergerMsfaApi.Controllers.Menu
         {
             try
             {
-                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id);
+                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id, model.Type,model.ParentId);
                 if (isExist)
                 {
                     ModelState.AddModelError(nameof(model.Name), "Menu Already Exist");
@@ -126,7 +126,7 @@ namespace BergerMsfaApi.Controllers.Menu
         {
             try
             {
-                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id);
+                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id, model.Type, model.ParentId);
                 if (isExist)
                 {
                     ModelState.AddModelError(nameof(model.Name), "Menu Already Exist");
@@ -173,7 +173,7 @@ namespace BergerMsfaApi.Controllers.Menu
                     result = await _menu.AssignRoleToMenuAsync(model, roleId);
 
                 }
-                else if(type == (int)TypeEnum.MobileApp || type == (int)TypeEnum.Alart)
+                else if(type == (int)TypeEnum.MobileApp || type == (int)TypeEnum.Alert)
                 {
                     result = await _menu.AssignEmpToMenuAsync(model, emp, type);
 

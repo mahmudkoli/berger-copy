@@ -87,10 +87,10 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return result.ToMap<Menu, MenuModel>();
         }
 
-        public async Task<bool> IsMenuExistAsync(string menuNamde, int id)
+        public async Task<bool> IsMenuExistAsync(string menuNamde, int id, TypeEnum typeEnum,int parentId)
         {
             var result = id <= 0
-                ? await _menu.IsExistAsync(s => s.Name == menuNamde)
+                ? await _menu.IsExistAsync(s => s.Name == menuNamde && s.Type== typeEnum && s.ParentId== parentId)
                 : await _menu.IsExistAsync(s => s.Name == menuNamde && s.Id != id);
 
             return result;
@@ -305,9 +305,10 @@ namespace BergerMsfaApi.Services.Menus.Implementation
         {
             var result = new List<MenuPermission>();
             var menuPermission = model.ToMap<MenuPermissionModel, MenuPermission>();
-
+            EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), empId.ToString());
+            TypeEnum typeEnum = (TypeEnum)Enum.Parse(typeof(TypeEnum), type.ToString());
             //Delete menu permissions
-            var existingMenuPermissions = await GetMenuPermissionsByEmp(empId, type);
+            var existingMenuPermissions = await GetMenuPermissionsByEmp(employeeRole, typeEnum);
             var menuDeleteListModel = new List<MenuPermissionModel>();
 
             foreach (var menuPerm in existingMenuPermissions)
@@ -330,8 +331,8 @@ namespace BergerMsfaApi.Services.Menus.Implementation
                 {
                     Id = item.Id,
                     MenuId = item.MenuId,
-                    Type = item.Type,
-                    EmpRoleId=item.EmpRoleId
+                    Type = typeEnum,
+                    EmpRoleId= employeeRole
                 };
 
                 if (item.Id == 0)
@@ -372,11 +373,12 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             }
         }
 
-        public async Task<List<MenuPermissionModel>> GetMenuPermissionsByEmp(int empId,int type)
+        public async Task<List<MenuPermissionModel>> GetMenuPermissionsByEmp(EnumEmployeeRole employeeRole, TypeEnum typeEnum)
         {
             try
             {
-                var result = await _menuPermission.FindAllAsync(mp => ((int)mp.EmpRoleId) == empId && ((int)mp.Type)==type);
+                
+                var result = await _menuPermission.FindAllAsync(mp => mp.EmpRoleId == employeeRole && mp.Type== typeEnum);
                 return result.ToMap<MenuPermission, MenuPermissionModel>();
             }
             catch (Exception ex)

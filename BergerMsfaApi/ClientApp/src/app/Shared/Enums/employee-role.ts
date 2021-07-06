@@ -26,14 +26,14 @@ export class EnumEmployeeRoleLabel{
 
 export class EnumTypeLabel{
     public static EnumTypes :  MapObject[] = [
-        { id : 0, label : "WebPortal" },
-        { id : 1, label : "Mobile App" },
-        { id : 2, label : "Alart" },
+        { id : 0, label : "Web Portal Menu Permission" },
+        { id : 1, label : "Mobile App Menu Permission" },
+        { id : 2, label : "Mobile App Alert Permission" },
     ];
 }
 
 export enum EnumType {
     WebPortal = 0,
     MobileApp = 1,
-    Alart = 2
+    Alert = 2
 }
