@@ -11,6 +11,7 @@ using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.Interfaces;
+using BergerMsfaApi.Services.Menus.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -22,16 +23,18 @@ namespace BergerMsfaApi.Services.Implementation
     {
         private readonly TokensSettingsModel _settings;
         private readonly IUserInfoService _userService;
+        private readonly IMenuService _menuService;
         private readonly ICommonService _commonService;
 
         public AuthService(
             IOptions<TokensSettingsModel> settings,
             IUserInfoService user,
-            ICommonService commonService)
+            ICommonService commonService, IMenuService menuService)
         {
             _settings = settings.Value;
             _userService = user;
             _commonService = commonService;
+            _menuService = menuService;
         }
 
         public async Task<AuthenticateUserModel> GetJWTTokenByUserNameAsync(string userName)
@@ -39,6 +42,7 @@ namespace BergerMsfaApi.Services.Implementation
             try
             {
                 var userInfo = await _userService.GetUserByUserNameAsync(userName);
+                var empMenu =await _menuService.GetPermissionMenusByEmpRoleId((int)userInfo.EmployeeRole);
 
                 var userPrincipal = new AppUserPrincipal(userInfo.UserName)
                 {
@@ -128,6 +132,8 @@ namespace BergerMsfaApi.Services.Implementation
                     EmployeeRole = (int)userInfo.EmployeeRole,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
+                    AppMenuPermission = empMenu.ToList()
+
                 };
 
                 return results;

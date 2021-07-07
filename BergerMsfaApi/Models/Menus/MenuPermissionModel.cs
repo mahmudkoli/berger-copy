@@ -11,7 +11,7 @@ namespace BergerMsfaApi.Models.Menus
         public int? RoleId { get; set; }
         public int MenuId { get; set; }
         public TypeEnum Type { get; set; }
-        public EnumEmployeeRole EmpRoleId { get; set; }
+        public EnumEmployeeRole? EmpRoleId { get; set; }
 
         [ForeignKey("RoleId")]
         public RoleModel Role { get; set; }
