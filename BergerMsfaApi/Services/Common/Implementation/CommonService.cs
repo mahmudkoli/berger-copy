@@ -159,69 +159,69 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
             var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
-            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.PlantIdList.Contains(x.Werks)));
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesOfficeIdList.Contains(x.Code)));
-            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.TerritoryIdList.Contains(x.Code)));
-            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code)));
-            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
         {
             var result = await _saleGroupSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _territorySvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()

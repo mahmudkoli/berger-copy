@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Model;
 using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
@@ -24,5 +25,7 @@ namespace Berger.Odata.Services
         Task<int> NoOfBillingDealer(IList<string> dealerIds);
         Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands);
         Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones);
+        Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "");
+        Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area);
     }
 }
