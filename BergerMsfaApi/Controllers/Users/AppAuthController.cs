@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
@@ -35,6 +36,7 @@ namespace BergerMsfaApi.Controllers.Users
 
         [AllowAnonymous]
         [HttpPost("login")]
+        [ProducesResponseType(typeof(AuthenticateUserModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
