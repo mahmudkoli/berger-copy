@@ -91,7 +91,7 @@ namespace BergerMsfaApi.Services.Menus.Implementation
         {
             var result = id <= 0
                 ? await _menu.IsExistAsync(s => s.Name == menuNamde && s.Type== typeEnum && s.ParentId== parentId)
-                : await _menu.IsExistAsync(s => s.Name == menuNamde && s.Id != id);
+                : await _menu.IsExistAsync(s => s.Name == menuNamde && s.Id != id && s.Type== typeEnum && s.ParentId == parentId);
 
             return result;
         }
@@ -176,6 +176,9 @@ namespace BergerMsfaApi.Services.Menus.Implementation
                                 IsTitle = c.IsTitle,
                                 Sequence = c.Sequence,
                                 MenuPermissions = c.MenuPermissions,
+                                ActivityNavigationId=c.ActivityNavigationId,
+                                BackgroundColor=c.BackgroundColor,
+                                GroupCode=c.GroupCode,
                                 Children = GetChildren(data, c.Id)
                             })
                             .ToList();
@@ -200,7 +203,10 @@ namespace BergerMsfaApi.Services.Menus.Implementation
                         IsTitle = c.IsTitle,
                         Sequence = c.Sequence,
                         MenuPermissions = c.MenuPermissions,
-                        Code=c.Code,
+                        GroupCode=c.GroupCode,
+                        ActivityNavigationId=c.ActivityNavigationId,
+                        BackgroundColor=c.BackgroundColor,
+                        Type=c.Type,
                         Children = GetChildren(menus, c.Id)
                     })
                     .Distinct().ToList();
@@ -430,52 +436,17 @@ namespace BergerMsfaApi.Services.Menus.Implementation
 
             var result = _menuPermission.FindAllInclude(mp => mp.Type == type && mp.EmpRoleId== employeeRole, mp => mp.Menu).Select(x => x.Menu).ToList();
 
-            var allMenus = _menu.FindAll(c=>c.Type == type).ToList();
-
-            var data = result.ToMap<Menu, MenuModel>();
-            var allMenuData = allMenus.ToMap<Menu, MenuModel>();
-
-            data = GetParentMenu(allMenuData, data).Menus;
-
-            List<MenuModel> hierarchyMenuData = new List<MenuModel>();
-            hierarchyMenuData = data
-                            .Where(c => c.ParentId == 0).OrderBy(o => o.Sequence)
-                            .Select(c => new MenuModel()
-                            {
-                                Id = c.Id,
-                                Status = c.Status,
-                                Name = c.Name,
-                                Controller = c.Controller,
-                                Action = c.Action,
-                                Url = c.Url,
-                                IconClass = c.IconClass,
-                                ParentId = c.ParentId,
-                                IsParent = c.IsParent,
-                                IsTitle = c.IsTitle,
-                                Sequence = c.Sequence,
-                                Code=c.Code,
-                                MenuPermissions = c.MenuPermissions,
-                                Children = GetChildren(data, c.Id)
-                            })
-                            .ToList();
+            
             IList<MobileAppMenuPermissionModel> mobileAppMenuPermission = new List<MobileAppMenuPermissionModel>();
-
-            foreach (var item in hierarchyMenuData)
+            mobileAppMenuPermission = result.Select(p => new MobileAppMenuPermissionModel()
             {
-                MobileAppMenuPermissionModel mobileAppMenu = new MobileAppMenuPermissionModel();
-                mobileAppMenu.Title = item.Name;
-                mobileAppMenu.Sequence = item.Sequence;
-                mobileAppMenu.IconUrl = item.IconClass;
-                mobileAppMenu.Code = item.Code;
-                mobileAppMenu.Child=item.Children.Count>0? item.Children.Select(p => new Child()
-                {
-                    Title=p.Name,
-                    IconUrl=p.IconClass,
-                    Sequence=p.Sequence,
-                    Code=p.Code
-                }).ToList():null;
-                mobileAppMenuPermission.Add(mobileAppMenu);
-            }
+                Title=p.Name,
+                ActivityNavigationId=p.ActivityNavigationId,
+                BackgroundColor=p.BackgroundColor,
+                GroupCode=p.GroupCode,
+                IconUrl=p.IconClass,
+                Sequence=p.Sequence
+            }).ToList();
 
             return mobileAppMenuPermission;
         }

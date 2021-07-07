@@ -15,6 +15,8 @@ export class ModalMenuComponent implements OnInit {
 
   @Input() menuItem: Menu;
   @Input() type: number;
+  @Input() isEditMode: boolean;
+
 
   parentMenuList: Menu[] = [];
   enumStatus = Status;
@@ -27,7 +29,7 @@ export class ModalMenuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.menuItem);
+    console.log(this.menuItem,"menu");
     this.statusValues = Object.keys(this.enumStatus).filter(e => !isNaN(Number(e)));
     this.getActiveMenus();
   }
@@ -46,7 +48,6 @@ export class ModalMenuComponent implements OnInit {
   }
 
   create() {
-    this.menuItem.type=this.type;
     this.menuService.create(this.menuItem).subscribe(
       (res: any) => {
         console.log(res.data);
@@ -73,7 +74,7 @@ export class ModalMenuComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.menuItem);
+    this.menuItem.type=this.type;
     if (this.menuItem.id > 0) {
       this.update();
     }

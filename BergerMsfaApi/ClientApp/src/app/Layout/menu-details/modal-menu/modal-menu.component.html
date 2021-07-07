@@ -29,7 +29,7 @@
             </div>
         </div>
 <div *ngIf="type ==0">
-        <div class="form-row">
+        <!-- <div class="form-row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
                     <label for="controller">Controller Name</label>
@@ -45,7 +45,7 @@
                 </div>
             </div>
            
-        </div>
+        </div> -->
 
         <div class="form-row">
             <div class="col-md-6">
@@ -89,16 +89,46 @@
                 </div>
             </div>
         </div>
-        <div class="form-row" *ngIf="type!=0">
+        <div class="form-row" *ngIf="type==1">
             <div class="col-md-6">
                 <div class="position-relative form-group">
-                    <label for="menuName">Menu Code</label>
-                    <input class="form-control" type="text" placeholder="Menu code" id="code" name="code"
-                        [(ngModel)]="menuItem.code" required
+                    <label for="menuName">Group Code</label>
+                    <input  class="form-control" type="text" placeholder="Group Code" id="groupCode" name="groupCode"
+                        [(ngModel)]="menuItem.groupCode" required
                         />
                     <!-- <small class="text-danger" [class.d-none]="code.valid || code.untouched">
                         Title is required
                     </small> -->
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="menuName">Activity Navigation Id</label>
+                    <input class="form-control"
+                     type="text" placeholder="Activity Navigation Id" id="activityNavigationId" name="activityNavigationId"
+                        [(ngModel)]="menuItem.activityNavigationId" required
+                        />
+                    <!-- <small class="text-danger" [class.d-none]="code.valid || code.untouched">
+                        Title is required
+                    </small> -->
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="menuName">Background Color</label>
+                    <input class="form-control" type="text" placeholder="Background Color" id="backgroundColor" name="backgroundColor"
+                        [(ngModel)]="menuItem.backgroundColor"
+                        />
+                    <!-- <small class="text-danger" [class.d-none]="code.valid || code.untouched">
+                        Title is required
+                    </small> -->
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="iconClass">Icon Url</label>
+                    <input class="form-control" type="text" placeholder="Icon Url" id="iconClass"
+                        name="iconClass" [(ngModel)]="menuItem.iconClass" />
                 </div>
             </div>
         </div>

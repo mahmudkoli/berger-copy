@@ -10,11 +10,12 @@ namespace BergerMsfaApi.Models.Menus
  
         public string Title { get; set; }
         public int Sequence { get; set; }
-        public string Code { get; set; }
+        public string GroupCode { get; set; }
         public string IconUrl { get; set; }
         public string ActivityNavigationId { get; set; }
-        public string backgroundColor { get; set; }
-        
+        public string BackgroundColor { get; set; }
+
+
 
     }
 }

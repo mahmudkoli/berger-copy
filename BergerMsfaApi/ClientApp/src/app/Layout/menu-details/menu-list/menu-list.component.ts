@@ -21,6 +21,7 @@ export class MenuListComponent implements OnInit {
   tosterMsgDltSuccess: string = "Successfully Deleted";
   types: MapObject[] = EnumTypeLabel.EnumTypes;
   typeId:number;
+  isEditMode:boolean = false;
 
 
   constructor(
@@ -62,9 +63,15 @@ export class MenuListComponent implements OnInit {
       backdrop: 'static',
       keyboard: false
     };
+    if(menu.id>0){
+      this.isEditMode=true;
+    }
     const modalRef = this.modalService.open(ModalMenuComponent, ngbModalOptions);
     modalRef.componentInstance.menuItem = menu ? menu : new Menu();
     modalRef.componentInstance.type=this.typeId;
+    modalRef.componentInstance.isEditMode=this.isEditMode;
+
+    
 
     modalRef.result.then((result) => {
       console.log(result);

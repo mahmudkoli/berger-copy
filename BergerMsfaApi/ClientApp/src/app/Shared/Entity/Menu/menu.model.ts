@@ -11,7 +11,11 @@ export class Menu {
     public sequence: number = 0;
     public menuPermissions: [] = [];
     public type:number =0;
-    public code:string = '';
+    public groupCode:string = '';
+    public backgroundColor:string = '';
+    public activityNavigationId:string = '';
+
+
     
     public isMapped: boolean = false;
     public hasParentOnCreateNew: boolean = false;
