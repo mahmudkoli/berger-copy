@@ -14,6 +14,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Sync;
 using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore;
@@ -208,6 +209,12 @@ namespace Berger.Data.MsfaEntity
         #region Collection Plan
         public DbSet<CollectionConfig> CollectionConfigs { get; set; }
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
+        #endregion
+
+        #region Sync
+
+        public DbSet<SyncDailySalesLog> SyncDailySalesLogs { get; set; }
+
         #endregion
     }
 }
