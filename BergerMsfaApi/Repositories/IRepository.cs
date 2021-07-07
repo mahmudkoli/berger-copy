@@ -97,6 +97,8 @@ namespace BergerMsfaApi.Repositories
         Task<int> SaveChangesAsync();
         #endregion
 
+        Task<List<TEntity>> BulkInsert(List<TEntity> items);
+
         IQueryable<TEntity> GetAllIncludeStrFormat(Expression<Func<TEntity, bool>> filter = null,
                     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                                                             string includeProperties = null,
