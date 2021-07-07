@@ -62,11 +62,29 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Implementation
                 merchandisingSnapShot.ImageUrl = await _fileUploadService.SaveImageAsync(model.ImageUrl, fileName, FileUploadCode.MerchandisingSnapShot, 1200, 800);
             }
 
-            merchandisingSnapShot.CreatedTime = DateTime.Now;
+            #region check existing data and update
+            var existingData = await _merchandisingSnapShotRepository.FindAsync(x => x.CreatedTime.Date == DateTime.Now
+                                                    && merchandisingSnapShot.DealerId == x.DealerId
+                                                    && merchandisingSnapShot.UserId == x.UserId
+                                                    && merchandisingSnapShot.MerchandisingSnapShotCategoryId == x.MerchandisingSnapShotCategoryId);
 
-            var result = await _merchandisingSnapShotRepository.CreateAsync(merchandisingSnapShot);
+            var id = 0;
+            if (existingData == null)
+            {
+                var result = await _merchandisingSnapShotRepository.CreateAsync(merchandisingSnapShot);
+                id = result.Id;
+            }
+            else
+            {
+                existingData.ImageUrl = merchandisingSnapShot.ImageUrl;
+                existingData.Remarks = merchandisingSnapShot.Remarks;
+                existingData.OthersSnapShotCategoryName = merchandisingSnapShot.OthersSnapShotCategoryName;
+                var result = await _merchandisingSnapShotRepository.UpdateAsync(existingData);
+                id = result.Id;
+            }
+            #endregion
 
-            return result.Id;
+            return id;
         }
 
         public async Task<bool> AddRangeAsync(List<SaveMerchandisingSnapShotModel> models)
@@ -132,6 +150,22 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Implementation
                             );
 
             var modelResult = _mapper.Map<IList<AppMerchandisingSnapShotModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<IList<AppMerchandisingSnapShotLogModel>> GetAppMerchandisingSnapShotListByCurrentUser(int dealerId)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var result = await _merchandisingSnapShotRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserId == userId && x.DealerId == dealerId,
+                                x => x.OrderByDescending(o => o.CreatedTime),
+                                x => x.Include(i => i.MerchandisingSnapShotCategory),
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<AppMerchandisingSnapShotLogModel>>(result);
 
             return modelResult;
         }

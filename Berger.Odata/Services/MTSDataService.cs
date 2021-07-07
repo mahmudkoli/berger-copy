@@ -308,7 +308,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<int> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue)
+        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<string> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue, EnumMyTargetBrandType brandType)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
@@ -318,6 +318,7 @@ namespace Berger.Odata.Services
                     selectQueryBuilder.AddProperty(DataColumnDef.MTS_Territory);
                     break;
                 case MyTargetReportType.ZoneWiseTarget:
+                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Territory);
                     selectQueryBuilder.AddProperty(DataColumnDef.MTS_Zone);
                     break;
                 case MyTargetReportType.BrandWise:
@@ -329,6 +330,12 @@ namespace Berger.Odata.Services
                 : DataColumnDef.MTS_TargetValue);
 
             string compareDate = date.ToString("yyyy.MM");
+
+            var mtsBrands = new List<string>();
+            if (targetReportType == MyTargetReportType.BrandWise && EnumMyTargetBrandType.MTS_Brands == brandType)
+            {
+                mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
 
             return await _odataService.GetMtsDataByMultipleCustomerAndDivision(selectQueryBuilder,dealerIds, compareDate, division);
         }

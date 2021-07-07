@@ -225,11 +225,13 @@ namespace BergerMsfaApi.Services.Users.Implementation
             finalResult.ZoneIds = zoneIds;
             finalResult.RoleIds = roleIds;
 
-            var userRoleMapping = await _userRoleMappingRepo.FindAsync(u => u.UserInfoId == id);
+            //var userRoleMapping = await _userRoleMappingRepo.FindAsync(u => u.UserInfoId == id);
+            var userRoleMapping = await _userRoleMappingRepo.FindAllInclude(u => u.UserInfoId == result.Id, i => i.Role).FirstOrDefaultAsync();
 
             if (userRoleMapping != null)
             {
                 finalResult.RoleId = userRoleMapping.RoleId;
+                finalResult.RoleName = userRoleMapping.Role?.Name;
             }
 
             return finalResult;
@@ -253,6 +255,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
             finalResult.AreaIds = areaIds;
             finalResult.TerritoryIds = territoryIds;
             finalResult.ZoneIds = zoneIds;
+            finalResult.RoleIds = roleIds;
 
             var userRoleMapping = await _userRoleMappingRepo.FindAllInclude(u => u.UserInfoId == result.Id, i=> i.Role).FirstOrDefaultAsync();
 

@@ -133,7 +133,8 @@ namespace BergerMsfaApi.Services.Workers
                 foreach (var leadFollowUp in leadFollowUps)
                 {
                     var title = $"Today you have lead follow up.";
-                    var body = $"Lead follow up - Territory: {leadFollowUp.Territory}, Zone: {leadFollowUp.Zone}, " +
+                    var body = $"Lead follow up - Depot: {leadFollowUp.Depot}, Territory: {leadFollowUp.Territory}, " +
+                        $"Zone: {leadFollowUp.Zone}, Code: {leadFollowUp.Code}, " +
                         $"Project Name: {leadFollowUp.ProjectName}, Project Address: {leadFollowUp.ProjectAddress}";
 
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
@@ -150,7 +151,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCheckBounceNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCheckBounceNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -176,7 +177,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCreditLimitCrossNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCreditLimitCrossNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -203,7 +204,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendPaymentFollowUpNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendPaymentFollowUpNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {
@@ -240,7 +241,7 @@ namespace BergerMsfaApi.Services.Workers
             }
         }
 
-        private async Task SendCustomerOccasionNotification(int userId, string fcmToken, List<int> dealerIds)
+        private async Task SendCustomerOccasionNotification(int userId, string fcmToken, List<string> dealerIds)
         {
             try
             {

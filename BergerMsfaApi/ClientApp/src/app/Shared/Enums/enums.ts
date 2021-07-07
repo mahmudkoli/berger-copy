@@ -3,13 +3,13 @@ import { MapObject } from './mapObject';
 export class Enums {
     
 
-    public static WorkflowType :  MapObject[] = [{ id : 0, label : "Workflow For POSM" },
+    // public static WorkflowType :  MapObject[] = [{ id : 0, label : "Workflow For POSM" },
 
-    { id : 1, label : "Workflow For CM Task" },
-    { id : 2, label : "Workflow For FMD" },
-    { id : 3, label : "Workflow For User" }
+    // { id : 1, label : "Workflow For CM Task" },
+    // { id : 2, label : "Workflow For FMD" },
+    // { id : 3, label : "Workflow For User" }
     
-    ];
+    // ];
 
     // public static workflowStatusType : MapObject[] = [{ id : 0, label : "In active" },
 
@@ -21,14 +21,25 @@ export class Enums {
     // ];
 
 
-    public static hierarchyType : MapObject[] = [
+    // public static hierarchyType : MapObject[] = [
 
-    { id : 1, label : "National" },
-    { id : 2, label : "Region" },
-    { id : 3, label : "Area" },
-    { id : 4, label : "Territory" }
+    // { id : 1, label : "National" },
+    // { id : 2, label : "Region" },
+    // { id : 3, label : "Area" },
+    // { id : 4, label : "Territory" }
     
-    ];
+    // ];
+
+    public static valueVolumeResultType : MapObject[] = [
+        { id : 1, label : "Value" },
+        { id : 2, label : "Volume" },
+    ]
+
+    public static customerClassificationType : MapObject[] = [
+        { id : 1, label : "All" },
+        { id : 2, label : "Exclusive" },
+        { id : 3, label : "NonExclusive" },
+    ]
 
 
     constructor() {

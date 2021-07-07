@@ -1,14 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { SaveSchemeMaster, SchemeMaster } from '../../../Shared/Entity/Scheme/SchemeMaster';
-import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { SaveSchemeMaster, SchemeMaster } from '../../../Shared/Entity/Scheme/SchemeMaster';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 
 @Component({
     selector: 'app-schememaster-add',
@@ -16,12 +14,12 @@ import { finalize } from 'rxjs/operators';
     styleUrls: ['./schememaster-add.component.css']
 })
 export class SchememasterAddComponent implements OnInit, OnDestroy {
-
+	plants:[]
 	schemeMaster: SchemeMaster;
 	schemeMasterForm: FormGroup;
 	// actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
-	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
-	
+	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload;
+
 	private subscriptions: Subscription[] = [];
 
 	constructor(private activatedRoute: ActivatedRoute,
@@ -35,7 +33,6 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
-			console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
 				this.schemeMasterService.getSchemeMasterById(id)
@@ -53,6 +50,12 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 			}
 		});
 		this.subscriptions.push(routeSubscription);
+
+		this.commonService.getDepotList().subscribe((p) => {
+            this.plants = p.data;
+
+
+        }), (err: any) => console.log(err);
 	}
 
 	ngOnDestroy() {
@@ -67,6 +70,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		this.schemeMasterForm = this.formBuilder.group({
 			schemeName: [this.schemeMaster.schemeName, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
 			condition: [this.schemeMaster.condition],
+			businessArea: [this.schemeMaster.businessArea],
 			// status: [this.schemeMaster.status, [Validators.required]]
 		});
 	}
@@ -100,8 +104,9 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		_schemeMaster.id = this.schemeMaster.id;
 		_schemeMaster.schemeName = controls['schemeName'].value;
 		_schemeMaster.condition = controls['condition'].value;
+		_schemeMaster.businessArea = controls['businessArea'].value;
 		// _schemeMaster.status = controls['status'].value;
-			
+
 		return _schemeMaster;
 	}
 
@@ -110,7 +115,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		const createSubscription = this.schemeMasterService.createSchemeMaster(_schemeMaster)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`New Scheme Master has been added successfully.`);
+				this.alertService.tosterSuccess(`New Scheme Category has been added successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -124,7 +129,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		const updateSubscription = this.schemeMasterService.updateSchemeMaster(_schemeMaster)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`Scheme Master has been saved successfully.`);
+				this.alertService.tosterSuccess(`Scheme Category has been saved successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -134,12 +139,12 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create Scheme Master';
+		let result = 'Create Scheme Category';
 		if (!this.schemeMaster || !this.schemeMaster.id) {
 			return result;
 		}
 
-		result = `Edit Scheme Master - ${this.schemeMaster.schemeName}`;
+		result = `Edit Scheme Category - ${this.schemeMaster.schemeName}`;
 		return result;
 	}
 
@@ -153,7 +158,6 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 
 	private throwError(errorDetails: any) {
 		// this.alertService.fnLoading(false);
-		console.log("error", errorDetails);
 		let errList = errorDetails.error.errors;
 		if (errList.length) {
 			console.log("error", errList, errList[0].errorList[0]);

@@ -1,22 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class CommonController : BaseController
     {
         private readonly ICommonService _commonSvc;
+        private readonly IBrandService _brandService;
 
         public CommonController(
-            ICommonService commonSvc)
+            ICommonService commonSvc, 
+            IBrandService brandService)
         {
             _commonSvc = commonSvc;
+            _brandService = brandService;
         }
 
         [HttpGet("GetDealList")]
@@ -131,12 +139,26 @@ namespace BergerMsfaApi.Controllers.Common
             }
         }
 
-        [HttpGet("GetUserInfoListByLoggedInManager")]
-        public async Task<IActionResult> GetUserInfoListByLoggedInManager()
+        [HttpGet("GetUserInfoListByCurrentUser")]
+        public async Task<IActionResult> GetUserInfoListByCurrentUser()
         {
             try
             {
-                var result = await _commonSvc.GetUserInfoListByLoggedInManager();
+                var result = await _commonSvc.GetUserInfoListByCurrentUser();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUserInfoListByCurrentUserWithoutZoUser")]
+        public async Task<IActionResult> GetUserInfoListByCurrentUserWithoutZoUser()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByCurrentUserWithoutZoUser();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -194,6 +216,88 @@ namespace BergerMsfaApi.Controllers.Common
             {
                 var result = _commonSvc.GetYearList();
                 return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetBrandDropDown")]
+        public async Task<IActionResult> GetBrandDropDown()
+        {
+            try
+            {
+                var result = await _brandService.GetBrandFamilyDropDownAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetMaterialGroupOrBrand")]
+        public async Task<IActionResult> GetMaterialGroupOrBrand()
+        {
+            try
+            {
+                var result = await _brandService.GetBrandDropDownAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetActivitySummaryDropDown")]
+        public IActionResult GetActivitySummaryDropDown()
+        {
+            try
+            {
+                var list = new List<KeyValuePairObjectModel>
+                {
+                    new KeyValuePairObjectModel()
+                    {
+                        Text = "JOURNEY PLAN",
+                        Value = "JOURNEY PLAN"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "SALES CALL- SUB DEALER",
+                        Value = "SALES CALL- SUB DEALER"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "SALES CALL- DIRECT DEALER",
+                        Value = "SALES CALL- DIRECT DEALER"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "PAINTER CALL",
+                        Value = "PAINTER CALL"
+                    },
+                    new KeyValuePairObjectModel()
+                    {
+                        Text = "PAINTER REGISTRATION",
+                        Value = "PAINTER REGISTRATION"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "AD HOC VISIT IN DEALERS POINT",
+                        Value = "AD HOC VISIT IN DEALERS POINT"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "LEAD GENERATION",
+                        Value = "LEAD GENERATION"
+                    },   new KeyValuePairObjectModel()
+                    {
+                        Text = "LEAD FOLLOWUP",
+                        Value = "LEAD FOLLOWUP"
+                    }, new KeyValuePairObjectModel()
+                    {
+                        Text = "TOTAL COLLECTION VALUE",
+                        Value = "TOTAL COLLECTION VALUE"
+                    },
+                }.OrderBy(x => x.Text).ToList();
+                return OkResult(list);
             }
             catch (Exception ex)
             {

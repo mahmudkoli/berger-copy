@@ -1,15 +1,13 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Berger.Common.Enumerations;
 using Berger.Data.Common;
-
 
 namespace Berger.Data.MsfaEntity.SAPTables
 {
     public class DealerInfo : AuditableEntity<int>
     {
-        public int CustomerNo { get; set; }
-        public int Division { get; set; }
+        public string CustomerNo { get; set; }
+        public string Division { get; set; }
         public string SalesOffice { get; set; }
         public string SalesGroup { get; set; } // Area
         public string DayLimit { get; set; }
@@ -23,29 +21,20 @@ namespace Berger.Data.MsfaEntity.SAPTables
         public string AccountGroup { get; set; }
         public string Territory { get; set; }
         public string CreditControlArea { get; set; }
+        public string CreatedOn { get; set; }
+        public string CustomerGroup { get; set; }
+        public string District { get; set; }
+        public string PriceGroup { get; set; }
+        public string SalesOrg { get; set; }
+        public string Channel { get; set; }
+        public string CustomerClasification { get; set; }
 
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public bool IsExclusive { get; set; }
-        public bool IsCBInstalled { get; set; }
         public bool IsLastYearAppointed { get; set; }
-        public bool IsClubSupreme { get; set; }
         public bool IsAP { get; set; }
-
-        //[NotMapped]
-        public string CreatedOn { get; set; }
-        //[NotMapped]
-        public string CustomerGroup { get; set; }
-        //[NotMapped]
-        public string District { get; set; }
-        //[NotMapped]
-        public string PriceGroup { get; set; }
-        //[NotMapped]
-        public string SalesOrg { get; set; }
-        //[NotMapped]
-        public string Channel { get; set; }
-        //[NotMapped]
-        public string CustomerClasification { get; set; }
+        public EnumClubSupreme ClubSupremeType { get; set; }
 
         private string compositeKey;
         [NotMapped] 

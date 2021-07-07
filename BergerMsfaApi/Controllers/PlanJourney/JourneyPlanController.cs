@@ -1,7 +1,7 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.JourneyPlan;
 using BergerMsfaApi.Services.Setup.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,38 +9,39 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BergerMsfaApi.Controllers.Journey
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-
     public class JourneyPlanController : BaseController
     {
         private readonly IJourneyPlanService _journeyService;
-        public JourneyPlanController(IJourneyPlanService journeyService) => _journeyService = journeyService;
+
+        public JourneyPlanController(
+            IJourneyPlanService journeyService) 
+        { 
+            _journeyService = journeyService; 
+        }
 
         [HttpGet("GetJourneyPlanList")]
         public async Task<IActionResult> GetJourneyPlanList()
         {
             try
             {
-         
                 var result = await _journeyService.GetJourneyPlanDetail();
                 return OkResult(result);
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpGet("GetJourneyPlanListPaging/{index}/{pageSize}")]
         public async Task<IActionResult> GetJourneyPlanListPaging([BindRequired] int index, int pageSize, string search)
         {
             try
             {
-             
                 var result = await _journeyService.PortalGetJourneyPlanDeailPage(index,pageSize, search);
                 return OkResult(result);
             }
@@ -49,7 +50,6 @@ namespace BergerMsfaApi.Controllers.Journey
                 return ExceptionResult(ex);
             }
         }
-
 
         [HttpGet("GetLineManagerJourneyPlanDetail/{index}/{pageSize}")]
         public async Task<IActionResult> GetJourneyPlanDetailForLineManager(int index,int pageSize,string search)
@@ -61,7 +61,6 @@ namespace BergerMsfaApi.Controllers.Journey
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
@@ -90,7 +89,6 @@ namespace BergerMsfaApi.Controllers.Journey
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
@@ -113,7 +111,6 @@ namespace BergerMsfaApi.Controllers.Journey
         [HttpPost("CreateJourneyPlan")]
         public async Task<IActionResult> CreateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
-
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
@@ -135,14 +132,11 @@ namespace BergerMsfaApi.Controllers.Journey
         [HttpPut("UpdateJourneyPlan")]
         public async Task<IActionResult> UpdateJourneyPlan([FromBody] PortalCreateJouneryModel model)
         {
-
             try
             {
-             
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _journeyService.PortalUpdateJourneyPlan(model);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {
@@ -153,7 +147,6 @@ namespace BergerMsfaApi.Controllers.Journey
         [HttpDelete("DeleteJourneyPlan/{PlanId}")]
         public async Task<IActionResult> DeleteJourneyPlan(int PlanId)
         {
-
             try
             {
                if(!await _journeyService.IsExistAsync(PlanId))
@@ -163,7 +156,6 @@ namespace BergerMsfaApi.Controllers.Journey
                 }
                 var result = await _journeyService.DeleteJourneyAsync(PlanId);
                 return OkResult(result);
-
             }
             catch (Exception ex)
             {

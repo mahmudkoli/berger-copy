@@ -1,13 +1,13 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SchemeMaster, SchemeMasterQuery } from 'src/app/Shared/Entity/Scheme/SchemeMaster';
-import { of, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
+import { SchemeMaster, SchemeMasterQuery } from 'src/app/Shared/Entity/Scheme/SchemeMaster';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 
 @Component({
     selector: 'app-schememaster-list',
@@ -76,7 +76,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 		this.query = new SchemeMasterQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'title',
+			sortBy: 'schemeName',
 			isSortAscending: true,
 			globalSearchValue: ''
 		});
@@ -98,14 +98,14 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 	}
 
 	deleteSchemeMaster(id) {
-		this.alertService.confirm("Are you sure want to delete this Scheme Master?",
+		this.alertService.confirm("Are you sure want to delete this Scheme Category?",
 			() => {
 				this.alertService.fnLoading(true);
 				const deleteSubscription = this.schemeMasterService.deleteSchemeMaster(id)
 					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 					.subscribe((res: any) => {
 						console.log('res from del func', res);
-						this.alertService.tosterSuccess("Scheme Master has been deleted successfully.");
+						this.alertService.tosterSuccess("Scheme Category has been deleted successfully.");
 						this.loadSchemeMastersPage();
 					},
 						(error) => {
@@ -120,11 +120,12 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 	public ptableSettings: IPTableSetting = {
 		tableID: "schemeMasters-table",
 		tableClass: "table table-border ",
-		tableName: 'Scheme Master List',
+		tableName: 'Scheme Category List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Scheme Name', width: '50%', internalName: 'schemeName', sort: true, type: "" },
-			{ headerName: 'Condition', width: '50%', internalName: 'condition', sort: false, type: "" },
+			{ headerName: 'Business Area', width: '30%', internalName: 'businessAreaName', sort: false, type: "" },
+			{ headerName: 'Condition', width: '20%', internalName: 'condition', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -135,7 +136,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
 		enabledDataLength: true,
-		newRecordButtonText: 'New Scheme Master'
+		newRecordButtonText: 'New Scheme Category'
 	};
 
 	public fnCustomTrigger(event) {
@@ -151,7 +152,7 @@ export class SchememasterListComponent implements OnInit, OnDestroy {
 			this.deleteSchemeMaster(event.record.id);
 		}
 	}
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new SchemeMasterQuery({

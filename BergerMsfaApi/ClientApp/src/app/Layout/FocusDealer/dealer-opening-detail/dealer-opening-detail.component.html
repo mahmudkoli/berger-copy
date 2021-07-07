@@ -1,35 +1,47 @@
-
+<div *ngIf="dealerOpen">
         <div class="table-header">
             <div class="row">
               
                     <div class="col-sm-6">
-                        <p> <label>Business Area :{{dealerOpen.businessArea}}</label> </p>
+                        <p> <label>Code : {{dealerOpen.code}}</label> </p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <p> <label>Business Area : {{dealerOpen.businessAreaName + ' ('+ dealerOpen.businessArea + ')'}}</label> </p>
                     </div>
 
                     <div class="col-md-6">
-                        <p> <label>Sale Office :{{dealerOpen.saleOffice}}</label> </p>
+                        <p> <label>Sale Office : {{dealerOpen.saleOfficeName + ' ('+ dealerOpen.saleOffice + ')'}}</label> </p>
                     </div>
 
                     <div class="col-md-6">
-                        <p> <label>Territory :{{dealerOpen.territoryNo}}</label> </p>
+                        <p> <label>Territory : {{dealerOpen.territory}}</label> </p>
                     </div>
 
                     <div class="col-md-6">
-                        <p> <label>Sale Group :{{dealerOpen.saleGroup}}</label> </p>
+                        <p> <label>Sale Group : {{dealerOpen.saleGroupName + ' ('+ dealerOpen.saleGroup + ')'}}</label> </p>
                     </div>
 
                     <div class="col-md-6">
-                        <p> <label>Zone :{{dealerOpen.zone}}</label> </p>
+                        <p> <label>Zone : {{dealerOpen.zone}}</label> </p>
                     </div>
 
                     <div class="col-md-6">
-                        <p> <label>Employee Id :{{dealerOpen.employeeId}}</label> </p>
+                        <p> <label>Employee Id : {{dealerOpen.employeeId}}</label> </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p> <label>Status : {{dealerOpen.dealerOpeningStatusText}}</label> </p>
+                    </div>
+
+                    <div class="col-md-6" *ngIf="dealerOpen.comment">
+                        <p> <label>Comment : {{dealerOpen.comment}}</label> </p>
                     </div>
 
                     
 
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="dealerOpen.dealerOpeningStatus!=1 && dealerOpen.dealerOpeningStatus!=3">
                     <div class="col-md-3">
                         <button *ngIf="dealerOpen" (click)="onStatusChange(1,dealerOpen)" class="btn btn-sm btn-primary">Approve</button>
                         <button *ngIf="dealerOpen" (click)="onStatusChange(3,dealerOpen)" class="btn btn-sm btn-danger ml-2">Reject</button>
@@ -110,9 +122,10 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
     </ng-template>
 </p-table>
 </div>
 
+<button class="btn mt-2 mb-2 btn-sm btn-primary" type="button" (click)="back()">Back To List</button>
 <!--{{dealerOpen|json}}-->
+</div>

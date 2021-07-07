@@ -122,7 +122,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportOutstandingSummaryResultModel>> GetReportOutstandingSummary(IList<int> dealerIds)
+        public async Task<IList<ReportOutstandingSummaryResultModel>> GetReportOutstandingSummary(IList<string> dealerIds)
         {
             //var currentDate = DateTime.Now;
             //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
@@ -191,7 +191,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportOSOver90DaysResultModel>> GetReportOSOver90Days(OSOver90DaysSearchModel model, IList<int> dealerIds)
+        public async Task<IList<ReportOSOver90DaysResultModel>> GetReportOSOver90Days(OSOver90DaysSearchModel model, IList<string> dealerIds)
         {
             var currentDate = DateTime.Now;
             var fmDate = currentDate.AddMonths(-3);
@@ -225,7 +225,7 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDateFM, toDateTM, model.CreditControlArea)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId, fromDateFM, toDateTM, model.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
                     dataAll.AddRange(dataSingle);
@@ -266,7 +266,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<int> dealerIds)
+        public async Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<string> dealerIds)
         {
             //var currentDate = DateTime.Now;
             //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
@@ -361,7 +361,7 @@ namespace Berger.Odata.Services
         //    return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         //}
 
-        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(int dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "")
+        public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(string dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "")
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
@@ -372,12 +372,50 @@ namespace Berger.Odata.Services
                             .AddProperty(FinancialColDef.CreditControlArea)
                             .AddProperty(FinancialColDef.Age);
 
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(),
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId,
                 fromDate.DateTimeFormat(), toDate.DateTimeFormat(), creditControlArea: creditControlArea)).ToList();
 
             return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).ToList();
         }
 
+        public async Task<IList<FinancialDataModel>> GetCustomerSlippageAmount(IList<string> dealerIds, DateTime endDate)
+        {
+            var endDateStr = endDate.DateTimeFormat();
+            
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.Amount)
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age);
 
+            #region data call by single customer
+            var data = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId, endDate: endDateStr)).ToList();
+                if (dataSingle.Any())
+                {
+                    data.AddRange(dataSingle);
+                }
+            }
+            #endregion
+
+            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
+        }
+
+        public async Task<(bool HasOS, bool HasSlippage)> CheckCustomerOSSlippage(string dealerId)
+        {
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Age);
+
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId)).ToList();
+
+            var hasOS = data.Any();
+            var hasSlippage = data.Any(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit));
+            
+            return (hasOS, hasSlippage);
+        }
     }
 }

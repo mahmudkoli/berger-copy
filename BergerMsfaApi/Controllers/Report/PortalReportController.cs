@@ -1,19 +1,16 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Common;
-using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Models.Report;
-using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Report
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -24,11 +21,10 @@ namespace BergerMsfaApi.Controllers.Report
 
         public PortalReportController(
                 IPortalReportService portalReportService,
-                ICommonService commonService
-            )
+                ICommonService commonService)
         {
-            this._portalReportService = portalReportService;
-            this._commonService = commonService;
+            _portalReportService = portalReportService;
+            _commonService = commonService;
         }
 
         [HttpGet("GetLeadSummary")]
@@ -128,7 +124,6 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         #region Nasir
-
         [HttpGet("GetPainterRegistration")]
         public async Task<IActionResult> GetPainterRegistration([FromQuery] PainterRegistrationReportSearchModel query)
         {
@@ -452,6 +447,76 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetAddhocDealerSalesCall")]
+        public async Task<IActionResult> GetAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadAddhocDealerSalesCall")]
+        public async Task<IActionResult> DownloadAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(DealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(DealerSalesCallReportResultModel.SchemeModalityImage));
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetAddhocSubDealerSalesCall")]
+        public async Task<IActionResult> GetAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadAddhocSubDealerSalesCall")]
+        public async Task<IActionResult> DownloadAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+
+                _commonService.SetEmptyString(result.Items.ToList(),
+                    nameof(SubDealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
+                    nameof(SubDealerSalesCallReportResultModel.SchemeModalityImage));
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet("GetDealerIssue")]
         public async Task<IActionResult> GetDealerIssue([FromQuery] DealerIssueReportSearchModel query)
         {
@@ -641,11 +706,9 @@ namespace BergerMsfaApi.Controllers.Report
                 return BadRequest(ex);
             }
         }
-
         #endregion
 
         #region Os over 90 days Trend Report
-
         [HttpGet("OsOver90daysTrendReport")]
         public async Task<IActionResult> OsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
         {
@@ -675,7 +738,6 @@ namespace BergerMsfaApi.Controllers.Report
                 return BadRequest(ex);
             }
         }
-
         #endregion
     }
 }

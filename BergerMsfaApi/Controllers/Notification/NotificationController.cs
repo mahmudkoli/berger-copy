@@ -1,17 +1,16 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Notification;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.Setup.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Notification
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -20,9 +19,11 @@ namespace BergerMsfaApi.Controllers.Notification
         private readonly ILogger<NotificationController> _logger;
         private readonly IJourneyPlanService _journeyPlanService;
         private readonly IDealerOpeningService _dealerOpeningService;
-        //private readonly IMenuService _menu;
-        //private readonly IMenuService _menu;
-        public NotificationController(ILogger<NotificationController> logger, IJourneyPlanService journeyPlanService, IDealerOpeningService dealerOpeningService)
+
+        public NotificationController(
+            ILogger<NotificationController> logger, 
+            IJourneyPlanService journeyPlanService, 
+            IDealerOpeningService dealerOpeningService)
         {
             _logger = logger;
             _journeyPlanService = journeyPlanService;
@@ -47,8 +48,7 @@ namespace BergerMsfaApi.Controllers.Notification
                             id=item.Id,
                             Status=item.PlanStatusInText,
                             VisitDate=item.PlanDate
-                        }
-                        );
+                        });
                 }
 
                 var dealeropening = await _dealerOpeningService.GetDealerOpeningPendingListForNotificationAsync();
@@ -67,8 +67,7 @@ namespace BergerMsfaApi.Controllers.Notification
                                 SaleOffice = item.SaleOffice,
                                 Territory = item.Territory,
                                 Zone = item.Zone
-                            }
-                            );
+                            });
                     }
                 }
                 

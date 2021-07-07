@@ -26,7 +26,7 @@ const routes: Routes = [
             { path: 'setup', loadChildren: () => import('./setup/setup.module').then(m => m.SetupModule) },
             { path: 'collection', loadChildren: () => import('./Collection-Entry/collectionEntry.module').then(m => m.CollectionEntryModule) },
             { path: 'journey-plan', loadChildren: () => import('./JourneyPlan/journeyPlan.module').then(m => m.JourneyPlanModule) },
-            { path: 'dealer', loadChildren: () => import('./FocusDealer/focusDealer.module').then(m => m.FocusDealerModule) },
+            { path: 'dealer', loadChildren: () => import('./FocusDealer/focus-dealer.module').then(m => m.FocusDealerModule) },
             { path: 'painter', loadChildren: () => import('./PainterRegis/painter-regis.module').then(m => m.PainterRegisModule) },
             { path: 'scheme', loadChildren: () => import('./Scheme/scheme.module').then(m => m.SchemeModule) },
             { path: 'tinting', loadChildren: () => import('./Tinting/tintingmachine.module').then(m => m.TintingmachineModule) },
@@ -36,7 +36,7 @@ const routes: Routes = [
             { path: 'lead', loadChildren: () => import('./demand-generation/lead.module').then(m => m.LeadModule) },
             { path: 'report', loadChildren: () => import('./report/report.module').then(m => m.ReportModule) },
             { path: 'access-denied', loadChildren: () => import('./access-denied/access-denied.module').then(m => m.AccessDeniedModule) },
-
+            { path: 'collection-plan', loadChildren: () => import('./CollectionPlan/collection-plan.module').then(m => m.CollectionPlanModule) },
         ]
     }
 ];

@@ -22,14 +22,15 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
         public async Task<int> UserLoggedInLogEntryAsync(int userId, string fcmToken)
         {
-            var loginLog = await this.UserLoggedOutLogEntryAsync(userId);
+            var logoutLog = await this.UserLoggedOutLogEntryAsync(userId);
 
             var entity = new LoginLog()
             {
                 UserId = userId,
                 FCMToken = fcmToken,
                 IsLoggedIn = true,
-                LoggedInTime = DateTime.Now
+                LoggedInTime = DateTime.Now,
+                LoggedOutTime = DateTime.Now
             };
 
             var result = await _loginLogRepo.CreateAsync(entity);
@@ -39,17 +40,19 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
         public async Task<bool> UserLoggedOutLogEntryAsync(int userId)
         {
-            var result = await _loginLogRepo.GetFirstOrDefaultIncludeAsync(x => x,
-                            x => x.UserId == userId, 
+            var result = await _loginLogRepo.GetAllIncludeAsync(x => x,
+                            x => x.UserId == userId && x.IsLoggedIn, 
                             x => x.OrderByDescending(o => o.LoggedInTime), 
                             null, true);
 
-            if (result != null)
+            if (result.Any())
             {
-                result.IsLoggedIn = false;
-                result.LoggedOutTime = DateTime.Now;
+                foreach (var item in result)
+                {
+                    item.IsLoggedIn = false;
+                }
 
-                await _loginLogRepo.UpdateAsync(result);
+                var returnResult = await _loginLogRepo.UpdateListAsync(result.ToList());
             }
 
             return true;
@@ -57,15 +60,35 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
         public async Task<IList<LoginLog>> GetAllLoggedInUsersAsync()
         {
-            var result = await _loginLogRepo.GetAllIncludeAsync(
-                                   x => x,
-                                   x => x.IsLoggedIn,
-                                   null,
-                                   null,
-                                   true
-                               );
+            //var result = await _loginLogRepo.GetAllIncludeAsync(
+            //                       x => x,
+            //                       x => x.IsLoggedIn,
+            //                       null,
+            //                       null,
+            //                       true
+            //                   );
 
-            return result;
+            //return result;
+            return new List<LoginLog>();
+        }
+
+        public async Task<bool> UserActivityAsync(int? userIdp = null, string fcmToken = null)
+        {
+            var userId = userIdp ?? AppIdentity.AppUser.UserId;
+            var currentDate = DateTime.Now;
+
+            var result = new LoginLog
+            {
+                UserId = userId,
+                FCMToken = fcmToken,
+                IsLoggedIn = true,
+                LoggedInTime = currentDate,
+                LoggedOutTime = currentDate
+            };
+
+            await _loginLogRepo.CreateAsync(result);
+
+            return true;
         }
     }
 }

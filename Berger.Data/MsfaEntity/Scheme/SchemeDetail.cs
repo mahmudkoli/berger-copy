@@ -1,4 +1,5 @@
-﻿using Berger.Data.Common;
+﻿using System;
+using Berger.Data.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Berger.Data.MsfaEntity.Scheme
@@ -23,7 +24,8 @@ namespace Berger.Data.MsfaEntity.Scheme
 
         //Common
         public string Benefit { get; set; }
-
+        public DateTime BenefitStartDate { get; set; }
+        public DateTime? BenefitEndDate { get; set; }
         public int SchemeMasterId { get; set; }
         [ForeignKey("SchemeMasterId")]
         public SchemeMaster SchemeMaster { get; set; }

@@ -15,4 +15,16 @@ namespace BergerMsfaApi.Models.Common
             this.PageSize = int.MaxValue;
         }
     }
+
+
+    public class BrandQueryObjectModel : QueryObjectModel
+    {
+        public BrandQueryObjectModel()
+        {
+            Brands ??= new string[] { };
+            MatrialCodes ??= new string[] { };
+        }
+        public string[] Brands { get; set; }
+        public string[] MatrialCodes { get; set; }
+    }
 }

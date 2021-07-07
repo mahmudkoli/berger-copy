@@ -99,7 +99,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		tableName: 'Lead List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'User Full Name', width: '20%', internalName: 'userFullName', sort: true, type: "" },
+			{ headerName: 'Employee Name', width: '20%', internalName: 'userFullName', sort: true, type: "" },
 			{ headerName: 'Depot', width: '10%', internalName: 'depot', sort: false, type: "" },
 			{ headerName: 'Territory', width: '10%', internalName: 'territory', sort: false, type: "" },
 			{ headerName: 'Zone', width: '10%', internalName: 'zone', sort: false, type: "" },

@@ -69,7 +69,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 		});
 		this.subscriptions.push(routeSubscription);
 
-		this.addLeadFollowUpDeleteBtn();
+		this.ptableSettings.enabledDeleteBtn = this.authService.isAdmin;
 	}
 
 	
@@ -96,7 +96,7 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 			{ headerName: 'Key Contact Person Mobile', width: '10%', internalName: 'keyContactPersonMobile', sort: false, type: "" },
 			{ headerName: 'Paint Contractor Name', width: '10%', internalName: 'paintContractorName', sort: false, type: "" },
 			{ headerName: 'Paint Contractor Mobile', width: '10%', internalName: 'paintContractorMobile', sort: false, type: "" },
-			{ headerName: 'Expected Value', width: '10%', internalName: 'expectedValue', sort: false, type: "" },
+			{ headerName: 'Expected Value', width: '10%', internalName: 'expectedValue', sort: false, type: "text", displayType: 'number-format-color-fraction' },
 			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" },
 			
 		],
@@ -190,16 +190,5 @@ export class LeadDetailsComponent implements OnInit, OnDestroy {
 				console.log(reason);
 			}
 		);
-	}
-
-	private addLeadFollowUpDeleteBtn() {
-		this.userRole = this.authService.currentUserValue.roleName;
-		//console.log("Role: " + userRole);
-		if (this.userRole == "Admin") {
-			this.ptableSettings.enabledDeleteBtn = true;
-			//this.ptableSettings.tableColDef.push(
-			//	{ headerName: '', width: '10%', internalName: 'deleteBtnText', className: 'deleteBtnClass', sort: false, type: "dynamic-button", onClick: 'true', innerBtnIcon: "deleteBtnIcon" }
-			//);
-		}
 	}
 }

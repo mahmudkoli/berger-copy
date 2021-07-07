@@ -1,8 +1,8 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Tinting;
 using BergerMsfaApi.Services.Tinting.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Tinting
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -17,11 +18,9 @@ namespace BergerMsfaApi.Controllers.Tinting
     {
         private readonly ILogger<AppTintingMachineController> _logger;
         private readonly ITintiningService _tintiningService;
-        public AppTintingMachineController
-            (
+        public AppTintingMachineController(
             ILogger<AppTintingMachineController> logger,
-            ITintiningService tintiningService
-            )
+            ITintiningService tintiningService)
         {
             _tintiningService = tintiningService;
             _logger = logger;
@@ -51,9 +50,23 @@ namespace BergerMsfaApi.Controllers.Tinting
                 var result = await _tintiningService.UpdateAsync(model);
                 return OkResult(result);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                return ExceptionResult(ex);
+            }
+        }
 
+        [HttpGet("GetAllTintingMachineList")]
+        public async Task<IActionResult> GetTintingMachineList([FromQuery] AppTintingMachineSearchModel query)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _tintiningService.GetAllAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
                 return ExceptionResult(ex);
             }
         }

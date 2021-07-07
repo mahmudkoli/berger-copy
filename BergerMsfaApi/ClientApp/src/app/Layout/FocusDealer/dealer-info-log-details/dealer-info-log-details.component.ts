@@ -7,7 +7,7 @@ import { BrandService } from 'src/app/Shared/Services/Brand/brand.service';
 import { Subscription, of } from 'rxjs';
 import { IPTableSetting } from '../../../Shared/Modules/p-table';
 import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { FocusdealerService } from '../../../Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from '../../../Shared/Services/FocusDealer/focus-dealer.service';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	
 	constructor(
 		private router: Router,
-		private dealerService: FocusdealerService,
+		private dealerService: FocusDealerService,
 		private alertService: AlertService,
 		private activatedRoute: ActivatedRoute,
 		private commonService: CommonService,
@@ -33,6 +33,8 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	id: any;
 	customerNo: any;
 	customerName: any;
+	contactNo: any;
+	address: any;
 	division: any;
 	businessArea: any;
 	salesOffice: any;
@@ -68,6 +70,8 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 				this.dealerInfoLogs.forEach(obj => {
 					this.customerNo = obj.customerNo;
 					this.customerName = obj.customerName;
+					this.contactNo = obj.contactNo;
+					this.address = obj.address;
 					this.division = obj.division;
 					this.businessArea = obj.businessArea;
 					this.salesOffice = obj.salesOffice;
@@ -89,7 +93,7 @@ export class DealerInfoLogDetailsComponent implements OnInit {
 	//}
 
 	public backToTheList() {
-		this.router.navigate(['/dealer/dealerList']);
+		this.router.navigate(['/dealer/dealer-list']);
 	}
 	public ptableSettings: IPTableSetting = {
 		tableID: "dealers-table",

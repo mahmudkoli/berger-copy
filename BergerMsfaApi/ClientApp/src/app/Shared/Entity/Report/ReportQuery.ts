@@ -1,16 +1,14 @@
-﻿import { EnumEmployeeRole } from '../../Enums/employee-role';
-import { QueryObject } from '../Common/query-object';
+﻿import { QueryObject } from '../Common/query-object';
 
 export class ReportBaseQuery extends QueryObject {
-    depotId: string;
-    employeeRole: EnumEmployeeRole;
+    depot: string;
     salesGroups: string[];
     territories: string[];
     zones: string[];
     userId: number;
     fromDate: Date;
     toDate: Date;
-    
+
     constructor(init?: Partial<ReportBaseQuery>) {
         super();
         Object.assign(this, init);
@@ -21,7 +19,7 @@ export class ReportBaseQuery extends QueryObject {
 }
 
 export class LeadSummaryQuery extends ReportBaseQuery {
-    
+
     constructor(init?: Partial<LeadSummaryQuery>) {
         super();
         Object.assign(this, init);
@@ -63,7 +61,7 @@ export class PainterRegisterQuery extends ReportBaseQuery {
     painterId: number;
     painterType: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<PainterRegisterQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -73,7 +71,7 @@ export class PainterRegisterQuery extends ReportBaseQuery {
 }
 
 export class DealerOpeningQuery extends ReportBaseQuery {
-    
+
     constructor(init?: Partial<DealerOpeningQuery>) {
         super();
         Object.assign(this, init);
@@ -84,11 +82,11 @@ export class DealerOpeningQuery extends ReportBaseQuery {
 }
 
 export class CollectionReportQuery extends ReportBaseQuery {
-    
+
     paymentMethodId: number;
     dealerId: number;
 
-    constructor(init?: Partial<DealerOpeningQuery>) {
+    constructor(init?: Partial<CollectionReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -101,7 +99,7 @@ export class PaintersCallReportQuery extends ReportBaseQuery {
     painterId: number;
     painterType: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<PaintersCallReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -115,7 +113,7 @@ export class DealerVisitReportQuery extends ReportBaseQuery {
     month: number;
     year: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<DealerVisitReportQuery>) {
         super();
         Object.assign(this, init);
         this.month = new Date().getUTCMonth() + 1,
@@ -129,7 +127,7 @@ export class DealerVisitReportQuery extends ReportBaseQuery {
 export class DealerSalesCallReportQuery extends ReportBaseQuery {
     dealerId: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<DealerSalesCallReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -141,7 +139,7 @@ export class DealerSalesCallReportQuery extends ReportBaseQuery {
 export class SubDealerSalesCallReportQuery extends ReportBaseQuery {
     subDealerId: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<SubDealerSalesCallReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -153,7 +151,7 @@ export class SubDealerSalesCallReportQuery extends ReportBaseQuery {
 export class DealerIssueReportQuery extends ReportBaseQuery {
     dealerId: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<DealerIssueReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -165,7 +163,7 @@ export class DealerIssueReportQuery extends ReportBaseQuery {
 export class SubDealerIssueReportQuery extends ReportBaseQuery {
     subDealerId: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<SubDealerIssueReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -179,7 +177,7 @@ export class TintingMachineReportQuery extends ReportBaseQuery {
     month: number;
     year: number;
 
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    constructor(init?: Partial<TintingMachineReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -192,8 +190,8 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
     dealerId: number;
     month: number;
     year: number;
-
-    constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
+    activitySummary:string;
+    constructor(init?: Partial<ActiveSummeryReportQuery>) {
         super();
         Object.assign(this, init);
     }
@@ -205,9 +203,15 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
 export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
     creditControlArea: number;
     dealerId: number;
+    fromMonth:any;
+	fromYear:any;
+	toMonth:any;
+	toYear:any;
 
-    
-    
+    constructor(init?: Partial<OSOver90DaysTrendReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
 
     clear() {
     }
@@ -221,6 +225,14 @@ export class MtsValueTargetAchivementReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+
+    constructor(init?: Partial<MtsValueTargetAchivementReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 
@@ -230,6 +242,14 @@ export class BillingDealerQuarterlyGrowthReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+
+    constructor(init?: Partial<BillingDealerQuarterlyGrowthReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 
@@ -239,6 +259,14 @@ export class EnamelPaintsQuarterlyGrowthReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+
+    constructor(init?: Partial<EnamelPaintsQuarterlyGrowthReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class PremiumBrandsGrowthReportQuery extends ReportBaseQuery {
@@ -247,6 +275,14 @@ export class PremiumBrandsGrowthReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+
+    constructor(init?: Partial<PremiumBrandsGrowthReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
@@ -255,11 +291,19 @@ export class PremiumBrandsContributionReportQuery extends ReportBaseQuery {
 	fromYear:any;
 	toMonth:any;
 	toYear:any;
+
+    constructor(init?: Partial<PremiumBrandsContributionReportQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
 }
 
 export class SnapShotReportQuery extends ReportBaseQuery {
     dealerId: number;
-    
+
     constructor(init?: Partial<SnapShotReportQuery>) {
         super();
         Object.assign(this, init);
@@ -271,9 +315,102 @@ export class SnapShotReportQuery extends ReportBaseQuery {
 
 export class LogInReportQuery extends ReportBaseQuery {
     status: number;
-    
-    constructor(init?: Partial<SnapShotReportQuery>) {
+
+    constructor(init?: Partial<LogInReportQuery>) {
         super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class TerritoryTargetAchivementQuery extends ReportBaseQuery {
+
+    constructor(init?: Partial<TerritoryTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
+    customerNo: string;
+
+    constructor(init?: Partial<DealerWiseTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
+    resultType: number;
+
+    constructor(init?: Partial<ProductWiseTargetAchivementQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
+export class BusinessCallAnalysisReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<BusinessCallAnalysisReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class StrikeRateKpiReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+    reportType: number;
+
+    constructor(init?: Partial<StrikeRateKpiReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class BillingAnalysisKpiReportQuery extends ReportBaseQuery {
+    month: number;
+    year: number;
+
+    constructor(init?: Partial<BillingAnalysisKpiReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.month = new Date().getUTCMonth() + 1,
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
+export class CollectionPlanKpiReportQuery {
+    depot: string;
+    territory: string;
+
+    constructor(init?: Partial<CollectionPlanKpiReportQuery>) {
         Object.assign(this, init);
     }
 

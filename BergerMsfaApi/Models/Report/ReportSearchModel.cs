@@ -10,9 +10,7 @@ namespace BergerMsfaApi.Models.Report
 {
     public class ReportBaseSearchModel : QueryObjectModel
     {
-        public string DepotId { get; set; }
-        //public string DepotName { get; set; }
-        public EnumEmployeeRole? EmployeeRole { get; set; }
+        public string Depot { get; set; }
         public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
@@ -66,6 +64,7 @@ namespace BergerMsfaApi.Models.Report
 
     public class ActiveSummeryReportSearchModel : ReportBaseSearchModel
     {
+        public string ActivitySummary { get; set; }
 
     }
 
@@ -111,8 +110,12 @@ namespace BergerMsfaApi.Models.Report
     {
         public int? DealerId { get; set; }
         public string CreditControlArea { get; set; }
-        public string AccountGroup { get; set; }
-        public string SalesOffice { get; set; }
+        //public string AccountGroup { get; set; }
+        //public string SalesOffice { get; set; }
+        public int FromMonth { get; set; }
+        public int FromYear { get; set; }
+        public int ToMonth { get; set; }
+        public int ToYear { get; set; }
     }
 
     public class MerchendizingSnapShotReportSearchModel : ReportBaseSearchModel

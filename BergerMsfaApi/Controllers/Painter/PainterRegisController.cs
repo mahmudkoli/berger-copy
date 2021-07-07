@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -6,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.PainterRegistration
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v1:apiVersion}/[controller]")]
-    public class PainterRegisController:BaseController
+    public class PainterRegisController : BaseController
     {
         private readonly IPainterRegistrationService _painterSvc;
+
         public PainterRegisController(
             IPainterRegistrationService painterSvc)
         {
@@ -31,6 +34,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
                 return ExceptionResult(ex);
             }
         }
+
         [HttpGet("GetPainterById/{Id}")]
         public async Task<IActionResult> GetPainterById(int Id)
         {

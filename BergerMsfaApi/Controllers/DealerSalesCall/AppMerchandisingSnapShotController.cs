@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.MerchandisingSnapShot;
-using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.MerchandisingSnapShot.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,53 +18,24 @@ namespace BergerMsfaApi.Controllers.MerchandisingSnapShot
         private readonly IMerchandisingSnapShotService _merchandisingSnapShotService;
 
         public AppMerchandisingSnapShotController(
-                IMerchandisingSnapShotService merchandisingSnapShotService
-            )
+            IMerchandisingSnapShotService merchandisingSnapShotService)
         {
             this._merchandisingSnapShotService = merchandisingSnapShotService;
         }
 
-        //[HttpGet("GetAllByUserId/{id}")]
-        //public async Task<IActionResult> GetAllByUserId(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _merchandisingSnapShotService.GetAllByUserIdAsync(id);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
-
-        //[HttpGet("GetMerchandisingSnapShotByDealerId/{id}")]
-        //public async Task<IActionResult> GetMerchandisingSnapShotByDealerId(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _merchandisingSnapShotService.GetMerchandisingSnapShotByDealerIdAsync(id);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
-
-        //[HttpGet("GetMerchandisingSnapShotListByDealerIds")]
-        //public async Task<IActionResult> GetMerchandisingSnapShotListByDealerIds([FromQuery] IList<int> ids)
-        //{
-        //    try
-        //    {
-        //        var result = await _merchandisingSnapShotService.GetMerchandisingSnapShotListByDealerIdsAsync(ids);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
+        [HttpGet("MerchandisingSnapShotList")]
+        public async Task<IActionResult> GetMerchandisingSnapShotList([FromQuery] int dealerId)
+        {
+            try
+            {
+                var result = await _merchandisingSnapShotService.GetAppMerchandisingSnapShotListByCurrentUser(dealerId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
         [HttpPost("CreateMerchandisingSnapShot")]
         public async Task<IActionResult> CreateMerchandisingSnapShot([FromBody] SaveMerchandisingSnapShotModel model)

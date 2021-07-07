@@ -208,7 +208,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     PainterId = _painterCall.PainterId,
                     WorkInHandNumber = _painterCall.WorkInHandNumber,
                     PainterCompanyMTDValue = (from c in result
-                                              join m in _painterCompanyMtvSvc.GetAll()
+                                              join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == _painterCall.PainterId)
                                               on new { a = c.Id, b =_painterCall.Id  } equals new { a = m.CompanyId, b = m.PainterCallId } into comLeftJoin
                                               from coms in comLeftJoin.DefaultIfEmpty()
                                               select new PainterCompanyMTDValueModel
@@ -257,7 +257,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             {
                 PainterId = PainterId,
                 PainterCompanyMTDValue = (from c in result
-                                          join m in _painterCompanyMtvSvc.GetAll()
+                                          join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == PainterId)
                                           on new { a = c.Id } equals new { a = m.CompanyId } into comLeftJoin
                                           from coms in comLeftJoin.DefaultIfEmpty()
                                           select new PainterCompanyMTDValueModel

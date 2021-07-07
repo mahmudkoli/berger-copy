@@ -8,6 +8,7 @@ export class ReportService {
   public baseUrl: string;
   public reportsEndpoint: string;
   public quaterlyReportEndpoint: string;
+  public kpiReportEndpoint: string;
 
   constructor(
     private http: HttpClient,
@@ -18,6 +19,7 @@ export class ReportService {
     this.baseUrl = baseUrl + 'api/';
     this.reportsEndpoint = this.baseUrl + 'v1/PortalReport';
     this.quaterlyReportEndpoint = this.baseUrl + 'v1/PortalQuartPerformReport';
+    this.kpiReportEndpoint = this.baseUrl + 'v1/KpiReport';
   }
 
   getLeadSummary(filter?) {
@@ -389,5 +391,130 @@ export class ReportService {
     }/DownloadLogInReport?${this.commonService.toQueryString(filter)}`;
   }
   
+  getTerritoryTargetAchivement(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetTerritoryTargetAchivement?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public DownloadTerritoryTargetAchivement(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadTerritoryTargetAchivement?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getDealerWiseTargetAchivement(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetDealerWiseTargetAchivement?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public DownloadDealerWiseTargetAchivement(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadDealerWiseTargetAchivement?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getProductWiseTargetAchivement(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetProductWiseTargetAchivement?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public DownloadProductWiseTargetAchivement(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadProductWiseTargetAchivement?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getBusinessCallAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetBusinessCallAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadBusinessCallAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadBusinessCallAnalysis?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getStrikeRateOnBusinessCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadStrikeRateOnBusinessCall(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getBillingAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetBillingAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadBillingAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadBillingAnalysis?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getFinancialCollectionPlan(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetFinancialCollectionPlan?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadFinancialCollectionPlan(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadFinancialCollectionPlan?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getAddhocDealerSalesCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetAddhocDealerSalesCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadAddhocDealerSalesCall(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadAddhocDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+  }
+
+  getAddhocSubDealerSalesCall(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetAddhocSubDealerSalesCall?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadAddhocSubDealerSalesCall(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadAddhocSubDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+  }
 
 }

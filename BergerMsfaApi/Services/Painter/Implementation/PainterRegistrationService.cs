@@ -104,6 +104,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     painter => painter
                                       .Include(i => i.Attachments)
                                       .Include(i => i.AttachedDealers)
+                                      .Include(i => i.PainterCat)
                                       .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue).ThenInclude(i=>i.Company),
 
                     true
@@ -163,7 +164,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             foreach (var id in painterModel.AttachedDealers)
             {
                 var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
-                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails.CustomerName, CustomerNo = dealerDetails.CustomerNo });
+                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails?.CustomerName??string.Empty, CustomerNo = dealerDetails?.CustomerNo??string.Empty });
                 
             }
 
@@ -171,14 +172,52 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             // foreach (var item in painterCallList)
             //painterModel.PainterCallList.Add(item); //(PainterCall.ToMap<Attachment, AttachmentModel>()
 
+            #region get area mapping data
+            var depots = (await _depotSvc.FindAllAsync(x => painterModel.Depot == x.Werks));
+            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => painterModel.SaleGroup == x.Code));
+            //var territories = (await _territorySvc.FindAllAsync(x => painterModel.Territory == x.Code));
+            //var zones = (await _zoneSvc.FindAllAsync(x => painterModel.Zone == x.Code));
+
+            painterModel.DepotName = depots.FirstOrDefault(x => x.Werks == painterModel.Depot)?.Name1 ?? string.Empty;
+            painterModel.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == painterModel.SaleGroup)?.Name ?? string.Empty;
+            //painterModel.TerritoryName = territories.FirstOrDefault(x => x.Code == painterModel.Territory)?.Code ?? string.Empty;
+            //painterModel.ZoneName = zones.FirstOrDefault(x => x.Code == painterModel.Zone)?.Code ?? string.Empty;
+            painterModel.TerritoryName = painterModel.Territory;
+            painterModel.ZoneName = painterModel.Zone;
+            #endregion
+
             return painterModel;
         }
 
         public async Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search)
         {
-            var result = (await _painterSvc.GetAllAsync()).ToMap<Painter, PainterModel>();
+            var result = (await _painterSvc.GetAllAsync()).OrderBy(x => x.PainterName).ToMap<Painter, PainterModel>();
+
             if (!string.IsNullOrEmpty(search))
                 result = result.Search(search);
+
+            #region get area mapping data
+            var depotIds = result.Select(x => x.Depot).Distinct().ToList();
+            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
+            //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
+            //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
+
+            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
+            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
+            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
+
+            foreach (var item in result)
+            {
+                item.DepotName = depots.FirstOrDefault(x => x.Werks == item.Depot)?.Name1 ?? string.Empty;
+                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
+                //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
+                //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
+                item.TerritoryName = item.Territory;
+                item.ZoneName = item.Zone;
+            }
+            #endregion
+
             return result.ToPagedList(index, pageSize);
 
         }

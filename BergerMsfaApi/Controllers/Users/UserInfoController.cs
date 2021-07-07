@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

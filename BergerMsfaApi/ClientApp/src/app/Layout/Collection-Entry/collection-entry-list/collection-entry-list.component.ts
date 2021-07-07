@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AuthService } from 'src/app/Shared/Services/Users';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import {
   ActivityPermissionService,
@@ -40,7 +42,8 @@ export class CollectionEntryListComponent implements OnInit {
     private activityPermissionService: ActivityPermissionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dynamicDropdownService: DynamicDropdownService
+    private dynamicDropdownService: DynamicDropdownService,
+	  private authService: AuthService
   ) {
     this._initPermissionGroup();
   }
@@ -144,9 +147,10 @@ export class CollectionEntryListComponent implements OnInit {
         {
           headerName: 'Amount',
           width: '10%',
-          internalName: 'number',
+          internalName: 'amount',
           sort: true,
-          type: '',
+          type: 'text',
+          displayType: 'number-format-color'
         },
         {
           headerName: 'Number(Manual)',
@@ -211,9 +215,10 @@ export class CollectionEntryListComponent implements OnInit {
         {
           headerName: 'Amount',
           width: '10%',
-          internalName: 'number',
+          internalName: 'amount',
           sort: true,
-          type: '',
+          type: 'text',
+          displayType: 'number-format-color'
         },
         {
           headerName: 'Number(Manual)',
@@ -278,9 +283,10 @@ export class CollectionEntryListComponent implements OnInit {
         {
           headerName: 'Amount',
           width: '10%',
-          internalName: 'number',
+          internalName: 'amount',
           sort: true,
-          type: '',
+          type: 'text',
+          displayType: 'number-format-color'
         },
         {
           headerName: 'Number(Manual)',
@@ -345,9 +351,10 @@ export class CollectionEntryListComponent implements OnInit {
         {
           headerName: 'Amount',
           width: '10%',
-          internalName: 'number',
+          internalName: 'amount',
           sort: true,
-          type: '',
+          type: 'text',
+          displayType: 'number-format-color'
         },
         {
           headerName: 'Number(Manual)',
@@ -376,10 +383,10 @@ export class CollectionEntryListComponent implements OnInit {
       pageSize: 10,
       enabledPagination: true,
       //enabledAutoScrolled:true,
-      enabledDeleteBtn: true,
-      enabledEditBtn: true,
+      // enabledDeleteBtn: false,
+      // enabledEditBtn: false,
       // enabledCellClick: true,
-      enabledColumnFilter: true,
+      // enabledColumnFilter: true,
       // enabledDataLength:true,
       // enabledColumnResize:true,
       // enabledReflow:true,
@@ -387,8 +394,40 @@ export class CollectionEntryListComponent implements OnInit {
       // enabledExcelDownload:true,
       // enabledPrint:true,
       // enabledColumnSetting:true,
-      enabledRecordCreateBtn: false,
+      // enabledRecordCreateBtn: false,
       // enabledTotal:true,
     };
+
+		this.ptableSettings.enabledDeleteBtn = this.authService.isAdmin;
   }
+
+	public fnCustomTrigger(event) {
+		console.log("custom  click: ", event);
+
+		
+		if (event.action == "delete-item") {
+			this.deleteCollection(event.record.id);
+			
+		}
+	}
+
+	deleteCollection(id) {
+		this.alertService.confirm("Are you sure to delete this?",
+			() => {
+				this.alertService.fnLoading(true);
+				this.collectionEntryService.deleteCollection(id)
+					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+					.subscribe((res: any) => {
+						console.log('res from del func', res);
+						this.alertService.tosterSuccess("Collection has been deleted successfully.");
+							this.gridDataSource.forEach((value, index) => {
+								if (value.id == id) this.gridDataSource.splice(index, 1);
+							});
+						},
+						(error) => {
+							console.log(error);
+						});
+			},
+			() => { });
+	}
 }

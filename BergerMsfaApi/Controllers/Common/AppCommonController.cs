@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -109,6 +110,34 @@ namespace BergerMsfaApi.Controllers.Common
             try
             {
                 var result = await _commonSvc.GetCreditControlAreaList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUserInfoListByCurrentUser")]
+        public async Task<IActionResult> GetUserInfoListByCurrentUser()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByCurrentUser();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUserInfoListByCurrentUserWithoutZoUser")]
+        public async Task<IActionResult> GetUserInfoListByCurrentUserWithoutZoUser()
+        {
+            try
+            {
+                var result = await _commonSvc.GetUserInfoListByCurrentUserWithoutZoUser();
                 return OkResult(result);
             }
             catch (Exception ex)

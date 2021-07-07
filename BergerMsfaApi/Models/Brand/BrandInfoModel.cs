@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Mappings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Brand
 {
@@ -24,6 +19,8 @@ namespace BergerMsfaApi.Models.Brand
         public bool IsMTS { get; set; }
         public bool IsPremium { get; set; }
         public bool IsEnamel { get; set; }
+        public bool IsLiquid { get; set; }
+        public bool IsPowder { get; set; }
 
         public void Mapping(Profile profile)
         {

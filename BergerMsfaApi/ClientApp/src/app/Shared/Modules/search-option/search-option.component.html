@@ -1,0 +1,313 @@
+
+<div class="p-3 bg-white mb-3 rounded">
+    <form [formGroup]="searchOptionForm" (ngSubmit)="onSubmitSearch()" *ngIf="searchOptionForm">
+        <div class="row">
+            <div class="col-md-3" *ngIf="hasSearchOption('depot')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('depot')}">Depot</label>
+                    <ng-select [items]="depots" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.depot.touched && formControls.depot.errors">
+                        <span *ngIf="formControls.depot.errors.required">Depot is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('salesGroups')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('salesGroups')}">Sales Groups</label>
+                    <ng-select [items]="salesGroups" formControlName="salesGroups" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.salesGroups.touched && formControls.salesGroups.errors">
+                        <span *ngIf="formControls.salesGroups.errors.required">Sales Group is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('territories')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('territories')}">Territories</label>
+                    <ng-select [items]="territories" formControlName="territories" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.territories.touched && formControls.territories.errors">
+                        <span *ngIf="formControls.territories.errors.required">Territory is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('zones')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('zones')}">Zones</label>
+                    <ng-select [items]="zones" formControlName="zones" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.zones.touched && formControls.zones.errors">
+                        <span *ngIf="formControls.zones.errors.required">Zone is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('fromDate')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('fromDate')}">From Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" formControlName="fromDate"
+                            ngbDatepicker #dpFromDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpFromDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                    <small class="text-danger" *ngIf="(formControls.fromDate.touched && formControls.fromDate.errors) || 
+                                                        (formControls.fromDate.touched && formControls.fromDate.invalid)">
+                        <span *ngIf="formControls.fromDate.errors.required">From Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.fromDate.errors.required && formControls.fromDate.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('toDate')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('toDate')}">To Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" formControlName="toDate"
+                            ngbDatepicker #dpToDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpToDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                    <small class="text-danger" *ngIf="(formControls.toDate.touched && formControls.toDate.errors) || 
+                                                        (formControls.toDate.touched && formControls.toDate.invalid)">
+                        <span *ngIf="formControls.toDate.errors.required">To Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.toDate.errors.required && formControls.toDate.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('userId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('userId')}">User Id</label>
+                    <ng-select [items]="users" formControlName="userId" bindValue="id" bindLabel="fullName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.userId.touched && formControls.userId.errors">
+                        <span *ngIf="formControls.userId.errors.required">User Id is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('dealerId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('dealerId')}">
+                        <label class="switch" *ngIf="searchOptionSettings.isDealerSubDealerOptionShow">
+                            <input type="checkbox" [checked]="searchOptionSettings.isDealerShow" (change)="changeDealerSubDealerShow()" />
+                            <span class="slider round"></span>
+                        </label>
+                        {{searchOptionSettings.isDealerShow?'Dealer':'Sub Dealer'}} Id
+                    </label>
+                    <ng-select [items]="dealers" formControlName="dealerId" bindValue="id" bindLabel="customerName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.dealerId.touched && formControls.dealerId.errors">
+                        <span *ngIf="formControls.dealerId.errors.required">Dealer Id is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('creditControlArea')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('creditControlArea')}">Credit Control Area</label>
+                    <ng-select [items]="creditControlAreas" formControlName="creditControlArea" bindValue="creditControlAreaId" bindLabel="description" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.creditControlArea.touched && formControls.creditControlArea.errors">
+                        <span *ngIf="formControls.creditControlArea.errors.required">Credit Control Area is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('paintingStageId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('paintingStageId')}">Painting Stage</label>
+                    <ng-select [items]="paintingStages" formControlName="paintingStageId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.paintingStageId.touched && formControls.paintingStageId.errors">
+                        <span *ngIf="formControls.paintingStageId.errors.required">Painting Stage is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('projectStatusId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('projectStatusId')}">Project Status</label>
+                    <ng-select [items]="projectStatuses" formControlName="projectStatusId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.projectStatusId.touched && formControls.projectStatusId.errors">
+                        <span *ngIf="formControls.projectStatusId.errors.required">Project Status is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('painterId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('painterId')}">Painter Id</label>
+                    <ng-select [items]="painters" formControlName="painterId" bindValue="id" bindLabel="painterName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.painterId.touched && formControls.painterId.errors">
+                        <span *ngIf="formControls.painterId.errors.required">Painter Id is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('painterTypeId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('painterTypeId')}">Painter Type</label>
+                    <ng-select [items]="painterTypes" formControlName="painterTypeId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.painterTypeId.touched && formControls.painterTypeId.errors">
+                        <span *ngIf="formControls.painterTypeId.errors.required">Painter Type is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('paymentMethodId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('paymentMethodId')}">Payment Method</label>
+                    <ng-select [items]="paymentMethods" formControlName="paymentMethodId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.paymentMethodId.touched && formControls.paymentMethodId.errors">
+                        <span *ngIf="formControls.paymentMethodId.errors.required">Payment Method is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('brands')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('brands')}">Brands</label>
+                    <ng-select [items]="brands" formControlName="brands" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.brands.touched && formControls.brands.errors">
+                        <span *ngIf="formControls.brands.errors.required">Brands is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('materialCodes')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('materialCodes')}">Materials</label>
+                    <ng-select [items]="materialCodes" formControlName="materialCodes" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.materialCodes.touched && formControls.materialCodes.errors">
+                        <span *ngIf="formControls.materialCodes.errors.required">Material Codes is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('activitySummary')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('activitySummary')}">Activity</label>
+                    <ng-select [items]="activitySummaries" formControlName="activitySummary" bindValue="value" bindLabel="text" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.activitySummary.touched && formControls.activitySummary.errors">
+                        <span *ngIf="formControls.activitySummary.errors.required">Activity is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('valueVolumeResultType')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('valueVolumeResultType')}">Result Type</label>
+                    <ng-select [items]="valueVolumeResultTypes" formControlName="valueVolumeResultType" bindValue="id" bindLabel="label" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.valueVolumeResultType.touched && formControls.valueVolumeResultType.errors">
+                        <span *ngIf="formControls.valueVolumeResultType.errors.required">Result Type is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('customerClassificationType')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('customerClassificationType')}">Report Type</label>
+                    <ng-select [items]="customerClassificationTypes" formControlName="customerClassificationType" bindValue="id" bindLabel="label" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.customerClassificationType.touched && formControls.customerClassificationType.errors">
+                        <span *ngIf="formControls.customerClassificationType.errors.required">Report Type is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('fromMonth')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('fromMonth')}">From Month</label>
+                    <ng-select [items]="months" formControlName="fromMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.fromMonth.touched && formControls.fromMonth.errors">
+                        <span *ngIf="formControls.fromMonth.errors.required">From Month is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('fromYear')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('fromYear')}">From Year</label>
+                    <ng-select [items]="years" formControlName="fromYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.fromYear.touched && formControls.fromYear.errors">
+                        <span *ngIf="formControls.fromYear.errors.required">From Year is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('toMonth')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('toMonth')}">To Month</label>
+                    <ng-select [items]="months" formControlName="toMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.toMonth.touched && formControls.toMonth.errors">
+                        <span *ngIf="formControls.toMonth.errors.required">To Month is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('toYear')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('toYear')}">To Year</label>
+                    <ng-select [items]="years" formControlName="toYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.toYear.touched && formControls.toYear.errors">
+                        <span *ngIf="formControls.toYear.errors.required">To Year is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('month')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('month')}">Month</label>
+                    <ng-select [items]="months" formControlName="month" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.month.touched && formControls.month.errors">
+                        <span *ngIf="formControls.month.errors.required">Month is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('year')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('year')}">Year</label>
+                    <ng-select [items]="years" formControlName="year" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.year.touched && formControls.year.errors">
+                        <span *ngIf="formControls.year.errors.required">Year is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('text1')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('text1')}">{{getSearchOptionLabel('text1')}}</label>
+                    <input type="text" class="form-control" formControlName="text1" />
+                    <small class="text-danger" *ngIf="formControls.text1.touched && formControls.text1.errors">
+                        <span *ngIf="formControls.text1.errors.required">{{getSearchOptionLabel('text1')} is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('text2')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('text2')}">{{getSearchOptionLabel('text2')}}</label>
+                    <input type="text" class="form-control" formControlName="text2" />
+                    <small class="text-danger" *ngIf="formControls.text2.touched && formControls.text2.errors">
+                        <span *ngIf="formControls.text2.errors.required">{{getSearchOptionLabel('text2')} is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('text3')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('text3')}">{{getSearchOptionLabel('text3')}}</label>
+                    <input type="text" class="form-control" formControlName="text3" />
+                    <small class="text-danger" *ngIf="formControls.text3.touched && formControls.text3.errors">
+                        <span *ngIf="formControls.text3.errors.required">{{getSearchOptionLabel('text3')} is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-center m-3 w-100">
+                <button type="button" [disabled]="searchOptionForm.invalid" (click)="onSubmitSearch()" class="btn btn-primary btn-login d-block rounded-0 w-100">Search</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,16 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { SaveSchemeDetail, SchemeDetail, SchemeMaster } from '../../../Shared/Entity/Scheme/SchemeMaster';
-import { Status } from '../../../Shared/Enums/status';
-import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
-import { pipe, Subscription } from 'rxjs';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { finalize } from 'rxjs/operators';
+import { SaveSchemeDetail, SchemeDetail } from '../../../Shared/Entity/Scheme/SchemeMaster';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 
 @Component({
   selector: 'app-schemedetail-add',
@@ -23,8 +22,8 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 	schemeDetailForm: FormGroup;
 	schemeMasters: MapObject[] = [];
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
-	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
-	
+	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload;
+
 	private subscriptions: Subscription[] = [];
 
 	constructor(private activatedRoute: ActivatedRoute,
@@ -32,14 +31,15 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		private formBuilder: FormBuilder,
 		private alertService: AlertService,
 		private commonService: CommonService,
-		private schemeDetailService: SchemeService) { }
+		private schemeDetailService: SchemeService,
+		private formatter:NgbDateParserFormatter
+		) { }
 
 	ngOnInit() {
 		this.loadSchemeMasters();
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
-			console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
 				this.schemeDetailService.getSchemeDetailById(id)
@@ -81,6 +81,9 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 	}
 
 	createForm() {
+		console.log('hi there')
+		console.log(this.schemeDetail.benefitStartDate)
+		console.log(this.schemeDetail.benefitEndDate)
 		this.schemeDetailForm = this.formBuilder.group({
 			schemeMasterId: [this.schemeDetail.schemeMasterId, [Validators.required]],
 			code: [this.schemeDetail.code],
@@ -89,13 +92,37 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			rateInDrum: [this.schemeDetail.rateInDrum],
 			slab: [this.schemeDetail.slab],
 			condition: [this.schemeDetail.condition],
-			benefitDate: [this.schemeDetail.benefitDate],
+			benefitStartDate: [],
+			benefitEndDate: [],
+			// benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
+			// benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
 			schemeId: [this.schemeDetail.schemeId],
 			material: [this.schemeDetail.material],
 			targetVolume: [this.schemeDetail.targetVolume],
 			benefit: [this.schemeDetail.benefit],
 			status: [this.schemeDetail.status, [Validators.required]]
 		});
+
+		if (this.schemeDetail.benefitStartDate) {
+			const fromDate = new Date(this.schemeDetail.benefitStartDate);
+			this.schemeDetailForm.controls.benefitStartDate.setValue({
+				year: fromDate.getFullYear(),
+				month: fromDate.getMonth()+1,
+				day: fromDate.getDate()
+			});
+		}
+
+		if (this.schemeDetail.benefitEndDate) {
+			const toDate = new Date(this.schemeDetail.benefitEndDate);
+			this.schemeDetailForm.controls.benefitEndDate.setValue({
+				year: toDate.getFullYear(),
+				month: toDate.getMonth()+1,
+				day: toDate.getDate()
+			});
+		}
+
+		this.schemeDetailForm.controls.benefitStartDate.setValidators([Validators.required]);
+		this.schemeDetailForm.controls.benefitStartDate.updateValueAndValidity();
 	}
 
 	get formControls() { return this.schemeDetailForm.controls; }
@@ -132,13 +159,36 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		_schemeDetail.rateInDrum = controls['rateInDrum'].value;
 		_schemeDetail.slab = controls['slab'].value;
 		_schemeDetail.condition = controls['condition'].value;
-		_schemeDetail.benefitDate = controls['benefitDate'].value;
+
+		// if (controls['benefitStartDate'].value) {
+		// 	const value = controls['benefitStartDate'].value;
+		// 	_schemeDetail.benefitStartDate =  this.formatter.format(value)
+		//   }
+		// if (controls['benefitEndDate'].value) {
+		// 	const value = controls['benefitEndDate'].value;
+		// 	_schemeDetail.benefitEndDate =  this.formatter.format(value)
+		//   }
+
+		const fromDate = controls['benefitStartDate'].value;
+		if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
+			_schemeDetail.benefitStartDate = new Date(fromDate.year,fromDate.month-1,fromDate.day);
+		} else {
+			_schemeDetail.benefitStartDate = null;
+		}
+
+		const toDate = controls['benefitEndDate'].value;
+		if (toDate && toDate.year && toDate.month && toDate.day) {
+			_schemeDetail.benefitEndDate = new Date(toDate.year,toDate.month-1,toDate.day);
+		} else {
+			_schemeDetail.benefitEndDate = null;
+		}
+
 		_schemeDetail.schemeId = controls['schemeId'].value;
 		_schemeDetail.material = controls['material'].value;
 		_schemeDetail.targetVolume = controls['targetVolume'].value;
 		_schemeDetail.benefit = controls['benefit'].value;
 		_schemeDetail.status = controls['status'].value;
-		
+
 		return _schemeDetail;
 	}
 

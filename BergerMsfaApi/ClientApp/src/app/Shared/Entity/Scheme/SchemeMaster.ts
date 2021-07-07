@@ -1,11 +1,11 @@
-﻿import { Status } from '../../Enums/status';
-import { QueryObject } from '../Common/query-object';
+﻿import { QueryObject } from '../Common/query-object';
 
 export class SchemeMaster {
     id: number;
     schemeName: string;
     condition: string;
-    
+    businessArea: string;
+
     constructor(init?: Partial<SchemeMaster>) {
         Object.assign(this, init);
     }
@@ -21,7 +21,8 @@ export class SaveSchemeMaster {
     id: number;
     schemeName: string;
     condition: string;
-    
+    businessArea: string;
+
     constructor(init?: Partial<SchemeMaster>) {
         Object.assign(this, init);
     }
@@ -35,7 +36,7 @@ export class SaveSchemeMaster {
 
 export class SchemeMasterQuery extends QueryObject {
     schemeName: string;
-    
+
     constructor(init?: Partial<SchemeMasterQuery>) {
         super();
         Object.assign(this, init);
@@ -57,7 +58,10 @@ export class SchemeDetail {
     //National Scheme (Value)
     slab: string;
     condition: string;
-    benefitDate: string;
+    benefitStartDate: Date;
+    benefitEndDate?: Date;
+    benefitStartDateText: string;
+    benefitEndDateText: string;
 
     //Painter Scheme
     schemeId: string;
@@ -71,7 +75,7 @@ export class SchemeDetail {
     schemeMasterName: string;
     schemeMasterCondition: string;
     status: number;
-    
+
     statusText: string;
 
     constructor(init?: Partial<SchemeDetail>) {
@@ -95,7 +99,8 @@ export class SaveSchemeDetail {
     //National Scheme (Value)
     slab: string;
     condition: string;
-    benefitDate: string;
+    benefitStartDate: Date;
+    benefitEndDate?: Date;
 
     //Painter Scheme
     schemeId: string;
@@ -107,7 +112,7 @@ export class SaveSchemeDetail {
 
     schemeMasterId: number;
     status: number;
-    
+
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
@@ -120,7 +125,7 @@ export class SaveSchemeDetail {
 
 export class SchemeDetailQuery extends QueryObject {
     schemeMasterName: string;
-    
+
     constructor(init?: Partial<SchemeDetailQuery>) {
         super();
         Object.assign(this, init);

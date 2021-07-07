@@ -1,0 +1,33 @@
+
+    <div class="modal-header">
+        <h5 class="modal-title">Billing Analysis Details</h5>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <p><span><strong>Billing Analysis Type:</strong></span> {{billingAnalysis['Billing Analysis Type']}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>No Of Dealer:</strong></span> {{billingAnalysis.noOfDealer}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>No Of Billing Dealer:</strong></span> {{billingAnalysis.noOfBillingDealer}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Billing Percentage:</strong></span> {{billingAnalysis.billingPercentage}}</p>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col col-md-12"> -->
+                <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="billingAnalysisCustomers">
+                </app-p-table>
+            <!-- </div>
+        </div> -->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+    </div>
+

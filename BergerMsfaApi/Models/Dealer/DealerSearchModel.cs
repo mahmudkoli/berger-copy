@@ -8,8 +8,6 @@ namespace BergerMsfaApi.Models.Dealer
 {
     public class AppDealerSearchModel
     {
-        public string UserCategory { get; set; }
-        public List<string> UserCategoryIds { get; set; }
         public string DealerName { get; set; }
         public EnumDealerCategory? DealerCategory { get; set; }
         public int? PageNo { get; set; }

@@ -32,6 +32,16 @@ import { PremiumBrandsGrowthReportComponent } from './premium-brands-growth/prem
 import { PremiumBrandsContributionReportComponent } from './premium-brands-contribution/premium-brands-contribution-report.component';
 import { MerchendizingSnapshotReportComponent } from './merchendizing-snapshot/merchendizing-snapshot-report.component';
 import { LoginLogReportComponent } from './login-log/login-log-report.component';
+import { TerritoryWiseKpiTargetAchivementReportComponent } from './territory-wise-kpi-target-achivement/territory-wise-kpi-target-achivement-report.component';
+import { DealerWiseKpiTargetAchivementReportComponent } from './dealer-wise-kpi-target-achivement/dealer-wise-kpi-target-achivement-report.component';
+import { ProductWiseKpiTargetAchivementReportComponent } from './product-wise-kpi-target-achivement/product-wise-kpi-target-achivement-report.component';
+import { BusinessCallAnalysisReportComponent } from './business-call-analysis/business-call-analysis-report.component';
+import { StrikeRateKpiReportComponent } from './strike-rate-kpi/strike-rate-kpi-report.component';
+import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-salescall/addhoc-sub-dealer-salescall-report.component';
+import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
+import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
+import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
+import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 
 @NgModule({
     declarations: [
@@ -61,7 +71,17 @@ import { LoginLogReportComponent } from './login-log/login-log-report.component'
       PremiumBrandsGrowthReportComponent,
       PremiumBrandsContributionReportComponent,
       MerchendizingSnapshotReportComponent,
-      LoginLogReportComponent
+      LoginLogReportComponent,
+      TerritoryWiseKpiTargetAchivementReportComponent,
+      DealerWiseKpiTargetAchivementReportComponent,
+      ProductWiseKpiTargetAchivementReportComponent,
+      BusinessCallAnalysisReportComponent,
+      StrikeRateKpiReportComponent,
+      BillingAnalysisReportComponent,
+      ModalBillingAnalysisDetailsComponent,
+      FinancialCollectionPlanReportComponent,
+      AddhocSubDealerSalescallReportComponent,
+      AddhocDealerSalescallReportComponent,
     ],
   imports: [
       CommonModule,
@@ -73,6 +93,9 @@ import { LoginLogReportComponent } from './login-log/login-log-report.component'
       FormsModule,
       ReactiveFormsModule,
       NgSelectModule,
+  ],
+  entryComponents: [
+    ModalBillingAnalysisDetailsComponent
   ]
 })
 export class ReportModule { }

@@ -10,7 +10,7 @@
         </div> -->
     </div>
     <div class="card-body">
-        <form [formGroup]="schemeMasterForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="schemeMasterForm" (ngSubmit)="onSubmit()" *ngIf="schemeMasterForm">
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="position-relative form-group">
@@ -22,6 +22,15 @@
                             <span *ngIf="formControls.schemeName.errors.required">Scheme Name is <strong>required</strong></span>
                             <span *ngIf="formControls.schemeName.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="name">Business Area</label>
+                        <ng-select  [multiple]="false"  formControlName="businessArea"  name="businessArea">
+                             <!--<ng-option>--Select--</ng-option>-->
+                            <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
                     </div>
                 </div>
                 <div class="col-md-6">

@@ -10,7 +10,7 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
-import { FocusdealerService } from 'src/app/Shared/Services/FocusDealer/focusdealer.service';
+import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { EmailConfigForDealerOpening } from '../../../Shared/Entity/DealerOpening/EmailConfig';
 
@@ -52,7 +52,7 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 
     private getEmpList() {
-        this.commonSvc.getUserInfoListByLoggedInManager().subscribe(
+        this.commonSvc.getUserInfoListByCurrentUser().subscribe(
             (result: any) => {
                 this.employeeList = result.data;
             },

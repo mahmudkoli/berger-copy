@@ -1,4 +1,5 @@
 ﻿using Berger.Data.MsfaEntity.DealerSalesCall;
+using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -13,6 +14,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
     {
         private readonly IRepository<EmailConfigForDealerOppening> _emailConfig;
         private readonly IRepository<EmailConfigForDealerSalesCall> _emailConfigDealerSalesCall;
+        private readonly IRepository<Depot> _depot;
 
         /// <summary>
         /// 
@@ -20,10 +22,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         /// <param name="emailConfig"></param>
         /// <param name="EmailConfigForDealerOppening"></param>
 
-        public EmailConfigService(IRepository<EmailConfigForDealerOppening> emailConfig, IRepository<EmailConfigForDealerSalesCall> emailConfigDealerSalesCall)
+        public EmailConfigService(IRepository<EmailConfigForDealerOppening> emailConfig, 
+            IRepository<EmailConfigForDealerSalesCall> emailConfigDealerSalesCall, 
+            IRepository<Depot> depot)
         {
             _emailConfig = emailConfig;
             _emailConfigDealerSalesCall = emailConfigDealerSalesCall;
+            this._depot = depot;
         } 
         public async Task<EmailConfigForDealerOppening> CreateAsync(EmailConfigForDealerOppening email)
         {
@@ -40,7 +45,17 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IEnumerable<EmailConfigForDealerOppening>> GetEmailConfig()
         {
-           var result= await _emailConfig.GetAllAsync();
+            var result= await _emailConfig.GetAllAsync();
+            var depotIds = result.Select(x => x.BusinessArea).Distinct();
+            var depots = await _depot.FindAllAsync(x => depotIds.Contains(x.Werks));
+            foreach (var item in result)
+            {
+                var dep = depots.FirstOrDefault(x => x.Werks == item.BusinessArea);
+                if (dep != null)
+                {
+                    item.BusinessArea = $"{dep.Name1} ({dep.Werks})";
+                }
+            }
             return result;
         }
 

@@ -11,7 +11,11 @@ namespace Berger.Odata.Model
         public int FromYear { get; set; }
         public int ToMonth { get; set; }
         public int ToYear { get; set; }
-        public string Territory { get; set; }
+        //public string Territory { get; set; }
+        public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> Zones { get; set; } // no need for app end
         public EnumQuarterlyPerformanceModel QuarterlyPerformanceType { get; set; }
     }
 
@@ -31,9 +35,13 @@ namespace Berger.Odata.Model
         public int ToMonth { get; set; }
         public int ToYear { get; set; }
         public string Depot { get; set; }
-        public string SalesOffice { get; set; }
-        public string SalesGroup { get; set; }
-        public string Territory { get; set; }
-        public string Zone { get; set; }
+        //public string SalesOffice { get; set; }
+        //public string SalesGroup { get; set; }
+        //public string Territory { get; set; }
+        //public string Zone { get; set; }
+
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> Zones { get; set; }
     }
 }

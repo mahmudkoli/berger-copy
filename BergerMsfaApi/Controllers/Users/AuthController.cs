@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Core;
-using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -35,24 +31,15 @@ namespace BergerMsfaApi.Controllers.Users
             _adservice = adservice;
         }
 
-        private string username => $"nizamuddinbs"; // fazlur1
-        //private string password => $"5~nEVER~cATCH:";
-        private string password => $"**33!wave!GAVE!70**";
-
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            //TODO: need to comment out
-            //model.UserName = username;
-            //model.Password = password;
-
             try
             {
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
-                //TODO: need to uncomment 
                 bool isAdLoginSuccess = _adservice.AuthenticateUser(model.UserName, model.Password);
                 if (!isAdLoginSuccess)
                 {

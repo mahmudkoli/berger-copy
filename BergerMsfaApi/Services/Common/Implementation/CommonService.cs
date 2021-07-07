@@ -103,16 +103,27 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
-        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByLoggedInManager()
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUser()
         {
             // var result1 = new List<UserInfoModel>();
             // var u = _userInfosvc.GetAll().ToList();
             //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
 
-            var userId = AppIdentity.AppUser.UserId;
-            var userInfo = await _userService.GetUserAsync(userId);
+            //var userId = AppIdentity.AppUser.UserId;
+            //var userInfo = await _userService.GetUserAsync(userId);
+            var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => userInfo.EmployeeRole == EnumEmployeeRole.Admin || f.ManagerId == AppIdentity.AppUser.EmployeeId);
+            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
+            return result.ToMap<UserInfo, UserInfoModel>();
+        }
+
+        public async Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUserWithoutZoUser()
+        {
+            var appUser = AppIdentity.AppUser;
+
+            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
+                                && (f.EmployeeRole != EnumEmployeeRole.ZO));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -146,28 +157,71 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
-            return await _saleGroupSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
-            var result = await _depotSvc.GetAllAsync();
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = s.Name1 }).ToList();
+            var appUser = AppIdentity.AppUser;
+            var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.PlantIdList.Contains(x.Werks)));
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
-            return await _saleOfficeSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesOfficeIdList.Contains(x.Code)));
+            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
-            return await _territorySvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.TerritoryIdList.Contains(x.Code)));
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
-            return await _zoneSvc.GetAllAsync();
+            var appUser = AppIdentity.AppUser;
+            var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code)));
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
+        {
+            var result = await _saleGroupSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _depotSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _saleOfficeSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _territorySvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+        }
+
+        public async Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate)
+        {
+            var appUser = AppIdentity.AppUser;
+            var result = await _zoneSvc.FindAllAsync(predicate);
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
@@ -247,7 +301,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
                 x.Division == ConstantsODataValue.DivisionDecorative && 
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
@@ -262,7 +316,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          { 
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
@@ -280,16 +334,17 @@ namespace BergerMsfaApi.Services.Common.Implementation
             model.DealerName = model.DealerName ?? string.Empty;
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                [EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
-                [EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
-                [EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
-                [EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
-                [EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
+                //[EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
+                //[EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
+                //[EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
+                //[EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
+                //[EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
             };
 
             //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
             //var result = (from dealer in _dealerInfoSvc.GetAll()
-            var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            //var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            var result = (from dealer in _dealerInfoSvc.GetAll()
                          join custGrp in _customerGroupSvc.GetAll()
                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
                          into cust
@@ -334,7 +389,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
@@ -361,7 +416,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           {
                             Id = dealer.Id,
                             CustomerNo = dealer.CustomerNo,
-                            CustomerName = dealer.CustomerName,
+                            CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
@@ -515,7 +570,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 var filter = result.Select(s => s.PlantId);
                 var data = _depotSvc.FindAll(x => filter.Contains(x.Werks)).ToList();
                 foreach (var item in result)
-                    SetName<Depot>(item, data, x => x.Werks == item.PlantId, x => x.Name1);
+                    SetName<Depot>(item, data, x => x.Werks == item.PlantId, x => $"{x.Name1 } ({x.Werks})");
             }
             else if (EnumUserCategory.SalesOffice.ToString() == userCategory)
             {
@@ -534,7 +589,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 var filter = result.Select(s => s.SalesOfficeId);
                 var data = _saleOfficeSvc.FindAll(x => filter.Contains(x.Code)).ToList();
                 foreach (var item in result)
-                    SetName<SaleOffice>(item, data, x => x.Code == item.SalesOfficeId, x => x.Name);
+                    SetName<SaleOffice>(item, data, x => x.Code == item.SalesOfficeId, x => $"{x.Name} ({x.Code})");
             }
             else if (EnumUserCategory.Area.ToString() == userCategory)
             {
@@ -553,7 +608,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 var filter = result.Select(s => s.AreaId);
                 var data = _saleGroupSvc.FindAll(x => filter.Contains(x.Code)).ToList();
                 foreach (var item in result)
-                    SetName<SaleGroup>(item, data, x => x.Code == item.AreaId, x => x.Name);
+                    SetName<SaleGroup>(item, data, x => x.Code == item.AreaId, x => $"{x.Name} ({x.Code})");
             }
             else if (EnumUserCategory.Territory.ToString() == userCategory)
             {
@@ -572,7 +627,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 var filter = result.Select(s => s.TerritoryId);
                 var data = _territorySvc.FindAll(x => filter.Contains(x.Code)).ToList();
                 foreach (var item in result)
-                    SetName<Territory>(item, data, x => x.Code == item.TerritoryId, x => x.Name);
+                    SetName<Territory>(item, data, x => x.Code == item.TerritoryId, x => x.Code);
             }
             else if (EnumUserCategory.Zone.ToString() == userCategory)
             {
@@ -591,7 +646,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 var filter = result.Select(s => s.ZoneId);
                 var data = _zoneSvc.FindAll(x => filter.Contains(x.Code)).ToList();
                 foreach (var item in result)
-                    SetName<Zone>(item, data, x => x.Code == item.ZoneId, x => x.Name);
+                    SetName<Zone>(item, data, x => x.Code == item.ZoneId, x => x.Code);
             }
 
             return result;

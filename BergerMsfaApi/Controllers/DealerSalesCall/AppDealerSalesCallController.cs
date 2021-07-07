@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.DealerSalesCall;
-using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerSalesCall
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,25 +18,10 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
         private readonly IDealerSalesCallService _dealerSalesCallService;
 
         public AppDealerSalesCallController(
-                IDealerSalesCallService dealerSalesCallService
-            )
+            IDealerSalesCallService dealerSalesCallService)
         {
-            this._dealerSalesCallService = dealerSalesCallService;
+            _dealerSalesCallService = dealerSalesCallService;
         }
-
-        //[HttpGet("GetAllByUserId/{id}")]
-        //public async Task<IActionResult> GetAllByUserId(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _dealerSalesCallService.GetAllByUserIdAsync(id);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
 
         [HttpGet("GetDealerSalesCallByDealerId/{id}")]
         public async Task<IActionResult> GetDealerSalesCallByDealerId(int id)

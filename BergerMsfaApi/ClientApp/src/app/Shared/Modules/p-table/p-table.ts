@@ -40,7 +40,10 @@ export interface IPTableSetting {
   totalTitle?: string | 'Total';
   enabledServerSitePaggination?: boolean | false;
   newRecordButtonText?: string | 'New Record';
+  newRecordButtonIcon?: string | 'fa fa-plus';
   downloadDataApiUrl?: string | null;
+  enabledDetailsEditDeleteBtn?: boolean | false;
+  enabledDetailsBtn?: boolean | false;
 }
 
 export interface colDef {

@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Services.OData.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -18,8 +17,7 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IQuarterlyPerformanceDataService _quarterlyPerformanceDataService;
 
         public PortalQuartPerformReportController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService
-            )
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService)
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
         }
@@ -85,7 +83,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetEnamelPaintsQuarterlyGrowth(model);
+                var result= await _quarterlyPerformanceDataService.GetEnamelPaintsQuarterlyGrowth(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -99,7 +97,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetEnamelPaintsQuarterlyGrowth(model);
+                var result= await _quarterlyPerformanceDataService.GetEnamelPaintsQuarterlyGrowth(model);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -113,7 +111,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsGrowth(model);
+                var result= await _quarterlyPerformanceDataService.GetPremiumBrandsGrowth(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -127,7 +125,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsGrowth(model);
+                var result= await _quarterlyPerformanceDataService.GetPremiumBrandsGrowth(model);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -141,7 +139,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsContribution(model);
+                var result= await _quarterlyPerformanceDataService.GetPremiumBrandsContribution(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -155,7 +153,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-               var result= await _quarterlyPerformanceDataService.GetPremiumBrandsContribution(model);
+                var result= await _quarterlyPerformanceDataService.GetPremiumBrandsContribution(model);
                 return Ok(result);
             }
             catch (Exception ex)

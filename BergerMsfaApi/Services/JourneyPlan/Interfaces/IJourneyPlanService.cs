@@ -16,6 +16,7 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
         Task<IPagedList<JourneyPlanDetailModel>> PortalGetJourneyPlanDeailPage(int index, int pageSize, string search );
         Task<IEnumerable<JourneyPlanDetailModel>> GetJourneyPlanDetail();
         Task<IPagedList<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManager(int index, int pageSize, string search);
+        Task<IList<JourneyPlanDetailModel>> GetAppJourneyPlanListForLineManager();
         Task<List<JourneyPlanDetailModel>> GetJourneyPlanDetailForLineManagerForNotification();
         Task<PortalCreateJouneryModel> PortalGetJourneyPlanById(string date);
 
@@ -24,8 +25,10 @@ namespace BergerMsfaApi.Services.Setup.Interfaces
       
 
         Task<JourneyPlanDetailModel> GetJourneyPlanDetailById(int PlanId);
+        Task<JourneyPlanDetailModel> GetAppJourneyPlanDetailById(int PlanId);
 
         Task<bool> ChangePlanStatus(JourneyPlanStatusChangeModel model);
+        Task<bool> AppChangePlanStatus(JourneyPlanStatusChangeModel model);
         Task<bool> CheckAlreadyTodayPlan(DateTime planDate);
 
         Task<bool> IsExistAsync(int id);

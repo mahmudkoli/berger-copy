@@ -21,7 +21,7 @@
                                [(ngModel)]="roleModel.name" 
                                (change)="validateInput()">
                         <small class="text-danger" [class.d-none]="name.valid || name.untouched">
-                            Invalid role name
+                            Invalid role name (only letters, digit and space allowed)
                         </small>
                         
 

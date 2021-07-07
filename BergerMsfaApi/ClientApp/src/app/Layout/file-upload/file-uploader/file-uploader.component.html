@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>
+    {{title}}
+    <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </h2>
+
+{{uploadMessage}}
+<div *ngFor="let item of uploader.queue">
+    <p><strong>{{ item?.file?.name }}({{ item?.file?.size/1024/1024  }} MB)</strong></p>
+    <div class="progress" style="margin-bottom: 0;color:red">
+    <div *ngIf="!item.isError" class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }">
+    </div>
+    <div *ngIf="item.isError" class="progress-bar bg-danger" role="progressbar"
+        [ngStyle]="{ 'width': item.progress + '%' }"></div>
+    </div>
+    <p *ngIf="!item.isError">{{item.progress}} % done</p>
+    <p *ngIf="item.isError">Failed</p>
+    <p *ngIf="!status" style="color: red">{{errorMessage}}</p>
+    <p *ngIf="status" style="color: green">{{errorMessage}}</p>
+</div>

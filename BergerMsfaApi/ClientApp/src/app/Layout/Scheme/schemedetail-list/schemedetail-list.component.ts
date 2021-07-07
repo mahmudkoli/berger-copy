@@ -1,10 +1,8 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Paginator } from 'primeng/paginator';
 import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
-import { APIModel } from 'src/app/Shared/Entity';
 import { SchemeDetail, SchemeDetailQuery } from 'src/app/Shared/Entity/Scheme/SchemeMaster';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
@@ -78,7 +76,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 		this.query = new SchemeDetailQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'title',
+			sortBy: 'schemeMasterName',
 			isSortAscending: true,
 			globalSearchValue: ''
 		});
@@ -125,12 +123,13 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 		tableName: 'Scheme Detail List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Scheme Master', width: '15%', internalName: 'schemeMasterName', sort: true, type: "" },
+			{ headerName: 'Scheme Name', width: '15%', internalName: 'schemeMasterName', sort: true, type: "" },
 			{ headerName: 'SM Condition', width: '15%', internalName: 'schemeMasterCondition', sort: false, type: "" },
-			{ headerName: 'Brand', width: '15%', internalName: 'brand', sort: false, type: "" },
-			{ headerName: 'SLAB', width: '10%', internalName: 'slab', sort: false, type: "" },
-			{ headerName: 'Product', width: '15%', internalName: 'material', sort: false, type: "" },
-			{ headerName: 'Benefit', width: '20%', internalName: 'benefit', sort: false, type: "" },
+			{ headerName: 'Brand', width: '10%', internalName: 'brand', sort: false, type: "" },
+			{ headerName: 'Benefit Start', width: '10%', internalName: 'benefitStartDateText', sort: true, type: "" },
+			{ headerName: 'Benefit End', width: '10%', internalName: 'benefitEndDateText', sort: true, type: "" },
+			{ headerName: 'Condition', width: '15%', internalName: 'condition', sort: false, type: "" },
+			{ headerName: 'Benefit', width: '15%', internalName: 'benefit', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
 		],
 		enabledSearch: true,
@@ -158,7 +157,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 			this.deleteSchemeDetail(event.record.id);
 		}
 	}
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new SchemeDetailQuery({

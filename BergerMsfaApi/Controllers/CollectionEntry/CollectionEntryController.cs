@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
 {
-
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,8 +17,9 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         private readonly ILogger<CollectionEntryController> _logger;
         private readonly ICollectionEntryService _paymentService;
 
-        public CollectionEntryController(ILogger<CollectionEntryController> logger
-            , ICollectionEntryService paymentService)
+        public CollectionEntryController(
+            ILogger<CollectionEntryController> logger, 
+            ICollectionEntryService paymentService)
         {
             _logger = logger;
             _paymentService = paymentService;
@@ -29,11 +28,28 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         [HttpGet("GetCollectionByType/{CustomerTypeId}")]
         public async Task<IActionResult> GetCollectionByType(int CustomerTypeId)
         {
-
             try
             {
-               
                 var result = await _paymentService.GetCollectionByType(CustomerTypeId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpDelete("DeleteCollection/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                if (!await _paymentService.IsExistAsync(id))
+                {
+                    ModelState.AddModelError(nameof(id), "Collection Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _paymentService.DeleteAsync(id);
                 return OkResult(result);
             }
             catch (Exception ex)

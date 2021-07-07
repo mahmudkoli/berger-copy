@@ -31,7 +31,9 @@ namespace Berger.Common.Constants
     public static class ConstantsODataValue
     {
         public const string DistrbutionChannelDealer = "10";
-        public const int DivisionDecorative = 10;
+        public const string DivisionDecorative = "10";
+        public const string CustomerClassificationExclusive = "01";
+        public const string CustomerClassificationNonExclusive = "02";
     }
 
     public static class ConstantsCustomerTypeValue
@@ -76,7 +78,7 @@ namespace Berger.Common.Constants
         public const string Others = "Others";
         public const string DamageProduct = "Damage Product";
         public const string CBMachineMantainance = "CB Machine Mantainance";
-        public const string ProductComplaint = "Product Complaint";
+        public const string ProductComplaint = "Product Complain";
     }
 
     public static class ConstantSnapShotValue
@@ -89,5 +91,11 @@ namespace Berger.Common.Constants
         public const string Others = "Others";
     }
 
+
+    public static class ConstantPlatformValue
+    {
+        public const string PlatformHeaderName = "Platform";
+        public const string AppPlatformHeader = "Mobile";
+    }
 
 }

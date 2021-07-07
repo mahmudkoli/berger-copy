@@ -1,15 +1,15 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
 {
-
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -19,8 +19,8 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         private readonly ICollectionEntryService _paymentService;
 
         public AppCollectionEntryController(
-             ILogger<AppCollectionEntryController> logger
-            ,ICollectionEntryService paymentService)
+            ILogger<AppCollectionEntryController> logger, 
+            ICollectionEntryService paymentService)
         {
             _logger = logger;
             _paymentService = paymentService;
@@ -31,29 +31,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
         {
             try
             {
-                var result = await _paymentService.GetCollectionList();
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("GetCollectionByType/{CustomerTypeId}")]
-        public async Task<IActionResult> GetCollectionByType(int CustomerTypeId)
-        {
-
-            try
-            {
-               
-                var result = await _paymentService.GetCollectionByType(CustomerTypeId);
-                if (result.Count() == 0)
-                {
-                    ModelState.AddModelError(nameof(CustomerTypeId), "Collection Not Found");
-                    return ValidationResult(ModelState);
-                }
+                var result = await _paymentService.GetAppCollectionListByCurrentUserAsync();
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -82,47 +60,6 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
                 return ExceptionResult(ex);
             }
         }
-        [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] PaymentModel model)
-        {
-
-            try
-            {
-                if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (!await _paymentService.IsExistAsync(model.Id))
-                {
-                    ModelState.AddModelError(nameof(model), "Payment Not Found");
-                    return ValidationResult(ModelState);
-                }
-
-                var result = await _paymentService.UpdateAsync(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                if (!await _paymentService.IsExistAsync(id))
-                {
-                    ModelState.AddModelError(nameof(id), "Payment Not Found");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _paymentService.DeleteAsync(id);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
 
         [HttpGet("GetCreditControlArea")]
         public async Task<IActionResult> GetCreditControlArea()
@@ -134,11 +71,8 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             }
             catch (Exception ex)
             {
-
                 return ExceptionResult(ex);
             }
         }
-
-
     }
 }
