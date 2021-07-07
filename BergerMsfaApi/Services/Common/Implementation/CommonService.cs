@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
+            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -121,7 +121,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin) || 
+            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
                                 (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
                                 && (f.EmployeeRole != EnumEmployeeRole.ZO));
             return result.ToMap<UserInfo, UserInfoModel>();
@@ -158,35 +158,35 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
             var appUser = AppIdentity.AppUser;
-            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
             return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
             var appUser = AppIdentity.AppUser;
-            var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.PlantIdList.Contains(x.Werks)));
+            var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.PlantIdList.Contains(x.Werks)));
             return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             var appUser = AppIdentity.AppUser;
-            var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.SalesOfficeIdList.Contains(x.Code)));
+            var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesOfficeIdList.Contains(x.Code)));
             return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
             var appUser = AppIdentity.AppUser;
-            var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.TerritoryIdList.Contains(x.Code)));
+            var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.TerritoryIdList.Contains(x.Code)));
             return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             var appUser = AppIdentity.AppUser;
-            var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole) || (appUser.ZoneIdList.Contains(x.Code)));
+            var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code)));
             return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
         }
 
@@ -301,7 +301,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
                 x.Division == ConstantsODataValue.DivisionDecorative && 
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
@@ -334,16 +334,17 @@ namespace BergerMsfaApi.Services.Common.Implementation
             model.DealerName = model.DealerName ?? string.Empty;
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                [EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
-                [EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
-                [EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
-                [EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
-                [EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
+                //[EnumUserCategory.Plant.ToString()] = f => model.UserCategoryIds.Contains(f.BusinessArea),
+                //[EnumUserCategory.SalesOffice.ToString()] = f => model.UserCategoryIds.Contains(f.SalesOffice),
+                //[EnumUserCategory.Area.ToString()] = f => model.UserCategoryIds.Contains(f.SalesGroup),
+                //[EnumUserCategory.Territory.ToString()] = f => model.UserCategoryIds.Contains(f.Territory),
+                //[EnumUserCategory.Zone.ToString()] = f => model.UserCategoryIds.Contains(f.CustZone)
             };
 
             //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
             //var result = (from dealer in _dealerInfoSvc.GetAll()
-            var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            //var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
+            var result = (from dealer in _dealerInfoSvc.GetAll()
                          join custGrp in _customerGroupSvc.GetAll()
                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
                          into cust
@@ -388,7 +389,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin) ||
+                ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Berger.Data.MsfaEntity.DealerFocus
 {
-    public class FocusDealer:AuditableEntity<int>
+    public class FocusDealer : AuditableEntity<int>
     {
         public int Code { get; set; } // DealerId
         public string EmployeeId { get; set; }

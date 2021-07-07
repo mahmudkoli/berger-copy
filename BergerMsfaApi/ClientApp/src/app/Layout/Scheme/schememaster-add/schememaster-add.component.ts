@@ -115,7 +115,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		const createSubscription = this.schemeMasterService.createSchemeMaster(_schemeMaster)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`New Scheme Master has been added successfully.`);
+				this.alertService.tosterSuccess(`New Scheme Category has been added successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -129,7 +129,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		const updateSubscription = this.schemeMasterService.updateSchemeMaster(_schemeMaster)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`Scheme Master has been saved successfully.`);
+				this.alertService.tosterSuccess(`Scheme Category has been saved successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -139,12 +139,12 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create Scheme Master';
+		let result = 'Create Scheme Category';
 		if (!this.schemeMaster || !this.schemeMaster.id) {
 			return result;
 		}
 
-		result = `Edit Scheme Master - ${this.schemeMaster.schemeName}`;
+		result = `Edit Scheme Category - ${this.schemeMaster.schemeName}`;
 		return result;
 	}
 

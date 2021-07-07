@@ -210,7 +210,9 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<SchemeDetailModel, object>>>()
             {
-                ["schemeMasterName"] = v => v.SchemeMasterName
+                ["schemeMasterName"] = v => v.SchemeMasterName,
+                ["benefitStartDateText"] = v => v.BenefitStartDate,
+                ["benefitEndDateText"] = v => v.BenefitEndDate
             };
 
             var result = (
@@ -222,12 +224,17 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                             {
                                 SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + " - " + m.Name1 + " (" + sm.BusinessArea + ")" : sm.SchemeName,
                                 SchemeMasterCondition = sm.Condition,
+                                Condition = det.Condition,
                                 Brand = det.Brand,
                                 Slab = det.Slab,
                                 Material = det.Material,
                                 Status = sm.Status,
                                 Id = det.Id,
-                                Benefit = det.Benefit
+                                Benefit = det.Benefit,
+                                BenefitStartDate = det.BenefitStartDate,
+                                BenefitEndDate = det.BenefitEndDate,
+                                BenefitStartDateText = det.BenefitStartDate.ToString("yyyy-MM-dd"),
+                                BenefitEndDateText = det.BenefitEndDate.HasValue?det.BenefitEndDate.Value.ToString("yyyy-MM-dd"):""
                             });
 
             Expression<Func<SchemeDetailModel, object>> keySelector = columnsMap[query.SortBy];

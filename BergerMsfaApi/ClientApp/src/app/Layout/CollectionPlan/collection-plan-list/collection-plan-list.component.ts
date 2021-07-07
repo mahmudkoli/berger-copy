@@ -33,13 +33,13 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		private collectionPlanService: CollectionPlanService,
 		private modalService: NgbModal,
 		private commonService: CommonService) {
-			// this.PAGE_SIZE = 5000;
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
+			this.PAGE_SIZE = 5000;
+			this.ptableSettings.pageSize = 10;
+			this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+			// this.PAGE_SIZE = commonService.PAGE_SIZE;
+			// this.ptableSettings.pageSize = this.PAGE_SIZE;
+			// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -131,12 +131,12 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		tableName: 'Collection Plan List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'User Full Name', width: '30%', internalName: 'userFullName', sort: true, type: "" },
-			{ headerName: 'Business Area', width: '15%', internalName: 'businessArea', sort: false, type: "" },
-			{ headerName: 'Territory', width: '15%', internalName: 'territory', sort: false, type: "" },
+			// { headerName: 'User Full Name', width: '30%', internalName: 'userFullName', sort: true, type: "" },
+			{ headerName: 'Business Area', width: '20%', internalName: 'businessArea', sort: false, type: "" },
+			{ headerName: 'Territory', width: '20%', internalName: 'territory', sort: false, type: "" },
 			{ headerName: 'Year Month', width: '10%', internalName: 'yearMonthText', sort: true, type: "" },
-			{ headerName: 'Slippage Amount', width: '15%', internalName: 'slippageAmount', sort: true, type: "" },
-			{ headerName: 'Collection Target Amount', width: '15%', internalName: 'collectionTargetAmount', sort: true, type: "" },
+			{ headerName: 'Slippage Amount', width: '25%', internalName: 'slippageAmount', sort: true, type: "" },
+			{ headerName: 'Collection Target Amount', width: '25%', internalName: 'collectionTargetAmount', sort: true, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,

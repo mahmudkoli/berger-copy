@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Models.Setup;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Setup.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Setup
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -17,16 +19,15 @@ namespace BergerMsfaApi.Controllers.Setup
     {
         private readonly ILogger<AppDynamicDropdownController> _logger;
         private readonly IDropdownService _dropdownService;
-        public AppDynamicDropdownController
-            (
-              ILogger<AppDynamicDropdownController> logger
-             ,IDropdownService dropdownService
-            )
+        public AppDynamicDropdownController(
+              ILogger<AppDynamicDropdownController> logger, 
+              IDropdownService dropdownService)
         {
             _logger = logger;
             _dropdownService = dropdownService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetDropdownByTypeCd/{typeCode}")]
         public async Task<IActionResult> GetDropdownByTypeCd(string typeCode)
         {
@@ -46,6 +47,7 @@ namespace BergerMsfaApi.Controllers.Setup
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetDropdownByTypeCd")]
         public async Task<IActionResult> GetDropdownByTypeCd([FromQuery] IList<string> typeCodes)
         {

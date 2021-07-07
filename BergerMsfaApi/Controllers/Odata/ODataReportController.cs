@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.OData.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -39,8 +39,8 @@ namespace BergerMsfaApi.Controllers.Odata
             _oDataReportService = oDataReportService;
             _salesDataService = salesDataService;
             _financialDataService = financialDataService;
-            this._stockDataService = stockDataService;
-            this._balanceDataService = balanceDataService;
+            _stockDataService = stockDataService;
+            _balanceDataService = balanceDataService;
         }
 
         [HttpGet("MyTargetReport")]

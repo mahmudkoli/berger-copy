@@ -92,4 +92,10 @@ namespace Berger.Common.Constants
     }
 
 
+    public static class ConstantPlatformValue
+    {
+        public const string PlatformHeaderName = "Platform";
+        public const string AppPlatformHeader = "Mobile";
+    }
+
 }

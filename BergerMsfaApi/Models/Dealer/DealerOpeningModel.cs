@@ -25,6 +25,11 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public string SaleGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
+        public string BusinessAreaName { get; set; }
+        public string SaleOfficeName { get; set; }
+        public string SaleGroupName { get; set; }
+        public string TerritoryName { get; set; }
+        public string ZoneName { get; set; }
         public string EmployeeId { get; set; }
         public int? CurrentApprovarId { get; set; }
         public int? NextApprovarId { get; set; }
@@ -32,6 +37,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         public UserInfo NextApprovar { get; set; }
         public string Comment { get; set; }
         public int DealerOpeningStatus { get; set; }
+        public string DealerOpeningStatusText { get; set; }
         public string Code { get; set; }
 
         public List<DealerOpeningAttachmentModel> DealerOpeningAttachments { get; set; }

@@ -18,7 +18,7 @@ namespace BergerMsfaApi.Models.Scheme
         //National Scheme (Value)
         public string Slab { get; set; }
         public string Condition { get; set; }
-        public string BenefitDate { get; set; }
+        //public string BenefitDate { get; set; }
 
         //Painter Scheme
         public string SchemeId { get; set; }
@@ -28,6 +28,8 @@ namespace BergerMsfaApi.Models.Scheme
         //Common
         public DateTime BenefitStartDate { get; set; }
         public DateTime? BenefitEndDate { get; set; }
+        public string BenefitStartDateText { get; set; }
+        public string BenefitEndDateText { get; set; }
 
         public int SchemeMasterId { get; set; }
         public string SchemeMasterName { get; set; }

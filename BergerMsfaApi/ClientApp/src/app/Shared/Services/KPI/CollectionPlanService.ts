@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { APIResponse } from '../../Entity';
 import { CommonService } from '../Common/common.service';
-import { SaveCollectionPlan, SaveCollectionConfig } from '../../Entity/KPI/CollectionPlan';
+import { SaveCollectionPlan, SaveCollectionConfig, CollectionPlanSlippageAmount } from '../../Entity/KPI/CollectionPlan';
 
 @Injectable({ providedIn: 'root' })
 
@@ -53,6 +53,10 @@ export class CollectionPlanService {
 
     public deleteCollectionPlan(id: number) {
         return this.http.delete<any>(`${this.CollectionPlansEndpoint}/${id}`);
+    }
+
+    public getCollectionPlanSlippageAmount(model: CollectionPlanSlippageAmount) {
+        return this.http.get<any>(`${this.CollectionPlansEndpoint}/SlippageAmount?${this.commonService.toQueryString(model)}`);
     }
     //#endregion
 }

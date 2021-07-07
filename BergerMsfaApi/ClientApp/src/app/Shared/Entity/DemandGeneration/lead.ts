@@ -14,6 +14,7 @@ export class LeadGeneration {
     typeOfClientId: number;
     // typeOfClient: Dropdown;
     typeOfClientText: string;
+    otherClientName: string;
     projectName: string;
     projectAddress: string;
     keyContactPersonName: string;
@@ -74,6 +75,7 @@ export class LeadFollowUp {
     typeOfClientId: number;
     //typeOfClient: Dropdown;
     typeOfClientText: string;
+    otherClientName: string;
     keyContactPersonName: string;
     keyContactPersonNameChangeReason: string;
     keyContactPersonMobile: string;
