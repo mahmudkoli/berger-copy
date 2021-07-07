@@ -2326,7 +2326,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<TintingMachineReportResultModel>();
 
-            reportResult = (_tintingMachine
+            reportResult = await (_tintingMachine
                 .GetAllInclude(x => x.Company).Where(p =>
                         (string.IsNullOrEmpty(query.Depot) || query.Depot == p.Depot)
                         && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
@@ -2341,7 +2341,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                         Territory = c.Territory,
                         TotalCBMachineNO = c.No
 
-                    }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+                    }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
 
             var queryResult = new QueryResultModel<TintingMachineReportResultModel>();
             queryResult.Items = reportResult;
@@ -2923,6 +2923,5 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return queryResult;
         }
-
     }
 }
