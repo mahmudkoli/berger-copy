@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
+using Berger.Common.Model;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
@@ -824,6 +825,55 @@ namespace Berger.Odata.Services
                                 new KPIBusinessAnalysisKPIReportResultModel()
                                 {
                                     CustomerNo = x.CustomerNoOrSoldToParty,
+                                }).ToList();
+
+            return result;
+        }
+
+        public async Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "")
+        {
+            var currentDate = DateTime.Now;
+            var fromDate = currentDate.SalesSearchDateFormat();
+            var toDate = currentDate.SalesSearchDateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                            .AddProperty(DataColumnDef.NetAmount);
+
+            var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
+                                                    depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
+                                                    territories: area.Territories, zones: area.Zones,
+                                                    division: division, channel: channel);
+
+            var result = data.Select(x => x.CustomerNoOrSoldToParty).Distinct().Count();
+
+            return result;
+        }
+
+        public async Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area)
+        {
+            var currentDate = DateTime.Now;
+            var fromDate = currentDate.SalesSearchDateFormat();
+            var toDate = currentDate.SalesSearchDateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                .AddProperty(DataColumnDef.CustomerName)
+                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+                                .AddProperty(DataColumnDef.NetAmount);
+
+            var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
+                                                    depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
+                                                    territories: area.Territories, zones: area.Zones,
+                                                    division: model.Division);
+
+            var result = data.Select(x =>
+                                new TotalInvoiceValueResultModel()
+                                {
+                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
+                                    CustomerNo = x.CustomerNoOrSoldToParty,
+                                    CustomerName = x.CustomerName,
+                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount)
                                 }).ToList();
 
             return result;

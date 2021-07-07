@@ -89,6 +89,24 @@ namespace Berger.Odata.Services
             string customerNo, string creditControlArea);
         #endregion
 
+        #region get selectable data By Area
+        Task<IList<SalesDataModel>> GetSalesData(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, IList<string> depots = null,
+            IList<string> salesOffices = null, IList<string> salesGroups = null,
+            IList<string> territories = null, IList<string> zones = null,
+            IList<string> brands = null,
+            string division = "",
+            string channel = "");
+
+        Task<IList<MTSDataModel>> GetMTSData(SelectQueryOptionBuilder selectQueryBuilder,
+            string startDate, string endDate, IList<string> depots = null,
+            IList<string> salesOffices = null, IList<string> salesGroups = null,
+            IList<string> territories = null, IList<string> zones = null,
+            IList<string> brands = null,
+            string division = "",
+            string channel = "");
+        #endregion
+
         #region calculate data
         public decimal GetGrowth(decimal first, decimal second);
         public decimal GetGrowthNew(decimal first, decimal second);
