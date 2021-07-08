@@ -29,6 +29,10 @@ namespace BergerMsfaApi.Models.Menus
         public bool IsParent { get; set; }
         public bool IsTitle { get; set; }
         public int Sequence { get; set; }
+        public TypeEnum Type { get; set; }
+        public string GroupCode { get; set; }
+        public string ActivityNavigationId { get; set; }
+        public string BackgroundColor { get; set; }
 
         public List<MenuPermissionModel> MenuPermissions { get; set; }
         public List<MenuActivityModel> MenuActivities { get; set; }

@@ -15,6 +15,10 @@ export class MenuService {
     return this.http.get(`${this.url}`);
   }
 
+  public getPortal(typeId) {    
+    return this.http.get<any>(`${this.url}/get-by-portal/${typeId}`);
+  } 
+
   public getAllActive() {
     return this.http.get(`${this.url}/get-active`);
   }
@@ -39,8 +43,8 @@ export class MenuService {
     return this.http.put(`${this.url}/update/`, model);
   }
 
-  public assignRoleToMenu(model: MenuPermission[], roleId) {    
-    return this.http.post<any>(`${this.url}/assignRoleToMenu/${roleId}`, model);
+  public assignRoleToMenu(model: MenuPermission[], roleId,type,emp) {    
+    return this.http.post<any>(`${this.url}/assignRoleToMenu/${roleId}/${type}/${emp}`, model);
   } 
 
   public getPermissionMenus(roleId) {    
