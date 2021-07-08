@@ -1,5 +1,6 @@
 using System;
 using Berger.Data.Common;
+using Berger.Data.MsfaEntity.AlertNotification;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
@@ -209,6 +210,13 @@ namespace Berger.Data.MsfaEntity
         #region Collection Plan
         public DbSet<CollectionConfig> CollectionConfigs { get; set; }
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
+        #endregion
+
+        #region Alert Notification
+        public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }
+        public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
+        public DbSet<OccasionToCelebrate> OccasionToCelebrate { get; set; }
+        public DbSet<PaymentFollowup> PaymentFollowup { get; set; }
         #endregion
 
         #region Sync
