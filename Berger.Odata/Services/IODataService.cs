@@ -89,6 +89,9 @@ namespace Berger.Odata.Services
             string customerNo, string creditControlArea);
 
         Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder, string date);
+
+        Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder, string date);
+
         #endregion
 
         #region get selectable data By Area

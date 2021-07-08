@@ -35,18 +35,21 @@ namespace Berger.Odata.Extensions
         public static DateTime GetCFYFD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.Month >= startMonth ? date.Year : date.AddYears(-1).Year, startMonth, 1));
         public static DateTime GetCFYLCD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.Year, date.Month, date.Day));
         public static DateTime GetCFYLD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.Month >= startMonth ? date.AddYears(1).Year : date.Year, startMonth, 1).AddDays(-1));
-        
+
+        public static DateTime GetMonthFirstDate(this DateTime date) => new DateTime(date.Year, date.Month, 1);
+        public static DateTime GetMonthLastDate(this DateTime date) => date.GetMonthFirstDate().AddMonths(1).AddDays(-1);
+
         public static (DateTime, DateTime) GetCurrentFinacialYearDateRange(this DateTime date, int startMonth = 4)
         {
             if (date.Month >= startMonth)
             {
                 DateTime startDate = new DateTime(date.Year, startMonth, 1);
-                DateTime endDate = new DateTime(date.Year+1, startMonth, 1).AddDays(-1);
+                DateTime endDate = new DateTime(date.Year + 1, startMonth, 1).AddDays(-1);
                 return (startDate, endDate);
             }
             else
             {
-                DateTime startDate = new DateTime(date.Year-1, startMonth, 1);
+                DateTime startDate = new DateTime(date.Year - 1, startMonth, 1);
                 DateTime endDate = new DateTime(date.Year, startMonth, 1).AddDays(-1);
                 return (startDate, endDate);
             }
