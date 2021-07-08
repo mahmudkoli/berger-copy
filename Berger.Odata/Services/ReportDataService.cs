@@ -128,6 +128,11 @@ namespace Berger.Odata.Services
                                 .Concat(cyDataTarget.Select(x => x.MatarialGroupOrBrand))
                                     .Distinct().ToList();
 
+            var depots = cyDataActual.Select(x => x.PlantOrBusinessArea)
+                            .Concat(lyDataActual.Select(x => x.PlantOrBusinessArea))
+                                .Concat(cyDataTarget.Select(x => x.PlantOrBusinessArea))
+                                    .Distinct().ToList();
+
             var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync(x => brands.Any(b => b == x.MatarialGroupOrBrand));
 
             Func<SalesDataModel, string, bool> predicateActual = (x, brand) => x.MatarialGroupOrBrand == brand;
@@ -220,7 +225,7 @@ namespace Berger.Odata.Services
             #region get depot data
             if (result.Any())
             {
-                var depotsCodeName = await _odataCommonService.GetAllDepotsAsync(x => brands.Contains(x.Werks));
+                var depotsCodeName = await _odataCommonService.GetAllDepotsAsync(x => depots.Contains(x.Werks));
 
                 foreach (var item in result)
                 {
