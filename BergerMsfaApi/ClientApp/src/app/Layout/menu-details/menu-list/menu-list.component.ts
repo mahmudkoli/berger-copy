@@ -7,6 +7,8 @@ import { SidebarComponent } from '../../LayoutComponent/Components/sidebar/sideb
 import { Role } from 'src/app/Shared/Entity/Users/role';
 import { RoleService } from 'src/app/Shared/Services/Users/role.service';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { EnumTypeLabel } from 'src/app/Shared/Enums/employee-role';
 @Component({
   selector: 'app-menu-list',
   templateUrl: './menu-list.component.html',
@@ -17,6 +19,10 @@ export class MenuListComponent implements OnInit {
   menuItem: Menu;
   menuList: Menu[] = [];
   tosterMsgDltSuccess: string = "Successfully Deleted";
+  types: MapObject[] = EnumTypeLabel.EnumTypes;
+  typeId:number;
+  isEditMode:boolean = false;
+
 
   constructor(
       private modalService: NgbModal,
@@ -24,11 +30,15 @@ export class MenuListComponent implements OnInit {
     private menuService: MenuService  ) { }
 
   ngOnInit() {
+  }
+
+  onTypeChange(){
     this.getMenus();
+
   }
 
   getMenus() { 
-    this.menuService.getAll().subscribe(
+    this.menuService.getPortal(this.typeId).subscribe(
       (res: any) => {
         //console.log(res.data);
         this.menuList = res.data;        
@@ -53,8 +63,15 @@ export class MenuListComponent implements OnInit {
       backdrop: 'static',
       keyboard: false
     };
+    if(menu.id>0){
+      this.isEditMode=true;
+    }
     const modalRef = this.modalService.open(ModalMenuComponent, ngbModalOptions);
     modalRef.componentInstance.menuItem = menu ? menu : new Menu();
+    modalRef.componentInstance.type=this.typeId;
+    modalRef.componentInstance.isEditMode=this.isEditMode;
+
+    
 
     modalRef.result.then((result) => {
       console.log(result);

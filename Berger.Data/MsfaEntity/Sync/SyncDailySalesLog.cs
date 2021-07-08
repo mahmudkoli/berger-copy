@@ -23,12 +23,6 @@ namespace Berger.Data.MsfaEntity.Sync
         public string BusinessAreaName { get; set; }
 
         [StringLength(20)]
-        public string CreditControlArea { get; set; } 
-        
-        [StringLength(250)]
-        public string CreditControlAreaName { get; set; }
-
-        [StringLength(20)]
         public string SalesGroup { get; set; } 
 
         [StringLength(250)]
@@ -55,5 +49,8 @@ namespace Berger.Data.MsfaEntity.Sync
         public int CustNo { get; set; }
         public double Volume { get; set; }
         public double NetAmount { get; set; }
+
+        [StringLength(50)]
+        public string DistributionChannel  { get; set; }
     }
 }
