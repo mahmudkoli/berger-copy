@@ -44,14 +44,13 @@ namespace BergerMsfaApi.Controllers.Odata
             _balanceDataService = balanceDataService;
         }
 
-        [HttpGet("MyTargetReport")]
-        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MyTargetSearchModel model)
+        [HttpGet("MTDTargetSummary")]
+        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDTargetSummarySearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _reportDataService.MyTarget(model, dealerIds);
-
+                var result = await _reportDataService.MTDTargetSummary(model);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -27,5 +27,7 @@ namespace Berger.Odata.Services
         Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones);
         Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "");
         Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area);
+        Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category);
     }
 }

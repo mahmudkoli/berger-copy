@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.Extensions;
+using Berger.Common.Model;
+using Berger.Odata.Extensions;
 using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
@@ -11,13 +14,18 @@ namespace Berger.Odata.Services
         private readonly ISalesDataService _salesDataService;
         private readonly IMTSDataService _mtsDataService;
         private readonly IODataService _odataService;
+        private readonly IODataCommonService _odataCommonService;
 
-        public ReportDataService(ISalesDataService salesDataService, IMTSDataService mtsDataService,
-            IODataService odataService)
+        public ReportDataService(
+            ISalesDataService salesDataService, 
+            IMTSDataService mtsDataService,
+            IODataService odataService,
+            IODataCommonService odataCommonService)
         {
             _salesDataService = salesDataService;
             _mtsDataService = mtsDataService;
-            this._odataService = odataService;
+            _odataService = odataService;
+            _odataCommonService = odataCommonService;
         }
 
         public async Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model, IList<string> dealerIds)
@@ -132,7 +140,76 @@ namespace Berger.Odata.Services
             return result;
         }
 
-       
+        public async Task<IList<MTDTargetSummaryReportResultModel>> MTDTargetSummary(MTDTargetSummarySearchModel model)
+        {
+            var currentDate = DateTime.Now;
+            var cyfd = currentDate.GetCYFD();
+            var cylcd = currentDate.GetCYLCD();
+            var cyld = currentDate.GetCYLD();
+            var lyfd = currentDate.GetLYFD();
+            var lylcd = currentDate.GetLYLCD();
+            var lyld = currentDate.GetLYLD();
 
+            var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category);
+            var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, model.Category);
+            var cyDataTarget = await _mtsDataService.GetMTDTarget(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category);
+
+
+            var result = new List<MTDTargetSummaryReportResultModel>();
+
+            var depots = cyDataActual.Select(x => x.PlantOrBusinessArea)
+                            .Concat(lyDataActual.Select(x => x.PlantOrBusinessArea))
+                                .Concat(cyDataTarget.Select(x => x.PlantOrBusinessArea))
+                                    .Distinct().ToList();
+
+            var tillDateCyActual = cyDataActual.Where(x => x.Date.SalesResultDateFormat().Date >= cyfd.Date
+                                                        && x.Date.SalesResultDateFormat().Date <= cylcd.Date)
+                                                .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+
+            var tillDateLyActual = lyDataActual.Where(x => x.Date.SalesResultDateFormat().Date >= lyfd.Date
+                                                        && x.Date.SalesResultDateFormat().Date <= lylcd.Date)
+                                                .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+
+            var tempResult = new MTDTargetSummaryReportResultModel();
+            tempResult.Depots = depots;
+            tempResult.Depot = depots.FirstOrDefault();
+            tempResult.LYMTD = lyDataActual.Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            tempResult.CMTarget = cyDataTarget.Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.TargetVolume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.TargetValue));
+            tempResult.CMActual = cyDataActual.Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            tempResult.TillDateGrowth = _odataService.GetGrowth(tillDateLyActual, tillDateCyActual);
+            tempResult.AskingPerDay = (tempResult.CMTarget - tempResult.CMActual) / currentDate.RemainingDays();
+            tempResult.TillDatePerformacePerDay = tempResult.CMActual / currentDate.TillDays();
+
+            result.Add(tempResult);
+
+            #region get depot data
+            if (result.Any())
+            {
+                var depotsCodeName = await _odataCommonService.GetAllDepotsAsync(x => depots.Contains(x.Werks));
+
+                foreach (var item in result)
+                {
+                    item.Depots = item.Depots.Select(x => 
+                                    depotsCodeName.Any(d => d.Code == x) 
+                                    ? $"{depotsCodeName.FirstOrDefault(d => d.Code == x).Name} ({x})" 
+                                    : x).ToList();
+
+                    item.Depot = string.Join(", ", item.Depots);
+                }
+            }
+            #endregion
+
+            return result;
+        }
     }
 }

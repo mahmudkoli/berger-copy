@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
+using Berger.Common.Model;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
@@ -338,6 +339,35 @@ namespace Berger.Odata.Services
             }
 
             return await _odataService.GetMtsDataByMultipleCustomerAndDivision(selectQueryBuilder,dealerIds, compareDate, division);
+        }
+
+        public async Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category)
+        {
+            var fromDateStr = fromDate.MTSSearchDateFormat();
+            var toDateStr = toDate.MTSSearchDateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.MTS_PlantOrBusinessArea)
+                                .AddProperty(DataColumnDef.MTS_Date)
+                                .AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+                                            ? DataColumnDef.MTS_TargetVolume
+                                            : DataColumnDef.MTS_TargetValue);
+
+            var brands = new List<string>();
+
+            if (category.HasValue && category.Value == EnumBrandCategoryType.Liquid)
+            {
+                brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
+            }
+            else if (category.HasValue && category.Value == EnumBrandCategoryType.Powder)
+            {
+                brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
+            }
+
+            return await _odataService.GetMTSData(selectQueryBuilder, fromDateStr, toDateStr,
+                            depots: area.Depots, territories: area.Territories, zones: area.Zones, 
+                            brands: brands, division: division);
         }
     }
 }
