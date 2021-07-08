@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
@@ -44,14 +45,44 @@ namespace BergerMsfaApi.Controllers.Odata
             _balanceDataService = balanceDataService;
         }
 
-        [HttpGet("MyTargetReport")]
-        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MyTargetSearchModel model)
+        [HttpGet("MTDTargetSummary")]
+        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDTargetSummarySearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _reportDataService.MyTarget(model, dealerIds);
+                var result = await _reportDataService.MTDTargetSummary(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole==(int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
+        [HttpGet("MTDBrandPerformance")]
+        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDBrandPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _reportDataService.MTDBrandPerformance(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole == (int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
                 return OkResult(result);
             }
             catch (Exception ex)

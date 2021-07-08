@@ -1,4 +1,6 @@
 ﻿using Berger.Common.Extensions;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Berger.Odata.Model
 {
@@ -16,6 +18,33 @@ namespace Berger.Odata.Model
         public decimal TillDateIdealAchieved { get; set; }
         public decimal TillDateActualAchieved { get; set; }
         public string Category { get; set; }
+    }
+
+    public class MTDTargetSummaryReportResultModel
+    {
+        [JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CMTarget { get; set; }
+        public decimal CMActual { get; set; }
+        public decimal TillDateGrowth { get; set; }
+        public decimal AskingPerDay { get; set; }
+        public decimal TillDatePerformacePerDay { get; set; }
+    }
+
+    public class MTDBrandPerformanceReportResultModel
+    {
+        [JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public string Brand { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CMTarget { get; set; }
+        public decimal CMActual { get; set; }
+        public decimal TillDateGrowth { get; set; }
+        public decimal AskingPerDay { get; set; }
+        public decimal TillDatePerformacePerDay { get; set; }
     }
 
     public class MySummaryReportResultModel
