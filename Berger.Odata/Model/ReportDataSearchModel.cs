@@ -1,5 +1,21 @@
-﻿namespace Berger.Odata.Model
+﻿using System.Collections.Generic;
+
+namespace Berger.Odata.Model
 {
+    public class AppAreaSearchCommonModel
+    {
+        public IList<string> Depots { get; set; }
+        public IList<string> Territories { get; set; }
+        public IList<string> Zones { get; set; }
+
+        public AppAreaSearchCommonModel()
+        {
+            this.Depots = new List<string>();
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
+    }
+
     public class MyTargetSearchModel
     {
         public int Month { get; set; }
@@ -8,6 +24,30 @@
         public MyTargetReportType ReportType { get; set; }
         public string Division { get; set; }
         public EnumMyTargetBrandType BrandType { get; set; }
+    }
+
+    public class MTDTargetSummarySearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumVolumeOrValue VolumeOrValue { get; set; }
+        public EnumBrandCategoryType? Category { get; set; }
+        public string Division { get; set; }
+    }
+
+    public class MTDBrandPerformanceSearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumVolumeOrValue VolumeOrValue { get; set; }
+        public EnumMyTargetBrandType Type { get; set; }
+        public string Division { get; set; }
+    }
+
+    public enum EnumBrandCategoryType
+    {
+        Liquid = 1,
+        Powder = 2
     }
 
     public enum MyTargetReportType

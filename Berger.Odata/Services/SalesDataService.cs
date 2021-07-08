@@ -878,6 +878,42 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate, 
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type)
+        {
+            var fromDateStr = fromDate.SalesSearchDateFormat();
+            var toDateStr = toDate.SalesSearchDateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+                selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
+                                    .AddProperty(DataColumnDef.Date)
+                                    .AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+                                                ? DataColumnDef.Volume
+                                                : DataColumnDef.NetAmount);
+
+            if (type.HasValue) selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
+
+            var brands = new List<string>();
+
+            if (category.HasValue && category.Value == EnumBrandCategoryType.Liquid)
+            {
+                brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
+            }
+            else if (category.HasValue && category.Value == EnumBrandCategoryType.Powder)
+            {
+                brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
+            }
+
+            if (type.HasValue && type.Value == EnumMyTargetBrandType.MTS_Brands)
+            {
+                brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
+
+            return await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr, 
+                            depots: area.Depots, territories: area.Territories, zones: area.Zones, 
+                            brands: brands, division: division);
+        }
     }
 }
 
