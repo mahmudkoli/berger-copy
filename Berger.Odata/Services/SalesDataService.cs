@@ -279,7 +279,7 @@ namespace Berger.Odata.Services
                                     .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
             }
 
-            if (model.BrandOrDivision == EnumBrandOrDivision.MTS_Brand)
+            if (model.BrandOrDivision == EnumBrandOrDivision.MTSBrand)
             {
                 mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }
@@ -369,70 +369,6 @@ namespace Berger.Odata.Services
         }
         #endregion
 
-        public async Task<IList<SalesDataModel>> GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
-            MyTargetReportType targetReportType, IList<string> dealerIds, EnumMyTargetBrandType brandType)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-
-            switch (targetReportType)
-            {
-                case MyTargetReportType.TerritoryWiseTarget:
-                    selectQueryBuilder.AddProperty(DataColumnDef.Territory);
-                    break;
-                case MyTargetReportType.ZoneWiseTarget:
-                    selectQueryBuilder.AddProperty(DataColumnDef.Territory);
-                    selectQueryBuilder.AddProperty(DataColumnDef.Zone);
-                    break;
-                case MyTargetReportType.BrandWise:
-                    selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
-                    break;
-            }
-
-
-            selectQueryBuilder.AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
-                ? DataColumnDef.Volume
-                : DataColumnDef.NetAmount);
-
-            var cyfd = fromDate.GetCYFD().DateFormat();
-            var cyed = endDate.DateFormat();
-
-
-            var mtsBrands = new List<string>();
-            if (targetReportType == MyTargetReportType.BrandWise && EnumMyTargetBrandType.MTS_Brands == brandType)
-            {
-                mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
-            }
-
-            return await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cyed, division, brands: mtsBrands);
-
-        }
-
-        public async Task<IList<TotalInvoiceValueResultModel>> GetReportTotalInvoiceValue(TotalInvoiceValueSearchModel model, IList<string> dealerIds)
-        {
-            var currentDate = DateTime.Now;
-            var fromDate = currentDate.DateFormat();
-            var toDate = currentDate.DateFormat();
-
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.NetAmount);
-
-            var data = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, fromDate, toDate, model.Division)).ToList();
-
-            var result = data.Select(x =>
-                                new TotalInvoiceValueResultModel()
-                                {
-                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
-                                    CustomerNo = x.CustomerNoOrSoldToParty,
-                                    CustomerName = x.CustomerName,
-                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount)
-                                }).ToList();
-
-            return result;
-        }
-
         public async Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<string> dealerIds)
         {
             var currentDate = DateTime.Now.AddMonths(-1);
@@ -471,7 +407,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrand)
                                 .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
 
-            if (model.BrandOrDivision == EnumBrandOrDivision.MTS_Brand)
+            if (model.BrandOrDivision == EnumBrandOrDivision.MTSBrand)
             {
                 mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }
@@ -555,9 +491,9 @@ namespace Berger.Odata.Services
 
             var customerClassification = model.DealerCategory switch
             {
-                EnumDealerClassificationCategory.All => "-1",
-                EnumDealerClassificationCategory.Exclusive => ConstantsValue.CustomerClassificationExclusive,
-                EnumDealerClassificationCategory.NonExclusive => ConstantsValue.CustomerClassificationNonExclusive,
+                EnumCustomerClassification.All => "-1",
+                EnumCustomerClassification.Exclusive => ConstantsValue.CustomerClassificationExclusive,
+                EnumCustomerClassification.NonExclusive => ConstantsValue.CustomerClassificationNonExclusive,
                 _ => "-1"
             };
 
@@ -765,17 +701,6 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<int> NoOfBillingDealer(IList<string> dealerIds)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty);
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo).AddProperty(DataColumnDef.Volume);
-            var fromDate = DateTime.Now.DateFormat();
-            var toDate = DateTime.Now.DateFormat();
-            IList<SalesDataModel> salesDataByMultipleCustomerAndDivision = await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, fromDate, toDate);
-            return salesDataByMultipleCustomerAndDivision.Select(x => x.CustomerNo).Distinct().Count();
-        }
-
         public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands)
         {
             var currentDate = new DateTime(year, month, 01);
@@ -850,7 +775,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area)
+        public async Task<IList<TodaysInvoiceValueResultModel>> GetTodaysActivityInvoiceValue(TodaysInvoiceValueSearchModel model, AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
             var fromDate = currentDate.SalesSearchDateFormat();
@@ -868,7 +793,7 @@ namespace Berger.Odata.Services
                                                     division: model.Division);
 
             var result = data.Select(x =>
-                                new TotalInvoiceValueResultModel()
+                                new TodaysInvoiceValueResultModel()
                                 {
                                     InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
                                     CustomerNo = x.CustomerNoOrSoldToParty,
@@ -880,7 +805,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate, 
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type)
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)
         {
             var fromDateStr = fromDate.SalesSearchDateFormat();
             var toDateStr = toDate.SalesSearchDateFormat();
@@ -896,16 +821,16 @@ namespace Berger.Odata.Services
 
             var brands = new List<string>();
 
-            if (category.HasValue && category.Value == EnumBrandCategoryType.Liquid)
+            if (category.HasValue && category.Value == EnumBrandCategory.Liquid)
             {
                 brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
             }
-            else if (category.HasValue && category.Value == EnumBrandCategoryType.Powder)
+            else if (category.HasValue && category.Value == EnumBrandCategory.Powder)
             {
                 brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
             }
 
-            if (type.HasValue && type.Value == EnumMyTargetBrandType.MTS_Brands)
+            if (type.HasValue && type.Value == EnumBrandType.MTSBrands)
             {
                 brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }

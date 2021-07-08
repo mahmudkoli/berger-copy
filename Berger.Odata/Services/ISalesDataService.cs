@@ -16,18 +16,14 @@ namespace Berger.Odata.Services
         Task<IList<BrandOrDivisionWiseMTDResultModel>> GetBrandOrDivisionWisePerformance(BrandOrDivisionWiseMTDSearchModel model);
         #endregion
 
-        Task<IList<SalesDataModel>>  GetMyTargetSales(DateTime fromDate, DateTime endDate, string division, EnumVolumeOrValue volumeOrValue,
-            MyTargetReportType targetReportType, IList<string> dealerIds, EnumMyTargetBrandType brandType);
-        Task<IList<TotalInvoiceValueResultModel>> GetReportTotalInvoiceValue(TotalInvoiceValueSearchModel model, IList<string> dealerIds);
         Task<IList<BrandOrDivisionWisePerformanceResultModel>> GetReportBrandOrDivisionWisePerformance(BrandOrDivisionWisePerformanceSearchModel model, IList<string> dealerIds);
         Task<IList<DealerPerformanceResultModel>> GetReportDealerPerformance(DealerPerformanceSearchModel model, IList<string> dealerIds);
         Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<string> dealerIds, DealerPerformanceReportType dealerPerformanceReportType);
-        Task<int> NoOfBillingDealer(IList<string> dealerIds);
         Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands);
         Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones);
         Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "");
-        Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area);
+        Task<IList<TodaysInvoiceValueResultModel>> GetTodaysActivityInvoiceValue(TodaysInvoiceValueSearchModel model, AreaSearchCommonModel area);
         Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type);
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type);
     }
 }

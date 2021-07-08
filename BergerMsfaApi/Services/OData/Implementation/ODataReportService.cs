@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _collectionDataService = collectionDataService;
         }
 
-        public async Task<MySummaryReportResultModel> MySummaryReport(AreaSearchCommonModel area)
+        public async Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
 
@@ -171,7 +171,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             var noOfBillingDealer = await _salesDataService.NoOfBillingDealer(area, ConstantsODataValue.DivisionDecorative, ConstantsODataValue.DistrbutionChannelDealer);
 
-            var result =  new MySummaryReportResultModel
+            var result =  new TodaysActivitySummaryReportResultModel
             {
                 DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
