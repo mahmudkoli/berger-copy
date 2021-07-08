@@ -1205,6 +1205,61 @@ namespace Berger.Odata.Services
             return data;
         }
 
+
+        public async Task<IList<CollectionDataModel>> GetCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
+
+
+            //if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
+            //{
+            //    filterQueryBuilder.And()
+            //                    .StartGroup()
+            //                    .GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate)
+            //                    .And()
+            //                    .LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate)
+            //                    .EndGroup();
+            //}
+            //else if (!string.IsNullOrEmpty(startPostingDate))
+            //{
+            //    filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate);
+            //}
+            //else if (!string.IsNullOrEmpty(endPostingDate))
+            //{
+            //    filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate);
+            //}
+
+            //if (!string.IsNullOrEmpty(startClearDate) && !string.IsNullOrEmpty(endClearDate))
+            //{
+            //    filterQueryBuilder.And()
+            //                    .StartGroup()
+            //                    .GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate)
+            //                    .And()
+            //                    .LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate)
+            //                    .EndGroup();
+            //}
+            //else if (!string.IsNullOrEmpty(startClearDate))
+            //{
+            //    filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate);
+            //}
+            //else if (!string.IsNullOrEmpty(endClearDate))
+            //{
+            //    filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate);
+            //}
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCollectionData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
         public async Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo)
         {
@@ -1249,6 +1304,38 @@ namespace Berger.Odata.Services
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
                         //.AppendQuery(topQuery)
                         .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder
+            )
+        {
+            //var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            //if (dealerIds.Any())
+            //{
+            //    filterQueryBuilder.StartGroup();
+            //    for (int i = 0; i < dealerIds.Count; i++)
+            //    {
+            //        filterQueryBuilder.Equal(nameof(CustomerDataModel.CustomerNo), dealerIds[i]);
+
+            //        if (i + 1 != dealerIds.Count)
+            //        {
+            //            filterQueryBuilder.Or();
+            //        }
+            //    }
+            //    filterQueryBuilder.EndGroup();
+            //}
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            //queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                  queryBuilder.AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetCustomerData(queryBuilder.Query)).ToList();
 
@@ -1428,6 +1515,35 @@ namespace Berger.Odata.Services
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
                 //.AppendQuery(topQuery)
                 .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerOccasionData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder)
+        {
+            //var filterQueryBuilder = new FilterQueryOptionBuilder();
+            ////filterQueryBuilder.Equal(FinancialColDef.CompanyCode, "1000");
+            //if (dealerIds.Any())
+            //{
+            //    filterQueryBuilder.StartGroup();
+            //    for (int i = 0; i < dealerIds.Count; i++)
+            //    {
+            //        filterQueryBuilder.Equal(CustomerOccasionColDef.Customer, dealerIds[i]);
+
+            //        if (i + 1 != dealerIds.Count)
+            //        {
+            //            filterQueryBuilder.Or();
+            //        }
+            //    }
+            //    filterQueryBuilder.EndGroup();
+            //}
+
+            var queryBuilder = new QueryOptionBuilder();
+            //queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                //.AppendQuery(topQuery)
+                queryBuilder.AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetCustomerOccasionData(queryBuilder.Query)).ToList();
 

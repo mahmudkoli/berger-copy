@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Berger.Odata.Services;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Users;
@@ -21,17 +22,20 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IUserInfoService _userService;
         private readonly ILoginLogService _loginLogService;
         private readonly IActiveDirectoryServices _adservice;
+        private readonly IAlertNotificationDataService _alertNotification;
 
         public AppAuthController(
             IAuthService service, 
             IUserInfoService user, 
             ILoginLogService loginLogService, 
-            IActiveDirectoryServices adservice)
+            IActiveDirectoryServices adservice,
+            IAlertNotificationDataService alertNotification)
         {
             authService = service;
             _userService = user;
             _loginLogService = loginLogService;
             _adservice = adservice;
+            _alertNotification = alertNotification;
         }
 
         [AllowAnonymous]
@@ -41,6 +45,8 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
+                var res = await _alertNotification.GetAllTodayCheckBouncesByDealerIds();
+
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 

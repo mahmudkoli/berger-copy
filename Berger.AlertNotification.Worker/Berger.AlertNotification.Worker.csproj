@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
+    <ProjectReference Include="..\Berger.Odata\Berger.Odata.csproj" />
   </ItemGroup>
 </Project>

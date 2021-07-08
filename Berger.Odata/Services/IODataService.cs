@@ -117,5 +117,13 @@ namespace Berger.Odata.Services
         decimal GetContribution(decimal first, decimal second);
 
         #endregion
+
+        #region Alert Notification
+        Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder);
+        Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder
+            );
+        Task<IList<CollectionDataModel>> GetCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
+            string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "");
+        #endregion
     }
 }

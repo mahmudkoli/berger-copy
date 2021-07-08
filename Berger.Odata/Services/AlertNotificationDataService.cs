@@ -13,18 +13,18 @@ namespace Berger.Odata.Services
    public class AlertNotificationDataService: IAlertNotificationDataService
     {
         private readonly IODataService _odataService;
-        private readonly IODataCommonService _odataCommonService;
+        //private readonly IODataCommonService _odataCommonService;
 
         public AlertNotificationDataService(
-            IODataService odataService,
-            IODataCommonService odataCommonService
+            IODataService odataService
+            //IODataCommonService odataCommonService
             )
         {
             _odataService = odataService;
-            _odataCommonService = odataCommonService;
+            //_odataCommonService = odataCommonService;
         }
 
-        public async Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBouncesByDealerIds(List<string> dealerIds)
+        public async Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBouncesByDealerIds()
         {
             var today = DateTime.Now;
             var resultDateFormat = "dd MMM yyyy";
@@ -41,7 +41,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.CreditControlArea);
 
-            var data = (await _odataService.GetCollectionDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, startClearDate: fromDate, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
+            var data = (await _odataService.GetCustomerAndCreditControlArea(selectQueryBuilder, startClearDate: fromDate, endClearDate: toDate)).ToList();
 
             var result = data.Select(x =>
                                 new AppChequeBounceNotificationModel()
@@ -69,17 +69,24 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppCreditLimitCrossNotificationModel>> GetAllTodayCreditLimitCrossByDealerIds(List<string> dealerIds)
+        public async Task<IList<AppCreditLimitCrossNotificationModel>> GetAllTodayCreditLimitCrossByDealerIds()
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+
+            selectQueryBuilder.AddProperty(nameof(CustomerDataModel.SalesOffice))
+                                .AddProperty(nameof(CustomerDataModel.SalesGroup))
+                                .AddProperty(nameof(CustomerDataModel.CustZone))
+                                .AddProperty(nameof(CustomerDataModel.Division))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.BusinessArea))
                                 .AddProperty(nameof(CustomerDataModel.CustomerName))
+                                .AddProperty(nameof(CustomerDataModel.CustomerNo))
                                 .AddProperty(nameof(CustomerDataModel.Channel))
                                 .AddProperty(nameof(CustomerDataModel.CreditControlArea))
                                 .AddProperty(nameof(CustomerDataModel.CreditLimit))
                                 .AddProperty(nameof(CustomerDataModel.TotalDue));
 
-            var data = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectQueryBuilder, dealerIds)).ToList();
+            var data = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectQueryBuilder)).ToList();
 
             var groupData = data.GroupBy(x => new { x.CustomerNo, x.CreditControlArea }).ToList();
 
@@ -108,7 +115,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUpByDealerIds(List<string> dealerIds)
+        public async Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUpByDealerIds()
         {
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -128,22 +135,22 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.DayLimit);
 
-            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
 
             //var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
 
             #region data call by single customer
             var data = new List<FinancialDataModel>();
 
-            foreach (var dealerId in dealerIds)
-            {
-                //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
-                if (dataSingle.Any())
-                {
-                    data.AddRange(dataSingle);
-                }
-            }
+            //foreach (var dealerId in dealerIds)
+            //{
+            //    //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
+            //    var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
+            //    if (dataSingle.Any())
+            //    {
+            //        data.AddRange(dataSingle);
+            //    }
+            //}
             #endregion
 
             var result = data.Select(x =>
@@ -206,7 +213,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasionsByDealerIds(List<string> dealerIds)
+        public async Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasionsByDealerIds()
         {
             var today = DateTime.Now;
             var oldDate = new DateTime(1000, 01, 01);
@@ -216,9 +223,13 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CustomerOccasionColDef.Customer)
                                 .AddProperty(CustomerOccasionColDef.Name)
-                                .AddProperty(CustomerOccasionColDef.DOB);
+                                .AddProperty(CustomerOccasionColDef.DOB)
+                                .AddProperty(CustomerOccasionColDef.SpouseDOB)
+                                .AddProperty(CustomerOccasionColDef.FirstChildDOB)
+                                .AddProperty(CustomerOccasionColDef.SecondChildDOB)
+                                .AddProperty(CustomerOccasionColDef.ThirdChildDOB);
 
-            var data = (await _odataService.GetCustomerOccasionData(selectQueryBuilder, dealerIds)).ToList();
+            var data = (await _odataService.GetCustomerOccasionData(selectQueryBuilder)).ToList();
 
             var result = data.Select(x =>
                                 new AppCustomerOccasionNotificationModel()
