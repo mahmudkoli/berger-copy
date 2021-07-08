@@ -7,7 +7,8 @@ namespace Berger.Odata.Extensions
     {
         public static string DateFormat(this DateTime date) => date.ToString("yyyy.MM.dd");
         public static string SalesSearchDateFormat(this DateTime date) => date.ToString("dd.MM.yyyy");
-        public static string SalesResultDateFormat(this DateTime date) => date.ToString("yyyyMMdd");
+        public static string MTSSearchDateFormat(this DateTime date) => $"{string.Format("{0:0000}", date.Year)}.{string.Format("{0:00}", date.Month)}";
+        public static DateTime SalesResultDateFormat(this string date, string format = "yyyyMMdd") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
@@ -38,6 +39,10 @@ namespace Berger.Odata.Extensions
 
         public static DateTime GetMonthFirstDate(this DateTime date) => new DateTime(date.Year, date.Month, 1);
         public static DateTime GetMonthLastDate(this DateTime date) => date.GetMonthFirstDate().AddMonths(1).AddDays(-1);
+
+
+        public static int RemainingDays(this DateTime date) => (DateTime.DaysInMonth(date.Year, date.Month) - date.Day);
+        public static int TillDays(this DateTime date) => date.Day;
 
         public static (DateTime, DateTime) GetCurrentFinacialYearDateRange(this DateTime date, int startMonth = 4)
         {

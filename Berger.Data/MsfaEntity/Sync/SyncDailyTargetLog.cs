@@ -7,8 +7,9 @@ namespace Berger.Data.MsfaEntity.Sync
 {
     public class SyncDailyTargetLog:AuditableEntity<int>
     {
-        [Column(TypeName = "date")]
-        public DateTime Date { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
+
         [StringLength(150)]
         public string Zone { get; set; }
         [StringLength(20)]
