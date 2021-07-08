@@ -36,10 +36,8 @@ namespace BergerMsfaApi.Services.Sync
                 SalesOffice = x.SalesOffice,
                 AccountGroup = x.CustomerAccountGroup,
                 BrandCode = x.MatarialGroupOrBrand,
-                CreatedTime = DateTime.Now
+                DistributionChannel = x.DistributionChannel
             }).ToList();
-
-
 
             try
             {
