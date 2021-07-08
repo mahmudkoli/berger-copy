@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("MTDTargetSummary")]
-        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<MTDTargetSummaryReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMTDTargetSummary([FromQuery] MTDTargetSummarySearchModel model)
         {
             try
@@ -101,7 +101,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("MTDBrandPerformance")]
-        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<MTDBrandPerformanceReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMTDBrandPerformance([FromQuery] MTDBrandPerformanceSearchModel model)
         {
             try
