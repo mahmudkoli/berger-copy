@@ -33,6 +33,20 @@ namespace Berger.Odata.Model
         public decimal TillDatePerformacePerDay { get; set; }
     }
 
+    public class MTDBrandPerformanceReportResultModel
+    {
+        [JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public string Brand { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CMTarget { get; set; }
+        public decimal CMActual { get; set; }
+        public decimal TillDateGrowth { get; set; }
+        public decimal AskingPerDay { get; set; }
+        public decimal TillDatePerformacePerDay { get; set; }
+    }
+
     public class MySummaryReportResultModel
     {
         public int DealerVisitTarget { get; set; }

@@ -35,6 +35,15 @@ namespace Berger.Odata.Model
         public string Division { get; set; }
     }
 
+    public class MTDBrandPerformanceSearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumVolumeOrValue VolumeOrValue { get; set; }
+        public EnumMyTargetBrandType Type { get; set; }
+        public string Division { get; set; }
+    }
+
     public enum EnumBrandCategoryType
     {
         Liquid = 1,

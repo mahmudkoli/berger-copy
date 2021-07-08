@@ -15,17 +15,20 @@ namespace Berger.Odata.Services
         private readonly IMTSDataService _mtsDataService;
         private readonly IODataService _odataService;
         private readonly IODataCommonService _odataCommonService;
+        private readonly IODataBrandService _odataBrandService;
 
         public ReportDataService(
             ISalesDataService salesDataService, 
             IMTSDataService mtsDataService,
             IODataService odataService,
-            IODataCommonService odataCommonService)
+            IODataCommonService odataCommonService,
+            IODataBrandService odataBrandService)
         {
             _salesDataService = salesDataService;
             _mtsDataService = mtsDataService;
             _odataService = odataService;
             _odataCommonService = odataCommonService;
+            _odataBrandService = odataBrandService;
         }
 
         public async Task<IList<TargetReportResultModel>> MyTarget(MyTargetSearchModel model, IList<string> dealerIds)
@@ -150,9 +153,9 @@ namespace Berger.Odata.Services
             var lylcd = currentDate.GetLYLCD();
             var lyld = currentDate.GetLYLD();
 
-            var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category);
-            var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, model.Category);
-            var cyDataTarget = await _mtsDataService.GetMTDTarget(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category);
+            var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category, null);
+            var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, model.Category, null);
+            var cyDataTarget = await _mtsDataService.GetMTDTarget(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category, null);
 
 
             var result = new List<MTDTargetSummaryReportResultModel>();
@@ -205,6 +208,107 @@ namespace Berger.Odata.Services
                                     : x).ToList();
 
                     item.Depot = string.Join(", ", item.Depots);
+                }
+            }
+            #endregion
+
+            return result;
+        }
+
+        public async Task<IList<MTDBrandPerformanceReportResultModel>> MTDBrandPerformance(MTDBrandPerformanceSearchModel model)
+        {
+            var currentDate = DateTime.Now;
+            var cyfd = currentDate.GetCYFD();
+            var cylcd = currentDate.GetCYLCD();
+            var cyld = currentDate.GetCYLD();
+            var lyfd = currentDate.GetLYFD();
+            var lylcd = currentDate.GetLYLCD();
+            var lyld = currentDate.GetLYLD();
+
+            var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, null, model.Type);
+            var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, null, model.Type);
+            var cyDataTarget = await _mtsDataService.GetMTDTarget(model, cyfd, cyld, model.Division, model.VolumeOrValue, null, model.Type);
+
+
+            var result = new List<MTDBrandPerformanceReportResultModel>();
+
+            var brands = cyDataActual.Select(x => x.MatarialGroupOrBrand)
+                            .Concat(lyDataActual.Select(x => x.MatarialGroupOrBrand))
+                                .Concat(cyDataTarget.Select(x => x.MatarialGroupOrBrand))
+                                    .Distinct().ToList();
+
+            foreach (var brand in brands)
+            {
+                var tillDateCyActual = cyDataActual.Where(x => x.MatarialGroupOrBrand == brand &&
+                                                        x.Date.SalesResultDateFormat().Date >= cyfd.Date
+                                                        && x.Date.SalesResultDateFormat().Date <= cylcd.Date)
+                                                .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+
+                var tillDateLyActual = lyDataActual.Where(x => x.MatarialGroupOrBrand == brand && 
+                                                            x.Date.SalesResultDateFormat().Date >= lyfd.Date
+                                                            && x.Date.SalesResultDateFormat().Date <= lylcd.Date)
+                                                    .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                    ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                    : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+
+                var tempResult = new MTDBrandPerformanceReportResultModel();
+                tempResult.Depots = cyDataActual.Where(x => x.MatarialGroupOrBrand == brand)
+                                                .Select(x => x.PlantOrBusinessArea)
+                                    .Concat(
+                                    lyDataActual.Where(x => x.MatarialGroupOrBrand == brand)
+                                                .Select(x => x.PlantOrBusinessArea))
+                                    .Concat(
+                                    cyDataTarget.Where(x => x.MatarialGroupOrBrand == brand)
+                                                .Select(x => x.PlantOrBusinessArea))
+                                    .Distinct().ToList();
+                tempResult.Depot = tempResult.Depots.FirstOrDefault();
+                tempResult.Brand = brand;
+                tempResult.LYMTD = lyDataActual.Where(x => x.MatarialGroupOrBrand == brand)
+                                                .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                    ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                    : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+                tempResult.CMTarget = cyDataTarget.Where(x => x.MatarialGroupOrBrand == brand)
+                                                    .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                    ? CustomConvertExtension.ObjectToDecimal(x.TargetVolume)
+                                                    : CustomConvertExtension.ObjectToDecimal(x.TargetValue));
+                tempResult.CMActual = cyDataActual.Where(x => x.MatarialGroupOrBrand == brand)
+                                                    .Sum(x => model.VolumeOrValue == EnumVolumeOrValue.Volume
+                                                    ? CustomConvertExtension.ObjectToDecimal(x.Volume)
+                                                    : CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+                tempResult.TillDateGrowth = _odataService.GetGrowth(tillDateLyActual, tillDateCyActual);
+                tempResult.AskingPerDay = (tempResult.CMTarget - tempResult.CMActual) / currentDate.RemainingDays();
+                tempResult.TillDatePerformacePerDay = tempResult.CMActual / currentDate.TillDays();
+
+                result.Add(tempResult);
+            }
+
+            #region get depot data
+            if (result.Any())
+            {
+                var depotsCodeName = await _odataCommonService.GetAllDepotsAsync(x => brands.Contains(x.Werks));
+
+                foreach (var item in result)
+                {
+                    item.Depots = item.Depots.Select(x =>
+                                    depotsCodeName.Any(d => d.Code == x)
+                                    ? $"{depotsCodeName.FirstOrDefault(d => d.Code == x).Name} ({x})"
+                                    : x).ToList();
+
+                    item.Depot = string.Join(", ", item.Depots);
+                }
+            }
+            #endregion
+
+            #region get brand data
+            if (result.Any())
+            {
+                var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync();
+
+                foreach (var item in result)
+                {
+                    item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?.MatarialGroupOrBrandName ?? item.Brand;
                 }
             }
             #endregion

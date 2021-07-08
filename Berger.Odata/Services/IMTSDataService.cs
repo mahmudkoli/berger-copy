@@ -17,6 +17,6 @@ namespace Berger.Odata.Services
         Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date, IList<string> dealerIds, string division,
             MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue, EnumMyTargetBrandType brandType);
         Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category);
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type);
     }
 }

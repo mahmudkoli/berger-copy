@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
@@ -51,6 +52,37 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _reportDataService.MTDTargetSummary(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole==(int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("MTDBrandPerformance")]
+        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDBrandPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _reportDataService.MTDBrandPerformance(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole == (int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
                 return OkResult(result);
             }
             catch (Exception ex)

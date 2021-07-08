@@ -28,6 +28,6 @@ namespace Berger.Odata.Services
         Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "");
         Task<IList<TotalInvoiceValueResultModel>> GetTotalInvoiceValue(TotalInvoiceValueSearchModel model, AreaSearchCommonModel area);
         Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category);
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type);
     }
 }

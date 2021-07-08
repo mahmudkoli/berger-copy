@@ -342,7 +342,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category)
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategoryType? category, EnumMyTargetBrandType? type)
         {
             var fromDateStr = fromDate.MTSSearchDateFormat();
             var toDateStr = toDate.MTSSearchDateFormat();
@@ -354,6 +354,8 @@ namespace Berger.Odata.Services
                                             ? DataColumnDef.MTS_TargetVolume
                                             : DataColumnDef.MTS_TargetValue);
 
+            if (type.HasValue) selectQueryBuilder.AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand);
+
             var brands = new List<string>();
 
             if (category.HasValue && category.Value == EnumBrandCategoryType.Liquid)
@@ -363,6 +365,11 @@ namespace Berger.Odata.Services
             else if (category.HasValue && category.Value == EnumBrandCategoryType.Powder)
             {
                 brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
+            }
+
+            if (type.HasValue && type.Value == EnumMyTargetBrandType.MTS_Brands)
+            {
+                brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }
 
             return await _odataService.GetMTSData(selectQueryBuilder, fromDateStr, toDateStr,

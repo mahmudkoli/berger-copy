@@ -13,5 +13,6 @@ namespace Berger.Odata.Services
         Task<IList<string>> GetEnamelBrandCodesAsync();
         Task<IList<string>> GetPowderBrandCodesAsync();
         Task<IList<string>> GetLiquidBrandCodesAsync();
+        Task<IList<BrandFamilyInfo>> GetBrandFamilyInfosAsync();
     }
 }
