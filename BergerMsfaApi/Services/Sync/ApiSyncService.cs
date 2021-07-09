@@ -38,7 +38,8 @@ namespace BergerMsfaApi.Services.Sync
 
             var syncDailyTargetLogs = monthlyTarget.ToList().Select(x => new SyncDailyTargetLog
             {
-                Date = x.Date.DateFormatDate(),
+                Year = date.Year,
+                Month = date.Month,
                 Zone = x.Zone,
                 TerritoryCode = x.Territory,
                 BusinessArea = x.PlantOrBusinessArea,
@@ -75,7 +76,7 @@ namespace BergerMsfaApi.Services.Sync
             try
             {
                 await _syncDailySalesLogRepository.DeleteAsync(x => x.Date >= firstDayOfMonth && x.Date <= lastDayOfMonth);
-                await _syncDailyTargetLogRepository.DeleteAsync(x => x.Date >= firstDayOfMonth && x.Date <= lastDayOfMonth);
+                await _syncDailyTargetLogRepository.DeleteAsync(x => x.Year == date.Year && x.Month == date.Month);
                 await _syncDailySalesLogRepository.BulkInsert(syncDailySalesLogs);
                 await _syncDailyTargetLogRepository.BulkInsert(syncDailyTargetLogs);
             }
