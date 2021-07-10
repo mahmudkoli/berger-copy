@@ -27,12 +27,13 @@ namespace BergerMsfaApi.Services.AppsFontBox
         private readonly IRepository<LeadGeneration> _leadGenerationRepository;
         private readonly IRepository<LeadFollowUp> _leadFollowUpRepository;
         private readonly IAuthService _authService;
+        private readonly IRepository<SyncSetup> _syncSetupRepository;
 
         public AppFrontBoxService(IRepository<SyncDailySalesLog> syncDailySalesLogRepository,
             IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository,
             IRepository<BrandInfo> brandInfoRepository, IODataService oDataService,
             IRepository<LeadGeneration> leadGenerationRepository, IRepository<LeadFollowUp> leadFollowUpRepository,
-            IAuthService authService
+            IAuthService authService, IRepository<SyncSetup> syncSetupRepository
         )
         {
             _syncDailySalesLogRepository = syncDailySalesLogRepository;
@@ -42,6 +43,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
             _leadGenerationRepository = leadGenerationRepository;
             _leadFollowUpRepository = leadFollowUpRepository;
             _authService = authService;
+            _syncSetupRepository = syncSetupRepository;
         }
 
         public async Task<AppFrontBoxModel> GetAppFontBoxValue(AreaSearchCommonModel area)
@@ -58,7 +60,9 @@ namespace BergerMsfaApi.Services.AppsFontBox
             if (employeeRole == EnumEmployeeRole.ZO)
             {
                 returnModel.FontBoxItem.Add($"Lead Create: {leadCreatedCount}");
+                returnModel.FontBoxItem.Add($"Number of Painter Call: {0}");
                 returnModel.FontBoxItem.Add($"Lead Followup: {leadFollowUpCount}");
+                returnModel.FontBoxItem.Add($"Sub-dealer Sales Call: {0}");
             }
 
             else if (employeeRole == EnumEmployeeRole.AM || employeeRole == EnumEmployeeRole.TM_TO ||
@@ -86,7 +90,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
                 returnModel.FontBoxItem.Add(leadFollowupString);
                 returnModel.FontBoxItem.Add(numberOfBillingDealerString);
 
-                returnModel.LastSyncDateTime = "";
+                returnModel.LastSyncDateTime = await GetLastSyncTime();
 
             }
 
@@ -94,6 +98,11 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
         }
 
+        private async Task<string> GetLastSyncTime()
+        {
+            var lastSyncTime = await _syncSetupRepository.FindByCondition(x => true).Select(x => x.LastSyncTime).FirstOrDefaultAsync();
+            return lastSyncTime?.ToString("dd/MM/yyyy h:mm tt") ?? "";
+        }
         private async Task<int> GetLeadFollowUpCount()
         {
 
@@ -106,12 +115,12 @@ namespace BergerMsfaApi.Services.AppsFontBox
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
 
-           return await _leadFollowUpRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
-                    && x.CreatedTime <= lastDateOfMonth
-                    && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.LeadGeneration.Depot))
-                    && (!area.Territories.Any() || area.Territories.Contains(x.LeadGeneration.Territory))
-                    && (!area.Zones.Any() || area.Zones.Contains(x.LeadGeneration.Zone)))))
-                .CountAsync();
+            return await _leadFollowUpRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
+                     && x.CreatedTime <= lastDateOfMonth
+                     && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.LeadGeneration.Depot))
+                     && (!area.Territories.Any() || area.Territories.Contains(x.LeadGeneration.Territory))
+                     && (!area.Zones.Any() || area.Zones.Contains(x.LeadGeneration.Zone)))))
+                 .CountAsync();
         }
 
         private async Task<int> GetLeadCreatedCount()
@@ -164,12 +173,12 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
-            return  x => x.Month == firstDateOfMonth.Month && x.Year == firstDateOfMonth.Year 
-                                                           && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
-                                                         && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
-                                                         && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
-                                                         && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
-                                                         && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
+            return x => x.Month == firstDateOfMonth.Month && x.Year == firstDateOfMonth.Year
+                                                          && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
+                                                        && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
+                                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
+                                                        && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
+                                                        && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
         }
 
         private async Task<int> GetNoOfBillingDealer()

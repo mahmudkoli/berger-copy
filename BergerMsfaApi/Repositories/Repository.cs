@@ -735,12 +735,14 @@ namespace BergerMsfaApi.Repositories
 
         public virtual async Task<List<TEntity>> BulkInsert(List<TEntity> items)
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
+
                 await _context.BulkInsertAsync(items);
-                transaction.Commit();
+                scope.Complete();
+
+                return items;
             }
-            return items;
         }
 
         #endregion

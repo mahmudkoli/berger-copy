@@ -17,12 +17,15 @@ namespace BergerMsfaApi.Services.Sync
         private readonly ISyncService _syncService;
         private readonly IRepository<SyncDailySalesLog> _syncDailySalesLogRepository;
         private readonly IRepository<SyncDailyTargetLog> _syncDailyTargetLogRepository;
+        private readonly IRepository<SyncSetup> _syncSetupRepository;
 
-        public ApiSyncService(ISyncService syncService, IRepository<SyncDailySalesLog> syncDailySalesLogRepository, IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository)
+        public ApiSyncService(ISyncService syncService, IRepository<SyncDailySalesLog> syncDailySalesLogRepository,
+            IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository, IRepository<SyncSetup> syncSetupRepository)
         {
             _syncService = syncService;
             _syncDailySalesLogRepository = syncDailySalesLogRepository;
             _syncDailyTargetLogRepository = syncDailyTargetLogRepository;
+            _syncSetupRepository = syncSetupRepository;
         }
 
         public async Task SyncDailySalesNTargetData()
@@ -76,13 +79,32 @@ namespace BergerMsfaApi.Services.Sync
 
             try
             {
+                var syncSetup = await _syncSetupRepository.FirstOrDefaultAsync(x => true);
+
                 using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     await _syncDailySalesLogRepository.DeleteAsync(x =>
                         x.Date >= firstDayOfMonth && x.Date <= lastDayOfMonth);
+
                     await _syncDailyTargetLogRepository.DeleteAsync(x => x.Year == date.Year && x.Month == date.Month);
+
                     await _syncDailySalesLogRepository.BulkInsert(syncDailySalesLogs);
+
                     await _syncDailyTargetLogRepository.BulkInsert(syncDailyTargetLogs);
+
+                    if (syncSetup == null)
+                    {
+                        await _syncSetupRepository.CreateAsync(new SyncSetup()
+                        {
+                            LastSyncTime = DateTime.Now
+                        });
+                    }
+                    else
+                    {
+                        syncSetup.LastSyncTime = DateTime.Now;
+                        await _syncSetupRepository.UpdateAsync(syncSetup);
+                    }
+
                     scope.Complete();
                 }
             }
