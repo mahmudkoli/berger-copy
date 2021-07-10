@@ -22,7 +22,9 @@ namespace Berger.Worker
         public static void Main(string[] args)
         {
             var _configuration = new ConfigurationBuilder()
-                                .SetBasePath(Directory.GetCurrentDirectory())
+                                //.SetBasePath(Directory.GetCurrentDirectory())
+                                //.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                .SetBasePath(AppContext.BaseDirectory)
                                 .AddJsonFile("appsettings.json", false, true)
                                 .AddEnvironmentVariables()
                                 .Build();
