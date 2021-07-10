@@ -67,19 +67,19 @@ namespace BergerMsfaApi.Services.AppsFontBox
                 employeeRole == EnumEmployeeRole.GM)
             {
 
-                double sumOfTotalSales = await GetMonthlySalesAmount();
+                var sumOfTotalSales = await GetMonthlySalesAmount();
 
-                double numberOfBillingDealer = await GetNoOfBillingDealer();
+                var numberOfBillingDealer = await GetNoOfBillingDealer();
 
-                double sumOfTotalTarget = await GetTotalTarget();
+                var sumOfTotalTarget = await GetTotalTarget();
 
                 var sumOfPremiumBrandSales = await GetPremiumBrandSalesAmount();
 
 
-                string targetAchv = $"Target Achv: {_oDataService.GetAchivement(CustomConvertExtension.ObjectToDecimal(sumOfTotalTarget), CustomConvertExtension.ObjectToDecimal(sumOfTotalSales)):0.00}%";
-                string premiumSalesPercentage = $"Premium Brand Value Sales: {_oDataService.GetPercentage(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales), CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales))}%";
-                string leadFollowupString = $"Lead Created: {leadCreatedCount} \n Lead Followup: {leadFollowUpCount}";
-                string numberOfBillingDealerString = $"Number of Billing Dealer: {numberOfBillingDealer}";
+                var targetAchv = $"Target Achv: {_oDataService.GetAchivement(CustomConvertExtension.ObjectToDecimal(sumOfTotalTarget), CustomConvertExtension.ObjectToDecimal(sumOfTotalSales)):0.00}%";
+                var premiumSalesPercentage = $"Premium Brand Value Sales: {_oDataService.GetPercentage(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales), CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales))}%";
+                var leadFollowupString = $"Lead Created: {leadCreatedCount} \n Lead Followup: {leadFollowUpCount}";
+                var numberOfBillingDealerString = $"Number of Billing Dealer: {numberOfBillingDealer}";
 
                 returnModel.FontBoxItem.Add(targetAchv);
                 returnModel.FontBoxItem.Add(premiumSalesPercentage);
@@ -106,13 +106,12 @@ namespace BergerMsfaApi.Services.AppsFontBox
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
 
-            int leadFollowUpCount = await _leadFollowUpRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
+           return await _leadFollowUpRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
                     && x.CreatedTime <= lastDateOfMonth
                     && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.LeadGeneration.Depot))
                     && (!area.Territories.Any() || area.Territories.Contains(x.LeadGeneration.Territory))
                     && (!area.Zones.Any() || area.Zones.Contains(x.LeadGeneration.Zone)))))
                 .CountAsync();
-            return leadFollowUpCount;
         }
 
         private async Task<int> GetLeadCreatedCount()
@@ -125,12 +124,11 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
-            int leadCreatedCount = await _leadGenerationRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
+            return await _leadGenerationRepository.FindByCondition(x => x.CreatedTime >= firstDateOfMonth
                     && x.CreatedTime <= lastDateOfMonth && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.Depot))
                     && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
                     && (!area.Zones.Any() || area.Zones.Contains(x.Zone)))))
                 .CountAsync();
-            return leadCreatedCount;
         }
 
         private async Task<double> GetPremiumBrandSalesAmount()
@@ -144,10 +142,9 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
             var premiumBranCheckFullExpression = GetSalesGeneralWhereExpression().AndAlso(premiumBranCheckExpression);
 
-            double sumOfPremiumBrandSales = await _syncDailySalesLogRepository
+            return await _syncDailySalesLogRepository
                 .FindByCondition(premiumBranCheckFullExpression)
                 .SumAsync(x => x.NetAmount);
-            return sumOfPremiumBrandSales;
         }
 
         private async Task<double> GetTotalTarget()
@@ -167,13 +164,12 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
-            Expression<Func<SyncDailyTargetLog, bool>> targetWhereClause = x => x.Month == firstDateOfMonth.Month
-                && x.Year == firstDateOfMonth.Year && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
+            return  x => x.Month == firstDateOfMonth.Month && x.Year == firstDateOfMonth.Year 
+                                                           && (employeeRole == EnumEmployeeRole.GM || ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
                                                          && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                                                          && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                                                          && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
                                                          && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
-            return targetWhereClause;
         }
 
         private async Task<int> GetNoOfBillingDealer()
@@ -200,14 +196,12 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
-            Expression<Func<SyncDailySalesLog, bool>> generalWhereExpression = x =>
-                x.Date >= firstDateOfMonth.Date && x.Date <= lastDateOfMonth.Date && (employeeRole == EnumEmployeeRole.GM ||
+            return x => x.Date >= firstDateOfMonth.Date && x.Date <= lastDateOfMonth.Date && (employeeRole == EnumEmployeeRole.GM ||
                     ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
                      && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                      && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                      && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
                      && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
-            return generalWhereExpression;
         }
 
         private Tuple<DateTime, DateTime> GetComparableDates()

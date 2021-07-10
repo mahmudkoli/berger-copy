@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.Sync;
 using Berger.Odata.Extensions;
@@ -24,10 +25,10 @@ namespace BergerMsfaApi.Services.Sync
             _syncDailyTargetLogRepository = syncDailyTargetLogRepository;
         }
 
-        public async Task SyncDailySalesData()
+        public async Task SyncDailySalesNTargetData()
         {
 
-            var date = DateTime.Now.AddMonths(-4).AddYears(-2);
+            var date = DateTime.Now;
             var firstDayOfMonth = date.GetMonthFirstDate();
             var lastDayOfMonth = date.GetMonthLastDate();
 
@@ -75,14 +76,19 @@ namespace BergerMsfaApi.Services.Sync
 
             try
             {
-                await _syncDailySalesLogRepository.DeleteAsync(x => x.Date >= firstDayOfMonth && x.Date <= lastDayOfMonth);
-                await _syncDailyTargetLogRepository.DeleteAsync(x => x.Year == date.Year && x.Month == date.Month);
-                await _syncDailySalesLogRepository.BulkInsert(syncDailySalesLogs);
-                await _syncDailyTargetLogRepository.BulkInsert(syncDailyTargetLogs);
+                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    await _syncDailySalesLogRepository.DeleteAsync(x =>
+                        x.Date >= firstDayOfMonth && x.Date <= lastDayOfMonth);
+                    await _syncDailyTargetLogRepository.DeleteAsync(x => x.Year == date.Year && x.Month == date.Month);
+                    await _syncDailySalesLogRepository.BulkInsert(syncDailySalesLogs);
+                    await _syncDailyTargetLogRepository.BulkInsert(syncDailyTargetLogs);
+                    scope.Complete();
+                }
             }
             catch (Exception e)
             {
-
+                throw;
             }
 
         }

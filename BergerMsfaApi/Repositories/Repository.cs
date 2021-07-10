@@ -740,7 +740,6 @@ namespace BergerMsfaApi.Repositories
                 await _context.BulkInsertAsync(items);
                 transaction.Commit();
             }
-
             return items;
         }
 

@@ -4,6 +4,6 @@ namespace BergerMsfaApi.Services.Sync
 {
     public interface IApiSyncService
     {
-        Task SyncDailySalesData();
+        Task SyncDailySalesNTargetData();
     }
 }

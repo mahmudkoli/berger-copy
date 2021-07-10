@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Controllers.Sync
         {
             try
             {
-                await _syncService.SyncDailySalesData();
+                await _syncService.SyncDailySalesNTargetData();
                 return Ok();
             }
             catch (Exception ex)
