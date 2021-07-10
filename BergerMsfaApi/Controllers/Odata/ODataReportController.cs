@@ -17,7 +17,7 @@ namespace BergerMsfaApi.Controllers.Odata
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class ODataReportController : BaseController
+    public class AppSalesReportController : BaseController
     {
         private readonly IReportDataService _reportDataService;
         private readonly IAuthService _authService;
@@ -27,7 +27,7 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IStockDataService _stockDataService;
         private readonly IBalanceDataService _balanceDataService;
 
-        public ODataReportController(
+        public AppSalesReportController(
             IReportDataService reportDataService, 
             IAuthService authService,
             IODataReportService oDataReportService,
@@ -45,21 +45,14 @@ namespace BergerMsfaApi.Controllers.Odata
             _balanceDataService = balanceDataService;
         }
 
-        [HttpGet("MTDTargetSummary")]
-        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDTargetSummarySearchModel model)
+        [HttpGet("TodaysActivitySummary")]
+        [ProducesResponseType(typeof(MySummaryReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetTodaysActivitySummary()
         {
             try
             {
-                var result = await _reportDataService.MTDTargetSummary(model);
-                var employeeRole = AppIdentity.AppUser.EmployeeRole;
-                if (employeeRole==(int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
-                {
-                    foreach (var item in result)
-                    {
-                        item.Depot = null;
-                    }
-                }
+                var area = _authService.GetLoggedInUserArea();
+                var result = await _oDataReportService.MySummaryReport(area);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -68,13 +61,29 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MTDBrandPerformance")]
-        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> TerritoryWiseMyTarget([FromQuery] MTDBrandPerformanceSearchModel model)
+        [HttpGet("TodaysInvoiceValue")]
+        [ProducesResponseType(typeof(IList<TotalInvoiceValueResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetTodaysInvoiceValue([FromQuery] TotalInvoiceValueSearchModel model)
         {
             try
             {
-                var result = await _reportDataService.MTDBrandPerformance(model);
+                var area = _authService.GetLoggedInUserArea();
+                var result = await _salesDataService.GetTotalInvoiceValue(model, area);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("MTDTargetSummary")]
+        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMTDTargetSummary([FromQuery] MTDTargetSummarySearchModel model)
+        {
+            try
+            {
+                var result = await _reportDataService.MTDTargetSummary(model);
                 var employeeRole = AppIdentity.AppUser.EmployeeRole;
                 if (employeeRole == (int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
                 {
@@ -91,30 +100,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MySummaryReport")]
-        [ProducesResponseType(typeof(MySummaryReportResultModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> MySummaryReport()
+        [HttpGet("MTDBrandPerformance")]
+        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMTDBrandPerformance([FromQuery] MTDBrandPerformanceSearchModel model)
         {
             try
             {
-                var area = _authService.GetLoggedInUserArea();
-                var result = await _oDataReportService.MySummaryReport(area);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("TotalInvoiceValue")]
-        [ProducesResponseType(typeof(IList<TotalInvoiceValueResultModel>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTotalInvoiceValue([FromQuery] TotalInvoiceValueSearchModel model)
-        {
-            try
-            {
-                var area = _authService.GetLoggedInUserArea();
-                var result = await _salesDataService.GetTotalInvoiceValue(model, area);
+                var result = await _reportDataService.MTDBrandPerformance(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole == (int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
                 return OkResult(result);
             }
             catch (Exception ex)

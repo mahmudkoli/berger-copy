@@ -223,6 +223,7 @@ namespace Berger.Data.MsfaEntity
 
         public DbSet<SyncDailySalesLog> SyncDailySalesLogs { get; set; }
         public DbSet<SyncDailyTargetLog> SyncDailyTargetLogs { get; set; }
+        public DbSet<SyncSetup> SyncSetups { get; set; }
 
         #endregion
     }
