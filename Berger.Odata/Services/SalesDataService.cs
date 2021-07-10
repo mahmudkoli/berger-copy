@@ -835,9 +835,11 @@ namespace Berger.Odata.Services
                 brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }
 
-            return await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr, 
+            var result = await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr, 
                             depots: area.Depots, territories: area.Territories, zones: area.Zones, 
                             brands: brands, division: division);
+
+            return result;
         }
     }
 }

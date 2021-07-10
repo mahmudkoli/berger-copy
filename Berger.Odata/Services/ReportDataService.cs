@@ -34,12 +34,13 @@ namespace Berger.Odata.Services
         public async Task<IList<MTDTargetSummaryReportResultModel>> MTDTargetSummary(MTDTargetSummarySearchModel model)
         {
             var currentDate = DateTime.Now;
-            var cyfd = currentDate.GetCYFD();
-            var cylcd = currentDate.GetCYLCD();
-            var cyld = currentDate.GetCYLD();
-            var lyfd = currentDate.GetLYFD();
-            var lylcd = currentDate.GetLYLCD();
-            var lyld = currentDate.GetLYLD();
+            var filterDate = new DateTime(model.Year, model.Month, 01);
+            var cyfd = filterDate.GetCYFD();
+            var cylcd = filterDate.GetCYLCD();
+            var cyld = filterDate.GetCYLD();
+            var lyfd = filterDate.GetLYFD();
+            var lylcd = filterDate.GetLYLCD();
+            var lyld = filterDate.GetLYLD();
 
             var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category, null);
             var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, model.Category, null);
@@ -109,12 +110,13 @@ namespace Berger.Odata.Services
         public async Task<IList<MTDBrandPerformanceReportResultModel>> MTDBrandPerformance(MTDBrandPerformanceSearchModel model)
         {
             var currentDate = DateTime.Now;
-            var cyfd = currentDate.GetCYFD();
-            var cylcd = currentDate.GetCYLCD();
-            var cyld = currentDate.GetCYLD();
-            var lyfd = currentDate.GetLYFD();
-            var lylcd = currentDate.GetLYLCD();
-            var lyld = currentDate.GetLYLD();
+            var filterDate = new DateTime(model.Year, model.Month, 01);
+            var cyfd = filterDate.GetCYFD();
+            var cylcd = filterDate.GetCYLCD();
+            var cyld = filterDate.GetCYLD();
+            var lyfd = filterDate.GetLYFD();
+            var lylcd = filterDate.GetLYLCD();
+            var lyld = filterDate.GetLYLD();
 
             var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, null, model.Type);
             var lyDataActual = await _salesDataService.GetMTDActual(model, lyfd, lyld, model.Division, model.VolumeOrValue, null, model.Type);
