@@ -7,6 +7,7 @@ using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Common.Model;
 using Berger.Data.MsfaEntity.DemandGeneration;
+using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Sync;
 using Berger.Odata.Extensions;
@@ -28,13 +29,19 @@ namespace BergerMsfaApi.Services.AppsFontBox
         private readonly IRepository<LeadFollowUp> _leadFollowUpRepository;
         private readonly IAuthService _authService;
         private readonly IRepository<SyncSetup> _syncSetupRepository;
+        private readonly IRepository<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<PainterCall> _painterCallsRepository;
 
         public AppFrontBoxService(IRepository<SyncDailySalesLog> syncDailySalesLogRepository,
             IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository,
             IRepository<BrandInfo> brandInfoRepository, IODataService oDataService,
             IRepository<LeadGeneration> leadGenerationRepository, IRepository<LeadFollowUp> leadFollowUpRepository,
-            IAuthService authService, IRepository<SyncSetup> syncSetupRepository
-        )
+            IAuthService authService,
+            IRepository<SyncSetup> syncSetupRepository,
+            IRepository<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> dealerSalesCallRepository,
+            IRepository<PainterCall> painterCallsRepository
+
+            )
         {
             _syncDailySalesLogRepository = syncDailySalesLogRepository;
             _syncDailyTargetLogRepository = syncDailyTargetLogRepository;
@@ -44,6 +51,8 @@ namespace BergerMsfaApi.Services.AppsFontBox
             _leadFollowUpRepository = leadFollowUpRepository;
             _authService = authService;
             _syncSetupRepository = syncSetupRepository;
+            _dealerSalesCallRepository = dealerSalesCallRepository;
+            _painterCallsRepository = painterCallsRepository;
         }
 
         public async Task<AppFrontBoxModel> GetAppFontBoxValue(AreaSearchCommonModel area)
@@ -60,9 +69,9 @@ namespace BergerMsfaApi.Services.AppsFontBox
             if (employeeRole == EnumEmployeeRole.ZO)
             {
                 returnModel.FontBoxItem.Add($"Lead Create: {leadCreatedCount}");
-                returnModel.FontBoxItem.Add($"Number of Painter Call: {0}");
+                returnModel.FontBoxItem.Add($"Number of Painter Call: {await GetNumberOfPainterCall()}");
                 returnModel.FontBoxItem.Add($"Lead Followup: {leadFollowUpCount}");
-                returnModel.FontBoxItem.Add($"Sub-dealer Sales Call: {0}");
+                returnModel.FontBoxItem.Add($"Sub-dealer Sales Call: {await GetNumberOfDealerSalesCall()}");
             }
 
             else if (employeeRole == EnumEmployeeRole.AM || employeeRole == EnumEmployeeRole.TM_TO ||
@@ -145,7 +154,6 @@ namespace BergerMsfaApi.Services.AppsFontBox
             List<string> premiumBrandList = await _brandInfoRepository.FindByCondition(x => x.IsPremium)
                 .Select(x => x.MaterialGroupOrBrand).Distinct().ToListAsync();
 
-
             Expression<Func<SyncDailySalesLog, bool>> premiumBranCheckExpression =
                 x => premiumBrandList.Contains(x.BrandCode);
 
@@ -198,7 +206,6 @@ namespace BergerMsfaApi.Services.AppsFontBox
         private Expression<Func<SyncDailySalesLog, bool>> GetSalesGeneralWhereExpression()
         {
             var area = _authService.GetLoggedInUserArea();
-
             var dates = GetComparableDates();
             var firstDateOfMonth = dates.Item1;
             var lastDateOfMonth = dates.Item2;
@@ -219,5 +226,23 @@ namespace BergerMsfaApi.Services.AppsFontBox
             var lastDateOfMonth = DateTime.Now.GetMonthLastDate();
             return Tuple.Create(firstDateOfMonth, lastDateOfMonth);
         }
+
+
+        private async Task<int> GetNumberOfDealerSalesCall()
+        {
+            var (fromDate, toDate) = GetComparableDates();
+            return await _dealerSalesCallRepository.FindByCondition(x => x.UserId == AppIdentity.AppUser.UserId
+                                                                         && x.IsSubDealerCall && x.CreatedTime >= fromDate && x.CreatedTime <= toDate).CountAsync();
+        }
+
+        private async Task<int> GetNumberOfPainterCall()
+        {
+            var (fromDate, toDate) = GetComparableDates();
+
+            return await _painterCallsRepository.FindByCondition(x => x.EmployeeId == AppIdentity.AppUser.EmployeeId && x.CreatedTime >= fromDate && x.CreatedTime <= toDate)
+                .CountAsync();
+        }
+
+
     }
 }

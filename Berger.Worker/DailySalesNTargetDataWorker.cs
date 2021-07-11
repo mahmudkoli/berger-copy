@@ -20,7 +20,6 @@ namespace Berger.Worker
         private readonly ILogger<DailySalesNTargetDataWorker> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<WorkerConfig> _appSettings;
-        private readonly int _timeOutHours = 4;
         private IWorkerSyncService _workerSyncService;
         private string workerName = "DailySalesNTargetData Worker";
 
@@ -100,12 +99,10 @@ namespace Berger.Worker
                     nextRunTime = nextRunTime.AddMinutes(1);
                 }
 
-                TimeSpan timeSpan = nextRunTime - today;
-
-                TimeSpan actualTime = TimeSpan.FromHours(_timeOutHours) - stopwatch.Elapsed;
+                TimeSpan actualTime = nextRunTime - today;
                 _logger.LogInformation($"{workerName} ______Next Service will run after: {actualTime}");
 
-                await Task.Delay(timeSpan, stoppingToken);
+                await Task.Delay(actualTime, stoppingToken);
             }
         }
 
