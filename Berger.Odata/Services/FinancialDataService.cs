@@ -290,13 +290,13 @@ namespace Berger.Odata.Services
 
             var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
 
-            if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS)
+            if (model.PaymentFollowUpType == EnumPaymentFollowUpType.RPRS)
             {
                 var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
                                                         x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
                 dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
             }
-            else if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.FastPayCarry)
+            else if (model.PaymentFollowUpType == EnumPaymentFollowUpType.FastPayCarry)
             {
                 var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
                                                         (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer || 
@@ -331,7 +331,7 @@ namespace Berger.Odata.Services
                                     DayLimit = x.DayLimit
                                 }).ToList();
 
-            if (model.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS)
+            if (model.PaymentFollowUpType == EnumPaymentFollowUpType.RPRS)
             {
                 var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
 

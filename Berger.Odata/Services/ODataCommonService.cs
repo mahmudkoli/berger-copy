@@ -58,11 +58,11 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<(string Code, string Name)>> GetAllDepotsAsync(Func<Depot, bool> predicate)
+        public async Task<IList<(string Code, string Name)>> GetAllDepotsAsync(Expression<Func<Depot, bool>> predicate)
         {
             var result = await _depotRepository.GetAllIncludeAsync(
                                 x => new ValueTuple<string, string>(x.Werks, x.Name1),
-                                x => predicate(x),
+                                predicate,
                                 null,
                                 null,
                                 true

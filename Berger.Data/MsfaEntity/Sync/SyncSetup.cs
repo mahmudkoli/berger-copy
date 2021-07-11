@@ -5,7 +5,7 @@ namespace Berger.Data.MsfaEntity.Sync
 {
     public class SyncSetup : AuditableEntity<int>
     {
-        public int DailySyncCount { get; set; }
+        public int SyncHourlyInterval { get; set; }
         public DateTime? LastSyncTime { get; set; }
     }
 }
