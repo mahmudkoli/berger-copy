@@ -210,7 +210,7 @@ namespace BergerMsfaApi.Services.Workers
             {
                 var paymentFollowUps = await _oDataNotificationService.GetAllTodayPaymentFollowUpByDealerIds(dealerIds);
 
-                foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.RPRS))
+                foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpType.RPRS))
                 {
                     var title = $"Today you have RPRS Follow Up.";
                     var body = $"RPRS Follow Up - Customer No: {paymentFollowUp.CustomerNo}, Customer Name: {paymentFollowUp.CustomerName}, " +
@@ -220,7 +220,7 @@ namespace BergerMsfaApi.Services.Workers
                     await _notificationService.SendPushNotificationAsync(fcmToken, title, body);
                 }
 
-                foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpTypeModel.FastPayCarry))
+                foreach (var paymentFollowUp in paymentFollowUps.Where(x => x.PaymentFollowUpType == EnumPaymentFollowUpType.FastPayCarry))
                 {
                     var title = $"Today you have Fast Pay Carry Follow Up.";
                     var body = $"Fast Pay Carry Follow Up - Customer No: {paymentFollowUp.CustomerNo}, Customer Name: {paymentFollowUp.CustomerName}, " +

@@ -46,13 +46,13 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("TodaysActivitySummary")]
-        [ProducesResponseType(typeof(MySummaryReportResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(TodaysActivitySummaryReportResultModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTodaysActivitySummary()
         {
             try
             {
                 var area = _authService.GetLoggedInUserArea();
-                var result = await _oDataReportService.MySummaryReport(area);
+                var result = await _oDataReportService.TodaysActivitySummaryReport(area);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -62,13 +62,13 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("TodaysInvoiceValue")]
-        [ProducesResponseType(typeof(IList<TotalInvoiceValueResultModel>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTodaysInvoiceValue([FromQuery] TotalInvoiceValueSearchModel model)
+        [ProducesResponseType(typeof(IList<TodaysInvoiceValueResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetTodaysInvoiceValue([FromQuery] TodaysInvoiceValueSearchModel model)
         {
             try
             {
                 var area = _authService.GetLoggedInUserArea();
-                var result = await _salesDataService.GetTotalInvoiceValue(model, area);
+                var result = await _salesDataService.GetTodaysActivityInvoiceValue(model, area);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("MTDTargetSummary")]
-        [ProducesResponseType(typeof(MTDTargetSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<MTDTargetSummaryReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMTDTargetSummary([FromQuery] MTDTargetSummarySearchModel model)
         {
             try
@@ -101,7 +101,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("MTDBrandPerformance")]
-        [ProducesResponseType(typeof(MTDBrandPerformanceReportResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<MTDBrandPerformanceReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMTDBrandPerformance([FromQuery] MTDBrandPerformanceSearchModel model)
         {
             try

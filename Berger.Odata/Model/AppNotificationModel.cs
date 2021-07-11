@@ -43,7 +43,7 @@ namespace Berger.Odata.Model
 
     public class AppPaymentFollowUpNotificationModel
     {
-        public EnumPaymentFollowUpTypeModel PaymentFollowUpType { get; set; }
+        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
         public string InvoiceNo { get; internal set; }
