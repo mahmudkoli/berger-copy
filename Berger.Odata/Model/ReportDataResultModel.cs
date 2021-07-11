@@ -1,53 +1,11 @@
 ﻿using Berger.Common.Extensions;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using NJ = Newtonsoft.Json;
+using SJ = System.Text.Json.Serialization;
 
 namespace Berger.Odata.Model
 {
-    public class TargetReportResultModel
-    {
-        public string TerritoryNumber { get; set; }
-        public string Zone { get; set; }
-        public string Brand { get; set; }
-        public decimal LYSMAchieved { get; set; }
-        public decimal TotalMTSTarget { get; set; }
-        public decimal TillDateTarget { get; set; }
-        public decimal TillDateMTSAchieved { get; set; }
-        public decimal DayTarget { get; set; }
-        public decimal DaySales { get; set; }
-        public decimal TillDateIdealAchieved { get; set; }
-        public decimal TillDateActualAchieved { get; set; }
-        public string Category { get; set; }
-    }
-
-    public class MTDTargetSummaryReportResultModel
-    {
-        [JsonIgnore]
-        public IList<string> Depots { get; set; }
-        public string Depot { get; set; }
-        public decimal LYMTD { get; set; }
-        public decimal CMTarget { get; set; }
-        public decimal CMActual { get; set; }
-        public decimal TillDateGrowth { get; set; }
-        public decimal AskingPerDay { get; set; }
-        public decimal TillDatePerformacePerDay { get; set; }
-    }
-
-    public class MTDBrandPerformanceReportResultModel
-    {
-        [JsonIgnore]
-        public IList<string> Depots { get; set; }
-        public string Depot { get; set; }
-        public string Brand { get; set; }
-        public decimal LYMTD { get; set; }
-        public decimal CMTarget { get; set; }
-        public decimal CMActual { get; set; }
-        public decimal TillDateGrowth { get; set; }
-        public decimal AskingPerDay { get; set; }
-        public decimal TillDatePerformacePerDay { get; set; }
-    }
-
-    public class MySummaryReportResultModel
+    public class TodaysActivitySummaryReportResultModel
     {
         public int DealerVisitTarget { get; set; }
         public int DealerVisitActual { get; set; }
@@ -55,7 +13,7 @@ namespace Berger.Odata.Model
         public int SubDealerVisitActual { get; set; }
         public int AdHocDealerVisit { get; set; }
         public int AdHocSubDealerVisit { get; set; }
-        public int NoOfBillingDealer { get; set; } // Division & Channel = 10
+        public int NoOfBillingDealer { get; set; }
         public int PainterCall { get; set; }
         public int CollectionFromDealer { get; set; }
         public int CollectionFromSubDealer { get; set; }
@@ -64,14 +22,53 @@ namespace Berger.Odata.Model
         public int LeadGenerationNo { get; set; }
         public int LeadFollowupNo { get; set; }
         public decimal DGABusinessValue { get; set; }
-    } 
+    }
 
-    public class TotalInvoiceValueResultModel
+    public class TodaysInvoiceValueResultModel
     {
         public string InvoiceNoOrBillNo { get; set; }
         public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
         public decimal NetAmount { get; set; }
+    }
+
+    public class MTDTargetSummaryReportResultModel
+    {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CMTarget { get; set; }
+        public decimal CMActual { get; set; }
+        public decimal TillDateGrowth { get; set; }
+        public decimal AskingPerDay { get; set; }
+        public decimal TillDatePerformacePerDay { get; set; }
+
+        public MTDTargetSummaryReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class MTDBrandPerformanceReportResultModel
+    {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public string Brand { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CMTarget { get; set; }
+        public decimal CMActual { get; set; }
+        public decimal TillDateGrowth { get; set; }
+        public decimal AskingPerDay { get; set; }
+        public decimal TillDatePerformacePerDay { get; set; }
+
+        public MTDBrandPerformanceReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
     }
 
     public class BrandOrDivisionWisePerformanceResultModel

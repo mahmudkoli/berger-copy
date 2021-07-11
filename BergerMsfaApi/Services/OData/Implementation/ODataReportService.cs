@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
             _collectionDataService = collectionDataService;
         }
 
-        public async Task<MySummaryReportResultModel> MySummaryReport(AreaSearchCommonModel area)
+        public async Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
 
@@ -73,7 +73,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                     from dscinfo in dscleftjoin.DefaultIfEmpty()
                                     join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
                                     from diInfo in dileftjoin.DefaultIfEmpty()
-                                    join cg in _context.CustomerGroups on diInfo.CustomerGroup equals cg.CustomerAccountGroup into cgleftjoin
+                                    join cg in _context.CustomerGroups on diInfo.AccountGroup equals cg.CustomerAccountGroup into cgleftjoin
                                     from cgInfo in cgleftjoin.DefaultIfEmpty()
                                     where (
                                         (jpminfo.PlanDate.Date == currentDate.Date)
@@ -171,12 +171,12 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             var noOfBillingDealer = await _salesDataService.NoOfBillingDealer(area, ConstantsODataValue.DivisionDecorative, ConstantsODataValue.DistrbutionChannelDealer);
 
-            var result =  new MySummaryReportResultModel
+            var result =  new TodaysActivitySummaryReportResultModel
             {
                 DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 SubDealerVisitTarget = dealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                SubDealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
+                SubDealerVisitActual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 AdHocDealerVisit = adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 NoOfBillingDealer = noOfBillingDealer,
