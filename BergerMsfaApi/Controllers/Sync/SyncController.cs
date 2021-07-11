@@ -8,6 +8,7 @@ namespace BergerMsfaApi.Controllers.Sync
 {
     [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1")]
     public class SyncController : BaseController
     {
         private readonly IApiSyncService _syncService;
