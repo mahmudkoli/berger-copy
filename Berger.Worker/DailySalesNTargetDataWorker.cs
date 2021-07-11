@@ -92,7 +92,7 @@ namespace Berger.Worker
                 }
 
 
-                DateTime nextRunTime = GetHourIntervals(clockIn, clockOut, syncSetup.DailySyncCount).FirstOrDefault(x => x > today);
+                DateTime nextRunTime = GetHourIntervals(clockIn, clockOut, syncSetup.SyncHourlyInterval).FirstOrDefault(x => x > today);
 
                 if (nextRunTime.Hour == 23 && nextRunTime.Minute == 59)
                 {
