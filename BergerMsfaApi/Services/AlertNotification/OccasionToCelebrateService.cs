@@ -3,6 +3,7 @@ using BergerMsfaApi.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,12 +17,22 @@ namespace BergerMsfaApi.Service.AlertNotification
             _repository = repository;
         }
 
+        public Task<bool> GetById(Expression<Func<bool, bool>> predicate)
+        {
+            var res = _repository.
+        }
+
         public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
         {
-            await _repository.CreateListAsync(occasions.ToList());
-            var res = await _repository.SaveChangesAsync();
-            return res > 0;
+            var res = await _repository.CreateListAsync(occasions.ToList());
+            return res !=null;
 
+        }
+
+        public async Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
+        {
+            var res=await _repository.UpdateListAsync(occasions.ToList());
+            return res!=null;
         }
     }
 }

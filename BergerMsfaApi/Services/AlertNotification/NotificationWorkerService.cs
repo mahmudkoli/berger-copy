@@ -40,7 +40,10 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     ChequeBounceNotification chequeBounce = new ChequeBounceNotification()
                     {
-
+                        Amount=item.Amount,
+                        CreditControlArea=item.CreditControlArea,
+                        BankName=item.BankName,
+                        
                     };
 
                     lstchequeBounceNotification.Add(chequeBounce);
