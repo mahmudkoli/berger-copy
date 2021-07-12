@@ -33,6 +33,11 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
+
+                                .AddProperty(CollectionColDef.Depot)
+                                .AddProperty(CollectionColDef.BusinessArea)
+                                .AddProperty(CollectionColDef.BounceStatus)
+                                .AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.CustomerName)
                                 .AddProperty(CollectionColDef.DocNumber)
                                 .AddProperty(CollectionColDef.ChequeNo)
@@ -129,6 +134,7 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CreditControlArea)
                                 .AddProperty(FinancialColDef.CustomerName)
                                 .AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.PostingDate)
@@ -137,10 +143,10 @@ namespace Berger.Odata.Services
 
             var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
 
-            //var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomer(selectQueryBuilder)).ToList();
 
             #region data call by single customer
-            var data = new List<FinancialDataModel>();
+            //var data = new List<FinancialDataModel>();
 
             //foreach (var dealerId in dealerIds)
             //{
@@ -223,6 +229,9 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CustomerOccasionColDef.Customer)
                                 .AddProperty(CustomerOccasionColDef.Name)
+                                .AddProperty(CustomerOccasionColDef.SalesOffice)
+                                .AddProperty(CustomerOccasionColDef.DistrChannel)
+                                .AddProperty(CustomerOccasionColDef.Division)
                                 .AddProperty(CustomerOccasionColDef.DOB)
                                 .AddProperty(CustomerOccasionColDef.SpouseDOB)
                                 .AddProperty(CustomerOccasionColDef.FirstChildDOB)

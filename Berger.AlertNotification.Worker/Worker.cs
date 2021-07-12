@@ -1,4 +1,5 @@
 using Berger.Odata.Services;
+using BergerMsfaApi.Services.AlertNotification;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,19 +13,26 @@ namespace Berger.AlertNotification.Worker
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IAlertNotificationDataService _alertNotification;
+        //private readonly IAlertNotificationDataService _alertNotificationData;
+        private readonly INotificationWorkerService _alertNotificationData;
+        //private readonly IOccasionToCelebrateService _occasionToCelebrate;
 
-        public Worker(ILogger<Worker> logger, IAlertNotificationDataService alertNotification)
+        public Worker(ILogger<Worker> logger,
+            //, IOccasionToCelebrateService occasionToCelebrate
+            INotificationWorkerService alertNotificationData
+            )
         {
             _logger = logger;
-            _alertNotification = alertNotification;
+            //_occasionToCelebrate = occasionToCelebrate;
+            _alertNotificationData = alertNotificationData;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-               var res=await _alertNotification.GetAllTodayCustomerOccasionsByDealerIds();
+                _alertNotificationData.get();
+                //_occasionToCelebrate.SaveOccasionToCelebrate();
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(1000, stoppingToken);
             }

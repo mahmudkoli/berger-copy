@@ -959,6 +959,53 @@ namespace Berger.Odata.Services
             return data;
         }
 
+        public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomer(SelectQueryOptionBuilder selectQueryBuilder,
+           string startDate = "", string endDate = "", string creditControlArea = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode);
+                                
+
+            if (!string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(FinancialColDef.CreditControlArea, creditControlArea);
+            }
+
+            if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(FinancialColDef.Date, startDate)
+                                .And()
+                                .LessThanOrEqualDateTime(FinancialColDef.Date, endDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(FinancialColDef.Date, startDate);
+            }
+            else if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
+            }
+            else if (string.IsNullOrEmpty(endDate))
+            {
+                endDate = DateTime.Now.DateTimeFormat();
+                filterQueryBuilder.And().LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetFinancialData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
         //public async Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
         //    IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "")
         //{
