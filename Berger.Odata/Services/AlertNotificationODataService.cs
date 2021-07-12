@@ -21,6 +21,43 @@ namespace Berger.Odata.Services
             string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startPostingDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate);
+            }
+            else if (!string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate);
+            }
+
+            if (!string.IsNullOrEmpty(startClearDate) && !string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startClearDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate);
+            }
+            else if (!string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate);
+            }
+
             filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
             var queryBuilder = new QueryOptionBuilder();
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)

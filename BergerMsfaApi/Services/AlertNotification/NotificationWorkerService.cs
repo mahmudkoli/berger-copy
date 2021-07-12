@@ -1,6 +1,6 @@
-﻿using Berger.Data.MsfaEntity.AlertNotification;
+﻿using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.AlertNotification;
 using Berger.Odata.Services;
-using BergerMsfaApi.Service.AlertNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
             bool result = false;
             IList<ChequeBounceNotification> lstchequeBounceNotification = new List<ChequeBounceNotification>();
-            var chequeBounceNotification = await _alertNotificationData.GetAllTodayCheckBouncesByDealerIds();
+            var chequeBounceNotification = await _alertNotificationData.GetAllTodayCheckBounces();
 
             if (chequeBounceNotification.Count > 0)
             {
@@ -40,9 +40,17 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     ChequeBounceNotification chequeBounce = new ChequeBounceNotification()
                     {
-                        Amount=item.Amount,
+                        Amount=Convert.ToDecimal(item.Amount),
                         CreditControlArea=item.CreditControlArea,
                         BankName=item.BankName,
+                        ChequeNo=item.ChequeNo,
+                        ClearDate=item.ClearDate,
+                        CustomarNo=item.CustomerNo,
+                        CustomerName=item.CustomerName,
+                        Depot=item.Depot,
+                        DocNumber=item.DocNumber,
+                        NotificationDate=DateTime.Now,
+                        
                         
                     };
 
@@ -58,7 +66,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
             bool result = false;
             IList<CreditLimitCrossNotifiction> lstcreditLimitCrossNotifiction = new List<CreditLimitCrossNotifiction>();
-            var creditLimitCrossNotifiction = await _alertNotificationData.GetAllTodayCreditLimitCrossByDealerIds();
+            var creditLimitCrossNotifiction = await _alertNotificationData.GetAllTodayCreditLimitCross();
 
             if (creditLimitCrossNotifiction.Count > 0)
             {
@@ -66,7 +74,14 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     CreditLimitCrossNotifiction creditLimit = new CreditLimitCrossNotifiction()
                     {
-
+                        CreditControlArea=item.CreditControlArea,
+                        CreditLimit=item.CreditLimit.ToString(),
+                        CustomarNo=item.CustomerNo,
+                        Zone=item.CustZone,
+                        CustomerName=item.CustomerName,
+                        Division=item.Division,
+                        TotalDue=item.TotalDue.ToString(),
+                        NotificationDate=DateTime.Now
                     };
 
                     lstcreditLimitCrossNotifiction.Add(creditLimit);
@@ -81,7 +96,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
             bool result = false;
             IList<OccasionToCelebrate> lstoccasionToCelebrates = new List<OccasionToCelebrate>();
-            var occassiontocelebrate =await _alertNotificationData.GetAllTodayCustomerOccasionsByDealerIds();
+            var occassiontocelebrate =await _alertNotificationData.GetAllTodayCustomerOccasions();
 
             if (occassiontocelebrate.Count > 0)
             {
@@ -89,6 +104,16 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     OccasionToCelebrate occasion = new OccasionToCelebrate()
                     {
+                        CustomarNo=item.Customer,
+                        CustomerName=item.Name,
+                        DissChannel=item.DistrChannel,
+                        Division=item.Division,
+                        DOB= CustomConvertExtension.ObjectToDateTime(item.DOB),
+                        NotificationDate=DateTime.Now,
+                        FirsChildDOB= CustomConvertExtension.ObjectToDateTime(item.FirstChildDOB),
+                        SecondChildDOB = CustomConvertExtension.ObjectToDateTime(item.SecondChildDOB),
+                        ThirdChildDOB = CustomConvertExtension.ObjectToDateTime(item.ThirdChildDOB),
+                        SpouseDOB = CustomConvertExtension.ObjectToDateTime(item.SpouseDOB)
 
                     };
 
@@ -104,7 +129,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
             bool result = false;
             IList<PaymentFollowup> lstpaymentFollowup = new List<PaymentFollowup>();
-            var paymentFollowup = await _alertNotificationData.GetAllTodayPaymentFollowUpByDealerIds();
+            var paymentFollowup = await _alertNotificationData.GetAllTodayPaymentFollowUp();
 
             if (lstpaymentFollowup.Count > 0)
             {
@@ -112,7 +137,20 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     PaymentFollowup payment = new PaymentFollowup()
                     {
-
+                        InvoiceAge=item.InvoiceAge,
+                        InvoiceDate=item.InvoiceDate,
+                        CustomarNo=item.CustomarNo,
+                        CustomerName=item.CustomerName,
+                        DayLimit=item.DayLimit,
+                        Depot=item.Depot,
+                        DissChannel=item.DissChannel,
+                        Division=item.Division,
+                        InvoiceNo=item.InvoiceNo,
+                        NotificationDate=DateTime.Now,
+                        SalesGroup=item.SalesGroup,
+                        SalesOffice=item.SalesOffice,
+                        Territory=item.Territory,
+                        Zone=item.Zone
                     };
 
                     lstpaymentFollowup.Add(payment);

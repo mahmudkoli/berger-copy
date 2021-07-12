@@ -32,6 +32,7 @@ using Berger.Common;
 using BergerMsfaApi.Models.EmailVm;
 using BergerMsfaApi.Services.Excel.Implementation;
 using BergerMsfaApi.Services.Excel.Interface;
+using BergerMsfaApi.Services.AlertNotification;
 
 namespace BergerMsfaApi
 {
@@ -107,6 +108,11 @@ namespace BergerMsfaApi
             services.AddScoped<IKpiDataService, KpiDataService>();
             services.AddScoped<IExcelReaderService, ExcelReaderService>();
             services.AddScoped<IAlertNotificationDataService, AlertNotificationDataService>();
+            services.AddScoped<IAlertNotificationODataService, AlertNotificationODataService>();
+            services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
+            services.AddScoped<IChequeBounceNotificationService, ChequeBounceNotificationService>();
+            services.AddScoped<IOccasionToCelebrateService, OccasionToCelebrateService>();
+            services.AddScoped<IPaymentFollowupService, PaymentFollowupService>();
 
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);

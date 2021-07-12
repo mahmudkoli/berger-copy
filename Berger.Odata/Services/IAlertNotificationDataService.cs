@@ -8,10 +8,10 @@ namespace Berger.Odata.Services
 {
     public interface IAlertNotificationDataService
     {
-        Task<IList<AppChequeBounceNotificationModel>> GetAllTodayCheckBounces();
-        Task<IList<AppCreditLimitCrossNotificationModel>> GetAllTodayCreditLimitCross();
-        Task<IList<AppPaymentFollowUpNotificationModel>> GetAllTodayPaymentFollowUp();
-        Task<IList<AppCustomerOccasionNotificationModel>> GetAllTodayCustomerOccasions();
+        Task<IList<CollectionDataModel>> GetAllTodayCheckBounces();
+        Task<IList<CustomerDataModel>> GetAllTodayCreditLimitCross();
+        Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp();
+        Task<IList<CustomerOccasionDataModel>> GetAllTodayCustomerOccasions();
 
     }
 }

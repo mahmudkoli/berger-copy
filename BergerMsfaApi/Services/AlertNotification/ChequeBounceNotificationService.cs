@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BergerMsfaApi.Service.AlertNotification
+namespace BergerMsfaApi.Services.AlertNotification
 {
    public class ChequeBounceNotificationService: IChequeBounceNotificationService
     {

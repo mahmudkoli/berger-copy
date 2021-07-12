@@ -5,6 +5,7 @@ using Berger.Odata.Services;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.Users;
+using BergerMsfaApi.Services.AlertNotification;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -23,19 +24,23 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly ILoginLogService _loginLogService;
         private readonly IActiveDirectoryServices _adservice;
         private readonly IAlertNotificationDataService _alertNotification;
+        private readonly INotificationWorkerService _alertNotificationData;
+
 
         public AppAuthController(
             IAuthService service, 
             IUserInfoService user, 
             ILoginLogService loginLogService, 
             IActiveDirectoryServices adservice,
-            IAlertNotificationDataService alertNotification)
+            IAlertNotificationDataService alertNotification,
+            INotificationWorkerService alertNotificationData)
         {
             authService = service;
             _userService = user;
             _loginLogService = loginLogService;
             _adservice = adservice;
             _alertNotification = alertNotification;
+            _alertNotificationData = alertNotificationData;
         }
 
         [AllowAnonymous]
@@ -45,7 +50,7 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
-                var res = await _alertNotification.GetAllTodayCheckBouncesByDealerIds();
+                var res = await _alertNotificationData.SaveCheckBounceNotification();
 
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);

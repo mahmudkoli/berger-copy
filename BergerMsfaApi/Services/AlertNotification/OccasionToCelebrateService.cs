@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BergerMsfaApi.Service.AlertNotification
+namespace BergerMsfaApi.Services.AlertNotification
 {
    public class OccasionToCelebrateService: IOccasionToCelebrateService
     {
@@ -17,9 +17,15 @@ namespace BergerMsfaApi.Service.AlertNotification
             _repository = repository;
         }
 
-        //public async Task<bool> GetById(OccasionToCelebrate occasionToCelebrate)
+        //public async Task<OccasionToCelebrate> GetByModel(OccasionToCelebrate occasionToCelebrate)
         //{
-        //    var res =await _repository.Where(p=>p.CustomarNo==occasionToCelebrate.CustomarNo && p.);
+        //    var res =  _repository.Where(p => p.CustomarNo == occasionToCelebrate.CustomarNo).FirstOrDefault();
+        //    var result = res.DOB != occasionToCelebrate.DOB ||
+        //        res.SpouseDOB != occasionToCelebrate.SpouseDOB ||
+        //        res.FirsChildDOB != occasionToCelebrate.FirsChildDOB ||
+        //        res.SecondChildDOB != occasionToCelebrate.SecondChildDOB ||
+        //        res.ThirdChildDOB != occasionToCelebrate.ThirdChildDOB;
+
         //}
 
         public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)

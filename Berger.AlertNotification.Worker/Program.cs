@@ -1,6 +1,11 @@
 using Berger.Common.HttpClient;
+using Berger.Data.Common;
+using Berger.Data.MsfaEntity;
 using Berger.Odata.Services;
+using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.AlertNotification;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -21,10 +26,19 @@ namespace Berger.AlertNotification.Worker
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddTransient<IHttpClientService, HttpClientService>();
-                    services.AddTransient<IODataService, ODataService>();
-                    services.AddTransient<IAlertNotificationDataService, AlertNotificationDataService>();
-                    services.AddTransient<INotificationWorkerService, NotificationWorkerService>();
+                    //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext))));
+                    //services.AddScoped<DbContext, ApplicationDbContext>();
+                    services.AddScoped<IHttpClientService, HttpClientService>();
+                    services.AddScoped<IODataService, ODataService>();
+                    services.AddScoped<IAlertNotificationODataService, AlertNotificationODataService>();
+                    services.AddScoped<IOccasionToCelebrateService, OccasionToCelebrateService>();
+                    services.AddScoped<ICreditLimitCrossNotifictionService, CreditLimitCrossNotifictionService>();
+                    services.AddScoped<IChequeBounceNotificationService, ChequeBounceNotificationService>();
+                    services.AddScoped<IPaymentFollowupService, PaymentFollowupService>();
+                    services.AddScoped<IAlertNotificationDataService, AlertNotificationDataService>();
+                    services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
+                    services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+                    //services.AddScoped<IUnitOfWork, ApplicationDbContext>();
                     services.AddHostedService<Worker>();
                 });
     }
