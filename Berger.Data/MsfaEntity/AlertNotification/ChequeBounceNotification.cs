@@ -20,7 +20,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string ChequeNo { get; set; }
         public string BankName { get; set; }
         public string ClearDate { get; set; }
-        public string Amount { get; set; }
+        public decimal Amount { get; set; }
         public string CreditControlArea { get; set; }
         public DateTime NotificationDate { get; set; }
     }
