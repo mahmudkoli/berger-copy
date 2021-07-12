@@ -42,17 +42,15 @@ namespace Berger.Odata.Services
 
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
-        
+
         Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
-        
+
         Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string date, List<string> territories = null, List<string> brands = null, string depot = "", List<string> salesGroups = null, List<string> zones = null);
 
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
-        Task<IList<FinancialDataModel>> GetFinancialDataByCustomer(SelectQueryOptionBuilder selectQueryBuilder,
-           string startDate = "", string endDate = "", string creditControlArea = "");
         //Task<IList<FinancialDataModel>> GetFinancialDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
         //    IList<int> dealerIds, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
@@ -118,14 +116,6 @@ namespace Berger.Odata.Services
         public decimal GetPercentage(decimal total, decimal value);
         decimal GetContribution(decimal first, decimal second);
 
-        #endregion
-
-        #region Alert Notification
-        Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder);
-        Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder
-            );
-        Task<IList<CollectionDataModel>> GetCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "");
         #endregion
     }
 }
