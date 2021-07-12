@@ -20,5 +20,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string CreditLimit { get; set; }
         public string TotalDue { get; set; }
         public string Channel { get; set; }
+        public DateTime NotificationDate { get; set; }
+
     }
 }

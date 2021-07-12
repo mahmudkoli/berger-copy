@@ -20,5 +20,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string InvoiceDate { get; set; }
         public string InvoiceAge { get; set; }
         public string DayLimit { get; set; }
+        public DateTime NotificationDate { get; set; }
+
     }
 }
