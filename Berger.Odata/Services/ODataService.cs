@@ -1462,7 +1462,8 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             IList<string> brands = null,
             string division = "",
-            string channel = "")
+            string channel = "",
+            string classification = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder
@@ -1480,6 +1481,11 @@ namespace Berger.Odata.Services
             if (channel != "-1" && !string.IsNullOrEmpty(channel))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.DistributionChannel, channel);
+            }
+
+            if (classification != "-1" && !string.IsNullOrEmpty(classification))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.CustomerClassification, classification);
             }
 
             if (depots != null && depots.Any())

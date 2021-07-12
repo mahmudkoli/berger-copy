@@ -146,13 +146,13 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("DealerPerformance")]
-        public async Task<IActionResult> GetDealerPerformance([FromQuery] DealerPerformanceSearchModel model)
+        [HttpGet("CategoryWiseDealerPerformance")]
+        [ProducesResponseType(typeof(IList<CategoryWiseDealerPerformanceResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetDealerPerformance([FromQuery] CategoryWiseDealerPerformanceSearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _salesDataService.GetReportDealerPerformance(model, dealerIds);
+                var result = await _salesDataService.GetCategoryWiseDealerPerformance(model);
                 return OkResult(result);
             }
             catch (Exception ex)

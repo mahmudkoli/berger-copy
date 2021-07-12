@@ -14,8 +14,8 @@ namespace Berger.Odata.Model
 
     public enum EnumDealerPerformanceCategory
     {
-        Top_10_Performer = 1,
-        Bottom_10_Performer = 2,
+        TopPerformer = 1,
+        BottomPerformer = 2,
         NotPurchasedLastMonth = 3
     }
 

@@ -78,7 +78,6 @@ namespace Berger.Odata.Model
         public IList<string> Depots { get; set; }
         public string Depot { get; set; }
         public string BrandOrDivision { get; internal set; }
-        //public decimal LYSM { get; internal set; }
         public decimal LYMTD { get; internal set; }
         public decimal LYYTD { get; internal set; }
         public decimal CYMTD { get; internal set; }
@@ -92,16 +91,19 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class DealerPerformanceResultModel
+    public class CategoryWiseDealerPerformanceResultModel
     {
-        public int SLNo { get; internal set; }
+        public int Ranking { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
-        public decimal LYSales { get; internal set; }
-        public decimal CYSales { get; internal set; }
-        public decimal Growth { get; internal set; }
+        public decimal LYMTD { get; internal set; }
+        public decimal LYYTD { get; internal set; }
+        public decimal CYMTD { get; internal set; }
+        public decimal CYYTD { get; internal set; }
+        public decimal GrowthMTD { get; internal set; }
+        public decimal GrowthYTD { get; internal set; }
 
-        public DealerPerformanceResultModel()
+        public CategoryWiseDealerPerformanceResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
