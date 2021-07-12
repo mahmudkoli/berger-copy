@@ -39,13 +39,13 @@ namespace Berger.Odata.Model
         public string Division { get; set; }
     }
 
-    public class BrandOrDivisionWisePerformanceSearchModel
+    public class YTDBrandPerformanceSearchModelSearchModel : AppAreaSearchCommonModel
     {
-        //public string CustomerNo { get; set; }
-        public string Division { get; set; } // "-1" for all
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string Division { get; set; }
         public EnumBrandOrDivision BrandOrDivision { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
-        //public EnumPeriod Period { get; set; }
     }
 
     public class DealerPerformanceSearchModel

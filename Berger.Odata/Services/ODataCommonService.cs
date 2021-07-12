@@ -18,17 +18,20 @@ namespace Berger.Odata.Services
         private readonly IODataRepository<CreditControlArea> _creditControlAreaRepository;
         private readonly IODataRepository<RPRSPolicy> _rPRSPolicyRepository;
         private readonly IODataRepository<Depot> _depotRepository;
+        private readonly IODataRepository<Division> _divisionRepository;
         private readonly IMapper _mapper;
 
         public ODataCommonService(
             IODataRepository<CreditControlArea> creditControlAreaRepository,
             IODataRepository<RPRSPolicy> rPRSPolicyRepository,
             IODataRepository<Depot> depotRepository,
+            IODataRepository<Division> divisionRepository,
             IMapper mapper)
         {
             _creditControlAreaRepository = creditControlAreaRepository;
             _rPRSPolicyRepository = rPRSPolicyRepository;
             _depotRepository = depotRepository;
+            _divisionRepository = divisionRepository;
             _mapper = mapper;
         }
 
@@ -63,6 +66,19 @@ namespace Berger.Odata.Services
             var result = await _depotRepository.GetAllIncludeAsync(
                                 x => new ValueTuple<string, string>(x.Werks, x.Name1),
                                 predicate,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result;
+        }
+
+        public async Task<IList<Division>> GetAllDivisionsAsync()
+        {
+            var result = await _divisionRepository.GetAllIncludeAsync(
+                                x => x,
+                                null,
                                 null,
                                 null,
                                 true

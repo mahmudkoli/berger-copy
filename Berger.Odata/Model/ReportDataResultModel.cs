@@ -71,9 +71,13 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class BrandOrDivisionWisePerformanceResultModel
+    public class YTDBrandPerformanceSearchModelResultModel
     {
-        public string MatarialGroupOrBrandOrDivision { get; internal set; }
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public IList<string> Depots { get; set; }
+        public string Depot { get; set; }
+        public string BrandOrDivision { get; internal set; }
         //public decimal LYSM { get; internal set; }
         public decimal LYMTD { get; internal set; }
         public decimal LYYTD { get; internal set; }
@@ -82,7 +86,7 @@ namespace Berger.Odata.Model
         public decimal GrowthMTD { get; internal set; }
         public decimal GrowthYTD { get; internal set; }
 
-        public BrandOrDivisionWisePerformanceResultModel()
+        public YTDBrandPerformanceSearchModelResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

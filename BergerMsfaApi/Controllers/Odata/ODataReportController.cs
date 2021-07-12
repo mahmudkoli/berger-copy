@@ -123,13 +123,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("BrandOrDivisionWisePerformance")]
-        public async Task<IActionResult> GetBrandOrDivisionWisePerformance([FromQuery] BrandOrDivisionWisePerformanceSearchModel model)
+        [HttpGet("YTDBrandPerformance")]
+        [ProducesResponseType(typeof(IList<YTDBrandPerformanceSearchModelResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetBrandOrDivisionWisePerformance([FromQuery] YTDBrandPerformanceSearchModelSearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _salesDataService.GetReportBrandOrDivisionWisePerformance(model, dealerIds);
+                var result = await _salesDataService.GetYTDBrandPerformance(model);
+                var employeeRole = AppIdentity.AppUser.EmployeeRole;
+                if (employeeRole == (int)EnumEmployeeRole.BM_BSI || employeeRole == (int)EnumEmployeeRole.TM_TO || employeeRole == (int)EnumEmployeeRole.ZO)
+                {
+                    foreach (var item in result)
+                    {
+                        item.Depot = null;
+                    }
+                }
                 return OkResult(result);
             }
             catch (Exception ex)

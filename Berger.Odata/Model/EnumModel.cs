@@ -47,8 +47,8 @@ namespace Berger.Odata.Model
 
     public enum EnumBrandOrDivision
     {
-        AllBrand = 1,
-        MTSBrand = 2,
+        AllBrands = 1,
+        MTSBrands = 2,
         Division = 3
     }
 
