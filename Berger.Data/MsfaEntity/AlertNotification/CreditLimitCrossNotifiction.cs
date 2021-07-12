@@ -10,6 +10,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string Depot { get; set; }
         public string SalesOffice { get; set; }
         public string SalesGroup { get; set; }
+        public string PriceGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
         public string Division { get; set; }
