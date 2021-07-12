@@ -81,7 +81,8 @@ namespace BergerMsfaApi.Services.AlertNotification
                         CustomerName=item.CustomerName,
                         Division=item.Division,
                         TotalDue=item.TotalDue.ToString(),
-                        NotificationDate=DateTime.Now
+                        NotificationDate=DateTime.Now,
+                        PriceGroup=item.PriceGroup
                     };
 
                     lstcreditLimitCrossNotifiction.Add(creditLimit);
@@ -133,24 +134,17 @@ namespace BergerMsfaApi.Services.AlertNotification
 
             if (lstpaymentFollowup.Count > 0)
             {
-                foreach (var item in lstpaymentFollowup)
+                foreach (var item in paymentFollowup)
                 {
                     PaymentFollowup payment = new PaymentFollowup()
                     {
-                        InvoiceAge=item.InvoiceAge,
-                        InvoiceDate=item.InvoiceDate,
-                        CustomarNo=item.CustomarNo,
+                        InvoiceAge=item.Age,
+                        InvoiceDate=item.Date,
+                        CustomarNo=item.CustomerNo,
                         CustomerName=item.CustomerName,
                         DayLimit=item.DayLimit,
-                        Depot=item.Depot,
-                        DissChannel=item.DissChannel,
-                        Division=item.Division,
                         InvoiceNo=item.InvoiceNo,
                         NotificationDate=DateTime.Now,
-                        SalesGroup=item.SalesGroup,
-                        SalesOffice=item.SalesOffice,
-                        Territory=item.Territory,
-                        Zone=item.Zone
                     };
 
                     lstpaymentFollowup.Add(payment);
@@ -160,6 +154,18 @@ namespace BergerMsfaApi.Services.AlertNotification
 
             return result;
         }
+
+        //public async Task<bool> GetRPRSPaymnetFollowup()
+        //{
+        //    var getPaymentFollowup =await _paymentFollowupService.GetToayPaymentFollowup();
+        //    var getCreditLimit =await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction();
+        //}
+
+        //public async Task<bool> GetFastPayAndCarryPaymnetFollowup()
+        //{
+        //    var getPaymentFollowup = await _paymentFollowupService.GetToayPaymentFollowup();
+        //    var getCreditLimit = await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction();
+        //}
     }
 
     public interface INotificationWorkerService
@@ -168,6 +174,8 @@ namespace BergerMsfaApi.Services.AlertNotification
         public Task<bool> SaveCheckBounceNotification();
         public Task<bool> SaveCreaditLimitNotification();
         public Task<bool> SavePaymnetFollowup();
+        //public Task<bool> GetRPRSPaymnetFollowup();
+        //public Task<bool> GetFastPayAndCarryPaymnetFollowup();
 
     }
 }

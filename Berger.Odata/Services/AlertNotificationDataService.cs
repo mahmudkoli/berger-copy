@@ -119,6 +119,8 @@ namespace Berger.Odata.Services
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
             var resultDateFormat = "dd MMM yyyy";
+            var fromDate = today.DateTimeFormat();
+            var toDate = today.DateTimeFormat();
             //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
 
             //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
@@ -128,6 +130,7 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+
                                 .AddProperty(FinancialColDef.CreditControlArea)
                                 .AddProperty(FinancialColDef.CustomerName)
                                 .AddProperty(FinancialColDef.InvoiceNo)
@@ -137,7 +140,7 @@ namespace Berger.Odata.Services
 
             //var customerData = (await _alertNotificationOData.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
 
-            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder)).ToList();
+            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate: fromDate, endDate: toDate)).ToList();
 
             #region data call by single customer
             //var data = new List<FinancialDataModel>();

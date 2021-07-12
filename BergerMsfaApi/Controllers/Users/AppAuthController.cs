@@ -50,7 +50,7 @@ namespace BergerMsfaApi.Controllers.Users
         {
             try
             {
-                var res = await _alertNotificationData.SaveCheckBounceNotification();
+                var res = await _alertNotificationData.SavePaymnetFollowup();
 
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
