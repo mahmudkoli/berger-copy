@@ -10,6 +10,12 @@ export class Menu {
     public isParent: boolean = false;
     public sequence: number = 0;
     public menuPermissions: [] = [];
+    public type:number =0;
+    public groupCode:string = '';
+    public backgroundColor:string = '';
+    public activityNavigationId:string = '';
+
+
     
     public isMapped: boolean = false;
     public hasParentOnCreateNew: boolean = false;
