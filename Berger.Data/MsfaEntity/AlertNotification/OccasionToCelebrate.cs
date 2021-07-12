@@ -19,6 +19,8 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public DateTime DOB { get; set; }
         public DateTime SpouseDOB { get; set; }
         public DateTime ChildDOB { get; set; }
-     
+        public DateTime NotificationDate { get; set; }
+
+
     }
 }

@@ -22,5 +22,6 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string ClearDate { get; set; }
         public string Amount { get; set; }
         public string CreditControlArea { get; set; }
+        public DateTime NotificationDate { get; set; }
     }
 }
