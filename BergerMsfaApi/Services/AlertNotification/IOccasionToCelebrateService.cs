@@ -9,7 +9,7 @@ namespace BergerMsfaApi.Service.AlertNotification
    public interface IOccasionToCelebrateService
     {
         Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
-        Task<bool> GetById(OccasionToCelebrate occasions);
+        //Task<bool> GetById(OccasionToCelebrate occasions);
         Task<bool> UpdateOccasionToCelebrate(OccasionToCelebrate occasions);
     }
 }

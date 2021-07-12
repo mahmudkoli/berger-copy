@@ -12,15 +12,16 @@ namespace Berger.Odata.Services
 {
    public class AlertNotificationDataService: IAlertNotificationDataService
     {
-        private readonly IODataService _odataService;
+        //private readonly IODataService _odataService;
+        private readonly IAlertNotificationODataService _alertNotificationOData;
         //private readonly IODataCommonService _odataCommonService;
 
         public AlertNotificationDataService(
-            IODataService odataService
+            IAlertNotificationODataService alertNotificationOData
             //IODataCommonService odataCommonService
             )
         {
-            _odataService = odataService;
+            _alertNotificationOData = alertNotificationOData;
             //_odataCommonService = odataCommonService;
         }
 
@@ -46,7 +47,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.CreditControlArea);
 
-            var data = (await _odataService.GetCustomerAndCreditControlArea(selectQueryBuilder, startClearDate: fromDate, endClearDate: toDate)).ToList();
+            var data = (await _alertNotificationOData.GetCustomerAndCreditControlArea(selectQueryBuilder, startClearDate: fromDate, endClearDate: toDate)).ToList();
 
             var result = data.Select(x =>
                                 new AppChequeBounceNotificationModel()
@@ -91,7 +92,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(nameof(CustomerDataModel.CreditLimit))
                                 .AddProperty(nameof(CustomerDataModel.TotalDue));
 
-            var data = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectQueryBuilder)).ToList();
+            var data = (await _alertNotificationOData.GetCustomerDataByMultipleCustomerNo(selectQueryBuilder)).ToList();
 
             var groupData = data.GroupBy(x => new { x.CustomerNo, x.CreditControlArea }).ToList();
 
@@ -141,9 +142,9 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.DayLimit);
 
-            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
+            var customerData = (await _alertNotificationOData.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
 
-            var data = (await _odataService.GetFinancialDataByCustomer(selectQueryBuilder)).ToList();
+            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder)).ToList();
 
             #region data call by single customer
             //var data = new List<FinancialDataModel>();
@@ -238,7 +239,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CustomerOccasionColDef.SecondChildDOB)
                                 .AddProperty(CustomerOccasionColDef.ThirdChildDOB);
 
-            var data = (await _odataService.GetCustomerOccasionData(selectQueryBuilder)).ToList();
+            var data = (await _alertNotificationOData.GetCustomerOccasionData(selectQueryBuilder)).ToList();
 
             var result = data.Select(x =>
                                 new AppCustomerOccasionNotificationModel()

@@ -17,10 +17,10 @@ namespace BergerMsfaApi.Service.AlertNotification
             _repository = repository;
         }
 
-        public Task<bool> GetById(Expression<Func<bool, bool>> predicate)
-        {
-            var res = _repository.
-        }
+        //public async Task<bool> GetById(OccasionToCelebrate occasionToCelebrate)
+        //{
+        //    var res =await _repository.Where(p=>p.CustomarNo==occasionToCelebrate.CustomarNo && p.);
+        //}
 
         public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
         {
