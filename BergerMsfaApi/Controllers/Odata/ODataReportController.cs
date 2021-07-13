@@ -177,12 +177,12 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("OutstandingSummary")]
-        public async Task<IActionResult> GetReportOutstandingSummary()
+        [ProducesResponseType(typeof(IList<OutstandingSummaryReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetReportOutstandingSummary([FromQuery] OutstandingSummaryReportSearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _financialDataService.GetReportOutstandingSummary(dealerIds);
+                var result = await _financialDataService.GetOutstandingSummaryReport(model);
                 return OkResult(result);
             }
             catch (Exception ex)

@@ -28,14 +28,26 @@ namespace Berger.Odata.Extensions
         }
 
         public FilterQueryOptionBuilder And() 
-        { 
-            this._filter += $" and "; 
+        {
+            this._filter += $" and ";
             return this; 
         }
 
         public FilterQueryOptionBuilder Or() 
-        { 
-            this._filter += $" or "; 
+        {
+            this._filter += $" or ";
+            return this; 
+        }
+
+        public FilterQueryOptionBuilder AndIf() 
+        {
+            this._filter += this._filter.Length > ("$filter=").Length ? $" and " : ""; 
+            return this; 
+        }
+
+        public FilterQueryOptionBuilder OrIf() 
+        {
+            this._filter += this._filter.Length > ("$filter=").Length ? $" or " : ""; 
             return this; 
         }
 

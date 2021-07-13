@@ -111,6 +111,17 @@ namespace Berger.Odata.Services
             IList<string> brands = null,
             string division = "",
             string channel = "");
+
+        Task<IList<CustomerDataModel>> GetCustomerData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null,
+            IList<string> salesOffices = null, IList<string> salesGroups = null,
+            IList<string> territories = null, IList<string> zones = null,
+            string division = "",
+            string creditControlArea = "",
+            string channel = "");
+
+        Task<IList<FinancialDataModel>> GetFinancialData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string endDate, string creditControlArea = "");
         #endregion
 
         #region calculate data

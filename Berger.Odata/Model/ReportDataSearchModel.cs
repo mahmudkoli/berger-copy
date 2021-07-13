@@ -55,6 +55,11 @@ namespace Berger.Odata.Model
         public EnumDealerPerformanceCategory PerformanceCategory { get; set; }
         public EnumCustomerClassification Category { get; set; }
     }
+
+    public class OutstandingSummaryReportSearchModel : AppAreaSearchCommonModel
+    {
+        public string CreditControlArea { get; set; }
+    }
     
     public class DealerPerformanceResultSearchModel
     {
