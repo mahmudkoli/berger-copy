@@ -155,7 +155,7 @@ namespace Berger.Odata.Services
             {
                 //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
                 var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
-                if(dataSingle.Any())
+                if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
                 }
@@ -292,14 +292,14 @@ namespace Berger.Odata.Services
 
             if (model.PaymentFollowUpType == EnumPaymentFollowUpType.RPRS)
             {
-                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
                                                         x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
                 dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
             }
             else if (model.PaymentFollowUpType == EnumPaymentFollowUpType.FastPayCarry)
             {
-                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer && 
-                                                        (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer || 
+                var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
+                                                        (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
                                                         x.PriceGroup == ConstantsValue.PriceGroupFastPayCarry)).ToList();
                 dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
             }
@@ -345,6 +345,69 @@ namespace Berger.Odata.Services
 
             return result;
         }
+        public async Task<IList<ReportPaymentFollowUpResultModel>> GetRprsFollowUp(IList<string> dealerIds)
+        {
+
+
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
+                                .AddProperty(nameof(CustomerDataModel.Channel))
+                                .AddProperty(nameof(CustomerDataModel.PriceGroup));
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                .AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.InvoiceNo)
+                                .AddProperty(FinancialColDef.PostingDate)
+                                .AddProperty(FinancialColDef.Age)
+                                .AddProperty(FinancialColDef.DayLimit);
+
+            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+
+            var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
+                                                  x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
+            dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+
+            #region data call by single customer
+            var data = new List<FinancialDataModel>();
+
+            foreach (var dealerId in dealerIds)
+            {
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
+                if (dataSingle.Any())
+                {
+                    data.AddRange(dataSingle);
+                }
+            }
+            #endregion
+
+            var result = data.Select(x =>
+                                new ReportPaymentFollowUpResultModel()
+                                {
+                                    CustomerNo = x.CustomerNo,
+                                    CustomerName = x.CustomerName,
+                                    InvoiceNo = x.InvoiceNo,
+                                    InvoiceDate = x.PostingDate.DateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ").DateFormat("dd.MM.yyyy"),
+                                    InvoiceAge = x.Age,
+                                    DayLimit = x.DayLimit
+                                }).ToList();
+
+            var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
+
+            foreach (var item in result)
+            {
+                var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
+                                                CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
+                item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
+            }
+
+
+            return result;
+        }
+
+
+
+
 
         //public async Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate)
         //{
@@ -381,7 +444,7 @@ namespace Berger.Odata.Services
         public async Task<IList<FinancialDataModel>> GetCustomerSlippageAmount(IList<string> dealerIds, DateTime endDate)
         {
             var endDateStr = endDate.DateTimeFormat();
-            
+
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                                 .AddProperty(FinancialColDef.Amount)
@@ -414,7 +477,7 @@ namespace Berger.Odata.Services
 
             var hasOS = data.Any();
             var hasSlippage = data.Any(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit));
-            
+
             return (hasOS, hasSlippage);
         }
     }
