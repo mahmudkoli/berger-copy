@@ -106,6 +106,7 @@ namespace BergerMsfaApi
             services.AddScoped<IODataNotificationService, ODataNotificationService>();
             services.AddScoped<IKpiDataService, KpiDataService>();
             services.AddScoped<IExcelReaderService, ExcelReaderService>();
+            services.AddScoped<ISyncService, SyncService>();
 
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);

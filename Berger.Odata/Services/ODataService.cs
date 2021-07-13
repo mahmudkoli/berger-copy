@@ -1453,6 +1453,46 @@ namespace Berger.Odata.Services
 
             return data;
         }
+
+
+        public async Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder,string date)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (!string.IsNullOrEmpty(date))
+            {
+                filterQueryBuilder.Equal(DataColumnDef.Date, date);
+            }
+
+            filterQueryBuilder.And().Equal(DataColumnDef.CustomerNoOrSoldToParty, "24");
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetSalesData(queryBuilder.Query)).ToList();
+            return data;
+        } 
+        
+        
+        public async Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder,string date)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (!string.IsNullOrEmpty(date))
+            {
+                filterQueryBuilder.Equal(DataColumnDef.MTS_Date, date);
+            }
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetMTSData(queryBuilder.Query)).ToList();
+            return data;
+        }
+
+
         #endregion
 
         #region get selectable data By Area
