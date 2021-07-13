@@ -1465,8 +1465,6 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.Equal(DataColumnDef.Date, date);
             }
 
-            filterQueryBuilder.And().Equal(DataColumnDef.CustomerNoOrSoldToParty, "24");
-
             var queryBuilder = new QueryOptionBuilder();
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
                 .AppendQuery(selectQueryBuilder.Select);

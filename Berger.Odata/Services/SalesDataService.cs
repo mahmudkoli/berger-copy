@@ -786,7 +786,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformance(LastYearAppointedDealerPerformanceSearchModel model)
+        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
@@ -841,6 +841,59 @@ namespace Berger.Odata.Services
 
                 res.DepotCode = item.PlantOrBusinessArea;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                result.Add(res);
+            }
+
+            return result;
+        }
+        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            var currentDate = new DateTime(model.Year, model.Month, 1);
+
+            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+
+            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
+
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                .AddProperty(DataColumnDef.PlantOrBusinessArea)
+                .AddProperty(DataColumnDef.Territory)
+                .AddProperty(DataColumnDef.Zone)
+                .AddProperty(DataColumnDef.CustomerNo)
+                .AddProperty(DataColumnDef.CustomerName);
+
+
+            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+            Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
+            {
+                NetAmount = x.NetAmount,
+                PlantOrBusinessArea = x.PlantOrBusinessArea
+            };
+
+            //var concatAllList = dataLyMtd.Select(selectFunc)
+            //    .Concat(dataCyMtd.Select(selectFunc))
+            //    .GroupBy(p => new { p.PlantOrBusinessArea })
+            //    .Select(g => g.First());
+
+            var result = new List<RptLastYearAppointDlrPerformanceDetailResultModel>();
+
+
+            foreach (var item in dataCyMtd)
+            {
+                var res = new RptLastYearAppointDlrPerformanceDetailResultModel
+                {
+                    DepotCode = item.PlantOrBusinessArea,
+                    Territory = item.Territory,
+                    Zone = item.Zone,
+                    DealerId = CustomConvertExtension.ObjectToInt(item.CustomerNo),
+                    DealerName = item.CustomerName,
+                };
+
                 result.Add(res);
             }
 

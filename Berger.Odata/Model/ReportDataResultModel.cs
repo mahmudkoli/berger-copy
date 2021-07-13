@@ -129,22 +129,31 @@ namespace Berger.Odata.Model
         public string Territory { get; set; }
         public int NumberOfDealer { get; set; }
         public decimal LYMTD { get; set; }
-        public decimal CYMTD  { get; set; }
-        public decimal LYYTD  { get; set; }
-        public decimal CYYTD   { get; set; }
-        public decimal GrowthMTD   { get; set; }
-        public decimal GrowthYTD    { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal LYYTD { get; set; }
+        public decimal CYYTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+        public decimal GrowthYTD { get; set; }
         public string DealerId { get; set; }
         public string DealerName { get; set; }
     }
-  public class RptLastYearAppointDlerPerformanceSummaryResultModel
+    public class RptLastYearAppointDlerPerformanceSummaryResultModel
     {
         public string DepotCode { get; set; }
         public string DepotName { get; set; }
         public int NumberOfDealer { get; set; }
         public decimal LYMTD { get; set; }
-        public decimal CYMTD  { get; set; }
-        public decimal GrowthMTD   { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+    }
+    public class RptLastYearAppointDlrPerformanceDetailResultModel
+    {
+        public string DepotCode { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public int DealerId { get; set; }
+        public string DealerName { get; set; }
     }
 
     public class ReportOSOver90DaysResultModel

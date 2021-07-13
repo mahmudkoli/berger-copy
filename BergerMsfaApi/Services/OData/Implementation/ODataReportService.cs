@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Berger.Common.Model;
 using Berger.Common.Enumerations;
 using Berger.Common.Constants;
+using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.Master;
 
 namespace BergerMsfaApi.Services.OData.Implementation
@@ -238,7 +239,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         }
 
 
-        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformance(LastYearAppointedDealerPerformanceSearchModel model)
+        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model)
         {
             var depotList = await _depotRepository.FindByCondition(x => model.Depots.Contains(x.Werks)).Select(x => new
             {
@@ -246,7 +247,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 x.Name1
             }).ToListAsync();
 
-            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformance(model);
+            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model);
 
             var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
             {
@@ -278,6 +279,42 @@ namespace BergerMsfaApi.Services.OData.Implementation
                     x.DepotName = null;
 
                 });
+            }
+
+            return result;
+        }
+
+
+        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> ReportLastYearAppointedDealerPerformanceDetails(LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            var depotList = await _depotRepository.FindByCondition(x => model.Depots.Contains(x.Werks)).Select(x => new
+            {
+                x.Werks,
+                x.Name1
+            }).ToListAsync();
+
+            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceDetail(model);
+
+
+
+            foreach (var item in result)
+            {
+                var depot = depotList.FirstOrDefault(x => x.Werks == item.DepotCode);
+                if (depot != null)
+                {
+                    item.DepotCode = depot.Werks;
+                    item.DepotName = depot.Name1;
+                }
+            }
+
+            if (depotList.Count == 1)
+            {
+                 result.ToList().ForEach(x =>
+                 {
+                     x.DepotCode = null;
+                     x.DepotName = null;
+
+                 });
             }
 
             return result;

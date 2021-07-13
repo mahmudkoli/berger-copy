@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-   // [AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IBalanceDataService _balanceDataService;
 
         public AppSalesReportController(
-            IReportDataService reportDataService, 
+            IReportDataService reportDataService,
             IAuthService authService,
             IODataReportService oDataReportService,
             ISalesDataService salesDataService,
@@ -251,12 +251,26 @@ namespace BergerMsfaApi.Controllers.Odata
 
 
 
-        [HttpGet("ReportLastYearAppointedDealerPerformance")]
-        public async Task<IActionResult> ReportLastYearAppointedDealerPerformance([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
+        [HttpGet("ReportLastYearAppointedDealerPerformanceSummary")]
+        public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceSummary([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
         {
             try
             {
-                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformance(model);
+                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformanceSummary(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        } 
+        
+        [HttpGet("ReportLastYearAppointedDealerPerformanceDetail")]
+        public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceDetail([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformanceDetails(model);
                 return OkResult(result);
             }
             catch (Exception ex)
