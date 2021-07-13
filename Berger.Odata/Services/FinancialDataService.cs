@@ -139,7 +139,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder, 
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
                                 depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                 channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
 
@@ -151,7 +151,7 @@ namespace Berger.Odata.Services
             foreach (var customerNo in customerNos)
             {
                 var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate)).ToList();
-                if(dataSingle.Any())
+                if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
                 }
@@ -182,8 +182,8 @@ namespace Berger.Odata.Services
             {
                 var creditControlArea = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea);
 
-                item.CreditControlArea = creditControlArea != null ? 
-                                            $"{creditControlArea.Description} ({creditControlArea.CreditControlAreaId})" 
+                item.CreditControlArea = creditControlArea != null ?
+                                            $"{creditControlArea.Description} ({creditControlArea.CreditControlAreaId})"
                                             : item.CreditControlArea;
             }
             #endregion
@@ -328,26 +328,27 @@ namespace Berger.Odata.Services
                                     InvoiceNo = x.InvoiceNo,
                                     InvoiceDate = x.PostingDate.DateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ").DateFormat("dd.MM.yyyy"),
                                     InvoiceAge = x.Age,
-                                    DayLimit = x.DayLimit
+                                   // DayLimit = x.DayLimit
                                 }).ToList();
 
             if (model.PaymentFollowUpType == EnumPaymentFollowUpType.RPRS)
             {
                 var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
 
-                foreach (var item in result)
-                {
-                    var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
-                                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
-                    item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
-                }
+                //foreach (var item in result)
+                //{
+                //    var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
+                //                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
+                //    item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
+                //}
             }
 
             return result;
         }
-        public async Task<IList<ReportPaymentFollowUpResultModel>> GetRprsFollowUp(IList<string> dealerIds)
-        {
 
+
+        public async Task<IList<ReportPaymentFollowUpResultModel>> GetPaymentFollowUp(RprsFollowupSearchModel model)
+        {
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
@@ -360,20 +361,24 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Age)
-                                .AddProperty(FinancialColDef.DayLimit);
+                                //.AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Amount);
 
-            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder, model.Depots, territories: model.Territories, zones: model.Zones, customerNo: model.Dealer, channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
 
             var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
-                                                  x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
-            dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
+                                                  (x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer ||
+                                                   x.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
+                                                   x.PriceGroup == ConstantsValue.PriceGroupFastPayCarry)).ToList();
+
+            var dealerIds = dealers.Select(x => x.CustomerNo).Distinct().ToList();
 
             #region data call by single customer
             var data = new List<FinancialDataModel>();
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
+                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, dealerId, DateTime.Now.FinancialSearchDateTimeFormat())).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -389,17 +394,18 @@ namespace Berger.Odata.Services
                                     InvoiceNo = x.InvoiceNo,
                                     InvoiceDate = x.PostingDate.DateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ").DateFormat("dd.MM.yyyy"),
                                     InvoiceAge = x.Age,
-                                    DayLimit = x.DayLimit
+                                    //DayLimit = x.DayLimit,
+                                    NetDue = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
-            var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
+            // var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
 
-            foreach (var item in result)
-            {
-                var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
-                                                CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
-                item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
-            }
+            //foreach (var item in result)
+            //{
+            //    var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
+            //                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
+            //    item.RPRSDate = item.InvoiceDate.DateFormatDate("dd.MM.yyyy").AddDays(dayCount).DateFormat("dd.MM.yyyy");
+            //}
 
 
             return result;

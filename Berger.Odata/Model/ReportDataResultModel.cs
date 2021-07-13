@@ -153,6 +153,11 @@ namespace Berger.Odata.Model
         public string Zone { get; set; }
         public int DealerId { get; set; }
         public string DealerName { get; set; }
+
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+
     }
 
     public class ReportOSOver90DaysResultModel
@@ -179,9 +184,9 @@ namespace Berger.Odata.Model
         public string InvoiceNo { get; internal set; }
         public string InvoiceDate { get; internal set; }
         public string InvoiceAge { get; internal set; }
-        public string DayLimit { get; internal set; }
-        public string RPRSDate { get; internal set; }
-
+       // public string DayLimit { get; internal set; }
+        //public string RPRSDate { get; internal set; }
+        public decimal NetDue { get; set; }
         public ReportPaymentFollowUpResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);

@@ -268,6 +268,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                     item.CYMTD = summaryResultModel.CYMTD;
                     item.LYMTD = summaryResultModel.LYMTD;
                     item.GrowthMTD = summaryResultModel.GrowthMTD;
+                    item.NumberOfDealer = summaryResultModel.NumberOfDealer;
                 }
             }
 
@@ -309,12 +310,12 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             if (depotList.Count == 1)
             {
-                 result.ToList().ForEach(x =>
-                 {
-                     x.DepotCode = null;
-                     x.DepotName = null;
+                result.ToList().ForEach(x =>
+                {
+                    x.DepotCode = null;
+                    x.DepotName = null;
 
-                 });
+                });
             }
 
             return result;

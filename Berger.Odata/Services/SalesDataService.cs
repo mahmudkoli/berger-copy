@@ -797,6 +797,11 @@ namespace Berger.Odata.Services
             var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
 
 
+            var dealerSelect = new SelectQueryOptionBuilder()
+                .AddProperty(nameof(CustomerDataModel.CustomerNo))
+                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+                .AddProperty(nameof(CustomerDataModel.BusinessArea));
+
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
                 .AddProperty(DataColumnDef.NetAmount)
@@ -823,6 +828,11 @@ namespace Berger.Odata.Services
             var result = new List<RptLastYearAppointDlerPerformanceSummaryResultModel>();
 
 
+
+            var dealer = await _odataService.GetCustomerData(dealerSelect, model.Depots, null, null, model.Territories,
+                model.Zones, "", "", "", null);
+
+
             foreach (var item in concatAllList)
             {
                 var res = new RptLastYearAppointDlerPerformanceSummaryResultModel();
@@ -841,6 +851,7 @@ namespace Berger.Odata.Services
 
                 res.DepotCode = item.PlantOrBusinessArea;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
                 result.Add(res);
             }
 
@@ -863,28 +874,36 @@ namespace Berger.Odata.Services
                 .AddProperty(DataColumnDef.Territory)
                 .AddProperty(DataColumnDef.Zone)
                 .AddProperty(DataColumnDef.CustomerNo)
+                .AddProperty(DataColumnDef.NetAmount)
                 .AddProperty(DataColumnDef.CustomerName);
 
 
             var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            //var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
                 NetAmount = x.NetAmount,
-                PlantOrBusinessArea = x.PlantOrBusinessArea
+                PlantOrBusinessArea = x.PlantOrBusinessArea,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                CustomerName = x.CustomerName,
+                CustomerNo = x.CustomerNo
             };
 
-            //var concatAllList = dataLyMtd.Select(selectFunc)
-            //    .Concat(dataCyMtd.Select(selectFunc))
-            //    .GroupBy(p => new { p.PlantOrBusinessArea })
-            //    .Select(g => g.First());
+            var concatAllList = dataLyMtd.Select(selectFunc)
+                .Concat(dataCyMtd.Select(selectFunc))
+                .GroupBy(p => new { p.PlantOrBusinessArea, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
+                .Select(g => g.First());
 
             var result = new List<RptLastYearAppointDlrPerformanceDetailResultModel>();
+            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea && x.Territory == val.Territory
+                && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
+            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
 
-
-            foreach (var item in dataCyMtd)
+            foreach (var item in concatAllList)
             {
+
                 var res = new RptLastYearAppointDlrPerformanceDetailResultModel
                 {
                     DepotCode = item.PlantOrBusinessArea,
@@ -894,6 +913,18 @@ namespace Berger.Odata.Services
                     DealerName = item.CustomerName,
                 };
 
+                if (dataLyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyMtd = dataLyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYMTD = amtLyMtd;
+                }
+
+                if (dataCyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYMTD = amtCyMtd;
+                }
+                res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 result.Add(res);
             }
 

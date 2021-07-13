@@ -42,10 +42,10 @@ namespace Berger.Odata.Services
 
         Task<IList<MTSDataModel>> GetMTSDataByCustomerAndDate(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string date, List<string> brands = null);
-        
+
         Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string date, string territory = "", List<string> brands = null, string depot = "", string salesGroup = "", string salesOffice = "", string zone = "");
-        
+
         Task<IList<MTSDataModel>> GetMTSDataByArea(SelectQueryOptionBuilder selectQueryBuilder,
             string date, List<string> territories = null, List<string> brands = null, string depot = "", List<string> salesGroups = null, List<string> zones = null);
 
@@ -118,7 +118,9 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             string division = "",
             string creditControlArea = "",
-            string channel = "");
+            string channel = "",
+            IList<string> customerNo = null
+        );
 
         Task<IList<FinancialDataModel>> GetFinancialData(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string endDate, string creditControlArea = "");

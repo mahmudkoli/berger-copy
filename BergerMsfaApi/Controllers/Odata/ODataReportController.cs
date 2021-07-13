@@ -295,16 +295,8 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                List<string> dealerList = await _dealerInfoRepository.FindByCondition(x =>
-                    (model.Division.Contains(x.Division) || !model.Division.Any()) &&
-                    (model.Territories.Contains(x.Territory) || !model.Territories.Any()) &&
-                    (model.Depots.Contains(x.BusinessArea) || !model.Depots.Any()) &&
-                    (model.Dealer.Contains(x.CustomerNo) || !model.Dealer.Any()))
-                    .Select(x => x.CustomerNo).Distinct()
-                    .ToListAsync();
 
-
-                var result = await _financialDataService.GetRprsFollowUp(dealerList);
+                var result = await _financialDataService.GetPaymentFollowUp(model);
                 return OkResult(result);
             }
             catch (Exception ex)

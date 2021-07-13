@@ -1727,7 +1727,8 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             string division = "",
             string creditControlArea = "",
-            string channel = "")
+            string channel = "", IList<string> customerNo = null
+        )
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -1806,6 +1807,18 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
+            if (customerNo != null && customerNo.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.CustomerNo), customerNo.FirstOrDefault());
+
+                foreach (var custNo in customerNo.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.CustomerNo), custNo);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
             //var topQuery = $"$top=5";
 
             var queryBuilder = new QueryOptionBuilder();
@@ -1826,7 +1839,7 @@ namespace Berger.Odata.Services
                                 .And()
                                 .Equal(FinancialColDef.CustomerLow, customerNo)
                                 .And()
-                                .Equal(FinancialColDef.Date, endDate);
+                                .LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
 
             if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
             {
