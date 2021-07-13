@@ -107,6 +107,7 @@ namespace BergerMsfaApi
             services.AddScoped<IODataNotificationService, ODataNotificationService>();
             services.AddScoped<IKpiDataService, KpiDataService>();
             services.AddScoped<IExcelReaderService, ExcelReaderService>();
+            services.AddScoped<ISyncService, SyncService>();
             services.AddScoped<IAlertNotificationDataService, AlertNotificationDataService>();
             services.AddScoped<IAlertNotificationODataService, AlertNotificationODataService>();
             services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
