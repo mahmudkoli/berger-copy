@@ -17,6 +17,12 @@ namespace BergerMsfaApi.Services.AlertNotification
             _repository = repository;
         }
 
+        public async Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer)
+        {
+            var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate == DateTime.Today).ToList();
+            return result;
+        }
+
         //public async Task<OccasionToCelebrate> GetByModel(OccasionToCelebrate occasionToCelebrate)
         //{
         //    var res =  _repository.Where(p => p.CustomarNo == occasionToCelebrate.CustomarNo).FirstOrDefault();

@@ -72,4 +72,22 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class PaymentFollowUpNotificationModel
+    {
+        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceDate { get; set; }
+        public string InvoiceAge { get; set; }
+        public string DayLimit { get;  set; }
+        public string RPRSDate { get;  set; }
+        public string NotificationDate { get;  set; }
+
+        public PaymentFollowUpNotificationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

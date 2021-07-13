@@ -16,10 +16,10 @@ namespace BergerMsfaApi.Services.AlertNotification
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PaymentFollowup>> GetToayPaymentFollowup()
+        public async Task<IEnumerable<PaymentFollowup>> GetToayPaymentFollowup(IList<string> customer)
         {
-            var res = _repository.Where(p=>p.NotificationDate==DateTime.Now.Date);
-            return res.ToList();
+            var res = _repository.Where(p=>p.NotificationDate==DateTime.Now.Date && customer.Contains(p.CustomarNo)).ToList();
+            return res;
         }
 
         public async Task<bool> SavePaymentFollowup(IList<PaymentFollowup> paymentFollowups)

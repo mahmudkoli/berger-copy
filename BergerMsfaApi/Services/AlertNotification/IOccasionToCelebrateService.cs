@@ -11,5 +11,6 @@ namespace BergerMsfaApi.Services.AlertNotification
         Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
         //Task<bool> GetById(OccasionToCelebrate occasions);
         Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
+        Task<bool> GetOccasionToCelebrate(IList<string> customer);
     }
 }

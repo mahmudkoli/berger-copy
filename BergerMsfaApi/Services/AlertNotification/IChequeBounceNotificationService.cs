@@ -9,5 +9,6 @@ namespace BergerMsfaApi.Services.AlertNotification
     public interface IChequeBounceNotificationService
     {
         Task<bool> SaveMultipleChequeBounceNotification(IList<ChequeBounceNotification> cheque);
+        Task<IEnumerable<ChequeBounceNotification>> GetChequeBounceNotification(IList<string> customer);
     }
 }

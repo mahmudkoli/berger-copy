@@ -16,9 +16,9 @@ namespace BergerMsfaApi.Services.AlertNotification
             _repository = repository;
         }
 
-        public async Task<IEnumerable<CreditLimitCrossNotifiction>> GetTodayCreditLimitCrossNotifiction()
+        public async Task<IEnumerable<CreditLimitCrossNotifiction>> GetTodayCreditLimitCrossNotifiction(IList<string> customer)
         {
-            var result = _repository.Where(p => p.NotificationDate == DateTime.Today).ToList();
+            var result = _repository.Where(p => p.NotificationDate == DateTime.Today && customer.Contains(p.CustomarNo)).ToList();
             return result;
         }
 
