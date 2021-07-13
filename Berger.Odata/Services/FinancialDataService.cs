@@ -122,18 +122,12 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportOutstandingSummaryResultModel>> GetReportOutstandingSummary(IList<string> dealerIds)
+        public async Task<IList<OutstandingSummaryReportResultModel>> GetOutstandingSummaryReport(OutstandingSummaryReportSearchModel model)
         {
-            //var currentDate = DateTime.Now;
-            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
+            var filterEndDate = DateTime.Now.FinancialSearchDateTimeFormat();
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            //foreach (var prop in typeof(CustomerDataModel).GetProperties())
-            //{
-            //    selectCustomerQueryBuilder.AddProperty(prop.Name);
-            //}
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
-                                .AddProperty(nameof(CustomerDataModel.Channel))
                                 .AddProperty(nameof(CustomerDataModel.CreditControlArea))
                                 .AddProperty(nameof(CustomerDataModel.CreditLimit));
 
@@ -145,17 +139,19 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var customerData = (await _odataService.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder, dealerIds)).ToList();
-            //var data = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDate)).ToList();
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder, 
+                                depots: model.Depots, territories: model.Territories, zones: model.Zones,
+                                channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
 
-            #region data call by single customer
+            var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
+
+            #region financial data call by single customer
             var data = new List<FinancialDataModel>();
 
-            foreach (var dealerId in dealerIds)
+            foreach (var customerNo in customerNos)
             {
-                //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
-                if (dataSingle.Any())
+                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate)).ToList();
+                if(dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
                 }
@@ -166,11 +162,11 @@ namespace Berger.Odata.Services
 
             var result = groupData.Select(x =>
                                     {
-                                        var osModel = new ReportOutstandingSummaryResultModel();
+                                        var osModel = new OutstandingSummaryReportResultModel();
                                         osModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                                         osModel.ValueLimit = customerData.GroupBy(g => g.CustomerNo)
-                                                                .Sum(s => s.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer && f.CreditControlArea == osModel.CreditControlArea)
-                                                                .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
+                                                                .Sum(s => s.Where(f => f.CreditControlArea == osModel.CreditControlArea)
+                                                                            .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) < CustomConvertExtension.ObjectToInt(w.Age))
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
@@ -184,7 +180,11 @@ namespace Berger.Odata.Services
 
             foreach (var item in result)
             {
-                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+                var creditControlArea = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea);
+
+                item.CreditControlArea = creditControlArea != null ? 
+                                            $"{creditControlArea.Description} ({creditControlArea.CreditControlAreaId})" 
+                                            : item.CreditControlArea;
             }
             #endregion
 
