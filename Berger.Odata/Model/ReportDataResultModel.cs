@@ -109,16 +109,15 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class ReportOutstandingSummaryResultModel
+    public class OutstandingSummaryReportResultModel
     {
         public string CreditControlArea { get; internal set; }
-        public string CreditControlAreaName { get; internal set; }
         public decimal ValueLimit { get; internal set; }
         public decimal NetDue { get; internal set; }
         public decimal Slippage { get; internal set; }
         public decimal OSOver90Days { get; internal set; }
 
-        public ReportOutstandingSummaryResultModel()
+        public OutstandingSummaryReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
