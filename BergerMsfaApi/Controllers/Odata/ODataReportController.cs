@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
+   // [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -248,5 +248,23 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+
+
+        [HttpGet("ReportLastYearAppointedDealerPerformance")]
+        public async Task<IActionResult> ReportLastYearAppointedDealerPerformance([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformance(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
     }
 }

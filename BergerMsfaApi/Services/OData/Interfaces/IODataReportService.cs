@@ -10,5 +10,6 @@ namespace BergerMsfaApi.Services.OData.Interfaces
         Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area);
 
         Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds);
+        Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformance(LastYearAppointedDealerPerformanceSearchModel model);
     }
 }

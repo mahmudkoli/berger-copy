@@ -60,6 +60,13 @@ namespace Berger.Odata.Model
     {
         public string Territory { get; set; }
         public DealerPerformanceReportType ReportType { get; set; }
+    } 
+    
+    public class LastYearAppointedDealerPerformanceSearchModel: AppAreaSearchCommonModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
 
     public class OSOver90DaysSearchModel

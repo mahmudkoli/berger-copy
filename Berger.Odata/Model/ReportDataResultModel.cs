@@ -137,6 +137,15 @@ namespace Berger.Odata.Model
         public string DealerId { get; set; }
         public string DealerName { get; set; }
     }
+  public class RptLastYearAppointDlerPerformanceSummaryResultModel
+    {
+        public string DepotCode { get; set; }
+        public string DepotName { get; set; }
+        public int NumberOfDealer { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD  { get; set; }
+        public decimal GrowthMTD   { get; set; }
+    }
 
     public class ReportOSOver90DaysResultModel
     {

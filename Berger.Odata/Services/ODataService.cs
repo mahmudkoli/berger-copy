@@ -273,7 +273,8 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<string> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
+            IList<string> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null,
+            string customerClassification = "-1", string territory = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.SalesOrgranization, "1000").And();
@@ -819,7 +820,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder, 
+        public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -910,7 +911,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
@@ -1455,7 +1456,7 @@ namespace Berger.Odata.Services
         }
 
 
-        public async Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder,string date)
+        public async Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder, string date)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -1472,10 +1473,10 @@ namespace Berger.Odata.Services
 
             var data = (await GetSalesData(queryBuilder.Query)).ToList();
             return data;
-        } 
-        
-        
-        public async Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder,string date)
+        }
+
+
+        public async Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder, string date)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
