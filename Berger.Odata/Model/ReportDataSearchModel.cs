@@ -39,20 +39,21 @@ namespace Berger.Odata.Model
         public string Division { get; set; }
     }
 
-    public class BrandOrDivisionWisePerformanceSearchModel
+    public class YTDBrandPerformanceSearchModelSearchModel : AppAreaSearchCommonModel
     {
-        //public string CustomerNo { get; set; }
-        public string Division { get; set; } // "-1" for all
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string Division { get; set; }
         public EnumBrandOrDivision BrandOrDivision { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
-        //public EnumPeriod Period { get; set; }
     }
 
-    public class DealerPerformanceSearchModel
+    public class CategoryWiseDealerPerformanceSearchModel : AppAreaSearchCommonModel
     {
-        public string Territory { get; set; }
-        public EnumDealerPerformanceCategory DealerPerformanceCategory { get; set; }
-        public EnumCustomerClassification DealerCategory { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumDealerPerformanceCategory PerformanceCategory { get; set; }
+        public EnumCustomerClassification Category { get; set; }
     }
     
     public class DealerPerformanceResultSearchModel

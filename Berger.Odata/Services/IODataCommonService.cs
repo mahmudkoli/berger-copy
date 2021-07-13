@@ -13,5 +13,6 @@ namespace Berger.Odata.Services
         Task<IList<CreditControlArea>> GetAllCreditControlAreasAsync();
         Task<IList<RPRSPolicy>> GetAllRPRSPoliciesAsync();
         Task<IList<(string Code, string Name)>> GetAllDepotsAsync(Expression<Func<Depot, bool>> predicate);
+        Task<IList<Division>> GetAllDivisionsAsync();
     }
 }
