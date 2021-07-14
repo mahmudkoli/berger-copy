@@ -246,20 +246,20 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ReportDealerPerformance")]
-        public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
-        {
-            try
-            {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("ReportDealerPerformance")]
+        //public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
+        //{
+        //    try
+        //    {
+        //        IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+        //        var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
         [HttpGet("CustomerCredit")]
         public async Task<IActionResult> GetCustomerCredit([FromQuery] CustomerCreditSearchModel model)
@@ -275,9 +275,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-
-
-        [HttpGet("ReportLastYearAppointedDealerPerformanceSummary")]
+        [HttpGet("LastYearNewDealerPerformanceSummary")]
+        [ProducesResponseType(typeof(IList<RptLastYearAppointDlerPerformanceSummaryResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceSummary([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
         {
             try
@@ -291,7 +290,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ReportLastYearAppointedDealerPerformanceDetail")]
+        [HttpGet("LastYearNewDealerPerformanceDealerWise")]
+        [ProducesResponseType(typeof(IList<RptLastYearAppointDlrPerformanceDetailResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceDetail([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
         {
             try

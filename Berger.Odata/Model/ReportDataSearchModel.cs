@@ -71,7 +71,7 @@ namespace Berger.Odata.Model
     {
         public int Year { get; set; }
         public int Month { get; set; }
-        public LastYearAppointedDealerPerformanceType ReportType { get; set; }
+        //public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
     
     public class RprsFollowupSearchModel: AppAreaSearchCommonModel

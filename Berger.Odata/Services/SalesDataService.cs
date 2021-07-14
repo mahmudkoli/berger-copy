@@ -909,8 +909,8 @@ namespace Berger.Odata.Services
                     DepotCode = item.PlantOrBusinessArea,
                     Territory = item.Territory,
                     Zone = item.Zone,
-                    DealerId = CustomConvertExtension.ObjectToInt(item.CustomerNo),
-                    DealerName = item.CustomerName,
+                    CustomerNo = item.CustomerNo,
+                    CustomerName = item.CustomerName,
                 };
 
                 if (dataLyMtd.Any(x => predicateFunc(x, item)))

@@ -254,7 +254,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 CYMTD = 0,
                 DepotCode = x.Werks,
                 LYMTD = 0,
-                DepotName = x.Name1,
+                Depot = x.Name1,
                 GrowthMTD = 0,
                 NumberOfDealer = 0,
             }).ToList();
@@ -277,7 +277,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 result.ForEach(x =>
                 {
                     x.DepotCode = null;
-                    x.DepotName = null;
+                    x.Depot = null;
 
                 });
             }
@@ -304,7 +304,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 if (depot != null)
                 {
                     item.DepotCode = depot.Werks;
-                    item.DepotName = depot.Name1;
+                    item.Depot = depot.Name1;
                 }
             }
 
@@ -313,7 +313,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 result.ToList().ForEach(x =>
                 {
                     x.DepotCode = null;
-                    x.DepotName = null;
+                    x.Depot = null;
 
                 });
             }
