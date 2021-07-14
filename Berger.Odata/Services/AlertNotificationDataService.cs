@@ -12,23 +12,17 @@ namespace Berger.Odata.Services
 {
    public class AlertNotificationDataService: IAlertNotificationDataService
     {
-        //private readonly IODataService _odataService;
         private readonly IAlertNotificationODataService _alertNotificationOData;
-        //private readonly IODataCommonService _odataCommonService;
-
         public AlertNotificationDataService(
             IAlertNotificationODataService alertNotificationOData
-            //IODataCommonService odataCommonService
             )
         {
             _alertNotificationOData = alertNotificationOData;
-            //_odataCommonService = odataCommonService;
         }
 
         public async Task<IList<CollectionDataModel>> GetAllTodayCheckBounces()
         {
             var today = DateTime.Now;
-            var resultDateFormat = "dd MMM yyyy";
             var fromDate = today.DateTimeFormat();
             var toDate = today.DateTimeFormat();
 
@@ -47,30 +41,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.CreditControlArea);
 
-            var data = (await _alertNotificationOData.GetCustomerAndCreditControlArea(selectQueryBuilder,startPostingDate: fromDate,endPostingDate: toDate, startClearDate: fromDate, endClearDate: toDate)).ToList();
-
-            //var result = data.Select(x =>
-            //                    new AppChequeBounceNotificationModel()
-            //                    {
-            //                        ReversalDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat(resultDateFormat),
-            //                        CustomerNo = x.CustomerNo,
-            //                        CustomerName = x.CustomerName,
-            //                        CreditControlArea = x.CreditControlArea,
-            //                        Amount = CustomConvertExtension.ObjectToDecimal(x.Amount),
-            //                        InstrumentNo = x.ChequeNo,
-            //                        DocumentNo = x.DocNumber,
-            //                        BankName = x.BankName,
-            //                        Reason = "Cheque Bounce-Insuff"
-            //                    }).ToList();
-
-            #region Credit Control Area 
-            //var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
-
-            //foreach (var item in result)
-            //{
-            //    item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
-            //}
-            #endregion
+            var data = (await _alertNotificationOData.GetCustomerAndCreditControlArea(selectQueryBuilder,startClearDate: fromDate, endClearDate: toDate)).ToList();
 
             return data;
         }
@@ -117,16 +88,8 @@ namespace Berger.Odata.Services
         public async Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp()
         {
             var today = DateTime.Now;
-            var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
-            var resultDateFormat = "dd MMM yyyy";
             var fromDate = today.DateTimeFormat();
             var toDate = today.DateTimeFormat();
-            //var fromDate = (new DateTime(2011, 01, 01)).DateTimeFormat(); // need to get all data so date not fixed
-
-            //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            //selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo))
-            //                    .AddProperty(nameof(CustomerDataModel.Channel))
-            //                    .AddProperty(nameof(CustomerDataModel.PriceGroup));
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
@@ -138,80 +101,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Age)
                                 .AddProperty(FinancialColDef.DayLimit);
 
-            //var customerData = (await _alertNotificationOData.GetCustomerDataByMultipleCustomerNo(selectCustomerQueryBuilder)).ToList();
 
             var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate: fromDate, endDate: toDate)).ToList();
-
-            #region data call by single customer
-            //var data = new List<FinancialDataModel>();
-
-            //foreach (var dealerId in dealerIds)
-            //{
-            //    //var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString(), fromDate)).ToList();
-            //    var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId.ToString())).ToList();
-            //    if (dataSingle.Any())
-            //    {
-            //        data.AddRange(dataSingle);
-            //    }
-            //}
-            #endregion
-
-            //var result = data.Select(x =>
-            //                    new AppPaymentFollowUpNotificationModel()
-            //                    {
-            //                        CustomerNo = x.CustomerNo,
-            //                        CustomerName = x.CustomerName,
-            //                        InvoiceNo = x.InvoiceNo,
-            //                        InvoiceDate = x.PostingDate.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat),
-            //                        InvoiceAge = x.Age,
-            //                        DayLimit = x.DayLimit
-            //                    }).ToList();
-
-            //var resultRPRS = new List<AppPaymentFollowUpNotificationModel>();
-            //var resultFastPayCarry = new List<AppPaymentFollowUpNotificationModel>();
-
-            //#region RPRS
-            //var dealersRPRS = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
-            //                                        x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer).ToList();
-            //var dealerIdsRPRS = dealersRPRS.Select(x => x.CustomerNo.ToString()).Distinct().ToList();
-
-            //var rprsDayPolicy = await _odataCommonService.GetAllRPRSPoliciesAsync();
-
-            //foreach (var item in result.Where(x => dealerIdsRPRS.Contains(x.CustomerNo)))
-            //{
-            //    var dayCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
-            //                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
-            //    var dayNotifyCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
-            //                                    CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.NotificationDays ?? 0;
-            //    item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
-            //    item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
-            //    item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.RPRS;
-
-            //    if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
-            //        resultRPRS.Add(item);
-            //}
-            //#endregion
-
-            //#region FastPayCarry
-            //var dealersFastPayCarry = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
-            //                                        (x.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
-            //                                        x.PriceGroup == ConstantsValue.PriceGroupFastPayCarry)).ToList();
-            //var dealerIdsFastPayCarry = dealersFastPayCarry.Select(x => x.CustomerNo.ToString()).Distinct().ToList();
-
-            //foreach (var item in result.Where(x => dealerIdsFastPayCarry.Contains(x.CustomerNo)))
-            //{
-            //    //var dayCount = 5;
-            //    var dayNotifyCount = 3;
-            //    //item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
-            //    item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
-            //    item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.FastPayCarry;
-
-            //    if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
-            //        resultFastPayCarry.Add(item);
-            //}
-            //#endregion
-
-            //result = resultRPRS.Concat(resultFastPayCarry).ToList();
 
             return data;
         }
@@ -236,26 +127,6 @@ namespace Berger.Odata.Services
                                 .AddProperty(CustomerOccasionColDef.ThirdChildDOB);
 
             var data = (await _alertNotificationOData.GetCustomerOccasionData(selectQueryBuilder)).ToList();
-
-            //var result = data.Select(x =>
-            //                    new AppCustomerOccasionNotificationModel()
-            //                    {
-            //                        CustomerNo = x.Customer,
-            //                        CustomerName = x.Name,
-            //                        DOB = !string.IsNullOrEmpty(x.DOB) ? x.DOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
-            //                                                            oldDate.DateFormat(resultDateFormat),
-            //                        SpouseDOB = !string.IsNullOrEmpty(x.SpouseDOB) ? x.SpouseDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
-            //                                                                        oldDate.DateFormat(resultDateFormat),
-
-            //                        ChildDOB = !string.IsNullOrEmpty(x.FirstChildDOB) ? x.FirstChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
-            //                                        !string.IsNullOrEmpty(x.SecondChildDOB) ? x.SecondChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
-            //                                            !string.IsNullOrEmpty(x.ThirdChildDOB) ? x.ThirdChildDOB.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat) :
-            //                                                oldDate.DateFormat(resultDateFormat),
-            //                    }).ToList();
-
-            //result = result.Where(x => x.DOB.DateFormatDate(format: resultDateFormat).Date == today.Date ||
-            //                            x.SpouseDOB.DateFormatDate(format: resultDateFormat).Date == today.Date ||
-            //                            x.ChildDOB.DateFormatDate(format: resultDateFormat).Date == today.Date).ToList();
 
             return data;
         }

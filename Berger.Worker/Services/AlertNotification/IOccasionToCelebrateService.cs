@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BergerMsfaApi.Services.AlertNotification
+namespace Berger.Worker.Services.AlertNotification
 {
    public interface IOccasionToCelebrateService
     {

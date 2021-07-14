@@ -21,6 +21,7 @@ namespace Berger.Odata.Services
             string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
 
             if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
             {
@@ -58,7 +59,6 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate);
             }
 
-            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
             var queryBuilder = new QueryOptionBuilder();
             queryBuilder.AppendQuery(filterQueryBuilder.Filter)
                         .AppendQuery(selectQueryBuilder.Select);
