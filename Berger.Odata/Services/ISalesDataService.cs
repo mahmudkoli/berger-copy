@@ -25,5 +25,8 @@ namespace Berger.Odata.Services
         Task<IList<TodaysInvoiceValueResultModel>> GetTodaysActivityInvoiceValue(TodaysInvoiceValueSearchModel model, AreaSearchCommonModel area);
         Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
             string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type);
+
+        Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model);
+        Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model);
     }
 }

@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.Sync
 
             var syncDailySalesLogs = salesDataModels.ToList().Select(x => new SyncDailySalesLog
             {
-                Date = x.Date.DateFormatDate(),
+                Date = x.Date.SalesResultDateFormat(),
                 Zone = x.Zone,
                 TerritoryCode = x.Territory,
                 BusinessArea = x.PlantOrBusinessArea,

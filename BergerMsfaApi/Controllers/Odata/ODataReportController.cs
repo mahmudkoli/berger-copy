@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.OData.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
+    //[AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -26,15 +31,19 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IFinancialDataService _financialDataService;
         private readonly IStockDataService _stockDataService;
         private readonly IBalanceDataService _balanceDataService;
+        private readonly IRepository<DealerInfo> _dealerInfoRepository;
 
         public AppSalesReportController(
-            IReportDataService reportDataService, 
+            IReportDataService reportDataService,
             IAuthService authService,
             IODataReportService oDataReportService,
             ISalesDataService salesDataService,
             IFinancialDataService financialDataService,
             IStockDataService stockDataService,
-            IBalanceDataService balanceDataService)
+            IBalanceDataService balanceDataService,
+            IRepository<DealerInfo> dealerInfoRepository
+
+            )
         {
             _reportDataService = reportDataService;
             _authService = authService;
@@ -43,6 +52,7 @@ namespace BergerMsfaApi.Controllers.Odata
             _financialDataService = financialDataService;
             _stockDataService = stockDataService;
             _balanceDataService = balanceDataService;
+            _dealerInfoRepository = dealerInfoRepository;
         }
 
         [HttpGet("TodaysActivitySummary")]
@@ -248,5 +258,53 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+
+
+        [HttpGet("ReportLastYearAppointedDealerPerformanceSummary")]
+        public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceSummary([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformanceSummary(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("ReportLastYearAppointedDealerPerformanceDetail")]
+        public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceDetail([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportLastYearAppointedDealerPerformanceDetails(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
+        [HttpGet("ReportRprsFollowup")]
+        public async Task<IActionResult> ReportRprsFollowup([FromQuery] RprsFollowupSearchModel model)
+        {
+            try
+            {
+
+                var result = await _financialDataService.GetPaymentFollowUp(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
     }
 }

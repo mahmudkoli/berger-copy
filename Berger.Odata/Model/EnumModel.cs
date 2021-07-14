@@ -44,6 +44,12 @@ namespace Berger.Odata.Model
         ClubSupremeTerritoryWise = 2,
         ClubSupremeTerritoryAndDealerWise = 3
     }
+    
+    public enum LastYearAppointedDealerPerformanceType
+    {
+        Summary = 1,
+        Details = 2,
+    }
 
     public enum EnumBrandOrDivision
     {
