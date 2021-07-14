@@ -404,7 +404,7 @@ namespace Berger.Odata.Services
                                 //.AddProperty(FinancialColDef.DayLimit)
                                 .AddProperty(FinancialColDef.Amount);
 
-            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder, model.Depots, territories: model.Territories, zones: model.Zones, customerNo: model.Dealer, channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder, model.Depots, territories: model.Territories, zones: model.Zones, customerNos: model.Dealer, channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
 
             var dealers = customerData.Where(x => x.Channel == ConstantsValue.DistrbutionChannelDealer &&
                                                   (x.PriceGroup == ConstantsValue.PriceGroupCreditBuyer ||

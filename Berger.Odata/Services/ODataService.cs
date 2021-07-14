@@ -1325,7 +1325,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
-            string plant = "", string materialGroup = "", string materialCode = "")
+            string plant = "", string materialGroupOrBrand = "", string materialCode = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             var filter = new List<(string Prop, string Value)>();
@@ -1335,9 +1335,9 @@ namespace Berger.Odata.Services
                 filter.Add((nameof(StockDataModel.Plant), plant));
             }
 
-            if (!string.IsNullOrEmpty(materialGroup))
+            if (!string.IsNullOrEmpty(materialGroupOrBrand))
             {
-                filter.Add((nameof(StockDataModel.MaterialGroup), materialGroup));
+                filter.Add((nameof(StockDataModel.MaterialGroup), materialGroupOrBrand));
             }
 
             if (!string.IsNullOrEmpty(materialCode))
@@ -1356,6 +1356,7 @@ namespace Berger.Odata.Services
             {
                 var fil = filter.FirstOrDefault();
                 filterQueryBuilder.Equal(fil.Prop, fil.Value);
+
                 foreach (var item in filter.Skip(1))
                 {
                     filterQueryBuilder.And().Equal(item.Prop, item.Value);

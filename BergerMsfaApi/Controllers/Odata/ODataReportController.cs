@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    //[AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -216,6 +216,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("MaterialStock")]
+        [ProducesResponseType(typeof(IList<MaterialStockResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetMaterialStock([FromQuery] MaterialStockSearchModel model)
+        {
+            try
+            {
+                var result = await _stockDataService.GetMaterialStock(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("ReportDealerPerformance")]
         public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
         {
@@ -238,20 +253,6 @@ namespace BergerMsfaApi.Controllers.Odata
             {
                 IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
                 var result = await _financialDataService.GetReportPaymentFollowUp(model, dealerIds);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [HttpGet("StockDetails")]
-        public async Task<IActionResult> GetStockDetails([FromQuery] StocksSearchModel model)
-        {
-            try
-            {
-                var result = await _stockDataService.GetStockDetails(model);
                 return OkResult(result);
             }
             catch (Exception ex)

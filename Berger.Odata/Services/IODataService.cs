@@ -76,7 +76,7 @@ namespace Berger.Odata.Services
             IList<string> dealerIds, string compareMonth, string division = "-1", List<string> brands = null);
 
         Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
-            string plant = "", string materialGroup = "", string materialCode = "");
+            string plant = "", string materialGroupOrBrand = "", string materialCode = "");
 
         Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> dealerIds, string fromDate, string endDate);
