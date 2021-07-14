@@ -201,6 +201,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("ChequeSummary")]
+        [ProducesResponseType(typeof(ChequeSummaryReportResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetChequeSummary([FromQuery] ChequeSummaryReportSearchModel model)
+        {
+            try
+            {
+                var data = await _balanceDataService.GetChequeSummaryReport(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("ReportDealerPerformance")]
         public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
         {

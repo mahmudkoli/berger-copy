@@ -27,6 +27,7 @@ namespace Berger.Odata.Model
         public string AccountGroupName { get; set; }
         public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
+        public string Territory { get; set; }
         public string Depot { get; set; }
         public string PostingDate { get; set; }
         public string ClearDate { get; set; }

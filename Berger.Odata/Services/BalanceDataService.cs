@@ -230,6 +230,133 @@ namespace Berger.Odata.Services
             return result;
         }
 
+        public async Task<ChequeSummaryReportResultModel> GetChequeSummaryReport(ChequeSummaryReportSearchModel model)
+        {
+            var filterDate = new DateTime(model.Year, model.Month, 01);
+
+            var cyfd = filterDate.GetCYFD().CollectionSearchDateTimeFormat();
+            var cfyfd = filterDate.GetCFYFD().CollectionSearchDateTimeFormat();
+            var cyld = filterDate.GetCYLD().CollectionSearchDateTimeFormat();
+
+            var dataCm = new List<CollectionDataModel>();
+            var dataCy = new List<CollectionDataModel>();
+            var dataBounceCm = new List<CollectionDataModel>();
+            var dataBounceCy = new List<CollectionDataModel>();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
+                                .AddProperty(CollectionColDef.CustomerName)
+                                .AddProperty(CollectionColDef.PostingDate)
+                                .AddProperty(CollectionColDef.ClearDate)
+                                .AddProperty(CollectionColDef.Amount)
+                                .AddProperty(CollectionColDef.ChequeNo);
+
+            #region Filter by area and customer no
+            //dataCm = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //                    depots: model.Depots, territories: model.Territories,
+            //                    startPostingDate: cyfd, endPostingDate: cyld,
+            //                    customerNos: model.CustomerNos)).ToList();
+
+            //dataCy = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //                    depots: model.Depots, territories: model.Territories,
+            //                    startPostingDate: cfyfd, endPostingDate: cyld,
+            //                    customerNos: model.CustomerNos)).ToList();
+
+            //dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //                        depots: model.Depots, territories: model.Territories,
+            //                        startClearDate: cfyfd, endClearDate: cyld,
+            //                        customerNos: model.CustomerNos, 
+            //                        bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
+
+            //dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
+            //                        depots: model.Depots, territories: model.Territories,
+            //                        startClearDate: cfyfd, endClearDate: cyld,
+            //                        customerNos: model.CustomerNos,
+            //                        bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
+            #endregion
+
+            #region Filter by only customer no
+            var customerNos = model.CustomerNos;
+
+            if (customerNos == null || !customerNos.Any())
+            {
+                var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+                selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
+
+                var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
+                                    channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
+
+                customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
+            }
+
+            dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
+                                startPostingDate: cyfd, endPostingDate: cyld,
+                                customerNos: customerNos)).ToList();
+
+            dataCy = (await _odataService.GetCollectionData(selectQueryBuilder,
+                                startPostingDate: cfyfd, endPostingDate: cyld,
+                                customerNos: customerNos)).ToList();
+
+            dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
+                                    startClearDate: cfyfd, endClearDate: cyld,
+                                    customerNos: customerNos,
+                                    bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
+
+            dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
+                                    startClearDate: cfyfd, endClearDate: cyld,
+                                    customerNos: customerNos,
+                                    bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
+            #endregion
+
+            var result = new ChequeSummaryReportResultModel();
+
+            //result.CustomerNo = dataCy.FirstOrDefault()?.CustomerNo ?? string.Empty;
+            //result.CustomerName = dataCy.FirstOrDefault()?.CustomerName ?? string.Empty;
+
+            #region Cheque Details
+            result.ChequeDetails = new List<ChequeSummaryChequeDetailsReportModel>();
+
+            var totalChqRec = new ChequeSummaryChequeDetailsReportModel();
+            totalChqRec.ChequeDetailsName = "Total Chq Rec";
+            totalChqRec.MTDNoOfCheque = dataCm.Count();
+            totalChqRec.YTDNoOfCheque = dataCy.Count();
+            totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+
+            var totalChqBncd = new ChequeSummaryChequeDetailsReportModel();
+            totalChqBncd.ChequeDetailsName = "Total Chq Bncd";
+            totalChqBncd.MTDNoOfCheque = dataBounceCm.Count();
+            totalChqBncd.YTDNoOfCheque = dataBounceCy.Count();
+            totalChqBncd.MTDTotalChequeValue = dataBounceCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            totalChqBncd.YTDTotalChequeValue = dataBounceCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+
+            var bncdPercent = new ChequeSummaryChequeDetailsReportModel();
+            bncdPercent.ChequeDetailsName = "Bncd Percent";
+            bncdPercent.MTDNoOfCheque = _odataService.GetPercentage(totalChqRec.MTDNoOfCheque, totalChqBncd.MTDNoOfCheque);
+            bncdPercent.YTDNoOfCheque = _odataService.GetPercentage(totalChqRec.YTDNoOfCheque, totalChqBncd.YTDNoOfCheque);
+            bncdPercent.MTDTotalChequeValue = _odataService.GetPercentage(totalChqRec.MTDTotalChequeValue, totalChqBncd.MTDTotalChequeValue);
+            bncdPercent.YTDTotalChequeValue = _odataService.GetPercentage(totalChqRec.YTDTotalChequeValue, totalChqBncd.YTDTotalChequeValue);
+
+            result.ChequeDetails.Add(totalChqRec);
+            result.ChequeDetails.Add(totalChqBncd);
+            result.ChequeDetails.Add(bncdPercent);
+            #endregion
+
+            #region Cheque Bounce Details
+            result.ChequeBounceDetails = dataBounceCm.Select(s => new ChequeSummaryChequeBounceDetailsReportModel()
+                                                                    {
+                                                                        CustomerNo = s.CustomerNo,
+                                                                        CustomerName = s.CustomerName,
+                                                                        Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                                                                        ChequeNo = s.ChequeNo,
+                                                                        Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
+                                                                    }).ToList();
+            #endregion
+
+            return result;
+        }
+
         public async Task<CustomerCreditResultModel> GetCustomerCredit(CustomerCreditSearchModel model)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();

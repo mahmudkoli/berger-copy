@@ -1733,8 +1733,8 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             string division = "",
             string creditControlArea = "",
-            string channel = "", IList<string> customerNo = null
-        )
+            string channel = "", 
+            IList<string> customerNos = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -1813,13 +1813,13 @@ namespace Berger.Odata.Services
                 filterQueryBuilder.EndGroup();
             }
 
-            if (customerNo != null && customerNo.Any())
+            if (customerNos != null && customerNos.Any())
             {
-                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.CustomerNo), customerNo.FirstOrDefault());
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.CustomerNo), customerNos.FirstOrDefault());
 
-                foreach (var custNo in customerNo.Skip(1))
+                foreach (var customerNo in customerNos.Skip(1))
                 {
-                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.CustomerNo), custNo);
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.CustomerNo), customerNo);
                 }
 
                 filterQueryBuilder.EndGroup();
@@ -1860,6 +1860,110 @@ namespace Berger.Odata.Services
                         .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetFinancialData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null, IList<string> territories = null, 
+            string startPostingDate = "", string endPostingDate = "", 
+            string startClearDate = "", string endClearDate = "", 
+            string creditControlArea = "", string bounceStatus = "", 
+            IList<string> customerNos = null)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.CreditControlArea, creditControlArea);
+            }
+
+            if (bounceStatus != "-1" && !string.IsNullOrEmpty(bounceStatus))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.BounceStatus, bounceStatus);
+            }
+
+            if (depots != null && depots.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.BusinessArea, depots.FirstOrDefault());
+
+                foreach (var depot in depots.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.BusinessArea, depot);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (territories != null && territories.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.Territory, territories.FirstOrDefault());
+
+                foreach (var territory in territories.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.Territory, territory);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startPostingDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate);
+            }
+            else if (!string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate);
+            }
+
+            if (!string.IsNullOrEmpty(startClearDate) && !string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startClearDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate);
+            }
+            else if (!string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate);
+            }
+
+            if (customerNos != null && customerNos.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.CustomerNo, customerNos.FirstOrDefault());
+
+                foreach (var customerNo in customerNos.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.CustomerNo, customerNo);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCollectionData(queryBuilder.Query)).ToList();
 
             return data;
         }
