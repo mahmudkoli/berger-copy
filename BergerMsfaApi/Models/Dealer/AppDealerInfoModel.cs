@@ -17,4 +17,12 @@ namespace BergerMsfaApi.Models.Dealer
 
 
     }
+
+    public class AppAreaDealerResultModel
+    {
+        public int Id { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerNo { get; set; }
+        public bool IsSubdealer { get; set; }
+    }
 }

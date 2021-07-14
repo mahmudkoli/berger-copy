@@ -27,7 +27,7 @@ namespace Berger.Odata.Services
             _odataCommonService = odataCommonService;
         }
 
-        public async Task<IList<StocksResultModel>> GetStockDetails(StocksSearchModel model)
+        public async Task<IList<MaterialStockResultModel>> GetMaterialStock(MaterialStockSearchModel model)
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             foreach (var prop in typeof(StockDataModel).GetProperties())
@@ -35,15 +35,17 @@ namespace Berger.Odata.Services
                 selectQueryBuilder.AddProperty(prop.Name);
             }
 
-            var data = (await _odataService.GetStockData(selectQueryBuilder, plant: model.Plant, materialGroup: model.MaterialGroup, materialCode: model.MaterialCode)).ToList();
+            var data = (await _odataService.GetStockData(selectQueryBuilder, 
+                                plant: model.Plant, 
+                                materialGroupOrBrand: model.MaterialGroupOrBrand, 
+                                materialCode: model.MaterialCode)).ToList();
 
             var result = data.GroupBy(x => x.MaterialCode).Select(x =>
-                                new StocksResultModel()
+                                new MaterialStockResultModel()
                                 {
                                     MaterialCode = x.Key,
-                                    MaterialDiscription = x.FirstOrDefault()?.MaterialDiscription??string.Empty,
-                                    Stock = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.CurrentStock)),
-                                    UOM = "NOS"
+                                    MaterialDescription = x.FirstOrDefault()?.MaterialDiscription??string.Empty,
+                                    Stock = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.CurrentStock))
                                 }).ToList();
 
             return result;

@@ -71,7 +71,7 @@ namespace Berger.Odata.Model
     {
         public int Year { get; set; }
         public int Month { get; set; }
-        public LastYearAppointedDealerPerformanceType ReportType { get; set; }
+        //public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
     
     public class RprsFollowupSearchModel: AppAreaSearchCommonModel
@@ -81,13 +81,18 @@ namespace Berger.Odata.Model
         public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
 
-    public class OSOver90DaysSearchModel : AppAreaSearchCommonModel
+    public class OSOver90DaysTrendSearchModel : AppAreaSearchCommonModel
     {
         public string CreditControlArea { get; set; }
     }
 
-    public class PaymentFollowUpSearchModel
+    public class PaymentFollowUpSearchModel : AppAreaSearchCommonModel
     {
-        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
+        public IList<string> CustomerNos { get; set; }
+
+        public PaymentFollowUpSearchModel()
+        {
+            this.CustomerNos = new List<string>();
+        }
     }
 }

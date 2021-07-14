@@ -61,5 +61,6 @@ namespace Berger.Odata.Model
         public string DistributionChannel { get; internal set; }
         public string AmountCurrency { get; internal set; }
         public string Time { get; internal set; }
+        public string CreditControlArea { get; internal set; }
     }
 }

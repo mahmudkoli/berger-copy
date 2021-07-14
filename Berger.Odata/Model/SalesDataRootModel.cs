@@ -122,6 +122,7 @@ namespace Berger.Odata.Model
         public string amt_kzwi6_F { get; set; }
         public string bonba { get; set; }
         public string bonba_F { get; set; }
+        public string kkber { get; set; }
 
         public SalesDataModel ToModel()
         {
@@ -186,6 +187,7 @@ namespace Berger.Odata.Model
             model.AmountCurrency = this.waerk;
             //model.Time = this.erzet;
             model.Time = this.erzet_T;
+            model.CreditControlArea = this.kkber;
             return model;
         }
     }

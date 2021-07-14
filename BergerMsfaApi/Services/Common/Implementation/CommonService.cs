@@ -428,6 +428,40 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
+        public async Task<IList<AppAreaDealerResultModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
+        {
+            model.PageNo = model.PageNo ?? 1;
+            model.PageSize = model.PageSize ?? int.MaxValue;
+            model.CustomerName = model.CustomerName ?? string.Empty;
+
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
+                (x.CustomerName.Contains(model.CustomerName)) &&
+                ((!(model.Depots != null && model.Depots.Any()) || model.Depots.Contains(x.BusinessArea)) &&
+                (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
+                (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
+                (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
+                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone)));
+
+            var result = (from di in _dealerInfoSvc.FindAll(dealerPredicate)
+                            join cg in _customerGroupSvc.GetAll()
+                            on di.AccountGroup equals cg.CustomerAccountGroup
+                            into cust
+                            from custGrp in cust.DefaultIfEmpty()
+
+                            select new AppAreaDealerResultModel
+                            {
+                                Id = di.Id,
+                                CustomerNo = di.CustomerNo,
+                                CustomerName = $"{di.CustomerName} ({di.CustomerNo})",
+                                IsSubdealer = custGrp.IsSubdealer()
+                            })
+                            .Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
+
+            return result;
+        }
+
         public async Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))

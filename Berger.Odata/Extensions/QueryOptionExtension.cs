@@ -54,7 +54,13 @@ namespace Berger.Odata.Extensions
         public FilterQueryOptionBuilder Equal(string property, string value) 
         { 
             this._filter += $"{property} eq '{value}'"; 
-            return this; 
+            return this;
+        }
+
+        public FilterQueryOptionBuilder EqualDateTime(string property, string value)
+        {
+            this._filter += $"{property} eq datetime'{value}'";
+            return this;
         }
 
         public FilterQueryOptionBuilder NotEqual(string property, string value) 

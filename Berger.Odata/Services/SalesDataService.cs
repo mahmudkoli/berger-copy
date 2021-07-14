@@ -829,8 +829,8 @@ namespace Berger.Odata.Services
 
 
 
-            var dealer = await _odataService.GetCustomerData(dealerSelect, model.Depots, null, null, model.Territories,
-                model.Zones, "", "", "", null);
+            var dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
+                zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
 
 
             foreach (var item in concatAllList)
@@ -909,8 +909,8 @@ namespace Berger.Odata.Services
                     DepotCode = item.PlantOrBusinessArea,
                     Territory = item.Territory,
                     Zone = item.Zone,
-                    DealerId = CustomConvertExtension.ObjectToInt(item.CustomerNo),
-                    DealerName = item.CustomerName,
+                    CustomerNo = item.CustomerNo,
+                    CustomerName = item.CustomerName,
                 };
 
                 if (dataLyMtd.Any(x => predicateFunc(x, item)))
