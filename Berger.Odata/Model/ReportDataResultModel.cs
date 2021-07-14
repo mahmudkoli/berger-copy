@@ -1,4 +1,5 @@
 ﻿using Berger.Common.Extensions;
+using System;
 using System.Collections.Generic;
 using NJ = Newtonsoft.Json;
 using SJ = System.Text.Json.Serialization;
@@ -160,7 +161,7 @@ namespace Berger.Odata.Model
 
     }
 
-    public class OSOver90DaysReportResultModel
+    public class OSOver90DaysTrendReportResultModel
     {
         public string Month { get; internal set; }
         public decimal OSOver90Days { get; internal set; }
@@ -168,23 +169,28 @@ namespace Berger.Odata.Model
         public decimal Sales { get; internal set; }
         public decimal OSPercentageWithSales { get; internal set; }
 
-        public OSOver90DaysReportResultModel()
+        public OSOver90DaysTrendReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
 
-    public class ReportPaymentFollowUpResultModel
+    public class PaymentFollowUpResultModel
     {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public DateTime InvoiceDateTime { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
-        public string InvoiceNo { get; internal set; }
         public string InvoiceDate { get; internal set; }
-        public string InvoiceAge { get; internal set; }
-       // public string DayLimit { get; internal set; }
-        //public string RPRSDate { get; internal set; }
+        public string InvoiceNo { get; internal set; }
         public decimal NetDue { get; set; }
-        public ReportPaymentFollowUpResultModel()
+        public int InvoiceAge { get; internal set; }
+        public int DayLimit { get; internal set; }
+        public int DayLimitRPRS { get; internal set; }
+        public string RPRSDate { get; internal set; }
+
+        public PaymentFollowUpResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

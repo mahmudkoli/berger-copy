@@ -252,26 +252,26 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.ChequeNo);
 
             #region Filter by area and customer no
-            //dataCm = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
             //                    depots: model.Depots, territories: model.Territories,
-            //                    startPostingDate: cyfd, endPostingDate: cyld,
-            //                    customerNos: model.CustomerNos)).ToList();
+            //                    customerNos: model.CustomerNos,
+            //                    startPostingDate: cyfd, endPostingDate: cyld)).ToList();
 
-            //dataCy = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //dataCy = (await _odataService.GetCollectionData(selectQueryBuilder,
             //                    depots: model.Depots, territories: model.Territories,
-            //                    startPostingDate: cfyfd, endPostingDate: cyld,
-            //                    customerNos: model.CustomerNos)).ToList();
+            //                    customerNos: model.CustomerNos,
+            //                    startPostingDate: cfyfd, endPostingDate: cyld)).ToList();
 
-            //dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder, 
+            //dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
             //                        depots: model.Depots, territories: model.Territories,
+            //                        customerNos: model.CustomerNos,
             //                        startClearDate: cfyfd, endClearDate: cyld,
-            //                        customerNos: model.CustomerNos, 
             //                        bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             //dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
             //                        depots: model.Depots, territories: model.Territories,
-            //                        startClearDate: cfyfd, endClearDate: cyld,
             //                        customerNos: model.CustomerNos,
+            //                        startClearDate: cfyfd, endClearDate: cyld,
             //                        bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
             #endregion
 
@@ -291,21 +291,21 @@ namespace Berger.Odata.Services
             }
 
             dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
-                                startPostingDate: cyfd, endPostingDate: cyld,
-                                customerNos: customerNos)).ToList();
+                                customerNos: customerNos,
+                                startPostingDate: cyfd, endPostingDate: cyld)).ToList();
 
             dataCy = (await _odataService.GetCollectionData(selectQueryBuilder,
-                                startPostingDate: cfyfd, endPostingDate: cyld,
-                                customerNos: customerNos)).ToList();
+                                customerNos: customerNos,
+                                startPostingDate: cfyfd, endPostingDate: cyld)).ToList();
 
             dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
-                                    startClearDate: cfyfd, endClearDate: cyld,
                                     customerNos: customerNos,
+                                    startClearDate: cfyfd, endClearDate: cyld,
                                     bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
-                                    startClearDate: cfyfd, endClearDate: cyld,
                                     customerNos: customerNos,
+                                    startClearDate: cfyfd, endClearDate: cyld,
                                     bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
             #endregion
 

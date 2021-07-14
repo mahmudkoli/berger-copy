@@ -11,12 +11,10 @@ namespace Berger.Odata.Services
         Task<IList<OutstandingDetailsResultModel>> GetOutstandingDetails(OutstandingDetailsSearchModel model);
         Task<IList<OutstandingSummaryResultModel>> GetOutstandingSummary(OutstandingSummarySearchModel model);
         Task<IList<OutstandingSummaryReportResultModel>> GetOutstandingSummaryReport(OutstandingSummaryReportSearchModel model);
-        Task<IList<OSOver90DaysReportResultModel>> GetOSOver90DaysReport(OSOver90DaysSearchModel model);
-        Task<IList<ReportPaymentFollowUpResultModel>> GetReportPaymentFollowUp(PaymentFollowUpSearchModel model, IList<string> dealerIds);
-        //Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(IList<int> dealerIds, DateTime fromDate, DateTime toDate);
+        Task<IList<OSOver90DaysTrendReportResultModel>> GetOSOver90DaysTrendReport(OSOver90DaysTrendSearchModel model);
+        Task<IList<PaymentFollowUpResultModel>> GetPaymentFollowUp(PaymentFollowUpSearchModel model);
         Task<IList<FinancialDataModel>> GetOsOver90DaysTrend(string dealerId, DateTime fromDate, DateTime toDate, string creditControlArea = "");
         Task<IList<FinancialDataModel>> GetCustomerSlippageAmount(IList<string> dealerIds, DateTime endDate);
         Task<(bool HasOS, bool HasSlippage)> CheckCustomerOSSlippage(string dealerId);
-        Task<IList<ReportPaymentFollowUpResultModel>> GetPaymentFollowUp(RprsFollowupSearchModel model);
     }
 }

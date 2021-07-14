@@ -186,13 +186,28 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("OSOver90Days")]
-        [ProducesResponseType(typeof(IList<OSOver90DaysReportResultModel>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetReportOSOver90Days([FromQuery] OSOver90DaysSearchModel model)
+        [HttpGet("OSOver90DaysTrend")]
+        [ProducesResponseType(typeof(IList<OSOver90DaysTrendReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetReportOSOver90DaysTrend([FromQuery] OSOver90DaysTrendSearchModel model)
         {
             try
             {
-                var result = await _financialDataService.GetOSOver90DaysReport(model);
+                var result = await _financialDataService.GetOSOver90DaysTrendReport(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("PaymentFollowUp")]
+        [ProducesResponseType(typeof(IList<PaymentFollowUpResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetReportPaymentFollowUp([FromQuery] PaymentFollowUpSearchModel model)
+        {
+            try
+            {
+                var result = await _financialDataService.GetPaymentFollowUp(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -246,21 +261,6 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("PaymentFollowUp")]
-        public async Task<IActionResult> GetReportPaymentFollowUp([FromQuery] PaymentFollowUpSearchModel model)
-        {
-            try
-            {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _financialDataService.GetReportPaymentFollowUp(model, dealerIds);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
         [HttpGet("CustomerCredit")]
         public async Task<IActionResult> GetCustomerCredit([FromQuery] CustomerCreditSearchModel model)
         {
@@ -304,23 +304,5 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
-
-
-        [HttpGet("ReportRprsFollowup")]
-        public async Task<IActionResult> ReportRprsFollowup([FromQuery] RprsFollowupSearchModel model)
-        {
-            try
-            {
-
-                var result = await _financialDataService.GetPaymentFollowUp(model);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-
     }
 }

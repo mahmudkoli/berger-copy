@@ -117,20 +117,20 @@ namespace Berger.Odata.Services
             IList<string> depots = null,
             IList<string> salesOffices = null, IList<string> salesGroups = null,
             IList<string> territories = null, IList<string> zones = null,
+            IList<string> customerNos = null,
             string division = "",
             string creditControlArea = "",
-            string channel = "",
-            IList<string> customerNos = null);
+            string channel = "");
 
         Task<IList<FinancialDataModel>> GetFinancialData(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string endDate, string creditControlArea = "");
 
         Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> depots = null, IList<string> territories = null,
+            IList<string> customerNos = null,
             string startPostingDate = "", string endPostingDate = "",
             string startClearDate = "", string endClearDate = "",
-            string creditControlArea = "", string bounceStatus = "",
-            IList<string> customerNos = null);
+            string creditControlArea = "", string bounceStatus = "");
         #endregion
 
         #region calculate data

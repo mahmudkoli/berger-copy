@@ -1732,10 +1732,10 @@ namespace Berger.Odata.Services
             IList<string> depots = null,
             IList<string> salesOffices = null, IList<string> salesGroups = null,
             IList<string> territories = null, IList<string> zones = null,
+            IList<string> customerNos = null,
             string division = "",
             string creditControlArea = "",
-            string channel = "", 
-            IList<string> customerNos = null)
+            string channel = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
 
@@ -1866,11 +1866,11 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<string> depots = null, IList<string> territories = null, 
+            IList<string> depots = null, IList<string> territories = null,
+            IList<string> customerNos = null, 
             string startPostingDate = "", string endPostingDate = "", 
             string startClearDate = "", string endClearDate = "", 
-            string creditControlArea = "", string bounceStatus = "", 
-            IList<string> customerNos = null)
+            string creditControlArea = "", string bounceStatus = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);

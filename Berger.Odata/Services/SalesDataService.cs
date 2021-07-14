@@ -829,8 +829,8 @@ namespace Berger.Odata.Services
 
 
 
-            var dealer = await _odataService.GetCustomerData(dealerSelect, model.Depots, null, null, model.Territories,
-                model.Zones, "", "", "", null);
+            var dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
+                zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
 
 
             foreach (var item in concatAllList)
