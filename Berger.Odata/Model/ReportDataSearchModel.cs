@@ -67,7 +67,7 @@ namespace Berger.Odata.Model
         public DealerPerformanceReportType ReportType { get; set; }
     }
 
-    public class OSOver90DaysSearchModel
+    public class OSOver90DaysSearchModel : AppAreaSearchCommonModel
     {
         public string CreditControlArea { get; set; }
     }

@@ -150,7 +150,7 @@ namespace Berger.Odata.Services
 
             foreach (var customerNo in customerNos)
             {
-                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate, creditControlArea: model.CreditControlArea)).ToList();
                 if(dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -191,77 +191,117 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportOSOver90DaysResultModel>> GetReportOSOver90Days(OSOver90DaysSearchModel model, IList<string> dealerIds)
+        public async Task<IList<OSOver90DaysReportResultModel>> GetOSOver90DaysReport(OSOver90DaysSearchModel model)
         {
             var currentDate = DateTime.Now;
             var fmDate = currentDate.AddMonths(-3);
             var smDate = currentDate.AddMonths(-2);
             var tmDate = currentDate.AddMonths(-1);
 
-            var fromDateFM = fmDate.GetCYFD().DateTimeFormat(); // First month
-            var toDateFM = fmDate.GetCYLD().DateTimeFormat();
-            var fromDateSM = smDate.GetCYFD().DateTimeFormat(); // Second month
-            var toDateSM = smDate.GetCYLD().DateTimeFormat();
-            var fromDateTM = tmDate.GetCYFD().DateTimeFormat(); // Third month
-            var toDateTM = tmDate.GetCYLD().DateTimeFormat();
+            var filterFinancialEndDateFM = fmDate.GetCYLD().FinancialSearchDateTimeFormat();
+            var filterFinancialEndDateSM = smDate.GetCYLD().FinancialSearchDateTimeFormat();
+            var filterFinancialEndDateTM = tmDate.GetCYLD().FinancialSearchDateTimeFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder
-                                //.AddProperty(FinancialColDef.CustomerNo)
-                                //.AddProperty(FinancialColDef.CustomerName)
-                                //.AddProperty(FinancialColDef.CreditControlArea)
-                                //.AddProperty(FinancialColDef.DayLimit)
-                                .AddProperty(FinancialColDef.Age)
-                                //.AddProperty(FinancialColDef.PostingDate)
-                                .AddProperty(FinancialColDef.Date)
-                                .AddProperty(FinancialColDef.Amount);
+            var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
+            var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
+            var fmFromDate = fmDate.GetCYFD();
+            var fmToDate = fmDate.GetCYLD();
+            var smFromDate = smDate.GetCYFD();
+            var smToDate = smDate.GetCYLD();
+            var tmFromDate = tmDate.GetCYFD();
+            var tmToDate = tmDate.GetCYLD();
 
-            //var dataFM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateFM, toDateFM, model.CreditControlArea)).ToList();
-            //var dataSM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateSM, toDateSM, model.CreditControlArea)).ToList();
-            //var dataTM = (await _odataService.GetFinancialDataByMultipleCustomerAndCreditControlArea(selectQueryBuilder, dealerIds, fromDateTM, toDateTM, model.CreditControlArea)).ToList();
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
-            #region data call by single customer
-            var dataAll = new List<FinancialDataModel>();
+            var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
+            selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                        .AddProperty(DataColumnDef.Date)
+                                        .AddProperty(DataColumnDef.NetAmount);
 
-            foreach (var dealerId in dealerIds)
+            var selectFinancialQueryBuilder = new SelectQueryOptionBuilder();
+            selectFinancialQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                        .AddProperty(FinancialColDef.Age)
+                                        .AddProperty(FinancialColDef.Amount);
+
+            var salesData = (await _odataService.GetSalesData(selectCustomerQueryBuilder,
+                                filterSalesFromDate, filterSalesToDate,
+                                depots: model.Depots, territories: model.Territories, zones: model.Zones,
+                                creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+                                depots: model.Depots, territories: model.Territories, zones: model.Zones,
+                                channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
+
+            #region financial data call by single customer
+            var financialDataFM = new List<FinancialDataModel>();
+            var financialDataSM = new List<FinancialDataModel>();
+            var financialDataTM = new List<FinancialDataModel>();
+
+            foreach (var customerNo in customerNos)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId, fromDateFM, toDateTM, model.CreditControlArea)).ToList();
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateFM, creditControlArea: model.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
-                    dataAll.AddRange(dataSingle);
+                    financialDataFM.AddRange(dataSingle);
                 }
             }
-            //var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= fmDate.GetCYFD().Date
-            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= fmDate.GetCYLD().Date).ToList();
 
-            //var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= smDate.GetCYFD().Date
-            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= smDate.GetCYLD().Date).ToList();
+            foreach (var customerNo in customerNos)
+            {
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateSM, creditControlArea: model.CreditControlArea)).ToList();
+                if (dataSingle.Any())
+                {
+                    financialDataSM.AddRange(dataSingle);
+                }
+            }
 
-            //var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date >= tmDate.GetCYFD().Date
-            //                && CustomConvertExtension.ObjectToDateTime(x.PostingDate).Date <= tmDate.GetCYLD().Date).ToList();
-
-            var dataFM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= fmDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= fmDate.GetCYLD().Date).ToList();
-
-            var dataSM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= smDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= smDate.GetCYLD().Date).ToList();
-
-            var dataTM = dataAll.Where(x => CustomConvertExtension.ObjectToDateTime(x.Date).Date >= tmDate.GetCYFD().Date
-                            && CustomConvertExtension.ObjectToDateTime(x.Date).Date <= tmDate.GetCYLD().Date).ToList();
+            foreach (var customerNo in customerNos)
+            {
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateTM, creditControlArea: model.CreditControlArea)).ToList();
+                if (dataSingle.Any())
+                {
+                    financialDataTM.AddRange(dataSingle);
+                }
+            }
             #endregion
 
-            var result = new List<ReportOSOver90DaysResultModel>();
+            var result = new List<OSOver90DaysReportResultModel>();
 
-            var res = new ReportOSOver90DaysResultModel();
-            res.FirstMonthName = fmDate.ToString("MMMM");
-            res.SecondMonthName = smDate.ToString("MMMM");
-            res.ThirdMonthName = tmDate.ToString("MMMM");
-            res.FirstMonthAmount = dataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-            res.SecondMonthAmount = dataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-            res.ThirdMonthAmount = dataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-            res.SecondMonthChangeAmount = res.SecondMonthAmount - res.FirstMonthAmount;
-            res.ThirdMonthChangeAmount = res.ThirdMonthAmount - res.SecondMonthAmount;
-            result.Add(res);
+            var resFM = new OSOver90DaysReportResultModel();
+            resFM.Month = fmDate.ToString("MMMM");
+            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resFM.Difference = 0;
+            resFM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= fmFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= fmToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resFM.OSPercentageWithSales = _odataService.GetPercentage(resFM.Sales, resFM.OSOver90Days);
+
+            result.Add(resFM);
+
+            var resSM = new OSOver90DaysReportResultModel();
+            resSM.Month = smDate.ToString("MMMM");
+            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
+            resSM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= smFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= smToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resSM.OSPercentageWithSales = _odataService.GetPercentage(resSM.Sales, resSM.OSOver90Days);
+
+            result.Add(resSM);
+
+            var resTM = new OSOver90DaysReportResultModel();
+            resTM.Month = tmDate.ToString("MMMM");
+            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
+            resTM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= tmFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= tmToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resTM.OSPercentageWithSales = _odataService.GetPercentage(resTM.Sales, resTM.OSOver90Days);
+
+            result.Add(resTM);
 
             return result;
         }

@@ -192,12 +192,12 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("OSOver90Days")]
+        [ProducesResponseType(typeof(IList<OSOver90DaysReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetReportOSOver90Days([FromQuery] OSOver90DaysSearchModel model)
         {
             try
             {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _financialDataService.GetReportOSOver90Days(model, dealerIds);
+                var result = await _financialDataService.GetOSOver90DaysReport(model);
                 return OkResult(result);
             }
             catch (Exception ex)
