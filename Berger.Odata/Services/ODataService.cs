@@ -1502,7 +1502,8 @@ namespace Berger.Odata.Services
             IList<string> brands = null,
             string division = "",
             string channel = "",
-            string classification = "")
+            string classification = "",
+            string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder
@@ -1525,6 +1526,11 @@ namespace Berger.Odata.Services
             if (classification != "-1" && !string.IsNullOrEmpty(classification))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.CustomerClassification, classification);
+            }
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.Division, creditControlArea);
             }
 
             if (depots != null && depots.Any())

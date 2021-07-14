@@ -160,18 +160,15 @@ namespace Berger.Odata.Model
 
     }
 
-    public class ReportOSOver90DaysResultModel
+    public class OSOver90DaysReportResultModel
     {
-        public string FirstMonthName { get; internal set; }
-        public string SecondMonthName { get; internal set; }
-        public string ThirdMonthName { get; internal set; }
-        public decimal FirstMonthAmount { get; internal set; }
-        public decimal SecondMonthAmount { get; internal set; }
-        public decimal ThirdMonthAmount { get; internal set; }
-        public decimal SecondMonthChangeAmount { get; internal set; }
-        public decimal ThirdMonthChangeAmount { get; internal set; }
+        public string Month { get; internal set; }
+        public decimal OSOver90Days { get; internal set; }
+        public decimal Difference { get; internal set; }
+        public decimal Sales { get; internal set; }
+        public decimal OSPercentageWithSales { get; internal set; }
 
-        public ReportOSOver90DaysResultModel()
+        public OSOver90DaysReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

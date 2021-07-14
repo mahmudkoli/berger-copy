@@ -102,7 +102,8 @@ namespace Berger.Odata.Services
             IList<string> brands = null,
             string division = "",
             string channel = "",
-            string classification = "");
+            string classification = "",
+            string creditControlArea = "");
 
         Task<IList<MTSDataModel>> GetMTSData(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, IList<string> depots = null,
