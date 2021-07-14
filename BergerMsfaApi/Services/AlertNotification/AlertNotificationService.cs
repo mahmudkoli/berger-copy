@@ -27,6 +27,7 @@ using Berger.Odata.Model;
 using Berger.Common.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using BergerMsfaApi.Services.Menus.Interfaces;
+using Berger.Common.Constants;
 
 namespace BergerMsfaApi.Services.AlertNotification
 {
@@ -131,7 +132,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                 foreach (var creditLimitCross in creditLimitCrosses)
                 {
                     var title = $"Today you have Credit Limit Cross.";
-                    var body = $"Credit Limit Cross - Customer No: {creditLimitCross.CustomarNo}, Customer Name: {creditLimitCross.CustomerName}, " +
+                    var body = $"Credit Limit Cross - Customer No: {creditLimitCross.CustomerName}, Customer Name: {creditLimitCross.CustomerName}, " +
                         $"Credit Control Area: {creditLimitCross.CreditControlArea}, Credit Limit: {creditLimitCross.CreditLimit}, " +
                         $"Total Due: {creditLimitCross.TotalDue}";
 
@@ -150,7 +151,7 @@ namespace BergerMsfaApi.Services.AlertNotification
             return notifications;
         }
 
-        private async Task<IList<AppAlertNotificationModel>> GetPaymentFollowUpNotification()
+        private async Task<IList<AppAlertNotificationModel>> GetRPRSPaymentFollowUpNotification()
         {
             var notifications = new List<AppAlertNotificationModel>();
 
@@ -268,8 +269,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
             Dictionary<string, IList<AppAlertNotificationModel>> keyValuePairs = new Dictionary<string, IList<AppAlertNotificationModel>>();
 
-            var appUser = AppIdentity.AppUser;
-            EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), appUser.EmployeeRole.ToString());
+            EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), AppIdentity.AppUser.EmployeeRole.ToString());
             TypeEnum typeEnum = (TypeEnum)Enum.Parse(typeof(TypeEnum), TypeEnum.Alert.ToString());
             var permission = await _menuService.GetAlertPermissionsByEmp(employeeRole, typeEnum);
 
@@ -277,31 +277,34 @@ namespace BergerMsfaApi.Services.AlertNotification
             {
                 switch (item.Name)
                 {
-                    case "Occasion to Celebrate":
+                    case ConstantAlertNotificationValue.OccasiontoCelebrate:
                         keyValuePairs.Add("OccasiontoCelebrate", await GetCustomerOccasionNotification());
                         break;
-                    case "Lead Followup Reminder":
+                    case ConstantAlertNotificationValue.LeadFollowupReminder:
                         keyValuePairs.Add("LeadFollowupReminder", await GetLeadFollowUpNotification());
                         break;
 
-                    case "Cheque Bounce Notification":
+                    case ConstantAlertNotificationValue.ChequeBounceNotification:
                         keyValuePairs.Add("ChequeBounceNotification", await GetCheckBounceNotification());
                         break;
-                    case "RPRS Notification":
-                        keyValuePairs.Add("RPRSNotification", await GetPaymentFollowUpNotification());
+                    case ConstantAlertNotificationValue.RPRSNotification:
+                        keyValuePairs.Add("RPRSNotification", await GetRPRSPaymentFollowUpNotification());
                         break;
 
-                    case "Fast Pay & Carry Notification":
+                    case ConstantAlertNotificationValue.FastPayCarryNotification:
                         keyValuePairs.Add("FastPay&CarryNotification", await GetFastPayCarryFollowUpNotification());
                         break;
 
-                    case "Credit Limit Cross Notifiction ":
+                    case ConstantAlertNotificationValue.CreditLimitCrossNotifiction:
                         keyValuePairs.Add("CreditLimitCrossNotifiction ", await GetCreditLimitCrossNotification());
                         break;
-                };
-            };
+                }
 
-            return keyValuePairs;
+            }
+
+
+
+                return keyValuePairs;
 
         }
     }

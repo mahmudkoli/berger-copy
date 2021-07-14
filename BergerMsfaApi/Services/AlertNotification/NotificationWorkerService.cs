@@ -55,14 +55,29 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         }
 
-        public async Task<IList<CreditLimitCrossNotifiction>> GetCreaditLimitNotification()
+        public async Task<IList<AppCreditLimitCrossNotificationModel>> GetCreaditLimitNotification()
         {
             var appUser = AppIdentity.AppUser;
             var customer = await _authService.GetDealerByUserId(appUser.UserId);
             var crossNotification =await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction(customer);
 
+            var groupData = crossNotification.GroupBy(x => new { x.CustomarNo, x.CreditControlArea }).ToList();
 
-            return crossNotification.ToList();
+            var result = groupData.Select(x =>
+            {
+                var notifyModel = new AppCreditLimitCrossNotificationModel();
+                notifyModel.CustomerNo = x.Key.CustomarNo.ToString();
+                notifyModel.CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty;
+                notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
+                notifyModel.CreditLimit = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.CreditLimit)).Sum(c => c.Key);
+                notifyModel.TotalDue = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.TotalDue)).Sum(c => c.Key);
+                return notifyModel;
+            }).ToList();
+
+            result = result.Where(x => x.TotalDue > x.CreditLimit).ToList();
+
+
+            return result;
 
         }
 
@@ -305,7 +320,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         //public Task<bool> SaveCheckBounceNotification();
         public Task<IList<ChequeBounceNotification>> GetCheckBounceNotification();
         //public Task<bool> SaveCreaditLimitNotification();
-        public Task<IList<CreditLimitCrossNotifiction>> GetCreaditLimitNotification();
+        public Task<IList<AppCreditLimitCrossNotificationModel>> GetCreaditLimitNotification();
         public Task<IList<AppLeadFollowUpNotificationModel>> GetLeadFollowUpReminderNotification();
         //public Task<bool> SavePaymnetFollowup();
         public Task<IList<PaymentFollowUpNotificationModel>> GetRPRSPaymnetFollowup();

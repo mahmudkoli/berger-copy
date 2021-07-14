@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer)
         {
-            var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate == DateTime.Today).ToList();
+            var result = _repository.Where(p => customer.Contains(p.CustomarNo)).ToList();
             return result;
         }
 

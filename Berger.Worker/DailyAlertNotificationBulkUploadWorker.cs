@@ -56,7 +56,7 @@ namespace Berger.Worker
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                if (_appSettings.Value.RunDailySalesNTargetDataWorker)
+                if (_appSettings.Value.RunDailyAlertNotificationDataWorker)
                 {
                     try
                     {
@@ -65,11 +65,10 @@ namespace Berger.Worker
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             _notificationWorker = scope.ServiceProvider.GetRequiredService<INotificationWorkerService>();
-
-                            //await _notificationWorker.SaveOccassionToCelebrste();
-                            //await _notificationWorker.SaveCheckBounceNotification();
-                            //await _notificationWorker.SaveCreaditLimitNotification();
                             await _notificationWorker.SavePaymnetFollowup();
+                            await _notificationWorker.SaveOccassionToCelebrste();
+                            await _notificationWorker.SaveCheckBounceNotification();
+                            await _notificationWorker.SaveCreaditLimitNotification();
                         }
 
                     }

@@ -20,5 +20,8 @@ namespace Berger.Worker.Model
     public class WorkerConfig
     {
         public bool RunDailySalesNTargetDataWorker { get; set; }
+
+        public bool RunDailyAlertNotificationDataWorker { get; set; }
+
     }
 }
