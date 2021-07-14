@@ -224,7 +224,7 @@ namespace Berger.Odata.Services
                                         .AddProperty(FinancialColDef.Age)
                                         .AddProperty(FinancialColDef.Amount);
 
-            var salesData = (await _odataService.GetSalesData(selectCustomerQueryBuilder,
+            var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
                                 filterSalesFromDate, filterSalesToDate,
                                 depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                 creditControlArea: model.CreditControlArea)).ToList();

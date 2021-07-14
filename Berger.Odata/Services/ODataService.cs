@@ -1530,7 +1530,7 @@ namespace Berger.Odata.Services
 
             if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
             {
-                filterQueryBuilder.And().Equal(DataColumnDef.Division, creditControlArea);
+                filterQueryBuilder.And().Equal(DataColumnDef.CreditControlArea, creditControlArea);
             }
 
             if (depots != null && depots.Any())
@@ -1845,7 +1845,7 @@ namespace Berger.Odata.Services
                                 .And()
                                 .Equal(FinancialColDef.CustomerLow, customerNo)
                                 .And()
-                                .LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
+                                .EqualDateTime(FinancialColDef.Date, endDate);
 
             if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
             {

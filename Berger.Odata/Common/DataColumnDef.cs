@@ -67,6 +67,7 @@ namespace Berger.Odata.Common
         public static string AmountCurrency = "waerk";
         //public static string Time = "erzet";
         public static string Time = "erzet_T";
+        public static string CreditControlArea = "kkber";
 
         // MTS Data
         public static string MTS_Date = "period";

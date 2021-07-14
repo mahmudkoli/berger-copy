@@ -171,21 +171,6 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ReportDealerPerformance")]
-        public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
-        {
-            try
-            {
-                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
-                var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
         [HttpGet("OutstandingSummary")]
         [ProducesResponseType(typeof(IList<OutstandingSummaryReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetReportOutstandingSummary([FromQuery] OutstandingSummaryReportSearchModel model)
@@ -208,6 +193,21 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _financialDataService.GetOSOver90DaysReport(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("ReportDealerPerformance")]
+        public async Task<IActionResult> ReportDealerPerformance([FromQuery] DealerPerformanceResultSearchModel model)
+        {
+            try
+            {
+                IList<string> dealerIds = await _authService.GetDealerByUserId(AppIdentity.AppUser.UserId);
+                var result = await _oDataReportService.ReportDealerPerformance(model, dealerIds);
                 return OkResult(result);
             }
             catch (Exception ex)
