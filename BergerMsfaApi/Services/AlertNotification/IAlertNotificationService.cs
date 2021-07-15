@@ -11,6 +11,6 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
     public interface IAlertNotificationService
     {
-        Task<Dictionary<string, IList<AppAlertNotificationModel>>> GetNotificationByEmpRole();
+        Task<IList<AppAlert>> GetNotificationByEmpRole();
     }
 }
