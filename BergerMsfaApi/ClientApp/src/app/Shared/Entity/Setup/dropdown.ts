@@ -7,9 +7,11 @@ export class Dropdown {
     public typeId: number;
     public typeName: string;
     public typeCode: string;
+    public dropdownCode: string;
     public dropdownName: string;
     public description: string;
     public sequence: number;
+    public status: number;
 
     //for client side
 
@@ -19,8 +21,10 @@ export class Dropdown {
         this.typeId=0,
         this.typeCode = '';
         this.typeName = '';
+        this.dropdownCode = '';
         this.dropdownName = '';
         this.description = '';
         this.sequence = 0;
+        this.status = 1;
     }
 }

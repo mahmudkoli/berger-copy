@@ -74,6 +74,21 @@ namespace Berger.Odata.Model
         }
     }
 
+    public class ChequeSummaryReportResultModel
+    {
+        //public string CustomerNo { get; set; }
+        //public string CustomerName { get; set; }
+        public IList<ChequeSummaryChequeDetailsReportModel> ChequeDetails { get; set; }
+        public IList<ChequeSummaryChequeBounceDetailsReportModel> ChequeBounceDetails { get; set; }
+
+        public ChequeSummaryReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.ChequeDetails = new List<ChequeSummaryChequeDetailsReportModel>();
+            this.ChequeBounceDetails = new List<ChequeSummaryChequeBounceDetailsReportModel>();
+        }
+    }
+
     public class ChequeSummaryChequeDetailsModel
     {
         //TODO: no int type
@@ -98,6 +113,34 @@ namespace Berger.Odata.Model
         public decimal Amount { get; set; }
 
         public ChequeSummaryChequeBounceDetailsModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class ChequeSummaryChequeDetailsReportModel
+    {
+        public string ChequeDetailsName { get; set; }
+        public decimal MTDNoOfCheque { get; set; }
+        public decimal MTDTotalChequeValue { get; set; }
+        public decimal YTDNoOfCheque { get; set; }
+        public decimal YTDTotalChequeValue { get; set; }
+
+        public ChequeSummaryChequeDetailsReportModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class ChequeSummaryChequeBounceDetailsReportModel
+    {
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public string Date { get; set; }
+        public string ChequeNo { get; set; }
+        public decimal Amount { get; set; }
+
+        public ChequeSummaryChequeBounceDetailsReportModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

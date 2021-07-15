@@ -32,4 +32,11 @@ namespace Berger.Odata.Model
         public int Month { get; set; }
         public int Year { get; set; }
     }
+
+    public class ChequeSummaryReportSearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public IList<string> CustomerNos { get; set; }
+    }
 }

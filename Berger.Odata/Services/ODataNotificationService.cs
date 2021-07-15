@@ -178,7 +178,7 @@ namespace Berger.Odata.Services
                                                 CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.NotificationDays ?? 0;
                 item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
                 item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
-                item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.RPRS;
+                item.PaymentFollowUpType = EnumPaymentFollowUpType.RPRS;
 
                 if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
                     resultRPRS.Add(item);
@@ -197,7 +197,7 @@ namespace Berger.Odata.Services
                 var dayNotifyCount = 3;
                 //item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
                 item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
-                item.PaymentFollowUpType = EnumPaymentFollowUpTypeModel.FastPayCarry;
+                item.PaymentFollowUpType = EnumPaymentFollowUpType.FastPayCarry;
 
                 if (item.NotificationDate.DateFormatDate(resultDateFormat).Date == today.Date)
                     resultFastPayCarry.Add(item);

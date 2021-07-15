@@ -8,6 +8,6 @@ namespace Berger.Common.Enumerations
     {
         WebPortal,
         MobileApp,
-        Alart
+        Alert
     }
 }

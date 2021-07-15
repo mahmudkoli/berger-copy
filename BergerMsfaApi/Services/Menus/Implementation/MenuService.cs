@@ -87,11 +87,11 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return result.ToMap<Menu, MenuModel>();
         }
 
-        public async Task<bool> IsMenuExistAsync(string menuNamde, int id)
+        public async Task<bool> IsMenuExistAsync(string menuNamde, int id, TypeEnum typeEnum,int parentId)
         {
             var result = id <= 0
-                ? await _menu.IsExistAsync(s => s.Name == menuNamde)
-                : await _menu.IsExistAsync(s => s.Name == menuNamde && s.Id != id);
+                ? await _menu.IsExistAsync(s => s.Name == menuNamde && s.Type== typeEnum && s.ParentId== parentId)
+                : await _menu.IsExistAsync(s => s.Name == menuNamde && s.Id != id && s.Type== typeEnum && s.ParentId == parentId);
 
             return result;
         }
@@ -145,6 +145,46 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return hierarchyMenuData;
         }
 
+        public async Task<IEnumerable<MenuModel>> GetMenusAsync(int type)
+        {
+            var result = _menu.GetAllIncludeStrFormat(includeProperties: "MenuPermissions.Role");
+
+            var mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Menu, MenuModel>();
+                //.ForMember(m => m.MenuPermissions, opt => opt.MapFrom(x => x.MenuPermissions.Select(r => r.Role)));
+                cfg.CreateMap<MenuPermission, MenuPermissionModel>();
+                cfg.CreateMap<Role, RoleModel>();
+            }).CreateMapper();
+
+            var data = mapper.Map<List<MenuModel>>(result);
+
+            List<MenuModel> hierarchyMenuData = new List<MenuModel>();
+            hierarchyMenuData = data
+                            .Where(c => c.ParentId == 0 && ((int)c.Type)== type).OrderBy(o => o.Sequence)
+                            .Select(c => new MenuModel()
+                            {
+                                Id = c.Id,
+                                Status = c.Status,
+                                Name = c.Name,
+                                Controller = c.Controller,
+                                Action = c.Action,
+                                Url = c.Url,
+                                IconClass = c.IconClass,
+                                ParentId = c.ParentId,
+                                IsParent = c.IsParent,
+                                IsTitle = c.IsTitle,
+                                Sequence = c.Sequence,
+                                MenuPermissions = c.MenuPermissions,
+                                ActivityNavigationId=c.ActivityNavigationId,
+                                BackgroundColor=c.BackgroundColor,
+                                GroupCode=c.GroupCode,
+                                Children = GetChildren(data, c.Id)
+                            })
+                            .ToList();
+
+            return hierarchyMenuData;
+        }
         public static List<MenuModel> GetChildren(List<MenuModel> menus, int parentId)
         {
             return menus
@@ -163,6 +203,10 @@ namespace BergerMsfaApi.Services.Menus.Implementation
                         IsTitle = c.IsTitle,
                         Sequence = c.Sequence,
                         MenuPermissions = c.MenuPermissions,
+                        GroupCode=c.GroupCode,
+                        ActivityNavigationId=c.ActivityNavigationId,
+                        BackgroundColor=c.BackgroundColor,
+                        Type=c.Type,
                         Children = GetChildren(menus, c.Id)
                     })
                     .Distinct().ToList();
@@ -264,12 +308,99 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             return data;
         }
 
+        public async Task<List<MenuPermissionModel>> AssignEmpToMenuAsync(List<MenuPermissionModel> model, int empId,int type)
+        {
+            var result = new List<MenuPermission>();
+            var menuPermission = model.ToMap<MenuPermissionModel, MenuPermission>();
+            EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), empId.ToString());
+            TypeEnum typeEnum = (TypeEnum)Enum.Parse(typeof(TypeEnum), type.ToString());
+            //Delete menu permissions
+            var existingMenuPermissions = await GetMenuPermissionsByEmp(employeeRole, typeEnum);
+            var menuDeleteListModel = new List<MenuPermissionModel>();
+
+            foreach (var menuPerm in existingMenuPermissions)
+            {
+                if (!menuPermission.Any(mp => mp.Id == menuPerm.Id))
+                {
+                    menuDeleteListModel.Add(menuPerm);
+                }
+            }
+
+            var menuDeleteList = menuDeleteListModel.ToMap<MenuPermissionModel, MenuPermission>();
+            await _menuPermission.DeleteListAsync(menuDeleteList);
+
+            //Add/Update menu permissions            
+            var menuCreateList = new List<MenuPermission>();
+            var menuUpdateList = new List<MenuPermission>();
+            foreach (var item in menuPermission)
+            {
+                var menuPermissionEntity = new MenuPermission()
+                {
+                    Id = item.Id,
+                    MenuId = item.MenuId,
+                    Type = typeEnum,
+                    EmpRoleId= employeeRole
+                };
+
+                if (item.Id == 0)
+                {
+                    menuCreateList.Add(menuPermissionEntity);
+                }
+                // else
+                // {
+                //     menuUpdateList.Add(menuPermissionEntity);
+                // }
+            }
+
+            if (menuCreateList.Count != 0)
+            {
+                var resultCreate = await _menuPermission.CreateListAsync(menuCreateList);
+                result.AddRange(resultCreate);
+            }
+            // if (menuUpdateList.Count != 0)
+            // {
+            //     var resultUpdate = await _menuPermission.UpdateListAsync(menuUpdateList);
+            //     result.AddRange(resultUpdate);
+            // }
+
+            var data = result.ToMap<MenuPermission, MenuPermissionModel>();
+            return data;
+        }
+
         public async Task<List<MenuPermissionModel>> GetMenuPermissionsByRoleId(int roleId)
         {
             try
             {
                 var result = await _menuPermission.FindAllAsync(mp => mp.RoleId == roleId);
                 return result.ToMap<MenuPermission, MenuPermissionModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<MenuPermissionModel>> GetMenuPermissionsByEmp(EnumEmployeeRole employeeRole, TypeEnum typeEnum)
+        {
+            try
+            {
+                
+                var result = await _menuPermission.FindAllAsync(mp => mp.EmpRoleId == employeeRole && mp.Type== typeEnum);
+                return result.ToMap<MenuPermission, MenuPermissionModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<MenuModel>> GetAlertPermissionsByEmp(EnumEmployeeRole employeeRole, TypeEnum typeEnum)
+        {
+            try
+            {
+
+                var result =  _menuPermission.FindAllInclude(mp => mp.EmpRoleId == employeeRole && mp.Type == typeEnum,m=>m.Menu).Select(p=>p.Menu).ToList();
+                return result.ToMap<Menu, MenuModel>();
             }
             catch (Exception ex)
             {
@@ -309,6 +440,29 @@ namespace BergerMsfaApi.Services.Menus.Implementation
                             .ToList();
 
             return hierarchyMenuData;
+        }
+
+
+        public async Task<IEnumerable<MobileAppMenuPermissionModel>> GetPermissionMenusByEmpRoleId(int roleId)
+        {
+            EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), roleId.ToString());
+            TypeEnum type = (TypeEnum)Enum.Parse(typeof(TypeEnum), TypeEnum.MobileApp.ToString());
+
+            var result = _menuPermission.FindAllInclude(mp => mp.Type == type && mp.EmpRoleId== employeeRole, mp => mp.Menu).Select(x => x.Menu).ToList();
+
+            
+            IList<MobileAppMenuPermissionModel> mobileAppMenuPermission = new List<MobileAppMenuPermissionModel>();
+            mobileAppMenuPermission = result.Select(p => new MobileAppMenuPermissionModel()
+            {
+                Title=p.Name,
+                ActivityNavigationId=p.ActivityNavigationId,
+                BackgroundColor=p.BackgroundColor,
+                GroupCode=p.GroupCode,
+                IconUrl=p.IconClass,
+                Sequence=p.Sequence
+            }).ToList();
+
+            return mobileAppMenuPermission;
         }
 
         public (List<MenuModel> AllMenus, List<MenuModel> Menus) GetParentMenu(List<MenuModel> allMenus, List<MenuModel> menus)

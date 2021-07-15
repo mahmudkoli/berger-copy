@@ -26,7 +26,7 @@ export class DropdownListComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-        this._initPermissionGroup();
+        // this._initPermissionGroup();
     }
 
     ngOnInit() {
@@ -43,7 +43,7 @@ export class DropdownListComponent implements OnInit {
 
         this.ptableSettings.enabledRecordCreateBtn = true;
         this.ptableSettings.enabledEditBtn = true;
-        this.ptableSettings.enabledDeleteBtn = true;
+        this.ptableSettings.enabledDeleteBtn = false;
 
 
     }
@@ -104,18 +104,19 @@ export class DropdownListComponent implements OnInit {
         tableName: 'Dynamic Drowdown Setup List',
         tableRowIDInternalName: "Id",
         tableColDef: [
-            { headerName: 'Code ', width: '10%', internalName: 'typeCode', sort: true, type: "" },
-            { headerName: 'Type Name  ', width: '30%', internalName: 'typeName', sort: true, type: "" },
-            { headerName: 'Dropdown Name ', width: '20%', internalName: 'dropdownName', sort: true, type: "" },
+            { headerName: 'Dropdown Code ', width: '15%', internalName: 'typeCode', sort: true, type: "" },
+            { headerName: 'Dropdown Name  ', width: '20%', internalName: 'typeName', sort: true, type: "" },
+            { headerName: 'Option Code', width: '15%', internalName: 'dropdownCode', sort: true, type: "" },
+            { headerName: 'Option Name ', width: '20%', internalName: 'dropdownName', sort: true, type: "" },
             { headerName: 'Sequence', width: '10%', internalName: 'sequence', sort: true, type: "" },
-
+            { headerName: 'Status', width: '10%', internalName: 'statusType', sort: true, type: "" },
         ],
         enabledSearch: true,
         enabledSerialNo: true,
         pageSize: 10,
         enabledPagination: true,
         //enabledAutoScrolled:true,
-        enabledDeleteBtn: true,
+        enabledDeleteBtn: false,
         enabledEditBtn: true,
         // enabledCellClick: true,
         enabledColumnFilter: true,

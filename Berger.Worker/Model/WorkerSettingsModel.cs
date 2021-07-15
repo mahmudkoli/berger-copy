@@ -16,4 +16,11 @@ namespace Berger.Worker.Model
         public string BrandFamilyUrl { get; set; }
         public string LogUrl { get; set; }
     }
+
+    public class WorkerConfig
+    {
+        public bool RunDailySalesNTargetDataWorker { get; set; }
+        public bool RunDailyCustomerBrandDataWorker { get; set; }
+        public bool RunDailyAlertNotificationDataWorker { get; set; }
+    }
 }

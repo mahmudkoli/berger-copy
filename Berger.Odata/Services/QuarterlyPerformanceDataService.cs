@@ -206,7 +206,7 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
-                            //.AddProperty(DataColumnDef.NetAmount)
+                            //.AddProperty(DataColumnDef.NetDue)
                             .AddProperty(DataColumnDef.Volume);
 
             enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
@@ -285,7 +285,7 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
-                            //.AddProperty(DataColumnDef.NetAmount)
+                            //.AddProperty(DataColumnDef.NetDue)
                             .AddProperty(DataColumnDef.Volume);
 
             premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
@@ -546,7 +546,7 @@ namespace Berger.Odata.Services
         //    var selectQueryBuilder = new SelectQueryOptionBuilder();
         //    selectQueryBuilder
         //                            .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-        //                            .AddProperty(DataColumnDef.NetAmount)
+        //                            .AddProperty(DataColumnDef.NetDue)
         //                            .AddProperty(DataColumnDef.Date);
 
         //    enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();

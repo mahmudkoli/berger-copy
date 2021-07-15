@@ -37,7 +37,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Territory>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Zone>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Depot>(e => { e.HasNoKey(); });
-            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
+            //modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
         }
 
@@ -211,6 +211,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<CollectionConfig> CollectionConfigs { get; set; }
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
         #endregion
+
 
         #region Alert Notification
         public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }

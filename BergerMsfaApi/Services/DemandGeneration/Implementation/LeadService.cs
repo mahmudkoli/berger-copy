@@ -2,6 +2,7 @@
 using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
+using Berger.Common.Model;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
@@ -374,6 +375,54 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                     modelRes.ProjectAddress = lead.ProjectAddress;
 
                     modelResult.Add(modelRes);
+                //}
+            }
+
+            return modelResult;
+        }
+
+        public async Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync()
+        {
+            var result = new AreaSearchCommonModel();
+            var appUser = AppIdentity.AppUser;
+
+            result.Depots = appUser.PlantIdList;
+            result.Territories = appUser.TerritoryIdList;
+            result.Zones = appUser.ZoneIdList;
+
+            var today = DateTime.Now;
+
+            var results = await _leadGenerationRepository.GetAllIncludeAsync(
+                                   x => x,
+                                   x => 
+                (!(result.Zones != null && result.Zones.Any()) || result.Zones.Contains(x.Zone)) &&
+                (!(result.Territories != null && result.Territories.Any()) || result.Territories.Contains(x.Territory)) &&
+                (!(result.Depots != null && result.Depots.Any()) || result.Depots.Contains(x.Depot)) &&
+
+
+
+            (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
+                                   null,
+                                   x => x.Include(i => i.LeadFollowUps),
+                                   true
+                               );
+
+            var modelResult = new List<AppLeadFollowUpNotificationModel>();
+
+            foreach (var lead in results)
+            {
+                //if (lead.NextFollowUpDate.Date == today.Date || lead.LeadFollowUps.Any(x => x.NextVisitDatePlan.Date == today.Date))
+                //{
+                var modelRes = new AppLeadFollowUpNotificationModel();
+                modelRes.UserId = appUser.UserId;
+                modelRes.Code = lead.Code;
+                modelRes.Depot = lead.Depot;
+                modelRes.Territory = lead.Territory;
+                modelRes.Zone = lead.Zone;
+                modelRes.ProjectName = lead.ProjectName;
+                modelRes.ProjectAddress = lead.ProjectAddress;
+
+                modelResult.Add(modelRes);
                 //}
             }
 

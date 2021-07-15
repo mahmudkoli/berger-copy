@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BergerMsfaApi.Models.Menus;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace BergerMsfaApi.Models.Users
         public int UserId { get; set; }
         public string FullName { get; set; }
         public IList<KeyValuePairModel> DealerOpeningsHierarchyList { get; set; }
+        public IList<MobileAppMenuPermissionModel> AppMenuPermission { get; set; }
         public IList<KeyValuePairModel> PainterRegistrationsHierarchyList { get; set; }
         public IList<KeyValuePairModel> LeadGenerationsHierarchyList { get; set; }
         public IList<KeyValuePairAreaModel> Plants { get; set; }
@@ -38,6 +40,7 @@ namespace BergerMsfaApi.Models.Users
         public AuthenticateUserModel()
         {
             this.DealerOpeningsHierarchyList = new List<KeyValuePairModel>();
+            this.AppMenuPermission = new List<MobileAppMenuPermissionModel>();
             this.PainterRegistrationsHierarchyList = new List<KeyValuePairModel>();
             this.LeadGenerationsHierarchyList = new List<KeyValuePairModel>();
             this.Plants = new List<KeyValuePairAreaModel>();

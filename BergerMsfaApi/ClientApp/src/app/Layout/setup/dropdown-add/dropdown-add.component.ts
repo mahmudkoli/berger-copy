@@ -3,6 +3,7 @@ import { Dropdown } from '../../../Shared/Entity/Setup/dropdown';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicDropdownService } from '../../../Shared/Services/Setup/dynamic-dropdown.service';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 
 
 @Component({
@@ -15,6 +16,7 @@ export class DropdownAddComponent implements OnInit {
     dropdownModel: Dropdown = new Dropdown();
 
     dropdownTypeList: any[] = [];
+    statusType: any[] = [];
 
     constructor(
         private alertService: AlertService,
@@ -23,7 +25,7 @@ export class DropdownAddComponent implements OnInit {
         private router: Router) { }
 
     ngOnInit() {
-    
+        this.statusType = this.getStatusType();
         this.getDropdownTypeList();
         console.log("param", this.route.snapshot.params, Object.keys(this.route.snapshot.params).length);
 
@@ -63,6 +65,10 @@ export class DropdownAddComponent implements OnInit {
         );
     };
 
+    private getStatusType() : any[] {
+        const statusType = [{'id': 0, 'name': 'Inactive'}, {'id': 1, 'name': 'Active'}]
+        return statusType;
+    }
 
     public fnRouteList() {
         this.router.navigate(['/setup/dropdown-list']);
