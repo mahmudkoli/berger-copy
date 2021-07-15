@@ -38,6 +38,12 @@ namespace BergerMsfaApi.Services.Report.Interfaces
         Task<QueryResultModel<LogInReportResultModel>> GetLogInReportAsync(LogInReportSearchModel query);
         Task<QueryResultModel<MerchendizingSnapShotReportResultModel>> GetSnapShotReportAsync(MerchendizingSnapShotReportSearchModel query);
 
+        dynamic GetSnapShotReportBySp(MerchendizingSnapShotReportSearchModel query);
+        dynamic GetPainterCallReportBySp(PainterCallReportSearchModel query);
+        dynamic GetDealerSalesCallReportBySp(DealerSalesCallReportSearchModel query);
+        dynamic GetSubDealerSalesCallReportBySp(SubDealerSalesCallReportSearchModel query);
+        dynamic GetAddhocDealerSalesCallReportBySp(DealerSalesCallReportSearchModel query);
+        dynamic GetAddhocSubDealerSalesCallReportBySp(SubDealerSalesCallReportSearchModel query);
 
         Task<QueryResultModel<TintingMachineReportResultModel>> GetTintingMachineReportAsync(TintingMachineReportSearchModel query);
         Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query);
