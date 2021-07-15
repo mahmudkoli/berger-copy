@@ -1,5 +1,6 @@
 using System;
 using Berger.Data.Common;
+using Berger.Data.MsfaEntity.AlertNotification;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
@@ -31,12 +32,12 @@ namespace Berger.Data.MsfaEntity
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SaleOffice>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<SaleOffice>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<SaleGroup>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Territory>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Zone>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Depot>(e => { e.HasNoKey(); });
+            //modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
         }
 
@@ -148,7 +149,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         #endregion
-      
+
         #region SAP Tables
         public DbSet<DealerInfo> DealerInfos { get; set; }
         public DbSet<BrandInfo> BrandInfos { get; set; }
@@ -211,9 +212,19 @@ namespace Berger.Data.MsfaEntity
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
         #endregion
 
+
+        #region Alert Notification
+        public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }
+        public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
+        public DbSet<OccasionToCelebrate> OccasionToCelebrate { get; set; }
+        public DbSet<PaymentFollowup> PaymentFollowup { get; set; }
+        #endregion
+
         #region Sync
 
         public DbSet<SyncDailySalesLog> SyncDailySalesLogs { get; set; }
+        public DbSet<SyncDailyTargetLog> SyncDailyTargetLogs { get; set; }
+        public DbSet<SyncSetup> SyncSetups { get; set; }
 
         #endregion
     }

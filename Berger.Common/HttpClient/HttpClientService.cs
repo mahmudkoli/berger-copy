@@ -23,6 +23,7 @@ namespace Berger.Common.HttpClient
                 {
                     clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                     HTTP.HttpClient client = new HTTP.HttpClient(clientHandler);
+                    client.Timeout = TimeSpan.FromMinutes(5);
                     var RequestMessage = HttpClientAuthentication.Authenticate(url, username, password);
 
                     _logger.LogInformation($"Http request started with authentication");

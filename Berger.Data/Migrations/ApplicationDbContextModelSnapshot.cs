@@ -19,6 +19,240 @@ namespace Berger.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.ChequeBounceNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChequeNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ClearDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreditControlArea")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomarNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DissChannel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PostingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SalesGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChequeBounceNotification");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.CreditLimitCrossNotifiction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Channel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreditControlArea")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreditLimit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomarNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DissChannel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PriceGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TotalDue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CreditLimitCrossNotifiction");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.OccasionToCelebrate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CustomarNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DissChannel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FirsChildDOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SalesGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SecondChildDOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SpouseDOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ThirdChildDOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OccasionToCelebrate");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.PaymentFollowup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CustomarNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DayLimit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DissChannel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceAge")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InvoiceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InvoiceNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PostingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SalesGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentFollowup");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.CollectionEntry.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -1683,11 +1917,18 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CustomerGroup", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<string>("CustomerAccountGroup")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("CustomerGroups");
                 });
@@ -3035,19 +3276,18 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreditControlArea")
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<string>("CreditControlAreaName")
-                        .HasColumnType("nvarchar(250)")
-                        .HasMaxLength(250);
 
                     b.Property<int>("CustNo")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
+
+
+                    b.Property<string>("DistributionChannel")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
 
                     b.Property<string>("Division")
                         .HasColumnType("nvarchar(20)")
@@ -3104,6 +3344,119 @@ namespace Berger.Data.Migrations
 
                     b.ToTable("SyncDailySalesLogs");
                 });
+
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Sync.SyncDailyTargetLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountGroup")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("BrandCode")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("BusinessArea")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DistributionChannel")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SalesGroup")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TargetValue")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TargetVolume")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TerritoryCode")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SyncDailyTargetLogs");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Sync.SyncSetup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastSyncTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SyncHourlyInterval")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SyncSetups");
+                });
+
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Tinting.TintingMachine", b =>
                 {

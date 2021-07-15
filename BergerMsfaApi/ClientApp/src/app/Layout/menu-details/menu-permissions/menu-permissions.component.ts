@@ -5,6 +5,9 @@ import { RoleService } from 'src/app/Shared/Services/Users/role.service';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { MenuPermission } from 'src/app/Shared/Entity/Menu/menuPermission.model';
 import { Router } from '@angular/router';
+import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { EnumType, EnumTypeLabel } from 'src/app/Shared/Enums/employee-role';
+import { EnumEmployeeRoleLabel } from '../../../Shared/Enums/employee-role';
 
 @Component({
   selector: 'app-menu-permissions',
@@ -19,6 +22,10 @@ export class MenuPermissionsComponent implements OnInit {
   selectedMenuIds: any[] = [];
   selectedMenuPermissions: any[] = [];
   updatedMenuPermissions: any[] = [];
+  types: MapObject[] = EnumTypeLabel.EnumTypes;
+  type:number;
+  empRole: MapObject[] = EnumEmployeeRoleLabel.EmployeeRoles;
+  empRoleId:number;
 
   constructor(
     private router: Router,
@@ -29,18 +36,23 @@ export class MenuPermissionsComponent implements OnInit {
 
   ngOnInit() {
     //this.getMenus();
-    this.getRoles();
   }
 
   getMenus() {
     this.selectedMenuPermissions = [];
     this.updatedMenuPermissions = [];
 
-    this.menuService.getAll().subscribe(
+    this.menuService.getPortal(this.type).subscribe(
       (res: any) => {
         console.log(res.data);
         this.menuList = res.data;
-        this.setCheckedToMenuNestedChildren(this.menuList);
+        if(this.type==EnumType.WebPortal){
+          this.setCheckedToMenuNestedChildren(this.menuList);
+        }
+        else if(this.type==EnumType.MobileApp || this.type==EnumType.Alert){
+          this.setCheckedToMenuNestedChildrenByEmpId(this.menuList);
+
+        }
       },
       (err: any) => {
         console.log(err);
@@ -120,7 +132,7 @@ export class MenuPermissionsComponent implements OnInit {
   }
 
   assignRoleToMenu() {
-    this.menuService.assignRoleToMenu(this.updatedMenuPermissions, this.selectedRole).subscribe(
+    this.menuService.assignRoleToMenu(this.updatedMenuPermissions, this.selectedRole,this.type,this.empRoleId).subscribe(
       (res: any) => {
         this.alertService.tosterSuccess("Assigned role successfully.");
       },
@@ -145,5 +157,46 @@ export class MenuPermissionsComponent implements OnInit {
 
   backToMenuList() {
     this.router.navigate(['/menu/menu-list']);
+  }
+  ChcekType(event){
+    console.log("event: ", event);
+    if(this.type==EnumType.WebPortal){
+      this.getRoles();
+    }
+    else if(this.type==EnumType.MobileApp || this.type==EnumType.Alert){
+      this.empRoleId = this.empRole.length ? this.empRole[0].id : 0;
+      this.getMenus()
+    }
+  }
+
+  CheckEmp(){
+    console.log(this.empRoleId,this.type)
+    this.getMenus();
+  }
+  setCheckedToMenuNestedChildrenByEmpId(arr) {
+    //debugger;  
+    // console.log("arr: ", arr);
+    for (var i in arr) {
+      let hasPermission = arr[i].menuPermissions.length != 0 ? arr[i].menuPermissions.find(p => p.empRoleId == this.empRoleId) : null;
+      let menuChecked = hasPermission != null ? "checked" : (arr[i].isParent ? "checked" : null);
+      arr[i].menuChecked = menuChecked;
+      // console.log("childArray: ", i, arr[i]);
+
+      if (!arr[i].isParent && hasPermission != null) {
+        let menuPermission = new MenuPermission();
+        menuPermission.id = hasPermission.id;
+        menuPermission.menuId = hasPermission.menuId,
+          menuPermission.empRoleId = hasPermission.empRoleId;
+          menuPermission.type = hasPermission.type;
+
+
+        this.selectedMenuPermissions.push(menuPermission);
+        this.updatedMenuPermissions.push(menuPermission);
+      }
+
+      if (arr[i].children.length) {
+        this.setCheckedToMenuNestedChildrenByEmpId(arr[i].children);
+      }
+    }
   }
 }

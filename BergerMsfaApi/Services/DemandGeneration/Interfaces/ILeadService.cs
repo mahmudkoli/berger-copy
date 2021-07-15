@@ -20,5 +20,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync(int userId);
         Task<int> DeleteAsync(int id);
         Task<bool> IsExistAsync(int id);
+        Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync();
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
+using Berger.Common.Model;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
@@ -308,36 +309,42 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<MTSDataModel>> GetMyTargetMts(DateTime date,IList<string> dealerIds, string division,MyTargetReportType targetReportType, EnumVolumeOrValue volumeOrValue, EnumMyTargetBrandType brandType)
+        public async Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
+            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)
         {
+            var fromDateStr = fromDate.MTSSearchDateFormat();
+            var toDateStr = toDate.MTSSearchDateFormat();
+
             var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(DataColumnDef.MTS_PlantOrBusinessArea)
+                                .AddProperty(DataColumnDef.MTS_Date)
+                                .AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+                                            ? DataColumnDef.MTS_TargetVolume
+                                            : DataColumnDef.MTS_TargetValue);
 
-            switch (targetReportType)
+            if (type.HasValue) selectQueryBuilder.AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand);
+
+            var brands = new List<string>();
+
+            if (category.HasValue && category.Value == EnumBrandCategory.Liquid)
             {
-                case MyTargetReportType.TerritoryWiseTarget:
-                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Territory);
-                    break;
-                case MyTargetReportType.ZoneWiseTarget:
-                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Territory);
-                    selectQueryBuilder.AddProperty(DataColumnDef.MTS_Zone);
-                    break;
-                case MyTargetReportType.BrandWise:
-                    selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
-                    break;
+                brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
             }
-            selectQueryBuilder.AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
-                ? DataColumnDef.MTS_TargetVolume
-                : DataColumnDef.MTS_TargetValue);
-
-            string compareDate = date.ToString("yyyy.MM");
-
-            var mtsBrands = new List<string>();
-            if (targetReportType == MyTargetReportType.BrandWise && EnumMyTargetBrandType.MTS_Brands == brandType)
+            else if (category.HasValue && category.Value == EnumBrandCategory.Powder)
             {
-                mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+                brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
             }
 
-            return await _odataService.GetMtsDataByMultipleCustomerAndDivision(selectQueryBuilder,dealerIds, compareDate, division);
+            if (type.HasValue && type.Value == EnumBrandType.MTSBrands)
+            {
+                brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            }
+
+            var result = await _odataService.GetMTSData(selectQueryBuilder, fromDateStr, toDateStr,
+                            depots: area.Depots, territories: area.Territories, zones: area.Zones, 
+                            brands: brands, division: division);
+
+            return result;
         }
     }
 }

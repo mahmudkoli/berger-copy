@@ -8,6 +8,6 @@ namespace Berger.Odata.Services
 {
     public interface IStockDataService
     {
-        Task<IList<StocksResultModel>> GetStockDetails(StocksSearchModel model);
+        Task<IList<MaterialStockResultModel>> GetMaterialStock(MaterialStockSearchModel model);
     }
 }
