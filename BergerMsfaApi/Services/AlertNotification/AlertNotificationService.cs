@@ -273,9 +273,11 @@ namespace BergerMsfaApi.Services.AlertNotification
             return notifications;
         }
 
-        public async Task<Dictionary<string, IList<AppAlertNotificationModel>>> GetNotificationByEmpRole()
+        public async Task<IList<AppAlert>> GetNotificationByEmpRole()
         {
-            Dictionary<string, IList<AppAlertNotificationModel>> keyValuePairs = new Dictionary<string, IList<AppAlertNotificationModel>>();
+            //Dictionary<string, IList<AppAlertNotificationModel>> keyValuePairs = new Dictionary<string, IList<AppAlertNotificationModel>>();
+
+            IList<AppAlert> appAlerts = new List<AppAlert>();
 
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)Enum.Parse(typeof(EnumEmployeeRole), AppIdentity.AppUser.EmployeeRole.ToString());
             TypeEnum typeEnum = (TypeEnum)Enum.Parse(typeof(TypeEnum), TypeEnum.Alert.ToString());
@@ -283,28 +285,47 @@ namespace BergerMsfaApi.Services.AlertNotification
 
             foreach (var item in permission)
             {
+                AppAlert app = new AppAlert();
                 switch (item.Name)
                 {
                     case ConstantAlertNotificationValue.OccasiontoCelebrate:
-                        keyValuePairs.Add("OccasiontoCelebrate", await GetCustomerOccasionNotification());
+                        app.cateegoryName = "OccasiontoCelebrate";
+                        app.notifications.ToList().AddRange(await GetCustomerOccasionNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("OccasiontoCelebrate", await GetCustomerOccasionNotification());
                         break;
                     case ConstantAlertNotificationValue.LeadFollowupReminder:
-                        keyValuePairs.Add("LeadFollowupReminder", await GetLeadFollowUpNotification());
+                        app.cateegoryName = "LeadFollowupReminder";
+                        app.notifications.ToList().AddRange(await GetLeadFollowUpNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("LeadFollowupReminder", await GetLeadFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.ChequeBounceNotification:
-                        keyValuePairs.Add("ChequeBounceNotification", await GetCheckBounceNotification());
+                        app.cateegoryName = "ChequeBounceNotification";
+                        app.notifications.ToList().AddRange(await GetCheckBounceNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("ChequeBounceNotification", await GetCheckBounceNotification());
                         break;
                     case ConstantAlertNotificationValue.RPRSNotification:
-                        keyValuePairs.Add("RPRSNotification", await GetRPRSPaymentFollowUpNotification());
+                        app.cateegoryName = "RPRSNotification";
+                        app.notifications.ToList().AddRange(await GetRPRSPaymentFollowUpNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("RPRSNotification", await GetRPRSPaymentFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.FastPayCarryNotification:
-                        keyValuePairs.Add("FastPay&CarryNotification", await GetFastPayCarryFollowUpNotification());
+                        app.cateegoryName = "FastPayCarryNotification";
+                        app.notifications.ToList().AddRange(await GetFastPayCarryFollowUpNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("FastPay&CarryNotification", await GetFastPayCarryFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.CreditLimitCrossNotifiction:
-                        keyValuePairs.Add("CreditLimitCrossNotifiction ", await GetCreditLimitCrossNotification());
+                        app.cateegoryName = "CreditLimitCrossNotifiction";
+                        app.notifications.ToList().AddRange(await GetCreditLimitCrossNotification());
+                        appAlerts.Add(app);
+                        //keyValuePairs.Add("CreditLimitCrossNotifiction ", await GetCreditLimitCrossNotification());
                         break;
                 }
 
@@ -312,7 +333,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
 
 
-                return keyValuePairs;
+                return appAlerts;
 
         }
     }
@@ -322,4 +343,16 @@ namespace BergerMsfaApi.Services.AlertNotification
         public string Title { get; set; }
         public string Body { get; set; }
     }
+
+    public class AppAlert
+    {
+        public AppAlert()
+        {
+            notifications = new List<AppAlertNotificationModel>();
+        }
+        public string cateegoryName { get; set; }
+        public IList<AppAlertNotificationModel> notifications { get; set; }
+    }
+
+
 }
