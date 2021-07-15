@@ -30,7 +30,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	totalFilterDataLength: number = 0; // for server side paggination
 
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Merchendizing Snapshot Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	// renameKeys: any = {};
@@ -49,13 +49,13 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
 			// client side paggination
-			// this.PAGE_SIZE = 2147483647; // Int32 max value
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
+			this.PAGE_SIZE = 2147483647; // Int32 max value
+			this.ptableSettings.pageSize = 10;
+			this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+			// this.PAGE_SIZE = commonService.PAGE_SIZE;
+			// this.ptableSettings.pageSize = this.PAGE_SIZE;
+			// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -125,9 +125,9 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
-					this.data = res.data.items;
-					this.totalDataLength = res.data.total;
-					this.totalFilterDataLength = res.data.totalFilter;
+					this.data = res.data;
+					// this.totalDataLength = res.data.total;
+					// this.totalFilterDataLength = res.data.totalFilter;
 					this.ptableColDefGenerate();
 				},
 				(error) => {
@@ -145,28 +145,20 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 		});
 
 		var columName = this.ptableSettings.tableColDef.filter(x => 
-			x.internalName == 'competitionDisplay' ||
-			x.internalName == 'glowSignBoard' ||
-			x.internalName == 'productDisplay' ||
-			x.internalName == 'scheme' ||
-			x.internalName == 'brochure' ||
-			x.internalName == 'others'
+			x.internalName.endsWith('_Image')
 		);
 
 		if(columName.length > 0){
-			columName[0].type = 'image';
-			columName[1].type = 'image';
-			columName[2].type = 'image'; 
-			columName[3].type = 'image';
-			columName[4].type = 'image';
-			columName[5].type = 'image';
+			columName.forEach(element => {
+				element.type = 'image';
+			});
 		}
 
 		// console.log(this.ptableSettings.tableColDef);
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionDisplay' || x.internalName == 'cRemarks'  || x.internalName == 'glowSignBoard' || x.internalName == 'gRemarks'   || x.internalName == 'productDisplay' || x.internalName == 'pRemarks'   || x.internalName == 'scheme' || x.internalName == 'sRemarks'   || x.internalName == 'brochure' || x.internalName == 'bRemarks'   || x.internalName == 'others' || x.internalName == 'oRemarks'   || x.internalName == 'otherSnapshotTypeName'
+			(x) => x.internalName.endsWith('_Remarks') || x.internalName.endsWith('_Image')
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Snapshot Type';

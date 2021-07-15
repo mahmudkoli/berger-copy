@@ -145,9 +145,9 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
       .subscribe(
         (res) => {
           console.log('res.data', res.data);
-          this.data = res.data.items;
-          this.totalDataLength = res.data.total;
-          this.totalFilterDataLength = res.data.totalFilter;
+          this.data = res.data;
+          // this.totalDataLength = res.data.total;
+          // this.totalFilterDataLength = res.data.totalFilter;
           this.ptableColDefGenerate();
         },
         (error) => {
