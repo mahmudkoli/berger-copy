@@ -156,7 +156,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Status' || x.internalName == 'Reason for poor or Average'
+			(x) => x.internalName == 'Status' || x.internalName == 'ReasonForPourOrAverage'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Secondary Sales';
@@ -164,7 +164,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'uspCommunication' || x.internalName == 'productLiftingStatus' || x.internalName == 'reasonForNotLifting'
+			(x) => x.internalName == 'UspCommunication' || x.internalName == 'ProductLiftingStatus' || x.internalName == 'ReasonForNotLifting'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Premium Product Activity';
@@ -172,7 +172,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'cbMachineStatus' || x.internalName == 'cbProductivity'
+			(x) => x.internalName == 'CbMachineStatus' || x.internalName == 'CbProductivity'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Color Bank';
@@ -180,7 +180,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'subDealerInfluence' || x.internalName == 'Influence %'
+			(x) => x.internalName == 'SubDealerInfluence' || x.internalName == 'SdInfluecePercent'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Sub-Dealer Management';
@@ -188,7 +188,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'painterInfluence' || x.internalName == 'Influenc %'
+			(x) => x.internalName == 'PainterInfluence' || x.internalName == 'PainterInfluecePercent'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Painter';
@@ -196,7 +196,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'productKnoledge' || x.internalName == 'salesTechniques' || x.internalName == 'merchendisingImprovement'
+			(x) => x.internalName == 'ProductKnoledge' || x.internalName == 'SalesTechniques' || x.internalName == 'MerchendisingImprovement'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shop Manage/Shop Boy';
@@ -204,7 +204,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionService' || x.internalName == 'Remarks' || x.internalName == 'productDisplayAndMerchendizingStatus' || x.internalName == 'Remark' || x.internalName == 'productDisplayAndMerchendizingImage' || x.internalName == 'schemeModality' || x.internalName == 'schemeModalityImage' || x.internalName == 'shopBoy'
+			(x) => x.internalName == 'CompetitionService' || x.internalName == 'CsRemarks' || x.internalName == 'ProductDisplayAndMerchendizingStatus' || x.internalName == 'PdmRemarks' || x.internalName == 'ProductDisplayAndMerchendizingImage' || x.internalName == 'SchemeModality' || x.internalName == 'SchemeModalityImage' || x.internalName == 'ShopBoy'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Competition Information';
@@ -212,15 +212,15 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'apAvrgMonthlySales' || x.internalName == 'apActualMtdSales' || x.internalName == 'nerolacAvrgMonthlySales' || x.internalName == 'nerolacActualMtdSales' || x.internalName == 'nipponAvrgMonthlySales' || x.internalName == 'nipponActualMtdSales' || x.internalName == 'duluxAvrgMonthlySales' || x.internalName == 'duluxActualMtdSales'  || x.internalName == 'jotunAvrgMonthlySales' || x.internalName == 'jotunActualMtdSales' || x.internalName == 'moonstarAvrgMonthlySales' || x.internalName == 'moonstarActualMtdSales' || x.internalName == 'eliteAvrgMonthlySales' || x.internalName == 'eliteActualMtdSales' || x.internalName == 'alkarimAvrgMonthlySales' || x.internalName == 'alkarimActualMtdSales' || x.internalName == 'othersAvrgMonthlySales' || x.internalName == 'othersActualMtdSales' || x.internalName == 'totalAvrgMonthlySales' || x.internalName == 'totalActualMtdSales'
+			(x) => x.internalName.endsWith('AvgMonthlySales') || x.internalName.endsWith('ActualMTDSales')
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Competition Sales';
-		});
+		})
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'dStatus' || x.internalName == 'dealerDissatisfactionReason'
+			(x) => x.internalName == 'DealerSatisfactionStatus' || x.internalName == 'DealerDissatisfactionReason'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Dealer Satisfaction';
@@ -228,12 +228,12 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		// Show Image
 		var columName = this.ptableSettings.tableColDef.filter(x => 
-						x.internalName == 'productDisplayAndMerchendizingImage' ||
-						x.internalName == 'schemeModalityImage'
-			);
+			x.internalName.endsWith('Image')
+		);
 		if(columName.length > 0){
-			columName[0].type = 'image';
-			columName[1].type = 'image';
+			columName.forEach(element => {
+				element.type = 'image';
+			});
 		}
 
 		// console.log(this.ptableSettings.tableColDef);

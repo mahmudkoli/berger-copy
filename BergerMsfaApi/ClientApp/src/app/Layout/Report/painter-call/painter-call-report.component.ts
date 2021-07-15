@@ -146,8 +146,8 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
         (res) => {
           console.log('res.data', res.data);
           this.data = res.data;
-          // this.totalDataLength = res.data.total;
-          // this.totalFilterDataLength = res.data.totalFilter;
+          this.totalDataLength = res.data.length;
+          this.totalFilterDataLength = res.data.length;
           this.ptableColDefGenerate();
         },
         (error) => {
@@ -173,82 +173,20 @@ export class PainterCallReportComponent implements OnInit, OnDestroy {
       } as colDef;
     });
 
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) => x.internalName == 'bpblMtdValue' || x.internalName == 'bpblCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'BPBL';
-      });
-
-    // this.ptableSettings.tableColDef
-    //   .filter(
-    //     (x) => x.internalName == 'duluxMtdValue' || x.internalName == 'duluxCount'
-    //   )
-    //   .forEach((x) => {
-    //     x.parentHeaderName = 'Dulux';
-    //   });
-    
-    // this.ptableSettings.tableColDef
-    //   .filter(
-    //     (x) => x.internalName == 'moonstarMtdValue' || x.internalName == 'moonstarCount'
-    //   )
-    //   .forEach((x) => {
-    //     x.parentHeaderName = 'Moonstar';
-    //   });  
+    this.ptableSettings.tableColDef.filter((x)=>x.internalName.includes('_'))
+      .forEach(x=>{
+          x.parentHeaderName = x.internalName.substr(0, x.internalName.indexOf('_'))
+        }
+    );
 
     this.ptableSettings.tableColDef
       .filter(
-        (x) => x.internalName == 'apMtdValue' || x.internalName == 'apCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'AP';
-      });
-
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'nerolacMtdValue' ||
-          x.internalName == 'nerolacCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Nerolac';
-      });
-
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'nipponMtdValue' || x.internalName == 'nipponCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Nippon';
-      });
-
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'eliteMtdValue' || x.internalName == 'eliteCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Elite';
-      });
-
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'othersMtdValue' || x.internalName == 'othersCount'
-      )
-      .forEach((x) => {
-        x.parentHeaderName = 'Others';
-      });
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'totalMtdValue' || x.internalName == 'totalCount'
+        (x) => x.internalName == 'TotalValue' || x.internalName == 'TotalPercent'
       )
       .forEach((x) => {
         x.parentHeaderName = 'Total';
       });
+
   }
 
   public ptableSettings: IPTableSetting = {
