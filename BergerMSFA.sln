@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Data", "Berger.Data\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Worker", "Berger.Worker\Berger.Worker.csproj", "{F0751C10-8E78-4092-B4F6-3A310C2CE05A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berger.Odata", "Berger.Odata\Berger.Odata.csproj", "{3ED18F2C-F726-4762-BFF1-1EE0F1C0A6F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Berger.Odata", "Berger.Odata\Berger.Odata.csproj", "{3ED18F2C-F726-4762-BFF1-1EE0F1C0A6F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210712084602_add-numberofchild-field-in-occassiontocelebrate")]
+    partial class addnumberofchildfieldinoccassiontocelebrate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +37,8 @@ namespace Berger.Data.Migrations
                     b.Property<string>("ChequeNo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ClearDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ClearDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreditControlArea")
                         .HasColumnType("nvarchar(max)");
@@ -60,9 +62,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PostingDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SalesGroup")
@@ -116,9 +115,6 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PriceGroup")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesGroup")
                         .HasColumnType("nvarchar(max)");
 
@@ -152,7 +148,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DOB")
+                    b.Property<DateTime>("DOB")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Depot")
@@ -164,7 +160,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Division")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("FirsChildDOB")
+                    b.Property<DateTime>("FirsChildDOB")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NotificationDate")
@@ -176,16 +172,16 @@ namespace Berger.Data.Migrations
                     b.Property<string>("SalesOffice")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SecondChildDOB")
+                    b.Property<DateTime>("SecondChildDOB")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("SpouseDOB")
+                    b.Property<DateTime>("SpouseDOB")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ThirdChildDOB")
+                    b.Property<DateTime>("ThirdChildDOB")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Zone")
@@ -224,16 +220,13 @@ namespace Berger.Data.Migrations
                     b.Property<string>("InvoiceAge")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("InvoiceDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("InvoiceDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InvoiceNo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PostingDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SalesGroup")

@@ -394,6 +394,20 @@ namespace BergerMsfaApi.Services.Menus.Implementation
             }
         }
 
+        public async Task<List<MenuModel>> GetAlertPermissionsByEmp(EnumEmployeeRole employeeRole, TypeEnum typeEnum)
+        {
+            try
+            {
+
+                var result =  _menuPermission.FindAllInclude(mp => mp.EmpRoleId == employeeRole && mp.Type == typeEnum,m=>m.Menu).Select(p=>p.Menu).ToList();
+                return result.ToMap<Menu, MenuModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<IEnumerable<MenuModel>> GetPermissionMenus(int roleId)
         {
             var result = _menuPermission.FindAllInclude(mp => mp.RoleId == roleId, mp => mp.Menu).Select(x => x.Menu).ToList();
