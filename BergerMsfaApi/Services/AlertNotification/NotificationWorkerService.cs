@@ -32,7 +32,8 @@ namespace BergerMsfaApi.Services.AlertNotification
             IChequeBounceNotificationService chequeBounceNotificationService,
             IPaymentFollowupService paymentFollowupService,
             IAuthService authService,
-            ILeadService leadService
+            ILeadService leadService,
+            IODataCommonService odataCommonService
             )
         {
             _occasionToCelebrate = occasionToCelebrate;
@@ -42,6 +43,7 @@ namespace BergerMsfaApi.Services.AlertNotification
             _paymentFollowupService = paymentFollowupService;
             _authService = authService;
             _leadService = leadService;
+            _odataCommonService = odataCommonService;
         }
 
         public async Task<IList<ChequeBounceNotification>> GetCheckBounceNotification()
@@ -61,14 +63,14 @@ namespace BergerMsfaApi.Services.AlertNotification
             var customer = await _authService.GetDealerByUserId(appUser.UserId);
             var crossNotification =await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction(customer);
 
-            var groupData = crossNotification.GroupBy(x => new { x.CustomarNo, x.CreditControlArea }).ToList();
+            var groupData = crossNotification.GroupBy(x => new { x.CustomarNo }).ToList();
 
             var result = groupData.Select(x =>
             {
                 var notifyModel = new AppCreditLimitCrossNotificationModel();
                 notifyModel.CustomerNo = x.Key.CustomarNo.ToString();
                 notifyModel.CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty;
-                notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
+                //notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
                 notifyModel.CreditLimit = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.CreditLimit)).Sum(c => c.Key);
                 notifyModel.TotalDue = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.TotalDue)).Sum(c => c.Key);
                 return notifyModel;
@@ -293,9 +295,9 @@ namespace BergerMsfaApi.Services.AlertNotification
 
             foreach (var item in result.Where(x => dealerIdsFastPayCarry.Contains(x.CustomerNo)))
             {
-                //var dayCount = 5;
+                var dayCount = 5;
                 var dayNotifyCount = 3;
-                //item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
+                item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
                 item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
                 item.PaymentFollowUpType = EnumPaymentFollowUpType.FastPayCarry;
 
@@ -307,10 +309,11 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IList<AppLeadFollowUpNotificationModel>> GetLeadFollowUpReminderNotification()
         {
-            var lead =await _leadService.GetAllTodayFollowUpByUserIdForNotificationAsync(AppIdentity.AppUser.UserId);
+            var lead =await _leadService.GetAllTodayFollowUpByUserIdForNotificationAsync();
 
             return lead;
         }
+
     }
 
     public interface INotificationWorkerService

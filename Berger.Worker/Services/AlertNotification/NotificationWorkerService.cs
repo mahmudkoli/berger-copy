@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Extensions;
-
+using System.Globalization;
 
 namespace Berger.Worker.Services.AlertNotification
 {
@@ -53,8 +53,8 @@ namespace Berger.Worker.Services.AlertNotification
                         CreditControlArea=item.CreditControlArea,
                         BankName=item.BankName,
                         ChequeNo=item.ChequeNo,
-                        ClearDate=GetDateTime(item.ClearDate),
-                        PostingDate=GetDateTime(item.PostingDate),
+                        ClearDate=item.ClearDate.DateFormatDate(),
+                        PostingDate=item.PostingDate.DateFormatDate(),
                         CustomarNo=item.CustomerNo,
                         CustomerName=item.CustomerName,
                         Depot=item.Depot,
@@ -120,12 +120,13 @@ namespace Berger.Worker.Services.AlertNotification
                         CustomerName=item.Name,
                         DissChannel=item.DistrChannel,
                         Division=item.Division,
-                        DOB= GetDateTime(item.DOB),
+                        //DOB= string.IsNullOrEmpty(item.DOB)?null : item.DOB.DateFormatDate(),
+                        DOB= convertDate(item.DOB),
                         NotificationDate=DateTime.Now,
-                        FirsChildDOB= GetDateTime(item.FirstChildDOB),
-                        SecondChildDOB = GetDateTime(item.SecondChildDOB),
-                        ThirdChildDOB = GetDateTime(item.ThirdChildDOB),
-                        SpouseDOB = GetDateTime(item.SpouseDOB)
+                        FirsChildDOB= convertDate(item.FirstChildDOB),
+                        SecondChildDOB = convertDate(item.SecondChildDOB),
+                        ThirdChildDOB = convertDate(item.ThirdChildDOB),
+                        SpouseDOB = convertDate(item.SpouseDOB)
 
                     };
 
@@ -143,15 +144,15 @@ namespace Berger.Worker.Services.AlertNotification
             IList<PaymentFollowup> lstpaymentFollowup = new List<PaymentFollowup>();
             var paymentFollowup = await _alertNotificationData.GetAllTodayPaymentFollowUp();
 
-            if (lstpaymentFollowup.Count > 0)
+            if (paymentFollowup.Count > 0)
             {
                 foreach (var item in paymentFollowup)
                 {
                     PaymentFollowup payment = new PaymentFollowup()
                     {
                         InvoiceAge=item.Age,
-                        InvoiceDate= GetDateTime(item.Date),
-                        PostingDate = GetDateTime(item.PostingDate),
+                        InvoiceDate= convertDate( item.Date),
+                        PostingDate = convertDate(item.PostingDate),
                         CustomarNo = item.CustomerNo,
                         CustomerName=item.CustomerName,
                         DayLimit=item.DayLimit,
@@ -167,18 +168,25 @@ namespace Berger.Worker.Services.AlertNotification
             return result;
         }
 
-        private DateTime? GetDateTime(string date)
-        {
-            DateTime? res = null;
-            if (date!=null){
-                var year = date.Substring(0, 4);
-                var month = date.Substring(4, 2);
-                var day = date.Substring(6, 2);
-                res = Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString());
-            }
-           
 
-            return res;
+        private DateTime? convertDate(string date)
+        {
+            DateTime result =DateTime.Now;
+            try
+            {
+
+                if (date == "" || date == null)
+                {
+                    return null;
+                }
+                result = date.DateFormatDate();
+            }
+            catch (Exception ex)
+            {
+                result = DateTime.MinValue;
+            }
+            return result;
+
         }
 
 

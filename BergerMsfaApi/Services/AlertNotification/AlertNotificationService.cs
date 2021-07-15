@@ -73,7 +73,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                 foreach (var leadFollowUp in leadFollowUps)
                 {
                     var title = $"Lead Followup Reminder.";
-                    var body = $"Lead ID: {leadFollowUp.UserId}" +
+                    var body = $"Lead ID: {leadFollowUp.Code}" +
                                 $"Lead Name: {leadFollowUp.ProjectName}, " +
                                 $"Lead Address: {leadFollowUp.ProjectAddress}";
 
@@ -99,12 +99,13 @@ namespace BergerMsfaApi.Services.AlertNotification
             try
             {
                 var checkBounces = await _notificationWorkerService.GetCheckBounceNotification();
+                var checkBouncesGroup = checkBounces.GroupBy(p => new { p.CustomarNo, p.CustomerName }).ToList();
 
-                foreach (var checkBounce in checkBounces)
+                foreach (var item in checkBouncesGroup)
                 {
                     var title = $"Cheque Bounce Notification.";
-                    var body = $"Dealer ID: {checkBounce.CustomarNo}, Dealer Name: {checkBounce.CustomerName}, " +
-                        $"Number of Cheque: {checkBounce.ChequeNo}, Amount: {checkBounce.Amount}";
+                    var body = $"Dealer ID: {item.Key.CustomarNo}, Dealer Name: {item.Key.CustomerName}, " +
+                        $"Number of Cheque: {item.Count()}, Total Amount of Cheque: {item.Sum(p=>p.Amount)}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
@@ -135,7 +136,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                     var body = $"Dealer ID: {creditLimitCross.CustomerNo}, Dealer Name: {creditLimitCross.CustomerName}, " +
                         $"Value Limit: {creditLimitCross.CreditLimit}" +
                         $"Total Due: {creditLimitCross.TotalDue}"+
-                        $"Excess Value: 0";
+                        $"Excess Value: {creditLimitCross.TotalDue- creditLimitCross.CreditLimit}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
@@ -196,7 +197,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                     var title = $"Fast Pay & Carry Payment Followup.";
                     var body = $"Dealer ID: {paymentFollowUp.CustomerNo}, Dealer Name: {paymentFollowUp.CustomerName}, " +
                         $"Invoice Value: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
-                        $"Invoice Age: {paymentFollowUp.InvoiceAge}, Payment Date: {paymentFollowUp.InvoiceDate}";
+                        $"Invoice Age: {paymentFollowUp.InvoiceAge}, Payment Date: {paymentFollowUp.RPRSDate}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }

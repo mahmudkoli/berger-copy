@@ -85,6 +85,8 @@ namespace Berger.Odata.Services
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode);
+            //filterQueryBuilder.And().Equal(FinancialColDef.CustomerLow, "24");
+
 
 
             if (!string.IsNullOrEmpty(creditControlArea))
