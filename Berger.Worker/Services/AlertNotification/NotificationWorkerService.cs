@@ -53,7 +53,8 @@ namespace Berger.Worker.Services.AlertNotification
                         CreditControlArea=item.CreditControlArea,
                         BankName=item.BankName,
                         ChequeNo=item.ChequeNo,
-                        ClearDate=item.ClearDate,
+                        ClearDate=GetDateTime(item.ClearDate),
+                        PostingDate=GetDateTime(item.PostingDate),
                         CustomarNo=item.CustomerNo,
                         CustomerName=item.CustomerName,
                         Depot=item.Depot,
@@ -104,8 +105,7 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<bool> SaveOccassionToCelebrste()
         {
-            var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
-            var resultDateFormat = "dd MMM yyyy";
+
             bool result = false;
             IList<OccasionToCelebrate> lstoccasionToCelebrates = new List<OccasionToCelebrate>();
             var occassiontocelebrate =await _alertNotificationData.GetAllTodayCustomerOccasions();
@@ -150,8 +150,9 @@ namespace Berger.Worker.Services.AlertNotification
                     PaymentFollowup payment = new PaymentFollowup()
                     {
                         InvoiceAge=item.Age,
-                        InvoiceDate=item.PostingDate,
-                        CustomarNo=item.CustomerNo,
+                        InvoiceDate= GetDateTime(item.Date),
+                        PostingDate = GetDateTime(item.PostingDate),
+                        CustomarNo = item.CustomerNo,
                         CustomerName=item.CustomerName,
                         DayLimit=item.DayLimit,
                         InvoiceNo=item.InvoiceNo,
