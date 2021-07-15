@@ -23,7 +23,7 @@ namespace Berger.Worker.Services.AlertNotification
             return result;
         }
 
-        public async Task<OccasionToCelebrate> GetByModel(OccasionToCelebrate occasionToCelebrate)
+        public async Task<bool> GetByModel(OccasionToCelebrate occasionToCelebrate)
         {
             var res = _repository.Where(p => p.CustomarNo == occasionToCelebrate.CustomarNo).FirstOrDefault();
             var result = res.DOB != occasionToCelebrate.DOB ||
@@ -31,8 +31,7 @@ namespace Berger.Worker.Services.AlertNotification
                 res.FirsChildDOB != occasionToCelebrate.FirsChildDOB ||
                 res.SecondChildDOB != occasionToCelebrate.SecondChildDOB ||
                 res.ThirdChildDOB != occasionToCelebrate.ThirdChildDOB;
-
-            return result ? res : null;
+            return result ;
 
         }
 
@@ -41,19 +40,20 @@ namespace Berger.Worker.Services.AlertNotification
             bool res = false;
             foreach (var item in occasions)
             {
-                var result = await GetByModel(item);
-                if (result == null)
+                var model = _repository.Where(p => p.CustomarNo == item.CustomarNo).FirstOrDefault();
+                if (model == null)
                 {
                     await _repository.CreateAsync(item);
 
                 }
                 else
                 {
-                    result.DOB = item.DOB;
-                    result.FirsChildDOB = item.FirsChildDOB;
-                    result.SecondChildDOB = item.SecondChildDOB;
-                    result.ThirdChildDOB = item.ThirdChildDOB;
-                    res=await UpdateOccasionToCelebrate(result);
+
+                    model.DOB = item.DOB;
+                    model.FirsChildDOB = item.FirsChildDOB;
+                    model.SecondChildDOB = item.SecondChildDOB;
+                    model.ThirdChildDOB = item.ThirdChildDOB;
+                    res=await UpdateOccasionToCelebrate(model);
 
 
                 }

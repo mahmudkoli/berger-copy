@@ -18,7 +18,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IEnumerable<ChequeBounceNotification>> GetChequeBounceNotification(IList<string> customer)
         {
-            var checkBounce = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate == DateTime.Today).ToList();
+            var checkBounce = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate.Date == DateTime.Now.Date).ToList();
 
             return checkBounce;
         }

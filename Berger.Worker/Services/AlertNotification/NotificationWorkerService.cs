@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Odata.Extensions;
+
 
 namespace Berger.Worker.Services.AlertNotification
 {
@@ -102,6 +104,8 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<bool> SaveOccassionToCelebrste()
         {
+            var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+            var resultDateFormat = "dd MMM yyyy";
             bool result = false;
             IList<OccasionToCelebrate> lstoccasionToCelebrates = new List<OccasionToCelebrate>();
             var occassiontocelebrate =await _alertNotificationData.GetAllTodayCustomerOccasions();
@@ -116,12 +120,12 @@ namespace Berger.Worker.Services.AlertNotification
                         CustomerName=item.Name,
                         DissChannel=item.DistrChannel,
                         Division=item.Division,
-                        DOB= CustomConvertExtension.ObjectToDateTime(item.DOB),
+                        DOB= GetDateTime(item.DOB),
                         NotificationDate=DateTime.Now,
-                        FirsChildDOB= CustomConvertExtension.ObjectToDateTime(item.FirstChildDOB),
-                        SecondChildDOB = CustomConvertExtension.ObjectToDateTime(item.SecondChildDOB),
-                        ThirdChildDOB = CustomConvertExtension.ObjectToDateTime(item.ThirdChildDOB),
-                        SpouseDOB = CustomConvertExtension.ObjectToDateTime(item.SpouseDOB)
+                        FirsChildDOB= GetDateTime(item.FirstChildDOB),
+                        SecondChildDOB = GetDateTime(item.SecondChildDOB),
+                        ThirdChildDOB = GetDateTime(item.ThirdChildDOB),
+                        SpouseDOB = GetDateTime(item.SpouseDOB)
 
                     };
 
@@ -146,7 +150,7 @@ namespace Berger.Worker.Services.AlertNotification
                     PaymentFollowup payment = new PaymentFollowup()
                     {
                         InvoiceAge=item.Age,
-                        InvoiceDate=item.Date,
+                        InvoiceDate=item.PostingDate,
                         CustomarNo=item.CustomerNo,
                         CustomerName=item.CustomerName,
                         DayLimit=item.DayLimit,
@@ -160,6 +164,15 @@ namespace Berger.Worker.Services.AlertNotification
             }
 
             return result;
+        }
+
+        private DateTime GetDateTime(string date)
+        {
+            var year = date.Substring(0,4);
+            var month = date.Substring(4,2);
+            var day = date.Substring(6,2);
+
+            return Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString());
         }
 
         
