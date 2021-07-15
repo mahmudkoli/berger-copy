@@ -120,12 +120,12 @@ namespace Berger.Worker.Services.AlertNotification
                         CustomerName=item.Name,
                         DissChannel=item.DistrChannel,
                         Division=item.Division,
-                        DOB= GetDateTime(item.DOB),
+                        DOB= ConvertDateTime(item.DOB),
                         NotificationDate=DateTime.Now,
-                        FirsChildDOB= GetDateTime(item.FirstChildDOB),
-                        SecondChildDOB = GetDateTime(item.SecondChildDOB),
-                        ThirdChildDOB = GetDateTime(item.ThirdChildDOB),
-                        SpouseDOB = GetDateTime(item.SpouseDOB)
+                        FirsChildDOB= ConvertDateTime(item.FirstChildDOB),
+                        SecondChildDOB = ConvertDateTime(item.SecondChildDOB),
+                        ThirdChildDOB = ConvertDateTime(item.ThirdChildDOB),
+                        SpouseDOB = ConvertDateTime(item.SpouseDOB)
 
                     };
 
@@ -167,16 +167,32 @@ namespace Berger.Worker.Services.AlertNotification
             return result;
         }
 
-        private DateTime GetDateTime(string date)
+        private DateTime? GetDateTime(string date)
         {
-            var year = date.Substring(0,4);
-            var month = date.Substring(4,2);
-            var day = date.Substring(6,2);
+            DateTime? res = null;
+            if (date!=null){
+                var year = date.Substring(0, 4);
+                var month = date.Substring(4, 2);
+                var day = date.Substring(6, 2);
+                res = Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString());
+            }
+           
 
-            return Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString());
+            return res;
         }
 
-        
+        private DateTime ConvertDateTime(string date)
+        {
+            
+                var year = date.Substring(0, 4);
+                var month = date.Substring(4, 2);
+                var day = date.Substring(6, 2);
+           
+
+            return Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString()); ;
+        }
+
+
     }
 
     public interface INotificationWorkerService
