@@ -269,6 +269,9 @@ namespace BergerMsfaApi.Services.OData.Implementation
                     item.LYMTD = summaryResultModel.LYMTD;
                     item.GrowthMTD = summaryResultModel.GrowthMTD;
                     item.NumberOfDealer = summaryResultModel.NumberOfDealer;
+                    item.LYMTD = summaryResultModel.LYMTD;
+                    item.LYYTD = summaryResultModel.LYYTD;
+                    item.GrowthYTD = summaryResultModel.GrowthYTD;
                 }
             }
 
