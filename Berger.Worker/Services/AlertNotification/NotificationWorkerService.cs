@@ -53,8 +53,8 @@ namespace Berger.Worker.Services.AlertNotification
                         CreditControlArea=item.CreditControlArea,
                         BankName=item.BankName,
                         ChequeNo=item.ChequeNo,
-                        ClearDate=item.ClearDate.DateFormatDate(),
-                        PostingDate=item.PostingDate.DateFormatDate(),
+                        ClearDate= Convert.ToDateTime(item.ClearDate),
+                        PostingDate= Convert.ToDateTime(item.PostingDate),
                         CustomarNo=item.CustomerNo,
                         CustomerName=item.CustomerName,
                         Depot=item.Depot,
@@ -151,8 +151,8 @@ namespace Berger.Worker.Services.AlertNotification
                     PaymentFollowup payment = new PaymentFollowup()
                     {
                         InvoiceAge=item.Age,
-                        InvoiceDate= convertDate( item.Date),
-                        PostingDate = convertDate(item.PostingDate),
+                        InvoiceDate= Convert.ToDateTime(item.Date),
+                        PostingDate = Convert.ToDateTime(item.PostingDate),
                         CustomarNo = item.CustomerNo,
                         CustomerName=item.CustomerName,
                         DayLimit=item.DayLimit,
