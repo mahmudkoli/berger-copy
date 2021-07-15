@@ -99,7 +99,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Age)
-                                .AddProperty(FinancialColDef.DayLimit);
+                                .AddProperty(FinancialColDef.DayLimit)
+                                .AddProperty(FinancialColDef.Date);
 
 
             var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate: fromDate, endDate: toDate)).ToList();

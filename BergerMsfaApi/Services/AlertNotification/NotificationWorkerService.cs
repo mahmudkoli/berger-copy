@@ -235,7 +235,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                                     CustomerNo = x.CustomarNo,
                                     CustomerName = x.CustomerName,
                                     InvoiceNo = x.InvoiceNo,
-                                    InvoiceDate = x.InvoiceDate.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat),
+                                    InvoiceDate = x.PostingDate.ToString(),
                                     InvoiceAge = x.InvoiceAge,
                                     DayLimit = x.DayLimit
                                 }).ToList();
@@ -280,7 +280,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                                     CustomerNo = x.CustomarNo,
                                     CustomerName = x.CustomerName,
                                     InvoiceNo = x.InvoiceNo,
-                                    InvoiceDate = x.InvoiceDate.DateFormatDate(format: dateFormat).DateFormat(resultDateFormat),
+                                    InvoiceDate = x.PostingDate.ToString(),
                                     InvoiceAge = x.InvoiceAge,
                                     DayLimit = x.DayLimit
                                 }).ToList();
