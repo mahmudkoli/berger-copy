@@ -58,13 +58,13 @@ export class AddhocDealerSalescallReportComponent implements OnInit, OnDestroy {
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
 			// client side paggination
-			// this.PAGE_SIZE = 2147483647; // Int32 max value
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
+			this.PAGE_SIZE = 2147483647; // Int32 max value
+			this.ptableSettings.pageSize = 10;
+			this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+			// this.PAGE_SIZE = commonService.PAGE_SIZE;
+			// this.ptableSettings.pageSize = this.PAGE_SIZE;
+			// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -136,8 +136,8 @@ export class AddhocDealerSalescallReportComponent implements OnInit, OnDestroy {
 				(res) => {
 					console.log("res.data", res.data);
 					this.data = res.data;
-					this.totalDataLength = res.data.length;
-					this.totalFilterDataLength = res.data.length;
+					// this.totalDataLength = res.data.length;
+					// this.totalFilterDataLength = res.data.length;
 					this.ptableColDefGenerate();
 				},
 				(error) => {
