@@ -265,7 +265,7 @@ namespace Berger.Odata.Services
             //dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
             //                        depots: model.Depots, territories: model.Territories,
             //                        customerNos: model.CustomerNos,
-            //                        startClearDate: cfyfd, endClearDate: cyld,
+            //                        startClearDate: cyfd, endClearDate: cyld,
             //                        bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             //dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
@@ -300,7 +300,7 @@ namespace Berger.Odata.Services
 
             dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
                                     customerNos: customerNos,
-                                    startClearDate: cfyfd, endClearDate: cyld,
+                                    startClearDate: cyfd, endClearDate: cyld,
                                     bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
             dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,

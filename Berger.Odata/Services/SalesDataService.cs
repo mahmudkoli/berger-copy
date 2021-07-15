@@ -381,16 +381,12 @@ namespace Berger.Odata.Services
             var mtsBrandCodes = new List<string>();
 
             var cyfd = filterDate.GetCYFD().SalesSearchDateFormat();
+            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
             var cyld = filterDate.GetCYLD().SalesSearchDateFormat();
 
             var lyfd = filterDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
-
             var lfyfd = filterDate.GetLFYFD().SalesSearchDateFormat();
-            var lfyld = filterDate.GetLFYLD().SalesSearchDateFormat();
-
-            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
-            var cfyld = filterDate.GetCFYLD().SalesSearchDateFormat();
+            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
@@ -414,11 +410,11 @@ namespace Berger.Odata.Services
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     division: model.Division, brands: mtsBrandCodes)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lfyld,
+            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld,
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     division: model.Division, brands: mtsBrandCodes)).ToList();
 
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cfyld,
+            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld,
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     division: model.Division, brands: mtsBrandCodes)).ToList();
 
@@ -571,16 +567,12 @@ namespace Berger.Odata.Services
             };
 
             var cyfd = filterDate.GetCYFD().SalesSearchDateFormat();
+            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
             var cyld = filterDate.GetCYLD().SalesSearchDateFormat();
 
             var lyfd = filterDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
-
             var lfyfd = filterDate.GetLFYFD().SalesSearchDateFormat();
-            var lfyld = filterDate.GetLFYLD().SalesSearchDateFormat();
-
-            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
-            var cfyld = filterDate.GetCFYLD().SalesSearchDateFormat();
+            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -596,11 +588,11 @@ namespace Berger.Odata.Services
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     classification: customerClassification)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lfyld,
+            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld,
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     classification: customerClassification)).ToList();
 
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cfyld,
+            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld,
                                     depots: model.Depots, territories: model.Territories, zones: model.Zones,
                                     classification: customerClassification)).ToList();
 
