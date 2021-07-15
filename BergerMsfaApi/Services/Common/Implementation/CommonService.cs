@@ -287,7 +287,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Address = dealer.Address,
                              ContactNo = dealer.ContactNo,
                              Territory = dealer.Territory,
-                             IsSubdealer = cu.IsSubdealer()
+                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                          };
 
             return result;
@@ -320,7 +320,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
-                            IsSubdealer = cu.IsSubdealer()
+                            IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                          };
 
             return result;
@@ -368,7 +368,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Address = dealer.Address,
                              ContactNo = dealer.ContactNo,
                              Territory = dealer.Territory,
-                             IsSubdealer = cu.IsSubdealer(),
+                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                              //IsFocused = fd.IsFocused(),
                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
                          }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
@@ -414,15 +414,15 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
                           select new AppDealerInfoModel
                           {
-                            Id = dealer.Id,
-                            CustomerNo = dealer.CustomerNo,
-                            CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
-                            Address = dealer.Address,
-                            ContactNo = dealer.ContactNo,
-                            Territory = dealer.Territory,
-                            IsSubdealer = cu.IsSubdealer(),
-                            //IsFocused = fd.IsFocused(),
-                            IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
@@ -455,7 +455,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                                 Id = di.Id,
                                 CustomerNo = di.CustomerNo,
                                 CustomerName = $"{di.CustomerName} ({di.CustomerNo})",
-                                IsSubdealer = custGrp.IsSubdealer()
+                                IsSubdealer = custGrp != null && !string.IsNullOrEmpty(custGrp.Description) && custGrp.Description.StartsWith("Subdealer")
                             })
                             .Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 

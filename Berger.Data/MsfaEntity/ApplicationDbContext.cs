@@ -37,7 +37,7 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Territory>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Zone>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Depot>(e => { e.HasNoKey(); });
-            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
+            //modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
         }
 
