@@ -789,6 +789,13 @@ namespace Berger.Odata.Services
             var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
 
 
+
+            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
+
+            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
+
+
+
             var dealerSelect = new SelectQueryOptionBuilder()
                 .AddProperty(nameof(CustomerDataModel.CustomerNo))
                 .AddProperty(nameof(CustomerDataModel.CreditControlArea))
@@ -803,6 +810,11 @@ namespace Berger.Odata.Services
             var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
             var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
+            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+
+
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
                 NetAmount = x.NetAmount,
@@ -812,8 +824,13 @@ namespace Berger.Odata.Services
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
             Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea;
 
+
+
+
             var concatAllList = dataLyMtd.Select(selectFunc)
                 .Concat(dataCyMtd.Select(selectFunc))
+                .Concat(dataLyYtd.Select(selectFunc))
+                .Concat(dataCyYtd.Select(selectFunc))
                 .GroupBy(p => new { p.PlantOrBusinessArea })
                 .Select(g => g.First());
 
@@ -841,8 +858,21 @@ namespace Berger.Odata.Services
                     res.CYMTD = amtCyMtd;
                 }
 
+                if (dataLyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYYTD = amtLyYtd;
+                }
+
+                if (dataCyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYYTD = amtCyYtd;
+                }
+
                 res.DepotCode = item.PlantOrBusinessArea;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
                 res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
                 result.Add(res);
             }
@@ -859,6 +889,9 @@ namespace Berger.Odata.Services
             var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
             var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
 
+            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
+
+            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
@@ -872,6 +905,10 @@ namespace Berger.Odata.Services
 
             var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
             var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            
 
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
@@ -895,7 +932,7 @@ namespace Berger.Odata.Services
 
             foreach (var item in concatAllList)
             {
-
+                
                 var res = new RptLastYearAppointDlrPerformanceDetailResultModel
                 {
                     DepotCode = item.PlantOrBusinessArea,
@@ -916,8 +953,21 @@ namespace Berger.Odata.Services
                     var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
                     res.CYMTD = amtCyMtd;
                 }
+
+                if (dataLyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYYTD = amtLyYtd;
+                }
+
+                if (dataCyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYYTD = amtCyYtd;
+                }
+
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
-                result.Add(res);
+                res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
             }
 
             return result;

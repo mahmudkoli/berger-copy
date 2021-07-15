@@ -142,8 +142,8 @@ namespace Berger.Odata.Services
             string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerOccasionUrl}{query}";
 
             var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
-            var parsedData = Parser<CustomerOccasionDataModel>.ParseJson(responseBody);
-            var data = parsedData.Results.ToList();
+            var parsedData = Parser<CustomerOccasionDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
 
             //return await Task.FromResult(data);
             return await Task.Run(() => data);

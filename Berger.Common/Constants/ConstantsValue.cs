@@ -98,4 +98,15 @@ namespace Berger.Common.Constants
         public const string AppPlatformHeader = "Mobile";
     }
 
+
+    public static class ConstantAlertNotificationValue
+    {
+        public const string OccasiontoCelebrate = "Occasion to Celebrate";
+        public const string LeadFollowupReminder = "Lead Followup Reminder";
+        public const string ChequeBounceNotification = "Cheque Bounce Notification";
+        public const string RPRSNotification = "RPRS Notification";
+        public const string FastPayCarryNotification = "Fast Pay & Carry Notification";
+        public const string CreditLimitCrossNotifiction  = "Credit Limit Cross Notifiction ";
+    }
+
 }

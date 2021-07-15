@@ -10,6 +10,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string Depot { get; set; }
         public string SalesOffice { get; set; }
         public string SalesGroup { get; set; }
+        public string PriceGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
         public string Division { get; set; }
@@ -20,5 +21,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public string CreditLimit { get; set; }
         public string TotalDue { get; set; }
         public string Channel { get; set; }
+        public DateTime NotificationDate { get; set; }
+
     }
 }

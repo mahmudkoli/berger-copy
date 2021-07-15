@@ -15,6 +15,7 @@ using Berger.Odata.Model;
 using Berger.Odata.Services;
 using Serilog;
 using Serilog.Events;
+using Berger.Worker.Services.AlertNotification;
 
 namespace Berger.Worker
 {
@@ -77,8 +78,16 @@ namespace Berger.Worker
                     services.AddScoped<IWorkerSyncService, WorkerSyncService>();
                     services.AddScoped<IODataService, ODataService>();
                     services.AddScoped<ISyncService, SyncService>();
+                    services.AddScoped<IOccasionToCelebrateService, OccasionToCelebrateService>();
+                    services.AddScoped<ICreditLimitCrossNotifictionService, CreditLimitCrossNotifictionService>();
+                    services.AddScoped<IChequeBounceNotificationService, ChequeBounceNotificationService>();
+                    services.AddScoped<IPaymentFollowupService, PaymentFollowupService>();
+                    services.AddScoped<IAlertNotificationDataService, AlertNotificationDataService>();
+                    services.AddScoped<IAlertNotificationODataService, AlertNotificationODataService>();
+                    services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
                     services.AddHostedService<Worker>();
                     services.AddHostedService<DailySalesNTargetDataWorker>();
+                    services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
                 });
     }
 }

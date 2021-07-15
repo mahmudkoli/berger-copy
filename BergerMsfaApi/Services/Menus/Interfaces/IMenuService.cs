@@ -24,5 +24,7 @@ namespace BergerMsfaApi.Services.Menus.Interfaces
         Task<IEnumerable<MenuModel>> GetMenusAsync(int type);
         Task<List<MenuPermissionModel>> AssignEmpToMenuAsync(List<MenuPermissionModel> model, int empRleId, int type);
         Task<IEnumerable<MobileAppMenuPermissionModel>> GetPermissionMenusByEmpRoleId(int roleId);
+
+        Task<List<MenuModel>> GetAlertPermissionsByEmp(EnumEmployeeRole employeeRole, TypeEnum typeEnum);
     }
 }
