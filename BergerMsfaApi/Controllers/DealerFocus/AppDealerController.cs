@@ -84,5 +84,19 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetDealerListByArea")]
+        public async Task<IActionResult> GetDealerListByArea([FromQuery] AppAreaDealerSearchModel model)
+        {
+            try
+            {
+                var result = await _commonSvc.AppGetDealerListByArea(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

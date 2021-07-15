@@ -1,4 +1,5 @@
 ﻿using Berger.Common.Extensions;
+using System;
 using System.Collections.Generic;
 using NJ = Newtonsoft.Json;
 using SJ = System.Text.Json.Serialization;
@@ -109,16 +110,15 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class ReportOutstandingSummaryResultModel
+    public class OutstandingSummaryReportResultModel
     {
         public string CreditControlArea { get; internal set; }
-        public string CreditControlAreaName { get; internal set; }
         public decimal ValueLimit { get; internal set; }
         public decimal NetDue { get; internal set; }
         public decimal Slippage { get; internal set; }
         public decimal OSOver90Days { get; internal set; }
 
-        public ReportOutstandingSummaryResultModel()
+        public OutstandingSummaryReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
@@ -129,43 +129,78 @@ namespace Berger.Odata.Model
         public string Territory { get; set; }
         public int NumberOfDealer { get; set; }
         public decimal LYMTD { get; set; }
-        public decimal CYMTD  { get; set; }
-        public decimal LYYTD  { get; set; }
-        public decimal CYYTD   { get; set; }
-        public decimal GrowthMTD   { get; set; }
-        public decimal GrowthYTD    { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal LYYTD { get; set; }
+        public decimal CYYTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+        public decimal GrowthYTD { get; set; }
         public string DealerId { get; set; }
         public string DealerName { get; set; }
     }
 
-    public class ReportOSOver90DaysResultModel
+    public class RptLastYearAppointDlerPerformanceSummaryResultModel
     {
-        public string FirstMonthName { get; internal set; }
-        public string SecondMonthName { get; internal set; }
-        public string ThirdMonthName { get; internal set; }
-        public decimal FirstMonthAmount { get; internal set; }
-        public decimal SecondMonthAmount { get; internal set; }
-        public decimal ThirdMonthAmount { get; internal set; }
-        public decimal SecondMonthChangeAmount { get; internal set; }
-        public decimal ThirdMonthChangeAmount { get; internal set; }
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public string DepotCode { get; set; }
+        public string Depot { get; set; }
+        public int NumberOfDealer { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+        public decimal LYYTD { get; set; }
+        public decimal CYYTD { get; set; }
+        public decimal GrowthYTD { get; set; }
+    }
 
-        public ReportOSOver90DaysResultModel()
+    public class RptLastYearAppointDlrPerformanceDetailResultModel
+    {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public string DepotCode { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+        public decimal LYYTD { get; set; }
+        public decimal CYYTD { get; set; }
+        public decimal GrowthYTD { get; set; }
+    }
+
+    public class OSOver90DaysTrendReportResultModel
+    {
+        public string Month { get; internal set; }
+        public decimal OSOver90Days { get; internal set; }
+        public decimal Difference { get; internal set; }
+        public decimal Sales { get; internal set; }
+        public decimal OSPercentageWithSales { get; internal set; }
+
+        public OSOver90DaysTrendReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
 
-    public class ReportPaymentFollowUpResultModel
+    public class PaymentFollowUpResultModel
     {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public DateTime InvoiceDateTime { get; internal set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
-        public string InvoiceNo { get; internal set; }
         public string InvoiceDate { get; internal set; }
-        public string InvoiceAge { get; internal set; }
-        public string DayLimit { get; internal set; }
+        public string InvoiceNo { get; internal set; }
+        public decimal NetDue { get; set; }
+        public int InvoiceAge { get; internal set; }
+        public int DayLimit { get; internal set; }
+        public int DayLimitRPRS { get; internal set; }
         public string RPRSDate { get; internal set; }
 
-        public ReportPaymentFollowUpResultModel()
+        public PaymentFollowUpResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

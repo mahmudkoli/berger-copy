@@ -76,7 +76,7 @@ namespace Berger.Odata.Services
             IList<string> dealerIds, string compareMonth, string division = "-1", List<string> brands = null);
 
         Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
-            string plant = "", string materialGroup = "", string materialCode = "");
+            string plant = "", string materialGroupOrBrand = "", string materialCode = "");
 
         Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> dealerIds, string fromDate, string endDate);
@@ -102,7 +102,8 @@ namespace Berger.Odata.Services
             IList<string> brands = null,
             string division = "",
             string channel = "",
-            string classification = "");
+            string classification = "",
+            string creditControlArea = "");
 
         Task<IList<MTSDataModel>> GetMTSData(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, IList<string> depots = null,
@@ -111,6 +112,25 @@ namespace Berger.Odata.Services
             IList<string> brands = null,
             string division = "",
             string channel = "");
+
+        Task<IList<CustomerDataModel>> GetCustomerData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null,
+            IList<string> salesOffices = null, IList<string> salesGroups = null,
+            IList<string> territories = null, IList<string> zones = null,
+            IList<string> customerNos = null,
+            string division = "",
+            string creditControlArea = "",
+            string channel = "");
+
+        Task<IList<FinancialDataModel>> GetFinancialData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string endDate, string creditControlArea = "");
+
+        Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null, IList<string> territories = null,
+            IList<string> customerNos = null,
+            string startPostingDate = "", string endPostingDate = "",
+            string startClearDate = "", string endClearDate = "",
+            string creditControlArea = "", string bounceStatus = "");
         #endregion
 
         #region calculate data

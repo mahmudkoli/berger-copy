@@ -55,20 +55,44 @@ namespace Berger.Odata.Model
         public EnumDealerPerformanceCategory PerformanceCategory { get; set; }
         public EnumCustomerClassification Category { get; set; }
     }
+
+    public class OutstandingSummaryReportSearchModel : AppAreaSearchCommonModel
+    {
+        public string CreditControlArea { get; set; }
+    }
     
     public class DealerPerformanceResultSearchModel
     {
         public string Territory { get; set; }
         public DealerPerformanceReportType ReportType { get; set; }
+    } 
+    
+    public class LastYearAppointedDealerPerformanceSearchModel: AppAreaSearchCommonModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        //public LastYearAppointedDealerPerformanceType ReportType { get; set; }
+    }
+    
+    public class RprsFollowupSearchModel: AppAreaSearchCommonModel
+    {
+        public List<string> Division { get; set; } = new List<string>();
+        public List<string> Dealer { get; set; } = new List<string>();
+        public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
 
-    public class OSOver90DaysSearchModel
+    public class OSOver90DaysTrendSearchModel : AppAreaSearchCommonModel
     {
         public string CreditControlArea { get; set; }
     }
 
-    public class PaymentFollowUpSearchModel
+    public class PaymentFollowUpSearchModel : AppAreaSearchCommonModel
     {
-        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
+        public IList<string> CustomerNos { get; set; }
+
+        public PaymentFollowUpSearchModel()
+        {
+            this.CustomerNos = new List<string>();
+        }
     }
 }
