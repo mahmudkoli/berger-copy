@@ -289,41 +289,49 @@ namespace BergerMsfaApi.Services.AlertNotification
                 switch (item.Name)
                 {
                     case ConstantAlertNotificationValue.OccasiontoCelebrate:
+                        var OccasiontoCelebrate = await GetCustomerOccasionNotification();
                         app.cateegoryName = "OccasiontoCelebrate";
-                        app.notifications.ToList().AddRange(await GetCustomerOccasionNotification());
+                        app.notifications= OccasiontoCelebrate;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("OccasiontoCelebrate", await GetCustomerOccasionNotification());
                         break;
                     case ConstantAlertNotificationValue.LeadFollowupReminder:
+                        var LeadFollowupReminder = await GetLeadFollowUpNotification();
+
                         app.cateegoryName = "LeadFollowupReminder";
-                        app.notifications.ToList().AddRange(await GetLeadFollowUpNotification());
+                        app.notifications= LeadFollowupReminder;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("LeadFollowupReminder", await GetLeadFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.ChequeBounceNotification:
+                        var ChequeBounceNotification = await GetCheckBounceNotification();
                         app.cateegoryName = "ChequeBounceNotification";
-                        app.notifications.ToList().AddRange(await GetCheckBounceNotification());
+                        app.notifications= ChequeBounceNotification;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("ChequeBounceNotification", await GetCheckBounceNotification());
                         break;
                     case ConstantAlertNotificationValue.RPRSNotification:
+                        var RPRSNotification = await GetRPRSPaymentFollowUpNotification();
+
                         app.cateegoryName = "RPRSNotification";
-                        app.notifications.ToList().AddRange(await GetRPRSPaymentFollowUpNotification());
+                        app.notifications= RPRSNotification;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("RPRSNotification", await GetRPRSPaymentFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.FastPayCarryNotification:
+                        var FastPayCarryNotification = await GetFastPayCarryFollowUpNotification();
                         app.cateegoryName = "FastPayCarryNotification";
-                        app.notifications.ToList().AddRange(await GetFastPayCarryFollowUpNotification());
+                        app.notifications= FastPayCarryNotification;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("FastPay&CarryNotification", await GetFastPayCarryFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.CreditLimitCrossNotifiction:
+                        var CreditLimitCrossNotifiction = await GetCreditLimitCrossNotification();
                         app.cateegoryName = "CreditLimitCrossNotifiction";
-                        app.notifications.ToList().AddRange(await GetCreditLimitCrossNotification());
+                        app.notifications= CreditLimitCrossNotifiction;
                         appAlerts.Add(app);
                         //keyValuePairs.Add("CreditLimitCrossNotifiction ", await GetCreditLimitCrossNotification());
                         break;
