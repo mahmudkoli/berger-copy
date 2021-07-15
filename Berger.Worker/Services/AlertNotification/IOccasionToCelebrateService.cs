@@ -10,7 +10,7 @@ namespace Berger.Worker.Services.AlertNotification
     {
         Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
         //Task<bool> GetById(OccasionToCelebrate occasions);
-        Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
+        Task<bool> UpdateOccasionToCelebrate(OccasionToCelebrate occasions);
         Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer);
     }
 }

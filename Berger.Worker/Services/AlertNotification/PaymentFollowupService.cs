@@ -18,9 +18,8 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<bool> SavePaymentFollowup(IList<PaymentFollowup> paymentFollowups)
         {
-            await _repository.CreateListAsync(paymentFollowups.ToList());
-            var res = await _repository.SaveChangesAsync();
-            return res > 0;
+          var res=  await _repository.CreateListAsync(paymentFollowups.ToList());
+            return res.Count > 0;
 
         }
 

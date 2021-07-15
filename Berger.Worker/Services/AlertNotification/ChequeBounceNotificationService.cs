@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Berger.Worker.Services.AlertNotification
 {
-   public class ChequeBounceNotificationService: IChequeBounceNotificationService
+    public class ChequeBounceNotificationService : IChequeBounceNotificationService
     {
         private readonly IRepository<ChequeBounceNotification> _repository;
         public ChequeBounceNotificationService(IRepository<ChequeBounceNotification> repository)
@@ -19,9 +19,8 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<bool> SaveMultipleChequeBounceNotification(IList<ChequeBounceNotification> cheque)
         {
-            await _repository.CreateListAsync(cheque.ToList());
-            var res =await _repository.SaveChangesAsync();
-            return res > 0;
+            var res = await _repository.CreateListAsync(cheque.ToList());
+            return res.Count > 0;
 
         }
     }

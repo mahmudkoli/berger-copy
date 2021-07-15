@@ -19,31 +19,52 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer)
         {
-            var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate == DateTime.Today).ToList();
+            var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate.Date == DateTime.Today).ToList();
             return result;
         }
 
-        //public async Task<OccasionToCelebrate> GetByModel(OccasionToCelebrate occasionToCelebrate)
-        //{
-        //    var res =  _repository.Where(p => p.CustomarNo == occasionToCelebrate.CustomarNo).FirstOrDefault();
-        //    var result = res.DOB != occasionToCelebrate.DOB ||
-        //        res.SpouseDOB != occasionToCelebrate.SpouseDOB ||
-        //        res.FirsChildDOB != occasionToCelebrate.FirsChildDOB ||
-        //        res.SecondChildDOB != occasionToCelebrate.SecondChildDOB ||
-        //        res.ThirdChildDOB != occasionToCelebrate.ThirdChildDOB;
-
-        //}
-
-        public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
+        public async Task<OccasionToCelebrate> GetByModel(OccasionToCelebrate occasionToCelebrate)
         {
-            var res = await _repository.CreateListAsync(occasions.ToList());
-            return res !=null;
+            var res = _repository.Where(p => p.CustomarNo == occasionToCelebrate.CustomarNo).FirstOrDefault();
+            var result = res.DOB != occasionToCelebrate.DOB ||
+                res.SpouseDOB != occasionToCelebrate.SpouseDOB ||
+                res.FirsChildDOB != occasionToCelebrate.FirsChildDOB ||
+                res.SecondChildDOB != occasionToCelebrate.SecondChildDOB ||
+                res.ThirdChildDOB != occasionToCelebrate.ThirdChildDOB;
+
+            return result ? res : null;
 
         }
 
-        public async Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
+        public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
         {
-            var res=await _repository.UpdateListAsync(occasions.ToList());
+            bool res = false;
+            foreach (var item in occasions)
+            {
+                var result = await GetByModel(item);
+                if (result == null)
+                {
+                    await _repository.CreateAsync(item);
+
+                }
+                else
+                {
+                    result.DOB = item.DOB;
+                    result.FirsChildDOB = item.FirsChildDOB;
+                    result.SecondChildDOB = item.SecondChildDOB;
+                    result.ThirdChildDOB = item.ThirdChildDOB;
+                    res=await UpdateOccasionToCelebrate(result);
+
+
+                }
+            }
+            return res;
+
+        }
+
+        public async Task<bool> UpdateOccasionToCelebrate(OccasionToCelebrate occasions)
+        {
+            var res=await _repository.UpdateAsync(occasions);
             return res!=null;
         }
     }

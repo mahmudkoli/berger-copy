@@ -18,9 +18,8 @@ namespace Berger.Worker.Services.AlertNotification
 
         public async Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotifiction> creditLimits)
         {
-            await _repository.CreateListAsync(creditLimits.ToList());
-            var res = await _repository.SaveChangesAsync();
-            return res > 0;
+          var res=  await _repository.CreateListAsync(creditLimits.ToList());
+            return res.Count > 0;
 
         }
 
