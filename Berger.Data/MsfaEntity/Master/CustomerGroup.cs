@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Berger.Data.Common;
+using System;
 using System.Collections.Generic;
 
 namespace Berger.Data.MsfaEntity.Master
 {
-    public partial class CustomerGroup
+    public class CustomerGroup : Entity<int>
     {
         public string CustomerAccountGroup { get; set; }
         public string Description { get; set; }
