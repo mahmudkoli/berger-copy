@@ -142,8 +142,8 @@ namespace Berger.Odata.Services
             string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerOccasionUrl}{query}";
 
             var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
-            var parsedData = Parser<CustomerOccasionDataModel>.ParseJson(responseBody);
-            var data = parsedData.Results.ToList();
+            var parsedData = Parser<CustomerOccasionDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
 
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
@@ -273,7 +273,8 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<SalesDataModel>> GetSalesDataByMultipleCustomerAndDivision(SelectQueryOptionBuilder selectQueryBuilder,
-            IList<string> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null, string customerClassification = "-1", string territory = "-1")
+            IList<string> dealerList, string startDate, string endDate, string division = "-1", List<string> materialCodes = null, List<string> brands = null,
+            string customerClassification = "-1", string territory = "-1")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(DataColumnDef.SalesOrgranization, "1000").And();
@@ -819,7 +820,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder, 
+        public async Task<IList<MTSDataModel>> GetMTSDataByMultipleTerritory(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, string depot = "", List<string> territories = null, List<string> zones = null, string dealerId = "", List<string> brands = null, List<string> salesGroups = null, List<string> salesOffices = null)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -910,7 +911,7 @@ namespace Berger.Odata.Services
 
             return data;
         }
-        
+
         public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "")
         {
@@ -1324,7 +1325,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<StockDataModel>> GetStockData(SelectQueryOptionBuilder selectQueryBuilder,
-            string plant = "", string materialGroup = "", string materialCode = "")
+            string plant = "", string materialGroupOrBrand = "", string materialCode = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             var filter = new List<(string Prop, string Value)>();
@@ -1334,9 +1335,9 @@ namespace Berger.Odata.Services
                 filter.Add((nameof(StockDataModel.Plant), plant));
             }
 
-            if (!string.IsNullOrEmpty(materialGroup))
+            if (!string.IsNullOrEmpty(materialGroupOrBrand))
             {
-                filter.Add((nameof(StockDataModel.MaterialGroup), materialGroup));
+                filter.Add((nameof(StockDataModel.MaterialGroup), materialGroupOrBrand));
             }
 
             if (!string.IsNullOrEmpty(materialCode))
@@ -1355,6 +1356,7 @@ namespace Berger.Odata.Services
             {
                 var fil = filter.FirstOrDefault();
                 filterQueryBuilder.Equal(fil.Prop, fil.Value);
+
                 foreach (var item in filter.Skip(1))
                 {
                     filterQueryBuilder.And().Equal(item.Prop, item.Value);
@@ -1453,6 +1455,44 @@ namespace Berger.Odata.Services
 
             return data;
         }
+
+
+        public async Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder, string date)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (!string.IsNullOrEmpty(date))
+            {
+                filterQueryBuilder.Equal(DataColumnDef.Date, date);
+            }
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetSalesData(queryBuilder.Query)).ToList();
+            return data;
+        }
+
+
+        public async Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder, string date)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (!string.IsNullOrEmpty(date))
+            {
+                filterQueryBuilder.Equal(DataColumnDef.MTS_Date, date);
+            }
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetMTSData(queryBuilder.Query)).ToList();
+            return data;
+        }
+
+
         #endregion
 
         #region get selectable data By Area
@@ -1462,7 +1502,9 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             IList<string> brands = null,
             string division = "",
-            string channel = "")
+            string channel = "",
+            string classification = "",
+            string creditControlArea = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder
@@ -1480,6 +1522,16 @@ namespace Berger.Odata.Services
             if (channel != "-1" && !string.IsNullOrEmpty(channel))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.DistributionChannel, channel);
+            }
+
+            if (classification != "-1" && !string.IsNullOrEmpty(classification))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.CustomerClassification, classification);
+            }
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.CreditControlArea, creditControlArea);
             }
 
             if (depots != null && depots.Any())
@@ -1672,6 +1724,247 @@ namespace Berger.Odata.Services
                         .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetMTSData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerDataModel>> GetCustomerData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null,
+            IList<string> salesOffices = null, IList<string> salesGroups = null,
+            IList<string> territories = null, IList<string> zones = null,
+            IList<string> customerNos = null,
+            string division = "",
+            string creditControlArea = "",
+            string channel = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+
+            if (division != "-1" && !string.IsNullOrEmpty(division))
+            {
+                filterQueryBuilder.AndIf().Equal(nameof(CustomerDataModel.Division), division);
+            }
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.AndIf().Equal(nameof(CustomerDataModel.CreditControlArea), creditControlArea);
+            }
+
+            if (channel != "-1" && !string.IsNullOrEmpty(channel))
+            {
+                filterQueryBuilder.AndIf().Equal(nameof(CustomerDataModel.Channel), channel);
+            }
+
+            if (depots != null && depots.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.BusinessArea), depots.FirstOrDefault());
+
+                foreach (var depot in depots.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.BusinessArea), depot);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (salesOffices != null && salesOffices.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.SalesOffice), salesOffices.FirstOrDefault());
+
+                foreach (var salesOffice in salesOffices.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.SalesOffice), salesOffice);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (salesGroups != null && salesGroups.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.SalesGroup), salesGroups.FirstOrDefault());
+
+                foreach (var salesGroup in salesGroups.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.SalesGroup), salesGroup);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (territories != null && territories.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.Territory), territories.FirstOrDefault());
+
+                foreach (var territory in territories.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.Territory), territory);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (zones != null && zones.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.CustZone), zones.FirstOrDefault());
+
+                foreach (var zone in zones.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.CustZone), zone);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (customerNos != null && customerNos.Any())
+            {
+                filterQueryBuilder.AndIf().StartGroup().Equal(nameof(CustomerDataModel.CustomerNo), customerNos.FirstOrDefault());
+
+                foreach (var customerNo in customerNos.Skip(1))
+                {
+                    filterQueryBuilder.OrIf().Equal(nameof(CustomerDataModel.CustomerNo), customerNo);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<FinancialDataModel>> GetFinancialData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string endDate, string creditControlArea = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode)
+                                .And()
+                                .Equal(FinancialColDef.CustomerLow, customerNo)
+                                .And()
+                                .EqualDateTime(FinancialColDef.Date, endDate);
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(FinancialColDef.CreditControlArea, creditControlArea);
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetFinancialData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
+            IList<string> depots = null, IList<string> territories = null,
+            IList<string> customerNos = null, 
+            string startPostingDate = "", string endPostingDate = "", 
+            string startClearDate = "", string endClearDate = "", 
+            string creditControlArea = "", string bounceStatus = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
+
+            if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.CreditControlArea, creditControlArea);
+            }
+
+            if (bounceStatus != "-1" && !string.IsNullOrEmpty(bounceStatus))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.BounceStatus, bounceStatus);
+            }
+
+            if (depots != null && depots.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.BusinessArea, depots.FirstOrDefault());
+
+                foreach (var depot in depots.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.BusinessArea, depot);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (territories != null && territories.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.Territory, territories.FirstOrDefault());
+
+                foreach (var territory in territories.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.Territory, territory);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startPostingDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, startPostingDate);
+            }
+            else if (!string.IsNullOrEmpty(endPostingDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endPostingDate);
+            }
+
+            if (!string.IsNullOrEmpty(startClearDate) && !string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate)
+                                .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(startClearDate))
+            {
+                filterQueryBuilder.And().GreaterThanOrEqualDateTime(CollectionColDef.ClearDate, startClearDate);
+            }
+            else if (!string.IsNullOrEmpty(endClearDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(CollectionColDef.ClearDate, endClearDate);
+            }
+
+            if (customerNos != null && customerNos.Any())
+            {
+                filterQueryBuilder.And().StartGroup().Equal(CollectionColDef.CustomerNo, customerNos.FirstOrDefault());
+
+                foreach (var customerNo in customerNos.Skip(1))
+                {
+                    filterQueryBuilder.Or().Equal(CollectionColDef.CustomerNo, customerNo);
+                }
+
+                filterQueryBuilder.EndGroup();
+            }
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCollectionData(queryBuilder.Query)).ToList();
 
             return data;
         }

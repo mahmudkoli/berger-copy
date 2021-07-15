@@ -15,13 +15,43 @@ namespace Berger.Data.MsfaEntity.Sync
         public string TerritoryCode { get; set; }
         [StringLength(150)]
         public string TerritoryName { get; set; }
+
         [StringLength(20)]
         public string BusinessArea { get; set; }
+
+        [StringLength(250)]
+        public string BusinessAreaName { get; set; }
+
         [StringLength(20)]
-        public string CreditControlArea { get; set; }
+        public string SalesGroup { get; set; } 
+
+        [StringLength(250)]
+        public string SalesGroupName { get; set; }
+        
+        [StringLength(250)]
+        public string SalesOfficeName { get; set; }
+        
         [StringLength(20)]
-        public string SalesGroup { get; set; }
+        public string SalesOffice { get; set; }
+        
+        [StringLength(20)]
+        public string AccountGroup { get; set; } 
+        
+        [StringLength(20)]
+        public string BrandCode { get; set; }
+
+        [StringLength(20)]
+        public string Division { get; set; }
+        
+        [StringLength(250)]
+        public string DivisionName { get; set; }
+
+        public int CustNo { get; set; }
         public double Volume { get; set; }
         public double NetAmount { get; set; }
+
+        [StringLength(50)]
+        public string DistributionChannel  { get; set; }
+
     }
 }

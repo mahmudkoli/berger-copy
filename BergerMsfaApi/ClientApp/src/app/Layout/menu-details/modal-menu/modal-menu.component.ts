@@ -3,6 +3,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Menu } from 'src/app/Shared/Entity/Menu/menu.model';
 import { Status } from 'src/app/Shared/Enums/status';
 import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
+import { EnumType, EnumTypeLabel } from 'src/app/Shared/Enums/employee-role';
+
 
 @Component({
   selector: 'app-modal-menu',
@@ -12,6 +14,10 @@ import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
 export class ModalMenuComponent implements OnInit {
 
   @Input() menuItem: Menu;
+  @Input() type: number;
+  @Input() isEditMode: boolean;
+
+
   parentMenuList: Menu[] = [];
   enumStatus = Status;
   statusValues = [];
@@ -23,7 +29,7 @@ export class ModalMenuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.menuItem);
+    console.log(this.menuItem,"menu");
     this.statusValues = Object.keys(this.enumStatus).filter(e => !isNaN(Number(e)));
     this.getActiveMenus();
   }
@@ -68,7 +74,7 @@ export class ModalMenuComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.menuItem);
+    this.menuItem.type=this.type;
     if (this.menuItem.id > 0) {
       this.update();
     }

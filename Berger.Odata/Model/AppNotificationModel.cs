@@ -43,7 +43,7 @@ namespace Berger.Odata.Model
 
     public class AppPaymentFollowUpNotificationModel
     {
-        public EnumPaymentFollowUpTypeModel PaymentFollowUpType { get; set; }
+        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
         public string CustomerNo { get; internal set; }
         public string CustomerName { get; internal set; }
         public string InvoiceNo { get; internal set; }
@@ -68,6 +68,24 @@ namespace Berger.Odata.Model
         public string ChildDOB { get; internal set; }
 
         public AppCustomerOccasionNotificationModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class PaymentFollowUpNotificationModel
+    {
+        public EnumPaymentFollowUpType PaymentFollowUpType { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceDate { get; set; }
+        public string InvoiceAge { get; set; }
+        public string DayLimit { get;  set; }
+        public string RPRSDate { get;  set; }
+        public string NotificationDate { get;  set; }
+
+        public PaymentFollowUpNotificationModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

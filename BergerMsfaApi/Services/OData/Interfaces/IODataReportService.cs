@@ -7,8 +7,10 @@ namespace BergerMsfaApi.Services.OData.Interfaces
 {
     public interface IODataReportService
     {
-        Task<MySummaryReportResultModel> MySummaryReport(AreaSearchCommonModel area);
+        Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area);
 
         Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds);
+        Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model);
+        Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> ReportLastYearAppointedDealerPerformanceDetails(LastYearAppointedDealerPerformanceSearchModel model);
     }
 }

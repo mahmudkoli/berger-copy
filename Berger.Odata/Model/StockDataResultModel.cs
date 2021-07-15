@@ -6,14 +6,13 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class StocksResultModel
+    public class MaterialStockResultModel
     {
         public string MaterialCode { get; set; }
-        public string MaterialDiscription { get; set; }
+        public string MaterialDescription { get; set; }
         public decimal Stock { get; set; }
-        public string UOM { get; set; }
 
-        public StocksResultModel()
+        public MaterialStockResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

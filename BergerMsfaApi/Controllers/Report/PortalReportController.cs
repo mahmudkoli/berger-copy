@@ -318,11 +318,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetPaintersCall")]
-        public async Task<IActionResult> GetPaintersCall([FromQuery] PainterCallReportSearchModel query)
+        public IActionResult GetPaintersCall([FromQuery] PainterCallReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetPainterCallReportAsync(query);
+                var result = _portalReportService.GetPainterCallReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -332,14 +332,14 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadPaintersCall")]
-        public async Task<IActionResult> DownloadPaintersCall([FromQuery] PainterCallReportSearchModel query)
+        public IActionResult DownloadPaintersCall([FromQuery] PainterCallReportSearchModel query)
         {
             try
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetPainterCallReportAsync(query);
-                return Ok(result.Items);
+                var result = _portalReportService.GetPainterCallReportBySp(query);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -378,11 +378,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetDealerSalesCall")]
-        public async Task<IActionResult> GetDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        public IActionResult GetDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetDealerSalesCallReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -398,13 +398,9 @@ namespace BergerMsfaApi.Controllers.Report
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetDealerSalesCallReportAsync(query);
+                var result = await _portalReportService.GetDealerSalesCallReportBySp(query);
 
-                _commonService.SetEmptyString(result.Items.ToList(), 
-                    nameof(DealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
-                    nameof(DealerSalesCallReportResultModel.SchemeModalityImage));
-
-                return Ok(result.Items);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -413,11 +409,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetSubDealerSalesCall")]
-        public async Task<IActionResult> GetSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        public IActionResult GetSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetSubDealerSalesCallReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -427,19 +423,15 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadSubDealerSalesCall")]
-        public async Task<IActionResult> DownloadSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        public IActionResult DownloadSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
         {
             try
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetSubDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetSubDealerSalesCallReportBySp(query);
 
-                _commonService.SetEmptyString(result.Items.ToList(),
-                    nameof(SubDealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
-                    nameof(SubDealerSalesCallReportResultModel.SchemeModalityImage));
-
-                return Ok(result.Items);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -448,11 +440,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetAddhocDealerSalesCall")]
-        public async Task<IActionResult> GetAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        public IActionResult GetAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetAddhocDealerSalesCallReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -462,19 +454,15 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadAddhocDealerSalesCall")]
-        public async Task<IActionResult> DownloadAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        public IActionResult DownloadAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
         {
             try
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetAddhocDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetAddhocDealerSalesCallReportBySp(query);
 
-                _commonService.SetEmptyString(result.Items.ToList(),
-                    nameof(DealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
-                    nameof(DealerSalesCallReportResultModel.SchemeModalityImage));
-
-                return Ok(result.Items);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -483,11 +471,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetAddhocSubDealerSalesCall")]
-        public async Task<IActionResult> GetAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        public IActionResult GetAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetAddhocSubDealerSalesCallReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -497,19 +485,15 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadAddhocSubDealerSalesCall")]
-        public async Task<IActionResult> DownloadAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
+        public IActionResult DownloadAddhocSubDealerSalesCall([FromQuery] SubDealerSalesCallReportSearchModel query)
         {
             try
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetAddhocSubDealerSalesCallReportAsync(query);
+                var result = _portalReportService.GetAddhocSubDealerSalesCallReportBySp(query);
 
-                _commonService.SetEmptyString(result.Items.ToList(),
-                    nameof(SubDealerSalesCallReportResultModel.ProductDisplayAndMerchendizingImage),
-                    nameof(SubDealerSalesCallReportResultModel.SchemeModalityImage));
-
-                return Ok(result.Items);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -669,11 +653,11 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("GetSnapShotReport")]
-        public async Task<IActionResult> GetSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        public IActionResult GetSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
         {
             try
             {
-                var result = await _portalReportService.GetSnapShotReportAsync(query);
+                var result = _portalReportService.GetSnapShotReportBySp(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -683,13 +667,13 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadSnapShotReport")]
-        public async Task<IActionResult> DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        public IActionResult DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
         {
             try
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetSnapShotReportAsync(query);
+                var result = _portalReportService.GetSnapShotReportBySp(query);
 
                 _commonService.SetEmptyString(result.Items.ToList(),
                     nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
@@ -699,7 +683,7 @@ namespace BergerMsfaApi.Controllers.Report
                     nameof(MerchendizingSnapShotReportResultModel.Brochure),
                     nameof(MerchendizingSnapShotReportResultModel.Others));
 
-                return Ok(result.Items);
+                return Ok(result);
             }
             catch (Exception ex)
             {

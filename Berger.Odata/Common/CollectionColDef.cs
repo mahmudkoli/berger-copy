@@ -27,6 +27,7 @@ namespace Berger.Odata.Common
         public const string AccountGroupName = "AccountGroupName";
         public const string CustomerNo = "Customer";
         public const string CustomerName = "CustomerName";
+        public const string Territory = "rpmkr";
         public const string Depot = "Depot";
         public const string PostingDate = "PostingDate";
         public const string ClearDate = "augdt";

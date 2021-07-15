@@ -1,90 +1,98 @@
-﻿namespace Berger.Odata.Model
+﻿using System.Collections.Generic;
+
+namespace Berger.Odata.Model
 {
-    public class MyTargetSearchModel
+    public class AppAreaSearchCommonModel
+    {
+        public IList<string> Depots { get; set; }
+        public IList<string> Territories { get; set; }
+        public IList<string> Zones { get; set; }
+
+        public AppAreaSearchCommonModel()
+        {
+            this.Depots = new List<string>();
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
+    }
+
+    public class TodaysInvoiceValueSearchModel
+    {
+        public string Division { get; set; }
+    }
+
+    public class MTDTargetSummarySearchModel : AppAreaSearchCommonModel
     {
         public int Month { get; set; }
         public int Year { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
-        public MyTargetReportType ReportType { get; set; }
-        public string Division { get; set; }
-        public EnumMyTargetBrandType BrandType { get; set; }
-    }
-
-    public enum MyTargetReportType
-    {
-        TerritoryWiseTarget = 1,
-        ZoneWiseTarget = 2,
-        BrandWise = 3
-    }
-
-
-    public class TotalInvoiceValueSearchModel
-    {
+        public EnumBrandCategory? Category { get; set; }
         public string Division { get; set; }
     }
 
-    public class BrandOrDivisionWisePerformanceSearchModel
+    public class MTDBrandPerformanceSearchModel : AppAreaSearchCommonModel
     {
-        //public string CustomerNo { get; set; }
-        public string Division { get; set; } // "-1" for all
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumVolumeOrValue VolumeOrValue { get; set; }
+        public EnumBrandType Type { get; set; }
+        public string Division { get; set; }
+    }
+
+    public class YTDBrandPerformanceSearchModelSearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string Division { get; set; }
         public EnumBrandOrDivision BrandOrDivision { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
-        //public EnumPeriod Period { get; set; }
     }
 
-    public class DealerPerformanceSearchModel
+    public class CategoryWiseDealerPerformanceSearchModel : AppAreaSearchCommonModel
     {
-        public string Territory { get; set; }
-        public EnumDealerPerformanceCategory DealerPerformanceCategory { get; set; }
-        public EnumDealerClassificationCategory DealerCategory { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public EnumDealerPerformanceCategory PerformanceCategory { get; set; }
+        public EnumCustomerClassification Category { get; set; }
     }
 
-    public enum EnumDealerPerformanceCategory
+    public class OutstandingSummaryReportSearchModel : AppAreaSearchCommonModel
     {
-        Top_10_Performer = 1,
-        Bottom_10_Performer = 2,
-        NotPurchasedLastMonth = 3,
-    }
-
-    public enum EnumDealerClassificationCategory
-    {
-        All = 1,
-        Exclusive = 2,
-        NonExclusive = 3,
+        public string CreditControlArea { get; set; }
     }
     
     public class DealerPerformanceResultSearchModel
     {
         public string Territory { get; set; }
         public DealerPerformanceReportType ReportType { get; set; }
-    }
-
-    public enum DealerPerformanceReportType
+    } 
+    
+    public class LastYearAppointedDealerPerformanceSearchModel: AppAreaSearchCommonModel
     {
-        LastYearAppointed = 1,
-        ClubSupremeTerritoryWise = 2,
-        ClubSupremeTerritoryAndDealerWise = 3,
+        public int Year { get; set; }
+        public int Month { get; set; }
+        //public LastYearAppointedDealerPerformanceType ReportType { get; set; }
+    }
+    
+    public class RprsFollowupSearchModel: AppAreaSearchCommonModel
+    {
+        public List<string> Division { get; set; } = new List<string>();
+        public List<string> Dealer { get; set; } = new List<string>();
+        public LastYearAppointedDealerPerformanceType ReportType { get; set; }
     }
 
-    public class OSOver90DaysSearchModel
+    public class OSOver90DaysTrendSearchModel : AppAreaSearchCommonModel
     {
         public string CreditControlArea { get; set; }
     }
 
-    public class PaymentFollowUpSearchModel
+    public class PaymentFollowUpSearchModel : AppAreaSearchCommonModel
     {
-        public EnumPaymentFollowUpTypeModel PaymentFollowUpType { get; set; }
-    }
+        public IList<string> CustomerNos { get; set; }
 
-    public enum EnumPaymentFollowUpTypeModel
-    {
-        RPRS = 1,
-        FastPayCarry = 2
-    }
-
-    public enum EnumMyTargetBrandType
-    {
-        All_Brands = 1,
-        MTS_Brands = 2
+        public PaymentFollowUpSearchModel()
+        {
+            this.CustomerNos = new List<string>();
+        }
     }
 }
