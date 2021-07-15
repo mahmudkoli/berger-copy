@@ -120,12 +120,12 @@ namespace Berger.Worker.Services.AlertNotification
                         CustomerName=item.Name,
                         DissChannel=item.DistrChannel,
                         Division=item.Division,
-                        DOB= ConvertDateTime(item.DOB),
+                        DOB= GetDateTime(item.DOB),
                         NotificationDate=DateTime.Now,
-                        FirsChildDOB= ConvertDateTime(item.FirstChildDOB),
-                        SecondChildDOB = ConvertDateTime(item.SecondChildDOB),
-                        ThirdChildDOB = ConvertDateTime(item.ThirdChildDOB),
-                        SpouseDOB = ConvertDateTime(item.SpouseDOB)
+                        FirsChildDOB= GetDateTime(item.FirstChildDOB),
+                        SecondChildDOB = GetDateTime(item.SecondChildDOB),
+                        ThirdChildDOB = GetDateTime(item.ThirdChildDOB),
+                        SpouseDOB = GetDateTime(item.SpouseDOB)
 
                     };
 
@@ -179,17 +179,6 @@ namespace Berger.Worker.Services.AlertNotification
            
 
             return res;
-        }
-
-        private DateTime ConvertDateTime(string date)
-        {
-            
-                var year = date.Substring(0, 4);
-                var month = date.Substring(4, 2);
-                var day = date.Substring(6, 2);
-           
-
-            return Convert.ToDateTime(string.Concat(year, "-", month, "-", day).ToString()); ;
         }
 
 
