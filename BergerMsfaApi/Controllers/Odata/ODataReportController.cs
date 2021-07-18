@@ -261,12 +261,13 @@ namespace BergerMsfaApi.Controllers.Odata
         //    }
         //}
 
-        [HttpGet("CustomerCredit")]
-        public async Task<IActionResult> GetCustomerCredit([FromQuery] CustomerCreditSearchModel model)
+        [HttpGet("DealerCreditStatus")]
+        [ProducesResponseType(typeof(CustomerCreditStatusResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetCustomerCreditStatus([FromQuery] CustomerCreditStatusSearchModel model)
         {
             try
             {
-                var result = await _balanceDataService.GetCustomerCredit(model);
+                var result = await _balanceDataService.GetCustomerCreditStatus(model);
                 return OkResult(result);
             }
             catch (Exception ex)
