@@ -12,6 +12,7 @@ using Berger.Data;
 using Berger.Data.Attributes;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.Users;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -399,12 +400,15 @@ namespace BergerMsfaApi.Repositories
             var records = await DbSet.Where(predicate).ToListAsync();
             if (!records.Any())
             {
-                throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
+                return 0; //throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
             }
-            foreach (var record in records)
-            {
-                DbSet.Remove(record);
-            }
+
+            DbSet.RemoveRange(records);
+
+            //foreach (var record in records)
+            //{
+            //    DbSet.Remove(record);
+            //}
             return await SaveChangesAsync();
         }
 
@@ -816,6 +820,18 @@ namespace BergerMsfaApi.Repositories
         public Task<X.PagedList.IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual async Task<List<TEntity>> BulkInsert(List<TEntity> items)
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+
+                await _context.BulkInsertAsync(items);
+                scope.Complete();
+
+                return items;
+            }
         }
     }
 }

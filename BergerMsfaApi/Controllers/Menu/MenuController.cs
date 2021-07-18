@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Berger.Common.Enumerations;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Menus;
@@ -30,6 +31,20 @@ namespace BergerMsfaApi.Controllers.Menu
             try
             {
                 var result = await _menu.GetMenusAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("get-by-portal/{typeId}")]
+        public async Task<IActionResult> GetByPortal(int typeId)
+        {
+            try
+            {
+                var result = await _menu.GetMenusAsync(typeId);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -85,7 +100,7 @@ namespace BergerMsfaApi.Controllers.Menu
         {
             try
             {
-                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id);
+                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id, model.Type,model.ParentId);
                 if (isExist)
                 {
                     ModelState.AddModelError(nameof(model.Name), "Menu Already Exist");
@@ -111,7 +126,7 @@ namespace BergerMsfaApi.Controllers.Menu
         {
             try
             {
-                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id);
+                var isExist = await _menu.IsMenuExistAsync(model.Name, model.Id, model.Type, model.ParentId);
                 if (isExist)
                 {
                     ModelState.AddModelError(nameof(model.Name), "Menu Already Exist");
@@ -123,6 +138,7 @@ namespace BergerMsfaApi.Controllers.Menu
                 }
                 else
                 {
+                    
                     var result = await _menu.UpdateAsync(model);
                     return OkResult(result);
                 }
@@ -147,12 +163,22 @@ namespace BergerMsfaApi.Controllers.Menu
             }
         }
 
-        [HttpPost("assignRoleToMenu/{roleId}")]
-        public async Task<IActionResult> AssignRoleToMenu([FromBody]List<MenuPermissionModel> model, int roleId)
+        [HttpPost("assignRoleToMenu/{roleId}/{type}/{emp}")]
+        public async Task<IActionResult> AssignRoleToMenu([FromBody]List<MenuPermissionModel> model, int roleId,int type,int emp)
         {
             try
             {
-                var result = await _menu.AssignRoleToMenuAsync(model, roleId);
+                List<MenuPermissionModel> result = new List<MenuPermissionModel>();
+                if (type == (int)TypeEnum.WebPortal)
+                {
+                    result = await _menu.AssignRoleToMenuAsync(model, roleId);
+
+                }
+                else if(type == (int)TypeEnum.MobileApp || type == (int)TypeEnum.Alert)
+                {
+                    result = await _menu.AssignEmpToMenuAsync(model, emp, type);
+
+                }
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -160,6 +186,20 @@ namespace BergerMsfaApi.Controllers.Menu
                 return ExceptionResult(ex);
             }
         }
+
+        //[HttpPost("assignRoleToMenu/{roleId}")]
+        //public async Task<IActionResult> AssignRoleToMenu([FromBody] List<MenuPermissionModel> model, int roleId)
+        //{
+        //    try
+        //    {
+        //        var result = await _menu.AssignRoleToMenuAsync(model, roleId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
         [HttpGet("get-permission-menu/{roleId}")]
         public async Task<IActionResult> GetPermissionMenus(int roleId)

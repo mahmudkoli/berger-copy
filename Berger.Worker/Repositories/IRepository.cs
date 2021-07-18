@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Transactions;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore.Query;
 using X.PagedList;
@@ -118,6 +119,9 @@ namespace BergerMsfaApi.Repositories
                                                             int? take = null);
         
         IList<UserInfo> GetNodeWiseUsersByUserId(int userId, bool isOnlyLastNodeUser = false);
+
+        public  Task<List<TEntity>> BulkInsert(List<TEntity> items);
+
     }
 }
 

@@ -37,6 +37,7 @@ using Berger.Odata.Services;
 using BergerMsfaApi.Services.Implementation;
 using BergerMsfaApi.Services.Interfaces;
 using DSC = Berger.Data.MsfaEntity.DealerSalesCall;
+using Microsoft.Data.SqlClient;
 
 namespace BergerMsfaApi.Services.Report.Implementation
 {
@@ -2326,7 +2327,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<TintingMachineReportResultModel>();
 
-            reportResult = (_tintingMachine
+            reportResult = await (_tintingMachine
                 .GetAllInclude(x => x.Company).Where(p =>
                         (string.IsNullOrEmpty(query.Depot) || query.Depot == p.Depot)
                         && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
@@ -2341,7 +2342,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                         Territory = c.Territory,
                         TotalCBMachineNO = c.No
 
-                    }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+                    }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
 
             var queryResult = new QueryResultModel<TintingMachineReportResultModel>();
             queryResult.Items = reportResult;
@@ -2923,6 +2924,202 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return queryResult;
         }
+
+        public dynamic GetSnapShotReportBySp(MerchendizingSnapShotReportSearchModel query) 
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@DealerId", query.DealerId },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicSnapshotReport", parameters, true);
+        }
+
+        public dynamic GetPainterCallReportBySp(PainterCallReportSearchModel query)
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') },
+                { "@PainterId", query.PainterId },
+                { "@PainterTypeId", query.PainterType },
+                { "@PageNumber", query.Page },
+                { "@RowspPage", query.PageSize }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicpPainterCallReport", parameters, true);
+        }
+
+        public dynamic GetDealerSalesCallReportBySp(DealerSalesCallReportSearchModel query)
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@IsSubDealarCall", 0 },
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@DealerId", query.DealerId },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') },
+                { "@PageNumber", query.Page },
+                { "@RowspPage", query.PageSize }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
+        }
+
+        public dynamic GetSubDealerSalesCallReportBySp(SubDealerSalesCallReportSearchModel query)
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@IsSubDealarCall", 1 },
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@DealerId", query.SubDealerId },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') },
+                { "@PageNumber", query.Page },
+                { "@RowspPage", query.PageSize }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
+        }
+
+        public dynamic GetAddhocDealerSalesCallReportBySp(DealerSalesCallReportSearchModel query)
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@IsSubDealarCall", 0 },
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@DealerId", query.DealerId },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') },
+                { "@PageNumber", query.Page },
+                { "@RowspPage", query.PageSize }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicAdhocDealerSalesCallReport", parameters, true);
+        }
+
+        public dynamic GetAddhocSubDealerSalesCallReportBySp(SubDealerSalesCallReportSearchModel query)
+        {
+            var territory = new StringBuilder();
+            foreach (var item in query.Territories)
+            {
+                territory.Append(',');
+                territory.Append(item);
+            }
+
+            var zone = new StringBuilder();
+            foreach (var item in query.Zones)
+            {
+                zone.Append(',');
+                zone.Append(item);
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@IsSubDealarCall", 1 },
+                { "@UserId", query.UserId },
+                { "@Depot", query.Depot },
+                { "@FromDate", query.FromDate.ToString() },
+                { "@ToDate", query.ToDate.ToString() },
+                { "@DealerId", query.SubDealerId },
+                { "@Territories", territory.ToString().TrimStart(',') },
+                { "@Zones", zone.ToString().TrimStart(',') },
+                { "@PageNumber", query.Page },
+                { "@RowspPage", query.PageSize }
+            };
+
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
+        }
+
 
     }
 }

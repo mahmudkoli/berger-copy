@@ -159,69 +159,69 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
             var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
-            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<DepotModel>> GetDepotList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.PlantIdList.Contains(x.Werks)));
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
+            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
         }
 
         public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesOfficeIdList.Contains(x.Code)));
-            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new SaleOffice { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<Territory>> GetTerritoryList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _territorySvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.TerritoryIdList.Contains(x.Code)));
-            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code)));
-            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate)
         {
             var result = await _saleGroupSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetSaleOfficeList(Expression<Func<SaleOffice, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetTerritoryList(Expression<Func<Territory, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _territorySvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IList<KeyValuePairAreaModel>> GetZoneList(Expression<Func<Zone, bool>> predicate)
         {
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(predicate);
-            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).ToList();
+            return result.Select(s => new KeyValuePairAreaModel { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
@@ -287,7 +287,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Address = dealer.Address,
                              ContactNo = dealer.ContactNo,
                              Territory = dealer.Territory,
-                             IsSubdealer = cu.IsSubdealer()
+                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                          };
 
             return result;
@@ -320,7 +320,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                             Address = dealer.Address,
                             ContactNo = dealer.ContactNo,
                             Territory = dealer.Territory,
-                            IsSubdealer = cu.IsSubdealer()
+                            IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                          };
 
             return result;
@@ -368,7 +368,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Address = dealer.Address,
                              ContactNo = dealer.ContactNo,
                              Territory = dealer.Territory,
-                             IsSubdealer = cu.IsSubdealer(),
+                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                              //IsFocused = fd.IsFocused(),
                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
                          }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
@@ -414,16 +414,50 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
                           select new AppDealerInfoModel
                           {
-                            Id = dealer.Id,
-                            CustomerNo = dealer.CustomerNo,
-                            CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
-                            Address = dealer.Address,
-                            ContactNo = dealer.ContactNo,
-                            Territory = dealer.Territory,
-                            IsSubdealer = cu.IsSubdealer(),
-                            //IsFocused = fd.IsFocused(),
-                            IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
+
+            return result;
+        }
+
+        public async Task<IList<AppAreaDealerResultModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
+        {
+            model.PageNo = model.PageNo ?? 1;
+            model.PageSize = model.PageSize ?? int.MaxValue;
+            model.CustomerName = model.CustomerName ?? string.Empty;
+
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
+                (x.CustomerName.Contains(model.CustomerName)) &&
+                ((!(model.Depots != null && model.Depots.Any()) || model.Depots.Contains(x.BusinessArea)) &&
+                (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
+                (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
+                (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
+                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone)));
+
+            var result = (from di in _dealerInfoSvc.FindAll(dealerPredicate)
+                            join cg in _customerGroupSvc.GetAll()
+                            on di.AccountGroup equals cg.CustomerAccountGroup
+                            into cust
+                            from custGrp in cust.DefaultIfEmpty()
+
+                            select new AppAreaDealerResultModel
+                            {
+                                Id = di.Id,
+                                CustomerNo = di.CustomerNo,
+                                CustomerName = $"{di.CustomerName} ({di.CustomerNo})",
+                                IsSubdealer = custGrp != null && !string.IsNullOrEmpty(custGrp.Description) && custGrp.Description.StartsWith("Subdealer")
+                            })
+                            .Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
         }
