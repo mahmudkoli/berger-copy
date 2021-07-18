@@ -17,4 +17,19 @@ namespace Berger.Common.Enumerations
         [Description("Platinum Plus")]
         PlatinumPlus = 3,
     }
+
+    public enum EnumBussinesCategory
+    {
+        [Description("Exclusive")]
+        Exclusive= 0,
+
+        [Description("Non-Exclusive")]
+        NonExclusive = 1,
+
+        [Description("Non AP Non-Exclusive")]
+        NonAPNonExclusive = 2,
+
+        [Description("New Dealer")]
+        NewDealer = 3,
+    }
 }
