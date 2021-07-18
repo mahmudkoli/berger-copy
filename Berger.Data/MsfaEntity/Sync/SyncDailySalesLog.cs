@@ -52,5 +52,6 @@ namespace Berger.Data.MsfaEntity.Sync
 
         [StringLength(50)]
         public string DistributionChannel  { get; set; }
+
     }
 }

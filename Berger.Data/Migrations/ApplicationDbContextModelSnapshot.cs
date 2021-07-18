@@ -3276,15 +3276,18 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+
                     b.Property<int>("CustNo")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
+
                     b.Property<string>("DistributionChannel")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
 
                     b.Property<string>("Division")
                         .HasColumnType("nvarchar(20)")
@@ -3341,6 +3344,7 @@ namespace Berger.Data.Migrations
 
                     b.ToTable("SyncDailySalesLogs");
                 });
+
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Sync.SyncDailyTargetLog", b =>
                 {
@@ -3452,6 +3456,7 @@ namespace Berger.Data.Migrations
 
                     b.ToTable("SyncSetups");
                 });
+
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Tinting.TintingMachine", b =>
                 {

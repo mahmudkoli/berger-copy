@@ -212,6 +212,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
         #endregion
 
+
         #region Alert Notification
         public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }
         public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
