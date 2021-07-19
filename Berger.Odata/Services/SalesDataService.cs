@@ -446,7 +446,8 @@ namespace Berger.Odata.Services
             }
             else
             {
-                brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync(x => brandsOrDivisions.Any(b => b == x.MatarialGroupOrBrand))).ToList();
+                //brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync(x => brandsOrDivisions.Any(b => b == x.MatarialGroupOrBrand))).ToList();
+                brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync()).ToList();
             }
 
             #region brand family group
@@ -506,6 +507,13 @@ namespace Berger.Odata.Services
                                             ? $"{brandFamilyObj.MatarialGroupOrBrandFamilyName} ({brandFamilyObj.MatarialGroupOrBrandFamily})"
                                             : $"{brandFamilyObj.MatarialGroupOrBrandName} ({brandFamilyObj.MatarialGroupOrBrand})"
                                         : brandOrDiv;
+
+                    // for showing all group item name code
+                    if (model.BrandOrDivision == EnumBrandOrDivision.MTSBrands && brandFamilyObj != null)
+                    {
+                        brandOrDivName = string.Join(", ", brandFamilyInfos.Where(x => x.MatarialGroupOrBrandFamily == brandOrDiv)
+                                                            .Select(x => $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})"));
+                    }
                 }
 
                 var res = new YTDBrandPerformanceSearchModelResultModel();
