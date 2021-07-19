@@ -418,7 +418,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   from dropDownInfo in dleftjoin.DefaultIfEmpty()
                                   join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
                                   from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                  join di in _context.DealerInfos on adpInfo.Dealer equals di.Id into dileftjoin
+                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
                                   from diInfo in dileftjoin.DefaultIfEmpty()
                                   join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
                                   from depinfo in depleftjoin.DefaultIfEmpty()
@@ -910,7 +910,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        from zinfo in zleftjoin.DefaultIfEmpty()
                                        join adp in _context.AttachedDealerPainters on pinfo.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
                                        from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                       join di in _context.DealerInfos on adpInfo.Dealer equals di.Id into dileftjoin
+                                       join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
                                        from diInfo in dileftjoin.DefaultIfEmpty()
                                        where (
                                        (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)

@@ -17,11 +17,11 @@ namespace BergerMsfaApi.Models.PainterRegistration
             profile.CreateMap<PainterAttachmentModel, PNTR.PainterAttachment>().ReverseMap();
 
             profile.CreateMap<PainterModel, PNTR.Painter>()
-                .ForMember(src => src.AttachedDealers, map => map.MapFrom(dest => dest.AttachedDealers.Select(dealer => new PNTR.AttachedDealerPainter { Dealer = dealer })));
+                .ForMember(src => src.AttachedDealers, map => map.MapFrom(dest => dest.AttachedDealers.Select(dealer => new PNTR.AttachedDealerPainter { DealerId = dealer })));
 
 
             profile.CreateMap<PNTR.Painter, PainterModel>()
-                   .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.Dealer)))
+                   .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.DealerId)))
                    .ForMember(src => src.PainterCatName, dest => dest.MapFrom(s => s.PainterCat != null ? s.PainterCat.DropdownName : string.Empty));
 
             profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
