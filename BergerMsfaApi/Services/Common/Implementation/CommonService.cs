@@ -351,13 +351,13 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          from cu in cust.DefaultIfEmpty()
 
                          join focusDealer in _focusDealerSvc.GetAll()
-                         on dealer.Id equals focusDealer.Code
+                         on dealer.Id equals focusDealer.DealerId
                          into focus
                          from fd in focus.DefaultIfEmpty()
 
                          where ((EnumDealerCategory.All == model.DealerCategory) ||
                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
                          && (dealer.CustomerName.Contains(model.DealerName))
 
                          select new AppDealerInfoModel
@@ -370,7 +370,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Territory = dealer.Territory,
                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                              //IsFocused = fd.IsFocused(),
-                             IsFocused = fd != null && fd.Code > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date,
                          }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
@@ -404,13 +404,13 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           from cu in cust.DefaultIfEmpty()
 
                           join focusDealer in _focusDealerSvc.GetAll()
-                          on dealer.Id equals focusDealer.Code
+                          on dealer.Id equals focusDealer.DealerId
                           into focus
                           from fd in focus.DefaultIfEmpty()
 
                           where ((EnumDealerCategory.All == model.DealerCategory) ||
                           //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
 
                           select new AppDealerInfoModel
@@ -423,7 +423,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                               Territory = dealer.Territory,
                               IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                               //IsFocused = fd.IsFocused(),
-                              IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;

@@ -66,12 +66,12 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var result = (
                             from fd in _focusDealerRepository.GetAll()
                             join ui in _userInfoRepository.GetAll() on fd.EmployeeId equals ui.EmployeeId
-                            join di in _dealerInfoRepository.GetAll() on fd.Code equals di.Id
+                            join di in _dealerInfoRepository.GetAll() on fd.DealerId equals di.Id
                             //where (ui.ManagerId == loggedInUser.EmployeeId || isAdminOrGMEmployeeRole)
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.Code,
+                                Code = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -142,11 +142,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var result = (
                             from fd in _focusDealerRepository.GetAll()
                             join ui in _userInfoRepository.GetAll() on fd.EmployeeId equals ui.EmployeeId
-                            join di in _dealerInfoRepository.GetAll() on fd.Code equals di.Id
+                            join di in _dealerInfoRepository.GetAll() on fd.DealerId equals di.Id
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.Code,
+                                Code = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -166,7 +166,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         private async Task<bool> IsFocusDealerAlreadyAssigned(SaveFocusDealerModel model)
         {
-            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.Code == model.Code
+            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.Code
                    && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
                        || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
                        || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)
