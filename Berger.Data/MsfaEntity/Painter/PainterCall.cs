@@ -22,6 +22,11 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         [ForeignKey("PainterId")]
         public Painter Painter { get; set; }
         public string EmployeeId { get; set; }
+        
+        public string SaleGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+
         public List<PainterCompanyMTDValue> PainterCompanyMTDValue { get; set; }
     }
 }

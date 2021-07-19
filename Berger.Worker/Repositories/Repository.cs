@@ -400,12 +400,15 @@ namespace BergerMsfaApi.Repositories
             var records = await DbSet.Where(predicate).ToListAsync();
             if (!records.Any())
             {
-                throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
+                return 0; //throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
             }
-            foreach (var record in records)
-            {
-                DbSet.Remove(record);
-            }
+
+            DbSet.RemoveRange(records);
+
+            //foreach (var record in records)
+            //{
+            //    DbSet.Remove(record);
+            //}
             return await SaveChangesAsync();
         }
 
