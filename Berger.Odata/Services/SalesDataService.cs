@@ -1113,6 +1113,40 @@ namespace Berger.Odata.Services
 
             return result;
         }
+
+        public async Task<IList<CustomerDeliveryNoteResultModel>> GetCustomerDeliveryNote(CustomerDeliveryNoteSearchModel model)
+        {
+            var fromDateStr = model.DeliveryFromDate.DeliverySearchDateTimeFormat();
+            var toDateStr = model.DeliveryToDate.DeliverySearchDateTimeFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(CustomerDeliveryColDef.InvoiceDate)
+                                .AddProperty(CustomerDeliveryColDef.InvoiceCreateTime)
+                                .AddProperty(CustomerDeliveryColDef.InvoiceNumber)
+                                .AddProperty(CustomerDeliveryColDef.Volume)
+                                .AddProperty(CustomerDeliveryColDef.DeliveryDate)
+                                .AddProperty(CustomerDeliveryColDef.DeliveryTime)
+                                .AddProperty(CustomerDeliveryColDef.DriverName)
+                                .AddProperty(CustomerDeliveryColDef.DriverMobileNo);
+
+            var data = await _odataService.GetCustomerDeliveryData(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr);
+
+            var result = data.Select(x => new CustomerDeliveryNoteResultModel() 
+                                        { 
+                                            InvoiceDate = CustomConvertExtension.ObjectToDateTime(x.InvoiceDate).DateFormat("dd.MM.yyyy"),
+                                            InvoiceCreateTime = x.InvoiceCreateTime
+                                                                    .Replace("PT","").Replace("H",":").Replace("M",":").Replace("S",""),
+                                            InvoiceNumber = x.InvoiceNumber,
+                                            Volume = CustomConvertExtension.ObjectToDecimal(x.Volume),
+                                            DeliveryDate = CustomConvertExtension.ObjectToDateTime(x.DeliveryDate).DateFormat("dd.MM.yyyy"),
+                                            DeliveryTime = x.DeliveryTime
+                                                                .Replace("PT", "").Replace("H", ":").Replace("M", ":").Replace("S", ""),
+                                            DriverName = x.DriverName,
+                                            DriverMobileNo = x.DriverMobileNo
+                                        }).ToList();
+
+            return result;
+        }
     }
 }
 

@@ -276,6 +276,21 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("DeliveryNote")]
+        [ProducesResponseType(typeof(IList<CustomerDeliveryNoteResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetCustomerDeliveryNote([FromQuery] CustomerDeliveryNoteSearchModel model)
+        {
+            try
+            {
+                var result = await _salesDataService.GetCustomerDeliveryNote(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("LastYearNewDealerPerformanceSummary")]
         [ProducesResponseType(typeof(IList<RptLastYearAppointDlerPerformanceSummaryResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> ReportLastYearAppointedDealerPerformanceSummary([FromQuery] LastYearAppointedDealerPerformanceSearchModel model)
