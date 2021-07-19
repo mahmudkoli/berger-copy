@@ -370,7 +370,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
                              Territory = dealer.Territory,
                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                              //IsFocused = fd.IsFocused(),
-                             IsFocused = fd != null && fd.Code > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                             IsFocused = fd != null && fd.Code > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date,
                          }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;

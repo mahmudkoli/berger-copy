@@ -44,6 +44,7 @@ namespace BergerMsfaApi.Models.Dealer
         public bool IsLastYearAppointed { get; set; }
         public bool IsAP { get; set; }
         public EnumClubSupreme ClubSupremeType { get; set; }
+        public EnumBussinesCategory BussinesCategoryType { get; set; }
 
         public void Mapping(Profile profile)
         {
