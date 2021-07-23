@@ -53,5 +53,19 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("UpdatePainterStatus/{Id}")]
+        public async Task<IActionResult> UpdatePainterStatus(int Id)
+        {
+            try
+            {
+                var result = await _painterSvc.PainterStatusUpdate(Id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

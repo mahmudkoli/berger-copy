@@ -9,9 +9,6 @@ import { PainterRegisRoutingModule } from './painterRegis-routing.module';
 import { PainterRegisDetailComponent } from './painter-regis-detail/painter-regis-detail.component';
 import { ModalPainterCallDetailsComponent } from './modal-painter-call-details/modal-painter-call-details.component';
 
-
-
-
 @NgModule({
   declarations: [PainterRegisListComponent, PainterRegisDetailComponent, ModalPainterCallDetailsComponent],
   imports: [

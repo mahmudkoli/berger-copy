@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 {
     public class PainterRegistrationService : IPainterRegistrationService
     {
+        private readonly IRepository<PainterStatusLog> _painterStatusLog;
         private readonly IRepository<Painter> _painterSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
         private readonly IRepository<PainterAttachment> _painterAttachmentSvc;
@@ -36,7 +37,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
         public PainterRegistrationService(
-            IRepository<Painter> painterSvc,
+             IRepository<PainterStatusLog> painterStatusLog,
+             IRepository<Painter> painterSvc,
              IRepository<PainterAttachment> painterAttachmentSvc,
              IFileUploadService fileUploadSvc,
              IRepository<Attachment> attachmentSvc,
@@ -51,6 +53,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             )
         {
+            _painterStatusLog = painterStatusLog;
             _painterSvc = painterSvc;
             _fileUploadSvc = fileUploadSvc;
             _attachmentSvc = attachmentSvc;
@@ -92,11 +95,38 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
+        public async Task<bool> PainterStatusUpdate(int id)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+
+            var find = await _painterSvc.FindAsync(p => p.Id == id);
+            if (find == null) return false;
+
+            if(find.Status == Status.Active)
+            {
+                find.Status = Status.InActive;
+
+                PainterStatusLog painterStatusLog = new PainterStatusLog
+                {
+                    CreatedTime = DateTime.Now,
+                    PainterId = id,
+                    UserId = userId,
+                    Status = Status.Active,
+                    Reason = ""
+                };
+
+                await _painterStatusLog.CreateAsync(painterStatusLog);
+            }
+            else
+                find.Status = Status.Active;
+            
+            await _painterSvc.UpdateAsync(find);
+
+            return true;
+        }
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            
-
             var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
                     painter => painter,
                     painter => painter.Id == Id,
@@ -215,6 +245,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
                 item.TerritoryName = item.Territory;
                 item.ZoneName = item.Zone;
+                item.Status = item.Status;
             }
             #endregion
 
