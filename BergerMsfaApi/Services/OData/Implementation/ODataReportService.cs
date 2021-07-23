@@ -247,7 +247,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 x.Name1
             }).ToListAsync();
 
-            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model);
+            List<string> lastYearAppointedDealer = _dealerInfoRepository
+                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Select(x => x.CustomerNo).Distinct()
+                .ToList();
+
+
+            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
 
             var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
             {
@@ -297,7 +303,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 x.Name1
             }).ToListAsync();
 
-            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceDetail(model);
+            List<string> lastYearAppointedDealer = _dealerInfoRepository
+                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Select(x => x.CustomerNo).Distinct()
+                .ToList();
+
+
+            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceDetail(model, lastYearAppointedDealer);
 
 
 

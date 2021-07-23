@@ -27,7 +27,7 @@ namespace Berger.Odata.Services
             IODataService odataService,
             IODataBrandService odataBrandService,
             IODataCommonService odataCommonService
-            )
+        )
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
@@ -778,7 +778,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model)
+        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
@@ -788,10 +788,7 @@ namespace Berger.Odata.Services
             var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
             var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
 
-
-
             var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
-
             var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
 
 
@@ -804,7 +801,8 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
                 .AddProperty(DataColumnDef.NetAmount)
-                .AddProperty(DataColumnDef.PlantOrBusinessArea);
+                .AddProperty(DataColumnDef.PlantOrBusinessArea)
+                .AddProperty(DataColumnDef.CustomerNo);
 
 
             var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
@@ -814,6 +812,27 @@ namespace Berger.Odata.Services
             var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
 
+            //var dataCyMtdTask = (_odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones));
+            //var dataLyMtdTask = (_odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones));
+
+            //var dataLyYtdTask = (_odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones));
+            //var dataCyYtdTask = (_odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones));
+
+
+            //await TaskExt.WhenAll(dataCyMtdTask, dataLyMtdTask, dataLyYtdTask, dataCyYtdTask);
+
+            //var dataCyMtd = await dataCyMtdTask;
+            //var dataLyMtd = await dataLyMtdTask;
+
+            //var dataLyYtd = await dataLyYtdTask;
+            //var dataCyYtd = await dataCyYtdTask;
+
+            Func<SalesDataModel, SalesDataModel> concatSelectFunc = x => new SalesDataModel
+            {
+                NetAmount = x.NetAmount,
+                PlantOrBusinessArea = x.PlantOrBusinessArea,
+                CustomerNo = x.CustomerNo
+            };
 
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
@@ -824,19 +843,19 @@ namespace Berger.Odata.Services
             Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
             Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea;
 
-
-
-
-            var concatAllList = dataLyMtd.Select(selectFunc)
-                .Concat(dataCyMtd.Select(selectFunc))
-                .Concat(dataLyYtd.Select(selectFunc))
-                .Concat(dataCyYtd.Select(selectFunc))
-                .GroupBy(p => new { p.PlantOrBusinessArea })
+            var concatAllList = dataLyMtd.Select(concatSelectFunc)
+                .Concat(dataCyMtd.Select(concatSelectFunc))
+                .Concat(dataLyYtd.Select(concatSelectFunc))
+                .Concat(dataCyYtd.Select(concatSelectFunc))
+                .GroupBy(p => new { p.PlantOrBusinessArea, p.CustomerNo })
                 .Select(g => g.First());
 
+
+            concatAllList = concatAllList.Where(x => lastYearAppointedDealer.Contains(x.CustomerNo)).ToList();
+
+            concatAllList = concatAllList.Select(selectFunc).GroupBy(p => p.PlantOrBusinessArea).Select(g => g.First()).ToList();
+
             var result = new List<RptLastYearAppointDlerPerformanceSummaryResultModel>();
-
-
 
             var dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
                 zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
@@ -879,7 +898,7 @@ namespace Berger.Odata.Services
 
             return result;
         }
-        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model)
+        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
@@ -908,7 +927,7 @@ namespace Berger.Odata.Services
 
             var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
             var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            
+
 
             Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
             {
@@ -925,6 +944,8 @@ namespace Berger.Odata.Services
                 .GroupBy(p => new { p.PlantOrBusinessArea, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
                 .Select(g => g.First());
 
+            concatAllList = concatAllList.Where(x => lastYearAppointedDealer.Contains(x.CustomerNo)).ToList();
+
             var result = new List<RptLastYearAppointDlrPerformanceDetailResultModel>();
             Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea && x.Territory == val.Territory
                 && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
@@ -932,7 +953,7 @@ namespace Berger.Odata.Services
 
             foreach (var item in concatAllList)
             {
-                
+
                 var res = new RptLastYearAppointDlrPerformanceDetailResultModel
                 {
                     DepotCode = item.PlantOrBusinessArea,
