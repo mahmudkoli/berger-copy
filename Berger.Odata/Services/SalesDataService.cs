@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
-using Berger.Common.HttpClient;
-using Berger.Common.JSONParser;
 using Berger.Common.Model;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.ViewModel;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
-using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
 {
@@ -990,6 +986,161 @@ namespace Berger.Odata.Services
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
             }
+
+            return result;
+        }
+        public async Task<IList<ReportClubSupremePerformance>> GetReportClubSupremePerformance(ClubSupremePerformanceSearchModel model, List<CustNClubMappingVm> clubSupremeDealers, ClubSupremeReportType reportType)
+        {
+            var currentDate = new DateTime(model.Year, model.Month, 1);
+
+            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+
+            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
+
+            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
+            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+
+            Func<SalesDataModel, SalesDataModel> selectFunc;
+
+            var dealerSelect = new SelectQueryOptionBuilder()
+                .AddProperty(nameof(CustomerDataModel.CustomerNo));
+
+            IList<CustomerDataModel> dealer = new List<CustomerDataModel>();
+
+            if (reportType == ClubSupremeReportType.Summary)
+            {
+                selectQueryBuilder
+                    .AddProperty(DataColumnDef.CustomerNo)
+                    .AddProperty(DataColumnDef.NetAmount);
+
+                selectFunc = x => new SalesDataModel
+                {
+                    NetAmount = x.NetAmount,
+                    CustomerName = x.CustomerName,
+                    CustomerNo = x.CustomerNo
+                };
+
+                dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
+                   zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
+
+            }
+            else
+            {
+                selectQueryBuilder
+                    .AddProperty(DataColumnDef.PlantOrBusinessArea)
+                    .AddProperty(DataColumnDef.Territory)
+                    .AddProperty(DataColumnDef.Zone)
+                    .AddProperty(DataColumnDef.CustomerNo)
+                    .AddProperty(DataColumnDef.NetAmount)
+                    .AddProperty(DataColumnDef.CustomerName);
+
+                selectFunc = x => new SalesDataModel
+                {
+                    NetAmount = x.NetAmount,
+                    PlantOrBusinessArea = x.PlantOrBusinessArea,
+                    Territory = x.Territory,
+                    Zone = x.Zone,
+                    CustomerName = x.CustomerName,
+                    CustomerNo = x.CustomerNo
+                };
+
+            }
+
+            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+
+            var concatAllList = dataLyMtd.Select(selectFunc)
+                .Concat(dataCyMtd.Select(selectFunc))
+                .GroupBy(p => new { p.PlantOrBusinessArea, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
+                .Select(g => g.First());
+
+            concatAllList = concatAllList.Where(x => clubSupremeDealers.Select(y => y.CustomerNo).Contains(x.CustomerNo)).ToList();
+
+            var result = new List<ReportClubSupremePerformance>();
+
+            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea && x.Territory == val.Territory
+                && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
+            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+
+            foreach (var item in concatAllList)
+            {
+                var res = reportType == ClubSupremeReportType.Detail
+                    ? (ReportClubSupremePerformance)new ReportClubSupremePerformanceDetail
+                    {
+                        DepotCode = item.PlantOrBusinessArea,
+                        Territory = item.Territory,
+                        Zone = item.Zone,
+                        CustomerNo = item.CustomerNo,
+                        CustomerName = item.CustomerName
+                    }
+                    : new ReportClubSupremePerformanceSummary()
+                    {
+                        NumberOfDealer = dealer.FirstOrDefault(x => x.CustomerNo == item.CustomerNo) == null ? 0 : 1
+                    };
+
+                res.ClubStatus = EnumExtension.GetEnumDescription(clubSupremeDealers.FirstOrDefault(x => x.CustomerNo == item.CustomerNo)?.ClubSupreme ?? 0);
+
+                if (dataLyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyMtd = dataLyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYMTD = amtLyMtd;
+                }
+
+                if (dataCyMtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYMTD = amtCyMtd;
+                }
+
+                if (dataLyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.LYYTD = amtLyYtd;
+                }
+
+                if (dataCyYtd.Any(x => predicateFunc(x, item)))
+                {
+                    var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+                    res.CYYTD = amtCyYtd;
+                }
+
+                if (reportType == ClubSupremeReportType.Detail)
+                {
+                    res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                    res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+                }
+                result.Add(res);
+            }
+
+            if (reportType == ClubSupremeReportType.Summary)
+            {
+                result = new List<ReportClubSupremePerformance>(result.Cast<ReportClubSupremePerformanceSummary>().GroupBy((x) => new
+                {
+                    x.ClubStatus
+                }).Select(x => new ReportClubSupremePerformanceSummary
+                {
+                    CYMTD = x.Sum(y => y.CYMTD),
+                    LYMTD = x.Sum(y => y.LYMTD),
+                    LYYTD = x.Sum(y => y.LYYTD),
+                    CYYTD = x.Sum(y => y.CYYTD),
+                    ClubStatus = x.Key.ClubStatus,
+                    NumberOfDealer = x.Sum(y => y.NumberOfDealer)
+                }).ToList());
+
+                result.ForEach(x =>
+                {
+                    x.GrowthMTD = _odataService.GetGrowth(x.LYMTD, x.CYMTD);
+                    x.GrowthYTD = _odataService.GetGrowth(x.LYYTD, x.CYYTD);
+                });
+            }
+
 
             return result;
         }

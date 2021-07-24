@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Berger.Common.Model;
+using Berger.Data.ViewModel;
 using Berger.Odata.Model;
 
 namespace Berger.Odata.Services
@@ -28,5 +29,8 @@ namespace Berger.Odata.Services
 
         Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer);
         Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer);
+
+        Task<IList<ReportClubSupremePerformance>> GetReportClubSupremePerformance(ClubSupremePerformanceSearchModel model, List<CustNClubMappingVm> clubSupremeDealers, ClubSupremeReportType reportType);
+
     }
 }
