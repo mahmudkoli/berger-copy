@@ -79,12 +79,8 @@ export class PainterRegisListComponent implements OnInit {
     detail(id) {
         this.router.navigate(['/painter/detail/' + id]);
     }
-    updateStatus(id, status) {
-        if(status == 1) {
-            
-        } else {
-            this.updatePainterStatus(id);
-        }
+    updateStatus(id) {
+        this.router.navigate(['/painter/update/' + id]);
     }
     
     updatePainterStatus(painterId: number) {

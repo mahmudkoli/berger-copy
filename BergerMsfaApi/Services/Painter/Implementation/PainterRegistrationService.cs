@@ -95,32 +95,26 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
-        public async Task<bool> PainterStatusUpdate(int id)
+        public async Task<bool> PainterStatusUpdate(PainterStatusUpdateModel model)
         {
             var userId = AppIdentity.AppUser.UserId;
 
-            var find = await _painterSvc.FindAsync(p => p.Id == id);
+            var find = await _painterSvc.FindAsync(p => p.Id == model.Id);
             if (find == null) return false;
 
-            if(find.Status == Status.Active)
-            {
-                find.Status = Status.InActive;
-
-                PainterStatusLog painterStatusLog = new PainterStatusLog
-                {
-                    CreatedTime = DateTime.Now,
-                    PainterId = id,
-                    UserId = userId,
-                    Status = Status.Active,
-                    Reason = ""
-                };
-
-                await _painterStatusLog.CreateAsync(painterStatusLog);
-            }
-            else
-                find.Status = Status.Active;
-            
+            find.Status = (Status)model.Status;
             await _painterSvc.UpdateAsync(find);
+
+            PainterStatusLog painterStatusLog = new PainterStatusLog
+            {
+                CreatedTime = DateTime.Now,
+                PainterId = model.Id,
+                UserId = userId,
+                Status = (Status)model.Status,
+                Reason = model.Reason
+            };
+
+            await _painterStatusLog.CreateAsync(painterStatusLog);
 
             return true;
         }

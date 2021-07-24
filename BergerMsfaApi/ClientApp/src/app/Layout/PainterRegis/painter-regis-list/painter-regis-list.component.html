@@ -60,7 +60,7 @@
                 <td>{{painter.territoryName }}</td>
                 <td>{{painter.zoneName }}</td>
                 <td>
-                    <button [class]="painter.statusBtnClass" (click)="updateStatus(painter.id, painter.status)" >
+                    <button [class]="painter.statusBtnClass" (click)="updateStatus(painter.id)" >
                         <i [class]="painter.statusBtnIcon" aria-hidden="true"></i> {{painter.statusText}}
                     </button>
                 </td>
