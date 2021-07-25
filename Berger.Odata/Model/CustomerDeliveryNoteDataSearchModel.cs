@@ -5,9 +5,10 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class CustomerCreditStatusSearchModel
+    public class CustomerDeliveryNoteSearchModel
     {
         public string CustomerNo { get; set; }
-        public string CreditControlArea { get; set; }
+        public DateTime DeliveryFromDate { get; set; }
+        public DateTime DeliveryToDate { get; set; }
     }
 }

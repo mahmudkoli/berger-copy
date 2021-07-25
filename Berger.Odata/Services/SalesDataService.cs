@@ -442,7 +442,8 @@ namespace Berger.Odata.Services
             }
             else
             {
-                brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync(x => brandsOrDivisions.Any(b => b == x.MatarialGroupOrBrand))).ToList();
+                //brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync(x => brandsOrDivisions.Any(b => b == x.MatarialGroupOrBrand))).ToList();
+                brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync()).ToList();
             }
 
             #region brand family group
@@ -502,6 +503,13 @@ namespace Berger.Odata.Services
                                             ? $"{brandFamilyObj.MatarialGroupOrBrandFamilyName} ({brandFamilyObj.MatarialGroupOrBrandFamily})"
                                             : $"{brandFamilyObj.MatarialGroupOrBrandName} ({brandFamilyObj.MatarialGroupOrBrand})"
                                         : brandOrDiv;
+
+                    // for showing all group item name code
+                    if (model.BrandOrDivision == EnumBrandOrDivision.MTSBrands && brandFamilyObj != null)
+                    {
+                        brandOrDivName = string.Join(", ", brandFamilyInfos.Where(x => x.MatarialGroupOrBrandFamily == brandOrDiv)
+                                                            .Select(x => $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})"));
+                    }
                 }
 
                 var res = new YTDBrandPerformanceSearchModelResultModel();
@@ -1282,6 +1290,40 @@ namespace Berger.Odata.Services
             var result = await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
                             depots: area.Depots, territories: area.Territories, zones: area.Zones,
                             brands: brands, division: division);
+
+            return result;
+        }
+
+        public async Task<IList<CustomerDeliveryNoteResultModel>> GetCustomerDeliveryNote(CustomerDeliveryNoteSearchModel model)
+        {
+            var fromDateStr = model.DeliveryFromDate.DeliverySearchDateTimeFormat();
+            var toDateStr = model.DeliveryToDate.DeliverySearchDateTimeFormat();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder.AddProperty(CustomerDeliveryColDef.InvoiceDate)
+                                .AddProperty(CustomerDeliveryColDef.InvoiceCreateTime)
+                                .AddProperty(CustomerDeliveryColDef.InvoiceNumber)
+                                .AddProperty(CustomerDeliveryColDef.Volume)
+                                .AddProperty(CustomerDeliveryColDef.DeliveryDate)
+                                .AddProperty(CustomerDeliveryColDef.DeliveryTime)
+                                .AddProperty(CustomerDeliveryColDef.DriverName)
+                                .AddProperty(CustomerDeliveryColDef.DriverMobileNo);
+
+            var data = await _odataService.GetCustomerDeliveryData(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr);
+
+            var result = data.Select(x => new CustomerDeliveryNoteResultModel() 
+                                        { 
+                                            InvoiceDate = CustomConvertExtension.ObjectToDateTime(x.InvoiceDate).DateFormat("dd.MM.yyyy"),
+                                            InvoiceCreateTime = x.InvoiceCreateTime
+                                                                    .Replace("PT","").Replace("H",":").Replace("M",":").Replace("S",""),
+                                            InvoiceNumber = x.InvoiceNumber,
+                                            Volume = CustomConvertExtension.ObjectToDecimal(x.Volume),
+                                            DeliveryDate = CustomConvertExtension.ObjectToDateTime(x.DeliveryDate).DateFormat("dd.MM.yyyy"),
+                                            DeliveryTime = x.DeliveryTime
+                                                                .Replace("PT", "").Replace("H", ":").Replace("M", ":").Replace("S", ""),
+                                            DriverName = x.DriverName,
+                                            DriverMobileNo = x.DriverMobileNo
+                                        }).ToList();
 
             return result;
         }
