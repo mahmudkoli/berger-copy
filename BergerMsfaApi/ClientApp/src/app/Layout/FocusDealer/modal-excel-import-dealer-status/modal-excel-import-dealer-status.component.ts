@@ -36,17 +36,16 @@ export class ModalExcelImportDealerStatusComponent implements OnInit {
 
   onChangeDealerStatusExcelType(event: any) {
     switch (this.selectedDealerStatusExcelType) {
-      case EnumDealerStatusExcelImportType.Exclusive:
-        this.exampleImportExcelFileUrl = 'examples/DealerStatusExclusive.xlsx';
-        break;
+
       case EnumDealerStatusExcelImportType.LastYearAppointed:
         this.exampleImportExcelFileUrl = 'examples/DealerStatusLastYearAppointed.xlsx';
         break;
       case EnumDealerStatusExcelImportType.ClubSupreme:
         this.exampleImportExcelFileUrl = 'examples/DealerStatusClubSupreme.xlsx';
         break;
-      case EnumDealerStatusExcelImportType.AP:
-        this.exampleImportExcelFileUrl = 'examples/DealerStatusAP.xlsx';
+      
+      case EnumDealerStatusExcelImportType.BussinessCategory:
+        this.exampleImportExcelFileUrl = 'examples/DealerStatusBussinessCategory.xlsx';
         break;
       default:
         break;

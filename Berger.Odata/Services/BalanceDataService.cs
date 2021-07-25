@@ -27,18 +27,22 @@ namespace Berger.Odata.Services
             _odataCommonService = odataCommonService;
         }
 
-        public async Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model)
+        public async Task<IList<CollectionHistoryResultModel>> GetMRHistory(CollectionHistorySearchModel model)
         {
-            var currentDate = DateTime.Now;
-            var fromDate = currentDate.AddMonths(-1).GetCYFD().DateTimeFormat();
-            var toDate = currentDate.AddMonths(-1).GetCYLD().DateTimeFormat();
+            //var currentDate = DateTime.Now;
+            //var fromDate = currentDate.AddMonths(-1).GetCYFD().DateTimeFormat();
+            //var toDate = currentDate.AddMonths(-1).GetCYLD().DateTimeFormat(); 
+
+            var fromDate = model.FromDate.DateTimeFormat();
+            var toDate = model.ToDate.DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CollectionColDef.DocNumber)
-                                .AddProperty(CollectionColDef.CustomerNo)
-                                .AddProperty(CollectionColDef.CustomerName)
+                                //.AddProperty(CollectionColDef.CustomerNo)
+                                //.AddProperty(CollectionColDef.CustomerName)
                                 .AddProperty(CollectionColDef.ChequeNo)
                                 .AddProperty(CollectionColDef.BankName)
+                                .AddProperty(CollectionColDef.Depot)
                                 .AddProperty(CollectionColDef.CreditControlArea)
                                 .AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.Amount);
@@ -48,14 +52,12 @@ namespace Berger.Odata.Services
             var result = data.Select(x =>
                                 new CollectionHistoryResultModel()
                                 {
-                                    DocumentNo = x.DocNumber,
-                                    CustomerNo = x.CustomerNo,
-                                    CustomerName = x.CustomerName,
-                                    InstrumentNo = x.ChequeNo,
+                                    MrNo = x.DocNumber,
+                                    ChequeNo = x.ChequeNo,
                                     BankName = x.BankName,
-                                    CreditControlArea = x.CreditControlArea,
-                                    PostingDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
-                                    Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
+                                    Division = x.CreditControlArea,
+                                    Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
+                                    MrAmount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
             #region Credit Control Area 
@@ -63,7 +65,7 @@ namespace Berger.Odata.Services
 
             foreach (var item in result)
             {
-                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+                item.Division = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.Division)?.Description ?? string.Empty;
             }
             #endregion
 
@@ -89,8 +91,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(BalanceColDef.Amount);
 
             var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
-            
-            var result = data.Select(x => 
+
+            var result = data.Select(x =>
             {
                 var res = new BalanceConfirmationSummaryResultModel();
 
@@ -218,13 +220,13 @@ namespace Berger.Odata.Services
 
             #region Cheque Bounce Details
             result.ChequeBounceDetails = dataBounceCm.Select(s => new ChequeSummaryChequeBounceDetailsModel()
-                                                        {
-                                                            CustomerNo = s.CustomerNo,
-                                                            CustomerName = s.CustomerName,
-                                                            ReversalDate = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
-                                                            ChequeNo = s.ChequeNo,
-                                                            Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
-                                                        }).ToList();
+            {
+                CustomerNo = s.CustomerNo,
+                CustomerName = s.CustomerName,
+                ReversalDate = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                ChequeNo = s.ChequeNo,
+                Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
+            }).ToList();
             #endregion
 
             return result;
@@ -345,13 +347,13 @@ namespace Berger.Odata.Services
 
             #region Cheque Bounce Details
             result.ChequeBounceDetails = dataBounceCm.Select(s => new ChequeSummaryChequeBounceDetailsReportModel()
-                                                                    {
-                                                                        CustomerNo = s.CustomerNo,
-                                                                        CustomerName = s.CustomerName,
-                                                                        Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
-                                                                        ChequeNo = s.ChequeNo,
-                                                                        Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
-                                                                    }).ToList();
+            {
+                CustomerNo = s.CustomerNo,
+                CustomerName = s.CustomerName,
+                Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                ChequeNo = s.ChequeNo,
+                Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
+            }).ToList();
             #endregion
 
             return result;
@@ -375,8 +377,8 @@ namespace Berger.Odata.Services
             {
                 modelResult.CreditLimit = CustomConvertExtension.ObjectToDecimal(result.CreditLimit);
                 modelResult.LastPayment = CustomConvertExtension.ObjectToDecimal(result.LastPayment);
-                modelResult.LastPaymentDate = string.IsNullOrEmpty(result.LastPaymentDate) || result.LastPaymentDate == "00000000" 
-                                                ? string.Empty 
+                modelResult.LastPaymentDate = string.IsNullOrEmpty(result.LastPaymentDate) || result.LastPaymentDate == "00000000"
+                                                ? string.Empty
                                                 : result.LastPaymentDate.DateFormatDate("yyyyMMdd").DateFormat("dd.MM.yyyy");
 
                 modelResult.CreditLimitUsed = CustomConvertExtension.ObjectToDecimal(result.Receivable) + CustomConvertExtension.ObjectToDecimal(result.OpenDelivery) +

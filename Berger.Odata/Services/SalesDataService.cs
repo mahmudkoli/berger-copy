@@ -35,7 +35,10 @@ namespace Berger.Odata.Services
         {
             var currentDate = DateTime.Now;
             var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
-            var toDate = currentDate.GetCYLD().DateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();  
+
+             fromDate = model.FromDate.SalesSearchDateFormat();
+             toDate = model.ToDate.SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)

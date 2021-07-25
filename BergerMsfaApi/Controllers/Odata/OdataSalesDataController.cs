@@ -8,7 +8,7 @@ using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
+   // [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -162,12 +162,12 @@ namespace BergerMsfaApi.Controllers.Odata
         #endregion
 
         #region Balance Collection Data
-        [HttpGet("CollectionHistory")]
-        public async Task<IActionResult> GetCollectionHistory([FromQuery] CollectionHistorySearchModel model)
+        [HttpGet("MRHistory")]
+        public async Task<IActionResult> GetMrHistory([FromQuery] CollectionHistorySearchModel model)
         {
             try
             {
-                var data = await _balanceDataService.GetCollectionHistory(model);
+                var data = await _balanceDataService.GetMRHistory(model);
                 return OkResult(data);
             }
             catch (Exception ex)
