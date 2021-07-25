@@ -2007,21 +2007,21 @@ namespace Berger.Odata.Services
         #endregion
 
         #region calculate data
-        public decimal GetGrowth(decimal first, decimal second)
+        public decimal GetGrowth(decimal lyValue, decimal cyValue)
         {
-            return first > 0 && second > 0 ? ((second - first) * 100) / first :
-                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
-                            decimal.Zero;
+            if (lyValue == 0 && cyValue > 0) return decimal.Parse("0.000");
+            else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
+            else return ((cyValue - lyValue) * 100) / lyValue;
         }
-        public decimal GetGrowthNew(decimal first, decimal second)
-        {
-            var subValue = (first - second);
-            if (subValue == 0 || second == 0)
-            {
-                return 0;
-            }
-            return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
-        }
+        //public decimal GetGrowthNew(decimal first, decimal second)
+        //{
+        //    var subValue = (first - second);
+        //    if (subValue == 0 || second == 0)
+        //    {
+        //        return 0;
+        //    }
+        //    return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
+        //}
         public decimal GetContribution(decimal first, decimal second)
         {
             if (first == 0 || second == 0)
@@ -2037,13 +2037,13 @@ namespace Berger.Odata.Services
             return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
         }
 
-        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays)
+        public decimal GetTillDateGrowth(decimal lyValue, decimal cyValue, int totalDays, int countDays)
         {
-            first = (first / totalDays) * countDays;
+            lyValue = (lyValue / totalDays) * countDays;
 
-            return first > 0 && second > 0 ? ((second - first) * 100) / first :
-                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
-                            decimal.Zero;
+            if (lyValue == 0 && cyValue > 0) return decimal.Parse("0.000");
+            else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
+            else return ((cyValue - lyValue) * 100) / lyValue;
         }
 
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays)
