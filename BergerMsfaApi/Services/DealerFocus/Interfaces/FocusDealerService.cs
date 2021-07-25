@@ -71,7 +71,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.DealerId,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -146,7 +146,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.DealerId,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -166,7 +166,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         private async Task<bool> IsFocusDealerAlreadyAssigned(SaveFocusDealerModel model)
         {
-            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.Code
+            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.DealerId
                    && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
                        || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
                        || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)

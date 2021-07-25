@@ -429,36 +429,50 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
-        public async Task<IList<AppAreaDealerResultModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
+        public async Task<IList<AppDealerInfoModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
         {
             model.PageNo = model.PageNo ?? 1;
             model.PageSize = model.PageSize ?? int.MaxValue;
-            model.CustomerName = model.CustomerName ?? string.Empty;
+            model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
+            model.DealerName = model.DealerName ?? string.Empty;
 
-            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                (x.CustomerName.Contains(model.CustomerName)) &&
-                ((!(model.Depots != null && model.Depots.Any()) || model.Depots.Contains(x.BusinessArea)) &&
+                (((!(model.Depots != null && model.Depots.Any()) || model.Depots.Contains(x.BusinessArea)) &&
                 (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
                 (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
                 (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
-                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone)));
+                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone))));
 
-            var result = (from di in _dealerInfoSvc.FindAll(dealerPredicate)
-                            join cg in _customerGroupSvc.GetAll()
-                            on di.AccountGroup equals cg.CustomerAccountGroup
-                            into cust
-                            from custGrp in cust.DefaultIfEmpty()
+            var result = (from dealer in _dealerInfoSvc.FindAll(dealerPredicate)
+                          join custGrp in _customerGroupSvc.GetAll()
+                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                          into cust
+                          from cu in cust.DefaultIfEmpty()
 
-                            select new AppAreaDealerResultModel
-                            {
-                                Id = di.Id,
-                                CustomerNo = di.CustomerNo,
-                                CustomerName = $"{di.CustomerName} ({di.CustomerNo})",
-                                IsSubdealer = custGrp != null && !string.IsNullOrEmpty(custGrp.Description) && custGrp.Description.StartsWith("Subdealer")
-                            })
-                            .Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
+                          join focusDealer in _focusDealerSvc.GetAll()
+                          on dealer.Id equals focusDealer.DealerId
+                          into focus
+                          from fd in focus.DefaultIfEmpty()
+
+                          where ((EnumDealerCategory.All == model.DealerCategory) ||
+                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                          && (dealer.CustomerName.Contains(model.DealerName))
+
+                          select new AppDealerInfoModel
+                          {
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                          }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
         }
