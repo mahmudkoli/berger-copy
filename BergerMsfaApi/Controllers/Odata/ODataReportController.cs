@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-   // [AuthorizeFilter]
+    // [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -320,5 +320,36 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("ClubSupremePerformanceSummaryReport")]
+        [ProducesResponseType(typeof(IList<ReportClubSupremePerformanceSummary>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ReportClubSupremePerformanceSummaryReport([FromQuery] ClubSupremePerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportClubSupremePerformanceSummaryReport(model,ClubSupremeReportType.Summary);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        
+        [HttpGet("ClubSupremePerformanceDetailReport")]
+        [ProducesResponseType(typeof(IList<ReportClubSupremePerformanceDetail>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ReportClubSupremePerformanceDetail([FromQuery] ClubSupremePerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportClubSupremePerformanceSummaryReport(model, ClubSupremeReportType.Detail);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }
