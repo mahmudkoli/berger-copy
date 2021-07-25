@@ -8,15 +8,15 @@ namespace Berger.Odata.Model
 {
     public class CollectionHistoryResultModel
     {
-        public string DocumentNo { get; internal set; }
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
-        public string CreditControlArea { get; internal set; }
-        public string CreditControlAreaName { get; internal set; }
+        public string MrNo { get; internal set; }
+      //  public string CustomerNo { get; internal set; }
+       // public string CustomerName { get; internal set; }
+        public string Division { get; internal set; }
+       // public string CreditControlAreaName { get; internal set; }
         public string BankName { get; internal set; }
-        public string PostingDate { get; internal set; }
-        public decimal Amount { get; internal set; }
-        public string InstrumentNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal MrAmount { get; internal set; }
+        public string ChequeNo { get; internal set; }
 
         public CollectionHistoryResultModel()
         {
