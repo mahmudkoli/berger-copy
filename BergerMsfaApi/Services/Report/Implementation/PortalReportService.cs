@@ -3120,6 +3120,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
         }
 
+        //public dynamic GetInactivePainterReportAsync(PainterRegistrationReportSearchModel query)
+        //{
+            
+        //}
 
     }
 }
