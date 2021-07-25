@@ -67,4 +67,15 @@ namespace BergerMsfaApi.Models.FocusDealer
             this.Zones = new List<string>();
         }
     }
+
+    public class DealerOpeningQueryObjectModel : QueryObjectModel
+    {
+        public string Depot { get; set; }
+        public IList<string> Territories { get; set; }
+
+        public DealerOpeningQueryObjectModel()
+        {
+            this.Territories = new List<string>();
+        }
+    }
 }

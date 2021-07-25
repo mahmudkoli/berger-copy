@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,12 +27,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             _dealerOpeningSvc = dealerOpeningSvc;
         }
 
-        [HttpGet("GetDealerOpeningList/{index}/{pageSize}")]
-        public async Task<IActionResult> GetDealerOpeningListAsync(int index, int pageSize, string search)
+        [HttpGet("GetDealerOpeningList")]
+        public async Task<IActionResult> GetDealerOpeningListAsync([FromQuery] DealerOpeningQueryObjectModel query)
         {
             try
             {
-                var result = await _dealerOpeningSvc.GetDealerOpeningPendingListAsync(index, pageSize, search);
+                var result = await _dealerOpeningSvc.GetAllDealersAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)

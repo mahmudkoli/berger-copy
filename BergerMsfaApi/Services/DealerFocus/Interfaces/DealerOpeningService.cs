@@ -25,6 +25,9 @@ using System;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Microsoft.EntityFrameworkCore;
+using BergerMsfaApi.Models.FocusDealer;
+using BergerMsfaApi.Models.Common;
+using System.Linq.Expressions;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -197,6 +200,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
 
 
+
+
         public async Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model)
         {
             var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
@@ -280,7 +285,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             //_dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
             var dealerOpening = _mapper.Map<DealerOpening>(model);
-            dealerOpening.NextApprovarId = managerUser.Id;
+            dealerOpening.CurrentApprovarId = managerUser.Id;
             dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
 
             //TODO: need to generate code
@@ -512,6 +517,76 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync();
             return result;
+        }
+
+        public async Task<QueryResultModel<DealerOpeningModel>> GetAllDealersAsync(DealerOpeningQueryObjectModel query)
+        {
+
+            var columnsMap = new Dictionary<string, Expression<Func<DealerOpeningModel, object>>>()
+            {
+                ["code"] = v => v.Code,
+                ["businessAreaName"] = v => v.BusinessAreaName,
+                ["saleOfficeName"] = v => v.SaleOfficeName,
+                ["saleGroupName"] = v => v.SaleGroupName,
+                ["territoryName"] = v => v.TerritoryName,
+                ["employeeId"] = v => v.EmployeeId,
+                ["zoneName"] = v => v.ZoneName,
+                ["dealerOpeningStatusText"] = v => v.DealerOpeningStatusText,
+            };
+            var currentUser = AppIdentity.AppUser;
+            //var resultDb = new List<DealerOpening>();
+
+            var resultDb = await _dealerOpeningSvc.FindAllAsync(p => p.CurrentApprovarId == currentUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending);
+     
+            var result = _mapper.Map<IEnumerable<DealerOpeningModel>>(resultDb);
+
+
+            var depotIds = result.Select(x => x.BusinessArea).Distinct().ToList();
+            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
+            var saleOfficeIds = result.Select(x => x.SaleOffice).Distinct().ToList();
+
+            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
+            var saleOffices = (await _saleOfficeSvc.FindAllAsync(x => saleOfficeIds.Contains(x.Code)));
+
+            foreach (var item in result)
+            {
+                item.BusinessAreaName = depots.FirstOrDefault(x => x.Werks == item.BusinessArea)?.Name1 ?? string.Empty;
+                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
+                item.SaleOfficeName = saleOffices.FirstOrDefault(x => x.Code == item.SaleOffice)?.Name ?? string.Empty;
+                item.TerritoryName = item.Territory;
+                item.ZoneName = item.Zone;
+                item.DealerOpeningStatusText = ((DealerOpeningStatus)item.DealerOpeningStatus).ToString();
+            }
+
+            //Expression<Func<DealerOpeningModel, object>> keySelector = columnsMap[query.SortBy];
+
+            var total = result.Count();
+
+            //result = result.Where(x =>
+            //         //(string.IsNullOrEmpty(query.Depot) || query.Depot == x.)
+            //         (!query.Territories.Any() || query.Territories.Contains(x.Territory))).ToList();
+            //&& (!query.Zones.Any() || query.Zones.Contains(x.Zone)));
+
+            var filterCount = result.Count();
+
+
+            //result = (List<DealerOpeningModel>) query.IsSortAscending ? result.OrderBy(keySelector) : result.OrderByDescending(keySelector);
+
+            result =(List<DealerOpeningModel>) result.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize);
+
+            //result = result.().ToList();
+
+            var items = await result.ToListAsync();
+
+            var queryResult = new QueryResultModel<DealerOpeningModel>
+            {
+                Items = items,
+                TotalFilter = filterCount,
+                Total = total
+            };
+
+            return queryResult;
         }
     }
 }
