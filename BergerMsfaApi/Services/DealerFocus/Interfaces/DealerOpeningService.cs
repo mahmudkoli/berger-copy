@@ -240,13 +240,14 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<bool> ChangeStatusDealer(DealerOpeningStatusChangeModel model)
         {
-            //var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            var isApproved = false;
             var dealer = _dealerOpeningSvc.Where(p => p.Id == model.DealerOpeningId).FirstOrDefault();
             var emailConfig = _emailconfig.Where(p => p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
             if (model.Status == (int)DealerOpeningStatus.Approved)
             {
 
                 dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Approved;
+                isApproved = true;
 
 
             }
@@ -254,14 +255,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Rejected;
             }
-            dealer.CurrentApprovarId = AppIdentity.AppUser.UserId;
             await _dealerOpeningSvc.UpdateAsync(dealer);
             await DealerStatusLog(dealer, "DealerStatus", model.Status.ToString());
             if (emailConfig != null)
             {
                 await sendEmail(emailConfig.Email, dealer.Id);
             }
-            return false;
+            return isApproved;
         }
 
         public async Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> attachments)
@@ -549,19 +549,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<QueryResultModel<DealerOpeningModel>> GetAllDealersAsync(DealerOpeningQueryObjectModel query)
         {
 
-            var columnsMap = new Dictionary<string, Expression<Func<DealerOpeningModel, object>>>()
-            {
-                ["code"] = v => v.Code,
-                ["businessAreaName"] = v => v.BusinessAreaName,
-                ["saleOfficeName"] = v => v.SaleOfficeName,
-                ["saleGroupName"] = v => v.SaleGroupName,
-                ["territoryName"] = v => v.TerritoryName,
-                ["employeeId"] = v => v.EmployeeId,
-                ["zoneName"] = v => v.ZoneName,
-                ["dealerOpeningStatusText"] = v => v.DealerOpeningStatusText,
-            };
             var currentUser = AppIdentity.AppUser;
-            //var resultDb = new List<DealerOpening>();
 
             var resultDb = await _dealerOpeningSvc.FindAllAsync(p => p.CurrentApprovarId == currentUser.UserId);
 
@@ -586,23 +574,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 item.DealerOpeningStatusText = ((DealerOpeningStatus)item.DealerOpeningStatus).ToString();
             }
 
-            //Expression<Func<DealerOpeningModel, object>> keySelector = columnsMap[query.SortBy];
 
             var total = result.Count();
 
             result = result.Where(x =>
                      (string.IsNullOrEmpty(query.Depot) || query.Depot == x.BusinessArea) &&
                      (!query.Territories.Any() || query.Territories.Contains(x.Territory))).ToList();
-            //&& (!query.Zones.Any() || query.Zones.Contains(x.Zone)));
 
             var filterCount = result.Count();
 
 
-            //result = (List<DealerOpeningModel>) query.IsSortAscending ? result.OrderBy(keySelector) : result.OrderByDescending(keySelector);
 
             result = await result.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
 
-            //result = result.().ToList();
 
             var items = await result.ToListAsync();
 

@@ -106,44 +106,10 @@ export class DealerOpeningListComponent implements OnInit {
 		this.searchOptionQuery.clear();
 	}
 
-	// toggleActiveInactive(id) {
-	// 	const actInSubscription = this.focusDealerService.activeInactive(id).subscribe(res => {
-	// 		this.loadFocusDealersPage();
-	// 	});
-	// 	this.subscriptions.push(actInSubscription);
-	// }
-
-	// editFocusDealer(id) {
-	// 	this.router.navigate(['/dealer/edit-focus-dealer', id]);
-	// }
-
     viewDealerOpening(id) {
 		this.router.navigate(['/dealer/openingList/', id]);
 	}
 
-	// newFocusDealer() {
-	// 	this.router.navigate(['/dealer/new-focus-dealer']);
-	// }
-
-	// deleteFocusDealer(id) {
-	// 	// this.alertService.confirm("Are you sure want to delete this Focus Dealer?",
-	// 	// 	() => {
-	// 	// 		this.alertService.fnLoading(true);
-	// 	// 		const deleteSubscription = this.dealerOpeningService.de(id)
-	// 	// 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
-	// 	// 			.subscribe((res: any) => {
-	// 	// 				console.log('res from del func', res);
-	// 	// 				this.alertService.tosterSuccess("Focus Dealer has been deleted successfully.");
-	// 	// 				this.loadFocusDealersPage();
-	// 	// 			},
-	// 	// 				(error) => {
-	// 	// 					console.log(error);
-	// 	// 				});
-	// 	// 		this.subscriptions.push(deleteSubscription);
-	// 	// 	},
-	// 	// 	() => {
-	// 	// 	});
-	// }
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "dealerOpening-table",
