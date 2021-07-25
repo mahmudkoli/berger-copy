@@ -7,7 +7,7 @@ namespace Berger.Data.MsfaEntity.Setup
 {
    public class EmailConfigForDealerOppening: AuditableEntity<int>
     {
-        public string Designation { get; set; }
+        //public string Designation { get; set; }
         public string BusinessArea { get; set; }
         public string Email { get; set; }
     }

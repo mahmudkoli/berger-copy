@@ -150,8 +150,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var currentUser = AppIdentity.AppUser;
             var resultDb = new List<DealerOpening>();
 
-            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea) && p.Designation == ((EnumEmployeeRole)currentUser.EmployeeRole).ToString()).FirstOrDefault();
-
+            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea)).FirstOrDefault();
+            
             if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
             {
                 resultDb = (List<DealerOpening>)await _dealerOpeningSvc.GetAllAsync();
