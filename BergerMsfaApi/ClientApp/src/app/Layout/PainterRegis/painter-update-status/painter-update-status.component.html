@@ -99,6 +99,9 @@
                                 <textarea [required]="painter.status == '0'" name="reason" #reason="ngModel"
                                           type="text" class="form-control"
                                           [(ngModel)]="painter.reason"></textarea>
+                                <small class="text-danger" [class.d-none]="reason.valid || reason.untouched">
+                                    Inactive reason is required
+                                </small>
                             </div>
                         </div>
         
