@@ -138,10 +138,10 @@ namespace Berger.Odata.Services
         #endregion
 
         #region calculate data
-        public decimal GetGrowth(decimal first, decimal second);
-        public decimal GetGrowthNew(decimal first, decimal second);
+        public decimal GetGrowth(decimal lyValue, decimal cyValue);
+        //public decimal GetGrowthNew(decimal first, decimal second);
         public decimal GetAchivement(decimal target, decimal actual);
-        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays);
+        public decimal GetTillDateGrowth(decimal lyValue, decimal cyValue, int totalDays, int countDays);
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays);
         public decimal GetPercentage(decimal total, decimal value);
         decimal GetContribution(decimal first, decimal second);
