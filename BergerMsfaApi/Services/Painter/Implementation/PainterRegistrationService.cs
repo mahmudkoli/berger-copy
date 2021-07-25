@@ -313,7 +313,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         {
             var _painters = await _painterSvc.GetAllIncludeAsync(
                 s => s,
-                f => f.EmployeeId == employeeId,
+                f => f.EmployeeId == employeeId && f.Status == Status.Active,
                 null,
                 a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments).Include(f => f.PainterCat),
                 false
@@ -346,6 +346,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
+            var userId = AppIdentity.AppUser.UserId;
+
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
             _painterImageFileName = _painterImageFileName.Replace(" ", "_");
@@ -362,7 +364,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
             }
 
-            
+            _painter.PainterNo = GeneratePainterNo(userId).Result;
 
             var result = await _painterSvc.CreateAsync(_painter);
             return _mapper.Map<PainterModel>(result);
@@ -448,6 +450,22 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             return await result;
 
+        }
+
+        public async Task<string> GeneratePainterNo(int userId)
+        {
+            var lastPainterNo = await _painterSvc.AnyAsync(p => p.CreatedBy == userId) ?
+                                _painterSvc.Where(p => p.CreatedBy == userId).OrderByDescending(p => p.PainterNo).FirstOrDefault()?.PainterNo : "";
+
+            if (lastPainterNo == null)
+            { 
+                return "1"; 
+            }
+            else
+            {
+                Int32.TryParse(lastPainterNo, out int x);
+                return (x + 1).ToString();
+            }
         }
 
         #endregion
