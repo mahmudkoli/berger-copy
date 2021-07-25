@@ -147,7 +147,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var currentUser = AppIdentity.AppUser;
             var resultDb = new List<DealerOpening>();
 
-            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea) && p.Designation == ((EnumEmployeeRole)currentUser.EmployeeRole).ToString()).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea)).FirstOrDefault();
             
             if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
             {
@@ -201,7 +201,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         {
             var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
             var dealer = _dealerOpeningSvc.Where(p => p.Id == model.DealerOpeningId).FirstOrDefault();
-            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString() && p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
             if (model.Status == (int)DealerOpeningStatus.Approved)
             {
                 if (emailConfig != null)
