@@ -47,7 +47,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                var result = await _dealerOpeningSvc.ChangeDealerStatus(model);
+                var result = await _dealerOpeningSvc.ChangeStatusDealer(model);
                 return OkResult(result);
             }
             catch (Exception ex)

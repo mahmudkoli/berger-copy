@@ -113,33 +113,37 @@ export class DealerOpeningListComponent implements OnInit {
 	// 	this.subscriptions.push(actInSubscription);
 	// }
 
-	editFocusDealer(id) {
-		this.router.navigate(['/dealer/edit-focus-dealer', id]);
+	// editFocusDealer(id) {
+	// 	this.router.navigate(['/dealer/edit-focus-dealer', id]);
+	// }
+
+    viewDealerOpening(id) {
+		this.router.navigate(['/dealer/openingList/', id]);
 	}
 
-	newFocusDealer() {
-		this.router.navigate(['/dealer/new-focus-dealer']);
-	}
+	// newFocusDealer() {
+	// 	this.router.navigate(['/dealer/new-focus-dealer']);
+	// }
 
-	deleteFocusDealer(id) {
-		// this.alertService.confirm("Are you sure want to delete this Focus Dealer?",
-		// 	() => {
-		// 		this.alertService.fnLoading(true);
-		// 		const deleteSubscription = this.dealerOpeningService.de(id)
-		// 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
-		// 			.subscribe((res: any) => {
-		// 				console.log('res from del func', res);
-		// 				this.alertService.tosterSuccess("Focus Dealer has been deleted successfully.");
-		// 				this.loadFocusDealersPage();
-		// 			},
-		// 				(error) => {
-		// 					console.log(error);
-		// 				});
-		// 		this.subscriptions.push(deleteSubscription);
-		// 	},
-		// 	() => {
-		// 	});
-	}
+	// deleteFocusDealer(id) {
+	// 	// this.alertService.confirm("Are you sure want to delete this Focus Dealer?",
+	// 	// 	() => {
+	// 	// 		this.alertService.fnLoading(true);
+	// 	// 		const deleteSubscription = this.dealerOpeningService.de(id)
+	// 	// 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+	// 	// 			.subscribe((res: any) => {
+	// 	// 				console.log('res from del func', res);
+	// 	// 				this.alertService.tosterSuccess("Focus Dealer has been deleted successfully.");
+	// 	// 				this.loadFocusDealersPage();
+	// 	// 			},
+	// 	// 				(error) => {
+	// 	// 					console.log(error);
+	// 	// 				});
+	// 	// 		this.subscriptions.push(deleteSubscription);
+	// 	// 	},
+	// 	// 	() => {
+	// 	// 	});
+	// }
 
 	public ptableSettings: IPTableSetting = {
 		tableID: "dealerOpening-table",
@@ -164,6 +168,7 @@ export class DealerOpeningListComponent implements OnInit {
 		enabledPagination: true,
 		enabledDeleteBtn: false,
 		enabledEditBtn: false,
+        enabledDetailsBtn:true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: false,
 		enabledDataLength: true,
@@ -173,14 +178,17 @@ export class DealerOpeningListComponent implements OnInit {
 	public fnCustomTrigger(event) {
 		console.log("custom  click: ", event);
 
-		if (event.action == "new-record") {
-			this.newFocusDealer();
-		}
-		else if (event.action == "edit-item") {
-			this.editFocusDealer(event.record.id);
-		}
-		else if (event.action == "delete-item") {
-			this.deleteFocusDealer(event.record.id);
+		// if (event.action == "new-record") {
+		// 	this.newFocusDealer();
+		// }
+		// else if (event.action == "edit-item") {
+		// 	this.editFocusDealer(event.record.id);
+		// }
+		// else if (event.action == "delete-item") {
+		// 	this.deleteFocusDealer(event.record.id);
+		// }
+         if (event.action == "details-item") {
+			this.viewDealerOpening(event.record.id);
 		}
 	}
 

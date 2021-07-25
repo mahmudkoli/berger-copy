@@ -151,7 +151,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var resultDb = new List<DealerOpening>();
 
             var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea) && p.Designation == ((EnumEmployeeRole)currentUser.EmployeeRole).ToString()).FirstOrDefault();
-            
+
             if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
             {
                 resultDb = (List<DealerOpening>)await _dealerOpeningSvc.GetAllAsync();
@@ -202,25 +202,52 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
 
 
-        public async Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model)
+        //public async Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model)
+        //{
+        //    var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+        //    var dealer = _dealerOpeningSvc.Where(p => p.Id == model.DealerOpeningId).FirstOrDefault();
+        //    var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString() && p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
+        //    if (model.Status == (int)DealerOpeningStatus.Approved)
+        //    {
+        //        if (emailConfig != null)
+        //        {
+        //            dealer.NextApprovarId = null;
+        //            dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Approved;
+
+        //        }
+        //        else
+        //        {
+        //            dealer.NextApprovarId = _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Id;
+
+        //        }
+        //        //dealer.NextApprovarId = _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Id;
+
+        //    }
+        //    else if (model.Status == (int)DealerOpeningStatus.Rejected)
+        //    {
+        //        dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Rejected;
+        //    }
+        //    dealer.CurrentApprovarId = AppIdentity.AppUser.UserId;
+        //    await _dealerOpeningSvc.UpdateAsync(dealer);
+        //    await DealerStatusLog(dealer, "DealerStatus", model.Status.ToString());
+        //    if (emailConfig != null)
+        //    {
+        //        await sendEmail(emailConfig.Email, dealer.Id);
+        //    }
+        //    return false;
+        //}
+
+
+        public async Task<bool> ChangeStatusDealer(DealerOpeningStatusChangeModel model)
         {
-            var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+            //var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
             var dealer = _dealerOpeningSvc.Where(p => p.Id == model.DealerOpeningId).FirstOrDefault();
-            var emailConfig = _emailconfig.Where(p => p.Designation == user.EmployeeRole.ToString() && p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
+            var emailConfig = _emailconfig.Where(p => p.BusinessArea == dealer.BusinessArea).FirstOrDefault();
             if (model.Status == (int)DealerOpeningStatus.Approved)
             {
-                if (emailConfig != null)
-                {
-                    dealer.NextApprovarId = null;
-                    dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Approved;
 
-                }
-                else
-                {
-                    dealer.NextApprovarId = _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Id;
+                dealer.DealerOpeningStatus = (int)DealerOpeningStatus.Approved;
 
-                }
-                //dealer.NextApprovarId = _userInfoSvc.Where(p => p.EmployeeId == user.ManagerId).FirstOrDefault().Id;
 
             }
             else if (model.Status == (int)DealerOpeningStatus.Rejected)
@@ -356,30 +383,30 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         public async Task<IEnumerable<AppDealerOpeningModel>> AppGetDealerOpeningListByCurrentUserAsync()
         {
             var result = await (from d in _dealerOpeningSvc.FindAll(x => x.EmployeeId == AppIdentity.AppUser.EmployeeId)
-                         join dep in _depotSvc.GetAll() on d.BusinessArea equals dep.Werks into depleftjoin
-                         from depinfo in depleftjoin.DefaultIfEmpty()
-                         join so in _saleOfficeSvc.GetAll() on d.SaleOffice equals so.Code into soleftjoin
-                         from soinfo in soleftjoin.DefaultIfEmpty()
-                         join sg in _saleGroupSvc.GetAll() on d.SaleGroup equals sg.Code into sgleftjoin
-                         from sginfo in sgleftjoin.DefaultIfEmpty()
-                         join t in _territorySvc.GetAll() on d.Territory equals t.Code into tleftjoin
-                         from tinfo in tleftjoin.DefaultIfEmpty()
-                         join z in _zoneSvc.GetAll() on d.Zone equals z.Code into zleftjoin
-                         from zinfo in zleftjoin.DefaultIfEmpty()
-                         orderby d.CreatedTime descending
-                         select new AppDealerOpeningModel
-                         {
-                             Id = d.Id,
-                             BusinessArea = $"{depinfo.Name1} ({depinfo.Werks})",
-                             SaleOffice = $"{soinfo.Name} ({soinfo.Code})",
-                             SaleGroup = $"{sginfo.Name} ({sginfo.Code})",
-                             Territory = $"{tinfo.Code}",
-                             Zone = $"{zinfo.Code}",
-                             Code = d.Code,
-                             OpeningDate = d.CreatedTime.ToString("yyyy-MM-dd"),
-                             DealerOpeningStatus = d.DealerOpeningStatus,
-                             DealerOpeningStatusText = ((DealerOpeningStatus)d.DealerOpeningStatus).ToString()
-                         }).ToListAsync();
+                                join dep in _depotSvc.GetAll() on d.BusinessArea equals dep.Werks into depleftjoin
+                                from depinfo in depleftjoin.DefaultIfEmpty()
+                                join so in _saleOfficeSvc.GetAll() on d.SaleOffice equals so.Code into soleftjoin
+                                from soinfo in soleftjoin.DefaultIfEmpty()
+                                join sg in _saleGroupSvc.GetAll() on d.SaleGroup equals sg.Code into sgleftjoin
+                                from sginfo in sgleftjoin.DefaultIfEmpty()
+                                join t in _territorySvc.GetAll() on d.Territory equals t.Code into tleftjoin
+                                from tinfo in tleftjoin.DefaultIfEmpty()
+                                join z in _zoneSvc.GetAll() on d.Zone equals z.Code into zleftjoin
+                                from zinfo in zleftjoin.DefaultIfEmpty()
+                                orderby d.CreatedTime descending
+                                select new AppDealerOpeningModel
+                                {
+                                    Id = d.Id,
+                                    BusinessArea = $"{depinfo.Name1} ({depinfo.Werks})",
+                                    SaleOffice = $"{soinfo.Name} ({soinfo.Code})",
+                                    SaleGroup = $"{sginfo.Name} ({sginfo.Code})",
+                                    Territory = $"{tinfo.Code}",
+                                    Zone = $"{zinfo.Code}",
+                                    Code = d.Code,
+                                    OpeningDate = d.CreatedTime.ToString("yyyy-MM-dd"),
+                                    DealerOpeningStatus = d.DealerOpeningStatus,
+                                    DealerOpeningStatusText = ((DealerOpeningStatus)d.DealerOpeningStatus).ToString()
+                                }).ToListAsync();
 
             return result;
         }
@@ -536,8 +563,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var currentUser = AppIdentity.AppUser;
             //var resultDb = new List<DealerOpening>();
 
-            var resultDb = await _dealerOpeningSvc.FindAllAsync(p => p.CurrentApprovarId == currentUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending);
-     
+            var resultDb = await _dealerOpeningSvc.FindAllAsync(p => p.CurrentApprovarId == currentUser.UserId);
+
             var result = _mapper.Map<IEnumerable<DealerOpeningModel>>(resultDb);
 
 
@@ -563,9 +590,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             var total = result.Count();
 
-            //result = result.Where(x =>
-            //         //(string.IsNullOrEmpty(query.Depot) || query.Depot == x.)
-            //         (!query.Territories.Any() || query.Territories.Contains(x.Territory))).ToList();
+            result = result.Where(x =>
+                     (string.IsNullOrEmpty(query.Depot) || query.Depot == x.BusinessArea) &&
+                     (!query.Territories.Any() || query.Territories.Contains(x.Territory))).ToList();
             //&& (!query.Zones.Any() || query.Zones.Contains(x.Zone)));
 
             var filterCount = result.Count();
@@ -573,7 +600,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             //result = (List<DealerOpeningModel>) query.IsSortAscending ? result.OrderBy(keySelector) : result.OrderByDescending(keySelector);
 
-            result =(List<DealerOpeningModel>) result.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize);
+            result = await result.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
 
             //result = result.().ToList();
 

@@ -24,12 +24,13 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         Task<IPagedList<DealerOpeningModel>> GetDealerOpeningListAsync(int index,int pageSize,string search);
         Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search);
         Task<List<DealerOpening>> GetDealerOpeningPendingListForNotificationAsync();
-        Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model);
+        //Task<bool> ChangeDealerStatus(DealerOpeningStatusChangeModel model);
         Task<DealerOpeningModel> GetDealerOpeningDetailById(int id);
         Task<QueryResultModel<DealerOpeningModel>> GetAllDealersAsync(DealerOpeningQueryObjectModel query);
         Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<DealerOpeningModel> UpdateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> files);
         Task<int> DeleteDealerOpeningAsync(int DealerId);
+        Task<bool> ChangeStatusDealer(DealerOpeningStatusChangeModel model);
         #endregion
 
         #region Common
