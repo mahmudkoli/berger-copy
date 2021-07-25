@@ -160,6 +160,18 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerDeliveryUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<CustomerDeliveryDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -1452,6 +1464,30 @@ namespace Berger.Odata.Services
                         .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await GetCustomerCreditData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
+        public async Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CustomerDeliveryColDef.CustomerNo, customerNo)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CustomerDeliveryColDef.DeliveryDate, startDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CustomerDeliveryColDef.DeliveryDate, endDate)
+                                .EndGroup();
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerDeliveryData(queryBuilder.Query)).ToList();
 
             return data;
         }
