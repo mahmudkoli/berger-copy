@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
-using Berger.Common.HttpClient;
-using Berger.Common.JSONParser;
-using Berger.Common.Model;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
-using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
 {
@@ -218,7 +213,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ValueTargetResultModel>> GetMonthlyValueTarget(MTSSearchModel model)
+        public async Task<IList<ValueTargetResultModel>> GetMonthlyValueTarget(MTSSearchModelBase model)
         {
             var currentDateStr = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
             var currentDate = (new DateTime(model.Year, model.Month, 1));
@@ -248,26 +243,26 @@ namespace Berger.Odata.Services
                 if (dataTarget.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
                     var volTar = dataTarget.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue));
-                    var brandNameTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
-                    var custNoTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
-                    var custNameTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
+                    //var brandNameTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    //var custNoTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
+                    //var custNameTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
 
                     //res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameTar : res.MatarialGroupOrBrand;
-                    res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoTar : res.CustomerNo;
-                    res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameTar : res.CustomerName;
+                   // res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoTar : res.CustomerNo;
+                   // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameTar : res.CustomerName;
                     res.TargetValue = volTar;
                 }
 
                 if (dataActual.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
                     var volAct = dataActual.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => x.ActualVolume);
-                    var brandNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
-                    var custNoAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
-                    var custNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
+                   // var brandNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    //var custNoAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
+                    //var custNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
 
                     //res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameAct : res.MatarialGroupOrBrand;
-                    res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoAct : res.CustomerNo;
-                    res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameAct : res.CustomerName;
+                  //  res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoAct : res.CustomerNo;
+                   // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameAct : res.CustomerName;
                     res.ActualValue = volAct;
                 }
 
@@ -280,8 +275,8 @@ namespace Berger.Odata.Services
             if (result.Any())
             {
                 var res = new ValueTargetResultModel();
-                res.CustomerNo = result.FirstOrDefault().CustomerNo;
-                res.CustomerName = result.FirstOrDefault().CustomerName;
+                //res.CustomerNo = result.FirstOrDefault().CustomerNo;
+                //res.CustomerName = result.FirstOrDefault().CustomerName;
                 res.TargetValue = result.Sum(x => x.TargetValue);
                 res.ActualValue = result.Sum(x => x.ActualValue);
                 res.DifferenceValue = res.TargetValue - res.ActualValue;
