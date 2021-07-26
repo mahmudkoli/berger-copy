@@ -9,29 +9,7 @@
     <div class="card-body">
         <form #focusDealerForm="ngForm" (submit)="fnSave()">
             <div class="form-row">
-                <div class="col-md-2">
-
-                    <div class="position-relative form-group">
-                        <label for="name">Role</label>
-                        <!-- <ng-select bindValue="employeeId"
-                                   [(ngModel)]="emailConfigModel.designation"
-                                  >
-
-                            <ng-option *ngFor="let st of employeeRoles;" [value]="st.label">{{st.label}}</ng-option>
-
-                        </ng-select> -->
-
-
-                        <ng-select [items]="employeeRoles"
-                                   bindLabel="label"
-                                   bindValue="label"
-                                   [multiple]="false"
-                                   [(ngModel)]="emailConfigModel.designation"
-                                   name="designation" #designation="ngModel">
-                        </ng-select>
-                    </div>
-
-                </div>
+                
                 <div class="col-md-4">
                     <div class="position-relative form-group">
                         <label for="name">Business Area</label>

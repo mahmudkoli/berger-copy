@@ -73,10 +73,18 @@ export class DealerOpeningDetailComponent implements OnInit {
         this.alertService.fnLoading(true);
         this.dealerOpeningSvc.DealerOpeningStatusChange(this.dealeropening).subscribe(
             (res) => {
+              console.log(res)
             
                 this.router.navigate(["/dealer/openingList"]).then(
                     () => {
+                      if(res.data){
                         this.alertService.tosterSuccess(`Dealer Opening status approved successfully .`);
+
+                      }
+                      else {
+                        this.alertService.tosterInfo(`Dealer Opening status rejected `);
+
+                      }
                     });
               
             },

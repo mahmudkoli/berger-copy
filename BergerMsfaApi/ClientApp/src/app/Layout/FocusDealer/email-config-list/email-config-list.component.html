@@ -13,8 +13,7 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="designation">Role<p-sortIcon field="designation"></p-sortIcon>
-                </th>
+                
                 <th pSortableColumn="businessArea">Business Area <p-sortIcon field="businessArea"></p-sortIcon>
                 </th>
                 <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon>
@@ -25,7 +24,6 @@
         </ng-template>
         <ng-template pTemplate="body" let-emailconfig>
             <tr>
-                <td>{{emailconfig.designation }}</td>
                 <td>{{emailconfig.businessArea}}</td>
                 <td>{{emailconfig.email}}</td>
 
