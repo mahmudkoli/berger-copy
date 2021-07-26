@@ -182,8 +182,6 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 ["customerName"] = v => v.CustomerName,
                 ["customerNo"] = v => v.CustomerNo,
-                ["isExclusiveText"] = v => v.IsExclusive,
-                ["isAPText"] = v => v.IsAP,
                 ["isLastYearAppointedText"] = v => v.IsLastYearAppointed,
                 ["clubSupremeTypeDropdown"] = v => v.ClubSupremeType,
                 ["bussinesCategoryTypeDrodown"] = v => v.BussinesCategoryType,
@@ -229,9 +227,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             switch (dealer.PropertyName)
             {
-                case "IsExclusive": find.IsExclusive = !find.IsExclusive; break;
                 case "IsLastYearAppointed": find.IsLastYearAppointed = !find.IsLastYearAppointed; break;
-                case "IsAP": find.IsAP = !find.IsAP; break;
                 case "ClubSupremeType": find.ClubSupremeType = (EnumClubSupreme)Enum.Parse(typeof(EnumClubSupreme), dealer.PropertyValue.ToString()); break;
                 case "BussinesCategoryType": find.BussinesCategoryType = (EnumBussinesCategory)Enum.Parse(typeof(EnumBussinesCategory), dealer.PropertyValue.ToString()); break;
                 default: break;
@@ -264,9 +260,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string value = "";
             switch (propertyName)
             {
-                case "IsExclusive": value = (dealerInfo.IsExclusive ? "Yes" : "No"); break;
                 case "IsLastYearAppointed": value = (dealerInfo.IsLastYearAppointed ? "Yes" : "No"); break;
-                case "IsAP": value = (dealerInfo.IsAP ? "Yes" : "No"); break;
                 case "ClubSupremeType": value = EnumExtension.GetEnumDescription(dealerInfo.ClubSupremeType); break;
                 case "BussinesCategoryType": value = EnumExtension.GetEnumDescription(dealerInfo.BussinesCategoryType); break;
                 default: break;
@@ -279,9 +273,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string value = "";
             switch (propertyName)
             {
-                case "IsExclusive": value = "Exclusive"; break;
                 case "IsLastYearAppointed": value = "Last Year Appointed"; break;
-                case "IsAP": value = "AP"; break;
                 case "ClubSupremeType": value = "Club Supreme"; break;
                 case "BussinesCategoryType": value = "Bussines Category"; break;
                 default: break;
@@ -311,9 +303,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             switch (model.Type)
             {
-                case EnumDealerStatusExcelImportType.Exclusive:
-                    result = await this.DealerStatusExclusive(model.File);
-                    break;
+                
                 case EnumDealerStatusExcelImportType.LastYearAppointed:
                     result = await this.DealerStatusLastYearAppointed(model.File);
                     break;
@@ -322,9 +312,6 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     break;
                 case EnumDealerStatusExcelImportType.BussinessCategory:
                     result = await this.DealerStatusBussinessCategory(model.File);
-                    break;
-                case EnumDealerStatusExcelImportType.AP:
-                    result = await this.DealerStatusAP(model.File);
                     break;
                 default:
                     break;
@@ -425,7 +412,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                     x.Division == ConstantsODataValue.DivisionDecorative &&
                     (dealerIdList.Contains(x.CustomerNo)
-                    //|| x.BussinesCategoryType != EnumBussinesCategory.NonExclusive
+                    || x.BussinesCategoryType != EnumBussinesCategory.None
                     )
                     )
                 .ToListAsync();
@@ -455,7 +442,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 if (excelModel != null && excelModel.BussinesCategoryType == null) continue; // check if type mismatch then no need to update;
                 if (excelModel != null && dealerInfo.BussinesCategoryType == excelModel.BussinesCategoryType) continue; // check if already same status then no need to update;
 
-                dealerInfo.BussinesCategoryType = excelModel?.BussinesCategoryType ?? EnumBussinesCategory.Exclusive;
+                dealerInfo.BussinesCategoryType = excelModel?.BussinesCategoryType ?? EnumBussinesCategory.None;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
