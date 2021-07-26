@@ -2,7 +2,7 @@ import { QueryObject } from "../Common/query-object";
 
 export class FocusDealer {
     id: number;
-    code: number;
+    dealerId: number;
     employeeId: string;
     validFrom: Date;
     validTo: Date;
@@ -24,7 +24,7 @@ export class FocusDealer {
 
 export class SaveFocusDealer {
     id: number;
-    code: number;
+    dealerId: number;
     employeeId: string;
     validFrom: Date;
     validTo: Date;
@@ -51,5 +51,20 @@ export class FocusDealerQuery extends QueryObject {
         this.depot = '';
         this.territories = [];
         this.zones = [];
+    }
+}
+
+export class DealerOpeningQuery extends QueryObject {
+    depot: string;
+    territories: string[];
+
+    constructor(init?: Partial<FocusDealerQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.depot = '';
+        this.territories = [];
     }
 }

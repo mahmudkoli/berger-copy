@@ -85,7 +85,7 @@ export class FocusDealerAddComponent implements OnInit {
 		console.log(this.focusDealer.validFrom)
 		console.log(this.focusDealer.validTo)
 		this.focusDealerForm = this.formBuilder.group({
-			code: [this.focusDealer.code, [Validators.required]],
+			dealerId: [this.focusDealer.dealerId, [Validators.required]],
 			employeeId: [this.focusDealer.employeeId, [Validators.required]],
 			validFrom: [],
 			validTo: [],
@@ -144,7 +144,7 @@ export class FocusDealerAddComponent implements OnInit {
 		const _focusDealer = new SaveFocusDealer();
 		_focusDealer.clear();
 		_focusDealer.id = this.focusDealer.id;
-		_focusDealer.code = controls['code'].value;
+		_focusDealer.dealerId = controls['dealerId'].value;
 		_focusDealer.employeeId = controls['employeeId'].value;
 		_focusDealer.validFrom = controls['validFrom'].value;
 		_focusDealer.validTo = controls['validTo'].value;

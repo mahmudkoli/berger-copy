@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
 import { FocusDealer, FocusDealerQuery } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
+import { EnumEmployeeRole } from 'src/app/Shared/Enums/employee-role';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
@@ -20,6 +21,7 @@ export class FocusDealerListComponent implements OnInit {
 	query: FocusDealerQuery;
 	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
+	isPermitted=false;
 	focusDealers: FocusDealer[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
@@ -40,10 +42,13 @@ export class FocusDealerListComponent implements OnInit {
 			this.PAGE_SIZE = commonService.PAGE_SIZE;
 			this.ptableSettings.pageSize = this.PAGE_SIZE;
 			this.ptableSettings.enabledServerSitePaggination = true;
+		// this.isAuthorize();
+
 	}
 
 	ngOnInit() {
 		this.searchConfiguration();
+		// this.isAuthorize();
 		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 		// 	this.loadFocusDealersPage();
 		// });
@@ -51,6 +56,13 @@ export class FocusDealerListComponent implements OnInit {
 
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
+	}
+
+	isAuthorize() {
+		var res=this.commonService.getUserInfoFromLocalStorage()
+		this.isPermitted=EnumEmployeeRole.TM_TO==res.employeeRole||EnumEmployeeRole.ZO==res.employeeRole?false:true;
+		// console.log(this.isPermitted)
+		return this.isPermitted;
 	}
   
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
@@ -156,7 +168,7 @@ export class FocusDealerListComponent implements OnInit {
 		enabledDeleteBtn: true,
 		enabledEditBtn: true,
 		enabledColumnFilter: false,
-		enabledRecordCreateBtn: true,
+		enabledRecordCreateBtn: this.isAuthorize(),
 		enabledDataLength: true,
 		newRecordButtonText: 'New Focus Dealer'
 	};

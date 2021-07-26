@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using HTTP = System.Net.Http;
 
 namespace Berger.Common.HttpClient
@@ -27,6 +28,7 @@ namespace Berger.Common.HttpClient
                     var RequestMessage = HttpClientAuthentication.Authenticate(url, username, password);
 
                     _logger.LogInformation($"Http request started with authentication");
+
                     var task = client.SendAsync(RequestMessage);
                     var response = task.Result;
                     response.EnsureSuccessStatusCode();

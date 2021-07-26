@@ -71,7 +71,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.DealerId,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -146,7 +146,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.DealerId,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -166,7 +166,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         private async Task<bool> IsFocusDealerAlreadyAssigned(SaveFocusDealerModel model)
         {
-            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.Code
+            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.DealerId
                    && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
                        || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
                        || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)
@@ -186,6 +186,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 ["isAPText"] = v => v.IsAP,
                 ["isLastYearAppointedText"] = v => v.IsLastYearAppointed,
                 ["clubSupremeTypeDropdown"] = v => v.ClubSupremeType,
+                ["bussinesCategoryTypeDrodown"] = v => v.BussinesCategoryType,
             };
 
             var result = await _dealerInfoRepository.GetAllIncludeAsync(
@@ -232,6 +233,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 case "IsLastYearAppointed": find.IsLastYearAppointed = !find.IsLastYearAppointed; break;
                 case "IsAP": find.IsAP = !find.IsAP; break;
                 case "ClubSupremeType": find.ClubSupremeType = (EnumClubSupreme)Enum.Parse(typeof(EnumClubSupreme), dealer.PropertyValue.ToString()); break;
+                case "BussinesCategoryType": find.BussinesCategoryType = (EnumBussinesCategory)Enum.Parse(typeof(EnumBussinesCategory), dealer.PropertyValue.ToString()); break;
                 default: break;
             }
 
@@ -266,6 +268,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 case "IsLastYearAppointed": value = (dealerInfo.IsLastYearAppointed ? "Yes" : "No"); break;
                 case "IsAP": value = (dealerInfo.IsAP ? "Yes" : "No"); break;
                 case "ClubSupremeType": value = EnumExtension.GetEnumDescription(dealerInfo.ClubSupremeType); break;
+                case "BussinesCategoryType": value = EnumExtension.GetEnumDescription(dealerInfo.BussinesCategoryType); break;
                 default: break;
             }
             return value;
@@ -280,6 +283,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 case "IsLastYearAppointed": value = "Last Year Appointed"; break;
                 case "IsAP": value = "AP"; break;
                 case "ClubSupremeType": value = "Club Supreme"; break;
+                case "BussinesCategoryType": value = "Bussines Category"; break;
                 default: break;
             }
             return value;
@@ -315,6 +319,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     break;
                 case EnumDealerStatusExcelImportType.ClubSupreme:
                     result = await this.DealerStatusClubSupreme(model.File);
+                    break;
+                case EnumDealerStatusExcelImportType.BussinessCategory:
+                    result = await this.DealerStatusBussinessCategory(model.File);
                     break;
                 case EnumDealerStatusExcelImportType.AP:
                     result = await this.DealerStatusAP(model.File);
@@ -399,6 +406,85 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 File = Convert.ToBase64String(writeToFile),
                 FileName = "Dealer_Status_Error_ClubSupreme"
+            };
+        }
+
+        private async Task<DealerStatusExcelExportModel> DealerStatusBussinessCategory(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusBussinessCategoryExcelModel>(file);
+            excelModelList.ForEach(x =>
+            {
+                try { x.BussinesCategoryType = x.BussinesCategoryStatus.ToEnumFromDisplayName<EnumBussinesCategory>(); }
+                catch (Exception ex) { x.BussinesCategoryType = null; }
+            }
+            );
+
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative &&
+                    (dealerIdList.Contains(x.CustomerNo)
+                    //|| x.BussinesCategoryType != EnumBussinesCategory.NonExclusive
+                    )
+                    )
+                .ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
+
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.BussinesCategoryStatus, Result = "Not Found" });
+            }
+            var typeMismatchExcelModels = excelModelList.Where(x => x.BussinesCategoryType == null);
+            foreach (var item in typeMismatchExcelModels)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.BussinesCategoryStatus, Result = "Type Mismatch" });
+            }
+            #endregion
+
+            foreach (var dealerInfo in dbDealerInfoList)
+            {
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (excelModel != null && excelModel.BussinesCategoryType == null) continue; // check if type mismatch then no need to update;
+                if (excelModel != null && dealerInfo.BussinesCategoryType == excelModel.BussinesCategoryType) continue; // check if already same status then no need to update;
+
+                dealerInfo.BussinesCategoryType = excelModel?.BussinesCategoryType ?? EnumBussinesCategory.Exclusive;
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = userId,
+                    PropertyName = "Bussinee Category",
+                    PropertyValue = EnumExtension.GetEnumDescription((EnumBussinesCategory)dealerInfo.BussinesCategoryType)
+                };
+
+                updatedDealerInfos.Add(dealerInfo);
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfoRepository.UpdateListAsync(updatedDealerInfos);
+            await _dealerInfoStatusLogRepository.CreateListAsync(dealerInfoStatusLogs);
+
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_BussinesCategory"
             };
         }
 

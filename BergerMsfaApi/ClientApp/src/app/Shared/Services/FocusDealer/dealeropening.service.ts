@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { APIResponse } from '../../Entity/Response/api-response';
 import { HttpClient } from '@angular/common/http';
+import { CommonService } from '../Common/common.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +12,7 @@ export class DealeropeningService {
 
     constructor(
         private http: HttpClient,
+        private commonService: CommonService,
         @Inject('BASE_URL') baseUrl: string
     ) {
 
@@ -18,9 +20,10 @@ export class DealeropeningService {
         this.baseUrl = baseUrl + 'api/';
     }
 
-    public GetDealerOpeningList(index, pageSize, search) {
-        return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningList/${index}/${pageSize}?search=${search}`);
+    public GetDealerOpeningList(filter) {
+        return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningList?/${this.commonService.toQueryString(filter)}`);
     }
+
     public GetDealerOpeningDetailById(id) {
         return this.http.get<APIResponse>(this.baseUrl + `v1/DealerOpening/GetDealerOpeningDetailById/${id}`);
     }

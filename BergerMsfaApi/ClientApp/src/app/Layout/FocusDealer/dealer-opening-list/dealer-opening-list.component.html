@@ -1,69 +1,10 @@
-<div class="p-3 mb-3 bg-white">
-    <p-table #dt [value]="dealerOpeningList" [globalFilterFields]="['businessArea','saleOffice','zoneNo','territoryNo']">
-    
-        <ng-template pTemplate="caption">
-            <div class="table-header">
-                <h5 class="mb-3"> Dealer Opening List</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div>
-                            <span class="p-input-icon-right">
-                                <i class="pi pi-search"></i>
-                                <input pInputText type="text" class="form-control form-control-sm" (keyup.enter)="onSearch()"
-                                [(ngModel)]="search" placeholder="Search" />
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-    
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
-                <th pSortableColumn="businessAreaName">Business Area <p-sortIcon field="businessAreaName"></p-sortIcon></th>
-                <th pSortableColumn="saleOfficeName">Sale Office <p-sortIcon field="saleOfficeName"></p-sortIcon></th>
-                <th pSortableColumn="saleGroupName">Sale Group<p-sortIcon field="saleGroupName"></p-sortIcon></th>
-                <th pSortableColumn="territoryName">Territory <p-sortIcon field="territoryName"></p-sortIcon></th>
-                <th pSortableColumn="zoneName">Zone <p-sortIcon field="zoneName"></p-sortIcon></th>
-                <th pSortableColumn="employeeId">Employee Id<p-sortIcon field="employeeId"></p-sortIcon></th>
-                <th pSortableColumn="dealerOpeningStatusText">Status<p-sortIcon field="dealerOpeningStatusText"></p-sortIcon></th>
-
-                <th></th>
-            </tr>
-    
-        </ng-template>
-        <ng-template pTemplate="body" let-dOpen>
-            <tr>
-    
-                <td>{{dOpen.code }}</td>
-                <td>{{dOpen.businessAreaName + ' (' + dOpen.businessArea + ')'}}</td>
-    
-                <td>{{dOpen.saleOfficeName+ ' (' + dOpen.saleOffice + ')'}}</td>
-                <td>{{dOpen.saleGroupName+ ' (' + dOpen.saleGroup + ')'}}</td>
-
-                <td>{{dOpen.territoryName }}</td>
-                <td>{{dOpen.zoneName }}</td>
-                <td>{{dOpen.employeeId }}</td>
-                <td>{{dOpen.dealerOpeningStatusText }}</td>
-
-    
-                <td *ngIf="dOpen.nextApprovarId==this.auth.currentUserValue.userId">
-                    <button class="btn btn-sm btn-primary" type="button" (click)="detail(dOpen.id)">View Detail</button>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <p-paginator
-            
-                         #paginator
-                         [rows]="rows"
-                         [totalRecords]="pagingConfig?.totalItemCount"
-                         [pageLinkSize]="10"
-                         [rowsPerPageOptions]="[10,20]"
-                         (onPageChange)="paginate($event)"></p-paginator>
-        </ng-template> 
-    </p-table>
-</div>
+<div class="col col-md-12">
+    <app-search-option [searchOptionQuery]="searchOptionQuery" [searchOptionSettings]="searchOptionSettings" 
+        (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"></app-search-option>
+        
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="dealerOpening" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
+                (customActivityOnRecord)="fnCustomTrigger($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+    </app-p-table>
+  </div>
 
 
