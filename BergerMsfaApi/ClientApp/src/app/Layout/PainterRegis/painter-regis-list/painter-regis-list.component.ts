@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { PainterRegisService } from '../../../Shared/Services/Painter-Regis/painterRegister.service';
 import { APIModel } from 'src/app/Shared/Entity';
 import { Paginator } from 'primeng/paginator';
+import { finalize } from 'rxjs/operators';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-painter-regis-list',
@@ -26,7 +28,8 @@ export class PainterRegisListComponent implements OnInit {
         @Inject('BASE_URL') baseUrl: string,
         private router: Router,
         private painterRegisSvc: PainterRegisService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private modalService: NgbModal,
     ) {
         this.baseUrl = baseUrl;
         this.pagingConfig = new APIModel(1, 10);
@@ -76,6 +79,23 @@ export class PainterRegisListComponent implements OnInit {
     detail(id) {
         this.router.navigate(['/painter/detail/' + id]);
     }
+    updateStatus(id) {
+        this.router.navigate(['/painter/update/' + id]);
+    }
+    
+    updatePainterStatus(painterId: number) {
+		this.alertService.fnLoading(true);
+		const painterStatus = this.painterRegisSvc.UpdatePainterStatus(painterId)
+			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+			.subscribe(
+				(res) => {
+					this.onLoadPainters(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+				},
+				(error) => {
+					console.log(error);
+				});
+	}
+
     onLoadPainters(index,pageSize,search="") {
         this.alertService.fnLoading(true);
 
@@ -83,6 +103,11 @@ export class PainterRegisListComponent implements OnInit {
             (res) => {
                 this.pagingConfig=res.data;
                 this.painterList = this.pagingConfig.model;
+                this.painterList.forEach(obj => {
+                    obj.statusText = (obj.status == 1) ? 'Active' : 'Inactive';
+                    obj.statusBtnClass = 'btn-transition btn btn-sm btn-outline-' + ((obj.status == 1) ? 'primary' : 'warning') + ' d-flex align-items-center';
+                    obj.statusBtnIcon = 'pr-1 fa fa-' + ((obj.status == 1) ? 'check' : 'ban');
+                });
             },
             (error) => {
                 console.log(error);
@@ -90,6 +115,4 @@ export class PainterRegisListComponent implements OnInit {
             () => this.alertService.fnLoading(false)
         );
     }
-
-
 }

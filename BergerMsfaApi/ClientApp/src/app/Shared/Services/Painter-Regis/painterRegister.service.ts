@@ -25,5 +25,8 @@ export class PainterRegisService {
 
         return this.http.get<APIResponse>(this.baseUrl + 'v1/PainterRegis/GetPainterById/' + id);
     }
+    public UpdatePainterStatus(model) {
+        return this.http.put<APIResponse>(this.baseUrl + 'v1/PainterRegis/UpdatePainterStatus', model);
+    }
    
 }
