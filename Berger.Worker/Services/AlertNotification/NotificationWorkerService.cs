@@ -35,143 +35,180 @@ namespace Berger.Worker.Services.AlertNotification
             _paymentFollowupService = paymentFollowupService;
         }
 
-       
+
 
         public async Task<bool> SaveCheckBounceNotification()
         {
             bool result = false;
-            IList<ChequeBounceNotification> lstchequeBounceNotification = new List<ChequeBounceNotification>();
-            var chequeBounceNotification = await _alertNotificationData.GetAllTodayCheckBounces();
-
-            if (chequeBounceNotification.Count > 0)
+            try
             {
-                foreach (var item in chequeBounceNotification)
+                IList<ChequeBounceNotification> lstchequeBounceNotification = new List<ChequeBounceNotification>();
+                var chequeBounceNotification = await _alertNotificationData.GetAllTodayCheckBounces();
+
+                if (chequeBounceNotification.Count > 0)
                 {
-                    ChequeBounceNotification chequeBounce = new ChequeBounceNotification()
+                    foreach (var item in chequeBounceNotification)
                     {
-                        Amount=Convert.ToDecimal(item.Amount),
-                        CreditControlArea=item.CreditControlArea,
-                        BankName=item.BankName,
-                        ChequeNo=item.ChequeNo,
-                        ClearDate= Convert.ToDateTime(item.ClearDate),
-                        PostingDate= Convert.ToDateTime(item.PostingDate),
-                        CustomarNo=item.CustomerNo,
-                        CustomerName=item.CustomerName,
-                        Depot=item.Depot,
-                        DocNumber=item.DocNumber,
-                        NotificationDate=DateTime.Now,
-                        
-                        
-                    };
+                        ChequeBounceNotification chequeBounce = new ChequeBounceNotification()
+                        {
+                            Amount = Convert.ToDecimal(item.Amount),
+                            CreditControlArea = item.CreditControlArea,
+                            BankName = item.BankName,
+                            ChequeNo = item.ChequeNo,
+                            ClearDate = Convert.ToDateTime(item.ClearDate),
+                            PostingDate = Convert.ToDateTime(item.PostingDate),
+                            CustomarNo = item.CustomerNo,
+                            CustomerName = item.CustomerName,
+                            Depot = item.Depot,
+                            DocNumber = item.DocNumber,
+                            NotificationDate = DateTime.Now,
 
-                    lstchequeBounceNotification.Add(chequeBounce);
+
+                        };
+
+                        lstchequeBounceNotification.Add(chequeBounce);
+                    }
+                    result = await _chequeBounceNotificationService.SaveMultipleChequeBounceNotification(lstchequeBounceNotification);
                 }
-                result = await _chequeBounceNotificationService.SaveMultipleChequeBounceNotification(lstchequeBounceNotification);
-            }
 
+            }
+            catch (Exception)
+            {
+
+            }
             return result;
+
         }
 
         public async Task<bool> SaveCreaditLimitNotification()
         {
             bool result = false;
-            IList<CreditLimitCrossNotifiction> lstcreditLimitCrossNotifiction = new List<CreditLimitCrossNotifiction>();
-            var creditLimitCrossNotifiction = await _alertNotificationData.GetAllTodayCreditLimitCross();
 
-            if (creditLimitCrossNotifiction.Count > 0)
+            try
             {
-                foreach (var item in creditLimitCrossNotifiction)
+                IList<CreditLimitCrossNotifiction> lstcreditLimitCrossNotifiction = new List<CreditLimitCrossNotifiction>();
+                var creditLimitCrossNotifiction = await _alertNotificationData.GetAllTodayCreditLimitCross();
+
+                if (creditLimitCrossNotifiction.Count > 0)
                 {
-                    CreditLimitCrossNotifiction creditLimit = new CreditLimitCrossNotifiction()
+                    foreach (var item in creditLimitCrossNotifiction)
                     {
-                        CreditControlArea=item.CreditControlArea,
-                        CreditLimit=item.CreditLimit.ToString(),
-                        CustomarNo=item.CustomerNo,
-                        Zone=item.CustZone,
-                        CustomerName=item.CustomerName,
-                        Division=item.Division,
-                        TotalDue=item.TotalDue.ToString(),
-                        NotificationDate=DateTime.Now,
-                        PriceGroup=item.PriceGroup
-                    };
+                        CreditLimitCrossNotifiction creditLimit = new CreditLimitCrossNotifiction()
+                        {
+                            CreditControlArea = item.CreditControlArea,
+                            CreditLimit = item.CreditLimit.ToString(),
+                            CustomarNo = item.CustomerNo,
+                            Zone = item.CustZone,
+                            CustomerName = item.CustomerName,
+                            Division = item.Division,
+                            TotalDue = item.TotalDue.ToString(),
+                            NotificationDate = DateTime.Now,
+                            PriceGroup = item.PriceGroup
+                        };
 
-                    lstcreditLimitCrossNotifiction.Add(creditLimit);
+                        lstcreditLimitCrossNotifiction.Add(creditLimit);
+                    }
+                    result = await _crossNotifictionService.SaveMultipleCreditLimitCrossNotifiction(lstcreditLimitCrossNotifiction);
                 }
-                result = await _crossNotifictionService.SaveMultipleCreditLimitCrossNotifiction(lstcreditLimitCrossNotifiction);
-            }
 
+            }
+            catch (Exception)
+            {
+
+
+            }
             return result;
+
         }
 
         public async Task<bool> SaveOccassionToCelebrste()
         {
-
             bool result = false;
-            IList<OccasionToCelebrate> lstoccasionToCelebrates = new List<OccasionToCelebrate>();
-            var occassiontocelebrate =await _alertNotificationData.GetAllTodayCustomerOccasions();
 
-            if (occassiontocelebrate.Count > 0)
+            try
             {
-                foreach (var item in occassiontocelebrate)
+                IList<OccasionToCelebrate> lstoccasionToCelebrates = new List<OccasionToCelebrate>();
+                var occassiontocelebrate = await _alertNotificationData.GetAllTodayCustomerOccasions();
+
+                if (occassiontocelebrate.Count > 0)
                 {
-                    OccasionToCelebrate occasion = new OccasionToCelebrate()
+                    foreach (var item in occassiontocelebrate)
                     {
-                        CustomarNo=item.Customer,
-                        CustomerName=item.Name,
-                        DissChannel=item.DistrChannel,
-                        Division=item.Division,
-                        //DOB= string.IsNullOrEmpty(item.DOB)?null : item.DOB.DateFormatDate(),
-                        DOB= convertDate(item.DOB),
-                        NotificationDate=DateTime.Now,
-                        FirsChildDOB= convertDate(item.FirstChildDOB),
-                        SecondChildDOB = convertDate(item.SecondChildDOB),
-                        ThirdChildDOB = convertDate(item.ThirdChildDOB),
-                        SpouseDOB = convertDate(item.SpouseDOB)
+                        OccasionToCelebrate occasion = new OccasionToCelebrate()
+                        {
+                            CustomarNo = item.Customer,
+                            CustomerName = item.Name,
+                            DissChannel = item.DistrChannel,
+                            Division = item.Division,
+                            //DOB= string.IsNullOrEmpty(item.DOB)?null : item.DOB.DateFormatDate(),
+                            DOB = convertDate(item.DOB),
+                            NotificationDate = DateTime.Now,
+                            FirsChildDOB = convertDate(item.FirstChildDOB),
+                            SecondChildDOB = convertDate(item.SecondChildDOB),
+                            ThirdChildDOB = convertDate(item.ThirdChildDOB),
+                            SpouseDOB = convertDate(item.SpouseDOB)
 
-                    };
+                        };
 
-                    lstoccasionToCelebrates.Add(occasion);
+                        lstoccasionToCelebrates.Add(occasion);
+                    }
+                    result = await _occasionToCelebrate.SaveOccasionToCelebrate(lstoccasionToCelebrates);
                 }
-                result= await _occasionToCelebrate.SaveOccasionToCelebrate(lstoccasionToCelebrates);
-            }
 
+            }
+            catch (Exception)
+            {
+
+
+            }
             return result;
+
         }
 
         public async Task<bool> SavePaymnetFollowup()
         {
             bool result = false;
-            IList<PaymentFollowup> lstpaymentFollowup = new List<PaymentFollowup>();
-            var paymentFollowup = await _alertNotificationData.GetAllTodayPaymentFollowUp();
 
-            if (paymentFollowup.Count > 0)
+            try
             {
-                foreach (var item in paymentFollowup)
+                IList<PaymentFollowup> lstpaymentFollowup = new List<PaymentFollowup>();
+                var paymentFollowup = await _alertNotificationData.GetAllTodayPaymentFollowUp();
+
+                if (paymentFollowup.Count > 0)
                 {
-                    PaymentFollowup payment = new PaymentFollowup()
+                    foreach (var item in paymentFollowup)
                     {
-                        InvoiceAge=item.Age,
-                        InvoiceDate= Convert.ToDateTime(item.Date),
-                        PostingDate = Convert.ToDateTime(item.PostingDate),
-                        CustomarNo = item.CustomerNo,
-                        CustomerName=item.CustomerName,
-                        DayLimit=item.DayLimit,
-                        InvoiceNo=item.InvoiceNo,
-                        NotificationDate=DateTime.Now,
-                    };
+                        PaymentFollowup payment = new PaymentFollowup()
+                        {
+                            InvoiceAge = item.Age,
+                            InvoiceDate = Convert.ToDateTime(item.Date),
+                            PostingDate = Convert.ToDateTime(item.PostingDate),
+                            CustomarNo = item.CustomerNo,
+                            CustomerName = item.CustomerName,
+                            DayLimit = item.DayLimit,
+                            InvoiceNo = item.InvoiceNo,
+                            NotificationDate = DateTime.Now,
+                        };
 
-                    lstpaymentFollowup.Add(payment);
+                        lstpaymentFollowup.Add(payment);
+                    }
+                    result = await _paymentFollowupService.SavePaymentFollowup(lstpaymentFollowup);
                 }
-                result = await _paymentFollowupService.SavePaymentFollowup(lstpaymentFollowup);
-            }
 
+            }
+            catch (Exception ex)
+            {
+
+
+            }
             return result;
+
         }
 
 
         private DateTime? convertDate(string date)
         {
-            DateTime result =DateTime.Now;
+            DateTime result = DateTime.Now;
             try
             {
 
