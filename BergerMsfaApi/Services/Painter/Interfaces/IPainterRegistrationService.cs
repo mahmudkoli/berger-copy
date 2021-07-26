@@ -30,6 +30,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
 
         Task<PainterModel> UpdateAsync(PainterModel model);
         Task<PainterModel> GetPainterByIdAsync(int Id);
+        Task<bool> PainterStatusUpdate(PainterStatusUpdateModel id);
 
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile file);
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile profile, List<IFormFile> attachments);

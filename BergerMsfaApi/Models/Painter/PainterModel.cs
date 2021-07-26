@@ -75,13 +75,19 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public List<PainterCallModel> PainterCalls { get; set; }
 
         public List<AttachedDealerDetails> DealerDetails {get;set;}
-
-
+        public int Status { get; set; }
     }
     public class AttachedDealerDetails
     {
         public string CustomerName { get; set; }
         public string CustomerNo { get; set; }
+    }
+
+    public class PainterStatusUpdateModel
+    {
+        public int Id { get; set; }
+        public int Status { get; set; }
+        public string Reason { get; set; }
     }
 
     

@@ -723,5 +723,35 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
         #endregion
+
+        [HttpGet("GetInactivePainters")]
+        public async Task<IActionResult> GetInactivePainters([FromQuery] InactivePainterReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetInactivePainterReportAsync(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadInactivePainters")]
+        public async Task<IActionResult> DownloadInactivePainters([FromQuery] InactivePainterReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetInactivePainterReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

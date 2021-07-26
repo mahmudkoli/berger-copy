@@ -1,5 +1,6 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -53,5 +54,26 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpPut("UpdatePainterStatus")]
+        public async Task<IActionResult> UpdatePainterStatus([FromBody] PainterStatusUpdateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                else if (!await _painterSvc.IsExistAsync(model.Id))
+                {
+                    ModelState.AddModelError(nameof(model), "Painter Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _painterSvc.PainterStatusUpdate(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }

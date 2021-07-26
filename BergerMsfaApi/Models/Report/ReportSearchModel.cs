@@ -52,6 +52,12 @@ namespace BergerMsfaApi.Models.Report
         public int? PainterType { get; set; }
     }
 
+    public class InactivePainterReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public int? PainterType { get; set; }
+    }
+
     public class DealerOpeningReportSearchModel : ReportBaseSearchModel
     {
 
