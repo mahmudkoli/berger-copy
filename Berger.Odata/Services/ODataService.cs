@@ -1038,7 +1038,7 @@ namespace Berger.Odata.Services
                                 .And()
                                 .Equal(BalanceColDef.CustomerLow, customerNo);
 
-            if (!string.IsNullOrEmpty(creditControlArea))
+            if (!string.IsNullOrEmpty(creditControlArea) && creditControlArea != "-1")
             {
                 filterQueryBuilder.And().Equal(BalanceColDef.CreditControlArea, creditControlArea);
             }
@@ -1903,9 +1903,9 @@ namespace Berger.Odata.Services
 
         public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> depots = null, IList<string> territories = null,
-            IList<string> customerNos = null, 
-            string startPostingDate = "", string endPostingDate = "", 
-            string startClearDate = "", string endClearDate = "", 
+            IList<string> customerNos = null,
+            string startPostingDate = "", string endPostingDate = "",
+            string startClearDate = "", string endClearDate = "",
             string creditControlArea = "", string bounceStatus = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
