@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-   // [AuthorizeFilter]
+    // [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -261,12 +261,28 @@ namespace BergerMsfaApi.Controllers.Odata
         //    }
         //}
 
-        [HttpGet("CustomerCredit")]
-        public async Task<IActionResult> GetCustomerCredit([FromQuery] CustomerCreditSearchModel model)
+        [HttpGet("DealerCreditStatus")]
+        [ProducesResponseType(typeof(CustomerCreditStatusResultModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetCustomerCreditStatus([FromQuery] CustomerCreditStatusSearchModel model)
         {
             try
             {
-                var result = await _balanceDataService.GetCustomerCredit(model);
+                var result = await _balanceDataService.GetCustomerCreditStatus(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DeliveryNote")]
+        [ProducesResponseType(typeof(IList<CustomerDeliveryNoteResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetCustomerDeliveryNote([FromQuery] CustomerDeliveryNoteSearchModel model)
+        {
+            try
+            {
+                var result = await _salesDataService.GetCustomerDeliveryNote(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -304,5 +320,36 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("ClubSupremePerformanceSummaryReport")]
+        [ProducesResponseType(typeof(IList<ReportClubSupremePerformanceSummary>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ReportClubSupremePerformanceSummaryReport([FromQuery] ClubSupremePerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportClubSupremePerformanceSummaryReport(model,ClubSupremeReportType.Summary);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        
+        [HttpGet("ClubSupremePerformanceDetailReport")]
+        [ProducesResponseType(typeof(IList<ReportClubSupremePerformanceDetail>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ReportClubSupremePerformanceDetail([FromQuery] ClubSupremePerformanceSearchModel model)
+        {
+            try
+            {
+                var result = await _oDataReportService.ReportClubSupremePerformanceSummaryReport(model, ClubSupremeReportType.Detail);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }

@@ -21,7 +21,8 @@ namespace BergerMsfaApi.Models.Dealer
         public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
-        public string CustomerName { get; set; }
+        public string DealerName { get; set; }
+        public EnumDealerCategory? DealerCategory { get; set; }
         public int? PageNo { get; set; }
         public int? PageSize { get; set; }
 

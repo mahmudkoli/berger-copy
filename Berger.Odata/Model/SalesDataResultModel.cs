@@ -89,10 +89,9 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class BrandOrDivisionWiseMTDResultModel
+    public class BrandWisePerformanceResultModel
     {
-        public string MatarialGroupOrBrandOrDivision { get; internal set; }
-        public decimal LYSM { get; internal set; }
+        public string BrandOrDivision { get; internal set; }
         public decimal LYMTD { get; internal set; }
         public decimal LYYTD { get; internal set; }
         public decimal CYMTD { get; internal set; }
@@ -100,7 +99,7 @@ namespace Berger.Odata.Model
         public decimal GrowthMTD { get; internal set; }
         public decimal GrowthYTD { get; internal set; }
 
-        public BrandOrDivisionWiseMTDResultModel()
+        public BrandWisePerformanceResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

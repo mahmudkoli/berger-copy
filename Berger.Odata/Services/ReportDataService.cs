@@ -135,7 +135,8 @@ namespace Berger.Odata.Services
                                 .Concat(cyDataTarget.Select(x => x.PlantOrBusinessArea))
                                     .Distinct().ToList();
 
-            var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync(x => brands.Any(b => b == x.MatarialGroupOrBrand));
+            //var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync(x => brands.Any(b => b == x.MatarialGroupOrBrand));
+            var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync();
 
             Func<SalesDataModel, string, bool> predicateActual = (x, brand) => x.MatarialGroupOrBrand == brand;
             Func<MTSDataModel, string, bool> predicateTarget = (x, brand) => x.MatarialGroupOrBrand == brand;
@@ -194,6 +195,13 @@ namespace Berger.Odata.Services
                                         ? $"{brandFamilyObj.MatarialGroupOrBrandFamilyName} ({brandFamilyObj.MatarialGroupOrBrandFamily})" 
                                         : $"{brandFamilyObj.MatarialGroupOrBrandName} ({brandFamilyObj.MatarialGroupOrBrand})"
                                     : brand;
+
+                // for showing all group item name code
+                if (model.Type == EnumBrandType.MTSBrands && brandFamilyObj != null)
+                {
+                    brandName = string.Join(", ", brandFamilyInfos.Where(x => x.MatarialGroupOrBrandFamily == brand)
+                                                        .Select(x => $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})"));
+                }
 
                 var tempResult = new MTDBrandPerformanceReportResultModel();
                 tempResult.Depots = cyDataActual.Where(x => predicateActual(x, brand))

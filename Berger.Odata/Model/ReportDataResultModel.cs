@@ -153,6 +153,38 @@ namespace Berger.Odata.Model
         public decimal GrowthYTD { get; set; }
     }
 
+
+    public class ReportClubSupremePerformance
+    {
+        public decimal LYMTD { get; set; }
+        public decimal CYMTD { get; set; }
+        public decimal GrowthMTD { get; set; }
+        public decimal LYYTD { get; set; }
+        public decimal CYYTD { get; set; }
+        public decimal GrowthYTD { get; set; }
+        public string ClubStatus { get; set; }
+
+    }
+
+
+    public class ReportClubSupremePerformanceSummary : ReportClubSupremePerformance
+    {
+        public int NumberOfDealer { get; set; }
+    }
+
+    public class ReportClubSupremePerformanceDetail : ReportClubSupremePerformance
+    {
+        [SJ.JsonIgnore]
+        [NJ.JsonIgnore]
+        public string DepotCode { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+    }
+
+
     public class RptLastYearAppointDlrPerformanceDetailResultModel
     {
         [SJ.JsonIgnore]

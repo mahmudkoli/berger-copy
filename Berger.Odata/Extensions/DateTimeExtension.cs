@@ -12,6 +12,7 @@ namespace Berger.Odata.Extensions
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string FinancialSearchDateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string CollectionSearchDateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
+        public static string DeliverySearchDateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string DateFormat(this DateTime? date) => date.HasValue ? date.Value.DateFormat() : string.Empty;
         public static string DateFormat(this string date) => Convert.ToDateTime(date).DateFormat();
         public static string DateFormat(this DateTime date, string format) => date.ToString(format);

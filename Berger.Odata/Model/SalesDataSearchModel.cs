@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
@@ -9,6 +6,8 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string Division { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
     }
 
     public class InvoiceDetailsSearchModel
@@ -23,12 +22,13 @@ namespace Berger.Odata.Model
         public bool IsOnlyCBMaterial { get; set; }
     }
 
-    public class BrandOrDivisionWiseMTDSearchModel
+    public class BrandWisePerformanceSearchModel
     {
         public string CustomerNo { get; set; }
-        public string Division { get; set; } // "-1" for all
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string Division { get; set; }
         public EnumBrandOrDivision BrandOrDivision { get; set; }
         public EnumVolumeOrValue VolumeOrValue { get; set; }
-        //public EnumPeriod Period { get; set; }
     }
 }

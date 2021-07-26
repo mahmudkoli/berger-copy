@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Berger.Common.Enumerations;
 
 namespace Berger.Odata.Model
 {
@@ -72,8 +73,16 @@ namespace Berger.Odata.Model
         public int Year { get; set; }
         public int Month { get; set; }
         //public LastYearAppointedDealerPerformanceType ReportType { get; set; }
-    }
+    } 
     
+    public class ClubSupremePerformanceSearchModel: AppAreaSearchCommonModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public EnumClubSupreme ClubStatus { get; set; }
+
+    }
+
     public class RprsFollowupSearchModel: AppAreaSearchCommonModel
     {
         public List<string> Division { get; set; } = new List<string>();
