@@ -3120,10 +3120,76 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
         }
 
-        //public dynamic GetInactivePainterReportAsync(PainterRegistrationReportSearchModel query)
-        //{
-            
-        //}
+        public async Task<QueryResultModel<InactivePainterReportResultModel>> GetInactivePainterReportAsync(InactivePainterReportSearchModel query)
+        {
+            var reportResult = new List<InactivePainterReportResultModel>();
 
+            var inactivePainter = await (from psl in _context.PainterStatusLogs
+                                        join p in _context.Painters on psl.PainterId equals p.Id
+                                        where (psl.Status == 0 && p.Status == 0)
+                                        select new
+                                        {
+                                            psl.PainterId,
+                                            psl.CreatedTime,
+                                        }).GroupBy(x => new { x.PainterId }).Select(x => new
+                                        {
+                                            painterId = x.Key.PainterId,
+                                            createdTime = x.Max(x => x.CreatedTime)
+                                        }).ToListAsync();
+
+            var Painterdata = (from ip in inactivePainter
+                              join psl in _context.PainterStatusLogs on ip.painterId equals psl.PainterId
+                              join p in _context.Painters on ip.painterId equals p.Id
+                              join dep in _context.Depots on p.Depot equals dep.Werks
+                              join dd in _context.DropdownDetails on p.PainterCatId equals dd.Id
+                              where (
+                                   (ip.painterId == psl.PainterId && ip.createdTime == psl.CreatedTime)
+                                   && (!query.UserId.HasValue || psl.UserId == query.UserId.Value)
+                                   && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
+                                   && (!query.FromDate.HasValue || psl.CreatedTime.Date >= query.FromDate.Value.Date)
+                                   && (!query.ToDate.HasValue || psl.CreatedTime.Date <= query.ToDate.Value.Date)
+                                   && (!query.SalesGroups.Any() || query.SalesGroups.Contains(p.SaleGroup))
+                                   && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                   && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                   && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
+                                   && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                              )
+                              select new
+                              {
+                                  p.Depot,
+                                  dep.Name1,
+                                  p.Territory,
+                                  p.Zone,
+                                  psl.PainterId,
+                                  p.PainterName,
+                                  p.Address,
+                                  p.Phone,
+                                  dd.DropdownName,
+                                  p.AccDbblNumber,
+                                  psl.Reason
+                              }).ToList();
+
+            reportResult = Painterdata.Select(x => new InactivePainterReportResultModel
+            {
+                DepotIdAndName = $"{x.Depot} {x.Name1}",
+                Territory = x.Territory,
+                Zone = x.Zone,
+                PainterId = x?.PainterId.ToString(),
+                PainterName = x.PainterName,
+                PainterAddress = x.Address,
+                PainterMobileNumber = x.Phone,
+                PainerType = x.DropdownName,
+                RocketDataNumber = x.AccDbblNumber,
+                InactiveReason = x.Reason
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<InactivePainterReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = Painterdata.Count();
+            queryResult.Total = Painterdata.Count();
+
+            return queryResult;
+        }
+    
     }
 }
