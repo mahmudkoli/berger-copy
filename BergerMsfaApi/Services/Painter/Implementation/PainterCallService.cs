@@ -60,6 +60,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             return _mapper.Map<PainterCallModel>(updatePainterCall);
         }
+        
         public async Task<int> DeletePainterCallByIdlAsync(int PainterId)
         {
 
@@ -103,6 +104,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         }
 
         public async Task<bool> IsExistAsync(int Id) => await _painterCallSvc.IsExistAsync(f => f.Id == Id);
+
+        public async Task<bool> IsExistCurrentDays(int painterId)
+        {
+            var painterCall = await _painterCallSvc.FirstOrDefaultAsync(x => x.PainterId == painterId && x.CreatedTime.Date == System.DateTime.Now.Date);
+            return (painterCall == null) ? true : false;
+        }
 
         public async Task<IEnumerable<PainterCallModel>> AppGetPainterCallListAsync(string emplyeeId)
         {
@@ -172,6 +179,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var result = await _painterCallSvc.FindIncludeAsync(f => f.Id == Id, f => f.PainterCompanyMTDValue);
             return _mapper.Map<PainterCallModel>(result);
         }
+        
         public async Task<PainterCallModel> AppCreatePainterCallAsync(string employeeId,PainterCallModel model)
         {
             var _mapper = new MapperConfiguration(config =>
@@ -186,6 +194,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var result = await _painterCallSvc.CreateAsync(painterCall);
             return _mapper.Map<PainterCallModel>(result);
         }
+        
         public async Task<PainterCallModel> AppCreatePainterCallAsync(int PainterId)
         {
             var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.PaintUsageCompany);
@@ -289,7 +298,5 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var updatePainterCall = await _painterCallSvc.UpdateAsync(_painterCall);
             return _mapper.Map<PainterCallModel>(updatePainterCall);
         }
-
-        
     }
 }

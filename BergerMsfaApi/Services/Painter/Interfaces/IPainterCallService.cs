@@ -16,7 +16,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
         Task<PainterCallModel> AppCreatePainterCallAsync(int painterCallId);
         Task<PainterCallModel> AppCreatePainterCallAsync(string employeeId,PainterCallModel model);
         Task<PainterCallModel> AppUpdatePainterCallAsync(string employeeId,PainterCallModel model);
-      
+        Task<bool> IsExistCurrentDays(int painterId);
+
         #endregion
 
         #region Portal

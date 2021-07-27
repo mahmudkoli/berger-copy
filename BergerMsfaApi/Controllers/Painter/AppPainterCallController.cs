@@ -46,6 +46,11 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
+                if (!await _paintCallSvc.IsExistCurrentDays(model.PainterId))
+                {
+                    ModelState.AddModelError(nameof(model.PainterId), "Today this painter already call");
+                    return ValidationResult(ModelState);
+                }
                 var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId, model);
                 return OkResult(result);
             }
