@@ -29,6 +29,7 @@ namespace BergerMsfaApi.Models.Notification
         public string Zone { get; set; }
         public string CurrentApprovar { get; set; }
         public string NextApprovar { get; set; }
+        public string Code { get; set; }
     }
 
     public class NotificationForJourneyPlan

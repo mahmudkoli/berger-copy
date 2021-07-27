@@ -87,24 +87,24 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
 
         }
-        public async Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> attachments)
-        {
-            var user = _userInfoSvc.Where(f => f.EmployeeId == AppIdentity.AppUser.EmployeeId).FirstOrDefault();
+        //public async Task<DealerOpeningModel> CreateDealerOpeningAsync(DealerOpeningModel model, List<IFormFile> attachments)
+        //{
+        //    var user = _userInfoSvc.Where(f => f.EmployeeId == AppIdentity.AppUser.EmployeeId).FirstOrDefault();
 
-            var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
-            _dealerOpening.NextApprovarId = user.Id;
-            _dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
-            var result = await _dealerOpeningSvc.CreateAsync(_dealerOpening);
-            var _dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
-            foreach (var attach in attachments)
-            {
-                var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.DealerOpening);
-                var attachment = await _attachmentSvc.CreateAsync(new Attachment { ParentId = result.Id, Name = attach.FileName, Path = path, Format = Path.GetExtension(attach.FileName), Size = attach.Length, TableName = nameof(DealerOpening) });
-                //   _dealerOpeningModel.Attachments.Add(attachment.ToMap<Attachment,AttachmentModel>());
-            }
+        //    var _dealerOpening = model.ToMap<DealerOpeningModel, DealerOpening>();
+        //    _dealerOpening.CurrentApprovarId = user.Id;
+        //    _dealerOpening.DealerOpeningStatus = (int)DealerOpeningStatus.Pending;
+        //    var result = await _dealerOpeningSvc.CreateAsync(_dealerOpening);
+        //    var _dealerOpeningModel = result.ToMap<DealerOpening, DealerOpeningModel>();
+        //    foreach (var attach in attachments)
+        //    {
+        //        var path = await _fileUploadSvc.SaveImageAsync(attach, attach.Name, FileUploadCode.DealerOpening);
+        //        var attachment = await _attachmentSvc.CreateAsync(new Attachment { ParentId = result.Id, Name = attach.FileName, Path = path, Format = Path.GetExtension(attach.FileName), Size = attach.Length, TableName = nameof(DealerOpening) });
+        //        //   _dealerOpeningModel.Attachments.Add(attachment.ToMap<Attachment,AttachmentModel>());
+        //    }
 
-            return _dealerOpeningModel;
-        }
+        //    return _dealerOpeningModel;
+        //}
 
         public async Task<int> DeleteDealerOpeningAsync(int DealerId)
         {
@@ -144,60 +144,60 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         }
 
 
-        public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
-        {
-            //var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
-            var currentUser = AppIdentity.AppUser;
-            var resultDb = new List<DealerOpening>();
+        //public async Task<IPagedList<DealerOpeningModel>> GetDealerOpeningPendingListAsync(int index, int pageSize, string search)
+        //{
+        //    //var user = _userInfoSvc.Where(p => p.Id == AppIdentity.AppUser.UserId).FirstOrDefault();
+        //    var currentUser = AppIdentity.AppUser;
+        //    var resultDb = new List<DealerOpening>();
 
-            var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea)).FirstOrDefault();
+        //    var emailConfig = _emailconfig.Where(p => currentUser.PlantIdList.Contains(p.BusinessArea)).FirstOrDefault();
             
-            if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
-            {
-                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.GetAllAsync();
-            }
-            else if (emailConfig != null)
-            {
-                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => currentUser.PlantIdList.Contains(p.BusinessArea));
-            }
-            else
-            {
-                resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => p.NextApprovarId == currentUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending);
-            }
+        //    if (currentUser.EmployeeRole == (int)EnumEmployeeRole.Admin || currentUser.EmployeeRole == (int)EnumEmployeeRole.GM)
+        //    {
+        //        resultDb = (List<DealerOpening>)await _dealerOpeningSvc.GetAllAsync();
+        //    }
+        //    else if (emailConfig != null)
+        //    {
+        //        resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => currentUser.PlantIdList.Contains(p.BusinessArea));
+        //    }
+        //    else
+        //    {
+        //        resultDb = (List<DealerOpening>)await _dealerOpeningSvc.FindAllAsync(p => p.NextApprovarId == currentUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending);
+        //    }
 
-            var result = _mapper.Map<List<DealerOpeningModel>>(resultDb.OrderByDescending(o => o.CreatedTime));
+        //    var result = _mapper.Map<List<DealerOpeningModel>>(resultDb.OrderByDescending(o => o.CreatedTime));
 
-            if (!string.IsNullOrEmpty(search))
-                result = result.Search(search);
+        //    if (!string.IsNullOrEmpty(search))
+        //        result = result.Search(search);
 
-            #region get area mapping data
-            var depotIds = result.Select(x => x.BusinessArea).Distinct().ToList();
-            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
-            var saleOfficeIds = result.Select(x => x.SaleOffice).Distinct().ToList();
-            //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
-            //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
+        //    #region get area mapping data
+        //    var depotIds = result.Select(x => x.BusinessArea).Distinct().ToList();
+        //    var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
+        //    var saleOfficeIds = result.Select(x => x.SaleOffice).Distinct().ToList();
+        //    //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
+        //    //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
 
-            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
-            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
-            var saleOffices = (await _saleOfficeSvc.FindAllAsync(x => saleOfficeIds.Contains(x.Code)));
-            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
-            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
+        //    var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
+        //    var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
+        //    var saleOffices = (await _saleOfficeSvc.FindAllAsync(x => saleOfficeIds.Contains(x.Code)));
+        //    //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
+        //    //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
 
-            foreach (var item in result)
-            {
-                item.BusinessAreaName = depots.FirstOrDefault(x => x.Werks == item.BusinessArea)?.Name1 ?? string.Empty;
-                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
-                item.SaleOfficeName = saleOffices.FirstOrDefault(x => x.Code == item.SaleOffice)?.Name ?? string.Empty;
-                //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
-                //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
-                item.TerritoryName = item.Territory;
-                item.ZoneName = item.Zone;
-                item.DealerOpeningStatusText = ((DealerOpeningStatus)item.DealerOpeningStatus).ToString();
-            }
-            #endregion
+        //    foreach (var item in result)
+        //    {
+        //        item.BusinessAreaName = depots.FirstOrDefault(x => x.Werks == item.BusinessArea)?.Name1 ?? string.Empty;
+        //        item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
+        //        item.SaleOfficeName = saleOffices.FirstOrDefault(x => x.Code == item.SaleOffice)?.Name ?? string.Empty;
+        //        //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
+        //        //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
+        //        item.TerritoryName = item.Territory;
+        //        item.ZoneName = item.Zone;
+        //        item.DealerOpeningStatusText = ((DealerOpeningStatus)item.DealerOpeningStatus).ToString();
+        //    }
+        //    #endregion
 
-            return result.ToPagedList(index, pageSize);
-        }
+        //    return result.ToPagedList(index, pageSize);
+        //}
 
 
 
@@ -542,7 +542,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<List<DealerOpening>> GetDealerOpeningPendingListForNotificationAsync()
         {
-            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar, p => p.NextApprovar).Where(p => p.NextApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync();
+            var result = await _dealerOpeningSvc.GetAllInclude(p => p.CurrentApprovar).Where(p => p.CurrentApprovarId == AppIdentity.AppUser.UserId && p.DealerOpeningStatus == (int)DealerOpeningStatus.Pending).ToListAsync();
             return result;
         }
 

@@ -21,15 +21,18 @@ namespace Berger.Common.Enumerations
     public enum EnumBussinesCategory
     {
         [Description("Exclusive")]
-        Exclusive= 0,
+        None= 0,
+
+        [Description("Exclusive")]
+        Exclusive = 1,
 
         [Description("Non-Exclusive")]
-        NonExclusive = 1,
+        NonExclusive = 2,
 
         [Description("Non AP Non-Exclusive")]
-        NonAPNonExclusive = 2,
+        NonAPNonExclusive = 3,
 
         [Description("New Dealer")]
-        NewDealer = 3,
+        NewDealer = 4,
     }
 }
