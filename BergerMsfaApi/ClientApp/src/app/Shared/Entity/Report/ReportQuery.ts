@@ -70,6 +70,19 @@ export class PainterRegisterQuery extends ReportBaseQuery {
     }
 }
 
+export class InactivePainterQuery extends ReportBaseQuery {
+    painterId: number;
+    painterType: number;
+
+    constructor(init?: Partial<InactivePainterQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
 export class DealerOpeningQuery extends ReportBaseQuery {
 
     constructor(init?: Partial<DealerOpeningQuery>) {

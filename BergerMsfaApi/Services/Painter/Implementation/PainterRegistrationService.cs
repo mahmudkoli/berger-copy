@@ -23,6 +23,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 {
     public class PainterRegistrationService : IPainterRegistrationService
     {
+        private readonly IRepository<PainterStatusLog> _painterStatusLog;
         private readonly IRepository<Painter> _painterSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
         private readonly IRepository<PainterAttachment> _painterAttachmentSvc;
@@ -36,7 +37,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
         public PainterRegistrationService(
-            IRepository<Painter> painterSvc,
+             IRepository<PainterStatusLog> painterStatusLog,
+             IRepository<Painter> painterSvc,
              IRepository<PainterAttachment> painterAttachmentSvc,
              IFileUploadService fileUploadSvc,
              IRepository<Attachment> attachmentSvc,
@@ -51,6 +53,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             )
         {
+            _painterStatusLog = painterStatusLog;
             _painterSvc = painterSvc;
             _fileUploadSvc = fileUploadSvc;
             _attachmentSvc = attachmentSvc;
@@ -92,11 +95,32 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
+        public async Task<bool> PainterStatusUpdate(PainterStatusUpdateModel model)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+
+            var find = await _painterSvc.FindAsync(p => p.Id == model.Id);
+            if (find == null) return false;
+
+            find.Status = (Status)model.Status;
+            await _painterSvc.UpdateAsync(find);
+
+            PainterStatusLog painterStatusLog = new PainterStatusLog
+            {
+                CreatedTime = DateTime.Now,
+                PainterId = model.Id,
+                UserId = userId,
+                Status = (Status)model.Status,
+                Reason = model.Reason
+            };
+
+            await _painterStatusLog.CreateAsync(painterStatusLog);
+
+            return true;
+        }
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            
-
             var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
                     painter => painter,
                     painter => painter.Id == Id,
@@ -215,6 +239,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
                 item.TerritoryName = item.Territory;
                 item.ZoneName = item.Zone;
+                item.Status = item.Status;
             }
             #endregion
 
@@ -222,14 +247,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
-
         public async Task<int> DeleteAsync(int Id)
         {
             if (await _attachmentSvc.AnyAsync((f => f.ParentId == Id && f.TableName == nameof(Painter))))
                 await _attachmentSvc.DeleteAsync(f => f.ParentId == Id && f.TableName == nameof(Painter));
             return await _painterSvc.DeleteAsync(f => f.Id == Id);
         }
-
 
         public async Task<bool> IsExistAsync(int Id) => await _painterSvc.IsExistAsync(f => f.Id == Id);
 
@@ -256,7 +279,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             await _painterSvc.UpdateAsync(_painter);
             return _painter.ToMap<Painter, PainterModel>();
         }
-
         public async Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile profile, List<IFormFile> attachments)
         {
             var _painter = await _painterSvc.FindIncludeAsync(f => f.Id == painterId);
@@ -289,11 +311,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         #region App
         public async Task<IEnumerable<PainterModel>> AppGetPainterListAsync(string employeeId)
         {
-
-
             var _painters = await _painterSvc.GetAllIncludeAsync(
                 s => s,
-                f => f.EmployeeId == employeeId,
+                f => f.EmployeeId == employeeId && f.Status == Status.Active,
                 null,
                 a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments).Include(f => f.PainterCat),
                 false
@@ -324,9 +344,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return mapResults;
         }
 
-
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
+            var userId = AppIdentity.AppUser.UserId;
+
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
             _painterImageFileName = _painterImageFileName.Replace(" ", "_");
@@ -343,11 +364,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
             }
 
+            _painter.PainterNo = GeneratePainterNo(userId).Result;
+
             var result = await _painterSvc.CreateAsync(_painter);
             return _mapper.Map<PainterModel>(result);
-
-
-
         }
 
         public async Task<PainterModel> AppUpdatePainterAsync(PainterModel model)
@@ -387,8 +407,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> AppGetPainterByIdAsync(int Id)
         {
-
-
             var painter = (await _painterSvc.GetAllIncludeAsync(
               s => s,
               f => f.Id == Id,
@@ -402,10 +420,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<bool> AppDeletePainterByIdAsync(int Id) => await _painterSvc.DeleteAsync(f => f.Id == Id) == 1 ? true : false;
 
-
         public async Task<PainterModel> AppGetPainterByPhonesync(string Phone)
         {
-
             var result = Task.Run(() =>
 
                 (from p in _painterSvc.GetAll().Where(f => f.Phone == Phone)
@@ -436,6 +452,21 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
+        public async Task<string> GeneratePainterNo(int userId)
+        {
+            var lastPainterNo = await _painterSvc.AnyAsync(p => p.CreatedBy == userId) ?
+                                _painterSvc.Where(p => p.CreatedBy == userId).OrderByDescending(p => p.PainterNo).FirstOrDefault()?.PainterNo : "";
+
+            if (lastPainterNo == null)
+            { 
+                return "1"; 
+            }
+            else
+            {
+                Int32.TryParse(lastPainterNo, out int x);
+                return (x + 1).ToString();
+            }
+        }
 
         #endregion
 

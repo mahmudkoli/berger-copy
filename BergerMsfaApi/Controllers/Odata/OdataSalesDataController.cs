@@ -60,8 +60,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("BrandWiseMTDDetails")]
-        public async Task<IActionResult> GetBrandWiseMTDDetails([FromQuery] BrandWiseMTDSearchModel model)
+        [HttpGet("BrandWiseLiftingTrend")]
+        public async Task<IActionResult> GetBrandWiseLiftingTrend([FromQuery] BrandWiseMTDSearchModel model)
         {
             try
             {
@@ -74,8 +74,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MTSBrandsVolume")]
-        public async Task<IActionResult> GetMTSBrandsVolume([FromQuery] MTSSearchModel model)
+        [HttpGet("CBProductLiftingTrend")]
+        public async Task<IActionResult> GetCBProductLiftingTrend([FromQuery] MTSSearchModel model)
         {
             try
             {
@@ -88,8 +88,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("PremiumBrandPerformance")]
-        public async Task<IActionResult> GetPremiumBrandPerformance([FromQuery] MTSSearchModel model)
+        [HttpGet("PremiumBrandTargetUpdate")]
+        public async Task<IActionResult> GetPremiumBrandTargetUpdate([FromQuery] MTSSearchModel model)
         {
             try
             {
@@ -102,8 +102,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MonthlyValueTarget")]
-        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModel model)
+        [HttpGet("MonthlyValueTargetUpdate")]
+        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModelBase model)
         {
             try
             {

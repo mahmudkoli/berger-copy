@@ -40,6 +40,8 @@
                 </th>
                 <th pSortableColumn="zoneName">Zone <p-sortIcon field="zoneName"></p-sortIcon>
                 </th>
+                <th pSortableColumn="statusText">Status <p-sortIcon field="statusText"></p-sortIcon>
+                </th>
                 <th>
                     View Details
                 </th>
@@ -57,6 +59,11 @@
                 <td>{{painter.saleGroupName + ' (' + painter.saleGroup + ')'}}</td>
                 <td>{{painter.territoryName }}</td>
                 <td>{{painter.zoneName }}</td>
+                <td>
+                    <button [class]="painter.statusBtnClass" (click)="updateStatus(painter.id)" >
+                        <i [class]="painter.statusBtnIcon" aria-hidden="true"></i> {{painter.statusText}}
+                    </button>
+                </td>
                 <td>
                     <button class="btn btn-sm btn-primary" type="button" (click)="detail(painter.id)">View
                         Detail</button>

@@ -37,6 +37,7 @@ namespace BergerMsfaApi.Services.Report.Interfaces
         Task<QueryResultModel<OsOver90daysTrendReportResultModel>> GetOsOver90daysTrendReport(OsOver90daysTrendReportSearchModel query);
         Task<QueryResultModel<LogInReportResultModel>> GetLogInReportAsync(LogInReportSearchModel query);
         Task<QueryResultModel<MerchendizingSnapShotReportResultModel>> GetSnapShotReportAsync(MerchendizingSnapShotReportSearchModel query);
+        Task<QueryResultModel<InactivePainterReportResultModel>> GetInactivePainterReportAsync(InactivePainterReportSearchModel query);
 
         dynamic GetSnapShotReportBySp(MerchendizingSnapShotReportSearchModel query);
         dynamic GetPainterCallReportBySp(PainterCallReportSearchModel query);
@@ -47,7 +48,5 @@ namespace BergerMsfaApi.Services.Report.Interfaces
 
         Task<QueryResultModel<TintingMachineReportResultModel>> GetTintingMachineReportAsync(TintingMachineReportSearchModel query);
         Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query);
-
-
     }
 }
