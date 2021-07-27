@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { CollectionReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { IPTableServerQueryObj } from 'src/app/Shared/Modules/p-table';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { AuthService } from 'src/app/Shared/Services/Users';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import {
   ActivityPermissionService,
@@ -31,10 +35,16 @@ export class CollectionEntryListComponent implements OnInit {
   //     { key: 4, type: 'Customer' },
   //   ];
   customerTypeList: { key: number; type: string }[] = [];
-
+  query: CollectionReportQuery;
+	searchOptionQuery: SearchOptionQuery;
+  PAGE_SIZE: number;
+	totalDataLength: number = 0; // for server side paggination
+	totalFilterDataLength: number = 0; 
   ptableSettings: any = null;
   gridDataSource: any[] = [];
   selectedType: number;
+	private subscriptions: Subscription[] = [];
+
 
   constructor(
     private collectionEntryService: CollectionEntryService,
@@ -50,8 +60,15 @@ export class CollectionEntryListComponent implements OnInit {
 
   ngOnInit() {
     this.loadDynamicDropdown();
+		this.searchConfiguration();
+
     // this.selectedType = CustomerTypeEnum.Dealer;
   }
+  ngOnDestroy() {
+		this.subscriptions.forEach(el => el.unsubscribe());
+	}
+	getData = (query) => this.collectionEntryService.getCollectionByType(query);
+
   private loadDynamicDropdown() {
     this.dynamicDropdownService
       .GetDropdownByTypeCd(EnumDynamicTypeCode.Customer)
@@ -87,7 +104,7 @@ export class CollectionEntryListComponent implements OnInit {
 
   private customerWiseTableConfig(selected) {
     let tableColDef: any;
-    this.gridDataSource = [];
+    // this.gridDataSource = [];
     let tableName: string = '';
     let selectedValue = this.customerTypeList.find((x) => x.key == selected);
     console.log(selectedValue);
@@ -366,7 +383,7 @@ export class CollectionEntryListComponent implements OnInit {
       ];
     }
 
-    this.getCustomerDetails(selected);
+    // this.getCustomerDetails(selected);
     this.configureTable(tableName, tableColDef);
   }
 
@@ -399,6 +416,8 @@ export class CollectionEntryListComponent implements OnInit {
     };
 
 		this.ptableSettings.enabledDeleteBtn = this.authService.isAdmin;
+		this.ptableSettings.enabledEditBtn = this.authService.isAdmin;
+
   }
 
 	public fnCustomTrigger(event) {
@@ -407,6 +426,11 @@ export class CollectionEntryListComponent implements OnInit {
 		
 		if (event.action == "delete-item") {
 			this.deleteCollection(event.record.id);
+			
+		}
+
+    if (event.action == "edit-item") {
+			//Edit code..
 			
 		}
 	}
@@ -429,5 +453,85 @@ export class CollectionEntryListComponent implements OnInit {
 						});
 			},
 			() => { });
+	}
+  searchConfiguration() {
+		this.query = new CollectionReportQuery({
+			page: 1,
+			pageSize: this.PAGE_SIZE,
+			sortBy: 'createdTime',
+			isSortAscending: false,
+			globalSearchValue: '',
+			depot: '',
+			salesGroups: [],
+			territories: [],
+			zones: [],
+			userId: null,
+			date: null,
+			dealerId: null,
+			paymentMethodId: null,
+			paymentFromId: null,
+
+		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
+	}
+
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Date, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.PaymentMethodId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.PaymentFromId, isRequired:true}),
+
+		]});
+
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.depot = queryObj.depot;
+		this.query.salesGroups = queryObj.salesGroups;
+		this.query.territories = queryObj.territories;
+		this.query.zones = queryObj.zones;
+		this.query.date = queryObj.date;
+		this.query.userId = queryObj.userId;
+		this.query.dealerId = queryObj.dealerId;
+		this.query.paymentMethodId = queryObj.paymentMethodId;
+		this.query.paymentFromId = queryObj.paymentFromId;
+
+		// this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
+		this.loadCollectionData();
+	}
+
+  serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
+		console.log('server site : ', queryObj);
+		this.query.page = queryObj.pageNo;
+		this.query.pageSize = queryObj.pageSize;
+		this.query.sortBy = queryObj.orderBy || this.query.sortBy;
+		this.query.isSortAscending = queryObj.isOrderAsc || this.query.isSortAscending;
+		this.query.globalSearchValue = queryObj.searchVal;
+		this.loadCollectionData();
+	}
+
+  loadCollectionData() {
+		this.alertService.fnLoading(true);
+		const reportsSubscription = this.getData(this.query)
+			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+			.subscribe(
+				(res) => {
+					this.gridDataSource = res.data.items;
+					this.totalDataLength = res.data.total;
+					this.totalFilterDataLength = res.data.totalFilter;
+					console.log("res.data", res);
+
+          this.onChange(this.searchOptionQuery.paymentFromId);
+				},
+				(error) => {
+					console.log(error);
+				});
+		this.subscriptions.push(reportsSubscription);
 	}
 }

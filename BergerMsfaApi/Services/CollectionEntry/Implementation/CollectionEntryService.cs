@@ -1,9 +1,13 @@
-﻿using Berger.Common.Extensions;
+﻿using Berger.Common.Constants;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.CollectionEntry;
+using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +24,18 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
         private readonly IRepository<CreditControlArea> _creditControlArea;
         private readonly IRepository<DropdownDetail> _dropdownDetail;
+        private readonly ApplicationDbContext _context;
+
         public CollectionEntryService(
             IRepository<Payment> payment,
             IRepository<DropdownDetail> dropdownDetail,
-        IRepository<CreditControlArea> creditControlArea)
+        IRepository<CreditControlArea> creditControlArea,
+        ApplicationDbContext context)
         {
             _payment = payment;
             _creditControlArea = creditControlArea;
             _dropdownDetail = dropdownDetail;
+            _context = context;
         }
         public async Task<PaymentModel> CreateAsync(PaymentModel model)
         {
@@ -37,11 +45,69 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
         }
         public async Task<int> DeleteAsync(int id) => await _payment.DeleteAsync(s => s.Id == id);
 
-        public async Task<IEnumerable<PaymentModel>> GetCollectionByType(int CustomerTypeId)
+        public async Task<QueryResultModel<PaymentModel>> GetCollectionByType(CollectionReportSearchModel query)
         {
-            
-            var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControlArea).Where(f=>f.CustomerTypeId==CustomerTypeId).OrderByDescending(x => x.CollectionDate);
-            return result.Select(s => new PaymentModel()
+            var dealers = await (from p in _context.Payments
+                                 join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                 from uinfo in uleftjoin.DefaultIfEmpty()
+                                 join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                 from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                 join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                 from dpminfo in dpmleftjoin.DefaultIfEmpty()
+                                 join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                 from cainfo in caleftjoin.DefaultIfEmpty()
+                                 join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                 from dinfo in dleftjoin.DefaultIfEmpty()
+                                 join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
+                                 from tinfo in tleftjoin.DefaultIfEmpty()
+                                 join z in _context.Zone on dinfo.CustZone equals z.Code into zleftjoin
+                                 from zinfo in zleftjoin.DefaultIfEmpty()
+                                 join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
+                                 from depinfo in depleftjoin.DefaultIfEmpty()
+                                 where (
+                                   dctinfo.DropdownName == ConstantsCustomerTypeValue.Dealer
+                                   && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                   && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
+                                   && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
+                                   && (!query.PaymentMethodId.HasValue || dpminfo.Id == query.PaymentMethodId.Value)
+                                   && (!query.DealerId.HasValue || dinfo.Id == query.DealerId.Value)
+                                   && (!query.Date.HasValue || p.CollectionDate.Date == query.Date.Value.Date)
+                                   && (!query.PaymentFromId.HasValue || dctinfo.Id == query.PaymentFromId)
+                                   && (!string.IsNullOrEmpty(query.Depot) || depinfo.Werks == query.Depot)
+                                 )
+                                 select new
+                                 {
+                                     p.CreditControlArea,
+                                     p.PaymentMethod,
+                                     p.CustomerType,
+                                     p.EmployeeId,
+                                     p.Id,
+                                     uinfo.Email,
+                                     p.CollectionDate,
+                                     customerType = dctinfo.DropdownName,
+                                     p.SapId,
+                                     projectName = p.Name,
+                                     p.Address,
+                                     paymentMethod = dpminfo.DropdownName,
+                                     creditControlArea = cainfo.Description,
+                                     p.BankName,
+                                     p.Number,
+                                     p.Amount,
+                                     p.ManualNumber,
+                                     p.Remarks,
+                                     p.Name,
+                                     p.MobileNumber,
+                                     depotId = depinfo.Werks,
+                                     depotName = depinfo.Name1,
+                                     territoryName = tinfo.Name,
+                                     zoneName = zinfo.Name,
+                                     p.Code,
+                                     dinfo.CustomerNo
+                                 }).ToListAsync();
+
+            //var result = _payment.GetAllInclude(f => f.PaymentMethod, f => f.CreditControlArea).Where(f=>true).OrderByDescending(x => x.CollectionDate).
+            var result = dealers.
+            Select(s => new PaymentModel()
             {
                 Id = s.Id,
                 Amount = s.Amount,
@@ -64,7 +130,14 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
 
 
-            }).ToList();
+            }).OrderByDescending(p=>p.CollectionDate).ToList();
+
+            var queryResult = new QueryResultModel<PaymentModel>();
+            queryResult.Items = result;
+            queryResult.TotalFilter = result.Count();
+            queryResult.Total = result.Count();
+
+            return queryResult;
         }
 
         public  async Task<IEnumerable<PaymentModel>> GetCollectionList()
@@ -132,12 +205,20 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
         public async Task<bool> IsExistAsync(int id) => await _payment.IsExistAsync(f => f.Id == id);
 
-        public async Task<PaymentModel> UpdateAsync(PaymentModel model)
+        public async Task<PaymentModel> UpdateAsync(Payment model)
         {
-            var mapModel = model.ToMap<PaymentModel, Payment>();
-            var result = await _payment.UpdateAsync(mapModel);
+            //var mapModel = model.ToMap<PaymentModel, Payment>();
+            var result = await _payment.UpdateAsync(model);
   
             return result.ToMap<Payment, PaymentModel>();
+        }
+
+        public async Task<PaymentModel> GetCollectionById(int Id)
+        {
+            var result =await _payment.FindByCondition(p => p.Id == Id).FirstOrDefaultAsync();
+            var mapModel = result.ToMap<Payment, PaymentModel>();
+
+            return mapModel;
         }
     }
 }
