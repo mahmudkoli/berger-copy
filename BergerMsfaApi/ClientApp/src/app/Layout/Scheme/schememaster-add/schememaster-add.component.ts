@@ -70,7 +70,7 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		this.schemeMasterForm = this.formBuilder.group({
 			schemeName: [this.schemeMaster.schemeName, [Validators.required, Validators.pattern(/^(?!\s+$).+/)]],
 			condition: [this.schemeMaster.condition],
-			businessArea: [this.schemeMaster.businessArea],
+			businessArea: [this.schemeMaster.businessArea, [!this.checkrole()? Validators.required: Validators.nullValidator]],
 			// status: [this.schemeMaster.status, [Validators.required]]
 		});
 	}
@@ -165,5 +165,14 @@ export class SchememasterAddComponent implements OnInit, OnDestroy {
 		} else {
 			// this.alertService.tosterDanger(errorDetails.error.message);
 		}
+	}
+
+	checkrole(){
+		console.log(this.commonService.getUserInfoFromLocalStorage())
+		let user=this.commonService.getUserInfoFromLocalStorage()
+		if(user.roleId==6){
+			return true;
+		}
+		return false;
 	}
 }
