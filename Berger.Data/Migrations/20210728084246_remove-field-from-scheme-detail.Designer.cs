@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210728084246_remove-field-from-scheme-detail")]
+    partial class removefieldfromschemedetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2444,9 +2446,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("PainterCatId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PainterCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PainterImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -2535,18 +2534,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AccChangeReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccDbblHolderName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccDbblNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -2577,29 +2564,14 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("HasUsageEftTools")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsAppInstalled")
-                        .HasColumnType("bit");
-
-                    b.Property<float>("Loyality")
-                        .HasColumnType("real");
-
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NoOfPainterAttached")
-                        .HasColumnType("int");
-
                     b.Property<int>("PainterId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PainterName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SaleGroup")
                         .HasColumnType("nvarchar(max)");
