@@ -62,11 +62,12 @@ namespace BergerMsfaApi.Controllers.Notification
                                 Id=item.Id,
                                 BusinessArea = item.BusinessArea,
                                 CurrentApprovar = item.CurrentApprovar?.UserName,
-                                NextApprovar = item.NextApprovar?.UserName,
+                                //NextApprovar = item.NextApprovar?.UserName,
                                 SaleGroup = item.SaleGroup,
                                 SaleOffice = item.SaleOffice,
                                 Territory = item.Territory,
-                                Zone = item.Zone
+                                Zone = item.Zone,
+                                Code=item.Code
                             });
                     }
                 }

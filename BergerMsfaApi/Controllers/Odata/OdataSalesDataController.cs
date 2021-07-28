@@ -102,8 +102,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MonthlyValueTarget")]
-        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModel model)
+        [HttpGet("MonthlyValueTargetUpdate")]
+        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModelBase model)
         {
             try
             {
