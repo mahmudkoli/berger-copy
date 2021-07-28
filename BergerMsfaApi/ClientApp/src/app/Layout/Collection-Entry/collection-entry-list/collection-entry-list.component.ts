@@ -480,7 +480,6 @@ export class CollectionEntryListComponent implements OnInit {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Date, isRequired:false}),
@@ -494,7 +493,6 @@ export class CollectionEntryListComponent implements OnInit {
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
 		this.query.date = queryObj.date;

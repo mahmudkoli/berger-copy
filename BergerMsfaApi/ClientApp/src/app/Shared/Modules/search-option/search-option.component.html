@@ -84,10 +84,10 @@
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('date')}">Date</label>
                     <div class="input-group w-100">
-                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpdate" formControlName="date"
-                            ngbDatepicker #dpToDate="ngbDatepicker" [placement]="'bottom'">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpDate" formControlName="date"
+                            ngbDatepicker #dpDate="ngbDatepicker" [placement]="'bottom'">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary calendar" (click)="dpdate.toggle()" type="button"></button>
+                            <button class="btn btn-outline-secondary calendar" (click)="dpDate.toggle()" type="button"></button>
                         </div>
                     </div>
                     <small class="text-danger" *ngIf="(formControls.date.touched && formControls.date.errors) || 
