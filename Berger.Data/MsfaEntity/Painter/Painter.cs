@@ -39,6 +39,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public float Loyality { get; set; }
         public string EmployeeId { get; set; }
         public string PainterNo { get; set; }
+        public string PainterCode { get; set; }
 
         public List<AttachedDealerPainter> AttachedDealers { get; set; } 
         public List<PainterAttachment> Attachments { get; set; }
