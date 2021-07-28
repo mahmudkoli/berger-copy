@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210728054631_update-painters-call")]
+    partial class updatepainterscall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2368,8 +2370,6 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DealerId");
-
                     b.HasIndex("PainterCallId");
 
                     b.ToTable("AttachedDealerPainterCalls");
@@ -4183,12 +4183,6 @@ namespace Berger.Data.Migrations
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainterCall", b =>
                 {
-                    b.HasOne("Berger.Data.MsfaEntity.SAPTables.DealerInfo", "Dealer")
-                        .WithMany()
-                        .HasForeignKey("DealerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.PainterCall", "PainterCall")
                         .WithMany("AttachedDealers")
                         .HasForeignKey("PainterCallId")

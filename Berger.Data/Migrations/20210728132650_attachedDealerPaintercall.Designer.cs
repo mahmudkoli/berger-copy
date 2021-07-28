@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210728132650_attachedDealerPaintercall")]
+    partial class attachedDealerPaintercall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2354,6 +2356,9 @@ namespace Berger.Data.Migrations
                     b.Property<int>("DealerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DealerIdId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
@@ -2368,7 +2373,7 @@ namespace Berger.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DealerId");
+                    b.HasIndex("DealerIdId");
 
                     b.HasIndex("PainterCallId");
 
@@ -4185,9 +4190,7 @@ namespace Berger.Data.Migrations
                 {
                     b.HasOne("Berger.Data.MsfaEntity.SAPTables.DealerInfo", "Dealer")
                         .WithMany()
-                        .HasForeignKey("DealerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DealerIdId");
 
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.PainterCall", "PainterCall")
                         .WithMany("AttachedDealers")
