@@ -56,8 +56,7 @@ export class CollectionEntryEditComponent implements OnInit {
 					.subscribe(res => {
 						if (res) {
 							this.payment = res.data as Payments;
-							console.log(this.payment);
-							this.initFocusDealers();
+							this.initCollectionForm();
 						}
 					});
 			} else {
@@ -89,7 +88,6 @@ export class CollectionEntryEditComponent implements OnInit {
 			this.lstpaymentmethod = paymentMethod.data;
 			this.lstCustomerType = customerType.data;
 			this.lstCreditControl = creditControlAreas.data;
-			console.log(this.lstCreditControl,"Credit control area");
 			
 
         }, (err) => { }, () => { });
@@ -97,7 +95,7 @@ export class CollectionEntryEditComponent implements OnInit {
 		this.subscriptions.push(forkJoinSubscription1);
     }
 
-	initFocusDealers() {
+	initCollectionForm() {
 		this.createForm();
 	}
 
@@ -180,7 +178,7 @@ export class CollectionEntryEditComponent implements OnInit {
 		const updateSubscription = this.collectionEntryServiceService.updateCollection(_payment)
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
-				this.alertService.tosterSuccess(`Focus Dealer has been saved successfully.`);
+				this.alertService.tosterSuccess(`Collection Entry has been updated successfully.`);
 				this.goBack();
 			},
 				error => {
@@ -190,17 +188,12 @@ export class CollectionEntryEditComponent implements OnInit {
 	}
 
 	getComponentTitle() {
-		let result = 'Create Focus Dealer';
-		if (!this.payment || !this.payment.id) {
-			return result;
-		}
-
-		result = `Edit Focus Dealer - ${this.payment.name}`;
+		let result = `Edit Collection Form - ${this.payment.name}`;
 		return result;
 	}
 
 	goBack() {
-		this.router.navigate([`/dealer/focus-dealer-list`], { relativeTo: this.activatedRoute });
+		this.router.navigate([`/collection/payment-list`], { relativeTo: this.activatedRoute });
 	}
 
 	stringToInt(value): number {

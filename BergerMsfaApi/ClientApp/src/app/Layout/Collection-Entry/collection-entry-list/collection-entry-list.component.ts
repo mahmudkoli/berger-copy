@@ -431,6 +431,7 @@ export class CollectionEntryListComponent implements OnInit {
 
     if (event.action == "edit-item") {
 			//Edit code..
+      this.router.navigate([`/collection/payment-details/${event.record.id}`]);
 			
 		}
 	}
