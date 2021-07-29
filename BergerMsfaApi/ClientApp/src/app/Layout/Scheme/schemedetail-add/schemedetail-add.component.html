@@ -62,13 +62,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Rate In Drum</label>
-                        <input type="text" class="form-control" formControlName="rateInDrum"
-                                [ngClass]="{'is-valid':formControls.rateInDrum.touched && !formControls.rateInDrum.errors,
-                                'is-invalid':formControls.rateInDrum.touched && formControls.rateInDrum.errors }" />
-                        <small class="text-danger" *ngIf="formControls.rateInDrum.touched && formControls.rateInDrum.errors">
-                            <span *ngIf="formControls.rateInDrum.errors.required">Rate In Drum is <strong>required</strong></span>
-                            <span *ngIf="formControls.rateInDrum.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+                        <label class="required">Rate In SKU</label>
+                        <input type="text" class="form-control" formControlName="rateInSKU"
+                                [ngClass]="{'is-valid':formControls.rateInSKU.touched && !formControls.rateInSKU.errors,
+                                'is-invalid':formControls.rateInSKU.touched && formControls.rateInSKU.errors }" />
+                        <small class="text-danger" *ngIf="formControls.rateInSKU.touched && formControls.rateInSKU.errors">
+                            <span *ngIf="formControls.rateInSKU.errors.required">Rate In SKU is <strong>required</strong></span>
+                            <span *ngIf="formControls.rateInSKU.errors.pattern">Please, Enter valid characters (not only spaces)</span>
                         </small>
                     </div>
                 </div>
@@ -196,54 +196,6 @@
 
 
 
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Scheme Id</label>
-                        <input type="text" class="form-control" formControlName="schemeId"
-                                [ngClass]="{'is-valid':formControls.schemeId.touched && !formControls.schemeId.errors,
-                                'is-invalid':formControls.schemeId.touched && formControls.schemeId.errors }" />
-                        <small class="text-danger" *ngIf="formControls.schemeId.touched && formControls.schemeId.errors">
-                            <span *ngIf="formControls.schemeId.errors.required">Scheme Id is <strong>required</strong></span>
-                            <span *ngIf="formControls.schemeId.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Product</label>
-                        <input type="text" class="form-control" formControlName="material"
-                                [ngClass]="{'is-valid':formControls.material.touched && !formControls.material.errors,
-                                'is-invalid':formControls.material.touched && formControls.material.errors }" />
-                        <small class="text-danger" *ngIf="formControls.material.touched && formControls.material.errors">
-                            <span *ngIf="formControls.material.errors.required">Product is <strong>required</strong></span>
-                            <span *ngIf="formControls.material.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Target Volume</label>
-                        <input type="text" class="form-control" formControlName="targetVolume"
-                                [ngClass]="{'is-valid':formControls.targetVolume.touched && !formControls.targetVolume.errors,
-                                'is-invalid':formControls.targetVolume.touched && formControls.targetVolume.errors }" />
-                        <small class="text-danger" *ngIf="formControls.targetVolume.touched && formControls.targetVolume.errors">
-                            <span *ngIf="formControls.targetVolume.errors.required">Target Volume is <strong>required</strong></span>
-                            <span *ngIf="formControls.targetVolume.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Benefit</label>
-                        <input type="text" class="form-control" formControlName="benefit"
-                                [ngClass]="{'is-valid':formControls.benefit.touched && !formControls.benefit.errors,
-                                'is-invalid':formControls.benefit.touched && formControls.benefit.errors }" />
-                        <small class="text-danger" *ngIf="formControls.benefit.touched && formControls.benefit.errors">
-                            <span *ngIf="formControls.benefit.errors.required">Benefit is <strong>required</strong></span>
-                            <span *ngIf="formControls.benefit.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Status</label>

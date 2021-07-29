@@ -13,17 +13,14 @@ namespace BergerMsfaApi.Models.Scheme
         public string Code { get; set; }
         public string Brand { get; set; }
         public string RateInLtrOrKg { get; set; }
-        public string RateInDrum { get; set; }
+        public string RateInSKU { get; set; }
 
         //National Scheme (Value)
         public string Slab { get; set; }
         public string Condition { get; set; }
         //public string BenefitDate { get; set; }
 
-        //Painter Scheme
-        public string SchemeId { get; set; }
-        public string Material { get; set; }
-        public string TargetVolume { get; set; }
+
 
         //Common
         public DateTime BenefitStartDate { get; set; }
@@ -35,7 +32,6 @@ namespace BergerMsfaApi.Models.Scheme
         public string SchemeMasterName { get; set; }
         public string SchemeMasterCondition { get; set; }
         public Status Status { get; set; }
-        public string Benefit { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -56,20 +52,13 @@ namespace BergerMsfaApi.Models.Scheme
         public string Code { get; set; }
         public string Brand { get; set; }
         public string RateInLtrOrKg { get; set; }
-        public string RateInDrum { get; set; }
+        public string RateInSKU { get; set; }
 
         //National Scheme (Value)
         public string Slab { get; set; }
         public string Condition { get; set; }
         public string BenefitDate { get; set; }
 
-        //Painter Scheme
-        public string SchemeId { get; set; }
-        public string Material { get; set; }
-        public string TargetVolume { get; set; }
-
-        //Common
-        public string Benefit { get; set; }
 
         public int SchemeMasterId { get; set; }
         public Status Status { get; set; }
@@ -90,17 +79,13 @@ namespace BergerMsfaApi.Models.Scheme
         //public string Code { get; set; }
         public string Brand { get; set; }
         public string RateInLtrOrKg { get; set; }
-        public string RateInDrum { get; set; }
+        public string RateInSKU { get; set; }
 
         //National Scheme (Value)
         public string Slab { get; set; }
         public string Condition { get; set; }
         //public string BenefitDate { get; set; }
 
-        //Painter Scheme
-        public string SchemeId { get; set; }
-        public string Material { get; set; }
-        public string TargetVolume { get; set; }
 
         //Common
         public string BenefitStartDate { get; set; }
@@ -110,7 +95,6 @@ namespace BergerMsfaApi.Models.Scheme
         public string SchemeMasterName { get; set; }
         public string SchemeMasterCondition { get; set; }
         public Status Status { get; set; }
-        public string Benefit { get; set; }
 
         public void Mapping(Profile profile)
         {

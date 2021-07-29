@@ -61,9 +61,17 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                 ["schemeName"] = v => v.SchemeName
             };
 
+            var user = AppIdentity.AppUser;
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString()) ;
+
+
+
             var result = (from sm in _applicationDbContext.SchemeMasters
                           join dep in _applicationDbContext.Depots on sm.BusinessArea equals dep.Werks into details
                           from m in details.DefaultIfEmpty()
+                          where (
+                          isPermitted? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
+                          )
                           select new SchemeMasterModel
                           {
                               SchemeName = sm.SchemeName,
@@ -162,11 +170,16 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
 
         public async Task<object> GetAllSchemeMastersForSelectAsync()
         {
-
+            var user = AppIdentity.AppUser;
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
             var result = await (from sm in _applicationDbContext.SchemeMasters
                 join d in _applicationDbContext.Depots on sm.BusinessArea equals d.Werks into depots
                 from dep in depots.DefaultIfEmpty()
-                select new
+                where(
+                  isPermitted? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
+
+                )
+                                select new
                 {
                     sm.Id,
                     Label = string.IsNullOrWhiteSpace(sm.BusinessArea)
@@ -214,12 +227,17 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                 ["benefitStartDateText"] = v => v.BenefitStartDate,
                 ["benefitEndDateText"] = v => v.BenefitEndDate
             };
-
+            var user = AppIdentity.AppUser;
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
             var result = (
                             from sm in _applicationDbContext.SchemeMasters
                             join det in _applicationDbContext.SchemeDetails on sm.Id equals det.SchemeMasterId
                             join dep in _applicationDbContext.Depots on sm.BusinessArea equals dep.Werks into details
                             from m in details.DefaultIfEmpty()
+                            where(
+                                isPermitted ? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
+
+                            )
                             select new SchemeDetailModel
                             {
                                 SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + " - " + m.Name1 + " (" + sm.BusinessArea + ")" : sm.SchemeName,
@@ -227,10 +245,8 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                                 Condition = det.Condition,
                                 Brand = det.Brand,
                                 Slab = det.Slab,
-                                Material = det.Material,
                                 Status = sm.Status,
                                 Id = det.Id,
-                                Benefit = det.Benefit,
                                 BenefitStartDate = det.BenefitStartDate,
                                 BenefitEndDate = det.BenefitEndDate,
                                 BenefitStartDateText = det.BenefitStartDate.ToString("yyyy-MM-dd"),
