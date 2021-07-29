@@ -106,6 +106,7 @@ export class CollectionEntryEditComponent implements OnInit {
 		this.paymentForm = this.formBuilder.group({
 			// dealerId: [this.payment.code, [Validators.required]],
 			employeeId: [this.payment.employeeId],
+			name: [this.payment.name],
 			address: [this.payment.address],
 			mobileNumber: [this.payment.mobileNumber],
 			bankName: [this.payment.bankName],
@@ -148,6 +149,7 @@ console.log(this.paymentForm);
 		_payments.id = this.payment.id;
 		_payments.dealerId = controls['dealerId'].value;
 		_payments.employeeId = controls['employeeId'].value;
+		_payments.name = controls['name'].value;
 		_payments.address = controls['address'].value;
 		_payments.mobileNumber = controls['mobileNumber'].value;
 		_payments.bankName = controls['bankName'].value;
@@ -165,7 +167,7 @@ console.log(this.paymentForm);
 		_payments.status=this.payment.status;
 		_payments.collectionDate=this.payment.collectionDate;
 		_payments.sapId=this.payment.sapId;
-		_payments.name=this.payment.name;
+		// _payments.name=this.payment.name;
 
 
 
@@ -200,6 +202,16 @@ console.log(this.paymentForm);
 
 	stringToInt(value): number {
 		return Number.parseInt(value);
+	}
+
+	changeDealer() {
+		var dealerId = this.paymentForm.controls['dealerId'].value;
+		if (dealerId) {
+			var dealer = this.dealers.find(x => x.id == dealerId);
+			if (dealer) {
+				this.paymentForm.controls.name.setValue(dealer.customerName);
+			}
+		}
 	}
 
 	private throwError(errorDetails: any) {

@@ -94,7 +94,7 @@ namespace Berger.Worker.Services
                             dealerInfo.IsActive = false;
                         }
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP), nameof(DealerInfo.BussinesCategoryType));
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
                         insertDeleteKeys.AddRange(deletedList.Item1);
@@ -107,7 +107,7 @@ namespace Berger.Worker.Services
                                 .ToList();
                             if (updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP), nameof(DealerInfo.BussinesCategoryType));
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -126,7 +126,7 @@ namespace Berger.Worker.Services
                                 dealerInfo.Id = IsMatch.Id;
                             }
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP), nameof(DealerInfo.BussinesCategoryType));
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }
