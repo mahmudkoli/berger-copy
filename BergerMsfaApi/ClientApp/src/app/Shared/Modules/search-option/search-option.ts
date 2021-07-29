@@ -7,6 +7,7 @@ export class SearchOptionQuery extends QueryObject {
     zones: string[];
     fromDate: Date;
     toDate: Date;
+    date: Date;
     userId: number;
     dealerId: number;
     creditControlArea: string;
@@ -15,6 +16,7 @@ export class SearchOptionQuery extends QueryObject {
     painterId: number;
     painterTypeId: number;
     paymentMethodId: number;
+    paymentFromId: number;
     materialCodes: string[];
     brands: string[];
     fromMonth: number;
@@ -77,6 +79,7 @@ export enum EnumSearchOption {
     Zone='zones',
     FromDate='fromDate',
     ToDate='toDate',
+    Date='date',
     UserId='userId',
     DealerId='dealerId',
     CreditControlArea='creditControlArea',
@@ -85,6 +88,7 @@ export enum EnumSearchOption {
     PainterId='painterId',
     PainterTypeId='painterTypeId',
     PaymentMethodId='paymentMethodId',
+    PaymentFromId='paymentFromId',
     MaterialCode='materialCodes',
     ActivitySummary='activitySummary',
     Brand='brands',

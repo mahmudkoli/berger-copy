@@ -233,6 +233,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<PainterModel>> GetPainterList()
         {
             var result = await _painterSvc.GetAllAsync();
+            foreach (var item in result)
+            {
+                item.PainterName = item.PainterName + " (" + item.PainterNo + ")";
+            }
             return result.ToMap<Painter, PainterModel>();
         }
 

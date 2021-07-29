@@ -366,6 +366,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             _painter.PainterNo = GeneratePainterNo(userId).Result;
             _painter.Status = Status.Active;
+            _painter.PainterCode = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
 
             var result = await _painterSvc.CreateAsync(_painter);
             return _mapper.Map<PainterModel>(result);

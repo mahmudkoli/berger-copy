@@ -78,11 +78,11 @@ export class DealerOpeningDetailComponent implements OnInit {
                 this.router.navigate(["/dealer/openingList"]).then(
                     () => {
                       if(res.data){
-                        this.alertService.tosterSuccess(`Dealer Opening status approved successfully .`);
+                        this.alertService.tosterSuccess(`New Dealer status approved successfully.`);
 
                       }
                       else {
-                        this.alertService.tosterInfo(`Dealer Opening status rejected `);
+                        this.alertService.tosterInfo(`New Dealer status rejected successfully.`);
 
                       }
                     });

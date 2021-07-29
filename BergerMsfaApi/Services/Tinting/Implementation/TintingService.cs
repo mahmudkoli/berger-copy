@@ -70,10 +70,15 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                 ["no"] = v => v.No,
                 ["contribution"] = v => v.Contribution,
             };
-
+            var user = AppIdentity.AppUser;
+            var isPermitted = user.ActiveRoleName == RoleEnum.GM.ToString() || user.ActiveRoleName == RoleEnum.Admin.ToString();
             var result = await _tintingMachineSvc.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.Company.DropdownName.Contains(query.GlobalSearchValue) || x.Territory.Contains(query.GlobalSearchValue)),
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.Company.DropdownName.Contains(query.GlobalSearchValue) || x.Territory.Contains(query.GlobalSearchValue))
+                                && isPermitted? isPermitted:user.PlantIdList.Contains(x.Depot)
+                                && isPermitted ? isPermitted : user.TerritoryIdList.Contains(x.Territory)
+
+                                ,
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.UserInfo).Include(i => i.Company),
                                 query.Page,

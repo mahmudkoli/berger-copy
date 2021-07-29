@@ -80,6 +80,25 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('date')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('date')}">Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpDate" formControlName="date"
+                            ngbDatepicker #dpDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                    <small class="text-danger" *ngIf="(formControls.date.touched && formControls.date.errors) || 
+                                                        (formControls.date.touched && formControls.date.invalid)">
+                        <span *ngIf="formControls.date.errors.required">Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.date.errors.required && formControls.date.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('userId')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('userId')}">User Id</label>
@@ -163,6 +182,16 @@
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.paymentMethodId.touched && formControls.paymentMethodId.errors">
                         <span *ngIf="formControls.paymentMethodId.errors.required">Payment Method is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('paymentFromId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('paymentFromId')}">Payment From</label>
+                    <ng-select [items]="paymentFrom" formControlName="paymentFromId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.paymentFromId.touched && formControls.paymentFromId.errors">
+                        <span *ngIf="formControls.paymentFromId.errors.required">Payment From is <strong>required</strong></span>
                     </small>
                 </div>
             </div>

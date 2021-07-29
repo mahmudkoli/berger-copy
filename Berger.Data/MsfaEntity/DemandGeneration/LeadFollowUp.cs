@@ -40,6 +40,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public int? ProjectStatusLeadCompletedId { get; set; }
         public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
+        public string ProjectStatusHandOverRemarks { get; set; }
         public decimal ProjectStatusPartialBusinessPercentage { get; set; }
         public bool HasSwappingCompetition { get; set; }
         public int? SwappingCompetitionId { get; set; }
@@ -57,12 +58,13 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public string BrandUsedTopCoatBrandName { get; set; } // multiple brand name separated by comma
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
-        public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
-        public decimal ActualVolumeSoldExteriorKg { get; set; }
-        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
-        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorKg { get; set; }
+        //public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldExteriorKg { get; set; }
+        //public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        public IList<LeadActualVolumeSold> ActualVolumeSolds { get; set; }
         public int BusinessAchievementId { get; set; }
         public LeadBusinessAchievement BusinessAchievement { get; set; }
     }

@@ -114,7 +114,7 @@ export class DealerOpeningListComponent implements OnInit {
 	public ptableSettings: IPTableSetting = {
 		tableID: "dealerOpening-table",
 		tableClass: "table table-border ",
-		tableName: 'Dealer Opening List',
+		tableName: 'New Dealer Approval List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Code', width: '10%', internalName: 'code', sort: false, type: "" },
