@@ -97,6 +97,9 @@
             <div class="col-sm-6">
                 <p><span><strong>Total Loss Remarks:</strong></span> {{leadFollowUp.projectStatusTotalLossRemarks}}</p>
             </div>
+            <div class="col-sm-6">
+                <p><span><strong>Hand Over Remarks:</strong></span> {{leadFollowUp.projectStatusHandOverRemarks}}</p>
+            </div>
             <!-- <div class="col-sm-6">
                 <p><span><strong>Partial Business:</strong></span> {{leadFollowUp.projectStatusPartialBusinessText}}</p>
             </div> -->
@@ -173,7 +176,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-sm-12"><h6><span><strong>Actual Volume Sold:</strong></span></h6></div>
             <div class="col-sm-6">
                 <p><span><strong>Interior (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldInteriorGallon}}</p>
@@ -193,7 +196,7 @@
             <div class="col-sm-6">
                 <p><span><strong>Top Coat (Gallon):</strong></span> {{leadFollowUp.actualVolumeSoldTopCoatGallon}}</p>
             </div>
-        </div>
+        </div> -->
 
         <div class="row">
             <div class="col-sm-12">
@@ -215,7 +218,10 @@
                 <p><span><strong>Competition Value Sales: </strong></span> <span [numberFormatColor]="leadFollowUp.businessAchievement?.competitionValueSales" *ngIf="leadFollowUp.businessAchievement?.competitionValueSales"></span></p>
             </div>
             <div class="col-sm-6">
-                <p><span><strong>Product Sourcing:</strong></span> {{leadFollowUp.businessAchievement?.productSourcing}}</p>
+                <p><span><strong>Product Sourcing:</strong></span> {{leadFollowUp.businessAchievement?.productSourcingText}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p><span><strong>Product Sourcing Remarks:</strong></span> {{leadFollowUp.businessAchievement?.productSourcingRemarks}}</p>
             </div>
         </div>
 
@@ -246,6 +252,30 @@
                     <!-- {{leadFollowUp.businessAchievement?.photoCaptureUrl}} -->
                     <img *ngIf='leadFollowUp.businessAchievement?.photoCaptureUrl' [src]="leadFollowUp.businessAchievement?.photoCaptureUrl" alt="Photo" width="150px" height="180px">
                 </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-12">
+                <app-p-table [pTableSetting]="ptableSettingsInterior" [pTableMasterData]="leadFollowUp.actualVolumeSoldInteriors">
+                </app-p-table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-12">
+                <app-p-table [pTableSetting]="ptableSettingsExterior" [pTableMasterData]="leadFollowUp.actualVolumeSoldExteriors">
+                </app-p-table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-12">
+                <app-p-table [pTableSetting]="ptableSettingsUnderCoat" [pTableMasterData]="leadFollowUp.actualVolumeSoldUnderCoats">
+                </app-p-table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-12">
+                <app-p-table [pTableSetting]="ptableSettingsTopCoat" [pTableMasterData]="leadFollowUp.actualVolumeSoldTopCoats">
+                </app-p-table>
             </div>
         </div>
     </div>

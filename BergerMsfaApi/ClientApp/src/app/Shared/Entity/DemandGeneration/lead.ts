@@ -102,6 +102,7 @@ export class LeadFollowUp {
     //projectStatusTotalLoss: Dropdown;
     // projectStatusTotalLossText: string;
     projectStatusTotalLossRemarks: string;
+    projectStatusHandOverRemarks: string;
     // projectStatusPartialBusinessId: number;
     //projectStatusPartialBusiness: Dropdown;
     // projectStatusPartialBusinessText: string;
@@ -125,12 +126,16 @@ export class LeadFollowUp {
     brandUsedTopCoatBrandName: string;
     actualPaintJobCompletedInteriorPercentage: number;
     actualPaintJobCompletedExteriorPercentage: number;
-    actualVolumeSoldInteriorGallon: number;
-    actualVolumeSoldInteriorKg: number;
-    actualVolumeSoldExteriorGallon: number;
-    actualVolumeSoldExteriorKg: number;
-    actualVolumeSoldUnderCoatGallon: number;
-    actualVolumeSoldTopCoatGallon: number;
+    // actualVolumeSoldInteriorGallon: number;
+    // actualVolumeSoldInteriorKg: number;
+    // actualVolumeSoldExteriorGallon: number;
+    // actualVolumeSoldExteriorKg: number;
+    // actualVolumeSoldUnderCoatGallon: number;
+    // actualVolumeSoldTopCoatGallon: number;
+    actualVolumeSoldInteriors: LeadActualVolumeSoldModel[];
+    actualVolumeSoldExteriors: LeadActualVolumeSoldModel[];
+    actualVolumeSoldUnderCoats: LeadActualVolumeSoldModel[];
+    actualVolumeSoldTopCoats: LeadActualVolumeSoldModel[];
     businessAchievementId: number;
     businessAchievement: LeadBusinessAchievement;
 
@@ -145,6 +150,10 @@ export class LeadFollowUp {
 
     clear() {
         this.id = null;
+        this.actualVolumeSoldInteriors = [];
+        this.actualVolumeSoldExteriors = [];
+        this.actualVolumeSoldUnderCoats = [];
+        this.actualVolumeSoldTopCoats = [];
     }
 }
 
@@ -153,7 +162,10 @@ export class LeadBusinessAchievement {
     bergerValueSales: number;
     bergerPremiumBrandSalesValue: number;
     competitionValueSales: number;
-    productSourcing: string;
+    // productSourcing: string;
+    productSourcingId: number;
+    productSourcingText: string;
+    productSourcingRemarks: string;
     isColorSchemeGiven: boolean;
     isProductSampling: boolean;
     productSamplingBrandName: string;
@@ -169,6 +181,23 @@ export class LeadBusinessAchievement {
     clear() {
         this.id =null;
     }
+}
+
+export interface LeadActualVolumeSoldModel {
+    id: number;
+    leadFollowUpId: number;
+    brandInfoId: number;
+    brandInfoText: string;
+    quantity: number;
+    totalAmount: number;
+    actualVolumeSoldType: EnumLeadActualVolumeSoldType;
+}
+
+export enum EnumLeadActualVolumeSoldType {
+    Interior = 1,
+    Exterior = 2,
+    UnderCoat = 3,
+    TopCoat = 4
 }
 
 export class LeadQuery extends QueryObject {

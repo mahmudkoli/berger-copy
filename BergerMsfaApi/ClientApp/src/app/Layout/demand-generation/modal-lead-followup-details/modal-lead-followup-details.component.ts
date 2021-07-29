@@ -9,6 +9,7 @@ import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { QuestionOption } from 'src/app/Shared/Entity/ELearning/questionOption';
 import { NgbActiveModal, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { LeadFollowUp } from 'src/app/Shared/Entity/DemandGeneration/lead';
+import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
 
 @Component({
 	selector: 'app-modal-lead-followup-details',
@@ -48,4 +49,60 @@ export class ModalLeadFollowUpDetailsComponent implements OnInit, OnDestroy {
 			// this.alertService.tosterDanger(errorDetails.error.message);
 		}
 	}
+  
+	public ptableSettingsInterior: IPTableSetting = {
+		tableID: "leadFollowUps-table",
+		tableClass: "table table-border ",
+		tableName: 'Actual Volume Sold (Interior)',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+			{ headerName: 'Brand Description', width: '10%', internalName: 'brandInfoText', sort: false, type: "" },
+			{ headerName: 'Quantity', width: '10%', internalName: 'quantity', sort: false, type: "" },
+			{ headerName: 'Total Amount', width: '10%', internalName: 'totalAmount', sort: false, type: "" },
+		],
+		// enabledSearch: true,
+		enabledSerialNo: true,
+	};
+  
+	public ptableSettingsExterior: IPTableSetting = {
+		tableID: "leadFollowUps-table",
+		tableClass: "table table-border ",
+		tableName: 'Actual Volume Sold (Exterior)',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+			{ headerName: 'Brand Description', width: '10%', internalName: 'brandInfoText', sort: false, type: "" },
+			{ headerName: 'Quantity', width: '10%', internalName: 'quantity', sort: false, type: "" },
+			{ headerName: 'Total Amount', width: '10%', internalName: 'totalAmount', sort: false, type: "" },
+		],
+		// enabledSearch: true,
+		enabledSerialNo: true,
+	};
+  
+	public ptableSettingsUnderCoat: IPTableSetting = {
+		tableID: "leadFollowUps-table",
+		tableClass: "table table-border ",
+		tableName: 'Actual Volume Sold (Under Coat)',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+			{ headerName: 'Brand Description', width: '10%', internalName: 'brandInfoText', sort: false, type: "" },
+			{ headerName: 'Quantity', width: '10%', internalName: 'quantity', sort: false, type: "" },
+			{ headerName: 'Total Amount', width: '10%', internalName: 'totalAmount', sort: false, type: "" },
+		],
+		// enabledSearch: true,
+		enabledSerialNo: true,
+	};
+  
+	public ptableSettingsTopCoat: IPTableSetting = {
+		tableID: "leadFollowUps-table",
+		tableClass: "table table-border ",
+		tableName: 'Actual Volume Sold (Top Coat)',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+			{ headerName: 'Brand Description', width: '10%', internalName: 'brandInfoText', sort: false, type: "" },
+			{ headerName: 'Quantity', width: '10%', internalName: 'quantity', sort: false, type: "" },
+			{ headerName: 'Total Amount', width: '10%', internalName: 'totalAmount', sort: false, type: "" },
+		],
+		// enabledSearch: true,
+		enabledSerialNo: true,
+	};
 }

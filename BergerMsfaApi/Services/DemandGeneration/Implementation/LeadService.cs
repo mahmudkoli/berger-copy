@@ -111,7 +111,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                  x => x,
                                  x => x.UserId == userId && (!x.LeadFollowUps.Any() || 
-                                        !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownName == ConstantsLeadValue.ProjectStatusLeadCompleted)),
+                                        !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode 
+                                                                || l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadHandOverDropdownCode)),
                                  null,
                                  x => x.Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus),
                                  true
@@ -147,7 +148,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.Add(modelRes);
             }
 
-            return modelResult;
+            return modelResult.OrderBy(x => CustomConvertExtension.ObjectToDateTime(x.NextVisitDatePlan)).ToList();
         }
 
         public async Task<LeadGenerationModel> GetByIdAsync(int id)
@@ -161,7 +162,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition)
-                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement),
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement).ThenInclude(i => i.ProductSourcing),
                                 true
                             );
 
@@ -214,6 +215,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             modelResult.Zone = result.Zone;
             modelResult.TypeOfClientId = result.TypeOfClientId;
             modelResult.TypeOfClientText = result.TypeOfClient != null ? $"{result.TypeOfClient.DropdownName}" : string.Empty;
+            modelResult.TypeOfClientDropdownCode = result.TypeOfClient != null ? $"{result.TypeOfClient.DropdownCode}" : string.Empty;
             modelResult.OtherClientName = result.OtherClientName ?? string.Empty;
             modelResult.ProjectName = result.ProjectName;
             modelResult.ProjectAddress = result.ProjectAddress;
@@ -239,9 +241,11 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 var leadFollowUp = result.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
                 modelResult.TypeOfClientId = leadFollowUp.TypeOfClientId;
                 modelResult.TypeOfClientText = leadFollowUp.TypeOfClient != null ? $"{leadFollowUp.TypeOfClient.DropdownName}" : string.Empty;
+                modelResult.TypeOfClientDropdownCode = leadFollowUp.TypeOfClient != null ? $"{leadFollowUp.TypeOfClient.DropdownCode}" : string.Empty;
                 modelResult.OtherClientName = leadFollowUp.OtherClientName ?? string.Empty;
                 modelResult.ProjectStatusId = leadFollowUp.ProjectStatusId;
                 modelResult.ProjectStatusText = leadFollowUp.ProjectStatus != null ? $"{leadFollowUp.ProjectStatus.DropdownName}" : string.Empty;
+                modelResult.ProjectStatusDropdownCode = leadFollowUp.ProjectStatus != null ? $"{leadFollowUp.ProjectStatus.DropdownCode}" : string.Empty;
                 modelResult.HasSwappingCompetition = leadFollowUp.HasSwappingCompetition;
                 modelResult.SwappingCompetitionId = leadFollowUp.SwappingCompetitionId;
                 modelResult.SwappingCompetitionText = leadFollowUp.SwappingCompetition != null ? $"{leadFollowUp.SwappingCompetition.DropdownName}" : string.Empty;
