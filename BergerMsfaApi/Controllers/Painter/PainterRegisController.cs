@@ -1,6 +1,7 @@
 ﻿using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,12 +23,12 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
             _painterSvc = painterSvc;
         }
 
-        [HttpGet("GetPainterList/{index}/{pageSize}")]
-        public async Task<IActionResult> GetPainterList(int index, int pageSize, string search)
+        [HttpGet("GetPainterList")]
+        public async Task<IActionResult> GetPainterList([FromQuery] PainterRegistrationReportSearchModel query)
         {
             try
             {
-                var result = await _painterSvc.GetPainterListAsync(index,pageSize,search);
+                var result = await _painterSvc.GetPainterListAsync(query);
                 return OkResult(result);
             }
             catch (Exception ex)
