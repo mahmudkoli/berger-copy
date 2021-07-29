@@ -445,6 +445,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       territoryName = tinfo.Name,
                                       zoneName = zinfo.Name,
                                       painterId = p.Id.ToString(),
+                                      painterNo = p.PainterNo,
                                       p.CreatedTime,
                                       typeOfPainter = dropDownInfo.DropdownName,
                                       depotName = depinfo.Name1,
@@ -473,7 +474,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 UserId = x?.Email ?? string.Empty,
                 Territory = x.territoryName,
                 Zone = x.zoneName,
-                PainterId = x.painterId,
+                //PainterId = x.painterId,
+                PainterId = x.painterNo,
                 PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TypeOfPainer = x.typeOfPainter,
                 DepotName = x.depotName,
@@ -926,6 +928,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        {
                                            userInfo.Email,
                                            painterId = pcinfo.PainterId.ToString(),
+                                           painterNo = pinfo.PainterNo,
                                            pcinfo.CreatedTime,
                                            painterType = ddcinfo.DropdownName,
                                            depot = depinfo.Name1,
@@ -972,7 +975,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult = paintersCalls.Select(x => new PainterCallReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
-                PainterId = x?.painterId ?? string.Empty,
+                //PainterId = x?.painterId ?? string.Empty,
+                PainterId = x?.painterNo ?? string.Empty,
                 PainterVisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TypeOfPainter = x.painterType,
                 DepotName = x.depot,
@@ -3140,8 +3144,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var Painterdata = (from ip in inactivePainter
                               join psl in _context.PainterStatusLogs on ip.painterId equals psl.PainterId
                               join p in _context.Painters on ip.painterId equals p.Id
+                              join pc in _context.PainterCalls on p.Id equals pc.PainterId into pcleft
+                              from pcInfo in pcleft.DefaultIfEmpty()
                               join dep in _context.Depots on p.Depot equals dep.Werks
                               join dd in _context.DropdownDetails on p.PainterCatId equals dd.Id
+                              join ddpc in _context.DropdownDetails on pcInfo?.PainterCatId equals ddpc.Id into ddpcleft
+                              from ddpcinfo in ddpcleft.DefaultIfEmpty()
                               where (
                                    (ip.painterId == psl.PainterId && ip.createdTime == psl.CreatedTime)
                                    && (!query.UserId.HasValue || psl.UserId == query.UserId.Value)
@@ -3158,35 +3166,59 @@ namespace BergerMsfaApi.Services.Report.Implementation
                               {
                                   p.Depot,
                                   dep.Name1,
-                                  p.Territory,
-                                  p.Zone,
+                                  poTerritory = p.Territory,
+                                  puTerritory = pcInfo?.Territory,
+                                  poZone = p.Zone,
+                                  puZone = pcInfo?.Zone,
                                   psl.PainterId,
-                                  p.PainterName,
-                                  p.Address,
-                                  p.Phone,
-                                  dd.DropdownName,
-                                  p.AccDbblNumber,
+                                  p.PainterNo,
+                                  pcInfo?.Id,
+                                  poName = p.PainterName,
+                                  puName = pcInfo?.PainterName,
+                                  poAddress = p.Address,
+                                  puAddress = pcInfo?.Address,
+                                  poPhone = p.Phone,
+                                  puPhone = pcInfo?.Phone,
+                                  poDropdownName = dd.DropdownName,
+                                  puDropdownName = ddpcinfo?.DropdownName,
+                                  poAccDbblNumber = p.AccDbblNumber,
+                                  puAccDbblNumber = pcInfo?.AccDbblNumber,
                                   psl.Reason
-                              }).ToList();
+                              }).OrderByDescending(x => x.Id).ToList();
 
-            reportResult = Painterdata.Select(x => new InactivePainterReportResultModel
+            var reportData = Painterdata.GroupBy(x => x.PainterId).Select(x => new
             {
-                DepotIdAndName = $"{x.Depot} {x.Name1}",
-                Territory = x.Territory,
-                Zone = x.Zone,
-                PainterId = x?.PainterId.ToString(),
-                PainterName = x.PainterName,
-                PainterAddress = x.Address,
-                PainterMobileNumber = x.Phone,
-                PainerType = x.DropdownName,
-                RocketDataNumber = x.AccDbblNumber,
-                InactiveReason = x.Reason
+                depotIdAndName = $"{x.FirstOrDefault()?.Depot} {x.FirstOrDefault()?.Name1}",
+                territory = x.FirstOrDefault()?.puTerritory ?? x.FirstOrDefault()?.poTerritory,
+                zone = x.FirstOrDefault()?.puZone ?? x.FirstOrDefault()?.poZone,
+                painterId = x.FirstOrDefault().PainterNo,
+                painterName = x.FirstOrDefault()?.puName ?? x.FirstOrDefault()?.poName,
+                painterAddress = x.FirstOrDefault()?.puAddress ?? x.FirstOrDefault()?.poAddress,
+                painterMobileNumber = x.FirstOrDefault()?.puPhone ?? x.FirstOrDefault()?.poPhone,
+                painerType = x.FirstOrDefault()?.puDropdownName ?? x.FirstOrDefault()?.poDropdownName,
+                rocketDataNumber = x.FirstOrDefault()?.puAccDbblNumber ?? x.FirstOrDefault()?.poAccDbblNumber,
+                inactiveReason = x.FirstOrDefault()?.Reason
+            }).ToList();
+
+            reportResult = reportData.Select(x => new InactivePainterReportResultModel
+            {
+                DepotIdAndName = x.depotIdAndName,
+                Territory = x.territory,
+                Zone = x.zone,
+                PainterId = x.painterId,
+                PainterName = x.painterName,
+                PainterAddress = x.painterAddress,
+                PainterMobileNumber = x.painterMobileNumber,
+                PainerType = x.painerType,
+                RocketDataNumber = x.rocketDataNumber,
+                InactiveReason = x.inactiveReason
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
 
             var queryResult = new QueryResultModel<InactivePainterReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = Painterdata.Count();
-            queryResult.Total = Painterdata.Count();
+            queryResult.TotalFilter = reportData.Count();
+            queryResult.Total = reportData.Count();
 
             return queryResult;
         }

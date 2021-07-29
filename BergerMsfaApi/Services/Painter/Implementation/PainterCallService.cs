@@ -231,6 +231,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     AccDbblNumber = _painterCall.AccDbblNumber,
                     AccDbblHolderName = _painterCall.AccDbblHolderName,
                     AccChangeReason = _painterCall.AccChangeReason,
+                    PainterCatId = _painterCall.PainterCatId,
 
                     HasAppUsage = _painterCall.HasAppUsage,
                     Comment = _painterCall.Comment,
@@ -284,6 +285,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     Loyality = _painter.Loyality,
                     AccDbblNumber = _painter.AccDbblNumber,
                     AccDbblHolderName = _painter.AccDbblHolderName,
+                    PainterCatId = _painter.PainterCatId,
                     PainterCompanyMTDValue = (from c in result
                                               join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == PainterId)
                                               on new { a = c.Id } equals new { a = m.CompanyId } into comLeftJoin

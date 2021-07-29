@@ -35,6 +35,7 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string AccDbblNumber { get; set; }
         public string AccDbblHolderName { get; set; }
         public string AccChangeReason { get; set; }
+        public int PainterCatId { get; set; }
 
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
