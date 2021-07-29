@@ -113,14 +113,14 @@ export class CollectionEntryEditComponent implements OnInit {
 			amount: [this.payment.amount],
 			manualNumber: [this.payment.manualNumber],
 			remarks: [this.payment.remarks],
-			dealerId: [parseInt(this.payment.dealerId.toString())],
+			dealerId: [this.payment.dealerId?parseInt(this.payment.dealerId):null],
 			paymenyMethodId: [this.payment.paymentMethodId],
 			creditControlArea: [this.payment.creditControlAreaId],
 			customerTypeId: [this.payment.customerTypeId]
 		
 		});
 
-
+console.log(this.paymentForm);
 	}
 
 	get formControls() { return this.paymentForm.controls; }
@@ -165,6 +165,8 @@ export class CollectionEntryEditComponent implements OnInit {
 		_payments.status=this.payment.status;
 		_payments.collectionDate=this.payment.collectionDate;
 		_payments.sapId=this.payment.sapId;
+		_payments.name=this.payment.name;
+
 
 
 
@@ -211,6 +213,8 @@ export class CollectionEntryEditComponent implements OnInit {
 			// this.alertService.tosterDanger(errorDetails.error.message);
 		}
 	}
+
+	
 
 
 	
