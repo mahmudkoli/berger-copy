@@ -112,13 +112,13 @@ export class CollectionEntryListComponent implements OnInit {
     if (selectedValue.type == 'Dealer') {
       tableName = 'Dealer Collection';
       tableColDef = [
-        {
-          headerName: 'Code  ',
-          width: '10%',
-          internalName: 'code',
-          sort: true,
-          type: '',
-        },
+        // {
+        //   headerName: 'Code  ',
+        //   width: '10%',
+        //   internalName: 'code',
+        //   sort: true,
+        //   type: '',
+        // },
         {
           headerName: 'Dealer ',
           width: '10%',
@@ -180,13 +180,13 @@ export class CollectionEntryListComponent implements OnInit {
     } else if (selectedValue.type == 'Sub-Dealer') {
       tableName = 'Sub Dealer Collection';
       tableColDef = [
-        {
-          headerName: 'Code  ',
-          width: '10%',
-          internalName: 'code',
-          sort: true,
-          type: '',
-        },
+        // {
+        //   headerName: 'Code  ',
+        //   width: '10%',
+        //   internalName: 'code',
+        //   sort: true,
+        //   type: '',
+        // },
         {
           headerName: 'Sub Dealer ',
           width: '10%',
@@ -248,13 +248,13 @@ export class CollectionEntryListComponent implements OnInit {
     } else if (selectedValue.type == 'Direct Project') {
       tableName = 'Project Collection';
       tableColDef = [
-        {
-          headerName: 'Code  ',
-          width: '10%',
-          internalName: 'code',
-          sort: true,
-          type: '',
-        },
+        // {
+        //   headerName: 'Code  ',
+        //   width: '10%',
+        //   internalName: 'code',
+        //   sort: true,
+        //   type: '',
+        // },
         {
           headerName: 'Project ',
           width: '10%',
@@ -316,13 +316,13 @@ export class CollectionEntryListComponent implements OnInit {
     } else if (selectedValue.type == 'Customer') {
       tableName = 'Cutomer Collection';
       tableColDef = [
-        {
-          headerName: 'Code  ',
-          width: '10%',
-          internalName: 'code',
-          sort: true,
-          type: '',
-        },
+        // {
+        //   headerName: 'Code  ',
+        //   width: '10%',
+        //   internalName: 'code',
+        //   sort: true,
+        //   type: '',
+        // },
         {
           headerName: 'Customer ',
           width: '10%',

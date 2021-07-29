@@ -1,6 +1,6 @@
 export class Payments{
     id:number;
-    code:number;
+    dealerId:number;
     name:string;
     address:string;
     bankName:string;

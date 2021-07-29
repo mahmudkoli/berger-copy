@@ -14,7 +14,7 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Dealer</label>
-                        <ng-select formControlName="code" [multiple]="false" [virtualScroll]="true">
+                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
                         </ng-select>

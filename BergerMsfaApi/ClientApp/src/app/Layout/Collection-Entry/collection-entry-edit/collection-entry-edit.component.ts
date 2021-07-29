@@ -113,7 +113,7 @@ export class CollectionEntryEditComponent implements OnInit {
 			amount: [this.payment.amount],
 			manualNumber: [this.payment.manualNumber],
 			remarks: [this.payment.remarks],
-			code: [parseInt(this.payment.code.toString())],
+			dealerId: [parseInt(this.payment.dealerId.toString())],
 			paymenyMethodId: [this.payment.paymentMethodId],
 			creditControlArea: [this.payment.creditControlAreaId],
 			customerTypeId: [this.payment.customerTypeId]
@@ -146,7 +146,7 @@ export class CollectionEntryEditComponent implements OnInit {
 		const _payments = new Payments();
 		// _focusDealer.clear();
 		_payments.id = this.payment.id;
-		_payments.code = controls['code'].value;
+		_payments.dealerId = controls['dealerId'].value;
 		_payments.employeeId = controls['employeeId'].value;
 		_payments.address = controls['address'].value;
 		_payments.mobileNumber = controls['mobileNumber'].value;

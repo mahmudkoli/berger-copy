@@ -66,7 +66,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
                                  join ca in _context.CreditControlAreas on paym.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                  from cainfo in caleftjoin.DefaultIfEmpty()
-                                 join d in _context.DealerInfos on paym.Code equals d.Id.ToString() into dleftjoin
+                                 join d in _context.DealerInfos on paym.DealerId equals d.Id.ToString() into dleftjoin
                                  from dinfo in dleftjoin.DefaultIfEmpty()
 
                                  join ter in _context.Territory on uzamaping.TerritoryId equals ter.Code into terleftjoin
@@ -112,7 +112,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                                      depotName = dep.Name1,
                                      territoryName = terinfo.Name,
                                      zoneName = zonfo.Name,
-                                     paym.Code,
+                                     paym.DealerId,
                                      dinfo.CustomerNo
                                  }).ToListAsync();
 
@@ -124,7 +124,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                 Amount = s.Amount,
                 Address = s.Address,
                 BankName = s.BankName,
-                Code = s.DealerId,
+                DealerId = s.DealerId,
                 CreditControlAreaId = Convert.ToInt32(s.CreditControlArea.CreditControlAreaId),
                 CreditControlAreaName = s.CreditControlArea.Description,
                 ManualNumber = s.ManualNumber,
