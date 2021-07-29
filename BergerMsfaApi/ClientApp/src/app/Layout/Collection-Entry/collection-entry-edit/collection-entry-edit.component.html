@@ -11,16 +11,14 @@
     <div class="card-body">
         <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" *ngIf="paymentForm">
             <div class="form-row">
-                <div class="col-md-6">
+                <div class="col-md-6" *ngIf="payment.dealerId!=null">
                     <div class="position-relative form-group">
-                        <label class="required">Dealer</label>
+                        <label>Dealer</label>
                         <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
                         </ng-select>
-                        <small class="text-danger" *ngIf="formControls.code.touched && formControls.code.errors">
-                            <span *ngIf="formControls.code.errors.required">Dealer is <strong>required</strong></span>
-                        </small>
+                       
                     </div>
                 </div>
                 <div class="col-md-6">
