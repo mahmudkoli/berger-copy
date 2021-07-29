@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210502184955_CollectionPlanAdded.cs" />
     <Compile Remove="Migrations\20210502184955_CollectionPlanAdded.Designer.cs" />
+    <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.cs" />
+    <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

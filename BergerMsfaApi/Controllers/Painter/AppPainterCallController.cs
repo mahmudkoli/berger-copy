@@ -28,7 +28,7 @@ namespace BergerMsfaApi.Controllers.Painter
         }
 
         [HttpGet("GetPainterCallByPainterId/{PainterId}")]
-        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int PainterId)
+        public async Task<IActionResult> GetPainterCallByPainterIdAysnc([BindRequired] int PainterId)
         {
             try
             {
