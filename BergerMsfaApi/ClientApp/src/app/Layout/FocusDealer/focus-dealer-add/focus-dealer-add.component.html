@@ -14,12 +14,12 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Dealer</label>
-                        <ng-select formControlName="code" [multiple]="false" [virtualScroll]="true">
+                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
                         </ng-select>
-                        <small class="text-danger" *ngIf="formControls.code.touched && formControls.code.errors">
-                            <span *ngIf="formControls.code.errors.required">Dealer is <strong>required</strong></span>
+                        <small class="text-danger" *ngIf="formControls.dealerId.touched && formControls.dealerId.errors">
+                            <span *ngIf="formControls.dealerId.errors.required">Dealer is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>

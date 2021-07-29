@@ -160,6 +160,18 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.CustomerDeliveryUrl}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<CustomerDeliveryDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
         #endregion
 
         #region Get selectable data
@@ -1456,6 +1468,30 @@ namespace Berger.Odata.Services
             return data;
         }
 
+        public async Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CustomerDeliveryColDef.CustomerNo, customerNo)
+                                .And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CustomerDeliveryColDef.DeliveryDate, startDate)
+                                .And()
+                                .LessThanOrEqualDateTime(CustomerDeliveryColDef.DeliveryDate, endDate)
+                                .EndGroup();
+
+            //var topQuery = $"$top=5";
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                        //.AppendQuery(topQuery)
+                        .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetCustomerDeliveryData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
+
 
         public async Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder, string date)
         {
@@ -1971,21 +2007,22 @@ namespace Berger.Odata.Services
         #endregion
 
         #region calculate data
-        public decimal GetGrowth(decimal first, decimal second)
+        public decimal GetGrowth(decimal lyValue, decimal cyValue)
         {
-            return first > 0 && second > 0 ? ((second - first) * 100) / first :
-                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
-                            decimal.Zero;
+            if (lyValue == 0 && cyValue == 0) return decimal.Parse("0.000");
+            else if (lyValue == 0 && cyValue > 0) return decimal.Parse("0.000");
+            else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
+            else return ((cyValue - lyValue) * 100) / lyValue;
         }
-        public decimal GetGrowthNew(decimal first, decimal second)
-        {
-            var subValue = (first - second);
-            if (subValue == 0 || second == 0)
-            {
-                return 0;
-            }
-            return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
-        }
+        //public decimal GetGrowthNew(decimal first, decimal second)
+        //{
+        //    var subValue = (first - second);
+        //    if (subValue == 0 || second == 0)
+        //    {
+        //        return 0;
+        //    }
+        //    return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
+        //}
         public decimal GetContribution(decimal first, decimal second)
         {
             if (first == 0 || second == 0)
@@ -2001,13 +2038,14 @@ namespace Berger.Odata.Services
             return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
         }
 
-        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays)
+        public decimal GetTillDateGrowth(decimal lyValue, decimal cyValue, int totalDays, int countDays)
         {
-            first = (first / totalDays) * countDays;
+            lyValue = (lyValue / totalDays) * countDays;
 
-            return first > 0 && second > 0 ? ((second - first) * 100) / first :
-                        first <= 0 && second > 0 ? decimal.Parse("100.000") :
-                            decimal.Zero;
+            if (lyValue == 0 && cyValue == 0) return decimal.Parse("0.000");
+            else if (lyValue == 0 && cyValue > 0) return decimal.Parse("0.000");
+            else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
+            else return ((cyValue - lyValue) * 100) / lyValue;
         }
 
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays)

@@ -23,38 +23,38 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             _commonSvc = commonSvc;
         }
 
-        [HttpGet("GetDealList/{territory}")]
-        public async Task<IActionResult> GetDealerList(string territory)
-        {
-            try
-            { 
-                if (string.IsNullOrEmpty(territory))
-                {
-                    ModelState.AddModelError(nameof(territory), "territory can not be null");
-                    return ValidationResult(ModelState);
-                }
-                var result = await _commonSvc.AppGetDealerInfoList(territory.Trim());
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetDealList/{territory}")]
+        //public async Task<IActionResult> GetDealerList(string territory)
+        //{
+        //    try
+        //    { 
+        //        if (string.IsNullOrEmpty(territory))
+        //        {
+        //            ModelState.AddModelError(nameof(territory), "territory can not be null");
+        //            return ValidationResult(ModelState);
+        //        }
+        //        var result = await _commonSvc.AppGetDealerInfoList(territory.Trim());
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpGet("GetFocusDealerList/{EmployeeId}")]
-        public async Task<IActionResult> GetFocusDealerList(string EmployeeId)
-        {
-            try
-            {
-                var result = await _commonSvc.AppGetFocusDealerInfoList(EmployeeId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("GetFocusDealerList/{EmployeeId}")]
+        //public async Task<IActionResult> GetFocusDealerList(string EmployeeId)
+        //{
+        //    try
+        //    {
+        //        var result = await _commonSvc.AppGetFocusDealerInfoList(EmployeeId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
         [HttpGet("GetDealerList")]
         public async Task<IActionResult> GetDealerList()

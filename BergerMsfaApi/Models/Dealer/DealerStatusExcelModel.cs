@@ -15,6 +15,13 @@ namespace BergerMsfaApi.Models.Dealer
         public EnumClubSupreme? ClubSupremeType { get; set; }
     }
 
+    public class DealerStatusBussinessCategoryExcelModel
+    {
+        public string DealerId { get; set; }
+        public string BussinesCategoryStatus { get; set; }
+        public EnumBussinesCategory? BussinesCategoryType { get; set; }
+    }
+
     public class DealerStatusExclusiveExcelModel
     {
         public string DealerId { get; set; }
@@ -57,6 +64,7 @@ namespace BergerMsfaApi.Models.Dealer
         Exclusive = 1,
         LastYearAppointed = 2,
         ClubSupreme = 3,
-        AP = 4
+        AP = 4,
+        BussinessCategory=5
     }
 }

@@ -107,7 +107,7 @@ namespace Berger.Odata.Services
             return result.Distinct().ToList();
         }
 
-        public async Task<IList<BrandFamilyInfo>> GetBrandFamilyInfosAsync(Expression<Func<BrandFamilyInfo, bool>> predicate)
+        public async Task<IList<BrandFamilyInfo>> GetBrandFamilyInfosAsync(Expression<Func<BrandFamilyInfo, bool>> predicate = null)
         {
             var result = await _brandFamilyInfoRepository.GetAllIncludeAsync(
                                 x => x,

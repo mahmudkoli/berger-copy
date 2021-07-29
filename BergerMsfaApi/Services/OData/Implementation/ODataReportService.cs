@@ -15,8 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Berger.Common.Model;
 using Berger.Common.Enumerations;
 using Berger.Common.Constants;
-using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.Master;
+using Berger.Data.ViewModel;
 
 namespace BergerMsfaApi.Services.OData.Implementation
 {
@@ -247,7 +247,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 x.Name1
             }).ToListAsync();
 
-            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model);
+            List<string> lastYearAppointedDealer = _dealerInfoRepository
+                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Select(x => x.CustomerNo).Distinct()
+                .ToList();
+
+
+            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
 
             var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
             {
@@ -297,9 +303,12 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 x.Name1
             }).ToListAsync();
 
-            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceDetail(model);
+            List<string> lastYearAppointedDealer = _dealerInfoRepository
+                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Select(x => x.CustomerNo).Distinct()
+                .ToList();
 
-
+            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceDetail(model, lastYearAppointedDealer);
 
             foreach (var item in result)
             {
@@ -319,6 +328,38 @@ namespace BergerMsfaApi.Services.OData.Implementation
                     x.Depot = null;
 
                 });
+            }
+
+            return result;
+        }
+
+        public async Task<IList<ReportClubSupremePerformance>> ReportClubSupremePerformanceSummaryReport(ClubSupremePerformanceSearchModel model, ClubSupremeReportType reportType)
+        {
+            var clubSupremeDealers = _dealerInfoRepository
+                .Where(x => x.ClubSupremeType > 0 && model.Depots.Contains(x.BusinessArea) && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None))
+                .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType }).Distinct()
+                .ToList();
+
+            var result = await _salesDataService.GetReportClubSupremePerformance(model, clubSupremeDealers, reportType);
+
+            if (reportType == ClubSupremeReportType.Detail)
+            {
+                var depotList = await _depotRepository.FindByCondition(x => model.Depots.Contains(x.Werks)).Select(x => new
+                {
+                    x.Werks,
+                    x.Name1
+                }).ToListAsync();
+
+                foreach (var reportClubSupremePerformance in result)
+                {
+                    var item = (ReportClubSupremePerformanceDetail)reportClubSupremePerformance;
+                    var depot = depotList.FirstOrDefault(x => x.Werks == item.DepotCode);
+                    if (depot != null)
+                    {
+                        item.DepotCode = depot.Werks;
+                        item.Depot = depot.Name1;
+                    }
+                }
             }
 
             return result;

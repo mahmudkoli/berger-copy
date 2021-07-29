@@ -21,6 +21,7 @@ namespace Berger.Odata.Services
         Task<IList<StockDataModel>> GetStockData(string query);
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(string query);
         Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(string query);
+        Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(string query);
         #endregion
 
         #region get selectable data
@@ -88,6 +89,9 @@ namespace Berger.Odata.Services
         Task<IList<CustomerCreditDataModel>> GetCustomerCreditData(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string creditControlArea);
 
+        Task<IList<CustomerDeliveryDataModel>> GetCustomerDeliveryData(SelectQueryOptionBuilder selectQueryBuilder,
+            string customerNo, string startDate, string endDate);
+
         Task<IList<SalesDataModel>> GetSalesDataByDate(SelectQueryOptionBuilder selectQueryBuilder, string date);
 
         Task<IList<MTSDataModel>> GetMtsTarget(SelectQueryOptionBuilder selectQueryBuilder, string date);
@@ -134,10 +138,10 @@ namespace Berger.Odata.Services
         #endregion
 
         #region calculate data
-        public decimal GetGrowth(decimal first, decimal second);
-        public decimal GetGrowthNew(decimal first, decimal second);
+        public decimal GetGrowth(decimal lyValue, decimal cyValue);
+        //public decimal GetGrowthNew(decimal first, decimal second);
         public decimal GetAchivement(decimal target, decimal actual);
-        public decimal GetTillDateGrowth(decimal first, decimal second, int totalDays, int countDays);
+        public decimal GetTillDateGrowth(decimal lyValue, decimal cyValue, int totalDays, int countDays);
         public decimal GetTillDateAchivement(decimal target, decimal actual, int totalDays, int countDays);
         public decimal GetPercentage(decimal total, decimal value);
         decimal GetContribution(decimal first, decimal second);

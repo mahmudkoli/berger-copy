@@ -8,18 +8,18 @@ using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
+   // [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class OdataSalesDataController : BaseController
+    public class AppDealerVisitReportController : BaseController
     {
         private readonly ISalesDataService _salesDataService;
         private readonly IMTSDataService _mtsDataService;
         private readonly IFinancialDataService _financialDataService;
         private readonly IBalanceDataService _balanceDataService;
 
-        public OdataSalesDataController(
+        public AppDealerVisitReportController(
             ISalesDataService salesDataService,
             IMTSDataService mtsDataService,
             IFinancialDataService financialDataService,
@@ -116,12 +116,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("BrandOrDivisionWisePerformance")]
-        public async Task<IActionResult> GetBrandOrDivisionWisePerformance([FromQuery] BrandOrDivisionWiseMTDSearchModel model)
+        [HttpGet("BrandWisePerformance")]
+        public async Task<IActionResult> GetBrandWisePerformance([FromQuery] BrandWisePerformanceSearchModel model)
         {
             try
             {
-                var data = await _salesDataService.GetBrandOrDivisionWisePerformance(model);
+                var data = await _salesDataService.GetBrandWisePerformance(model);
                 return OkResult(data);
             }
             catch (Exception ex)
@@ -162,12 +162,12 @@ namespace BergerMsfaApi.Controllers.Odata
         #endregion
 
         #region Balance Collection Data
-        [HttpGet("CollectionHistory")]
-        public async Task<IActionResult> GetCollectionHistory([FromQuery] CollectionHistorySearchModel model)
+        [HttpGet("MRHistory")]
+        public async Task<IActionResult> GetMrHistory([FromQuery] CollectionHistorySearchModel model)
         {
             try
             {
-                var data = await _balanceDataService.GetCollectionHistory(model);
+                var data = await _balanceDataService.GetMRHistory(model);
                 return OkResult(data);
             }
             catch (Exception ex)
