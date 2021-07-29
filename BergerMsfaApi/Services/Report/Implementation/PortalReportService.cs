@@ -594,7 +594,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                  join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                  from cainfo in caleftjoin.DefaultIfEmpty()
-                                 join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                 join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                  from dinfo in dleftjoin.DefaultIfEmpty()
                                  join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
                                  from tinfo in tleftjoin.DefaultIfEmpty()
@@ -608,7 +608,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                    && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                                    && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                   && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                   && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                    && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                    && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                  )
@@ -633,7 +633,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      depotName = depinfo.Name1,
                                      territoryName = tinfo.Name,
                                      zoneName = zinfo.Name,
-                                     p.Code,
+                                     p.DealerId,
                                      dinfo.CustomerNo
                                  }).ToListAsync();
 
@@ -678,7 +678,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                     join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                     from cainfo in caleftjoin.DefaultIfEmpty()
-                                    join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                    join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                     from dinfo in dleftjoin.DefaultIfEmpty()
                                     join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
                                     from tinfo in tleftjoin.DefaultIfEmpty()
@@ -692,7 +692,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                       && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                                       && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                      && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                      && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                       && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                       && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                     )
@@ -717,7 +717,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         depotName = depinfo.Name1,
                                         territoryName = tinfo.Name,
                                         zoneName = zinfo.Name,
-                                        p.Code,
+                                        p.DealerId,
                                         dinfo.CustomerNo
                                     }).ToListAsync();
 
@@ -768,7 +768,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.Customer
                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                      && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                     && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                     && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                    )
@@ -837,7 +837,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           dctinfo.DropdownName == ConstantsCustomerTypeValue.DirectProject
                                           && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                           && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                          && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                          && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                           && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                           && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                         )
