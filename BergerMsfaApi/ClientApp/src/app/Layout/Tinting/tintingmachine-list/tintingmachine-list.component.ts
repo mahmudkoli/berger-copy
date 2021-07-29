@@ -95,7 +95,6 @@ export class TintingmachineListComponent implements OnInit, OnDestroy {
 		tableName: 'Tinting Machine List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Employee Name', width: '20%', internalName: 'userFullName', sort: true, type: "" },
 			{ headerName: 'Depot', width: '20%', internalName: 'depot', sort: true, type: "" },
 			{ headerName: 'Territory', width: '10%', internalName: 'territory', sort: true, type: "" },
 			{ headerName: 'Company Name', width: '10%', internalName: 'companyName', sort: true, type: "" },
