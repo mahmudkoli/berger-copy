@@ -92,7 +92,7 @@ export class TintingmachineListComponent implements OnInit, OnDestroy {
 	public ptableSettings: IPTableSetting = {
 		tableID: "tintingMachines-table",
 		tableClass: "table table-border ",
-		tableName: 'Tinting Machine List',
+		tableName: 'Color Bank Status',
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'Depot', width: '20%', internalName: 'depot', sort: true, type: "" },

@@ -71,7 +71,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                 ["contribution"] = v => v.Contribution,
             };
             var user = AppIdentity.AppUser;
-            var isPermitted = user.RoleIds == RoleEnum.GM.ToString() || user.RoleIds == RoleEnum.Admin.ToString();
+            var isPermitted = user.ActiveRoleName == RoleEnum.GM.ToString() || user.ActiveRoleName == RoleEnum.Admin.ToString();
             var result = await _tintingMachineSvc.GetAllIncludeAsync(
                                 x => x,
                                 x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.Company.DropdownName.Contains(query.GlobalSearchValue) || x.Territory.Contains(query.GlobalSearchValue))

@@ -162,7 +162,7 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
                     Amount = s.Amount,
                     Address = s.Address,
                     BankName = s.BankName,
-                    Code = s.DealerId,
+                    DealerId = s.DealerId,
                     CreditControlAreaId =Convert.ToInt32(s.CreditControlArea.CreditControlAreaId),
                     CreditControlAreaName = s.CreditControlArea.Description,
                     ManualNumber = s.ManualNumber,

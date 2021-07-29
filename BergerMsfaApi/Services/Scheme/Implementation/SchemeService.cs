@@ -62,7 +62,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             };
 
             var user = AppIdentity.AppUser;
-            var isPermitted = (user.RoleIds == RoleEnum.Admin.ToString() || user.RoleIds == RoleEnum.GM.ToString()) ;
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString()) ;
 
 
 
@@ -171,7 +171,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         public async Task<object> GetAllSchemeMastersForSelectAsync()
         {
             var user = AppIdentity.AppUser;
-            var isPermitted = (user.RoleIds == RoleEnum.Admin.ToString() || user.RoleIds == RoleEnum.GM.ToString());
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
             var result = await (from sm in _applicationDbContext.SchemeMasters
                 join d in _applicationDbContext.Depots on sm.BusinessArea equals d.Werks into depots
                 from dep in depots.DefaultIfEmpty()
@@ -228,7 +228,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                 ["benefitEndDateText"] = v => v.BenefitEndDate
             };
             var user = AppIdentity.AppUser;
-            var isPermitted = (user.RoleIds == RoleEnum.Admin.ToString() || user.RoleIds == RoleEnum.GM.ToString());
+            var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
             var result = (
                             from sm in _applicationDbContext.SchemeMasters
                             join det in _applicationDbContext.SchemeDetails on sm.Id equals det.SchemeMasterId
