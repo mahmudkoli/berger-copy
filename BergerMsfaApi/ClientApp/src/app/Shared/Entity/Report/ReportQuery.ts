@@ -8,6 +8,7 @@ export class ReportBaseQuery extends QueryObject {
     userId: number;
     fromDate: Date;
     toDate: Date;
+    date: Date;
 
     constructor(init?: Partial<ReportBaseQuery>) {
         super();
@@ -70,6 +71,19 @@ export class PainterRegisterQuery extends ReportBaseQuery {
     }
 }
 
+export class InactivePainterQuery extends ReportBaseQuery {
+    painterId: number;
+    painterType: number;
+
+    constructor(init?: Partial<InactivePainterQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
 export class DealerOpeningQuery extends ReportBaseQuery {
 
     constructor(init?: Partial<DealerOpeningQuery>) {
@@ -84,6 +98,7 @@ export class DealerOpeningQuery extends ReportBaseQuery {
 export class CollectionReportQuery extends ReportBaseQuery {
 
     paymentMethodId: number;
+    paymentFromId: number;
     dealerId: number;
 
     constructor(init?: Partial<CollectionReportQuery>) {

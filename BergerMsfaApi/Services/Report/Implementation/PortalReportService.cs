@@ -215,54 +215,54 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<LeadGenerationDetailsReportResultModel>();
 
             var leads = await (from lg in _context.LeadGenerations
-                                join u in _context.UserInfos on lg.UserId equals u.Id into uleftjoin
-                                from uinfo in uleftjoin.DefaultIfEmpty()
-                                join tc in _context.DropdownDetails on lg.TypeOfClientId equals tc.Id into tcleftjoin
-                                from tcinfo in tcleftjoin.DefaultIfEmpty()
-                                join ps in _context.DropdownDetails on lg.PaintingStageId equals ps.Id into psleftjoin
-                                from psinfo in psleftjoin.DefaultIfEmpty()
-                                join d in _context.Depots on lg.Depot equals d.Werks into dleftjoin
-                                from dinfo in dleftjoin.DefaultIfEmpty()
-                                where (
-                                 (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
-                                 && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
-                                 && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
-                                 && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
-                                 && (!query.FromDate.HasValue || lg.CreatedTime.Date >= query.FromDate.Value.Date)
-                                 && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date)
-                                 && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
-                                 && (!query.PaintingStageId.HasValue || lg.PaintingStageId == query.PaintingStageId.Value)
-                                )
-                                select new
-                                {
-                                    uinfo.Email,
-                                    lg.Code,
-                                    lg.ProjectName,
-                                    lg.Depot,
-                                    depotName = dinfo.Name1,
-                                    lg.Territory,
-                                    lg.Zone,
-                                    lg.CreatedTime,
-                                    typeOfClient = tcinfo.DropdownName,
-                                    lg.ProjectAddress,
-                                    lg.KeyContactPersonName,
-                                    lg.KeyContactPersonMobile,
-                                    lg.PaintContractorName,
-                                    lg.PaintContractorMobile,
-                                    paintingStage = psinfo.DropdownName,
-                                    lg.ExpectedDateOfPainting,
-                                    lg.NumberOfStoriedBuilding,
-                                    lg.TotalPaintingAreaSqftInterior,
-                                    lg.TotalPaintingAreaSqftExterior,
-                                    lg.ExpectedValue,
-                                    lg.ExpectedMonthlyBusinessValue,
-                                    lg.RequirementOfColorScheme,
-                                    lg.ProductSamplingRequired,
-                                    lg.NextFollowUpDate,
-                                    lg.Remarks,
-                                    lg.PhotoCaptureUrl,
-                                    lg.OtherClientName
-                                }).ToListAsync();
+                               join u in _context.UserInfos on lg.UserId equals u.Id into uleftjoin
+                               from uinfo in uleftjoin.DefaultIfEmpty()
+                               join tc in _context.DropdownDetails on lg.TypeOfClientId equals tc.Id into tcleftjoin
+                               from tcinfo in tcleftjoin.DefaultIfEmpty()
+                               join ps in _context.DropdownDetails on lg.PaintingStageId equals ps.Id into psleftjoin
+                               from psinfo in psleftjoin.DefaultIfEmpty()
+                               join d in _context.Depots on lg.Depot equals d.Werks into dleftjoin
+                               from dinfo in dleftjoin.DefaultIfEmpty()
+                               where (
+                                (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
+                                && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
+                                && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
+                                && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
+                                && (!query.FromDate.HasValue || lg.CreatedTime.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date)
+                                && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
+                                && (!query.PaintingStageId.HasValue || lg.PaintingStageId == query.PaintingStageId.Value)
+                               )
+                               select new
+                               {
+                                   uinfo.Email,
+                                   lg.Code,
+                                   lg.ProjectName,
+                                   lg.Depot,
+                                   depotName = dinfo.Name1,
+                                   lg.Territory,
+                                   lg.Zone,
+                                   lg.CreatedTime,
+                                   typeOfClient = tcinfo.DropdownName,
+                                   lg.ProjectAddress,
+                                   lg.KeyContactPersonName,
+                                   lg.KeyContactPersonMobile,
+                                   lg.PaintContractorName,
+                                   lg.PaintContractorMobile,
+                                   paintingStage = psinfo.DropdownName,
+                                   lg.ExpectedDateOfPainting,
+                                   lg.NumberOfStoriedBuilding,
+                                   lg.TotalPaintingAreaSqftInterior,
+                                   lg.TotalPaintingAreaSqftExterior,
+                                   lg.ExpectedValue,
+                                   lg.ExpectedMonthlyBusinessValue,
+                                   lg.RequirementOfColorScheme,
+                                   lg.ProductSamplingRequired,
+                                   lg.NextFollowUpDate,
+                                   lg.Remarks,
+                                   lg.PhotoCaptureUrl,
+                                   lg.OtherClientName
+                               }).ToListAsync();
 
             //var leads = await _leadGenerationRepository.GetAllIncludeAsync(x => x,
             //                x => (!query.UserId.HasValue || x.UserId == query.UserId.Value)
@@ -445,6 +445,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       territoryName = tinfo.Name,
                                       zoneName = zinfo.Name,
                                       painterId = p.Id.ToString(),
+                                      painterNo = p.PainterNo,
                                       p.CreatedTime,
                                       typeOfPainter = dropDownInfo.DropdownName,
                                       depotName = depinfo.Name1,
@@ -473,7 +474,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 UserId = x?.Email ?? string.Empty,
                 Territory = x.territoryName,
                 Zone = x.zoneName,
-                PainterId = x.painterId,
+                //PainterId = x.painterId,
+                PainterId = x.painterNo,
                 PainerRegistrationDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TypeOfPainer = x.typeOfPainter,
                 DepotName = x.depotName,
@@ -594,7 +596,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                  join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                  from cainfo in caleftjoin.DefaultIfEmpty()
-                                 join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                 join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                  from dinfo in dleftjoin.DefaultIfEmpty()
                                  join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
                                  from tinfo in tleftjoin.DefaultIfEmpty()
@@ -608,7 +610,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                    && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                                    && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                   && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                   && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                    && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                    && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                  )
@@ -633,7 +635,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      depotName = depinfo.Name1,
                                      territoryName = tinfo.Name,
                                      zoneName = zinfo.Name,
-                                     p.Code,
+                                     p.DealerId,
                                      dinfo.CustomerNo
                                  }).ToListAsync();
 
@@ -678,7 +680,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                     join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                     from cainfo in caleftjoin.DefaultIfEmpty()
-                                    join d in _context.DealerInfos on p.Code equals d.Id.ToString() into dleftjoin
+                                    join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                     from dinfo in dleftjoin.DefaultIfEmpty()
                                     join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
                                     from tinfo in tleftjoin.DefaultIfEmpty()
@@ -692,7 +694,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
                                       && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
                                       && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                      && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                      && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                       && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                       && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                     )
@@ -717,7 +719,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         depotName = depinfo.Name1,
                                         territoryName = tinfo.Name,
                                         zoneName = zinfo.Name,
-                                        p.Code,
+                                        p.DealerId,
                                         dinfo.CustomerNo
                                     }).ToListAsync();
 
@@ -768,7 +770,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.Customer
                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                      && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                     && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                     && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                    )
@@ -837,7 +839,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           dctinfo.DropdownName == ConstantsCustomerTypeValue.DirectProject
                                           && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                           && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                          && (!query.DealerId.HasValue || p.Code == query.DealerId.Value.ToString())
+                                          && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                           && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                           && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                         )
@@ -926,6 +928,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        {
                                            userInfo.Email,
                                            painterId = pcinfo.PainterId.ToString(),
+                                           painterNo = pinfo.PainterNo,
                                            pcinfo.CreatedTime,
                                            painterType = ddcinfo.DropdownName,
                                            depot = depinfo.Name1,
@@ -972,7 +975,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult = paintersCalls.Select(x => new PainterCallReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
-                PainterId = x?.painterId ?? string.Empty,
+                //PainterId = x?.painterId ?? string.Empty,
+                PainterId = x?.painterNo ?? string.Empty,
                 PainterVisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
                 TypeOfPainter = x.painterType,
                 DepotName = x.depot,
@@ -1753,7 +1757,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      join u in _context.UserInfos on dsc.UserId equals u.Id into uleftjoin
                                      from userInfo in uleftjoin.DefaultIfEmpty()
                                      where (
-                                        (dsc.IsSubDealerCall == true) 
+                                        (dsc.IsSubDealerCall == true)
                                         && (dsc.JourneyPlanId == null)
                                         && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
@@ -2361,27 +2365,27 @@ namespace BergerMsfaApi.Services.Report.Implementation
             //string zone = query.Zones.Count > 0 ? query.Zones[0] : string.Empty;
             query.ActivitySummary = string.IsNullOrWhiteSpace(query.ActivitySummary) ? "" : query.ActivitySummary;
             //IList<int> userDealerIds = await _service.GetDealerByUserId(AppIdentity.AppUser.UserId);
-            var userDealerIds = new List<string>();
+            //  var userDealerIds = new List<string>();
 
-            if (query.UserId.HasValue)
-                userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();
+            //if (query.UserId.HasValue)
+            //    userDealerIds = (await _service.GetDealerByUserId(query.UserId.Value)).ToList();
 
-            var dbResult = await _dealerInfoRepository.FindByCondition(x =>
-                (!query.Territories.Any() || query.Territories.Contains(x.Territory))
-                && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
-                && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
-                && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == x.BusinessArea)
-                && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
-            ).Select(x => new
-            {
-                //x.Territory,
-                x.CustomerNo,
-                //x.CustZone,
-                //x.CreditControlArea,
-                x.CustomerName,
-            }).ToListAsync();
+            //var dbResult = await _dealerInfoRepository.FindByCondition(x =>
+            //    (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+            //    && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
+            //    && (!query.Zones.Any() || query.Zones.Contains(x.CustZone))
+            //    && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == x.BusinessArea)
+            //    && (!query.UserId.HasValue || userDealerIds.Contains(x.CustomerNo))
+            //).Select(x => new
+            //{
+            //    //x.Territory,
+            //    x.CustomerNo,
+            //    //x.CustZone,
+            //    //x.CreditControlArea,
+            //    x.CustomerName,
+            //}).ToListAsync();
 
-            var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
+            // var dealerIds = dbResult.Select(x => x.CustomerNo).Distinct().ToList();
 
             if (query.UserId.HasValue)
             {
@@ -2389,65 +2393,98 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             }
 
-
-
             var data = _context.JourneyPlanMasters.Join(_context.JourneyPlanDetails, jpm => jpm.Id, jpd => jpd.PlanId, (JourneyPlanMaster, JourneyPlanDetail) => new { JourneyPlanMaster, JourneyPlanDetail })
                         .Join(_context.DealerSalesCalls.Include(p => p.Dealer), jpm => jpm.JourneyPlanMaster.Id, dsc => dsc.JourneyPlanId, (JourneyPlanMaster, DealerSalesCall) => new { JourneyPlanMaster, DealerSalesCall })
                         .Where(p =>
                             p.JourneyPlanMaster.JourneyPlanMaster.PlanStatus == PlanStatus.Approved &&
-                           (!query.UserId.HasValue ? true : userinfo.EmployeeId == p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
+                           (!query.UserId.HasValue || userinfo.EmployeeId == p.JourneyPlanMaster.JourneyPlanMaster.EmployeeId)
 
-                           && (!query.FromDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime >= query.FromDate)
-                           && (!query.ToDate.HasValue ? true : p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime <= query.ToDate)
+                           && (!query.FromDate.HasValue || p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime >= query.FromDate)
+                           && (!query.ToDate.HasValue || p.JourneyPlanMaster.JourneyPlanMaster.CreatedTime <= query.ToDate)
 
-                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
-                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
-                )
+                           && (query.Zones.Count == 0 || query.Zones.Contains(p.DealerSalesCall.Dealer.CustZone))
+                           && (query.Territories.Count == 0 || query.Territories.Contains(p.DealerSalesCall.Dealer.Territory))
+
+                           && (p.DealerSalesCall.Dealer.BusinessArea == query.Depot || string.IsNullOrWhiteSpace(query.Depot))
+                           && (!query.SalesGroups.Any() || query.SalesGroups.Contains(p.DealerSalesCall.Dealer.SalesGroup))
+
+                            )
                         .Select(p => new
                         {
                             JourneyPlanMaster = p.JourneyPlanMaster.JourneyPlanMaster,
                             JourneyPlanDetail = p.JourneyPlanMaster.JourneyPlanMaster.JourneyPlanDetail,
                             DealerSalesCall = p.DealerSalesCall
                         }).ToList();
-            var dealerSalesCall = _context.DealerSalesCalls.Where(p => p.JourneyPlanId == null
-
-               && (!query.FromDate.HasValue ? true : p.CreatedTime.Date >= query.FromDate.Value.Date)
-                              && (!query.ToDate.HasValue ? true : p.CreatedTime.Date <= query.ToDate.Value.Date)
-            ).ToList();
-
-            var painter = _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (Painter, PainterCall) => new { Painter, PainterCall })
-                                .Where(p =>
-                              (!query.FromDate.HasValue ? true : p.PainterCall.CreatedTime.Date >= query.FromDate.Value.Date)
-                            && (!query.ToDate.HasValue ? true : p.PainterCall.CreatedTime.Date <= query.ToDate.Value.Date)
-                            && (!query.FromDate.HasValue ? true : p.Painter.CreatedTime.Date >= query.FromDate.Value.Date)
-                            && (!query.ToDate.HasValue ? true : p.Painter.CreatedTime.Date <= query.ToDate.Value.Date)
-
-                            && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.Painter.Zone))
-                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.Painter.Territory))
-                                )
-                                .Select(p => new
-                                {
-                                    PainterRegistration = p.Painter,
-                                    PainterCalls = p.PainterCall
-                                }).ToList();
 
 
-            var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (LeadGeneration, LeadFollowUp) => new { LeadGeneration, LeadFollowUp })
-                .Where(p =>
-               (!query.FromDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date >= query.FromDate.Value.Date)
-                           && (!query.ToDate.HasValue ? true : p.LeadGeneration.CreatedTime.Date <= query.ToDate.Value.Date)
-                           && (!query.FromDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date >= query.FromDate.Value.Date)
-                           && (!query.ToDate.HasValue ? true : p.LeadFollowUp.CreatedTime.Date <= query.ToDate.Value.Date)
+            var dealerSalesCall = await _context.DealerSalesCalls.Join(_context.DealerInfos, p => p.DealerId, di => di.Id, (dealerSalesCall, dealerInfo) => new { dealerSalesCall, dealerInfo })
+                .Where(p => p.dealerSalesCall.JourneyPlanId == null
+                            && (!query.FromDate.HasValue || p.dealerSalesCall.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue || p.dealerSalesCall.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (query.Zones.Count == 0 || query.Zones.Contains(p.dealerInfo.CustZone))
+                            && (query.Territories.Count == 0 || query.Territories.Contains(p.dealerInfo.Territory))
+                            && (query.SalesGroups.Count == 0 || query.SalesGroups.Contains(p.dealerInfo.SalesGroup))
+                            && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == p.dealerInfo.BusinessArea)
+                            && (!query.UserId.HasValue || p.dealerSalesCall.UserId == query.UserId.Value)
+                            ).Select(x => x.dealerSalesCall).ToListAsync();
 
-                           && (query.Zones.Count == 0 ? true : query.Zones.Contains(p.LeadGeneration.Zone))
-                           && (query.Territories.Count == 0 ? true : query.Territories.Contains(p.LeadGeneration.Territory))
+            var painter = _context.Painters.Join(_context.PainterCalls, p => p.Id, pc => pc.PainterId, (painter, PainterCall) => new { Painter = painter, PainterCall })
+                                .Where(p => (!query.FromDate.HasValue || p.PainterCall.CreatedTime.Date >= query.FromDate.Value.Date)
+                                            && (!query.ToDate.HasValue || p.PainterCall.CreatedTime.Date <= query.ToDate.Value.Date)
+                                            && (!query.FromDate.HasValue || p.Painter.CreatedTime.Date >= query.FromDate.Value.Date)
+                                            && (!query.ToDate.HasValue || p.Painter.CreatedTime.Date <= query.ToDate.Value.Date)
+                                            && (query.Zones.Count == 0 || query.Zones.Contains(p.Painter.Zone))
+                                            && (query.Territories.Count == 0 || query.Territories.Contains(p.Painter.Territory))
+                                            && (query.SalesGroups.Count == 0 || query.SalesGroups.Contains(p.Painter.SaleGroup))
+                                            && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == p.Painter.Depot)
+                                            && (!query.UserId.HasValue || p.Painter.EmployeeId == userinfo.EmployeeId)
+                                            )
+                                            .Select(p => new
+                                            {
+                                                PainterRegistration = p.Painter,
+                                                PainterCalls = p.PainterCall
+                                            }).ToList();
+
+            var lead = _context.LeadGenerations.Join(_context.LeadFollowUps, lg => lg.Id, lf => lf.LeadGenerationId, (leadGeneration, leadFollowUp) => new { LeadGeneration = leadGeneration, LeadFollowUp = leadFollowUp })
+                .Where(p => (!query.FromDate.HasValue || p.LeadGeneration.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue || p.LeadGeneration.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (!query.FromDate.HasValue || p.LeadFollowUp.CreatedTime.Date >= query.FromDate.Value.Date)
+                            && (!query.ToDate.HasValue || p.LeadFollowUp.CreatedTime.Date <= query.ToDate.Value.Date)
+                            && (query.Zones.Count == 0 || query.Zones.Contains(p.LeadGeneration.Zone))
+                            && (query.Territories.Count == 0 || query.Territories.Contains(p.LeadGeneration.Territory))
+                            && (p.LeadGeneration.Depot == query.Depot || string.IsNullOrWhiteSpace(query.Depot))
+                            && (!query.UserId.HasValue || p.LeadGeneration.UserId == query.UserId.Value)
                 )
+                            .Select(p => new
+                            {
+                                LeadGeneration = p.LeadGeneration,
+                                LeadFollowUp = p.LeadFollowUp
+                            }).ToList();
 
-                .Select(p => new
-                {
-                    LeadGeneration = p.LeadGeneration,
-                    LeadFollowUp = p.LeadFollowUp
-                }).ToList();
+
+
+            var collection = await (from p in _context.Payments
+                                    join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
+                                    from dctinfo in dctleftjoin.DefaultIfEmpty()
+                                    join ui in _context.UserInfos on p.EmployeeId equals ui.EmployeeId into uileftjoin
+                                    from uiInfo in uileftjoin.DefaultIfEmpty()
+                                    join uarea in _context.UserZoneAreaMappings on uiInfo.Id equals uarea.UserInfoId into uarealeftjoin
+                                    from uareaInfo in uarealeftjoin.DefaultIfEmpty()
+                                    where (
+                                        (!query.ToDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
+                                        && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
+                                        && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == uareaInfo.PlantId)
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == uareaInfo.PlantId)
+                                        && (!query.UserId.HasValue || p.EmployeeId == userinfo.EmployeeId)
+                                    )
+                                    select new
+                                    {
+                                        CollectionId = p.Id,
+                                        p.Amount
+                                    }).Distinct().SumAsync(x => x.Amount);
 
 
             var reportResult = new List<ActiveSummaryReportResultModel>()
@@ -2468,10 +2505,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
 
-                    Activity="SALES CALL- SUB DEALER",
-                    Target="0",
-                    Actual = data.Where(p=>p.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.Id).Count().ToString(),
-                    Variance="0",
+                    Activity="SALES CALL- DIRECT DEALER",
+                    Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
+                    Actual = data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count().ToString(),
+                    Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count()).ToString(),
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
@@ -2484,10 +2521,53 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 new ActiveSummaryReportResultModel
                 {
 
-                    Activity="SALES CALL- DIRECT DEALER",
-                    Target=data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0).ToString(),
-                    Actual = data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count().ToString(),
-                    Variance=(data.Select(x => x.DealerSalesCall.DealerId).Distinct().Count(x=>x>0)-data.Where(x=>!x.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.DealerId).Distinct().Count()).ToString(),
+                    Activity="AD HOC VISIT IN DEALERS POINT",
+                    Target="N/A",
+                    Actual = dealerSalesCall.Count(x=>!x.IsSubDealerCall).ToString(),
+                    Variance="N/A",
+                    BusinessGeneration="N/A",
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.Depot,
+                    Territory=territory,
+                    Zone=zone
+                },
+
+                new ActiveSummaryReportResultModel
+                {
+
+                    Activity="SALES CALL- SUB DEALER",
+                    Target="0",
+                    Actual = data.Where(p=>p.DealerSalesCall.IsSubDealerCall).Select(x => x.DealerSalesCall.Id).Count().ToString(),
+                    Variance="0",
+                    BusinessGeneration="N/A",
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.Depot,
+                    Territory=territory,
+                    Zone=zone
+
+                },
+                new ActiveSummaryReportResultModel
+                {
+
+                    Activity="AD HOC VISIT IN SUB-DEALERS POINT",
+                    Target="N/A",
+                    Actual = dealerSalesCall.Count(x=>x.IsSubDealerCall).ToString(),
+                    Variance="N/A",
+                    BusinessGeneration="N/A",
+                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
+                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID=query.Depot,
+                    Territory=territory,
+                    Zone=zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity="PAINTER REGISTRATION",
+                    Target="N/A",
+                    Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
+                    Variance="0",
                     BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
@@ -2512,58 +2592,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 },
                 new ActiveSummaryReportResultModel
                 {
-                    Activity="PAINTER REGISTRATION",
-                    Target="N/A",
-                    Actual = painter.Select(x => x.PainterRegistration.Id).Distinct().Count(x=>x>0).ToString(),
-                    Variance="0",
-                    BusinessGeneration="N/A",
-                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
-                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.Depot,
-                    Territory=territory,
-                    Zone=zone
-
-                },
-                new ActiveSummaryReportResultModel
-                {
-
-                    Activity="AD HOC VISIT IN DEALERS POINT",
-                    Target="N/A",
-                    Actual = dealerSalesCall.Count(x=>!x.IsSubDealerCall).ToString(),
-                    Variance="N/A",
-                    BusinessGeneration="N/A",
-                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
-                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.Depot,
-                    Territory=territory,
-                    Zone=zone
-
-
-                },
-                new ActiveSummaryReportResultModel
-                {
-
-                    Activity="AD HOC VISIT IN SUB-DEALERS POINT",
-                    Target="N/A",
-                    Actual = dealerSalesCall.Count(x=>x.IsSubDealerCall).ToString(),
-                    Variance="N/A",
-                    BusinessGeneration="N/A",
-                    //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
-                    UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
-                    DepotID=query.Depot,
-                    Territory=territory,
-                    Zone=zone
-
-
-                },
-                new ActiveSummaryReportResultModel
-                {
 
                     Activity="LEAD GENERATION",
                     Target="N/A",
                     Actual =lead.Select(p=>p.LeadGeneration.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
-                    BusinessGeneration="0",
+                    BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
                     DepotID=query.Depot,
@@ -2577,7 +2611,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Target="N/A",
                     Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
-                    BusinessGeneration="0",
+                    BusinessGeneration=lead.Sum(x=>x.LeadFollowUp.BusinessAchievement.BergerValueSales).ToString(),
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
                     DepotID=query.Depot,
@@ -2591,10 +2625,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
                     Actual =  (string.IsNullOrWhiteSpace(query.ActivitySummary) || query.ActivitySummary.ToLower()=="TOTAL COLLECTION VALUE".ToLower())?
-                        (await _collectionDataService.GetTotalCollectionValue(dealerIds, query.FromDate, query.ToDate)).ToString():"0",
+                        collection.ToString():"0",
                     //Actual ="0",
                     Variance="N/A",
-                    BusinessGeneration="0",
+                    BusinessGeneration="N/A",
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
                     DepotID=query.Depot,
@@ -2797,7 +2831,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        ll.IsLoggedIn
                                    }).ToListAsync();
 
-            var loginInfoGroup = loginInfo.GroupBy(x => new { 
+            var loginInfoGroup = loginInfo.GroupBy(x => new
+            {
                 x.Email,
                 LoggedInTime = x.LoggedInTime.Date
             }).Select(x => new
@@ -2810,7 +2845,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 totalUseTime = Decimal.Round(CustomConvertExtension.ObjectToDecimal((CustomConvertExtension.ObjectToCurrentDateTime(x.Max(x => x.LoggedOutTime)) - CustomConvertExtension.ObjectToCurrentDateTime(x.Min(x => x.LoggedInTime))).TotalHours), 2)
             }).OrderByDescending(x => x.startDate).ThenByDescending(x => x.startTime).ToList();
 
-            reportResult = loginInfoGroup.Select(x => new LogInReportResultModel 
+            reportResult = loginInfoGroup.Select(x => new LogInReportResultModel
             {
                 UserId = x.userId,
                 StartDate = x.startDate,
@@ -2925,7 +2960,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return queryResult;
         }
 
-        public dynamic GetSnapShotReportBySp(MerchendizingSnapShotReportSearchModel query) 
+        public dynamic GetSnapShotReportBySp(MerchendizingSnapShotReportSearchModel query)
         {
             var territory = new StringBuilder();
             foreach (var item in query.Territories)
@@ -3120,6 +3155,104 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
         }
 
+        public async Task<QueryResultModel<InactivePainterReportResultModel>> GetInactivePainterReportAsync(InactivePainterReportSearchModel query)
+        {
+            var reportResult = new List<InactivePainterReportResultModel>();
+
+            var inactivePainter = await (from psl in _context.PainterStatusLogs
+                                         join p in _context.Painters on psl.PainterId equals p.Id
+                                         where (psl.Status == 0 && p.Status == 0)
+                                         select new
+                                         {
+                                             psl.PainterId,
+                                             psl.CreatedTime,
+                                         }).GroupBy(x => new { x.PainterId }).Select(x => new
+                                         {
+                                             painterId = x.Key.PainterId,
+                                             createdTime = x.Max(x => x.CreatedTime)
+                                         }).ToListAsync();
+
+            var Painterdata = (from ip in inactivePainter
+                               join psl in _context.PainterStatusLogs on ip.painterId equals psl.PainterId
+                               join p in _context.Painters on ip.painterId equals p.Id
+                               join pc in _context.PainterCalls on p.Id equals pc.PainterId into pcleft
+                               from pcInfo in pcleft.DefaultIfEmpty()
+                               join dep in _context.Depots on p.Depot equals dep.Werks
+                               join dd in _context.DropdownDetails on p.PainterCatId equals dd.Id
+                               join ddpc in _context.DropdownDetails on pcInfo?.PainterCatId equals ddpc.Id into ddpcleft
+                               from ddpcinfo in ddpcleft.DefaultIfEmpty()
+                               where (
+                                    (ip.painterId == psl.PainterId && ip.createdTime == psl.CreatedTime)
+                                    && (!query.UserId.HasValue || psl.UserId == query.UserId.Value)
+                                    && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
+                                    && (!query.FromDate.HasValue || psl.CreatedTime.Date >= query.FromDate.Value.Date)
+                                    && (!query.ToDate.HasValue || psl.CreatedTime.Date <= query.ToDate.Value.Date)
+                                    && (!query.SalesGroups.Any() || query.SalesGroups.Contains(p.SaleGroup))
+                                    && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                    && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                    && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
+                                    && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                               )
+                               select new
+                               {
+                                   p.Depot,
+                                   dep.Name1,
+                                   poTerritory = p.Territory,
+                                   puTerritory = pcInfo?.Territory,
+                                   poZone = p.Zone,
+                                   puZone = pcInfo?.Zone,
+                                   psl.PainterId,
+                                   p.PainterNo,
+                                   pcInfo?.Id,
+                                   poName = p.PainterName,
+                                   puName = pcInfo?.PainterName,
+                                   poAddress = p.Address,
+                                   puAddress = pcInfo?.Address,
+                                   poPhone = p.Phone,
+                                   puPhone = pcInfo?.Phone,
+                                   poDropdownName = dd.DropdownName,
+                                   puDropdownName = ddpcinfo?.DropdownName,
+                                   poAccDbblNumber = p.AccDbblNumber,
+                                   puAccDbblNumber = pcInfo?.AccDbblNumber,
+                                   psl.Reason
+                               }).OrderByDescending(x => x.Id).ToList();
+
+            var reportData = Painterdata.GroupBy(x => x.PainterId).Select(x => new
+            {
+                depotIdAndName = $"{x.FirstOrDefault()?.Depot} {x.FirstOrDefault()?.Name1}",
+                territory = x.FirstOrDefault()?.puTerritory ?? x.FirstOrDefault()?.poTerritory,
+                zone = x.FirstOrDefault()?.puZone ?? x.FirstOrDefault()?.poZone,
+                painterId = x.FirstOrDefault().PainterNo,
+                painterName = x.FirstOrDefault()?.puName ?? x.FirstOrDefault()?.poName,
+                painterAddress = x.FirstOrDefault()?.puAddress ?? x.FirstOrDefault()?.poAddress,
+                painterMobileNumber = x.FirstOrDefault()?.puPhone ?? x.FirstOrDefault()?.poPhone,
+                painerType = x.FirstOrDefault()?.puDropdownName ?? x.FirstOrDefault()?.poDropdownName,
+                rocketDataNumber = x.FirstOrDefault()?.puAccDbblNumber ?? x.FirstOrDefault()?.poAccDbblNumber,
+                inactiveReason = x.FirstOrDefault()?.Reason
+            }).ToList();
+
+            reportResult = reportData.Select(x => new InactivePainterReportResultModel
+            {
+                DepotIdAndName = x.depotIdAndName,
+                Territory = x.territory,
+                Zone = x.zone,
+                PainterId = x.painterId,
+                PainterName = x.painterName,
+                PainterAddress = x.painterAddress,
+                PainterMobileNumber = x.painterMobileNumber,
+                PainerType = x.painerType,
+                RocketDataNumber = x.rocketDataNumber,
+                InactiveReason = x.inactiveReason
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+
+            var queryResult = new QueryResultModel<InactivePainterReportResultModel>();
+            queryResult.Items = reportResult;
+            queryResult.TotalFilter = reportData.Count();
+            queryResult.Total = reportData.Count();
+
+            return queryResult;
+        }
 
     }
 }

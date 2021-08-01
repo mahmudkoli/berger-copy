@@ -1,4 +1,6 @@
-﻿using BergerMsfaApi.Models.PainterRegistration;
+﻿using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.PainterRegistration;
+using BergerMsfaApi.Models.Report;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,12 +26,13 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
         #endregion
 
         #region Portal
-        Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search);
+        Task<QueryResultModel<PainterModel>> GetPainterListAsync(PainterRegistrationReportSearchModel query);
         Task<PainterModel> CreatePainterAsync(PainterModel model);
         Task<PainterModel> CreatePainterAsync(PainterModel model, IFormFile profile, List<IFormFile> attachments);
 
         Task<PainterModel> UpdateAsync(PainterModel model);
         Task<PainterModel> GetPainterByIdAsync(int Id);
+        Task<bool> PainterStatusUpdate(PainterStatusUpdateModel id);
 
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile file);
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile profile, List<IFormFile> attachments);

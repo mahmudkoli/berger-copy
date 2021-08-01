@@ -39,13 +39,46 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class ChequeBounceResultModel
+
+    public class ChecqueBounceResultModel
     {
-        public string CustomerNo { get; set; }
-        public string CustomerName { get; set; }
-        public string DocumentNo { get; set; }
-        public string InstrumentNo { get; set; }
-        public string ReversalDate { get; set; }
+        public List<ChequeBounceSummaryResultModel> ChequeBounceSummaryResultModels { get; set; } 
+        public List<ChequeBounceDetailResultModel> ChequeBounceDetailResultModels { get; set; }
+
+        public ChecqueBounceResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.ChequeBounceSummaryResultModels = new List<ChequeBounceSummaryResultModel>();
+            this.ChequeBounceDetailResultModels = new List<ChequeBounceDetailResultModel>();
+        }
+
+
+
+    }
+
+
+    public class ChequeBounceSummaryResultModel
+    {
+        public string Category { get; set; }
+        public decimal MTDNoOfCheque { get; set; }
+        public decimal MTDChequeValue { get; set; }
+        public decimal YTDNoOfCheque { get; set; }
+        public decimal YTDChequeValue { get; set; }
+
+        public ChequeBounceSummaryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+
+    public class ChequeBounceDetailResultModel
+    {
+      //  public string CustomerNo { get; set; }
+       // public string CustomerName { get; set; }
+        public string MrNumber { get; set; }
+        public string ChequeNo { get; set; }
+        public string Date { get; set; }
         public decimal Amount { get; set; }
         public string BankName { get; set; }
         public string CreditControlArea { get; set; }
@@ -53,7 +86,7 @@ namespace Berger.Odata.Model
         public string Reason { get; set; }
         //public string Remarks { get; set; }
 
-        public ChequeBounceResultModel()
+        public ChequeBounceDetailResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

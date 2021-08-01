@@ -9,6 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedMasterModule } from '../../Shared/Modules/shared-master/shared-master.module';
 import { CollectionEntryListComponent } from './collection-entry-list/collection-entry-list.component';
 import { CollectionEntryRoutingModule } from './collectionEntry-routing';
+import { CollectionEntryEditComponent } from './collection-entry-edit/collection-entry-edit.component';
 
 
 //import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
@@ -16,7 +17,7 @@ import { CollectionEntryRoutingModule } from './collectionEntry-routing';
 
 
 @NgModule({
-    declarations: [CollectionEntryListComponent],
+    declarations: [CollectionEntryListComponent,CollectionEntryEditComponent],
     imports: [
         CommonModule,
         SharedMasterModule,

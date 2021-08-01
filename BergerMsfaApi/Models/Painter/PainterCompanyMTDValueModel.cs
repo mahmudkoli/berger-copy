@@ -23,4 +23,17 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public float CumelativeInPercent { get; set; }
 
     }
+
+    public class AttachedDealerPainterCallModel : MapFrom<AttachedDealerPainterCall>
+    {
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<AttachedDealerPainterCall, AttachedDealerPainterCallModel>();
+        }
+
+        public int Id { get; set; }
+        public int DealerId { get; set; } // DealerInfo Id
+        public string CustomerName { get; set; }
+        public string CustomerNo { get; set; }
+    }
 }

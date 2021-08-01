@@ -82,8 +82,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Lead FollowUp to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification failed for Lead FollowUp to send for User Id ({userId}): {ex}", _rootPath);
 
                 _logger.LogError(ex, $"Notification failed for Lead FollowUp to send ");
                 LoggerExtension.ToWriteLog($"Notification failed for Lead FollowUp to send): {ex}", _rootPath);
@@ -112,8 +110,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Check Bounce to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification failed for Check Bounce to send for User Id ({userId}): {ex}", _rootPath);
 
                 _logger.LogError(ex, $"Notification failed for Check Bounce to send ");
                 LoggerExtension.ToWriteLog($"Notification failed for Check Bounce to send): {ex}", _rootPath);
@@ -143,8 +139,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Credit Limit Cross to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification failed for Credit Limit Cross to send for User Id ({userId}): {ex}", _rootPath);
 
                 _logger.LogError(ex, $"Notification failed for Credit Limit Cross to send");
                 LoggerExtension.ToWriteLog($"Notification failed for Credit Limit Cross to send): {ex}", _rootPath);
@@ -174,8 +168,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Payment FollowUp to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification failed for Payment FollowUp to send for User Id ({userId}): {ex}", _rootPath);
 
                 _logger.LogError(ex, $"Notification failed for Payment FollowUp to send");
                 LoggerExtension.ToWriteLog($"Notification failed for Payment FollowUp to send): {ex}", _rootPath);
@@ -204,8 +196,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Payment FollowUp to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification failed for Payment FollowUp to send for User Id ({userId}): {ex}", _rootPath);
 
                 _logger.LogError(ex, $"Notification failed for Payment FollowUp to send ");
                 LoggerExtension.ToWriteLog($"Notification failed for Payment FollowUp to send ): {ex}", _rootPath);
@@ -262,8 +252,6 @@ namespace BergerMsfaApi.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, $"Notification failed for Dealer Occasion to send for User Id: {userId}");
-                //LoggerExtension.ToWriteLog($"Notification for Dealer Occasion failed to send for User Id ({userId}): {ex}", _rootPath);
 
 
                 _logger.LogError(ex, $"Notification failed for Dealer Occasion to send ");
@@ -275,7 +263,6 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IList<AppAlert>> GetNotificationByEmpRole()
         {
-            //Dictionary<string, IList<AppAlertNotificationModel>> keyValuePairs = new Dictionary<string, IList<AppAlertNotificationModel>>();
 
             IList<AppAlert> appAlerts = new List<AppAlert>();
 
@@ -293,15 +280,14 @@ namespace BergerMsfaApi.Services.AlertNotification
                         app.cateegoryName = "Occasionto Celebrate Notification";
                         app.notifications= OccasiontoCelebrate;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("OccasiontoCelebrate", await GetCustomerOccasionNotification());
                         break;
+
                     case ConstantAlertNotificationValue.LeadFollowupReminder:
                         var LeadFollowupReminder = await GetLeadFollowUpNotification();
 
                         app.cateegoryName = "Lead Followup Reminder Notification";
                         app.notifications= LeadFollowupReminder;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("LeadFollowupReminder", await GetLeadFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.ChequeBounceNotification:
@@ -309,15 +295,14 @@ namespace BergerMsfaApi.Services.AlertNotification
                         app.cateegoryName = "Cheque Bounce Notification";
                         app.notifications= ChequeBounceNotification;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("ChequeBounceNotification", await GetCheckBounceNotification());
                         break;
+
                     case ConstantAlertNotificationValue.RPRSNotification:
                         var RPRSNotification = await GetRPRSPaymentFollowUpNotification();
 
                         app.cateegoryName = "RPRS Notification";
                         app.notifications= RPRSNotification;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("RPRSNotification", await GetRPRSPaymentFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.FastPayCarryNotification:
@@ -325,7 +310,6 @@ namespace BergerMsfaApi.Services.AlertNotification
                         app.cateegoryName = "Fast Pay & Carry Notification";
                         app.notifications= FastPayCarryNotification;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("FastPay&CarryNotification", await GetFastPayCarryFollowUpNotification());
                         break;
 
                     case ConstantAlertNotificationValue.CreditLimitCrossNotifiction:
@@ -333,7 +317,6 @@ namespace BergerMsfaApi.Services.AlertNotification
                         app.cateegoryName = "Credit Limit Cross Notifiction";
                         app.notifications= CreditLimitCrossNotifiction;
                         appAlerts.Add(app);
-                        //keyValuePairs.Add("CreditLimitCrossNotifiction ", await GetCreditLimitCrossNotification());
                         break;
                 }
 

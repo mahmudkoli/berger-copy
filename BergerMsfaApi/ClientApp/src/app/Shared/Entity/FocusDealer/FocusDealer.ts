@@ -53,3 +53,18 @@ export class FocusDealerQuery extends QueryObject {
         this.zones = [];
     }
 }
+
+export class DealerOpeningQuery extends QueryObject {
+    depot: string;
+    territories: string[];
+
+    constructor(init?: Partial<FocusDealerQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.depot = '';
+        this.territories = [];
+    }
+}

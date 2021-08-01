@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Painter;
 using BergerMsfaApi.Models.PainterRegistration;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
@@ -23,6 +27,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 {
     public class PainterRegistrationService : IPainterRegistrationService
     {
+        private readonly IRepository<PainterStatusLog> _painterStatusLog;
         private readonly IRepository<Painter> _painterSvc;
         private readonly IRepository<Attachment> _attachmentSvc;
         private readonly IRepository<PainterAttachment> _painterAttachmentSvc;
@@ -35,8 +40,11 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<PainterCall> _painterCallSvc;
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
+
         public PainterRegistrationService(
-            IRepository<Painter> painterSvc,
+             IRepository<PainterStatusLog> painterStatusLog,
+             IRepository<Painter> painterSvc,
              IRepository<PainterAttachment> painterAttachmentSvc,
              IFileUploadService fileUploadSvc,
              IRepository<Attachment> attachmentSvc,
@@ -47,10 +55,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
              IRepository<AttachedDealerPainter> attachedDealerSvc,
              IRepository<PNTR.PainterCall> painterCallSvc,
              IRepository<DealerInfo> dealerInfoSvc,
-              IMapper mapper
+              IMapper mapper,
+              ApplicationDbContext context
 
             )
         {
+            _painterStatusLog = painterStatusLog;
             _painterSvc = painterSvc;
             _fileUploadSvc = fileUploadSvc;
             _attachmentSvc = attachmentSvc;
@@ -63,6 +73,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             _painterCallSvc = painterCallSvc;
             _dealerInfoSvc = dealerInfoSvc;
             _mapper = mapper;
+            _context = context;
 
         }
 
@@ -92,11 +103,32 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
+        public async Task<bool> PainterStatusUpdate(PainterStatusUpdateModel model)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+
+            var find = await _painterSvc.FindAsync(p => p.Id == model.Id);
+            if (find == null) return false;
+
+            find.Status = (Status)model.Status;
+            await _painterSvc.UpdateAsync(find);
+
+            PainterStatusLog painterStatusLog = new PainterStatusLog
+            {
+                CreatedTime = DateTime.Now,
+                PainterId = model.Id,
+                UserId = userId,
+                Status = (Status)model.Status,
+                Reason = model.Reason
+            };
+
+            await _painterStatusLog.CreateAsync(painterStatusLog);
+
+            return true;
+        }
 
         public async Task<PainterModel> GetPainterByIdAsync(int Id)
         {
-            
-
             var result = await _painterSvc.GetFirstOrDefaultIncludeAsync(
                     painter => painter,
                     painter => painter.Id == Id,
@@ -189,39 +221,68 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
-        public async Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search)
+        private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
+
+
+        public async Task<QueryResultModel<PainterModel>> GetPainterListAsync(PainterRegistrationReportSearchModel query)
         {
-            var result = (await _painterSvc.GetAllAsync()).OrderBy(x => x.PainterName).ToMap<Painter, PainterModel>();
 
-            if (!string.IsNullOrEmpty(search))
-                result = result.Search(search);
+            var painters = await (from p in _context.Painters
+                                  join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                  from userInfo in uleftjoin.DefaultIfEmpty()
+                                  join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
+                                  from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                                  join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                  from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                  from diInfo in dileftjoin.DefaultIfEmpty()
+                                  join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
+                                  from depinfo in depleftjoin.DefaultIfEmpty()
+                                  join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
+                                  from sginfo in sgleftjoin.DefaultIfEmpty()
+                                  join t in _context.Territory on p.Territory equals t.Code into tleftjoin
+                                  from tinfo in tleftjoin.DefaultIfEmpty()
+                                  join z in _context.Zone on p.Zone equals z.Code into zleftjoin
+                                  from zinfo in zleftjoin.DefaultIfEmpty()
+                                  where (
+                                     (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                     && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
+                                     && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                     && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                                     && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                                     && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
+                                     && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                                     && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
+                                  )
+                                  select new PainterModel
+                                  {
+                                      Id=p.Id,
+                                      PainterName=p.PainterName,
+                                      PainterNo=p.PainterNo,
+                                      PainterCode=p.PainterCode,
+                                      PainterImageUrl=p.PainterImageUrl,
+                                      Phone=p.Phone,
+                                      SaleGroupName= sginfo.Name,
+                                      TerritoryName= tinfo.Name,
+                                      ZoneName= zinfo.Name,
+                                      DepotName= depinfo.Name1,
+                                      Status =(int)p.Status
+                                  }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
 
-            #region get area mapping data
-            var depotIds = result.Select(x => x.Depot).Distinct().ToList();
-            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
-            //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
-            //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
 
-            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
-            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
-            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
-            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
 
-            foreach (var item in result)
-            {
-                item.DepotName = depots.FirstOrDefault(x => x.Werks == item.Depot)?.Name1 ?? string.Empty;
-                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
-                //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
-                //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
-                item.TerritoryName = item.Territory;
-                item.ZoneName = item.Zone;
-            }
-            #endregion
 
-            return result.ToPagedList(index, pageSize);
+            var queryResult = new QueryResultModel<PainterModel>();
+            queryResult.Items = painters;
+            queryResult.TotalFilter = painters.Count();
+            queryResult.Total = painters.Count();
+
+            return queryResult;
+
+            //return result.ToPagedList(index, pageSize);
 
         }
-
 
         public async Task<int> DeleteAsync(int Id)
         {
@@ -229,7 +290,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 await _attachmentSvc.DeleteAsync(f => f.ParentId == Id && f.TableName == nameof(Painter));
             return await _painterSvc.DeleteAsync(f => f.Id == Id);
         }
-
 
         public async Task<bool> IsExistAsync(int Id) => await _painterSvc.IsExistAsync(f => f.Id == Id);
 
@@ -256,7 +316,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             await _painterSvc.UpdateAsync(_painter);
             return _painter.ToMap<Painter, PainterModel>();
         }
-
         public async Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile profile, List<IFormFile> attachments)
         {
             var _painter = await _painterSvc.FindIncludeAsync(f => f.Id == painterId);
@@ -289,11 +348,9 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         #region App
         public async Task<IEnumerable<PainterModel>> AppGetPainterListAsync(string employeeId)
         {
-
-
             var _painters = await _painterSvc.GetAllIncludeAsync(
                 s => s,
-                f => f.EmployeeId == employeeId,
+                f => f.EmployeeId == employeeId && f.Status == Status.Active,
                 null,
                 a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments).Include(f => f.PainterCat),
                 false
@@ -324,9 +381,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return mapResults;
         }
 
-
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
+            var userId = AppIdentity.AppUser.UserId;
+
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
             _painterImageFileName = _painterImageFileName.Replace(" ", "_");
@@ -343,11 +401,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
             }
 
+            _painter.PainterNo = GeneratePainterNo(userId).Result;
+            _painter.Status = Status.Active;
+            _painter.PainterCode = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+
             var result = await _painterSvc.CreateAsync(_painter);
             return _mapper.Map<PainterModel>(result);
-
-
-
         }
 
         public async Task<PainterModel> AppUpdatePainterAsync(PainterModel model)
@@ -387,8 +446,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> AppGetPainterByIdAsync(int Id)
         {
-
-
             var painter = (await _painterSvc.GetAllIncludeAsync(
               s => s,
               f => f.Id == Id,
@@ -402,10 +459,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<bool> AppDeletePainterByIdAsync(int Id) => await _painterSvc.DeleteAsync(f => f.Id == Id) == 1 ? true : false;
 
-
         public async Task<PainterModel> AppGetPainterByPhonesync(string Phone)
         {
-
             var result = Task.Run(() =>
 
                 (from p in _painterSvc.GetAll().Where(f => f.Phone == Phone)
@@ -436,6 +491,21 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
+        public async Task<string> GeneratePainterNo(int userId)
+        {
+            var lastPainterNo = await _painterSvc.AnyAsync(p => p.CreatedBy == userId) ?
+                                _painterSvc.Where(p => p.CreatedBy == userId).OrderByDescending(p => p.PainterNo).FirstOrDefault()?.PainterNo : "";
+
+            if (lastPainterNo == null)
+            { 
+                return "1"; 
+            }
+            else
+            {
+                Int32.TryParse(lastPainterNo, out int x);
+                return (x + 1).ToString();
+            }
+        }
 
         #endregion
 

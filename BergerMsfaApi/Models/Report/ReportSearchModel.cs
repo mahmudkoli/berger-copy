@@ -17,6 +17,7 @@ namespace BergerMsfaApi.Models.Report
         public int? UserId { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
+        public DateTime? Date { get; set; }
 
         public ReportBaseSearchModel()
         {
@@ -52,6 +53,12 @@ namespace BergerMsfaApi.Models.Report
         public int? PainterType { get; set; }
     }
 
+    public class InactivePainterReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
+        public int? PainterType { get; set; }
+    }
+
     public class DealerOpeningReportSearchModel : ReportBaseSearchModel
     {
 
@@ -71,6 +78,7 @@ namespace BergerMsfaApi.Models.Report
     public class CollectionReportSearchModel : ReportBaseSearchModel
     {
         public int? PaymentMethodId { get; set; }
+        public int? PaymentFromId { get; set; }
         public int? DealerId { get; set; }
     }
 

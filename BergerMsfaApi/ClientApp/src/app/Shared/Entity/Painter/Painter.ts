@@ -20,6 +20,11 @@ export class Painter {
     public DealerId: number;
     public PainterCatId: number;
     public TerritoryId: number;
+    public status: number;
+    public statusText: string;
+    public statusBtnClass: string;
+    public statusBtnIcon: string;
+    
 
     constructor() {
 

@@ -42,6 +42,7 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
+import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
 
 @NgModule({
     declarations: [
@@ -82,6 +83,7 @@ import { FinancialCollectionPlanReportComponent } from './financial-collection-p
       FinancialCollectionPlanReportComponent,
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
+      InactivePainterReportComponent
     ],
   imports: [
       CommonModule,

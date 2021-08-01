@@ -81,7 +81,7 @@
                     <tr>
                         <th pSortableColumn="businessArea">Business Area <p-sortIcon field="businessArea"></p-sortIcon></th>
                         <th pSortableColumn="zone">Zone</th>
-                        <th pSortableColumn="currentApprovar">Last Approvar</th>
+                        <th pSortableColumn="currentApprovar">Code</th>
                         <th></th>
                     </tr>
                 </ng-template>
@@ -89,7 +89,7 @@
                     <tr>
                         <td>{{jPlan.businessArea }}</td>
                         <td>{{jPlan.zone }}</td>
-                        <td>{{jPlan.currentApprovar }}</td>
+                        <td>{{jPlan.code }}</td>
                         <td><a href="/dealer/openingList/{{jPlan.id}}"> Approve</a> </td>
                     </tr>
                 </ng-template> 

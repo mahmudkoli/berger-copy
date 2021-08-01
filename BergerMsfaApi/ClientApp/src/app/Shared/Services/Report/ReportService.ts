@@ -80,6 +80,20 @@ export class ReportService {
     }/DownloadPainterRegistration?${this.commonService.toQueryString(filter)}`;
   }
 
+  getInactivePainters(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetInactivePainters?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadInactivePainters(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadInactivePainters?${this.commonService.toQueryString(filter)}`;
+  }
+
   getDealerOpening(filter?) {
     return this.http.get<APIResponse>(
       `${

@@ -53,7 +53,7 @@ export class SchemeDetail {
     code: string;
     brand: string;
     rateInLtrOrKg: string;
-    rateInDrum: string;
+    rateInSKU: string;
 
     //National Scheme (Value)
     slab: string;
@@ -63,13 +63,6 @@ export class SchemeDetail {
     benefitStartDateText: string;
     benefitEndDateText: string;
 
-    //Painter Scheme
-    schemeId: string;
-    material: string;
-    targetVolume: string;
-
-    //Common
-    benefit: string;
 
     schemeMasterId: number;
     schemeMasterName: string;
@@ -94,7 +87,7 @@ export class SaveSchemeDetail {
     code: string;
     brand: string;
     rateInLtrOrKg: string;
-    rateInDrum: string;
+    rateInSKU: string;
 
     //National Scheme (Value)
     slab: string;
@@ -102,13 +95,6 @@ export class SaveSchemeDetail {
     benefitStartDate: Date;
     benefitEndDate?: Date;
 
-    //Painter Scheme
-    schemeId: string;
-    material: string;
-    targetVolume: string;
-
-    //Common
-    benefit: string;
 
     schemeMasterId: number;
     status: number;

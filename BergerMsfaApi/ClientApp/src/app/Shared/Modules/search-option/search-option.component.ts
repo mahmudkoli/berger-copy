@@ -38,6 +38,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     painters: any[] = [];
     painterTypes: any[] = [];
     paymentMethods: any[] = [];
+    paymentFrom: any[] = [];
     brands: any[] = [];
     materialCodes: any[] = [];
 	months: any[] = [];
@@ -76,6 +77,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			zones: [this.searchOptionQuery.zones],
 			fromDate: [],
 			toDate: [],
+			date: [],
 			userId: [this.searchOptionQuery.userId],
 			dealerId: [this.searchOptionQuery.dealerId],
 			creditControlArea: [this.searchOptionQuery.creditControlArea],
@@ -84,6 +86,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			painterId: [this.searchOptionQuery.painterId],
 			painterTypeId: [this.searchOptionQuery.painterTypeId],
 			paymentMethodId: [this.searchOptionQuery.paymentMethodId],
+			paymentFromId: [this.searchOptionQuery.paymentFromId],
 			brands:[this.searchOptionQuery.brands],
 			materialCodes:[this.searchOptionQuery.materialCodes],
 			fromMonth: [this.searchOptionQuery.fromMonth],
@@ -115,6 +118,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 				year: toDate.getFullYear(),
 				month: toDate.getMonth()+1,
 				day: toDate.getDate()
+			});
+		}
+
+		if (this.searchOptionQuery.date) {
+			const date = new Date(this.searchOptionQuery.date);
+			this.searchOptionForm.controls.date.setValue({
+				year: date.getFullYear(),
+				month: date.getMonth()+1,
+				day: date.getDate()
 			});
 		}
 
@@ -183,15 +195,19 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.ProjectStatusId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ProjectStatus):of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterId)?this.commonService.getPainterList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterTypeId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Painter):of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse)
+            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.PaymentFromId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Customer):of(APIResponse)
 
-        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods]) => {
+
+        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods,paymentFrom]) => {
             this.dealers = dealers.data;
             this.paintingStages = paintingStages.data;
             this.projectStatuses = projectStatuses.data;
             this.painters = painters.data;
             this.painterTypes = painterTypes.data;
             this.paymentMethods = paymentMethods.data;
+            this.paymentFrom = paymentFrom.data;
+
 			this._allDealers = dealers.data;
 			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
@@ -230,6 +246,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.painterId = controls['painterId'].value;
 		this.searchOptionQuery.painterTypeId = controls['painterTypeId'].value;
 		this.searchOptionQuery.paymentMethodId = controls['paymentMethodId'].value;
+		this.searchOptionQuery.paymentFromId = controls['paymentFromId'].value;
 		this.searchOptionQuery.fromMonth = controls['fromMonth'].value;
 		this.searchOptionQuery.toMonth = controls['toMonth'].value;
 		this.searchOptionQuery.fromYear = controls['fromYear'].value;
@@ -260,6 +277,13 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			this.searchOptionQuery.toDate = new Date(toDate.year,toDate.month-1,toDate.day);
 		} else {
 			this.searchOptionQuery.toDate = null;
+		}
+
+		const date = controls['date'].value;
+		if (date && date.year && date.month && date.day) {
+			this.searchOptionQuery.date = new Date(date.year,date.month-1,date.day);
+		} else {
+			this.searchOptionQuery.date = null;
 		}
 
 		if (!this.checkSearchOptionValidity()) return;
