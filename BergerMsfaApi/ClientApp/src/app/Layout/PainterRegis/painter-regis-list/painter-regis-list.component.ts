@@ -181,6 +181,7 @@ export class PainterRegisListComponent implements OnInit {
 		// pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
+		enabledCellClick:true,
 		// enabledTotal: this.enabledTotal,
 		
 	};
@@ -215,15 +216,16 @@ export class PainterRegisListComponent implements OnInit {
 
     public cellClickCallbackFn(event) {
         console.log(event);
-
-        let painter = new PainterStatus();
-			 if (event.cellName == "statusText") {
-                painter.id=event.record.id;
-                painter.status = event.record.status;
-                 this.updatePainterStatus(painter)
-				// dealerStatus.propertyName = 'IsLastYearAppointed';
-				// dealerStatus.dealerId = event.record.id;
-			}
+		this.updateStatus(event.record.id);
+        // let painter = new PainterStatus();
+		// 	 if (event.cellName == "statusText") {
+        //         painter.id=event.record.id;
+        //         painter.status = event.record.status;
+				
+        //          this.updatePainterStatus(painter)
+		// 		// dealerStatus.propertyName = 'IsLastYearAppointed';
+		// 		// dealerStatus.dealerId = event.record.id;
+		// 	}
     }
 
 }
