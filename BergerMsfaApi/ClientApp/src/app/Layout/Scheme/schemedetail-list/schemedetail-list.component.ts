@@ -129,7 +129,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 			{ headerName: 'SLAB', width: '15%', internalName: 'slab', sort: false, type: "" },
 			{ headerName: 'Benefit Start', width: '10%', internalName: 'benefitStartDateText', sort: true, type: "" },
 			{ headerName: 'Benefit End', width: '10%', internalName: 'benefitEndDateText', sort: true, type: "" },
-			{ headerName: 'Condition', width: '15%', internalName: 'condition', sort: false, type: "" },
+			{ headerName: 'Condition & Benefit', width: '15%', internalName: 'condition', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
 		],
 		enabledSearch: true,

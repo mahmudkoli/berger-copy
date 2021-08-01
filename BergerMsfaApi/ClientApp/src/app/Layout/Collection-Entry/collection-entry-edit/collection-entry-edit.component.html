@@ -11,10 +11,11 @@
     <div class="card-body">
         <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" *ngIf="paymentForm">
             <div class="form-row">
-                <div class="col-md-6" *ngIf="payment.dealerId!=null">
+                <!-- <div class="col-md-6" *ngIf="payment.dealerId!=null"> -->
+                <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label>Dealer</label>
-                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true">
+                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true" (change)="changeDealer()">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
                         </ng-select>
@@ -53,6 +54,17 @@
                             <ng-option *ngFor="let creditControl of lstCreditControl;" [value]="creditControl.creditControlAreaId">{{creditControl.description}}</ng-option>
                         </ng-select>
                         
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Name</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="name"
+                                   name="Name">
+                           
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
