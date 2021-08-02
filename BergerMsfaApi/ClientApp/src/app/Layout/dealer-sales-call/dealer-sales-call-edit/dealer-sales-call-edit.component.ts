@@ -22,6 +22,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 	dealerSalesCall: DealerSalesCall;
 	dealerCompetitionSales: DealerCompetitionSales[];
 	dealerSalesIssues: DealerSalesIssue[];
+
   dealerList=[];
   userList=[];
   secondarySalesRatingslst=[];
@@ -30,6 +31,14 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
   subDealerInfluencelst=[];
   painterInfluencelst=[];
   dealerSatisfactionlst=[];
+
+  companylst=[];
+
+  dealerSalesIssueCategorylst=[];
+  prioritylst=[];
+  cBMachineMantainancelst=[];
+
+
 
 
 	
@@ -89,78 +98,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 		this.router.navigate(['/dealer-sales-call']);
 	}
 
-	public dcs_ptableSettings: IPTableSetting = {
-		tableID: "dealerCompetitionSales-table",
-		tableClass: "table table-border ",
-		tableName: 'Dealer Competition Sales List',
-		tableRowIDInternalName: "id",
-		tableColDef: [
-			{ headerName: 'Company Name', width: '40%', internalName: 'companyName', sort: false, type: "" },
-			{ headerName: 'Average Monthly Sales', width: '30%', internalName: 'averageMonthlySales', sort: false, type: "text", displayType: 'number-format-color' },
-			{ headerName: 'Actual MTD Sales', width: '30%', internalName: 'actualMTDSales', sort: false, type: "text", displayType: 'number-format-color' }
-		],
-		// enabledSearch: true,
-		enabledSerialNo: true,
-		// pageSize: 10,
-		// enabledPagination: true,
-		// enabledDeleteBtn: true,
-		// enabledEditBtn: true,
-		// enabledCellClick: true,
-		// enabledColumnFilter: false,
-		// enabledRecordCreateBtn: true,
-		// enabledDataLength: true,
-		// newRecordButtonText: 'New ELearning'
-	};
 
-	public dsi_ptableSettings: IPTableSetting = {
-		tableID: "dealerSalesIssues-table",
-		tableClass: "table table-border ",
-		tableName: 'Dealer Sales Issue List',
-		tableRowIDInternalName: "id",
-		tableColDef: [
-			{ headerName: 'Dealer Sales Issue Category', width: '10%', internalName: 'dealerSalesIssueCategoryText', sort: false, type: "" },
-			{ headerName: 'Material Name', width: '10%', internalName: 'materialName', sort: false, type: "" },
-			{ headerName: 'Material Group', width: '10%', internalName: 'materialGroup', sort: false, type: "" },
-			{ headerName: 'Quantity', width: '10%', internalName: 'quantity', sort: false, type: "" },
-			{ headerName: 'Batch Number', width: '10%', internalName: 'batchNumber', sort: false, type: "" },
-			{ headerName: 'Comments', width: '10%', internalName: 'comments', sort: false, type: "" },
-			{ headerName: 'Priority', width: '10%', internalName: 'priorityText', sort: false, type: "" },
-			{ headerName: 'Has CB Machine Mantainance', width: '10%', internalName: 'hasCBMachineMantainanceText', sort: false, type: "" },
-			{ headerName: 'CB Machine Mantainance', width: '10%', internalName: 'cBMachineMantainanceText', sort: false, type: "" },
-			{ headerName: 'CB Machine Mantainance Regular Reason', width: '10%', internalName: 'cBMachineMantainanceRegularReason', sort: false, type: "" }
-		],
-		// enabledSearch: true,
-		enabledSerialNo: true,
-		// pageSize: 10,
-		// enabledPagination: true,
-		// enabledDeleteBtn: true,
-		// enabledEditBtn: true,
-		// enabledCellClick: true,
-		// enabledColumnFilter: false,
-		// enabledRecordCreateBtn: true,
-		// enabledDataLength: true,
-		// newRecordButtonText: 'New ELearning'
-	};
-
-  getUserList(): void {
-    this.alertService.fnLoading(true);
-    this.commonService.getUserInfoList()
-      .subscribe(
-        res => {
-          this.userList = res.data;
-          this.alertService.fnLoading(false);
-        })
-  }
-
-  getDealerList(): void {
-    this.alertService.fnLoading(true);
-    this.commonService.getDealerList('',[])
-      .subscribe(
-        res => {
-          this.dealerList = res.data;
-          this.alertService.fnLoading(false);
-        })
-  }
 
   populateDropdown(): void {
    
@@ -175,6 +113,14 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.SubDealerInfluence),
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.PainterInfluence),
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Satisfaction),
+        this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.SwappingCompetitionCompany),
+        this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Priority),
+        this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.CBMachineMantainance),
+        this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ISSUES_01),
+
+
+
+
 
 
 
@@ -184,7 +130,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
         //       this.commonService.getCreditControlAreaList(),
   
   
-          ]).subscribe(([users, dealer,marchendising,Ratings,ProductLifting,SubDealerInfluence,PainterInfluence,Satisfaction]) => {
+          ]).subscribe(([users, dealer,marchendising,Ratings,ProductLifting,SubDealerInfluence,PainterInfluence,Satisfaction,company,priority,CBMachineMantainance,issue]) => {
               this.userList = users.data;
               this.dealerList = dealer.data;
 			  this.merchendisinglst = marchendising.data;
@@ -193,6 +139,10 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 			  this.subDealerInfluencelst = SubDealerInfluence.data;
 			  this.painterInfluencelst = PainterInfluence.data;
 			  this.dealerSatisfactionlst = Satisfaction.data;
+			  this.companylst = company.data;
+			  this.prioritylst = priority.data;
+			  this.cBMachineMantainancelst = CBMachineMantainance.data;
+			  this.dealerSalesIssueCategorylst = issue.data;
         
   
           }, (err) => { }, () => { });
@@ -200,5 +150,33 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
       this.subscriptions.push(forkJoinSubscription1);
       
   }
+  deleteDealerCompetitionSalesRow(x){
+	var delBtn = confirm(" Do you want to delete ?");
+	if ( delBtn == true ) {
+	  this.dealerCompetitionSales.splice(x, 1 );
+	}   
+  }
+
+  addDealerCompetitionSalesTable() {
+	const obj = new DealerCompetitionSales();
+	this.dealerCompetitionSales.push(obj)
+  }
+
+  deleteDealerSalesIssueRow(x){
+	var delBtn = confirm(" Do you want to delete ?");
+	if ( delBtn == true ) {
+	  this.dealerSalesIssues.splice(x, 1 );
+	}   
+  }
+
+  addDealerSalesIssueTable() {
+	const obj = new DealerSalesIssue();
+	this.dealerSalesIssues.push(obj)
+  }
+
+  save(){
+	  console.log(this.dealerCompetitionSales,this.dealerSalesIssues);
+  }
+
 
 }
