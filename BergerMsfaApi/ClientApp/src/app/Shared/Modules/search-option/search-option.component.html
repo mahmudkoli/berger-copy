@@ -248,7 +248,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('fromMonth')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('fromMonth')}">From Month</label>
-                    <ng-select [items]="months" formControlName="fromMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="months" formControlName="fromMonth" bindValue="id" bindLabel="name" [multiple]="false" (ngModelChange)="onChangeFromYearMonth()">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.fromMonth.touched && formControls.fromMonth.errors">
                         <span *ngIf="formControls.fromMonth.errors.required">From Month is <strong>required</strong></span>
@@ -258,7 +258,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('fromYear')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('fromYear')}">From Year</label>
-                    <ng-select [items]="years" formControlName="fromYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="years" formControlName="fromYear" bindValue="id" bindLabel="name" [multiple]="false" (ngModelChange)="onChangeFromYearMonth()">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.fromYear.touched && formControls.fromYear.errors">
                         <span *ngIf="formControls.fromYear.errors.required">From Year is <strong>required</strong></span>
@@ -268,7 +268,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('toMonth')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('toMonth')}">To Month</label>
-                    <ng-select [items]="months" formControlName="toMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="months" formControlName="toMonth" bindValue="id" bindLabel="name" [multiple]="false" [readonly]="isSearchOptionReadonly('toMonth')">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.toMonth.touched && formControls.toMonth.errors">
                         <span *ngIf="formControls.toMonth.errors.required">To Month is <strong>required</strong></span>
@@ -278,7 +278,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('toYear')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('toYear')}">To Year</label>
-                    <ng-select [items]="years" formControlName="toYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="years" formControlName="toYear" bindValue="id" bindLabel="name" [multiple]="false" [readonly]="isSearchOptionReadonly('toYear')">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.toYear.touched && formControls.toYear.errors">
                         <span *ngIf="formControls.toYear.errors.required">To Year is <strong>required</strong></span>
