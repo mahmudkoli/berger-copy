@@ -150,17 +150,17 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
       this.subscriptions.push(forkJoinSubscription1);
       
   }
-  deleteDealerCompetitionSalesRow(x){
-	var delBtn = confirm(" Do you want to delete ?");
-	if ( delBtn == true ) {
-	  this.dealerCompetitionSales.splice(x, 1 );
-	}   
-  }
+//   deleteDealerCompetitionSalesRow(x){
+// 	var delBtn = confirm(" Do you want to delete ?");
+// 	if ( delBtn == true ) {
+// 	  this.dealerCompetitionSales.splice(x, 1 );
+// 	}   
+//   }
 
-  addDealerCompetitionSalesTable() {
-	const obj = new DealerCompetitionSales();
-	this.dealerCompetitionSales.push(obj)
-  }
+//   addDealerCompetitionSalesTable() {
+// 	const obj = new DealerCompetitionSales();
+// 	this.dealerCompetitionSales.push(obj)
+//   }
 
   deleteDealerSalesIssueRow(x){
 	var delBtn = confirm(" Do you want to delete ?");
@@ -175,8 +175,64 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
   }
 
   save(){
-	  console.log(this.dealerCompetitionSales,this.dealerSalesIssues);
+	  this.dealerSalesCall.dealerCompetitionSales=this.dealerCompetitionSales;
+	  this.dealerSalesCall.dealerSalesIssues=this.dealerSalesIssues;
+	//   console.log(this.dealerSalesCall);
+
+	  this.dealerSalesCallService.updateDealerSalesCall(this.dealerSalesCall)
+	  .pipe(finalize(() => this.alertService.fnLoading(false))) 
+	  .subscribe(res=>{
+		  console.log(res);
+		  if(res.statusCode==200){
+			this.alertService.tosterSuccess("Dealer Sales Call Update successfully.");	
+			  this.router.navigate(['/dealer-sales-call']);
+		  }
+		  else{
+			  this.alertService.tosterWarning("Dealer Sales Call Update failed.");
+		  }
+		  
+	  })
   }
 
+
+  fileChangeEvents(fileInput: any) {
+	if (fileInput.target.files && fileInput.target.files[0]) {
+		// Size Filter Bytes
+
+		const reader = new FileReader();
+		reader.onload = (e: any) => {
+			const image = new Image();
+			image.src = e.target.result;
+			image.onload = rs => {
+				
+					const imgBase64Path = e.target.result;
+					this.dealerSalesCall.competitionProductDisplayImageUrl = imgBase64Path;
+				
+			};
+		};
+
+		reader.readAsDataURL(fileInput.target.files[0]);
+	}
+}
+
+fileChangeEvent(fileInput: any) {
+	if (fileInput.target.files && fileInput.target.files[0]) {
+		// Size Filter Bytes
+
+		const reader = new FileReader();
+		reader.onload = (e: any) => {
+			const image = new Image();
+			image.src = e.target.result;
+			image.onload = rs => {
+				
+					const imgBase64Path = e.target.result;
+					this.dealerSalesCall.competitionSchemeModalityImageUrl = imgBase64Path;
+				
+			};
+		};
+
+		reader.readAsDataURL(fileInput.target.files[0]);
+	}
+}
 
 }

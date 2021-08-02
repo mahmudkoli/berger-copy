@@ -354,6 +354,8 @@
                    
                 </div>
             </div>
+        </div>
+
             <div class="col-md-6">
                 <div class="position-relative form-group">
                     <div class="form-check">
@@ -366,22 +368,23 @@
                    
                 </div>
             </div>
-        </div>
+    </div>
+
 
         <div class="row">
             <div class="col-md-6">
                 <div class="form-check">
-                    
+                    <div class="position-relative form-group">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCompetitionServiceBetterThanBPBL"
+                        name="isCompetitionServiceBetterThanBPBL" [checked]="dealerSalesCall.isCompetitionServiceBetterThanBPBL">
+                
+                        <label class="form-check-label">Has Competition Presence</label>
+          
+                        
+                       
+                    </div>   
             </div>
-                <div class="position-relative form-group">
-                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCompetitionServiceBetterThanBPBL"
-                    name="isCompetitionServiceBetterThanBPBL" [checked]="dealerSalesCall.isCompetitionServiceBetterThanBPBL">
-            
-                    <label class="form-check-label">Has Competition Presence</label>
-      
-                    
-                   
-                </div>
+                
             </div>
 
             <div class="col-md-6">
@@ -423,27 +426,48 @@
             </div>
         </div>
 
-        <!-- <div class="row">
-            <div class="col-sm-6">
+        <div class="row">
+            <div class="col-md-6">
                 <p><span><strong>Competition Product Display Image:</strong></span> 
                     <img *ngIf='dealerSalesCall.competitionProductDisplayImageUrl' [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px">
                 </p>
+                <input type='file' (change)="fileChangeEvents($event)">
+
             </div>
-            <div class="col-sm-6">
-                <p><span><strong>Competition Scheme Modality Comments:</strong></span> {{dealerSalesCall.competitionSchemeModalityComments}}</p>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="competitionSchemeModalityComments">Competition Scheme Modality Comments</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionSchemeModalityComments"
+                               name="competitionSchemeModalityComments">
+                       
+                    </div>
+                </div>
             </div>
+            
         </div>
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-md-6">
                 <p><span><strong>Competition Scheme Modality Image:</strong></span> 
                     <img *ngIf='dealerSalesCall.competitionSchemeModalityImageUrl' [src]="dealerSalesCall.competitionSchemeModalityImageUrl" alt="Photo" width="150px" height="180px">
                 </p>
+                <input type='file' (change)="fileChangeEvent($event)">
             </div>
-            <div class="col-sm-6">
-                <p><span><strong>Competition Shop Boys Comments:</strong></span> {{dealerSalesCall.competitionShopBoysComments}}</p>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="competitionShopBoysComments">Competition Shop Boys Comments</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionShopBoysComments"
+                               name="competitionShopBoysComments">
+                       
+                    </div>
+                </div>
             </div>
-        </div> -->
+            
+        </div>
 
         <div class="row">
             <div class="col-md-6">

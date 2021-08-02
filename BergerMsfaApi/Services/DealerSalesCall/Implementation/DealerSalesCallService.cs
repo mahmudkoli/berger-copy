@@ -32,6 +32,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
     public class DealerSalesCallService : IDealerSalesCallService
     {
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<DSC.DealerCompetitionSales> _dealerCompetitionSalesRepository;
+        private readonly IRepository<DSC.DealerSalesIssue> _dealerSalesIssueRepository;
+
         private readonly IRepository<EmailConfigForDealerSalesCall> _repository;
         private readonly IDropdownService _dropdownService;
         private readonly IFileUploadService _fileUploadService;
@@ -52,7 +55,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IRepository<DealerInfo> dealerInfo,
                 IRepository<Depot> plantSvc,
                 IEmailSender emailSender,
-                IFinancialDataService financialDataService
+                IFinancialDataService financialDataService,
+                IRepository<DSC.DealerCompetitionSales> dealerCompetitionSalesRepository,
+                IRepository<DSC.DealerSalesIssue> dealerSalesIssueRepository
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
@@ -65,6 +70,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             _userInfo = userInfo;
             this.dealerInfo = dealerInfo;
             this._plantSvc = plantSvc;
+            _dealerCompetitionSalesRepository = dealerCompetitionSalesRepository;
+            _dealerSalesIssueRepository = dealerSalesIssueRepository;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -84,6 +91,41 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
+
+            await SendIssueEmail(result.Id);
+
+            return result.Id;
+        }
+
+        public async Task<int> UpdateAsync(AppDealerSalesCallModel model)
+        {
+            
+
+
+            var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
+            var issue = await _dealerSalesIssueRepository.DeleteAsync(p => p.DealerSalesCallId == dealerSalesCall.Id);
+            if (issue > 0)
+            {
+                var issuecategory = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesCall.DealerSalesIssues.ToList());
+
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                //dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                //dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+            }
+            var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
+
+           
+
+            var dealerCompetitionSales = await _dealerCompetitionSalesRepository.UpdateListAsync(result.DealerCompetitionSales.ToList());
 
             await SendIssueEmail(result.Id);
 
@@ -456,5 +498,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 throw ex;
             }
         }
+
+       
     }
 }
