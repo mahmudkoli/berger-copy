@@ -188,7 +188,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('paymentFromId')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('paymentFromId')}">Payment From</label>
-                    <ng-select [items]="paymentFrom" formControlName="paymentFromId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    <ng-select [items]="paymentFroms" formControlName="paymentFromId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.paymentFromId.touched && formControls.paymentFromId.errors">
                         <span *ngIf="formControls.paymentFromId.errors.required">Payment From is <strong>required</strong></span>

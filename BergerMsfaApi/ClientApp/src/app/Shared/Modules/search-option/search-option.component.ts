@@ -38,7 +38,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     painters: any[] = [];
     painterTypes: any[] = [];
     paymentMethods: any[] = [];
-    paymentFrom: any[] = [];
+    paymentFroms: any[] = [];
     brands: any[] = [];
     materialCodes: any[] = [];
 	months: any[] = [];
@@ -196,18 +196,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.PainterId)?this.commonService.getPainterList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterTypeId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Painter):of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.PaymentFromId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Customer):of(APIResponse)
-
-
-        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods,paymentFrom]) => {
+            this.hasSearchOption(EnumSearchOption.PaymentFromId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Customer):of(APIResponse),
+        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods, paymentFroms]) => {
             this.dealers = dealers.data;
             this.paintingStages = paintingStages.data;
             this.projectStatuses = projectStatuses.data;
             this.painters = painters.data;
             this.painterTypes = painterTypes.data;
             this.paymentMethods = paymentMethods.data;
-            this.paymentFrom = paymentFrom.data;
-
+            this.paymentFroms = paymentFroms.data;
 			this._allDealers = dealers.data;
 			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
@@ -216,11 +213,10 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.Brand)?this.commonService.getBrandDropDown():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.MaterialCode)?this.commonService.getMaterialGroupOrBrand():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.ActivitySummary)?this.commonService.getActivitySummaryDropDown():of(APIResponse),
-        ]).subscribe(([brands,materialCodes,activitySummary]) => {
+        ]).subscribe(([brands, materialCodes, activitySummaries]) => {
             this.brands = brands.data;
             this.materialCodes = materialCodes.data;
-            this.activitySummaries = activitySummary.data;
-			this.updateDealerSubDealerShow();
+            this.activitySummaries = activitySummaries.data;
         }, (err) => { }, () => { });
 
 		this.subscriptions.push(forkJoinSubscription1);
@@ -295,10 +291,10 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		if (this.searchOptionForm)
 			this.searchOptionForm.controls.dealerId.setValue(null);
 
-		if (this.searchOptionSettings.isDealerShow && this._allDealers) {
-			this.dealers = this._allDealers.filter(x => !x.isSubdealer);
-		} else if (this.searchOptionSettings.isSubDealerShow && this._allDealers) {
-			this.dealers = this._allDealers.filter(x => x.isSubdealer);
+		if (this.searchOptionSettings.isDealerShow) {
+			this.dealers = this._allDealers ? this._allDealers.filter(x => !x.isSubdealer) : [];
+		} else if (this.searchOptionSettings.isSubDealerShow) {
+			this.dealers = this._allDealers ? this._allDealers.filter(x => x.isSubdealer) : [];
 		} else {
 			this.searchOptionSettings.isDealerShow = true;
 			this.searchOptionSettings.isSubDealerShow = false;
