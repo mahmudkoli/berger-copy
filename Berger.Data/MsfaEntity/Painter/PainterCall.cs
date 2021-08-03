@@ -19,10 +19,11 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public string SaleGroup { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
-        public int PainterCatId { get; set; }
         public int NoOfPainterAttached { get; set; }
         public bool IsAppInstalled { get; set; }
         public float Loyality { get; set; }
+        public bool HasDbbl { get; set; }
+        public int PainterCatId { get; set; }
         public string AccDbblNumber { get; set; }
         public string AccDbblHolderName { get; set; }
         public string AccChangeReason { get; set; }
@@ -39,8 +40,8 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         [ForeignKey("PainterId")]
         public Painter Painter { get; set; }
         public string EmployeeId { get; set; }
+        
         public List<AttachedDealerPainterCall> AttachedDealers { get; set; }
-
         public List<PainterCompanyMTDValue> PainterCompanyMTDValue { get; set; }
     }
 
