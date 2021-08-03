@@ -1,0 +1,180 @@
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <!-- <div class="btn-actions-pane-right">
+            <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                <fa class="mr-2" name="list"></fa>
+                Back to list
+            </button>
+        </div> -->
+    </div>
+    <div class="card-body">
+        <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" *ngIf="paymentForm">
+            <div class="form-row">
+                <!-- <div class="col-md-6" *ngIf="payment.dealerId!=null"> -->
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label>Dealer</label>
+                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true" (change)="changeDealer()">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
+                        </ng-select>
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Employee</label>
+                        <ng-select formControlName="employeeId" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let em of users;" [value]="em.employeeId">{{em.fullName}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger"
+                            *ngIf="formControls.employeeId.touched && formControls.employeeId.errors">
+                            <span *ngIf="formControls.employeeId.errors.required">Employee is
+                                <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Payment Method</label>
+                        <ng-select formControlName="paymenyMethodId" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let payment of lstpaymentmethod;" [value]="payment.id">{{payment.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Creadit Control Area</label>
+                        <ng-select formControlName="creditControlArea" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let creditControl of lstCreditControl;" [value]="creditControl.creditControlAreaId">{{creditControl.description}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Name</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="name"
+                                   name="Name">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Customer Type</label>
+                        <ng-select formControlName="customerTypeId" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let customer of lstCustomerType;" [value]="customer.id">{{customer.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Address</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="address"
+                                   name="address">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Mobile No</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="mobileNumber"
+                                   name="mobileNumber">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Bank Name</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="bankName"
+                                   name="address">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Number</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="number"
+                                   name="number">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Amount</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="amount"
+                                   name="amount" >
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Manual Number</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="manualNumber"
+                                   name="manualNumber">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+
+                        <label for="name">Remarks</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" formControlName="remarks"
+                                   name="remarks" >
+                           
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status"> -->
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <!-- <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i
+                        class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="paymentForm.invalid" class="mb-2 btn btn-primary"><i
+                        class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

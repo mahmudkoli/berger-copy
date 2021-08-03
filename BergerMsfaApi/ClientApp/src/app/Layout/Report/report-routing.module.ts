@@ -37,6 +37,7 @@ import { AddhocSubDealerSalescallReportComponent } from './addhoc-sub-dealer-sal
 import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/addhoc-dealer-salescall-report.component';
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
+import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
 
 const routes: Routes = [
   {
@@ -270,11 +271,18 @@ const routes: Routes = [
         data: { title: 'Collection Plan Report', },
       },
 
+      {
+        path: 'inactive-painters',
+        component: InactivePainterReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Inactive Painters', },
+      },
+
     ],
   }
 ];
 
-// StrikeRateKpiReportComponent
+// InactivePainterReportComponent
 
 @NgModule({
 

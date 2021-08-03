@@ -586,6 +586,20 @@ namespace BergerMsfaApi.Models.Report
         public decimal TotalUseTime { get; set; }
     }
 
+    public class InactivePainterReportResultModel
+    {
+        public string DepotIdAndName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string PainterId { get; set; }
+        public string PainterName { get; set; }
+        public string PainterAddress { get; set; }
+        public string PainterMobileNumber { get; set; }
+        public string PainerType { get; set; }
+        public string RocketDataNumber { get; set; }
+        public string InactiveReason { get; set; }
+    }
+
     #endregion
 
     public class OsOver90daysTrendReportResultModel

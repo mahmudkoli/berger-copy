@@ -233,6 +233,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<PainterModel>> GetPainterList()
         {
             var result = await _painterSvc.GetAllAsync();
+            foreach (var item in result)
+            {
+                item.PainterName = item.PainterName + " (" + item.PainterNo + ")";
+            }
             return result.ToMap<Painter, PainterModel>();
         }
 
@@ -357,7 +361,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
                          where ((EnumDealerCategory.All == model.DealerCategory) ||
                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date))
                          && (dealer.CustomerName.Contains(model.DealerName))
 
                          select new AppDealerInfoModel
@@ -410,7 +415,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
                           where ((EnumDealerCategory.All == model.DealerCategory) ||
                           //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
 
                           select new AppDealerInfoModel
@@ -423,7 +429,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
                               Territory = dealer.Territory,
                               IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                               //IsFocused = fd.IsFocused(),
-                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
@@ -458,7 +465,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
                           where ((EnumDealerCategory.All == model.DealerCategory) ||
                           //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
 
                           select new AppDealerInfoModel
@@ -471,7 +479,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
                               Territory = dealer.Territory,
                               IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
                               //IsFocused = fd.IsFocused(),
-                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo != null && fd.ValidTo.Date >= DateTime.Now.Date,
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;

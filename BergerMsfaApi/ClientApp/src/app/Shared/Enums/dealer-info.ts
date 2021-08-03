@@ -8,10 +8,11 @@ export enum EnumClubSupreme {
 }
 
 export enum EnumBussinesCategory {
-    Exclusive = 0,
-    NonExclusive = 1,
-    NonAPNonExclusive = 2,
-    NewDealer = 3
+    None = 0,
+    Exclusive = 1,
+    NonExclusive = 2,
+    NonAPNonExclusive = 3,
+    NewDealer = 4
 }
 export class EnumClubSupremeLabel {
     public static enumClubSupremeLabel: MapObject[] = [
@@ -27,10 +28,11 @@ export class EnumClubSupremeLabel {
 
 export class EnumBussinesCategoryLabel {
     public static enumBussinesCategoryLabel: MapObject[] = [
-        { id: 0, label: "Exclusive" },
-        { id: 1, label: "Non-Exclusive" },
-        { id: 2, label: "Non AP Non-Exclusive" },
-        { id: 3, label: "New Dealer" },
+        { id: 0, label: "None" },
+        { id: 1, label: "Exclusive" },
+        { id: 2, label: "Non-Exclusive" },
+        { id: 3, label: "Non AP Non-Exclusive" },
+        { id: 4, label: "New Dealer" },
     ];
 
     constructor() {

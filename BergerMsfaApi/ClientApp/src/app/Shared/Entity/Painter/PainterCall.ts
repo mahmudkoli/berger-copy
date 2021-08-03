@@ -28,3 +28,17 @@
 
     
 }
+
+
+export class PainterStatus {
+    id: number;
+    status: number;
+    resoan: string;
+
+    constructor(init?: Partial<PainterStatus>) {
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}

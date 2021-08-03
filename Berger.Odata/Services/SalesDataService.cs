@@ -34,11 +34,11 @@ namespace Berger.Odata.Services
         public async Task<IList<InvoiceHistoryResultModel>> GetInvoiceHistory(InvoiceHistorySearchModel model)
         {
             var currentDate = DateTime.Now;
-            var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
-            var toDate = currentDate.GetCYLD().DateFormat();  
+            //var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
+            //var toDate = currentDate.GetCYLD().DateFormat();
 
-             fromDate = model.FromDate.SalesSearchDateFormat();
-             toDate = model.ToDate.SalesSearchDateFormat();
+            var fromDate = model.FromDate.SalesSearchDateFormat();
+            var toDate = model.ToDate.SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -129,11 +129,11 @@ namespace Berger.Odata.Services
             var previousMonthCount = 3;
             var cbMaterialCodes = new List<string>();
 
-            var cyfd = currentDate.GetCYFD().DateFormat();
-            var cylcd = currentDate.GetCYLCD().DateFormat();
+            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
+            var cylcd = currentDate.GetCYLCD().SalesSearchDateFormat();
 
-            var lyfd = currentDate.GetLYFD().DateFormat();
-            var lylcd = currentDate.GetLYLCD().DateFormat();
+            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
+            var lylcd = currentDate.GetLYLCD().SalesSearchDateFormat();
 
             var dataLy = new List<SalesDataModel>();
             var dataCy = new List<SalesDataModel>();
@@ -178,24 +178,36 @@ namespace Berger.Odata.Services
 
             foreach (var brandCode in brandCodes)
             {
-                var res = new BrandWiseMTDResultModel();
-                res.PreviousMonthData = new List<BrandWiseMTDPreviousModel>();
+                var res = new BrandWiseMTDResultModel { PreviousMonthData = new List<BrandWiseMTDPreviousModel>() };
 
                 if (dataLy.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
                     var mtdAmtLy = dataLy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    var brandNameLy = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrandName;
+                    var lastYearSingleData = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
 
-                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameLy : res.MatarialGroupOrBrand;
+                    if (lastYearSingleData != null)
+                    {
+                        var brandNameLy = $"{lastYearSingleData.MatarialGroupOrBrandName} ({lastYearSingleData.MatarialGroupOrBrand })";
+
+                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameLy : res.MatarialGroupOrBrand;
+                    }
+
                     res.LYMTD = mtdAmtLy;
                 }
 
                 if (dataCy.Any(x => x.MatarialGroupOrBrand == brandCode))
                 {
                     var mtdAmtCy = dataCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    var brandNameCy = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrandName;
 
-                    res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameCy : res.MatarialGroupOrBrand;
+                    var cySingleData = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
+
+                    if (cySingleData != null)
+                    {
+                        var brandNameCy = $"{cySingleData.MatarialGroupOrBrandName} ({cySingleData.MatarialGroupOrBrand })";
+
+                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameCy : res.MatarialGroupOrBrand;
+                    }
+
                     res.CYMTD = mtdAmtCy;
                 }
 
@@ -209,9 +221,15 @@ namespace Berger.Odata.Services
                     if (dictData.Any(x => x.MatarialGroupOrBrand == brandCode))
                     {
                         mtdAmt = dictData.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                        var brandName = dictData.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrandName;
 
-                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandName : res.MatarialGroupOrBrand;
+                        var mtdSingleData = dictData.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
+
+                        if (mtdSingleData != null)
+                        {
+                            var brandName = $"{mtdSingleData.MatarialGroupOrBrandName} ({mtdSingleData.MatarialGroupOrBrand })";
+
+                            res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandName : res.MatarialGroupOrBrand;
+                        }
                     }
 
                     res.PreviousMonthData.Add(new BrandWiseMTDPreviousModel() { MonthName = monthName, Amount = mtdAmt });
@@ -221,6 +239,9 @@ namespace Berger.Odata.Services
 
                 result.Add(res);
             }
+
+            result.ForEach(x => x.MatarialGroupOrBrand = model.IsOnlyCBMaterial ? null : x.MatarialGroupOrBrand);
+
 
             return result;
         }
@@ -1320,19 +1341,19 @@ namespace Berger.Odata.Services
 
             var data = await _odataService.GetCustomerDeliveryData(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr);
 
-            var result = data.Select(x => new CustomerDeliveryNoteResultModel() 
-                                        { 
-                                            InvoiceDate = CustomConvertExtension.ObjectToDateTime(x.InvoiceDate).DateFormat("dd.MM.yyyy"),
-                                            InvoiceCreateTime = x.InvoiceCreateTime
-                                                                    .Replace("PT","").Replace("H",":").Replace("M",":").Replace("S",""),
-                                            InvoiceNumber = x.InvoiceNumber,
-                                            Volume = CustomConvertExtension.ObjectToDecimal(x.Volume),
-                                            DeliveryDate = CustomConvertExtension.ObjectToDateTime(x.DeliveryDate).DateFormat("dd.MM.yyyy"),
-                                            DeliveryTime = x.DeliveryTime
+            var result = data.Select(x => new CustomerDeliveryNoteResultModel()
+            {
+                InvoiceDate = CustomConvertExtension.ObjectToDateTime(x.InvoiceDate).DateFormat("dd.MM.yyyy"),
+                InvoiceCreateTime = x.InvoiceCreateTime
+                                                                    .Replace("PT", "").Replace("H", ":").Replace("M", ":").Replace("S", ""),
+                InvoiceNumber = x.InvoiceNumber,
+                Volume = CustomConvertExtension.ObjectToDecimal(x.Volume),
+                DeliveryDate = CustomConvertExtension.ObjectToDateTime(x.DeliveryDate).DateFormat("dd.MM.yyyy"),
+                DeliveryTime = x.DeliveryTime
                                                                 .Replace("PT", "").Replace("H", ":").Replace("M", ":").Replace("S", ""),
-                                            DriverName = x.DriverName,
-                                            DriverMobileNo = x.DriverMobileNo
-                                        }).ToList();
+                DriverName = x.DriverName,
+                DriverMobileNo = x.DriverMobileNo
+            }).ToList();
 
             return result;
         }

@@ -48,7 +48,7 @@ export class FocusDealerListComponent implements OnInit {
 
 	ngOnInit() {
 		this.searchConfiguration();
-		this.isAuthorize();
+		// this.isAuthorize();
 		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
 		// 	this.loadFocusDealersPage();
 		// });
@@ -61,7 +61,7 @@ export class FocusDealerListComponent implements OnInit {
 	isAuthorize() {
 		var res=this.commonService.getUserInfoFromLocalStorage()
 		this.isPermitted=EnumEmployeeRole.TM_TO==res.employeeRole||EnumEmployeeRole.ZO==res.employeeRole?false:true;
-		console.log(this.isPermitted)
+		// console.log(this.isPermitted)
 		return this.isPermitted;
 	}
   

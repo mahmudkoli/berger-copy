@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
@@ -8,13 +7,10 @@ using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.OData.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BergerMsfaApi.Controllers.Odata
 {

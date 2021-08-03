@@ -8,7 +8,7 @@ using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-   // [AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -60,8 +60,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("BrandWiseMTDDetails")]
-        public async Task<IActionResult> GetBrandWiseMTDDetails([FromQuery] BrandWiseMTDSearchModel model)
+        [HttpGet("BrandWiseLiftingTrend")]
+        public async Task<IActionResult> GetBrandWiseLiftingTrend([FromQuery] BrandWiseMTDSearchModel model)
         {
             try
             {
@@ -74,12 +74,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MTSBrandsVolume")]
-        public async Task<IActionResult> GetMTSBrandsVolume([FromQuery] MTSSearchModel model)
+        [HttpGet("MTSUpdate")]
+        public async Task<IActionResult> GetMTSUpdate([FromQuery] MTSSearchModelBase model)
         {
             try
             {
-                var data = await _mtsDataService.GetMTSBrandsVolume(model);
+                var data = await _mtsDataService.GetMTSUpdate(model);
                 return OkResult(data);
             }
             catch (Exception ex)
@@ -88,8 +88,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("PremiumBrandPerformance")]
-        public async Task<IActionResult> GetPremiumBrandPerformance([FromQuery] MTSSearchModel model)
+        [HttpGet("PremiumBrandTargetUpdate")]
+        public async Task<IActionResult> GetPremiumBrandTargetUpdate([FromQuery] MTSSearchModel model)
         {
             try
             {
@@ -102,8 +102,8 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("MonthlyValueTarget")]
-        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModel model)
+        [HttpGet("MonthlyValueTargetUpdate")]
+        public async Task<IActionResult> GetMonthlyValueTarget([FromQuery] MTSSearchModelBase model)
         {
             try
             {
@@ -190,7 +190,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ChequeBounce")]
+        [HttpGet("ChequeSummary")]
         public async Task<IActionResult> GetChequeBounce([FromQuery] ChequeBounceSearchModel model)
         {
             try
@@ -204,19 +204,19 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ChequeSummary")]
-        public async Task<IActionResult> GetChequeSummary([FromQuery] ChequeSummarySearchModel model)
-        {
-            try
-            {
-                var data = await _balanceDataService.GetChequeSummary(model);
-                return OkResult(data);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("ChequeSummary")]
+        //public async Task<IActionResult> GetChequeSummary([FromQuery] ChequeSummarySearchModel model)
+        //{
+        //    try
+        //    {
+        //        var data = await _balanceDataService.GetChequeSummary(model);
+        //        return OkResult(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
         #endregion
     }
 }

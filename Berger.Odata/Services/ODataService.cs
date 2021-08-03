@@ -1038,7 +1038,7 @@ namespace Berger.Odata.Services
                                 .And()
                                 .Equal(BalanceColDef.CustomerLow, customerNo);
 
-            if (!string.IsNullOrEmpty(creditControlArea))
+            if (!string.IsNullOrEmpty(creditControlArea) && creditControlArea != "-1")
             {
                 filterQueryBuilder.And().Equal(BalanceColDef.CreditControlArea, creditControlArea);
             }
@@ -1903,9 +1903,9 @@ namespace Berger.Odata.Services
 
         public async Task<IList<CollectionDataModel>> GetCollectionData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> depots = null, IList<string> territories = null,
-            IList<string> customerNos = null, 
-            string startPostingDate = "", string endPostingDate = "", 
-            string startClearDate = "", string endClearDate = "", 
+            IList<string> customerNos = null,
+            string startPostingDate = "", string endPostingDate = "",
+            string startClearDate = "", string endClearDate = "",
             string creditControlArea = "", string bounceStatus = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
@@ -2014,21 +2014,10 @@ namespace Berger.Odata.Services
             else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
             else return ((cyValue - lyValue) * 100) / lyValue;
         }
-        //public decimal GetGrowthNew(decimal first, decimal second)
-        //{
-        //    var subValue = (first - second);
-        //    if (subValue == 0 || second == 0)
-        //    {
-        //        return 0;
-        //    }
-        //    return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
-        //}
+
         public decimal GetContribution(decimal first, decimal second)
         {
-            if (first == 0 || second == 0)
-            {
-                return 0;
-            }
+            if (first == 0 || second == 0) return 0;
 
             return decimal.Parse(((second / first) * 100).ToString("#.##"));
         }

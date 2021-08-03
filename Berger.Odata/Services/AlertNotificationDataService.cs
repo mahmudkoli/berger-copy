@@ -103,7 +103,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Date);
 
 
-            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate:toDate,endDate: toDate)).ToList();
+            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate: fromDate, endDate: toDate)).ToList();
 
             return data;
         }
