@@ -23,7 +23,7 @@ namespace Berger.Odata.Services
             _odataBrandService = odataBrandService;
         }
 
-        public async Task<IList<MTSResultModel>> GetMTSBrandsVolume(MTSSearchModel model)
+        public async Task<IList<MTSResultModel>> GetMTSUpdate(MTSSearchModelBase model)
         {
             var currentDateStr = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
             var currentDate = (new DateTime(model.Year, model.Month, 1));

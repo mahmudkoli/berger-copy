@@ -240,6 +240,9 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
+            result.ForEach(x => x.MatarialGroupOrBrand = model.IsOnlyCBMaterial ? null : x.MatarialGroupOrBrand);
+
+
             return result;
         }
 
