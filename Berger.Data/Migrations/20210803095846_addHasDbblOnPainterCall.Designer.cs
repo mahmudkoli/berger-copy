@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210803095846_addHasDbblOnPainterCall")]
+    partial class addHasDbblOnPainterCall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2359,43 +2361,6 @@ namespace Berger.Data.Migrations
                     b.ToTable("AttachedDealerPainters");
                 });
 
-            modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainterCall", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DealerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PainterCallId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DealerId");
-
-                    b.HasIndex("PainterCallId");
-
-                    b.ToTable("AttachedDealerPainterCalls");
-                });
-
             modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.Attachment", b =>
                 {
                     b.Property<int>("Id")
@@ -2651,9 +2616,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("NoOfPainterAttached")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PainterCatId")
                         .HasColumnType("int");
 
                     b.Property<int>("PainterId")
@@ -4216,21 +4178,6 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.Painter", "Painter")
                         .WithMany("AttachedDealers")
                         .HasForeignKey("PainterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.PainterRegistration.AttachedDealerPainterCall", b =>
-                {
-                    b.HasOne("Berger.Data.MsfaEntity.SAPTables.DealerInfo", "Dealer")
-                        .WithMany()
-                        .HasForeignKey("DealerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Berger.Data.MsfaEntity.PainterRegistration.PainterCall", "PainterCall")
-                        .WithMany("AttachedDealers")
-                        .HasForeignKey("PainterCallId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
