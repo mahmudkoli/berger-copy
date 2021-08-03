@@ -338,7 +338,6 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             //                                      Value = coms.Value,
             //                                      CountInPercent = coms != null ? coms.CountInPercent : 0,
             //                                      CumelativeInPercent = coms != null ? coms.CountInPercent : 0
-
             //                                  }).ToList()
             //    };
         }
