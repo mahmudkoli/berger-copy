@@ -19,10 +19,10 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public int NoOfPainterAttached { get; set; }
         public bool IsAppInstalled { get; set; }
         public float Loyality { get; set; }
+        public bool HasDbbl { get; set; }
         public string AccDbblNumber { get; set; }
         public string AccDbblHolderName { get; set; }
         public string AccChangeReason { get; set; }
-
 
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
