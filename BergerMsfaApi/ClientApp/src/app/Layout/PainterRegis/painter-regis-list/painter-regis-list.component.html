@@ -1,11 +1,14 @@
-<!--<div class="col col-lg-12">
-    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="painterList"
-                 (customActivityOnRecord)="fnCustomTrigger($event)"
-                 (cellClickCallbackFn)="fnPtableCellClick($event)">
-    </app-p-table>
-</div>-->
 
-<div class="p-3 mb-3 bg-white">
+<div class="col col-md-12">
+    <app-search-option [searchOptionQuery]="searchOptionQuery" [searchOptionSettings]="searchOptionSettings" 
+        (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"></app-search-option>
+
+    <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="painterList" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength" 
+    (customActivityOnRecord)="fnCustomTrigger($event)" (cellClickCallbackFn)="cellClickCallbackFn($event)"  (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+    </app-p-table>
+</div>
+
+<!-- <div class="p-3 mb-3 bg-white">
     <p-table [value]="painterList">
 
         <ng-template pTemplate="caption">
@@ -76,4 +79,4 @@
                 [rowsPerPageOptions]="[10,20]" (onPageChange)="paginate($event)"></p-paginator>
         </ng-template>
     </p-table>
-</div>
+</div> -->

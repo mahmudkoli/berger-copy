@@ -89,17 +89,14 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			code: [this.schemeDetail.code],
 			brand: [this.schemeDetail.brand],
 			rateInLtrOrKg: [this.schemeDetail.rateInLtrOrKg],
-			rateInDrum: [this.schemeDetail.rateInDrum],
+			rateInSKU: [this.schemeDetail.rateInSKU],
 			slab: [this.schemeDetail.slab],
 			condition: [this.schemeDetail.condition],
 			benefitStartDate: [],
 			benefitEndDate: [],
 			// benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
 			// benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
-			schemeId: [this.schemeDetail.schemeId],
-			material: [this.schemeDetail.material],
-			targetVolume: [this.schemeDetail.targetVolume],
-			benefit: [this.schemeDetail.benefit],
+			
 			status: [this.schemeDetail.status, [Validators.required]]
 		});
 
@@ -156,7 +153,7 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		_schemeDetail.code = controls['code'].value;
 		_schemeDetail.brand = controls['brand'].value;
 		_schemeDetail.rateInLtrOrKg = controls['rateInLtrOrKg'].value;
-		_schemeDetail.rateInDrum = controls['rateInDrum'].value;
+		_schemeDetail.rateInSKU = controls['rateInSKU'].value;
 		_schemeDetail.slab = controls['slab'].value;
 		_schemeDetail.condition = controls['condition'].value;
 
@@ -183,10 +180,6 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			_schemeDetail.benefitEndDate = null;
 		}
 
-		_schemeDetail.schemeId = controls['schemeId'].value;
-		_schemeDetail.material = controls['material'].value;
-		_schemeDetail.targetVolume = controls['targetVolume'].value;
-		_schemeDetail.benefit = controls['benefit'].value;
 		_schemeDetail.status = controls['status'].value;
 
 		return _schemeDetail;

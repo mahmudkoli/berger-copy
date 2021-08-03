@@ -80,6 +80,25 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('date')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('date')}">Date</label>
+                    <div class="input-group w-100">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="dpDate" formControlName="date"
+                            ngbDatepicker #dpDate="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="dpDate.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                    <small class="text-danger" *ngIf="(formControls.date.touched && formControls.date.errors) || 
+                                                        (formControls.date.touched && formControls.date.invalid)">
+                        <span *ngIf="formControls.date.errors.required">Date is <strong>required</strong></span>
+                        <span *ngIf="!formControls.date.errors.required && formControls.date.invalid">
+                            Please, Enter valid date (Ex: yyyy-mm-dd)
+                        </span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('userId')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('userId')}">User Id</label>
@@ -166,6 +185,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('paymentFromId')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('paymentFromId')}">Payment From</label>
+                    <ng-select [items]="paymentFroms" formControlName="paymentFromId" bindValue="id" bindLabel="dropdownName" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.paymentFromId.touched && formControls.paymentFromId.errors">
+                        <span *ngIf="formControls.paymentFromId.errors.required">Payment From is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('brands')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('brands')}">Brands</label>
@@ -219,7 +248,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('fromMonth')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('fromMonth')}">From Month</label>
-                    <ng-select [items]="months" formControlName="fromMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="months" formControlName="fromMonth" bindValue="id" bindLabel="name" [multiple]="false" (ngModelChange)="onChangeFromYearMonth()">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.fromMonth.touched && formControls.fromMonth.errors">
                         <span *ngIf="formControls.fromMonth.errors.required">From Month is <strong>required</strong></span>
@@ -229,7 +258,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('fromYear')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('fromYear')}">From Year</label>
-                    <ng-select [items]="years" formControlName="fromYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="years" formControlName="fromYear" bindValue="id" bindLabel="name" [multiple]="false" (ngModelChange)="onChangeFromYearMonth()">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.fromYear.touched && formControls.fromYear.errors">
                         <span *ngIf="formControls.fromYear.errors.required">From Year is <strong>required</strong></span>
@@ -239,7 +268,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('toMonth')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('toMonth')}">To Month</label>
-                    <ng-select [items]="months" formControlName="toMonth" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="months" formControlName="toMonth" bindValue="id" bindLabel="name" [multiple]="false" [readonly]="isSearchOptionReadonly('toMonth')">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.toMonth.touched && formControls.toMonth.errors">
                         <span *ngIf="formControls.toMonth.errors.required">To Month is <strong>required</strong></span>
@@ -249,7 +278,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('toYear')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('toYear')}">To Year</label>
-                    <ng-select [items]="years" formControlName="toYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    <ng-select [items]="years" formControlName="toYear" bindValue="id" bindLabel="name" [multiple]="false" [readonly]="isSearchOptionReadonly('toYear')">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.toYear.touched && formControls.toYear.errors">
                         <span *ngIf="formControls.toYear.errors.required">To Year is <strong>required</strong></span>

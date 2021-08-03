@@ -15,6 +15,8 @@ namespace Berger.Common.Constants
         public const string ProjectStatusLeadCompletedTotalLoss = "Total Loss";
         public const string ProjectStatusLeadCompletedPartialBusiness = "Partial Business";
 
+        public const string ProjectStatusLeadCompletedDropdownCode = "PS02_03";
+        public const string ProjectStatusLeadHandOverDropdownCode = "PS02_04";
 
 
 

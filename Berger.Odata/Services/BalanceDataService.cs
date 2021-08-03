@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
-using Berger.Common.HttpClient;
-using Berger.Common.JSONParser;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
-using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
 {
@@ -111,14 +107,14 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ChequeBounceResultModel>> GetChequeBounce(ChequeBounceSearchModel model)
+        public async Task<ChecqueBounceResultModel> GetChequeBounce(ChequeBounceSearchModel model)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
-            var fromDate = currentDate.GetCYFD().DateTimeFormat();
+            var fromDate = currentDate.GetCFYFD().DateTimeFormat();
             var toDate = currentDate.GetCYLD().DateTimeFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
+            var bounceSelectQueryBuilder = new SelectQueryOptionBuilder();
+            bounceSelectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
                                 .AddProperty(CollectionColDef.CustomerName)
                                 .AddProperty(CollectionColDef.DocNumber)
                                 .AddProperty(CollectionColDef.ChequeNo)
@@ -127,26 +123,85 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.CreditControlArea);
 
-            var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, startClearDate: fromDate, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus)).ToList();
 
-            var result = data.Select(x =>
-                                new ChequeBounceResultModel()
+            var receiveSelectQueryBuilder = new SelectQueryOptionBuilder();
+            receiveSelectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
+                                .AddProperty(CollectionColDef.CustomerName)
+                                .AddProperty(CollectionColDef.DocNumber)
+                                .AddProperty(CollectionColDef.ChequeNo)
+                                .AddProperty(CollectionColDef.BankName)
+                                .AddProperty(CollectionColDef.PostingDate)
+                                .AddProperty(CollectionColDef.Amount)
+                                .AddProperty(CollectionColDef.CreditControlArea);
+
+            var chequeBounce = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(bounceSelectQueryBuilder, model.CustomerNo, startClearDate: fromDate, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus, creditControlArea: model.CreditControlArea)).ToList();
+            var chequeReceived = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(receiveSelectQueryBuilder, model.CustomerNo, startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea)).ToList();
+
+            var result = new ChecqueBounceResultModel();
+
+
+            var totalChqRec = new ChequeBounceSummaryResultModel
+            {
+                Category = "Total Cheque Receive",
+                MTDNoOfCheque = chequeReceived.Count(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
+                                                          CustomConvertExtension.ObjectToDateTime(x.PostingDate) <=
+                                                          currentDate.GetMonthLastDate()),
+                YTDNoOfCheque = chequeReceived.Count(),
+                MTDChequeValue = chequeReceived
+                    .Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
+                                CustomConvertExtension.ObjectToDateTime(x.PostingDate) <=
+                                currentDate.GetMonthLastDate())
+                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)),
+                YTDChequeValue = chequeReceived.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount))
+            };
+
+            var totalChqBncd = new ChequeBounceSummaryResultModel
+            {
+                Category = "Total Cheque Bounced",
+                MTDNoOfCheque = chequeBounce.Count(x => CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
+                                                        CustomConvertExtension.ObjectToDateTime(x.ClearDate) <=
+                                                        currentDate.GetMonthLastDate()),
+                YTDNoOfCheque = chequeBounce.Count(),
+                MTDChequeValue = chequeBounce.Where(x => CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
+                                                         CustomConvertExtension.ObjectToDateTime(x.ClearDate) <=
+                                                         currentDate.GetMonthLastDate())
+                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)),
+                YTDChequeValue = chequeBounce.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount))
+            };
+
+            var bncdPercent = new ChequeBounceSummaryResultModel
+            {
+                Category = "Bounce %",
+                MTDNoOfCheque = _odataService.GetPercentage(totalChqRec.MTDNoOfCheque, totalChqBncd.MTDNoOfCheque),
+                YTDNoOfCheque = _odataService.GetPercentage(totalChqRec.YTDNoOfCheque, totalChqBncd.YTDNoOfCheque),
+                MTDChequeValue =
+                    _odataService.GetPercentage(totalChqRec.MTDChequeValue, totalChqBncd.YTDChequeValue),
+                YTDChequeValue =
+                    _odataService.GetPercentage(totalChqRec.MTDChequeValue, totalChqBncd.YTDChequeValue)
+            };
+
+            result.ChequeBounceSummaryResultModels.Add(totalChqRec);
+            result.ChequeBounceSummaryResultModels.Add(totalChqBncd);
+            result.ChequeBounceSummaryResultModels.Add(bncdPercent);
+
+
+            result.ChequeBounceDetailResultModels = chequeBounce.Where(x => CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
+                                              CustomConvertExtension.ObjectToDateTime(x.ClearDate) <=
+                                              currentDate.GetMonthLastDate()).Select(x =>
+                                new ChequeBounceDetailResultModel()
                                 {
-                                    ReversalDate = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
-                                    CustomerNo = x.CustomerNo,
-                                    CustomerName = x.CustomerName,
+                                    Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd.MM.yyyy"),
                                     CreditControlArea = x.CreditControlArea,
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount),
-                                    InstrumentNo = x.ChequeNo,
-                                    DocumentNo = x.DocNumber,
-                                    BankName = x.BankName,
-                                    Reason = "Cheque Bounce-Insuff"
+                                    ChequeNo = x.ChequeNo,
+                                    MrNumber = x.DocNumber,
+                                    BankName = x.BankName
                                 }).ToList();
 
             #region Credit Control Area 
             var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
 
-            foreach (var item in result)
+            foreach (var item in result.ChequeBounceDetailResultModels)
             {
                 item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
             }

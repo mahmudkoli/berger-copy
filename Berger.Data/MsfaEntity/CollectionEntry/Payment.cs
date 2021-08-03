@@ -17,11 +17,11 @@ namespace Berger.Data.MsfaEntity.CollectionEntry
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime CollectionDate { get; set; }
-        public string Code { get; set; } // DealerId for dealer/sub dealer
+        public string DealerId { get; set; } // DealerId for dealer/sub dealer
         public string Name { get; set; }
         public string Address { get; set; }
         public string MobileNumber { get; set; }
-        public string SapId { get; set; }
+        public string SapId { get; set; } // Direct Project
         public string BankName { get; set; }
         public string Number { get; set; }
         public decimal Amount { get; set; }

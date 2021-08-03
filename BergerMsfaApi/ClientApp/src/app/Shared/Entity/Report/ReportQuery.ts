@@ -8,6 +8,7 @@ export class ReportBaseQuery extends QueryObject {
     userId: number;
     fromDate: Date;
     toDate: Date;
+    date: Date;
 
     constructor(init?: Partial<ReportBaseQuery>) {
         super();
@@ -97,6 +98,7 @@ export class DealerOpeningQuery extends ReportBaseQuery {
 export class CollectionReportQuery extends ReportBaseQuery {
 
     paymentMethodId: number;
+    paymentFromId: number;
     dealerId: number;
 
     constructor(init?: Partial<CollectionReportQuery>) {

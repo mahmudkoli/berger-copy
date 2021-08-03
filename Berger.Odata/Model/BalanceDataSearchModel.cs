@@ -23,6 +23,7 @@ namespace Berger.Odata.Model
 
     public class ChequeBounceSearchModel
     {
+        public string CreditControlArea { get; set; }
         public string CustomerNo { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }

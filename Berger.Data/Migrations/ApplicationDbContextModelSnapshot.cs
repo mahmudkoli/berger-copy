@@ -269,9 +269,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("BankName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CollectionDate")
                         .HasColumnType("datetime2");
 
@@ -286,6 +283,9 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("CustomerTypeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DealerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployeeId")
                         .HasColumnType("nvarchar(max)");
@@ -859,6 +859,37 @@ namespace Berger.Data.Migrations
                     b.ToTable("MerchandisingSnapShots");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadActualVolumeSold", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ActualVolumeSoldType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BrandInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LeadFollowUpId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandInfoId");
+
+                    b.HasIndex("LeadFollowUpId");
+
+                    b.ToTable("LeadActualVolumeSold");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", b =>
                 {
                     b.Property<int>("Id")
@@ -890,13 +921,18 @@ namespace Berger.Data.Migrations
                     b.Property<string>("ProductSamplingBrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProductSourcing")
+                    b.Property<int>("ProductSourcingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductSourcingRemarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RemarksOrOutcome")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductSourcingId");
 
                     b.ToTable("LeadBusinessAchievements");
                 });
@@ -916,24 +952,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime>("ActualVisitDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("ActualVolumeSoldExteriorGallon")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ActualVolumeSoldExteriorKg")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ActualVolumeSoldInteriorGallon")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ActualVolumeSoldInteriorKg")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ActualVolumeSoldTopCoatGallon")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ActualVolumeSoldUnderCoatGallon")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BrandUsedExteriorBrandName")
                         .HasColumnType("nvarchar(max)");
@@ -1017,6 +1035,9 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaintContractorNameChangeReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectStatusHandOverRemarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProjectStatusId")
@@ -2599,6 +2620,9 @@ namespace Berger.Data.Migrations
                     b.Property<bool>("HasAppUsage")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("HasDbbl")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("HasDbblIssue")
                         .HasColumnType("bit");
 
@@ -3112,9 +3136,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Benefit")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BenefitDate")
                         .HasColumnType("nvarchar(max)");
 
@@ -3139,22 +3160,16 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Material")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RateInDrum")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RateInLtrOrKg")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SchemeId")
+                    b.Property<string>("RateInSKU")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SchemeMasterId")
@@ -3165,9 +3180,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("TargetVolume")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -3972,6 +3984,30 @@ namespace Berger.Data.Migrations
                     b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadActualVolumeSold", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.SAPTables.BrandInfo", "BrandInfo")
+                        .WithMany()
+                        .HasForeignKey("BrandInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", "LeadFollowUp")
+                        .WithMany("ActualVolumeSolds")
+                        .HasForeignKey("LeadFollowUpId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadBusinessAchievement", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProductSourcing")
+                        .WithMany()
+                        .HasForeignKey("ProductSourcingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

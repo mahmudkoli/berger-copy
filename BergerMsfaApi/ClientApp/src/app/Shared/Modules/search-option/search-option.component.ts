@@ -38,6 +38,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     painters: any[] = [];
     painterTypes: any[] = [];
     paymentMethods: any[] = [];
+    paymentFroms: any[] = [];
     brands: any[] = [];
     materialCodes: any[] = [];
 	months: any[] = [];
@@ -76,6 +77,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			zones: [this.searchOptionQuery.zones],
 			fromDate: [],
 			toDate: [],
+			date: [],
 			userId: [this.searchOptionQuery.userId],
 			dealerId: [this.searchOptionQuery.dealerId],
 			creditControlArea: [this.searchOptionQuery.creditControlArea],
@@ -84,6 +86,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			painterId: [this.searchOptionQuery.painterId],
 			painterTypeId: [this.searchOptionQuery.painterTypeId],
 			paymentMethodId: [this.searchOptionQuery.paymentMethodId],
+			paymentFromId: [this.searchOptionQuery.paymentFromId],
 			brands:[this.searchOptionQuery.brands],
 			materialCodes:[this.searchOptionQuery.materialCodes],
 			fromMonth: [this.searchOptionQuery.fromMonth],
@@ -115,6 +118,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 				year: toDate.getFullYear(),
 				month: toDate.getMonth()+1,
 				day: toDate.getDate()
+			});
+		}
+
+		if (this.searchOptionQuery.date) {
+			const date = new Date(this.searchOptionQuery.date);
+			this.searchOptionForm.controls.date.setValue({
+				year: date.getFullYear(),
+				month: date.getMonth()+1,
+				day: date.getDate()
 			});
 		}
 
@@ -183,15 +195,16 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.ProjectStatusId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ProjectStatus):of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterId)?this.commonService.getPainterList():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.PainterTypeId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Painter):of(APIResponse),
-            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse)
-
-        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods]) => {
+            this.hasSearchOption(EnumSearchOption.PaymentMethodId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Payment):of(APIResponse),
+            this.hasSearchOption(EnumSearchOption.PaymentFromId)?this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Customer):of(APIResponse),
+        ]).subscribe(([dealers, paintingStages, projectStatuses, painters, painterTypes, paymentMethods, paymentFroms]) => {
             this.dealers = dealers.data;
             this.paintingStages = paintingStages.data;
             this.projectStatuses = projectStatuses.data;
             this.painters = painters.data;
             this.painterTypes = painterTypes.data;
             this.paymentMethods = paymentMethods.data;
+            this.paymentFroms = paymentFroms.data;
 			this._allDealers = dealers.data;
 			this.updateDealerSubDealerShow();
         }, (err) => { }, () => { });
@@ -200,11 +213,10 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
             this.hasSearchOption(EnumSearchOption.Brand)?this.commonService.getBrandDropDown():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.MaterialCode)?this.commonService.getMaterialGroupOrBrand():of(APIResponse),
             this.hasSearchOption(EnumSearchOption.ActivitySummary)?this.commonService.getActivitySummaryDropDown():of(APIResponse),
-        ]).subscribe(([brands,materialCodes,activitySummary]) => {
+        ]).subscribe(([brands, materialCodes, activitySummaries]) => {
             this.brands = brands.data;
             this.materialCodes = materialCodes.data;
-            this.activitySummaries = activitySummary.data;
-			this.updateDealerSubDealerShow();
+            this.activitySummaries = activitySummaries.data;
         }, (err) => { }, () => { });
 
 		this.subscriptions.push(forkJoinSubscription1);
@@ -230,6 +242,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.painterId = controls['painterId'].value;
 		this.searchOptionQuery.painterTypeId = controls['painterTypeId'].value;
 		this.searchOptionQuery.paymentMethodId = controls['paymentMethodId'].value;
+		this.searchOptionQuery.paymentFromId = controls['paymentFromId'].value;
 		this.searchOptionQuery.fromMonth = controls['fromMonth'].value;
 		this.searchOptionQuery.toMonth = controls['toMonth'].value;
 		this.searchOptionQuery.fromYear = controls['fromYear'].value;
@@ -262,6 +275,13 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			this.searchOptionQuery.toDate = null;
 		}
 
+		const date = controls['date'].value;
+		if (date && date.year && date.month && date.day) {
+			this.searchOptionQuery.date = new Date(date.year,date.month-1,date.day);
+		} else {
+			this.searchOptionQuery.date = null;
+		}
+
 		if (!this.checkSearchOptionValidity()) return;
 
 		this.searchOptionQueryCallbackFn.emit(this.searchOptionQuery);
@@ -272,9 +292,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			this.searchOptionForm.controls.dealerId.setValue(null);
 
 		if (this.searchOptionSettings.isDealerShow) {
-			this.dealers = this._allDealers.filter(x => !x.isSubdealer);
+			this.dealers = this._allDealers ? this._allDealers.filter(x => !x.isSubdealer) : [];
 		} else if (this.searchOptionSettings.isSubDealerShow) {
-			this.dealers = this._allDealers.filter(x => x.isSubdealer);
+			this.dealers = this._allDealers ? this._allDealers.filter(x => x.isSubdealer) : [];
 		} else {
 			this.searchOptionSettings.isDealerShow = true;
 			this.searchOptionSettings.isSubDealerShow = false;
@@ -336,6 +356,26 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		return isRequired || false;
 	}
 
+	isSearchOptionReadonly(searchOption): 'readonly' | '' {
+		const searchOptionDef = this.searchOptionSettings.searchOptionDef.find(x => x.searchOption == searchOption);
+		return searchOptionDef != null && searchOptionDef.isReadonly ? 'readonly' : '';
+	}
+
+	onChangeFromYearMonth() {
+		const searchOptionDefs = this.searchOptionSettings.searchOptionDef
+								.filter(x => (x.searchOption == EnumSearchOption.ToYear || x.searchOption == EnumSearchOption.ToMonth) 
+												&& x.isAutoGenerated);
+		if (searchOptionDefs && searchOptionDefs.length > 0) {
+			const fromYear = this.searchOptionForm.controls[EnumSearchOption.FromYear].value;
+			const fromMonth = this.searchOptionForm.controls[EnumSearchOption.FromMonth].value;
+			if (fromYear && fromMonth) {
+				const yearMonth = this.getToYearMonth(fromYear, fromMonth, this.searchOptionSettings.monthDifferenceCount);
+				this.searchOptionForm.controls[EnumSearchOption.ToYear].setValue(yearMonth.year);
+				this.searchOptionForm.controls[EnumSearchOption.ToMonth].setValue(yearMonth.month);
+			}
+		}
+	}
+
 	ngbDateToDate(date: NgbDate) : Date | null {
 		return date && date.year && date.month && date.day ?
 				new Date(date.year,date.month-1,date.day) :
@@ -368,5 +408,11 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		// 	monthCount += 1;
 		// return (monthCount <= 0 ? 0 : monthCount)===monthDiffCount;
 		return ((toDate.getMonth()+1) - (fromDate.getMonth()+1) + (12 * (toDate.getFullYear() - fromDate.getFullYear())) + 1)===monthDiffCount;
+	}
+
+	getToYearMonth(fromYear:number,fromMonth:number,monthDiffCount:number) : any {
+		var date = new Date(fromYear, fromMonth-1);
+		date.setMonth(date.getMonth() + monthDiffCount-1);
+		return { 'year': date.getFullYear(), 'month': date.getMonth()+1 };
 	}
 }
