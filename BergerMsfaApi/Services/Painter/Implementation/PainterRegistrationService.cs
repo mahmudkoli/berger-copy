@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Painter;
 using BergerMsfaApi.Models.PainterRegistration;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
@@ -36,6 +40,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<PainterCall> _painterCallSvc;
         private readonly IRepository<DealerInfo> _dealerInfoSvc;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
+
         public PainterRegistrationService(
              IRepository<PainterStatusLog> painterStatusLog,
              IRepository<Painter> painterSvc,
@@ -49,7 +55,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
              IRepository<AttachedDealerPainter> attachedDealerSvc,
              IRepository<PNTR.PainterCall> painterCallSvc,
              IRepository<DealerInfo> dealerInfoSvc,
-              IMapper mapper
+              IMapper mapper,
+              ApplicationDbContext context
 
             )
         {
@@ -66,6 +73,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             _painterCallSvc = painterCallSvc;
             _dealerInfoSvc = dealerInfoSvc;
             _mapper = mapper;
+            _context = context;
 
         }
 
@@ -213,37 +221,66 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             return painterModel;
         }
 
-        public async Task<IPagedList<PainterModel>> GetPainterListAsync(int index, int pageSize, string search)
+        private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
+
+
+        public async Task<QueryResultModel<PainterModel>> GetPainterListAsync(PainterRegistrationReportSearchModel query)
         {
-            var result = (await _painterSvc.GetAllAsync()).OrderBy(x => x.PainterName).ToMap<Painter, PainterModel>();
 
-            if (!string.IsNullOrEmpty(search))
-                result = result.Search(search);
+            var painters = await (from p in _context.Painters
+                                  join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
+                                  from userInfo in uleftjoin.DefaultIfEmpty()
+                                  join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
+                                  from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                                  join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                  from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                  from diInfo in dileftjoin.DefaultIfEmpty()
+                                  join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
+                                  from depinfo in depleftjoin.DefaultIfEmpty()
+                                  join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
+                                  from sginfo in sgleftjoin.DefaultIfEmpty()
+                                  join t in _context.Territory on p.Territory equals t.Code into tleftjoin
+                                  from tinfo in tleftjoin.DefaultIfEmpty()
+                                  join z in _context.Zone on p.Zone equals z.Code into zleftjoin
+                                  from zinfo in zleftjoin.DefaultIfEmpty()
+                                  where (
+                                     (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                     && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
+                                     && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                     && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                                     && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                                     && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
+                                     && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
+                                     && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
+                                  )
+                                  select new PainterModel
+                                  {
+                                      Id=p.Id,
+                                      PainterName=p.PainterName,
+                                      PainterNo=p.PainterNo,
+                                      PainterCode=p.PainterCode,
+                                      PainterImageUrl=p.PainterImageUrl,
+                                      Phone=p.Phone,
+                                      SaleGroupName= sginfo.Name,
+                                      TerritoryName= tinfo.Name,
+                                      ZoneName= zinfo.Name,
+                                      DepotName= depinfo.Name1,
+                                      Status =(int)p.Status
+                                  }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
 
-            #region get area mapping data
-            var depotIds = result.Select(x => x.Depot).Distinct().ToList();
-            var saleGroupIds = result.Select(x => x.SaleGroup).Distinct().ToList();
-            //var territoryIds = result.Select(x => x.Territory).Distinct().ToList();
-            //var zoneIds = result.Select(x => x.Zone).Distinct().ToList();
 
-            var depots = (await _depotSvc.FindAllAsync(x => depotIds.Contains(x.Werks)));
-            var saleGroups = (await _saleGroupSvc.FindAllAsync(x => saleGroupIds.Contains(x.Code)));
-            //var territories = (await _territorySvc.FindAllAsync(x => territoryIds.Contains(x.Code)));
-            //var zones = (await _zoneSvc.FindAllAsync(x => zoneIds.Contains(x.Code)));
 
-            foreach (var item in result)
-            {
-                item.DepotName = depots.FirstOrDefault(x => x.Werks == item.Depot)?.Name1 ?? string.Empty;
-                item.SaleGroupName = saleGroups.FirstOrDefault(x => x.Code == item.SaleGroup)?.Name ?? string.Empty;
-                //item.TerritoryName = territories.FirstOrDefault(x => x.Code == item.Territory)?.Code ?? string.Empty;
-                //item.ZoneName = zones.FirstOrDefault(x => x.Code == item.Zone)?.Code ?? string.Empty;
-                item.TerritoryName = item.Territory;
-                item.ZoneName = item.Zone;
-                item.Status = item.Status;
-            }
-            #endregion
 
-            return result.ToPagedList(index, pageSize);
+            var queryResult = new QueryResultModel<PainterModel>();
+            queryResult.Items = painters;
+            queryResult.TotalFilter = painters.Count();
+            queryResult.Total = painters.Count();
+
+            return queryResult;
+
+            //return result.ToPagedList(index, pageSize);
 
         }
 
