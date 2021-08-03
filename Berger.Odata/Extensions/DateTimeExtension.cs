@@ -9,6 +9,7 @@ namespace Berger.Odata.Extensions
         public static string SalesSearchDateFormat(this DateTime date) => date.ToString("dd.MM.yyyy");
         public static string MTSSearchDateFormat(this DateTime date) => $"{string.Format("{0:0000}", date.Year)}.{string.Format("{0:00}", date.Month)}";
         public static DateTime SalesResultDateFormat(this string date, string format = "yyyyMMdd") => DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
+        public static string MTSResultDateFormat(this DateTime date) => $"0{string.Format("{0:00}", date.Month)}{string.Format("{0:0000}", date.Year)}";
         public static string DateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string FinancialSearchDateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");
         public static string CollectionSearchDateTimeFormat(this DateTime date) => date.ToString("yyyy-MM-ddT00:00:00");

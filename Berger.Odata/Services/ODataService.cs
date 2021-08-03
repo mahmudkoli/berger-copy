@@ -2014,21 +2014,10 @@ namespace Berger.Odata.Services
             else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
             else return ((cyValue - lyValue) * 100) / lyValue;
         }
-        //public decimal GetGrowthNew(decimal first, decimal second)
-        //{
-        //    var subValue = (first - second);
-        //    if (subValue == 0 || second == 0)
-        //    {
-        //        return 0;
-        //    }
-        //    return decimal.Parse(((subValue * 100) / second).ToString("#.##"));
-        //}
+
         public decimal GetContribution(decimal first, decimal second)
         {
-            if (first == 0 || second == 0)
-            {
-                return 0;
-            }
+            if (first == 0 || second == 0) return 0;
 
             return decimal.Parse(((second / first) * 100).ToString("#.##"));
         }
