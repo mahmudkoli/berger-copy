@@ -103,29 +103,44 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
 
             var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
-            var issue = await _dealerSalesIssueRepository.DeleteAsync(p => p.DealerSalesCallId == dealerSalesCall.Id);
-            if (issue > 0)
-            {
-                var issuecategory = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesCall.DealerSalesIssues.ToList());
 
-            }
 
-            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
-            {
-                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                //dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
-            }
+            var dealerSalesIssues = dealerSalesCall.DealerSalesIssues.ToList();
+            var dealerCompetitionSales = dealerSalesCall.DealerCompetitionSales.ToList();
 
-            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
+            dealerSalesCall.DealerSalesIssues = null;
+            dealerSalesCall.DealerCompetitionSales = null;
+
+
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageBase64))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                //dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                model.CompetitionProductDisplayImageUrl=model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageBase64))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                model.CompetitionSchemeModalityImageUrl = model.CompetitionSchemeModalityImageBase64.Substring(model.CompetitionSchemeModalityImageBase64.LastIndexOf(',') + 1);
+
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+            }
+
             var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
 
-           
 
-            var dealerCompetitionSales = await _dealerCompetitionSalesRepository.UpdateListAsync(result.DealerCompetitionSales.ToList());
+            var issue = await _dealerSalesIssueRepository.DeleteAsync(p=>p.DealerSalesCallId==dealerSalesCall.Id);
+
+
+            var issuecategoryAdd = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesIssues);
+
+
+            var dealerCompetitionSalesEdit = await _dealerCompetitionSalesRepository.UpdateListAsync(dealerCompetitionSales);
+
+
+
 
             await SendIssueEmail(result.Id);
 

@@ -37,7 +37,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
   dealerSalesIssueCategorylst=[];
   prioritylst=[];
   cBMachineMantainancelst=[];
-
+id:number;
 
 
 
@@ -64,6 +64,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
+			this.id=id
 			console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
@@ -76,6 +77,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 							this.dealerSalesIssues = this.dealerSalesCall.dealerSalesIssues || [];
 							this.commonService.booleanToText(this.dealerSalesCall);
 							this.dealerSalesIssues.forEach(obj => {
+								obj.id=0;
 								this.commonService.booleanToText(obj);
 							});
 							console.log(this.dealerSalesCall);
@@ -171,13 +173,14 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 
   addDealerSalesIssueTable() {
 	const obj = new DealerSalesIssue();
+	obj.dealerSalesCallId=this.id;
 	this.dealerSalesIssues.push(obj)
   }
 
   save(){
 	  this.dealerSalesCall.dealerCompetitionSales=this.dealerCompetitionSales;
 	  this.dealerSalesCall.dealerSalesIssues=this.dealerSalesIssues;
-	//   console.log(this.dealerSalesCall);
+	  console.log(this.dealerSalesCall);
 
 	  this.dealerSalesCallService.updateDealerSalesCall(this.dealerSalesCall)
 	  .pipe(finalize(() => this.alertService.fnLoading(false))) 
@@ -206,7 +209,7 @@ export class DealerSalesCallEditComponent implements OnInit, OnDestroy {
 			image.onload = rs => {
 				
 					const imgBase64Path = e.target.result;
-					this.dealerSalesCall.competitionProductDisplayImageUrl = imgBase64Path;
+					this.dealerSalesCall.competitionProductDisplayImageBase64 = imgBase64Path;
 				
 			};
 		};
@@ -226,7 +229,7 @@ fileChangeEvent(fileInput: any) {
 			image.onload = rs => {
 				
 					const imgBase64Path = e.target.result;
-					this.dealerSalesCall.competitionSchemeModalityImageUrl = imgBase64Path;
+					this.dealerSalesCall.competitionSchemeModalityImageBase64 = imgBase64Path;
 				
 			};
 		};

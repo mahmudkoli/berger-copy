@@ -210,10 +210,13 @@ namespace BergerMsfaApi.Models.DealerSalesCall
         //public int? CompetitionProductDisplayImageId { get; set; }
         //public AttachmentModel CompetitionProductDisplayImage { get; set; }
         public string CompetitionProductDisplayImageUrl { get; set; }
+        public string CompetitionProductDisplayImageBase64 { get; set; }
+
         public string CompetitionSchemeModalityComments { get; set; }
         //public int? CompetitionSchemeModalityImageId { get; set; }
         //public AttachmentModel CompetitionSchemeModalityImage { get; set; }
         public string CompetitionSchemeModalityImageUrl { get; set; }
+        public string CompetitionSchemeModalityImageBase64 { get; set; }
         public string CompetitionShopBoysComments { get; set; }
         public IList<AppDealerCompetitionSalesModel> DealerCompetitionSales { get; set; }
 

@@ -402,13 +402,14 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
+                    <div class="form-check">
                     <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCompetitionProductDisplayBetterThanBPBL"
                            name="isCompetitionProductDisplayBetterThanBPBL" [checked]="dealerSalesCall.isCompetitionProductDisplayBetterThanBPBL">
                    
                            <label class="form-check-label">Is Competition Product Display Better Than BPBL</label>
              
                    
-
+                        </div>
                    
                 </div>
             </div>
@@ -472,11 +473,14 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
+                    <div class="form-check">
+
                     <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasDealerSalesIssue"
                            name="hasDealerSalesIssue" [checked]="dealerSalesCall.hasDealerSalesIssue">
                    
                            <label class="form-check-label">Has Dealer Sales Issue</label>
                     
+                </div>
                     
                    
                 </div>
@@ -508,10 +512,13 @@
             </div>
             <div class="col-md-6">
                 <div class="position-relative form-group">
+                    <div class="form-check">
+
                     <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isSubDealerCall"
                            name="isSubDealerCall" [checked]="dealerSalesCall.isSubDealerCall">
                    
                            <label class="form-check-label">Is Sub Dealer Call</label>
+                </div>
                     
                     
                 </div>
@@ -521,11 +528,14 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="position-relative form-group">
+                    <div class="form-check">
+
                     <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasBPBLSales"
                            name="hasBPBLSales" [checked]="dealerSalesCall.hasBPBLSales">
                    
                            <label class="form-check-label">Has BPBL Sales</label>
                    
+                </div>
                     
                    
                 </div>
@@ -559,6 +569,7 @@
     </div>
 
     <div class="col col-md-12">
+        <h3>Dealer Competition Sales</h3>
     <div class="table-responsive">
 	<table class="table">
 		<tr>
@@ -599,6 +610,7 @@
     </div>
 
     <div class="col col-md-12">
+        <h3>Dealer Sales Issues</h3>
         <div class="table-responsive">
         <table class="table" cellspacing="0"
         width="100%">
