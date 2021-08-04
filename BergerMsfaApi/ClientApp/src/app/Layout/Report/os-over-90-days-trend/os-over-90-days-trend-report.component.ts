@@ -156,6 +156,7 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
         showTotal: this.allTotalKeysOfNumberType
           ? typeof obj[key] === 'number'
           : this.totalKeys.includes(key),
+        displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
       } as colDef;
     });
   }
