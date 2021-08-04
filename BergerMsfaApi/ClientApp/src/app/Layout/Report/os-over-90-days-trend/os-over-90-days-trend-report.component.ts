@@ -36,10 +36,10 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
   totalFilterDataLength: number = 0; // for server side paggination
 
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'OS over 90 days Trend Report';
   // renameKeys: any = {'userId':'// User Id //'};
-  renameKeys: any = {};
+  renameKeys: any = {'osOver90Days':'OS over 90 Days','osPercentageWithSales':'OS % With Sales'};
   allTotalKeysOfNumberType: boolean = true;
   // totalKeys: any[] = ['totalCall'];
   totalKeys: any[] = [];
@@ -56,13 +56,13 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
     private dynamicDropdownService: DynamicDropdownService
   ) {
     // client side paggination
-    // this.PAGE_SIZE = 2147483647; // Int32 max value
-    // this.ptableSettings.pageSize = 10;
-    // this.ptableSettings.enabledServerSitePaggination = false;
+    this.PAGE_SIZE = 2147483647; // Int32 max value
+    this.ptableSettings.pageSize = 10;
+    this.ptableSettings.enabledServerSitePaggination = false;
     // server side paggination
-    this.PAGE_SIZE = commonService.PAGE_SIZE;
-    this.ptableSettings.pageSize = this.PAGE_SIZE;
-    this.ptableSettings.enabledServerSitePaggination = true;
+    // this.PAGE_SIZE = commonService.PAGE_SIZE;
+    // this.ptableSettings.pageSize = this.PAGE_SIZE;
+    // this.ptableSettings.enabledServerSitePaggination = true;
   }
 
   ngOnInit() {
@@ -89,29 +89,22 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
       salesGroups: [],
       territories: [],
       zones: [],
-      fromMonth: null,
-      fromYear: null,
-      toMonth: null,
-      toYear: null,
+      month: null,
+      year: null,
     });
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
-    hasMonthDifference: true,
-    monthDifferenceCount: 3,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.CreditControlArea, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.FromMonth, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.FromYear, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.ToMonth, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.ToYear, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Month, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -120,12 +113,9 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
-		this.query.dealerId = queryObj.dealerId;
 		this.query.creditControlArea = +queryObj.creditControlArea;
-		this.query.fromMonth = queryObj.fromMonth;
-		this.query.fromYear = queryObj.fromYear;
-		this.query.toMonth = queryObj.toMonth;
-		this.query.toYear = queryObj.toYear;
+		this.query.month = queryObj.month;
+		this.query.year = queryObj.year;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -142,9 +132,9 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (res) => {
-          this.data = res.data.items;
-          this.totalDataLength = res.data.total;
-          this.totalFilterDataLength = res.data.totalFilter;
+          this.data = res.data;
+          this.totalDataLength = res.data.length;
+          this.totalFilterDataLength = res.data.length;
           this.ptableColDefGenerate();
         },
         (error) => {
@@ -168,33 +158,6 @@ export class OSOver90DaysTrendReportComponent implements OnInit, OnDestroy {
           : this.totalKeys.includes(key),
       } as colDef;
     });
-
-    this.ptableSettings.tableColDef
-      .filter((x) => x.internalName == 'change1' || x.internalName == 'change2')
-      .forEach((element) => {
-        element.headerName = 'Change';
-      });
-
-    this.ptableSettings.tableColDef
-      .filter(
-        (x) =>
-          x.internalName == 'month1Value' ||
-          x.internalName == 'month2Value' ||
-          x.internalName == 'month3Value'
-      )
-      .forEach((element) => {
-        let propertyName = element.internalName.replace('Value', 'Name');
-        element.headerName = this.data[0][propertyName];
-      });
-
-    this.ptableSettings.tableColDef = this.ptableSettings.tableColDef.filter(
-      (x) =>
-        !(
-          x.internalName == 'month1Name' ||
-          x.internalName == 'month2Name' ||
-          x.internalName == 'month3Name'
-        )
-    );
   }
 
   public ptableSettings: IPTableSetting = {

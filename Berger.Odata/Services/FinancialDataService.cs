@@ -305,6 +305,121 @@ namespace Berger.Odata.Services
 
             return result;
         }
+        
+        public async Task<IList<PortalOSOver90DaysTrendResultModel>> GetPortalOSOver90DaysTrendReport(PortalOSOver90DaysTrendSearchModel model)
+        {
+            var currentDate = new DateTime(model.Year, model.Month, 01);
+            var fmDate = currentDate.AddMonths(-2);
+            var smDate = currentDate.AddMonths(-1);
+            var tmDate = currentDate;
+
+            var filterFinancialEndDateFM = fmDate.GetCYLD().FinancialSearchDateTimeFormat();
+            var filterFinancialEndDateSM = smDate.GetCYLD().FinancialSearchDateTimeFormat();
+            var filterFinancialEndDateTM = tmDate.GetCYLD().FinancialSearchDateTimeFormat();
+
+            var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
+            var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
+            var fmFromDate = fmDate.GetCYFD();
+            var fmToDate = fmDate.GetCYLD();
+            var smFromDate = smDate.GetCYFD();
+            var smToDate = smDate.GetCYLD();
+            var tmFromDate = tmDate.GetCYFD();
+            var tmToDate = tmDate.GetCYLD();
+
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
+
+            var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
+            selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+                                        .AddProperty(DataColumnDef.Date)
+                                        .AddProperty(DataColumnDef.NetAmount);
+
+            var selectFinancialQueryBuilder = new SelectQueryOptionBuilder();
+            selectFinancialQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
+                                        .AddProperty(FinancialColDef.Age)
+                                        .AddProperty(FinancialColDef.Amount);
+
+            var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
+                                filterSalesFromDate, filterSalesToDate,
+                                depots: new List<string> { model.Depot }, territories: model.Territories, zones: model.Zones,
+                                creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+                                depots: new List<string> { model.Depot }, territories: model.Territories, zones: model.Zones,
+                                channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
+
+            #region financial data call by single customer
+            var financialDataFM = new List<FinancialDataModel>();
+            var financialDataSM = new List<FinancialDataModel>();
+            var financialDataTM = new List<FinancialDataModel>();
+
+            foreach (var customerNo in customerNos)
+            {
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateFM, creditControlArea: model.CreditControlArea)).ToList();
+                if (dataSingle.Any())
+                {
+                    financialDataFM.AddRange(dataSingle);
+                }
+            }
+
+            foreach (var customerNo in customerNos)
+            {
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateSM, creditControlArea: model.CreditControlArea)).ToList();
+                if (dataSingle.Any())
+                {
+                    financialDataSM.AddRange(dataSingle);
+                }
+            }
+
+            foreach (var customerNo in customerNos)
+            {
+                var dataSingle = (await _odataService.GetFinancialData(selectFinancialQueryBuilder, customerNo, filterFinancialEndDateTM, creditControlArea: model.CreditControlArea)).ToList();
+                if (dataSingle.Any())
+                {
+                    financialDataTM.AddRange(dataSingle);
+                }
+            }
+            #endregion
+
+            var result = new List<PortalOSOver90DaysTrendResultModel>();
+
+            var resFM = new PortalOSOver90DaysTrendResultModel();
+            resFM.Month = fmDate.ToString("MMMM");
+            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resFM.Difference = 0;
+            resFM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= fmFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= fmToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resFM.OSPercentageWithSales = _odataService.GetPercentage(resFM.Sales, resFM.OSOver90Days);
+
+            result.Add(resFM);
+
+            var resSM = new PortalOSOver90DaysTrendResultModel();
+            resSM.Month = smDate.ToString("MMMM");
+            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
+            resSM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= smFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= smToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resSM.OSPercentageWithSales = _odataService.GetPercentage(resSM.Sales, resSM.OSOver90Days);
+
+            result.Add(resSM);
+
+            var resTM = new PortalOSOver90DaysTrendResultModel();
+            resTM.Month = tmDate.ToString("MMMM");
+            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
+            resTM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= tmFromDate.Date
+                                             && x.Date.SalesResultDateFormat().Date <= tmToDate.Date)
+                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resTM.OSPercentageWithSales = _odataService.GetPercentage(resTM.Sales, resTM.OSOver90Days);
+
+            result.Add(resTM);
+
+            return result;
+        }
 
         public async Task<IList<PaymentFollowUpResultModel>> GetPaymentFollowUp(PaymentFollowUpSearchModel model)
         {
