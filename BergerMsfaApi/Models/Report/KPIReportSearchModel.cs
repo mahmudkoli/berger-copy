@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BergerMsfaApi.Models.Report
 {
     public class KPIReportBaseSearchModel
-        //: QueryObjectModel
+    //: QueryObjectModel
     {
         public string Depot { get; set; }
         public List<string> SalesGroups { get; set; }
@@ -33,14 +33,14 @@ namespace BergerMsfaApi.Models.Report
 
     public enum EnumStrikeRateReportType
     {
-        All=1,
-        Exclusive=2,
-        NonExclusive=3
+        All = 1,
+        Exclusive = 2,
+        NonExclusive = 3
     }
 
     public class BusinessCallKPIReportSearchModel : KPIReportBaseSearchModel
     {
-
+        public EnumStrikeRateReportType Category { get; set; }
     }
 
     public class BillingAnalysisKPIReportSearchModel : KPIReportBaseSearchModel
@@ -52,5 +52,11 @@ namespace BergerMsfaApi.Models.Report
     {
         public string Depot { get; set; }
         public string Territory { get; set; }
+    }
+
+    public enum EnumReportFor
+    {
+        App = 1,
+        Web = 2
     }
 }

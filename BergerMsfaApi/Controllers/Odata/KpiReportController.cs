@@ -116,7 +116,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return Ok(result);
             }
             catch (Exception ex)

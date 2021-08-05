@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using BergerMsfaApi.Mappings;
+using BergerMsfaApi.Models.DealerSalesCall;
 
 namespace BergerMsfaApi.Models.Report
 {
@@ -23,14 +26,37 @@ namespace BergerMsfaApi.Models.Report
         }
     }
 
-    public class BusinessCallKPIReportResultModel
+    public class BusinessCallBaseKPIReportResultModel
     {
         [JsonIgnore]
         public DateTime DateTime { get; set; }
-        public string Date { get; set; }
         public int NoOfCallTarget { get; set; }
         public int NoOfCallActual { get; set; }
         public decimal Achivement { get; set; }
+
+        public BusinessCallBaseKPIReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class BusinessCallAPPKPIReportResultModel : BusinessCallBaseKPIReportResultModel, IMapFrom<BusinessCallWebKPIReportResultModel>
+    {
+        public string Title { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<BusinessCallWebKPIReportResultModel, BusinessCallAPPKPIReportResultModel>()
+                .ForMember(dest => dest.Title,
+                    opt => opt.MapFrom(src => src.Date));
+        }
+
+    }
+
+    public class BusinessCallWebKPIReportResultModel : BusinessCallBaseKPIReportResultModel
+    {
+      
+        public string Date { get; set; }
         public int ExclusiveNoOfCallTarget { get; set; }
         public int ExclusiveNoOfCallActual { get; set; }
         public decimal ExclusiveAchivement { get; set; }
@@ -38,11 +64,16 @@ namespace BergerMsfaApi.Models.Report
         public int NonExclusiveNoOfCallActual { get; set; }
         public decimal NonExclusiveAchivement { get; set; }
 
-        public BusinessCallKPIReportResultModel()
+        public BusinessCallWebKPIReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+
+
+
+
 
     public class BillingAnalysisKPIReportResultModel
     {
@@ -75,11 +106,11 @@ namespace BergerMsfaApi.Models.Report
 
     public enum EnumBillingAnalysisType
     {
-        Exclusive=1,
-        NonAPNonExclusive=2,
-        NonExclusive=3,
-        New=4,
-        Total=5,
+        Exclusive = 1,
+        NonAPNonExclusive = 2,
+        NonExclusive = 3,
+        New = 4,
+        Total = 5,
     }
 
     public class CollectionPlanKPIReportResultModel
