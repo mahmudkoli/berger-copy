@@ -13,6 +13,7 @@ import {
 } from 'src/app/Shared/Modules/p-table';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import {
   EnumSearchOption,
   SearchOptionDef,
@@ -215,7 +216,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     // pageSize: 10,
     enabledPagination: true,
     // enabledDeleteBtn: true,
-    // enabledEditBtn: true,
+    enabledEditBtn: true,
     enabledCellClick: true,
     enabledColumnFilter: false,
     // enabledRecordCreateBtn: true,
@@ -235,7 +236,6 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
   public cellClickCallbackFn(event: any) {
     let id = event.record.id;
     let cellName = event.cellName;
-
     if (cellName == 'detailsBtnText') {
       this.detailsDealerSalesCall(id);
     }
@@ -254,5 +254,16 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
 
   public detailsDealerSalesCall(id) {
     this.router.navigate([`/dealer-sales-call/details/${id}`]);
+  }
+
+  public editDealerSalesCall(id) {
+    this.router.navigate([`/dealer-sales-call/edit/${id}`]);
+  }
+
+  public fnCustomTrigger(event) {
+    if(event.action=="edit-item"){
+      this.editDealerSalesCall(event.record.id);
+    }
+
   }
 }

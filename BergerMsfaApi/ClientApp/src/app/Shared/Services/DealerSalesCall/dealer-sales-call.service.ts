@@ -22,6 +22,11 @@ export class DealerSalesCallService {
     getDealerSalesCall(id) {
       return this.http.get<APIResponse>(`${this.DealerSalesCallsEndpoint}/${id}`);
     }
+
+
+    updateDealerSalesCall(dealerSalesCall) {
+      return this.http.put<any>(this.baseUrl + `v1/DealerSalesCall/UpdateDealerSalesCallList/`,dealerSalesCall);
+    }
   
     getDealerSalesCalls(filter?) {
       return this.http.get<APIResponse>(`${this.DealerSalesCallsEndpoint}?${this.commonService.toQueryString(filter)}`);
