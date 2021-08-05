@@ -36,7 +36,6 @@ namespace Berger.Odata.Services
         public async Task<IList<QuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(QuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var mtsBrands = new List<string>();
             var monthlyDictTarget = new Dictionary<string, IList<MTSDataModel>>();
@@ -44,74 +43,51 @@ namespace Berger.Odata.Services
 
             var selectTargetQueryBuilder = new SelectQueryOptionBuilder();
             selectTargetQueryBuilder
-                                //.AddProperty(DataColumnDef.MTS_Territory)
-                                //.AddProperty(DataColumnDef.MTS_CustomerNo)
-                                //.AddProperty(DataColumnDef.MTS_CustomerName)
+                                .AddProperty(DataColumnDef.MTS_Date)
                                 .AddProperty(DataColumnDef.MTS_TargetValue);
 
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
             selectActualQueryBuilder
-                                //.AddProperty(DataColumnDef.Territory)
-                                //.AddProperty(DataColumnDef.CustomerNo)
-                                //.AddProperty(DataColumnDef.CustomerName)
+                                .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
             mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var date = fromDate.GetMonthDate(number).GetCYFD();
-                var dateStr = $"{string.Format("{0:0000}", date.Year)}.{string.Format("{0:00}", date.Month)}";
+            monthlyDictTarget = (await this.GetQuarterlyTargetData(selectTargetQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: mtsBrands));
 
-                var data = (await _odataService.GetMTSDataByArea(selectTargetQueryBuilder, dateStr, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: mtsBrands)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictTarget.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: mtsBrands)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictActual.Add(monthName, data);
-            }
+            monthlyDictActual = (await this.GetQuarterlyActualData(selectActualQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: mtsBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictTarget.Any())
+            var res = new QuarterlyPerformanceDataResultModel();
+
+            for (var i = 0; i < monthCount; i++)
             {
-                var res = new QuarterlyPerformanceDataResultModel();
+                int number = i;
+                var monthName = fromDate.GetMonthName(number);
+                var dictDataTarget = monthlyDictTarget[monthName].ToList();
+                var dictDataActual = monthlyDictActual[monthName].ToList();
 
-                for (var i = 0; i < monthCount; i++)
+                res.MonthlyTargetData.Add(new MonthlyDataModel()
                 {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataTarget = monthlyDictTarget[monthName].ToList();
-                    var dictDataActual = monthlyDictActual[monthName].ToList();
+                    MonthName = $"{monthName} Target",
+                    Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.TargetValue))
+                });
 
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} Target",
-                        Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.TargetValue))
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} Actual",
-                        Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                    });
-                }
+                res.MonthlyActualData.Add(new MonthlyDataModel()
+                {
+                    MonthName = $"{monthName} Actual",
+                    Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                });
 
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = res.TotalTarget > 0 ? ((res.TotalActual / res.TotalTarget)) * 100 : decimal.Zero;
+                res.AchivementOrGrowth = _odataService.GetAchivement(res.TotalTarget, res.TotalActual);
 
                 result.Add(res);
             }
@@ -122,67 +98,44 @@ namespace Berger.Odata.Services
         public async Task<IList<QuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(QuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
+                            .AddProperty(DataColumnDef.Date)
                             .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
                             .AddProperty(DataColumnDef.NetAmount);
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, isLastYear: true));
 
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
-
-                var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictLY.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictCY.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictLY.Any())
+            var res = new QuarterlyPerformanceDataResultModel();
+
+            for (var i = 0; i < monthCount; i++)
             {
-                var res = new QuarterlyPerformanceDataResultModel();
+                int number = i;
+                var monthName = fromDate.GetMonthName(number);
+                var dictDataLY = monthlyDictLY[monthName].ToList();
+                var dictDataCY = monthlyDictCY[monthName].ToList();
 
-                for (var i = 0; i < monthCount; i++)
+                res.MonthlyTargetData.Add(new MonthlyDataModel()
                 {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataLY = monthlyDictLY[monthName].ToList();
-                    var dictDataCY = monthlyDictCY[monthName].ToList();
+                    MonthName = $"{monthName} LY",
+                    Amount = dictDataLY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
+                });
 
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} LY",
-                        Amount = dictDataLY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} CY",
-                        Amount = dictDataCY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
-                    });
-                }
+                res.MonthlyActualData.Add(new MonthlyDataModel()
+                {
+                    MonthName = $"{monthName} CY",
+                    Amount = dictDataCY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
+                });
 
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
@@ -198,7 +151,6 @@ namespace Berger.Odata.Services
         public async Task<IList<QuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(QuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var enamelBrands = new List<string>();
             var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
@@ -206,70 +158,49 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
-                            //.AddProperty(DataColumnDef.NetDue)
+                            .AddProperty(DataColumnDef.Date)
                             .AddProperty(DataColumnDef.Volume);
 
             enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: enamelBrands, isLastYear: true));
 
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
-
-                var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: enamelBrands);
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictLY.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: enamelBrands)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictCY.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: enamelBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictLY.Any())
+            var res = new QuarterlyPerformanceDataResultModel();
+
+            for (var i = 0; i < monthCount; i++)
             {
-                var res = new QuarterlyPerformanceDataResultModel();
+                int number = i;
+                var monthName = fromDate.GetMonthName(number);
+                var dictDataLY = monthlyDictLY[monthName].ToList();
+                var dictDataCY = monthlyDictCY[monthName].ToList();
 
-                for (var i = 0; i < monthCount; i++)
+                res.MonthlyTargetData.Add(new MonthlyDataModel()
                 {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataLY = monthlyDictLY[monthName].ToList();
-                    var dictDataCY = monthlyDictCY[monthName].ToList();
+                    MonthName = $"{monthName} LY",
+                    Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                });
 
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} LY",
-                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} CY",
-                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-                }
-
-                res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
-                res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
-
-                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
-
-                result.Add(res);
+                res.MonthlyActualData.Add(new MonthlyDataModel()
+                {
+                    MonthName = $"{monthName} CY",
+                    Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                });
             }
+
+            res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
+            res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
+
+            res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
+
+            result.Add(res);
 
             return result;
         }
@@ -277,7 +208,6 @@ namespace Berger.Odata.Services
         public async Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(QuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var premiumBrands = new List<string>();
             var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
@@ -285,70 +215,49 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
-                            //.AddProperty(DataColumnDef.NetDue)
+                            .AddProperty(DataColumnDef.Date)
                             .AddProperty(DataColumnDef.Volume);
 
             premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands, isLastYear: true));
 
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
-
-                var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: premiumBrands);
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictLY.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: premiumBrands)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictCY.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictLY.Any())
+            var res = new QuarterlyPerformanceDataResultModel();
+
+            for (var i = 0; i < monthCount; i++)
             {
-                var res = new QuarterlyPerformanceDataResultModel();
+                int number = i;
+                var monthName = fromDate.GetMonthName(number);
+                var dictDataLY = monthlyDictLY[monthName].ToList();
+                var dictDataCY = monthlyDictCY[monthName].ToList();
 
-                for (var i = 0; i < monthCount; i++)
+                res.MonthlyTargetData.Add(new MonthlyDataModel()
                 {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataLY = monthlyDictLY[monthName].ToList();
-                    var dictDataCY = monthlyDictCY[monthName].ToList();
+                    MonthName = $"{monthName} LY",
+                    Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                });
 
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} LY",
-                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} CY",
-                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-                }
-
-                res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
-                res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
-
-                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
-
-                result.Add(res);
+                res.MonthlyActualData.Add(new MonthlyDataModel()
+                {
+                    MonthName = $"{monthName} CY",
+                    Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                });
             }
+
+            res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
+            res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
+
+            res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
+
+            result.Add(res);
 
             return result;
         }
@@ -356,86 +265,54 @@ namespace Berger.Odata.Services
         public async Task<IList<QuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(QuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var premiumBrands = new List<string>();
-            var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            //var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
-                            //.AddProperty(DataColumnDef.Volume)
                             .AddProperty(DataColumnDef.NetAmount)
-                            .AddProperty(DataColumnDef.Division);
+                            .AddProperty(DataColumnDef.Division)
+                            .AddProperty(DataColumnDef.Date);
 
             premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
 
-            Division division = await _oDataDivisionRepository.FindAsync(x => x.Description == "Decorative");
-            string divisionCode = division != null ? division.DivisionCode.ToString() : "";
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands));
 
-            //for (var i = 0; i < monthCount; i++)
-            //{
-            //    int number = i;
+            var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            //    var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-            //    var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
-
-            //    var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territory: model.Territory, brands: premiumBrands);
-            //    var monthName = fromDate.GetMonthName(number);
-
-            //    monthlyDictLY.Add(monthName, data);
-            //}
+            var res = new QuarterlyPerformanceDataResultModel();
 
             for (var i = 0; i < monthCount; i++)
             {
                 int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones, brands: premiumBrands)).ToList();
                 var monthName = fromDate.GetMonthName(number);
+                //var dictDataLY = monthlyDictLY[monthName].ToList();
+                var dictDataLY = monthlyDictCY[monthName].Where(x => x.Division == ConstantsValue.DivisionDecorative).ToList();
+                var dictDataCY = monthlyDictCY[monthName].ToList();
 
-                monthlyDictCY.Add(monthName, data);
-
-                data = data.Where(x => x.Division == divisionCode).ToList();
-
-                monthlyDictLY.Add(monthName, data);
-            }
-
-
-            var result = new List<QuarterlyPerformanceDataResultModel>();
-
-            if (monthlyDictCY.Any())
-            {
-                var res = new QuarterlyPerformanceDataResultModel();
-
-                for (var i = 0; i < monthCount; i++)
+                res.MonthlyTargetData.Add(new MonthlyDataModel()
                 {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataLY = monthlyDictLY[monthName].ToList();
-                    var dictDataCY = monthlyDictCY[monthName].ToList();
+                    MonthName = $"{monthName} (Total Deco Sales at his Territory)",
+                    Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                });
 
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} (Total Deco Sales at his Territory)",
-                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} (Premium Brand actual Sales at his Territory)",
-                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                    });
-                }
-
-                res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
-                res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
-
-                res.AchivementOrGrowth = _odataService.GetContribution(res.TotalTarget, res.TotalActual);
-
-                result.Add(res);
+                res.MonthlyActualData.Add(new MonthlyDataModel()
+                {
+                    MonthName = $"{monthName} (Premium Brand actual Sales at his Territory)",
+                    Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                });
             }
+
+            res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
+            res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
+
+            res.AchivementOrGrowth = _odataService.GetContribution(res.TotalActual, res.TotalTarget);
+
+            result.Add(res);
 
             return result;
         }
@@ -445,7 +322,6 @@ namespace Berger.Odata.Services
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetMTSValueTargetAchivement(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var mtsBrands = new List<string>();
             var monthlyDictTarget = new Dictionary<string, IList<MTSDataModel>>();
@@ -453,61 +329,43 @@ namespace Berger.Odata.Services
 
             var selectTargetQueryBuilder = new SelectQueryOptionBuilder();
             selectTargetQueryBuilder
-                                //.AddProperty(DataColumnDef.MTS_Territory)
-                                //.AddProperty(DataColumnDef.MTS_CustomerNo)
-                                //.AddProperty(DataColumnDef.MTS_CustomerName)
+                                .AddProperty(DataColumnDef.MTS_Territory)
+                                .AddProperty(DataColumnDef.MTS_Date)
                                 .AddProperty(DataColumnDef.MTS_TargetValue);
 
             var selectActualQueryBuilder = new SelectQueryOptionBuilder();
             selectActualQueryBuilder
-                                //.AddProperty(DataColumnDef.Territory)
-                                //.AddProperty(DataColumnDef.CustomerNo)
+                                .AddProperty(DataColumnDef.Territory)
                                 .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
             mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var dateFull = fromDate.GetMonthDate(number).GetCYFD();
-                var date = $"{string.Format("{0:0000}", dateFull.Year)}.{string.Format("{0:00}", dateFull.Month)}";
+            monthlyDictTarget = (await this.GetQuarterlyTargetData(selectTargetQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: mtsBrands));
 
-                var data = (await _odataService.GetMTSDataByArea(selectTargetQueryBuilder, date, territories: model.Territories, brands: mtsBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictTarget.Add(monthName, data);
-            }
-
-            DateTime toDate = fromDate.AddMonths(2);
-            toDate = toDate.AddDays(DateTime.DaysInMonth(toDate.Year, toDate.Month)).AddDays(-1);
-
-            var sellsData = (await _odataService.GetSalesDataByArea(selectActualQueryBuilder, fromDate.DateFormat(), toDate.DateFormat(), territories: model.Territories, brands: mtsBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones)).ToList();
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD();
-
-                var data = sellsData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictActual.Add(monthName, data);
-            }
+            monthlyDictActual = (await this.GetQuarterlyActualData(selectActualQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: mtsBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictTarget.Any())
+            var territories = monthlyDictTarget.SelectMany(x => x.Value).Select(x => x.Territory)
+                                .Concat(monthlyDictActual.SelectMany(x => x.Value).Select(x => x.Territory))
+                                    .Distinct().ToList();
+
+            foreach (var territory in territories)
             {
                 var res = new QuarterlyPerformanceDataResultModel();
+                res.Territory = territory;
 
                 for (var i = 0; i < monthCount; i++)
                 {
                     int number = i;
                     var monthName = fromDate.GetMonthName(number);
-                    var dictDataTarget = monthlyDictTarget[monthName].ToList();
-                    var dictDataActual = monthlyDictActual[monthName].ToList();
+                    var dictDataTarget = monthlyDictTarget[monthName].Where(x => x.Territory == territory).ToList();
+                    var dictDataActual = monthlyDictActual[monthName].Where(x => x.Territory == territory).ToList();
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
                     {
@@ -525,7 +383,7 @@ namespace Berger.Odata.Services
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = res.TotalTarget > 0 ? ((res.TotalActual / res.TotalTarget)) * 100 : decimal.Zero;
+                res.AchivementOrGrowth = _odataService.GetAchivement(res.TotalTarget, res.TotalActual);
 
                 result.Add(res);
             }
@@ -533,155 +391,43 @@ namespace Berger.Odata.Services
             return await ToPortalModel(result);
         }
 
-        #region all data req
-        //public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
-        //{
-        //    var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-        //    //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
-        //    var monthCount = 3;
-        //    var enamelBrands = new List<string>();
-        //    var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
-        //    var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
-
-        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
-        //    selectQueryBuilder
-        //                            .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-        //                            .AddProperty(DataColumnDef.NetDue)
-        //                            .AddProperty(DataColumnDef.Date);
-
-        //    enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
-
-
-        //    var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-        //    var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-        //    var lyData = await _odataService.GetSalesDataByArea(selectQueryBuilder, lyFd, lyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone);
-
-        //    for (var i = 0; i < monthCount; i++)
-        //    {
-        //        int number = i;
-
-        //        var startDate = fromDate.GetMonthDate(number).GetLYFD();
-        //        var endDate = fromDate.GetMonthDate(number).GetLYLD();
-
-        //        var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-
-        //        var monthName = fromDate.GetMonthName(number);
-
-        //        monthlyDictLY.Add(monthName, data);
-        //    }
-
-        //    var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-        //    var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-        //    var cyData = (await _odataService.GetSalesDataByArea(selectQueryBuilder, cyFd, cyEd, territory: model.Territory, brands: enamelBrands, depot: model.Depot, salesGroup: model.SalesGroup, model.SalesOffice, zone: model.Zone)).ToList();
-
-        //    for (var i = 0; i < monthCount; i++)
-        //    {
-        //        int number = i;
-        //        var startDate = fromDate.GetMonthDate(number).GetCYFD();
-        //        var endDate = fromDate.GetMonthDate(number).GetCYLD();
-
-        //        var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-        //        var monthName = fromDate.GetMonthName(number);
-
-        //        monthlyDictCY.Add(monthName, data);
-        //    }
-
-
-        //    var result = new List<QuarterlyPerformanceDataResultModel>();
-
-        //    if (monthlyDictLY.Any())
-        //    {
-        //        var res = new QuarterlyPerformanceDataResultModel();
-
-        //        for (var i = 0; i < monthCount; i++)
-        //        {
-        //            int number = i;
-        //            var monthName = fromDate.GetMonthName(number);
-        //            var dictDataLY = monthlyDictLY[monthName].ToList();
-        //            var dictDataCY = monthlyDictCY[monthName].ToList();
-
-        //            res.MonthlyTargetData.Add(new MonthlyDataModel()
-        //            {
-        //                MonthName = $"{monthName} LY",
-        //                Amount = dictDataLY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
-        //            });
-
-        //            res.MonthlyActualData.Add(new MonthlyDataModel()
-        //            {
-        //                MonthName = $"{monthName} CY",
-        //                Amount = dictDataCY.Select(s => s.CustomerNoOrSoldToParty).Distinct().Count()
-        //            });
-        //        }
-
-        //        res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
-        //        res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
-
-        //        res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
-
-        //        result.Add(res);
-        //    }
-
-        //    return await ToPortalModel(result);
-        //}
-        #endregion
-
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
-            var enamelBrands = new List<string>();
             var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
+                            .AddProperty(DataColumnDef.Date)
+                            .AddProperty(DataColumnDef.Territory)
                             .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
                             .AddProperty(DataColumnDef.NetAmount);
 
-            enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, isLastYear: true));
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-
-                var startDate = fromDate.GetMonthDate(number).GetLYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD().DateFormat();
-
-                var data = await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, brands: enamelBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictLY.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByArea(selectQueryBuilder, startDate, endDate, territories: model.Territories, brands: enamelBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones)).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictCY.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictLY.Any())
+            var territories = monthlyDictLY.SelectMany(x => x.Value).Select(x => x.Territory)
+                                .Concat(monthlyDictCY.SelectMany(x => x.Value).Select(x => x.Territory))
+                                    .Distinct().ToList();
+
+            foreach (var territory in territories)
             {
                 var res = new QuarterlyPerformanceDataResultModel();
+                res.Territory = territory;
 
                 for (var i = 0; i < monthCount; i++)
                 {
                     int number = i;
                     var monthName = fromDate.GetMonthName(number);
-                    var dictDataLY = monthlyDictLY[monthName].ToList();
-                    var dictDataCY = monthlyDictCY[monthName].ToList();
+                    var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
+                    var dictDataCY = monthlyDictCY[monthName].Where(x => x.Territory == territory).ToList();
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
                     {
@@ -710,86 +456,127 @@ namespace Berger.Odata.Services
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
             var enamelBrands = new List<string>();
-            var monthlyDictTarget = new Dictionary<string, IList<SalesDataModel>>();
-            var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
-            var selectActualQueryBuilder = new SelectQueryOptionBuilder();
-            selectActualQueryBuilder
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                .AddProperty(DataColumnDef.Territory)
                 .AddProperty(DataColumnDef.Date)
                 .AddProperty(DataColumnDef.Volume);
 
             enamelBrands = (await _odataBrandService.GetEnamelBrandCodesAsync()).ToList();
 
-            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: enamelBrands, isLastYear: true));
 
-            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territories: model.Territories, brands: enamelBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-
-                var startDate = fromDate.GetMonthDate(number).GetCYFD();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD();
-
-                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictTarget.Add(monthName, data);
-            }
-
-            var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-            var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-            var cyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, cyFd, cyEd, territories: model.Territories, brands: enamelBrands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetLYFD();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD();
-
-                var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictActual.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: enamelBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictTarget.Any())
+            var territories = monthlyDictLY.SelectMany(x => x.Value).Select(x => x.Territory)
+                                .Concat(monthlyDictCY.SelectMany(x => x.Value).Select(x => x.Territory))
+                                    .Distinct().ToList();
+
+            foreach (var territory in territories)
             {
                 var res = new QuarterlyPerformanceDataResultModel();
+                res.Territory = territory;
 
                 for (var i = 0; i < monthCount; i++)
                 {
                     int number = i;
                     var monthName = fromDate.GetMonthName(number);
-                    var dictDataTarget = monthlyDictTarget[monthName].ToList();
-                    var dictDataActual = monthlyDictActual[monthName].ToList();
+                    var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
+                    var dictDataCY = monthlyDictCY[monthName].Where(x => x.Territory == territory).ToList();
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
                     {
-                        MonthName = $"{monthName} CY",
-                        Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                        MonthName = $"{monthName} LY",
+                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
                     });
 
                     res.MonthlyActualData.Add(new MonthlyDataModel()
                     {
-                        MonthName = $"{monthName} LY",
-                        Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                        MonthName = $"{monthName} CY",
+                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
                     });
                 }
 
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalActual, res.TotalTarget);
+                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
+
+                result.Add(res);
+            }
+
+            return await ToPortalModel(result);
+        }
+
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(PortalQuarterlyPerformanceSearchModel model)
+        {
+            var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
+            var monthCount = 3;
+            var premiumBrands = new List<string>();
+            var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
+
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                .AddProperty(DataColumnDef.Date)
+                .AddProperty(DataColumnDef.Volume);
+
+            premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands, isLastYear: true));
+
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands));
+
+            var result = new List<QuarterlyPerformanceDataResultModel>();
+
+            var territories = monthlyDictLY.SelectMany(x => x.Value).Select(x => x.Territory)
+                                .Concat(monthlyDictCY.SelectMany(x => x.Value).Select(x => x.Territory))
+                                    .Distinct().ToList();
+
+            foreach (var territory in territories)
+            {
+                var res = new QuarterlyPerformanceDataResultModel();
+                res.Territory = territory;
+
+                for (var i = 0; i < monthCount; i++)
+                {
+                    int number = i;
+                    var monthName = fromDate.GetMonthName(number);
+                    var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
+                    var dictDataCY = monthlyDictCY[monthName].Where(x => x.Territory == territory).ToList();
+
+                    res.MonthlyTargetData.Add(new MonthlyDataModel()
+                    {
+                        MonthName = $"{monthName} LY",
+                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                    });
+
+                    res.MonthlyActualData.Add(new MonthlyDataModel()
+                    {
+                        MonthName = $"{monthName} CY",
+                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+                    });
+                }
+
+                res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
+                res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
+
+                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalTarget, res.TotalActual);
 
                 result.Add(res);
             }
@@ -800,82 +587,51 @@ namespace Berger.Odata.Services
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(PortalQuarterlyPerformanceSearchModel model)
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
             var monthCount = 3;
-            var brands = new List<string>();
-            var monthlyDictTarget = new Dictionary<string, IList<SalesDataModel>>();
-            var monthlyActData = new Dictionary<string, IList<SalesDataModel>>();
-            var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
+            var premiumBrands = new List<string>();
+            //var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
-            var selectActualQueryBuilder = new SelectQueryOptionBuilder();
-            selectActualQueryBuilder
-                .AddProperty(DataColumnDef.Division)
-                .AddProperty(DataColumnDef.NetAmount) 
-                .AddProperty(DataColumnDef.Date);
+            var selectQueryBuilder = new SelectQueryOptionBuilder();
+            selectQueryBuilder
+                            .AddProperty(DataColumnDef.Division)
+                            .AddProperty(DataColumnDef.NetAmount)
+                            .AddProperty(DataColumnDef.Date);
 
-            brands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+            premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
 
-            Division division = await _oDataDivisionRepository.FindAsync(x => x.Description == "Decorative");
-            string divisionCode = division != null ? division.DivisionCode.ToString() : "";
-
-            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territories: model.Territories, brands: brands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-            
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-
-                var startDate = fromDate.GetMonthDate(number).GetCYFD();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD();
-
-                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyActData.Add(monthName, data);
-
-
-                data = data.Where(x => x.Division == divisionCode).ToList();
-
-                monthlyDictTarget.Add(monthName, data);
-            }
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-
-                var monthName = fromDate.GetMonthName(number);
-                var data = monthlyActData[monthName];
-
-                monthlyDictActual.Add(monthName, data);
-            }
-
+            monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                brands: premiumBrands));
 
             var result = new List<QuarterlyPerformanceDataResultModel>();
 
-            if (monthlyDictTarget.Any())
+            var territories = monthlyDictCY.SelectMany(x => x.Value).Select(x => x.Territory)
+                                .Distinct().ToList();
+
+            foreach (var territory in territories)
             {
                 var res = new QuarterlyPerformanceDataResultModel();
+                res.Territory = territory;
 
                 for (var i = 0; i < monthCount; i++)
                 {
                     int number = i;
                     var monthName = fromDate.GetMonthName(number);
-                    var dictDataTarget = monthlyDictTarget[monthName].ToList();
-                    var dictDataActual = monthlyDictActual[monthName].ToList();
+                    //var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
+                    var dictDataLY = monthlyDictCY[monthName].Where(x => x.Division == ConstantsValue.DivisionDecorative && x.Territory == territory).ToList();
+                    var dictDataCY = monthlyDictCY[monthName].Where(x => x.Territory == territory).ToList();
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
                     {
                         MonthName = $"{monthName} (Total Deco Sales at his Territory)",
-                        Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                        Amount = dictDataLY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
                     });
 
                     res.MonthlyActualData.Add(new MonthlyDataModel()
                     {
                         MonthName = $"{monthName} (Premium Brand actual Sales at his Territory)",
-                        Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+                        Amount = dictDataCY.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
                     });
                 }
 
@@ -890,98 +646,6 @@ namespace Berger.Odata.Services
             return await ToPortalModel(result);
         }
 
-        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(PortalQuarterlyPerformanceSearchModel model)
-        {
-            var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
-            //var toDate = (new DateTime(model.ToYear, model.ToMonth, 1)).GetCYLD().DateTimeFormat();
-            var monthCount = 3;
-            var brands = new List<string>();
-            var monthlyDictTarget = new Dictionary<string, IList<SalesDataModel>>();
-            var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
-
-            var selectActualQueryBuilder = new SelectQueryOptionBuilder();
-            selectActualQueryBuilder
-                .AddProperty(DataColumnDef.Date)
-                .AddProperty(DataColumnDef.Volume);
-
-            brands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
-
-            var lyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-            var lyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-            var lyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, lyFd, lyEd, territories: model.Territories, brands: brands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-
-                var startDate = fromDate.GetMonthDate(number).GetCYFD();
-                var endDate = fromDate.GetMonthDate(number).GetCYLD();
-
-                var data = lyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictTarget.Add(monthName, data);
-            }
-
-            var cyFd = fromDate.GetMonthDate(0).GetLYFD().DateFormat();
-            var cyEd = fromDate.GetMonthDate(2).GetLYLD().DateFormat();
-
-            var cyData = await _odataService.GetSalesDataByArea(selectActualQueryBuilder, cyFd, cyEd, territories: model.Territories, brands: brands, depot: model.Depot, salesGroups: model.SalesGroups, zones: model.Zones);
-
-
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = fromDate.GetMonthDate(number).GetLYFD();
-                var endDate = fromDate.GetMonthDate(number).GetLYLD();
-
-                var data = cyData.Where(x => x.Date.DateFormatDate() >= startDate && x.Date.DateFormatDate() <= endDate).ToList();
-
-                var monthName = fromDate.GetMonthName(number);
-
-                monthlyDictActual.Add(monthName, data);
-            }
-
-
-            var result = new List<QuarterlyPerformanceDataResultModel>();
-
-            if (monthlyDictTarget.Any())
-            {
-                var res = new QuarterlyPerformanceDataResultModel();
-
-                for (var i = 0; i < monthCount; i++)
-                {
-                    int number = i;
-                    var monthName = fromDate.GetMonthName(number);
-                    var dictDataTarget = monthlyDictTarget[monthName].ToList();
-                    var dictDataActual = monthlyDictActual[monthName].ToList();
-
-                    res.MonthlyTargetData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} CY",
-                        Amount = dictDataTarget.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-
-                    res.MonthlyActualData.Add(new MonthlyDataModel()
-                    {
-                        MonthName = $"{monthName} LY",
-                        Amount = dictDataActual.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                    });
-                }
-
-                res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
-                res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
-
-                res.AchivementOrGrowth = _odataService.GetGrowth(res.TotalActual, res.TotalTarget);
-
-                result.Add(res);
-            }
-
-            return await ToPortalModel(result);
-        }
-
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> ToPortalModel(List<QuarterlyPerformanceDataResultModel> data)
         {
             var result = new List<PortalQuarterlyPerformanceDataResultModel>();
@@ -989,6 +653,7 @@ namespace Berger.Odata.Services
             foreach (var item in data)
             {
                 var res = new PortalQuarterlyPerformanceDataResultModel();
+                res.Territory = item.Territory;
                 res.FirstMonthTargetName = item.MonthlyTargetData[0].MonthName;
                 res.SecondMonthTargetName = item.MonthlyTargetData[1].MonthName;
                 res.ThirdMonthTargetName = item.MonthlyTargetData[2].MonthName;
@@ -1011,6 +676,65 @@ namespace Berger.Odata.Services
             }
 
             return result;
+        }
+
+        public async Task<Dictionary<string, IList<MTSDataModel>>> GetQuarterlyTargetData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth, 
+            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false)
+        {
+            var fromDate = (new DateTime(fromYear, fromMonth, 1));
+            var monthCount = 3;
+            var mtsBrands = new List<string>();
+            var monthlyDictTarget = new Dictionary<string, IList<MTSDataModel>>();
+
+            var fromDateStr = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD()).MTSSearchDateFormat();
+            var toDateStr = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD()).MTSSearchDateFormat();
+
+            var targetData = (await _odataService.GetMTSData(selectQueryBuilder, fromDateStr, toDateStr,
+                depots: depots, salesGroups: salesGroups, territories: territories,
+                brands: brands)).ToList();
+
+            for (var i = 0; i < monthCount; i++)
+            {
+                int number = i;
+                var dateStr = (isLastYear ? fromDate.GetMonthDate(number).GetLYFD() : fromDate.GetMonthDate(number).GetCYFD()).MTSResultDateFormat();
+
+                var data = targetData.Where(x => x.Date == dateStr).ToList();
+                var monthName = fromDate.GetMonthName(number);
+
+                monthlyDictTarget.Add(monthName, data);
+            }
+
+            return monthlyDictTarget;
+        }
+
+        public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth, 
+            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false)
+        {
+            var fromDate = (new DateTime(fromYear, fromMonth, 1));
+            var monthCount = 3;
+            var mtsBrands = new List<string>();
+            var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
+
+            var fromDateStr = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD()).SalesSearchDateFormat();
+            var toDateStr = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD()).SalesSearchDateFormat();
+
+            var actualData = (await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
+                depots: depots, salesGroups: salesGroups, territories: territories,
+                brands: brands)).ToList();
+
+            for (var i = 0; i < monthCount; i++)
+            {
+                int number = i;
+                var startDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYFD() : fromDate.GetMonthDate(number).GetCYFD());
+                var endDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYLD() : fromDate.GetMonthDate(number).GetCYLD());
+
+                var data = actualData.Where(x => x.Date.SalesResultDateFormat().Date >= startDate.Date && x.Date.SalesResultDateFormat().Date <= endDate.Date).ToList();
+                var monthName = fromDate.GetMonthName(number);
+
+                monthlyDictActual.Add(monthName, data);
+            }
+
+            return monthlyDictActual;
         }
         #endregion
     }

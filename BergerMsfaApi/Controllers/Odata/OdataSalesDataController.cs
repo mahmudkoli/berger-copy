@@ -8,7 +8,7 @@ using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-   // [AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -74,12 +74,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("CBProductLiftingTrend")]
-        public async Task<IActionResult> GetCBProductLiftingTrend([FromQuery] MTSSearchModel model)
+        [HttpGet("MTSUpdate")]
+        public async Task<IActionResult> GetMTSUpdate([FromQuery] MTSSearchModelBase model)
         {
             try
             {
-                var data = await _mtsDataService.GetMTSBrandsVolume(model);
+                var data = await _mtsDataService.GetMTSUpdate(model);
                 return OkResult(data);
             }
             catch (Exception ex)
@@ -190,7 +190,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ChequeBounce")]
+        [HttpGet("ChequeSummary")]
         public async Task<IActionResult> GetChequeBounce([FromQuery] ChequeBounceSearchModel model)
         {
             try
@@ -204,19 +204,19 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("ChequeSummary")]
-        public async Task<IActionResult> GetChequeSummary([FromQuery] ChequeSummarySearchModel model)
-        {
-            try
-            {
-                var data = await _balanceDataService.GetChequeSummary(model);
-                return OkResult(data);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpGet("ChequeSummary")]
+        //public async Task<IActionResult> GetChequeSummary([FromQuery] ChequeSummarySearchModel model)
+        //{
+        //    try
+        //    {
+        //        var data = await _balanceDataService.GetChequeSummary(model);
+        //        return OkResult(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
         #endregion
     }
 }

@@ -8,6 +8,7 @@ namespace Berger.Odata.Model
 {
     public class QuarterlyPerformanceDataResultModel
     {
+        public string Territory { get; internal set; } // only used for portal
         public IList<MonthlyDataModel> MonthlyTargetData { get; internal set; }
         public IList<MonthlyDataModel> MonthlyActualData { get; internal set; }
         public decimal TotalTarget { get; set; }
@@ -35,6 +36,7 @@ namespace Berger.Odata.Model
 
     public class PortalQuarterlyPerformanceDataResultModel
     {
+        public string Territory { get; internal set; }
         public string FirstMonthTargetName { get; internal set; }
         public string SecondMonthTargetName { get; internal set; }
         public string ThirdMonthTargetName { get; internal set; }
