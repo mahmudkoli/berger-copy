@@ -59,8 +59,10 @@ export class DealerSalesCall {
   isCompetitionProductDisplayBetterThanBPBL: boolean;
   competitionProductDisplayBetterThanBPBLRemarks: string;
   competitionProductDisplayImageUrl: string;
+  competitionProductDisplayImageBase64: string;
   competitionSchemeModalityComments: string;
   competitionSchemeModalityImageUrl: string;
+  competitionSchemeModalityImageBase64: string;
   competitionShopBoysComments: string;
   dealerCompetitionSales: DealerCompetitionSales[];
 
@@ -147,6 +149,7 @@ export class DealerSalesCall {
 }
 
 export class DealerCompetitionSales {
+  id: number;
   dealerSalesCallId: number;
   //dealerSalesCall: DealerSalesCall;
   companyId: number;
@@ -163,6 +166,7 @@ export class DealerCompetitionSales {
 }
 
 export class DealerSalesIssue {
+  id: number;
   dealerSalesCallId: number;
   //dealerSalesCall: DealerSalesCall;
   dealerSalesIssueCategoryId: number;

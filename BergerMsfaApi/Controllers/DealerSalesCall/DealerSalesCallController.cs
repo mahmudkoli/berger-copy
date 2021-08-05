@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
@@ -42,6 +43,26 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             try
             {
                 var result = await _dealerSalesCallService.GetByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
+        [HttpPut("UpdateDealerSalesCallList")]
+        public async Task<IActionResult> UpdateDealerSalesCallList([FromBody] AppDealerSalesCallModel models)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationResult(ModelState);
+            }
+
+            try
+            {
+                var result = await _dealerSalesCallService.UpdateAsync(models);
                 return OkResult(result);
             }
             catch (Exception ex)
