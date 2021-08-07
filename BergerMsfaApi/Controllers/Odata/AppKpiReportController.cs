@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
@@ -25,6 +27,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("GetBusinessCallAnalysis")]
+        [ProducesResponseType(typeof(IList<BusinessCallAPPKPIReportResultModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetBusinessCallKpiReport([FromQuery] BusinessCallKPIReportSearchModel model)
         {
             try
@@ -38,6 +41,20 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("GetPremiumBrandBillingStrikeRate")]
+        [ProducesResponseType(typeof(IList<StrikeRateKPIReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPremiumBrandBillingStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.PremiumBrandBillingStrikeRateKPIReportAsync(model,EnumReportFor.App);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
     }
 }

@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
 
-        public async Task<IList<StrikeRateKPIReportResultModel>> GetStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query)
+        public async Task<IList<StrikeRateKPIReportResultModel>> PremiumBrandBillingStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query, EnumReportFor reportFor)
         {
             var reportResult = new List<StrikeRateKPIReportResultModel>();
 
@@ -87,16 +87,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      from jpminfo in jpmleftjoin.DefaultIfEmpty()
                                      join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
                                      from dscinfo in dscleftjoin.DefaultIfEmpty()
-                                     join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
-                                     from userInfo in uleftjoin.DefaultIfEmpty()
+                                     //join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                   //  from userInfo in uleftjoin.DefaultIfEmpty()
                                      join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
                                      from diInfo in dileftjoin.DefaultIfEmpty()
-                                     join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
-                                     from depinfo in depleftjoin.DefaultIfEmpty()
-                                     join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
-                                     from tinfo in tleftjoin.DefaultIfEmpty()
-                                     join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
-                                     from zinfo in zleftjoin.DefaultIfEmpty()
+                                     //join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     //from depinfo in depleftjoin.DefaultIfEmpty()
+                                     //join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     //from tinfo in tleftjoin.DefaultIfEmpty()
+                                     //join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     //from zinfo in zleftjoin.DefaultIfEmpty()
                                      where (
                                          (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                          && (diInfo.BusinessArea == query.Depot)
@@ -110,7 +110,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      {
                                          //UserId = userInfo.Id,
                                          //EmployeeId = jpminfo.EmployeeId,
-                                         DealerId = jpd.DealerId,
+                                         jpd.DealerId,
                                          DealerClasification = diInfo.CustomerClasification,
                                          //UserEmail = userInfo.Email,
                                          //Depot = diInfo.BusinessArea,
@@ -140,12 +140,13 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
                                                     .Select(x => x.DealerId).Distinct().Count();
+
                 var billingCount = billingOData.Where(x => x.DateTime.Date == date.Date
                                                     && ((query.ReportType == EnumStrikeRateReportType.All) ||
                                                         (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                .Select(x => new { x.CustomerNo, x.InvoiceNoOrBillNo }).Distinct().Count();
+                                                .Select(x => new { x.CustomerNo}).Distinct().Count();
 
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
@@ -157,27 +158,47 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 if (WeeklyCalculationDict.TryGetValue(date.Day, out (int Start, int End) dateRange))
                 {
-                    reportModel = new StrikeRateKPIReportResultModel();
-                    reportModel.Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day) + 1)}";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallActual);
-                    reportModel.NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfPremiumBrandBilling);
+                    reportModel = new StrikeRateKPIReportResultModel
+                    {
+                        Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day) + 1)}",
+                        DateTime = default(DateTime),
+                        NoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallActual),
+                        NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfPremiumBrandBilling)
+                    };
                     reportModel.BillingPercentage = this.GetPercentage(reportModel.NoOfCallActual, reportModel.NoOfPremiumBrandBilling);
                     reportResult.Add(reportModel);
                 }
                 else if (date.Day > 28 && date.Day == DateTime.DaysInMonth(date.Year, date.Month))
                 {
-                    reportModel = new StrikeRateKPIReportResultModel();
-                    reportModel.Date = $"Week 5";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual);
-                    reportModel.NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfPremiumBrandBilling);
+                    reportModel = new StrikeRateKPIReportResultModel
+                    {
+                        Date = $"Week 5",
+                        DateTime = default(DateTime),
+                        NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual),
+                        NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfPremiumBrandBilling)
+                    };
                     reportModel.BillingPercentage = this.GetPercentage(reportModel.NoOfCallActual, reportModel.NoOfPremiumBrandBilling);
                     reportResult.Add(reportModel);
                 }
             }
 
-            return reportResult;
+
+            var weekResults = reportResult.Where(x => x.Date.StartsWith("Week")).ToList();
+
+            int noOfPremiumBrandBilling = 0;
+            int actual = 0;
+            var businessCallWebKpiReportResultModel = new StrikeRateKPIReportResultModel
+            {
+                NoOfCallActual = actual = weekResults.Sum(x => x.NoOfCallActual),
+                NoOfPremiumBrandBilling = noOfPremiumBrandBilling = weekResults.Sum(x => x.NoOfPremiumBrandBilling),
+                BillingPercentage = this.GetAchivement(actual, noOfPremiumBrandBilling),
+                Date = "Total",
+            };
+
+            reportResult.Add(businessCallWebKpiReportResultModel);
+            weekResults.Add(businessCallWebKpiReportResultModel);
+
+            return reportFor==EnumReportFor.App ? weekResults : reportResult;
         }
 
         public async Task<IList<BusinessCallBaseKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query, EnumReportFor reportFor)
