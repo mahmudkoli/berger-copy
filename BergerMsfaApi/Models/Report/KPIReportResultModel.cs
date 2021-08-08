@@ -73,17 +73,17 @@ namespace BergerMsfaApi.Models.Report
 
     public class BillingAnalysisKPIReportResultModel
     {
-        public EnumBillingAnalysisType BillingAnalysisType { get; set; }
-        public string BillingAnalysisTypeText { get; set; }
+        //public EnumBillingAnalysisType BillingAnalysisType { get; set; }
+        public string DealerType { get; set; }
         public int NoOfDealer { get; set; }
         public int NoOfBillingDealer { get; set; }
         public decimal BillingPercentage { get; set; }
-        public IList<BillingAnalysisDetailsKPIReportResultModel> Details { get; set; }
+        //public IList<BillingAnalysisDetailsKPIReportResultModel> Details { get; set; }
 
         public BillingAnalysisKPIReportResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
-            this.Details = new List<BillingAnalysisDetailsKPIReportResultModel>();
+            //this.Details = new List<BillingAnalysisDetailsKPIReportResultModel>();
         }
     }
 
