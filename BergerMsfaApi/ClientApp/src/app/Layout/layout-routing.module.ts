@@ -137,6 +137,13 @@ const routes: Routes = [
             (m) => m.CollectionPlanModule
           ),
       },
+      {
+        path: 'dealer-opening-status',
+        loadChildren: () =>
+          import('./kpi/kpi.module').then(
+            (m) => m.KpiModule
+          ),
+      },
     ],
   },
 ];

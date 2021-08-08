@@ -433,3 +433,18 @@ export class CollectionPlanKpiReportQuery {
     clear() {
     }
 }
+
+
+export class NewDealerDevelopmentQuery {
+    depot: string;
+    territory:string;
+    year: number;
+
+
+    constructor(init?: Partial<NewDealerDevelopmentQuery>) {
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
