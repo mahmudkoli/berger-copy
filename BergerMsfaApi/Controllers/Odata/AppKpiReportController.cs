@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +18,7 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
-        public AppKpiReportController(IKpiDataService kpiDataService,
-            IKPIReportService kpiReportService)
+        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;

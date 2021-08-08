@@ -21,6 +21,7 @@ export interface IPTableSetting {
   disabledTableReset?: boolean | false;
   pageSize?: number | 10;
   displayPaggingSize?: number | 10;
+  defaultPaggingSize?: number | 10;
   checkboxColumnHeader?: boolean | string | 'Select';
   radioBtnColumnHeader?: string | 'Select';
   checkboxCallbackFn?: boolean | null;
