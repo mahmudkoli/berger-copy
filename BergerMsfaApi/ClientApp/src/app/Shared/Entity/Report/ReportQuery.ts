@@ -423,7 +423,8 @@ export class BillingAnalysisKpiReportQuery extends ReportBaseQuery {
 
 export class CollectionPlanKpiReportQuery {
     depot: string;
-    territory: string;
+    territory=[];
+    salesGroups: string;
 
     constructor(init?: Partial<CollectionPlanKpiReportQuery>) {
         Object.assign(this, init);

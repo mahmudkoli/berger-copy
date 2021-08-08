@@ -84,10 +84,11 @@ namespace BergerMsfaApi.Models.Report
 
     public class CollectionPlanKPIReportResultModel
     {
-        public decimal SlippageAmount { get; set; }
-        public decimal CollectionTargetAmount { get; set; }
-        public decimal CollectionActualAmount { get; set; }
-        public decimal CollectionActualSlippageAmount { get; set; }
+        public string Territory { get; set; }
+        public decimal ImmediateLMSlippageAmount { get; set; }
+        public decimal MTDCollectionPlan { get; set; }
+        public decimal MTDActualCollection { get; set; }
+        public decimal TargetAch { get; set; }
 
         public CollectionPlanKPIReportResultModel()
         {
