@@ -59,6 +59,18 @@ namespace BergerMsfaApi.Models.Report
         }
     }
 
+    public class ColorBankInstallationPlanVsActualKpiReportSearchModel: KPIReportBaseSearchModel
+    {
+
+    }
+
+    public class ColorBankProductivityKpiReportSearchModel : KPIReportBaseSearchModel
+    {
+
+    }
+
+
+
     public class CollectionPlanKPIReportSearchModel
     {
         public string Depot { get; set; }

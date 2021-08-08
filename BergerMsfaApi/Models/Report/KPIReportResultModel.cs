@@ -121,4 +121,12 @@ namespace BergerMsfaApi.Models.Report
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class ColorBankInstallationPlanVsActualKPIReportResultModel
+    {
+        public string Month { get; set; }
+        public int Target { get; set; }
+        public int Actual { get; set; }
+        public decimal TargetAchievement { get; set; }
+    }
 }

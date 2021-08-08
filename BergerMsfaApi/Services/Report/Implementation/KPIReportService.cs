@@ -393,14 +393,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<BillingAnalysisKPIReportResultModel>();
 
             var dealers = await (from diInfo in _context.DealerInfos
-                                where (
-                                    (diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer 
-                                        && diInfo.Division == ConstantsODataValue.DivisionDecorative)
-                                    && (diInfo.BusinessArea == query.Depot)
-                                    && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                    && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                )
-                                select diInfo).ToListAsync();
+                                 where (
+                                     (diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                         && diInfo.Division == ConstantsODataValue.DivisionDecorative)
+                                     && (diInfo.BusinessArea == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                 )
+                                 select diInfo).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
@@ -463,6 +463,45 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return reportResult;
         }
+
+
+        public IList<ColorBankInstallationPlanVsActualKPIReportResultModel> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query)
+        {
+            var result = new List<ColorBankInstallationPlanVsActualKPIReportResultModel>();
+            var bergerFyMonth = GetBergerFyMonth();
+
+            foreach (var item in bergerFyMonth)
+            {
+                var addItem = new ColorBankInstallationPlanVsActualKPIReportResultModel()
+                {
+                    Actual = 1,
+                    Month = item.Value,
+                    Target = 2,
+
+                };
+                addItem.TargetAchievement = GetAchivement(addItem.Target, addItem.Actual);
+                result.Add(addItem);
+            }
+            return result; 
+        }
+
+        private Dictionary<int, string> GetBergerFyMonth()
+        {
+            var result = new Dictionary<int, string>();
+
+            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
+            DateTime compareDate = date.AddMonths(12);
+
+            while (date != compareDate)
+            {
+                result.Add(date.Month, date.ToString("MMM"));
+                date = date.AddMonths(1);
+            }
+
+            return result;
+        }
+
+
 
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
         {
