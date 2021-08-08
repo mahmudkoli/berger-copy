@@ -15,11 +15,14 @@ namespace BergerMsfaApi.Controllers.Odata
     public class PortalQuartPerformReportController : BaseController
     {
         private readonly IQuarterlyPerformanceDataService _quarterlyPerformanceDataService;
+        private readonly IFinancialDataService _financialDataService;
 
         public PortalQuartPerformReportController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService)
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService,
+            IFinancialDataService financialDataService)
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
+            _financialDataService = financialDataService;
         }
 
         [HttpGet("GetMTSValueTargetAchivement")]
@@ -161,5 +164,35 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+        #region Os over 90 days Trend Report
+        [HttpGet("OsOver90DaysTrendReport")]
+        public async Task<IActionResult> OsOver90DaysTrendReport([FromQuery] PortalOSOver90DaysTrendSearchModel query)
+        {
+            try
+            {
+                var result = await _financialDataService.GetPortalOSOver90DaysTrendReport(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadOsOver90daysTrendReport")]
+        public async Task<IActionResult> DownloadOsOver90daysTrendReport([FromQuery] PortalOSOver90DaysTrendSearchModel query)
+        {
+            try
+            {
+                var result = await _financialDataService.GetPortalOSOver90DaysTrendReport(query);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        #endregion
     }
 }

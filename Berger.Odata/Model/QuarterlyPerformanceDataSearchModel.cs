@@ -44,4 +44,15 @@ namespace Berger.Odata.Model
         public List<string> Territories { get; set; }
         //public List<string> Zones { get; set; }
     }
+
+    public class PortalOSOver90DaysTrendSearchModel
+    {
+        public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> Zones { get; set; }
+        public string CreditControlArea { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
 }
