@@ -176,6 +176,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<EmailConfigForDealerSalesCall> EmailConfigForDealerSalesCalls { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
+        public DbSet<NewDealerDevelopment> NewDealerDevelopments { get; set; }
 
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
