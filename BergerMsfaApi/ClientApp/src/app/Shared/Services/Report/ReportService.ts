@@ -280,14 +280,14 @@ export class ReportService {
   public getOsOver90DaysTrend(filter?) {
     return this.http.get<APIResponse>(
       `${
-        this.reportsEndpoint
+        this.quaterlyReportEndpoint
       }/OsOver90daysTrendReport?${this.commonService.toQueryString(filter)}`
     );
   }
 
   public downloadOsOver90DaysTrend(filter?) {
     return `${
-      this.reportsEndpoint
+      this.quaterlyReportEndpoint
     }/DownloadOsOver90daysTrendReport?${this.commonService.toQueryString(
       filter
     )}`;

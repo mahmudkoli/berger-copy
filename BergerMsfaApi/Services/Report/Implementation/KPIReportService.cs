@@ -393,72 +393,73 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<BillingAnalysisKPIReportResultModel>();
 
             var dealers = await (from diInfo in _context.DealerInfos
-                                 where (
-                                     (diInfo.BusinessArea == query.Depot)
-                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                     && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
-                                 )
-                                 select diInfo).ToListAsync();
+                                where (
+                                    (diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer 
+                                        && diInfo.Division == ConstantsODataValue.DivisionDecorative)
+                                    && (diInfo.BusinessArea == query.Depot)
+                                    && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                    && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                )
+                                select diInfo).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             //TODO: need to recheck
-            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones);
+            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories);
             //var billingOData = new List<KPIBusinessAnalysisKPIReportResultModel>();
             var tempDealer = new List<string>();
             var tempNoOfDealer = 0;
             var tempNoOfBillingDealer = 0;
 
-            var selectDictionary = new Dictionary<EnumBillingAnalysisType, (string Text, Func<DealerInfo, bool> Func)>()
+            var selectDictionary = new Dictionary<EnumBussinesCategory, (string Text, Func<DealerInfo, bool> Func)>()
             {
-                { EnumBillingAnalysisType.Exclusive, ("Exclusive Dealer", x => x.IsExclusive) },
-                { EnumBillingAnalysisType.NonAPNonExclusive, ("Non AP Non Exclusive Dealer", x => !x.IsExclusive && !x.IsAP) },
-                { EnumBillingAnalysisType.NonExclusive, ("Non Exclusive Dealer", x => !x.IsExclusive) },
-                { EnumBillingAnalysisType.New, ("New Dealer", x => CustomConvertExtension.ObjectToDateTime(x.CreatedOn).Date >= fromDate.Date
-                                                                    && CustomConvertExtension.ObjectToDateTime(x.CreatedOn).Date <= toDate.Date) }
+                { EnumBussinesCategory.Exclusive, ("Exclusive", x => x.BussinesCategoryType == EnumBussinesCategory.Exclusive) },
+                { EnumBussinesCategory.NonExclusive, ("Non Exclusive", x => x.BussinesCategoryType == EnumBussinesCategory.NonExclusive) },
+                { EnumBussinesCategory.NonAPNonExclusive, ("Non AP Non Exclusive", x => x.BussinesCategoryType == EnumBussinesCategory.NonAPNonExclusive) },
+                { EnumBussinesCategory.NewDealer, ("CY New Dealer", x => x.BussinesCategoryType == EnumBussinesCategory.NewDealer) }
             };
 
             foreach (var item in selectDictionary)
             {
                 reportResult.Add(new BillingAnalysisKPIReportResultModel
                 {
-                    BillingAnalysisType = item.Key,
-                    BillingAnalysisTypeText = item.Value.Text,
+                    //BillingAnalysisType = item.Key,
+                    DealerType = item.Value.Text,
                     NoOfDealer = tempNoOfDealer = (tempDealer = dealers.Where(item.Value.Func)
-                                                                        .Select(x => x.CustomerNo.ToString()).Distinct().ToList()).Count(),
-                    NoOfBillingDealer = tempNoOfBillingDealer = billingOData.Where(x => tempDealer.Contains(x.CustomerNo)).Count(),
+                                                                        .Select(x => x.CustomerNo).Distinct().ToList()).Count(),
+                    NoOfBillingDealer = tempNoOfBillingDealer = (billingOData.Where(x => tempDealer.Contains(x.CustomerNo))
+                                                                        .Select(x => x.CustomerNo).Distinct().ToList()).Count(),
                     BillingPercentage = this.GetPercentage(tempNoOfDealer, tempNoOfBillingDealer),
-                    Details = dealers.Where(item.Value.Func).GroupBy(x => x.CustomerNo).Select(x =>
-                    {
-                        var dt = new BillingAnalysisDetailsKPIReportResultModel();
-                        dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty;
-                        dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString() ?? string.Empty;
-                        dt.IsBilling = billingOData.Any(x => dt.CustomerNo == x.CustomerNo);
-                        dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
-                        return dt;
-                    }).ToList()
+                    //Details = dealers.Where(item.Value.Func).GroupBy(x => x.CustomerNo).Select(x =>
+                    //{
+                    //    var dt = new BillingAnalysisDetailsKPIReportResultModel();
+                    //    dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty;
+                    //    dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString() ?? string.Empty;
+                    //    dt.IsBilling = billingOData.Any(x => dt.CustomerNo == x.CustomerNo);
+                    //    dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
+                    //    return dt;
+                    //}).ToList()
                 });
             }
 
-            reportResult.Add(new BillingAnalysisKPIReportResultModel
-            {
-                BillingAnalysisType = EnumBillingAnalysisType.Total,
-                BillingAnalysisTypeText = "Total",
-                NoOfDealer = tempNoOfDealer = (reportResult.Sum(x => x.NoOfDealer)),
-                NoOfBillingDealer = tempNoOfBillingDealer = (reportResult.Sum(x => x.NoOfBillingDealer)),
-                BillingPercentage = this.GetPercentage(tempNoOfDealer, tempNoOfBillingDealer),
-                Details = dealers.GroupBy(x => x.CustomerNo).Select(x =>
-                {
-                    var dt = new BillingAnalysisDetailsKPIReportResultModel();
-                    dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty;
-                    dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString() ?? string.Empty;
-                    dt.IsBilling = billingOData.Any(x => dt.CustomerNo == x.CustomerNo);
-                    dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
-                    return dt;
-                }).ToList()
-            });
+            //reportResult.Add(new BillingAnalysisKPIReportResultModel
+            //{
+            //    BillingAnalysisType = EnumBillingAnalysisType.Total,
+            //    BillingAnalysisTypeText = "Total",
+            //    NoOfDealer = tempNoOfDealer = (reportResult.Sum(x => x.NoOfDealer)),
+            //    NoOfBillingDealer = tempNoOfBillingDealer = (reportResult.Sum(x => x.NoOfBillingDealer)),
+            //    BillingPercentage = this.GetPercentage(tempNoOfDealer, tempNoOfBillingDealer),
+            //    Details = dealers.GroupBy(x => x.CustomerNo).Select(x =>
+            //    {
+            //        var dt = new BillingAnalysisDetailsKPIReportResultModel();
+            //        dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty;
+            //        dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString() ?? string.Empty;
+            //        dt.IsBilling = billingOData.Any(x => dt.CustomerNo == x.CustomerNo);
+            //        dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
+            //        return dt;
+            //    }).ToList()
+            //});
 
             return reportResult;
         }

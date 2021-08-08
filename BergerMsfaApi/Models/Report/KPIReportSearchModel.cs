@@ -43,9 +43,20 @@ namespace BergerMsfaApi.Models.Report
         public EnumStrikeRateReportType Category { get; set; }
     }
 
-    public class BillingAnalysisKPIReportSearchModel : KPIReportBaseSearchModel
+    public class BillingAnalysisKPIReportSearchModel
+        //: KPIReportBaseSearchModel
     {
+        public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
 
+        public BillingAnalysisKPIReportSearchModel()
+        {
+            this.SalesGroups = new List<string>();
+            this.Territories = new List<string>();
+        }
     }
 
     public class CollectionPlanKPIReportSearchModel
