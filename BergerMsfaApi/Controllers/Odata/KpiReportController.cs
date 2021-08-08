@@ -116,7 +116,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -139,12 +139,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("GetStrikeRateOnBusinessCall")]
-        public async Task<IActionResult> GetStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        [HttpGet("GetPremiumBrandBillingStrikeRate")]
+        public async Task<IActionResult> GetPremiumBrandBillingStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
         {
             try
             {
-                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                var result = await _kpiReportService.PremiumBrandBillingStrikeRateKPIReportAsync(model,EnumReportFor.Web);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -153,12 +153,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("DownloadStrikeRateOnBusinessCall")]
+        [HttpGet("DownloadPremiumBrandBillingStrikeRate")]
         public async Task<IActionResult> DownloadStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
         {
             try
             {
-                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                var result = await _kpiReportService.PremiumBrandBillingStrikeRateKPIReportAsync(model,EnumReportFor.Web);
                 return Ok(result);
             }
             catch (Exception ex)

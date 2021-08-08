@@ -50,7 +50,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
-        public Dictionary<int, (int Start, int End)> WeeklyCalculationDict = new Dictionary<int, (int Start, int End)>() 
+        public Dictionary<int, (int Start, int End)> WeeklyCalculationDict = new Dictionary<int, (int Start, int End)>()
         {
             { 7, (1 , 7) },
             { 14, (8 , 14) },
@@ -78,58 +78,58 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
 
-        public async Task<IList<StrikeRateKPIReportResultModel>> GetStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query)
+        public async Task<IList<StrikeRateKPIReportResultModel>> PremiumBrandBillingStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query, EnumReportFor reportFor)
         {
             var reportResult = new List<StrikeRateKPIReportResultModel>();
 
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
-                                    join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
-                                    from jpminfo in jpmleftjoin.DefaultIfEmpty()
-                                    join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
-                                    from dscinfo in dscleftjoin.DefaultIfEmpty()
-                                    join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
-                                    from userInfo in uleftjoin.DefaultIfEmpty()
-                                    join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
-                                    from diInfo in dileftjoin.DefaultIfEmpty()
-                                    join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
-                                    from depinfo in depleftjoin.DefaultIfEmpty()
-                                    join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
-                                    from tinfo in tleftjoin.DefaultIfEmpty()
-                                    join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
-                                    from zinfo in zleftjoin.DefaultIfEmpty()
-                                    where (
-                                        (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
-                                        && (diInfo.BusinessArea == query.Depot)
-                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
-                                        && (jpminfo.PlanStatus == PlanStatus.Approved)
-                                        && (dscinfo.JourneyPlanId.HasValue)
-                                    )
-                                    select new
-                                    {
-                                        //UserId = userInfo.Id,
-                                        //EmployeeId = jpminfo.EmployeeId,
-                                        DealerId = jpd.DealerId,
-                                        DealerClasification = diInfo.CustomerClasification,
-                                        //UserEmail = userInfo.Email,
-                                        //Depot = diInfo.BusinessArea,
-                                        //DepotName = depinfo.Name1,
-                                        //Territory = diInfo.Territory,
-                                        //TerritoryName = tinfo.Name,
-                                        //Zone = diInfo.CustZone,
-                                        //ZoneName = zinfo.Name,
-                                        //CustomerName = diInfo.CustomerName,
-                                        JourneyPlanDate = jpminfo.PlanDate,
-                                        JourneyPlanId = dscinfo.JourneyPlanId,
-                                    }).ToListAsync();
+                                     join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
+                                     from jpminfo in jpmleftjoin.DefaultIfEmpty()
+                                     join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     from dscinfo in dscleftjoin.DefaultIfEmpty()
+                                     //join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                   //  from userInfo in uleftjoin.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
+                                     from diInfo in dileftjoin.DefaultIfEmpty()
+                                     //join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     //from depinfo in depleftjoin.DefaultIfEmpty()
+                                     //join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     //from tinfo in tleftjoin.DefaultIfEmpty()
+                                     //join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     //from zinfo in zleftjoin.DefaultIfEmpty()
+                                     where (
+                                         (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
+                                         && (diInfo.BusinessArea == query.Depot)
+                                         && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
+                                         && (dscinfo.JourneyPlanId.HasValue)
+                                     )
+                                     select new
+                                     {
+                                         //UserId = userInfo.Id,
+                                         //EmployeeId = jpminfo.EmployeeId,
+                                         jpd.DealerId,
+                                         DealerClasification = diInfo.CustomerClasification,
+                                         //UserEmail = userInfo.Email,
+                                         //Depot = diInfo.BusinessArea,
+                                         //DepotName = depinfo.Name1,
+                                         //Territory = diInfo.Territory,
+                                         //TerritoryName = tinfo.Name,
+                                         //Zone = diInfo.CustZone,
+                                         //ZoneName = zinfo.Name,
+                                         //CustomerName = diInfo.CustomerName,
+                                         JourneyPlanDate = jpminfo.PlanDate,
+                                         JourneyPlanId = dscinfo.JourneyPlanId,
+                                     }).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             var premiumBrands = _context.BrandInfos.Where(x => x.IsPremium).Select(x => x.MaterialGroupOrBrand).Distinct().ToList();
             var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
-            
+
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 var reportModel = new StrikeRateKPIReportResultModel();
@@ -140,13 +140,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
                                                     .Select(x => x.DealerId).Distinct().Count();
+
                 var billingCount = billingOData.Where(x => x.DateTime.Date == date.Date
                                                     && ((query.ReportType == EnumStrikeRateReportType.All) ||
                                                         (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                .Select(x => new { x.CustomerNo, x.InvoiceNoOrBillNo }).Distinct().Count();
-                
+                                                .Select(x => new { x.CustomerNo}).Distinct().Count();
+
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
                 reportModel.NoOfCallActual = actualVisitCount;
@@ -157,85 +158,117 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 if (WeeklyCalculationDict.TryGetValue(date.Day, out (int Start, int End) dateRange))
                 {
-                    reportModel = new StrikeRateKPIReportResultModel();
-                    reportModel.Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day)+1)}";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallActual);
-                    reportModel.NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfPremiumBrandBilling);
+                    reportModel = new StrikeRateKPIReportResultModel
+                    {
+                        Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day) + 1)}",
+                        DateTime = default(DateTime),
+                        NoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallActual),
+                        NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfPremiumBrandBilling)
+                    };
                     reportModel.BillingPercentage = this.GetPercentage(reportModel.NoOfCallActual, reportModel.NoOfPremiumBrandBilling);
                     reportResult.Add(reportModel);
                 }
                 else if (date.Day > 28 && date.Day == DateTime.DaysInMonth(date.Year, date.Month))
                 {
-                    reportModel = new StrikeRateKPIReportResultModel();
-                    reportModel.Date = $"Week 5";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual);
-                    reportModel.NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfPremiumBrandBilling);
+                    reportModel = new StrikeRateKPIReportResultModel
+                    {
+                        Date = $"Week 5",
+                        DateTime = default(DateTime),
+                        NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual),
+                        NoOfPremiumBrandBilling = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfPremiumBrandBilling)
+                    };
                     reportModel.BillingPercentage = this.GetPercentage(reportModel.NoOfCallActual, reportModel.NoOfPremiumBrandBilling);
                     reportResult.Add(reportModel);
                 }
             }
 
-            return reportResult;
+
+            var weekResults = reportResult.Where(x => x.Date.StartsWith("Week")).ToList();
+
+            int noOfPremiumBrandBilling = 0;
+            int actual = 0;
+            var businessCallWebKpiReportResultModel = new StrikeRateKPIReportResultModel
+            {
+                NoOfCallActual = actual = weekResults.Sum(x => x.NoOfCallActual),
+                NoOfPremiumBrandBilling = noOfPremiumBrandBilling = weekResults.Sum(x => x.NoOfPremiumBrandBilling),
+                BillingPercentage = this.GetAchivement(actual, noOfPremiumBrandBilling),
+                Date = "Total",
+            };
+
+            reportResult.Add(businessCallWebKpiReportResultModel);
+            weekResults.Add(businessCallWebKpiReportResultModel);
+
+            return reportFor==EnumReportFor.App ? weekResults : reportResult;
         }
-        
-        public async Task<IList<BusinessCallKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query)
+
+        public async Task<IList<BusinessCallBaseKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query, EnumReportFor reportFor)
         {
-            var reportResult = new List<BusinessCallKPIReportResultModel>();
+            var reportResult = new List<BusinessCallWebKPIReportResultModel>();
+
+            var customerType = query.Category switch
+            {
+                EnumStrikeRateReportType.Exclusive => ConstantsODataValue.CustomerClassificationExclusive,
+                EnumStrikeRateReportType.NonExclusive => ConstantsODataValue.CustomerClassificationNonExclusive,
+                _ => String.Empty
+            };
 
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
-                                    join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
-                                    from jpminfo in jpmleftjoin.DefaultIfEmpty()
-                                    join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
-                                    from dscinfo in dscleftjoin.DefaultIfEmpty()
-                                    join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
-                                    from userInfo in uleftjoin.DefaultIfEmpty()
-                                    join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
-                                    from diInfo in dileftjoin.DefaultIfEmpty()
-                                    join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
-                                    from depinfo in depleftjoin.DefaultIfEmpty()
-                                    join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
-                                    from tinfo in tleftjoin.DefaultIfEmpty()
-                                    join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
-                                    from zinfo in zleftjoin.DefaultIfEmpty()
-                                    where (
-                                        (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
-                                        && (diInfo.BusinessArea == query.Depot)
-                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
-                                        && (jpminfo.PlanStatus == PlanStatus.Approved)
-                                    )
-                                    select new
-                                    {
-                                        //UserId = userInfo.Id,
-                                        //EmployeeId = jpminfo.EmployeeId,
-                                        DealerId = jpd.DealerId,
-                                        DealerClasification = diInfo.CustomerClasification,
-                                        //UserEmail = userInfo.Email,
-                                        //Depot = diInfo.BusinessArea,
-                                        //DepotName = depinfo.Name1,
-                                        //Territory = diInfo.Territory,
-                                        //TerritoryName = tinfo.Name,
-                                        //Zone = diInfo.CustZone,
-                                        //ZoneName = zinfo.Name,
-                                        //CustomerName = diInfo.CustomerName,
-                                        JourneyPlanDate = jpminfo.PlanDate,
-                                        JourneyPlanId = dscinfo.JourneyPlanId,
-                                    }).ToListAsync();
+                                     join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
+                                     from jpmInfo in jpmleftjoin.DefaultIfEmpty()
+                                     join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     from descInfo in dscleftjoin.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
+                                     from diInfo in dileftjoin.DefaultIfEmpty()
+                                     where (
+                                         (jpmInfo.PlanDate.Month == query.Month && jpmInfo.PlanDate.Year == query.Year)
+                                         && (diInfo.BusinessArea == query.Depot)
+                                         && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                         && (jpmInfo.PlanStatus == PlanStatus.Approved)
+                                         && (query.Category == EnumStrikeRateReportType.All || diInfo.CustomerClasification == customerType)
+                                     )
+                                     select new
+                                     {
+                                         jpd.DealerId,
+                                         DealerClasification = diInfo.CustomerClasification,
+                                         JourneyPlanDate = jpmInfo.PlanDate,
+                                         descInfo.JourneyPlanId,
+                                     }).ToListAsync();
+
+
+            var adHocDealerVisit = await (from dsc in _context.DealerSalesCalls
+                                          join di in _context.DealerInfos on dsc.DealerId equals di.Id into dileftjoin
+                                          from diInfo in dileftjoin.DefaultIfEmpty()
+                                          where (
+                                              (dsc.CreatedTime.Month == query.Month && dsc.CreatedTime.Year == query.Year)
+                                              && (!query.Depot.Any() || query.Depot.Contains(diInfo.BusinessArea))
+                                              && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                              && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                              && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                          )
+                                          select new
+                                          {
+                                              dsc.DealerId,
+                                              DealerClasification = diInfo.CustomerClasification,
+                                              JourneyPlanDate = dsc.CreatedTime,
+                                              JourneyPlanId = (int?)null
+                                          }).Distinct().ToListAsync();
+
+
+            dealerVisit.AddRange(adHocDealerVisit);
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                var reportModel = new BusinessCallKPIReportResultModel();
+                BusinessCallWebKPIReportResultModel reportModel = new BusinessCallWebKPIReportResultModel();
 
                 var data = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date).ToList();
                 var callActual = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date && x.JourneyPlanId.HasValue).ToList();
                 var callTarget = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date).ToList();
-                
+
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
 
@@ -243,70 +276,132 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.NoOfCallActual = callActual.Select(x => x.DealerId).Distinct().Count();
                 reportModel.Achivement = this.GetAchivement(reportModel.NoOfCallTarget, reportModel.NoOfCallActual);
 
-                reportModel.ExclusiveNoOfCallTarget = callTarget.Where(x => x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive)
-                                                                    .Select(x => x.DealerId).Distinct().Count();
-                reportModel.ExclusiveNoOfCallActual = callActual.Where(x => x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive)
-                                                                    .Select(x => x.DealerId).Distinct().Count();
-                reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget, reportModel.ExclusiveNoOfCallActual);
+                if (reportFor == EnumReportFor.Web)
+                {
+                    reportModel.ExclusiveNoOfCallTarget = callTarget.Where(x =>
+                            x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive)
+                        .Select(x => x.DealerId).Distinct().Count();
 
-                reportModel.NonExclusiveNoOfCallTarget = callTarget.Where(x => x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)
-                                                                    .Select(x => x.DealerId).Distinct().Count();
-                reportModel.NonExclusiveNoOfCallActual = callActual.Where(x => x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)
-                                                                    .Select(x => x.DealerId).Distinct().Count();
-                reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget, reportModel.NonExclusiveNoOfCallActual);
+                    reportModel.ExclusiveNoOfCallActual = callActual.Where(x =>
+                            x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive)
+                        .Select(x => x.DealerId).Distinct().Count();
+
+                    reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget,
+                        reportModel.ExclusiveNoOfCallActual);
+
+                    reportModel.NonExclusiveNoOfCallTarget = callTarget.Where(x =>
+                            x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)
+                        .Select(x => x.DealerId).Distinct().Count();
+
+                    reportModel.NonExclusiveNoOfCallActual = callActual.Where(x =>
+                            x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)
+                        .Select(x => x.DealerId).Distinct().Count();
+
+                    reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget,
+                        reportModel.NonExclusiveNoOfCallActual);
+                }
+
+
 
                 reportResult.Add(reportModel);
 
                 if (WeeklyCalculationDict.TryGetValue(date.Day, out (int Start, int End) dateRange))
                 {
-                    reportModel = new BusinessCallKPIReportResultModel();
-                    reportModel.Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day)+1)}";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallTarget = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallTarget);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NoOfCallActual);
+                    reportModel = new BusinessCallWebKPIReportResultModel
+                    {
+                        Date = $"Week {(WeeklyCalculationDict.Keys.ToList().IndexOf(date.Day) + 1)}",
+                        DateTime = default(DateTime),
+                        NoOfCallTarget = reportResult
+                            .Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End)
+                            .Sum(x => x.NoOfCallTarget),
+                        NoOfCallActual = reportResult
+                            .Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End)
+                            .Sum(x => x.NoOfCallActual)
+                    };
+
                     reportModel.Achivement = this.GetAchivement(reportModel.NoOfCallTarget, reportModel.NoOfCallActual);
-                    reportModel.ExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.ExclusiveNoOfCallTarget);
-                    reportModel.ExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.ExclusiveNoOfCallActual);
-                    reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget, reportModel.ExclusiveNoOfCallActual);
-                    reportModel.NonExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NonExclusiveNoOfCallTarget);
-                    reportModel.NonExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NonExclusiveNoOfCallActual);
-                    reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget, reportModel.NonExclusiveNoOfCallActual);
-                    
+
+                    if (reportFor == EnumReportFor.Web)
+                    {
+                        reportModel.ExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.ExclusiveNoOfCallTarget);
+                        reportModel.ExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.ExclusiveNoOfCallActual);
+                        reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget, reportModel.ExclusiveNoOfCallActual);
+                        reportModel.NonExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NonExclusiveNoOfCallTarget);
+                        reportModel.NonExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day >= dateRange.Start && x.DateTime.Day <= dateRange.End).Sum(x => x.NonExclusiveNoOfCallActual);
+                        reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget, reportModel.NonExclusiveNoOfCallActual);
+                    }
+
                     reportResult.Add(reportModel);
                 }
                 else if (date.Day > 28 && date.Day == DateTime.DaysInMonth(date.Year, date.Month))
                 {
-                    reportModel = new BusinessCallKPIReportResultModel();
-                    reportModel.Date = $"Week 5";
-                    reportModel.DateTime = default(DateTime);
-                    reportModel.NoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallTarget);
-                    reportModel.NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual);
-                    reportModel.Achivement = this.GetAchivement(reportModel.NoOfCallTarget, reportModel.NoOfCallActual);
-                    reportModel.ExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.ExclusiveNoOfCallTarget);
-                    reportModel.ExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.ExclusiveNoOfCallActual);
-                    reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget, reportModel.ExclusiveNoOfCallActual);
-                    reportModel.NonExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NonExclusiveNoOfCallTarget);
-                    reportModel.NonExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NonExclusiveNoOfCallActual);
-                    reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget, reportModel.NonExclusiveNoOfCallActual);
+                    reportModel = new BusinessCallWebKPIReportResultModel
+                    {
+                        Date = $"Week 5",
+                        DateTime = default(DateTime),
+                        NoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallTarget),
+                        NoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NoOfCallActual)
+                    };
+
+                    if (reportFor == EnumReportFor.Web)
+                    {
+                        reportModel.Achivement = this.GetAchivement(reportModel.NoOfCallTarget, reportModel.NoOfCallActual);
+                        reportModel.ExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.ExclusiveNoOfCallTarget);
+                        reportModel.ExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.ExclusiveNoOfCallActual);
+                        reportModel.ExclusiveAchivement = this.GetAchivement(reportModel.ExclusiveNoOfCallTarget, reportModel.ExclusiveNoOfCallActual);
+                        reportModel.NonExclusiveNoOfCallTarget = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NonExclusiveNoOfCallTarget);
+                        reportModel.NonExclusiveNoOfCallActual = reportResult.Where(x => x.DateTime.Day > 28).Sum(x => x.NonExclusiveNoOfCallActual);
+                        reportModel.NonExclusiveAchivement = this.GetAchivement(reportModel.NonExclusiveNoOfCallTarget, reportModel.NonExclusiveNoOfCallActual);
+                    }
+
                     reportResult.Add(reportModel);
                 }
             }
 
-            return reportResult;
+
+            var weekResults = reportResult.Where(x => x.Date.StartsWith("Week")).ToList();
+
+            int target = 0;
+            int actual = 0;
+            var businessCallWebKpiReportResultModel = new BusinessCallWebKPIReportResultModel
+            {
+                NoOfCallActual = actual = weekResults.Sum(x => x.NoOfCallActual),
+                NoOfCallTarget = target = weekResults.Sum(x => x.NoOfCallTarget),
+                Achivement = this.GetAchivement(target, actual),
+
+                ExclusiveNoOfCallTarget = target= weekResults.Sum(x => x.ExclusiveNoOfCallTarget),
+                ExclusiveNoOfCallActual = actual= weekResults.Sum(x => x.ExclusiveNoOfCallActual),
+                ExclusiveAchivement = this.GetAchivement(target, actual),
+
+                NonExclusiveNoOfCallTarget = target= weekResults.Sum(x => x.NonExclusiveNoOfCallTarget),
+                NonExclusiveNoOfCallActual = actual=weekResults.Sum(x => x.NonExclusiveNoOfCallActual),
+                NonExclusiveAchivement = this.GetAchivement(target, actual),
+                Date = "Total",
+            };
+
+            reportResult.Add(businessCallWebKpiReportResultModel);
+            weekResults.Add(businessCallWebKpiReportResultModel);
+
+            if (reportFor == EnumReportFor.App)
+            {
+               return _mapper.Map<IList<BusinessCallAPPKPIReportResultModel>>(weekResults).Cast<BusinessCallBaseKPIReportResultModel>().ToList();
+            }
+
+            return reportResult.Cast<BusinessCallBaseKPIReportResultModel>().ToList();
         }
 
         public async Task<IList<BillingAnalysisKPIReportResultModel>> GetBillingAnalysisKPIReportAsync(BillingAnalysisKPIReportSearchModel query)
         {
             var reportResult = new List<BillingAnalysisKPIReportResultModel>();
 
-            var dealers = await (from diInfo in _context.DealerInfos 
-                                    where (
-                                        (diInfo.BusinessArea == query.Depot)
-                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
-                                    )
-                                    select diInfo).ToListAsync();
+            var dealers = await (from diInfo in _context.DealerInfos
+                                 where (
+                                     (diInfo.BusinessArea == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                     && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                 )
+                                 select diInfo).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
@@ -318,12 +413,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var tempNoOfDealer = 0;
             var tempNoOfBillingDealer = 0;
 
-            var selectDictionary = new Dictionary<EnumBillingAnalysisType, (string Text, Func<DealerInfo, bool> Func)>() 
+            var selectDictionary = new Dictionary<EnumBillingAnalysisType, (string Text, Func<DealerInfo, bool> Func)>()
             {
                 { EnumBillingAnalysisType.Exclusive, ("Exclusive Dealer", x => x.IsExclusive) },
                 { EnumBillingAnalysisType.NonAPNonExclusive, ("Non AP Non Exclusive Dealer", x => !x.IsExclusive && !x.IsAP) },
                 { EnumBillingAnalysisType.NonExclusive, ("Non Exclusive Dealer", x => !x.IsExclusive) },
-                { EnumBillingAnalysisType.New, ("New Dealer", x => CustomConvertExtension.ObjectToDateTime(x.CreatedOn).Date >= fromDate.Date 
+                { EnumBillingAnalysisType.New, ("New Dealer", x => CustomConvertExtension.ObjectToDateTime(x.CreatedOn).Date >= fromDate.Date
                                                                     && CustomConvertExtension.ObjectToDateTime(x.CreatedOn).Date <= toDate.Date) }
             };
 
@@ -337,14 +432,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                         .Select(x => x.CustomerNo.ToString()).Distinct().ToList()).Count(),
                     NoOfBillingDealer = tempNoOfBillingDealer = billingOData.Where(x => tempDealer.Contains(x.CustomerNo)).Count(),
                     BillingPercentage = this.GetPercentage(tempNoOfDealer, tempNoOfBillingDealer),
-                    Details = dealers.Where(item.Value.Func).GroupBy(x => x.CustomerNo).Select(x => 
-                    { 
+                    Details = dealers.Where(item.Value.Func).GroupBy(x => x.CustomerNo).Select(x =>
+                    {
                         var dt = new BillingAnalysisDetailsKPIReportResultModel();
-                        dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString()??string.Empty;
-                        dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString()??string.Empty;
+                        dt.CustomerNo = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty;
+                        dt.CustomerName = x.FirstOrDefault()?.CustomerName.ToString() ?? string.Empty;
                         dt.IsBilling = billingOData.Any(x => dt.CustomerNo == x.CustomerNo);
                         dt.IsBillingText = billingOData.Any(x => dt.CustomerNo == x.CustomerNo) ? "Has Billing" : "Does not have Billing";
-                        return dt; 
+                        return dt;
                     }).ToList()
                 });
             }
@@ -376,11 +471,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var currentDate = DateTime.Now;
 
             var dealerIds = await (from diInfo in _context.DealerInfos
-                                 where (
-                                     diInfo.BusinessArea == query.Depot
-                                     && query.Territory == diInfo.Territory
-                                 )
-                                 select diInfo.CustomerNo).Distinct().ToListAsync();
+                                   where (
+                                       diInfo.BusinessArea == query.Depot
+                                       && query.Territory == diInfo.Territory
+                                   )
+                                   select diInfo.CustomerNo).Distinct().ToListAsync();
 
             var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
             var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
