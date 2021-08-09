@@ -16,6 +16,7 @@ using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Sync;
+using Berger.Data.MsfaEntity.Target;
 using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore;
@@ -230,5 +231,13 @@ namespace Berger.Data.MsfaEntity
         public DbSet<SyncSetup> SyncSetups { get; set; }
 
         #endregion
+
+        #region Target
+
+        public DbSet<ColorBankInstallationTarget> ColorBankInstallationTargets { get; set; }
+
+        #endregion
+
+
     }
 }
