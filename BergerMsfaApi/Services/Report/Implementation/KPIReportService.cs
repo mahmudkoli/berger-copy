@@ -81,22 +81,27 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<StrikeRateKPIReportResultModel>> PremiumBrandBillingStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query, EnumReportFor reportFor)
         {
             var reportResult = new List<StrikeRateKPIReportResultModel>();
-
+            var customerType = query.ReportType switch
+            {
+                EnumStrikeRateReportType.Exclusive => ConstantsODataValue.CustomerClassificationExclusive,
+                EnumStrikeRateReportType.NonExclusive => ConstantsODataValue.CustomerClassificationNonExclusive,
+                _ => String.Empty
+            };
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
                                      from jpminfo in jpmleftjoin.DefaultIfEmpty()
                                      join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
                                      from dscinfo in dscleftjoin.DefaultIfEmpty()
-                                     //join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
-                                   //  from userInfo in uleftjoin.DefaultIfEmpty()
+                                         //join u in _context.UserInfos on jpminfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                         //  from userInfo in uleftjoin.DefaultIfEmpty()
                                      join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
                                      from diInfo in dileftjoin.DefaultIfEmpty()
-                                     //join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
-                                     //from depinfo in depleftjoin.DefaultIfEmpty()
-                                     //join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
-                                     //from tinfo in tleftjoin.DefaultIfEmpty()
-                                     //join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
-                                     //from zinfo in zleftjoin.DefaultIfEmpty()
+                                         //join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                         //from depinfo in depleftjoin.DefaultIfEmpty()
+                                         //join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                         //from tinfo in tleftjoin.DefaultIfEmpty()
+                                         //join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                         //from zinfo in zleftjoin.DefaultIfEmpty()
                                      where (
                                          (jpminfo.PlanDate.Month == query.Month && jpminfo.PlanDate.Year == query.Year)
                                          && (diInfo.BusinessArea == query.Depot)
@@ -105,23 +110,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                          && (jpminfo.PlanStatus == PlanStatus.Approved)
                                          && (dscinfo.JourneyPlanId.HasValue)
+                                         && (diInfo.CustomerClasification.Contains(customerType))
                                      )
                                      select new
                                      {
-                                         //UserId = userInfo.Id,
-                                         //EmployeeId = jpminfo.EmployeeId,
                                          jpd.DealerId,
                                          DealerClasification = diInfo.CustomerClasification,
-                                         //UserEmail = userInfo.Email,
-                                         //Depot = diInfo.BusinessArea,
-                                         //DepotName = depinfo.Name1,
-                                         //Territory = diInfo.Territory,
-                                         //TerritoryName = tinfo.Name,
-                                         //Zone = diInfo.CustZone,
-                                         //ZoneName = zinfo.Name,
-                                         //CustomerName = diInfo.CustomerName,
                                          JourneyPlanDate = jpminfo.PlanDate,
-                                         JourneyPlanId = dscinfo.JourneyPlanId,
+                                         JourneyPlanId = jpd.PlanId,
                                      }).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
@@ -146,7 +142,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                         (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                .Select(x => new { x.CustomerNo}).Distinct().Count();
+                                                .Select(x => new { x.CustomerNo }).Distinct().Count();
 
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
@@ -198,7 +194,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult.Add(businessCallWebKpiReportResultModel);
             weekResults.Add(businessCallWebKpiReportResultModel);
 
-            return reportFor==EnumReportFor.App ? weekResults : reportResult;
+            return reportFor == EnumReportFor.App ? weekResults : reportResult;
         }
 
         public async Task<IList<BusinessCallBaseKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query, EnumReportFor reportFor)
@@ -226,14 +222,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                          && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                          && (jpmInfo.PlanStatus == PlanStatus.Approved)
-                                         && (query.Category == EnumStrikeRateReportType.All || diInfo.CustomerClasification == customerType)
+                                         && (diInfo.CustomerClasification.Contains(customerType))
                                      )
                                      select new
                                      {
                                          jpd.DealerId,
                                          DealerClasification = diInfo.CustomerClasification,
                                          JourneyPlanDate = jpmInfo.PlanDate,
-                                         descInfo.JourneyPlanId,
+                                         JourneyPlanId = (int?)jpd.PlanId,
                                      }).ToListAsync();
 
 
@@ -246,6 +242,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                               && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                               && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                               && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                              && dsc.JourneyPlanId == null
+                                              && (diInfo.CustomerClasification.Contains(customerType))
                                           )
                                           select new
                                           {
@@ -265,15 +263,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 BusinessCallWebKPIReportResultModel reportModel = new BusinessCallWebKPIReportResultModel();
 
-                var data = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date).ToList();
+                //var data = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date).ToList();
                 var callActual = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date && x.JourneyPlanId.HasValue).ToList();
                 var callTarget = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date).ToList();
 
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
 
-                reportModel.NoOfCallTarget = callTarget.Select(x => x.DealerId).Distinct().Count();
-                reportModel.NoOfCallActual = callActual.Select(x => x.DealerId).Distinct().Count();
+                reportModel.NoOfCallTarget = -1 * callTarget.Select(x => x.DealerId).Distinct().Count();
+                reportModel.NoOfCallActual = -1 * callActual.Select(x => x.DealerId).Distinct().Count();
                 reportModel.Achivement = this.GetAchivement(reportModel.NoOfCallTarget, reportModel.NoOfCallActual);
 
                 if (reportFor == EnumReportFor.Web)
@@ -369,12 +367,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 NoOfCallTarget = target = weekResults.Sum(x => x.NoOfCallTarget),
                 Achivement = this.GetAchivement(target, actual),
 
-                ExclusiveNoOfCallTarget = target= weekResults.Sum(x => x.ExclusiveNoOfCallTarget),
-                ExclusiveNoOfCallActual = actual= weekResults.Sum(x => x.ExclusiveNoOfCallActual),
+                ExclusiveNoOfCallTarget = target = weekResults.Sum(x => x.ExclusiveNoOfCallTarget),
+                ExclusiveNoOfCallActual = actual = weekResults.Sum(x => x.ExclusiveNoOfCallActual),
                 ExclusiveAchivement = this.GetAchivement(target, actual),
 
-                NonExclusiveNoOfCallTarget = target= weekResults.Sum(x => x.NonExclusiveNoOfCallTarget),
-                NonExclusiveNoOfCallActual = actual=weekResults.Sum(x => x.NonExclusiveNoOfCallActual),
+                NonExclusiveNoOfCallTarget = target = weekResults.Sum(x => x.NonExclusiveNoOfCallTarget),
+                NonExclusiveNoOfCallActual = actual = weekResults.Sum(x => x.NonExclusiveNoOfCallActual),
                 NonExclusiveAchivement = this.GetAchivement(target, actual),
                 Date = "Total",
             };
@@ -384,7 +382,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             if (reportFor == EnumReportFor.App)
             {
-               return _mapper.Map<IList<BusinessCallAPPKPIReportResultModel>>(weekResults).Cast<BusinessCallBaseKPIReportResultModel>().ToList();
+                return _mapper.Map<IList<BusinessCallAPPKPIReportResultModel>>(weekResults).Cast<BusinessCallBaseKPIReportResultModel>().ToList();
             }
 
             return reportResult.Cast<BusinessCallBaseKPIReportResultModel>().ToList();
@@ -395,14 +393,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var reportResult = new List<BillingAnalysisKPIReportResultModel>();
 
             var dealers = await (from diInfo in _context.DealerInfos
-                                where (
-                                    (diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer 
-                                        && diInfo.Division == ConstantsODataValue.DivisionDecorative)
-                                    && (diInfo.BusinessArea == query.Depot)
-                                    && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
-                                    && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                )
-                                select diInfo).ToListAsync();
+                                 where (
+                                     (diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                         && diInfo.Division == ConstantsODataValue.DivisionDecorative)
+                                     && (diInfo.BusinessArea == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                     && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                 )
+                                 select diInfo).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
@@ -465,6 +463,45 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return reportResult;
         }
+
+
+        public IList<ColorBankInstallationPlanVsActualKPIReportResultModel> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query)
+        {
+            var result = new List<ColorBankInstallationPlanVsActualKPIReportResultModel>();
+            var bergerFyMonth = GetBergerFyMonth();
+
+            foreach (var item in bergerFyMonth)
+            {
+                var addItem = new ColorBankInstallationPlanVsActualKPIReportResultModel()
+                {
+                    Actual = 1,
+                    Month = item.Value,
+                    Target = 2,
+
+                };
+                addItem.TargetAchievement = GetAchivement(addItem.Target, addItem.Actual);
+                result.Add(addItem);
+            }
+            return result; 
+        }
+
+        private Dictionary<int, string> GetBergerFyMonth()
+        {
+            var result = new Dictionary<int, string>();
+
+            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
+            DateTime compareDate = date.AddMonths(12);
+
+            while (date != compareDate)
+            {
+                result.Add(date.Month, date.ToString("MMM"));
+                date = date.AddMonths(1);
+            }
+
+            return result;
+        }
+
+
 
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
         {

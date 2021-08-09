@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +18,7 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
-        public AppKpiReportController(IKpiDataService kpiDataService,
-            IKPIReportService kpiReportService)
+        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;
@@ -69,6 +67,37 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetColorBankInstallationPlanVsActual")]
+        [ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
+
+        public async Task<IActionResult> GetColorBankInstallationPlanVsActual([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        
+        //[HttpGet("GetColorBankProductivity")]
+        //[ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
+        //public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
+        //{
+        //    try
+        //    {
+        //        var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
     }
 }
