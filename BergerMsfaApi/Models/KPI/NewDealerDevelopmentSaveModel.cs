@@ -17,7 +17,7 @@ namespace BergerMsfaApi.Models.KPI
 
     public class SearchNewDealerDevelopment
     {
-        public int Year { get; set; }
+        public int Year { get; set; } 
         public string Territory { get; set; }
         public string Depot { get; set; }
     }

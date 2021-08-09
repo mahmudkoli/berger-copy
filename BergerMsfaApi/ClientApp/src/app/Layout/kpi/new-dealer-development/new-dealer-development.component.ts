@@ -30,7 +30,7 @@ export class NewDealerDevelopmentComponent implements OnInit {
 		
 			depot: '',
 			territory: '',
-			year: null
+			year: new Date().getFullYear()
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -40,7 +40,6 @@ export class NewDealerDevelopmentComponent implements OnInit {
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -48,7 +47,6 @@ export class NewDealerDevelopmentComponent implements OnInit {
 		this.query.depot = queryObj.depot;
 		// this.query.salesGroups = queryObj.salesGroups;
 		this.query.territory = queryObj.territories[0];
-		this.query.year = queryObj.year;
 
     this.loadData()
 	}

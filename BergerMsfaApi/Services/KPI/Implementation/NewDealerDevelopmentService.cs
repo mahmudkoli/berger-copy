@@ -47,7 +47,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         {
             
             var count = model.Where(p => p.Id > 0).Count();
-            if (count < 0)
+            if (count == 0)
             {
                 var result =await _repository.CreateListAsync(model.ToList());
             }
@@ -87,45 +87,53 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         {
             var newDealerDevelopementList = new List<NewDealerDevelopment>();
 
-           
-          var  currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+            var monthNumber = 0;
 
-                                              p.Territory == query.Territory
-                                              
-                                              &&
-                                             
-                                              p.Year == query.Year )
-                                              
-                                                                            .ToListAsync();
+            var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
-          var  nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+                                              p.Territory == query.Territory &&
+                                              p.FiscalYear == query.Year ).ToListAsync();
 
-                                              p.Territory == query.Territory 
-                                              && p.Year == (query.Year + 1))
-                                                                            .ToListAsync();
-
-
+          
             newDealerDevelopementList.AddRange(currentYear);
-            newDealerDevelopementList.AddRange(nextYear);
 
             if (newDealerDevelopementList.Count ==0)
             {
                 for (int i = 1; i <=12; i++)
                 {
+                    monthNumber = i + 3;
                     var res = new NewDealerDevelopment()
                     {
                         BusinessArea=query.Depot,
                         Territory=query.Territory,
                         Month=i,
                         Year=query.Year,
-                        ConversionTarget=0,
+                        FiscalYear= query.Year,
+                        ConversionTarget =0,
                         Target=0
                     };
                     if (i > 9)
                     {
+                        monthNumber = i -9;
                         res.Year = query.Year+1;
                     }
+                    res.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(res.Year);
                     newDealerDevelopementList.Add(res);
+                }
+            }
+
+            else
+            {
+                foreach (var item in newDealerDevelopementList)
+                {
+                    monthNumber = item.Month + 3;
+                    if (item.Month > 9)
+                    {
+                        monthNumber = item.Month -9;
+
+                    }
+
+                    item.MonthName= CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year);
                 }
             }
 
@@ -140,16 +148,10 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var monthNumber = 0;
             var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
-                                               p.Territory == query.Territory &&
-                                               p.Year == query.Year).ToListAsync();
-
-            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
-
-                                               p.Territory == query.Territory
-                                               && p.Year == (query.Year + 1)).ToListAsync();
+                                             p.Territory == query.Territory &&
+                                             p.FiscalYear == query.Year).ToListAsync();
 
 
-            currentYear.AddRange(nextYear);
             currentYear.OrderBy(p=>p.Month);
 
             if (currentYear.Count == 12)
@@ -191,16 +193,10 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var monthNumber = 0;
             var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
-                                               p.Territory == query.Territory &&
-                                               p.Year == query.Year).ToListAsync();
-
-            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
-
-                                               p.Territory == query.Territory
-                                               && p.Year == (query.Year + 1)).ToListAsync();
+                                             p.Territory == query.Territory &&
+                                             p.FiscalYear == query.Year).ToListAsync();
 
 
-            currentYear.AddRange(nextYear);
             currentYear.OrderBy(p => p.Month);
 
             if (currentYear.Count == 12)
@@ -271,16 +267,8 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var monthNumber = 0;
             var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
-                                               p.Territory == query.Territory &&
-                                               p.Year == query.Year).ToListAsync();
-
-            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
-
-                                               p.Territory == query.Territory
-                                               && p.Year == (query.Year + 1)).ToListAsync();
-
-
-            currentYear.AddRange(nextYear);
+                                            p.Territory == query.Territory &&
+                                            p.FiscalYear == query.Year).ToListAsync();
             currentYear.OrderBy(p => p.Month);
 
             if (currentYear.Count == 12)

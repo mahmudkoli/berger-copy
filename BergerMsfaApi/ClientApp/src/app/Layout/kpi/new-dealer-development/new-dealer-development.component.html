@@ -8,7 +8,7 @@
     <table class="table">
         <tr>
             <th>Month</th>
-            <th>Year</th>
+            <!-- <th>Year</th> -->
             <th>Target</th>
             <th>Conversion Target</th>
 
@@ -16,22 +16,20 @@
         </tr>
         <tr *ngFor="let item of data">
             <td>
-            <div class="position-relative form-group">
-                <ng-select [(ngModel)]="item.month" disabled>
-                    <!-- <ng-option>--Select--</ng-option> -->
-                    <ng-option *ngFor="let da of month;" [value]="da.id">{{da.label}}</ng-option>
-                </ng-select>
-                
-            </div>
+                <div class="input-group">
+                    <input class="form-control" type="text" [(ngModel)]="item.monthName"
+                           name="monthName" disabled>
+                   
+                </div>
         </td>
             <!-- <td><input type="text" [(ngModel)]="item.companyName" name="companyName"></td> -->
             
             
-            <td><div class="input-group">
+            <!-- <td><div class="input-group">
                 <input class="form-control" type="text" [(ngModel)]="item.year"
                        name="year" disabled>
                
-            </div></td>
+            </div></td> -->
             <td><div class="input-group">
                 <input class="form-control" type="number" [(ngModel)]="item.target"
                        name="target">
