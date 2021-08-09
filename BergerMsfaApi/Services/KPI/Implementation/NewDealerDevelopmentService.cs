@@ -64,21 +64,21 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         public async Task<bool> AddDealerConversionAsync(IList<NewDealerDevelopmentSaveModel> model)
         {
             var result = false;
-
+            var lstNewDealerConversion = new List<NewDealerDevelopment>();
             foreach (var item in model)
             {
-                var data = _repository.Where(p => p.Id == item.Id).FirstOrDefault();
+                var data = _repository.Where(p => p.Id == item.Id).AsNoTracking().FirstOrDefault();
                 if (data != null)
                 {
                     data.NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition;
-                    data.ModifiedTime = DateTime.Now;
-
-                    var res = _repository.UpdateAsync(data);
+                    lstNewDealerConversion.Add(data);
+                    //var res = _repository.UpdateAsync(data);
                     result = true;
 
                 }
 
             }
+            var res =await _repository.UpdateListAsync(lstNewDealerConversion);
 
             return result;
         }
@@ -171,7 +171,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     var result = new NewDealerDevelopmentModel()
                     {
-                        MonthName= CultureInfo.CurrentCulture. DateTimeFormat.GetMonthName(monthNumber),
+                        MonthName= CultureInfo.CurrentCulture. DateTimeFormat.GetMonthName(monthNumber)+"-"+ GetYear(item.Year),
                         Target=item.Target,
                         Actual=actual,
                         TargetAch= GetAchivement(item.Target, actual)
@@ -221,7 +221,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     var result = new DealerConversionModel()
                     {
-                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber),
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber)+ "-"+ GetYear(item.Year),
                         ConversionTarget = item.ConversionTarget,
                         NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
                     };
@@ -254,6 +254,14 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         public decimal GetAchivement(decimal target, decimal actual)
         {
             return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
+        }
+
+        private string GetYear(int year)
+        {
+            DateTime expirationDate = new DateTime(year, 1, 31); // random date
+            string lastTwoDigitsOfYear = expirationDate.ToString("yy");
+
+            return lastTwoDigitsOfYear;
         }
 
         public async Task<IList<NewDealerDevelopmentSaveModel>> GetDealerConversionByYearAsync(SearchNewDealerDevelopment query)
@@ -296,7 +304,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                     {
                         Id=item.Id,
                         Actual= actual,
-                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber),
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year),
                         ConversionTarget = item.ConversionTarget,
                         NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
                     };

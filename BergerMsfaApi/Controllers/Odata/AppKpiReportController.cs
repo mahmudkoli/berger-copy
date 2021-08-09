@@ -58,7 +58,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("SaveDealerConversion")]
+        [HttpPost("SaveDealerConversion")]
         public async Task<IActionResult> SaveDealerConversion(IList<NewDealerDevelopmentSaveModel> model)
         {
             try

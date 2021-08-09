@@ -43,6 +43,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     materialCodes: any[] = [];
 	months: any[] = [];
 	years: any[] = [];
+	fiscalYears: any[] = [];
 	activitySummaries: any[] = [];
 
     valueVolumeResultTypes: any[] = Enums.valueVolumeResultType;
@@ -95,6 +96,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			toYear: [this.searchOptionQuery.toYear],
 			month: [this.searchOptionQuery.month],
 			year: [this.searchOptionQuery.year],
+			fiscalYear: [this.searchOptionQuery.fiscalYear],
 			text1: [this.searchOptionQuery.text1],
 			text2: [this.searchOptionQuery.text2],
 			text3: [this.searchOptionQuery.text3],
@@ -225,6 +227,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 
 		this.months = this.getMonths();
 		this.years = this.getYears();
+		this.fiscalYears=this.getFiscalYears()
     }
 
 	onSubmitSearch() {
@@ -249,6 +252,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.toYear = controls['toYear'].value;
 		this.searchOptionQuery.month = controls['month'].value;
 		this.searchOptionQuery.year = controls['year'].value;
+		this.searchOptionQuery.fiscalYear = controls['fiscalYear'].value;
 		this.searchOptionQuery.text1 = controls['text1'].value;
 		this.searchOptionQuery.text2 = controls['text2'].value;
 		this.searchOptionQuery.text3 = controls['text3'].value;
@@ -394,6 +398,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		let currentYear: number = new Date().getFullYear();
 		for(let i = (currentYear - 10); i < (currentYear + 3); i++) {
 			years.push({'id':i,'name':i.toString()});
+		}
+		return years;
+	}
+
+	getFiscalYears(): any[] {
+		let years: any[] = [];
+		let currentYear: number = new Date().getFullYear();
+		for(let i = (currentYear - 10); i < (currentYear + 3); i++) {
+			years.push({'id':i,'name':i.toString()+' - '+(i+1).toString()});
 		}
 		return years;
 	}

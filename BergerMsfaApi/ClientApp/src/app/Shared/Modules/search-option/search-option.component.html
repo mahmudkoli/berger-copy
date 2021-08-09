@@ -305,6 +305,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('fiscalYear')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('fiscalYear')}">Fiscal Year</label>
+                    <ng-select [items]="fiscalYears" formControlName="fiscalYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.fiscalYear.touched && formControls.fiscalYear.errors">
+                        <span *ngIf="formControls.fiscalYear.errors.required">fiscalYear is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('text1')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('text1')}">{{getSearchOptionLabel('text1')}}</label>

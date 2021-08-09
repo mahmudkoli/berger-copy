@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NewDealerDevelopmentQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NewDealerDevelopmentService } from 'src/app/Shared/Services/KPI/NewDealerDevelopmentService';
 
 @Component({
@@ -17,8 +18,13 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
+	allTotalKeysOfNumberType: boolean = true;
+	// totalKeys: any[] = ['totalCall'];
+	totalKeys: any[] = [];
 
-  constructor(private newDealerDevelopmentService:NewDealerDevelopmentService) { }
+  constructor(private newDealerDevelopmentService:NewDealerDevelopmentService,
+	private commonService: CommonService,
+	) { }
 
   ngOnInit() {
     this.searchConfiguration();
@@ -32,14 +38,15 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			// { headerName: 'User Full Name', width: '30%', internalName: 'userFullName', sort: true, type: "" },
-			{ headerName: 'Month Name', width: '20%', internalName: 'monthName', sort: false, type: "" },
-			{ headerName: 'Target', width: '20%', internalName: 'target', sort: false, type: "" },
-			{ headerName: 'Actual', width: '10%', internalName: 'actual', sort: true, type: "" },
-			{ headerName: 'TargetAch', width: '25%', internalName: 'targetAch', sort: true, type: "" },
+			// { headerName: 'Month Name', width: '20%', internalName: 'monthName', sort: false, type: "" },
+			// { headerName: 'Target', width: '20%', internalName: 'target', sort: false, type: "" },
+			// { headerName: 'Actual', width: '10%', internalName: 'actual', sort: true, type: "" },
+			// { headerName: 'TargetAch', width: '25%', internalName: 'targetAch', sort: true, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
-		// pageSize: 10,
+		pageSize: 12,
+		enabledTotal: true,
 		
 		enabledDataLength: true,
 	};
@@ -60,7 +67,7 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.FiscalYear, isRequired:true}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -68,7 +75,7 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 		this.query.depot = queryObj.depot;
 		// this.query.salesGroups = queryObj.salesGroups;
 		this.query.territory = queryObj.territories[0];
-		this.query.year = queryObj.year;
+		this.query.year = queryObj.fiscalYear;
 
     this.loadData()
 	}
@@ -77,7 +84,7 @@ export class NewDealerDevelopmentListComponent implements OnInit {
   loadData() {
     this.newDealerDevelopmentService.GetDealerOpeningStatus(this.query).subscribe(
       (res:any) =>{this.data = res.data; this.totalDataLength = res.length;
-	console.log(res)
+	this.ptableColDefGenerate();
 	}
 	
       ,
@@ -85,5 +92,15 @@ export class NewDealerDevelopmentListComponent implements OnInit {
       () => console.log('done')
     );
   }
+
+  ptableColDefGenerate() {
+	const obj = this.data[0] || {};
+	console.log(obj);
+	this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
+		return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+	});
+	
+}
 
 }
