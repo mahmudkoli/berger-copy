@@ -17,6 +17,7 @@ using BergerMsfaApi.Services.Scheme.interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -27,14 +28,17 @@ namespace BergerMsfaApi.Services.KPI.Implementation
     public class NewDealerDevelopmentService : INewDealerDevelopmentService
     {
         public readonly IRepository<NewDealerDevelopment> _repository;
+        public readonly IRepository<DealerInfo> _dealerInfo;
       
 
         public NewDealerDevelopmentService(
-            IRepository<NewDealerDevelopment> repository
-          
+            IRepository<NewDealerDevelopment> repository,
+            IRepository<DealerInfo> dealerInfo
+
             )
         {
             _repository = repository;
+            _dealerInfo = dealerInfo;
 
 
         }
@@ -43,7 +47,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         {
             
             var count = model.Where(p => p.Id > 0).Count();
-            if (count > 0)
+            if (count < 0)
             {
                 var result =await _repository.CreateListAsync(model.ToList());
             }
@@ -56,6 +60,29 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             return count;
         }
 
+
+        public async Task<bool> AddDealerConversionAsync(IList<NewDealerDevelopmentSaveModel> model)
+        {
+            var result = false;
+
+            foreach (var item in model)
+            {
+                var data = _repository.Where(p => p.Id == item.Id).FirstOrDefault();
+                if (data != null)
+                {
+                    data.NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition;
+                    data.ModifiedTime = DateTime.Now;
+
+                    var res = _repository.UpdateAsync(data);
+                    result = true;
+
+                }
+
+            }
+
+            return result;
+        }
+
         public async Task<IList<NewDealerDevelopment>> GetNewDealerDevelopmentByIdAsync(SearchNewDealerDevelopment query)
         {
             var newDealerDevelopementList = new List<NewDealerDevelopment>();
@@ -66,16 +93,6 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                               p.Territory == query.Territory
                                               
                                               &&
-
-                                              //p.Month==(int)MonthEnum.Apr && 
-                                              //p.Month==(int)MonthEnum.May && 
-                                              //p.Month==(int)MonthEnum.Jun && 
-                                              //p.Month==(int)MonthEnum.Jul && 
-                                              //p.Month==(int)MonthEnum.Aug && 
-                                              //p.Month==(int)MonthEnum.Sep && 
-                                              //p.Month==(int)MonthEnum.Oct && 
-                                              //p.Month==(int)MonthEnum.Nov && 
-                                              //p.Month==(int)MonthEnum.Dec && 
                                              
                                               p.Year == query.Year )
                                               
@@ -84,12 +101,6 @@ namespace BergerMsfaApi.Services.KPI.Implementation
           var  nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
                                               p.Territory == query.Territory 
-                                              
-                                              //&&
-                                             
-                                              //p.Month == (int)MonthEnum.Jan &&
-                                              //p.Month == (int)MonthEnum.Feb &&
-                                              //p.Month == (int)MonthEnum.Mar 
                                               && p.Year == (query.Year + 1))
                                                                             .ToListAsync();
 
@@ -115,6 +126,181 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                         res.Year = query.Year+1;
                     }
                     newDealerDevelopementList.Add(res);
+                }
+            }
+
+            return newDealerDevelopementList;
+        }
+
+
+        public async Task<IList<NewDealerDevelopmentModel>> GetNewDealerDevelopment(SearchNewDealerDevelopment query)
+        {
+            var newDealerDevelopementList = new List<NewDealerDevelopmentModel>();
+
+            var monthNumber = 0;
+            var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory &&
+                                               p.Year == query.Year).ToListAsync();
+
+            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory
+                                               && p.Year == (query.Year + 1)).ToListAsync();
+
+
+            currentYear.AddRange(nextYear);
+            currentYear.OrderBy(p=>p.Month);
+
+            if (currentYear.Count == 12)
+            {
+                foreach (var item in currentYear)
+                {
+                    if (item.Month >= 1 && item.Month <= 9)
+                    {
+                        monthNumber = item.Month + 3;
+                    }
+
+                    else if (item.Month >= 10 && item.Month <= 12)
+                    {
+                        monthNumber = item.Month - 9;
+
+                    }
+
+                    var actual = GetActualDealer(monthNumber, item.Year);
+
+                    var result = new NewDealerDevelopmentModel()
+                    {
+                        MonthName= CultureInfo.CurrentCulture. DateTimeFormat.GetMonthName(monthNumber),
+                        Target=item.Target,
+                        Actual=actual,
+                        TargetAch= GetAchivement(item.Target, actual)
+                    };
+                    newDealerDevelopementList.Add(result);
+                }
+            }
+
+            return newDealerDevelopementList;
+        }
+
+
+        public async Task<IList<DealerConversionModel>> GetDealerConversion(SearchNewDealerDevelopment query)
+        {
+            var newDealerDevelopementList = new List<DealerConversionModel>();
+
+            var monthNumber = 0;
+            var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory &&
+                                               p.Year == query.Year).ToListAsync();
+
+            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory
+                                               && p.Year == (query.Year + 1)).ToListAsync();
+
+
+            currentYear.AddRange(nextYear);
+            currentYear.OrderBy(p => p.Month);
+
+            if (currentYear.Count == 12)
+            {
+                foreach (var item in currentYear)
+                {
+                    if (item.Month >= 1 && item.Month <= 9)
+                    {
+                        monthNumber = item.Month + 3;
+                    }
+
+                    else if (item.Month >= 10 && item.Month <= 12)
+                    {
+                        monthNumber = item.Month - 9;
+
+                    }
+
+
+                    var result = new DealerConversionModel()
+                    {
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber),
+                        ConversionTarget = item.ConversionTarget,
+                        NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
+                    };
+                    newDealerDevelopementList.Add(result);
+                }
+            }
+
+            return newDealerDevelopementList;
+        }
+
+
+
+        private int GetActualDealer(int monthnumber,int year)
+        {
+
+            
+
+
+            var monthName = CultureInfo.CurrentCulture.
+            DateTimeFormat.GetMonthName
+            (monthnumber);
+
+            var count = _dealerInfo.Where(p => p.CreatedTime.Month == monthnumber && p.CreatedTime.Year == year).Count();
+
+            return count;
+
+        }
+
+
+        public decimal GetAchivement(decimal target, decimal actual)
+        {
+            return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
+        }
+
+        public async Task<IList<NewDealerDevelopmentSaveModel>> GetDealerConversionByYearAsync(SearchNewDealerDevelopment query)
+        {
+            var newDealerDevelopementList = new List<NewDealerDevelopmentSaveModel>();
+
+            var monthNumber = 0;
+            var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory &&
+                                               p.Year == query.Year).ToListAsync();
+
+            var nextYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
+
+                                               p.Territory == query.Territory
+                                               && p.Year == (query.Year + 1)).ToListAsync();
+
+
+            currentYear.AddRange(nextYear);
+            currentYear.OrderBy(p => p.Month);
+
+            if (currentYear.Count == 12)
+            {
+                foreach (var item in currentYear)
+                {
+                    if (item.Month >= 1 && item.Month <= 9)
+                    {
+                        monthNumber = item.Month + 3;
+                    }
+
+                    else if (item.Month >= 10 && item.Month <= 12)
+                    {
+                        monthNumber = item.Month - 9;
+
+                    }
+
+                    var actual = GetActualDealer(monthNumber, item.Year);
+
+                    var result = new NewDealerDevelopmentSaveModel()
+                    {
+                        Id=item.Id,
+                        Actual= actual,
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber),
+                        ConversionTarget = item.ConversionTarget,
+                        NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
+                    };
+                    newDealerDevelopementList.Add(result);
                 }
             }
 

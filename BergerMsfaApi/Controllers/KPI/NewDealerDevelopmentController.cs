@@ -26,7 +26,7 @@ namespace BergerMsfaApi.Controllers.KPI
 
 
         [HttpGet("GetNewDealerDevelopment")]
-        public async Task<IActionResult> GetCollectionConfigById([FromQuery] SearchNewDealerDevelopment query)
+        public async Task<IActionResult> GetNewDealerDevelopment([FromQuery] SearchNewDealerDevelopment query)
         {
             try
             {
@@ -39,6 +39,34 @@ namespace BergerMsfaApi.Controllers.KPI
             }
         }
 
+
+        [HttpGet("GetDealerOpeningStatus")]
+        public async Task<IActionResult> GetDealerOpeningStatus([FromQuery] SearchNewDealerDevelopment query)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.GetNewDealerDevelopment(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetDealerConversion")]
+        public async Task<IActionResult> GetDealerConversion([FromQuery] SearchNewDealerDevelopment query)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.GetDealerConversion(query);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
         [HttpPost("SaveNewDealerDevelopment")]
         public async Task<IActionResult> SaveNewDealerDevelopment(IList<NewDealerDevelopment> data)

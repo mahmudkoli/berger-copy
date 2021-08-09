@@ -38,6 +38,8 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
+import { NewDealerDevelopmentListComponent } from './new-dealer-development-list/new-dealer-development-list.component';
+import { DealerConversionComponent } from './dealer-conversion/dealer-conversion.component';
 
 const routes: Routes = [
   {
@@ -262,6 +264,21 @@ const routes: Routes = [
         component: BillingAnalysisReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Billing Analysis Report', },
+      },
+
+      {
+        path: 'dealer-opening-status',
+        component: NewDealerDevelopmentListComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'New Dealer Opening Status Report', },
+      },
+
+
+      {
+        path: 'dealer-conversion',
+        component: DealerConversionComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: ' Dealer Conversion from Competition:', },
       },
 
       {
