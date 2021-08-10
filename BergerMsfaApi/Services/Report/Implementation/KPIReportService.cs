@@ -422,11 +422,13 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 var currentDate = DateTime.Now;
 
+            foreach (var item in query.Territory)
+            {
                 var dealerIds = await (from diInfo in _context.DealerInfos
                                        where (
                                            diInfo.BusinessArea == query.Depot
-                                           && query.Territory == diInfo.Territory
-                                           && string.IsNullOrEmpty(query.SalesGroups) ? true : query.SalesGroups == diInfo.SalesGroup
+                                           && item == diInfo.Territory
+                                           && query.SalesGroups!=null ? query.SalesGroups.Contains(diInfo.SalesGroup) :true
                                        )
                                        select diInfo.CustomerNo).Distinct().ToListAsync();
 
@@ -437,19 +439,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
                 var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
                 var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
-                                    && x.BusinessArea == query.Depot && query.Territory == x.Territory
+                                    && x.BusinessArea == query.Depot && item == x.Territory
                                     && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
 
                 var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
 
-                reportResult=new CollectionPlanKPIReportResultModel
-                {
-                    Territory = query.Territory,
-                    ImmediateLMSlippageAmount = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
-                    MTDCollectionPlan = targetAmount,
-                    MTDActualCollection = actualCollection,
-                    TargetAch = GetAchivement(targetAmount, actualCollection)
-                };
+
+                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount+ slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan+ targetAmount;
+                reportResult.MTDActualCollection = reportResult.MTDActualCollection+ actualCollection;
+                reportResult.TargetAch = reportResult.TargetAch+ GetAchivement(targetAmount, actualCollection);
+             
+            }
+
+                
             
 
 

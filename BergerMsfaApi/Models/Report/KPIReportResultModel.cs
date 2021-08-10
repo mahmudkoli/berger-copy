@@ -95,4 +95,19 @@ namespace BergerMsfaApi.Models.Report
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+
+    public class CollectionPlanKPIReportResultModelForApp
+    {
+        public string Territory { get; set; }
+        public decimal ImmediateLMSlippageAmount { get; set; }
+        public decimal MTDCollectionPlan { get; set; }
+        public decimal MTDActualCollection { get; set; }
+        public decimal TargetAch { get; set; }
+
+        public CollectionPlanKPIReportResultModelForApp()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }
