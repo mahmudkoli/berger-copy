@@ -147,5 +147,8 @@ namespace Berger.Odata.Services
         decimal GetContribution(decimal first, decimal second);
 
         #endregion
+
+        Task<IList<ColorBankMachineDataModel>> GetColorBankMachine(string query);
+        Task<IList<ColorBankMachineDataModel>> GetColorBankInstallData(SelectQueryOptionBuilder selectQueryBuilder, string depot = "", string startDate = "", string endDate = "");
     }
 }

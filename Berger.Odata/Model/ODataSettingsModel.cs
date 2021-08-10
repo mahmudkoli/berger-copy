@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Berger.Odata.Model
+﻿namespace Berger.Odata.Model
 {
     public class ODataSettingsModel
     {
@@ -24,5 +18,6 @@ namespace Berger.Odata.Model
         public string CustomerOccasionUrl { get; set; }
         public string CustomerCreditUrl { get; set; }
         public string CustomerDeliveryUrl { get; set; }
+        public string ColorBankMachine { get; set; }
     }
 }

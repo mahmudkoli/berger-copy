@@ -115,6 +115,7 @@ namespace BergerMsfaApi
             services.AddScoped<IOccasionToCelebrateService, OccasionToCelebrateService>();
             services.AddScoped<IPaymentFollowupService, PaymentFollowupService>();
             services.AddScoped<IAlertNotificationService, AlertNotificationService>();
+            services.AddScoped<IColorBankInstallMachine, ColorBankInstallMachine>();
 
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);

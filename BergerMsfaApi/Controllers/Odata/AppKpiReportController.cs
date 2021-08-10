@@ -75,7 +75,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+                var result = await _kpiReportService.GetColorBankInstallationPlanVsActual(model);
                 return OkResult(result);
             }
             catch (Exception ex)
