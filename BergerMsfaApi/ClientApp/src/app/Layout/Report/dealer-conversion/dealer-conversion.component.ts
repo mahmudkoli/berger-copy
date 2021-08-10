@@ -57,6 +57,7 @@ export class DealerConversionComponent implements OnInit {
 		
 			depot: '',
 			territory: '',
+			salesGroup: '',
 			year: null
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
@@ -68,6 +69,7 @@ export class DealerConversionComponent implements OnInit {
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FiscalYear, isRequired:true}),
 		]});
 
@@ -76,6 +78,7 @@ export class DealerConversionComponent implements OnInit {
 		this.query.depot = queryObj.depot;
 		// this.query.salesGroups = queryObj.salesGroups;
 		this.query.territory = queryObj.territories[0];
+		this.query.salesGroup =queryObj.salesGroups? queryObj.salesGroups[0]:null;
 		this.query.year = queryObj.fiscalYear;
 
     this.loadData()

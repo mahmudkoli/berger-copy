@@ -438,6 +438,7 @@ export class CollectionPlanKpiReportQuery {
 export class NewDealerDevelopmentQuery {
     depot: string;
     territory:string;
+    salesGroup:string;
     year: number;
 
 

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { forkJoin, Subscription } from 'rxjs';
 import { NewDealerDevelopmentQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { EnumMonthLabel } from 'src/app/Shared/Enums/employee-role';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NewDealerDevelopmentService } from 'src/app/Shared/Services/KPI/NewDealerDevelopmentService';
 
 @Component({
@@ -12,49 +14,53 @@ import { NewDealerDevelopmentService } from 'src/app/Shared/Services/KPI/NewDeal
 })
 export class NewDealerDevelopmentComponent implements OnInit {
   query: NewDealerDevelopmentQuery;
-	searchOptionQuery: SearchOptionQuery;
 	data: any[];
   month: MapObject[] = EnumMonthLabel.EnumMonth;
+  depotList=[];
+  territoryList=[];
+	searchForm: FormGroup;
+	private subscriptions: Subscription[] = [];
 
   constructor(
-    private newDealerDevelopmentService:NewDealerDevelopmentService
+    private newDealerDevelopmentService:NewDealerDevelopmentService,
+    private commonService: CommonService,
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
-		this.searchConfiguration();
-    
+    this.populateDropdown();
+    this.initCollectionForm();
   }
 
-  searchConfiguration() {
-		this.query = new NewDealerDevelopmentQuery({
-		
-			depot: '',
-			territory: '',
-			year: new Date().getFullYear()
+  
+  prepareNewDealerEntry(): NewDealerDevelopmentQuery {
+		const controls = this.searchForm.controls;
+
+		const _query = new NewDealerDevelopmentQuery();
+		_query.depot = controls['depot'].value;
+		_query.territory = controls['territory'].value;
+    _query.year=new Date().getFullYear();
+		return _query;
+	}
+
+  initCollectionForm() {
+		this.createForm();
+	}
+
+	createForm() {
+		this.searchForm = this.formBuilder.group({
+			depot: [''],
+			territory: [''],
+			
 		});
-		this.searchOptionQuery = new SearchOptionQuery();
-		this.searchOptionQuery.clear();
+
 	}
-
-	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
-		searchOptionDef:[
-			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-		]});
-
-	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
-		// console.log('Search option query callback: ', queryObj);
-		this.query.depot = queryObj.depot;
-		// this.query.salesGroups = queryObj.salesGroups;
-		this.query.territory = queryObj.territories[0];
-
-    this.loadData()
-	}
-
+	get formControls() { return this.searchForm.controls; }
 
   loadData() {
+    const query=this.prepareNewDealerEntry();
     this.data = [];
-    this.newDealerDevelopmentService.getNewDealerDevelopment(this.query).subscribe(
+    this.newDealerDevelopmentService.getNewDealerDevelopment(query).subscribe(
       res => this.data = res.data,
       error => console.log(error),
       () => console.log('done')
@@ -68,6 +74,24 @@ this.newDealerDevelopmentService.SaveOrUpdateNewDealerDevelopment(this.data).sub
       error => console.log(error),
       () => console.log('done')
     );
+}
+
+
+populateDropdown(): void {
+   
+  // this.loadDynamicDropdown();
+
+      const forkJoinSubscription1 = forkJoin([
+          this.commonService.getDepotList(),
+          this.commonService.getTerritoryList(),
+      ]).subscribe(([depot, territory]) => {
+        
+          this.depotList = depot.data;
+          this.territoryList = territory.data;
+      }, (err) => { }, () => { });
+
+  this.subscriptions.push(forkJoinSubscription1);
+  
 }
 
 
