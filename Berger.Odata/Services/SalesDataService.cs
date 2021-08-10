@@ -26,11 +26,16 @@ namespace Berger.Odata.Services
         private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
         private readonly IODataSAPRepository<CustomerPerformanceReport> _customerPerformanceReportRepository;
         private readonly IODataSAPRepository<ColorBankPerformanceReport> _colorBankPerformanceSapRepository;
+        private readonly IODataSAPRepository<SAPSalesInfo> _sapSalesInfoRepository;
+
         public SalesDataService(
             IODataService odataService,
             IODataBrandService odataBrandService,
             IODataCommonService odataCommonService,
-            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo, IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository, IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository, IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository)
+            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo, 
+            IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository, 
+            IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository, 
+            IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository)
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
@@ -38,6 +43,7 @@ namespace Berger.Odata.Services
             _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
             _customerPerformanceReportRepository = customerPerformanceReportRepository;
             _colorBankPerformanceSapRepository = colorBankPerformanceSapRepository;
+            _sapSalesInfoRepository = sapSalesInfoRepository;
         }
 
         #region During dealer visit
@@ -1466,19 +1472,31 @@ namespace Berger.Odata.Services
         public async Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "")
         {
             var currentDate = DateTime.Now;
-            var fromDate = currentDate.SalesSearchDateFormat();
-            var toDate = currentDate.SalesSearchDateFormat();
+            //var fromDate = currentDate.SalesSearchDateFormat();
+            //var toDate = currentDate.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                            .AddProperty(DataColumnDef.NetAmount);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                .AddProperty(DataColumnDef.NetAmount);
 
-            var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
-                                                    depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
-                                                    territories: area.Territories, zones: area.Zones,
-                                                    division: division, channel: channel);
+            //var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
+            //                                        depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
+            //                                        territories: area.Territories, zones: area.Zones,
+            //                                        division: division, channel: channel);
 
-            var result = data.Select(x => x.CustomerNoOrSoldToParty).Distinct().Count();
+            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x => x.CustomerNo,
+                                x => x.Date.Date == currentDate.Date
+                                    && (!area.Depots.Any() || area.Depots.Contains(x.PlantOrBusinessArea))
+                                    && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
+                                    && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
+                                    && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
+                                    && (!area.Zones.Any() || area.Zones.Contains(x.Zone))
+                                    && x.Division == division
+                                    && x.DistributionChannel == channel,
+                                null, null, true);
+
+            //var result = data.Select(x => x.CustomerNoOrSoldToParty).Distinct().Count();
+            var result = data.Distinct().Count();
 
             return result;
         }
@@ -1486,27 +1504,40 @@ namespace Berger.Odata.Services
         public async Task<IList<TodaysInvoiceValueResultModel>> GetTodaysActivityInvoiceValue(TodaysInvoiceValueSearchModel model, AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
-            var fromDate = currentDate.SalesSearchDateFormat();
-            var toDate = currentDate.SalesSearchDateFormat();
+            //var fromDate = currentDate.SalesSearchDateFormat();
+            //var toDate = currentDate.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.NetAmount);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                    .AddProperty(DataColumnDef.CustomerName)
+            //                    .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+            //                    .AddProperty(DataColumnDef.NetAmount);
 
-            var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
-                                                    depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
-                                                    territories: area.Territories, zones: area.Zones,
-                                                    division: model.Division);
+            //var data = await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
+            //                                        depots: area.Depots, salesOffices: area.SalesOffices, salesGroups: area.SalesGroups,
+            //                                        territories: area.Territories, zones: area.Zones,
+            //                                        division: model.Division);
 
-            var result = data.Select(x =>
+            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x => 
+                                new { x.InvoiceNoOrBillNo, x.CustomerNo, x.CustomerName, x.NetAmount },
+                                x => x.Date.Date == currentDate.Date
+                                    && (!area.Depots.Any() || area.Depots.Contains(x.PlantOrBusinessArea))
+                                    && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
+                                    && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
+                                    && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
+                                    && (!area.Zones.Any() || area.Zones.Contains(x.Zone))
+                                    && x.Division == model.Division,
+                                null, null, true);
+
+            var groupData = data.GroupBy(x => x.InvoiceNoOrBillNo).ToList();
+
+            var result = groupData.Select(x =>
                                 new TodaysInvoiceValueResultModel()
                                 {
-                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
-                                    CustomerNo = x.CustomerNoOrSoldToParty,
-                                    CustomerName = x.CustomerName,
-                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount)
+                                    InvoiceNoOrBillNo = x.Key,
+                                    CustomerNo = x.FirstOrDefault()?.CustomerNo ?? string.Empty,
+                                    CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
+                                    NetAmount = x.Sum(s => s.NetAmount)
                                 }).ToList();
 
             return result;
