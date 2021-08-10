@@ -191,6 +191,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<LeadGeneration> LeadGenerations { get; set; }
         public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
         public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
+        public DbSet<LeadActualVolumeSold> LeadActualVolumeSold { get; set; }
         #endregion
 
         #region Tinting

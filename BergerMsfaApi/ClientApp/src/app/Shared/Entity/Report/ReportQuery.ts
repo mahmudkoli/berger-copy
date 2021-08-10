@@ -57,6 +57,20 @@ export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
     }
 }
 
+export class LeadBusinessUpdateQuery extends ReportBaseQuery {
+    projectName: string;
+    projectCode: string;
+    projectStatusId: number;
+
+    constructor(init?: Partial<LeadBusinessUpdateQuery>) {
+        super();
+        Object.assign(this, init);
+    }
+
+    clear() {
+    }
+}
+
 export class PainterRegisterQuery extends ReportBaseQuery {
     painterMobileNo: string;
     painterId: number;

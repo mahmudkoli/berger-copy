@@ -38,6 +38,7 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
+import { LeadBusinessUpdateReportComponent } from './lead-business-update/lead-business-update-report.component';
 
 const routes: Routes = [
   {
@@ -67,6 +68,12 @@ const routes: Routes = [
         component: LeadFollowUpDetailsReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Lead FollowUp Details', },
+      },
+      {
+        path: 'lead-business-update',
+        component: LeadBusinessUpdateReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Lead Business Update', },
       },
       {
         path: 'painter-registration',

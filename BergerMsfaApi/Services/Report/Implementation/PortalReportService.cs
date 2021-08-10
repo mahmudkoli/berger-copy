@@ -407,6 +407,102 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return queryResult;
         }
 
+        public async Task<QueryResultModel<LeadBusinessReportResultModel>> GetLeadBusinessUpdateReportAsync(LeadBusinessReportSearchModel query)
+        {
+            var reportResult = new List<LeadBusinessReportResultModel>();
+            var reportData = new List<LeadBusinessReportResultModel>();
+
+            var leadBusiness = await (from lf in _context.LeadFollowUps
+                                      join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id
+                                      join ui in _context.UserInfos on lg.UserId equals ui.Id
+                                      join las in _context.LeadActualVolumeSold on lf.Id equals las.LeadFollowUpId
+                                      join bi in _context.BrandInfos on las.BrandInfoId equals bi.Id
+                                      join bfi in _context.BrandFamilyInfos on bi.MaterialGroupOrBrand equals bfi.MatarialGroupOrBrand
+                                      join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id
+                                      join dd in _context.DropdownDetails on lba.ProductSourcingId equals dd.Id
+                                      where (
+                                           (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
+                                           && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
+                                           && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
+                                           && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
+                                           && (!query.FromDate.HasValue || lf.ActualVisitDate.Date >= query.FromDate.Value.Date)
+                                           && (!query.ToDate.HasValue || lf.ActualVisitDate.Date <= query.ToDate.Value.Date)
+                                           && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
+                                           && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
+                                           && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
+                                      )
+                                      select new
+                                      {
+                                          leadfolowupId = lf.Id,
+                                          ui.Email,
+                                          lg.Depot,
+                                          lg.Code,
+                                          lg.ProjectName,
+                                          lg.ProjectAddress,
+                                          lg.Territory,
+                                          lg.Zone,
+                                          lf.ActualVisitDate,
+                                          bi.MaterialGroupOrBrand,
+                                          bfi.MatarialGroupOrBrandName,
+                                          bi.MaterialDescription,
+                                          las.Quantity,
+                                          las.TotalAmount,
+                                          dd.DropdownName,
+                                          lba.ProductSourcingRemarks
+                                      }).OrderByDescending(x => x.ActualVisitDate).ToListAsync();
+
+            var groupOfLeadBusiness = leadBusiness.GroupBy(x => new { x.leadfolowupId });
+
+            foreach (var item in groupOfLeadBusiness)
+            {
+                foreach (var i in item)
+                {
+                    reportResult.Add(new LeadBusinessReportResultModel { 
+                        UserId = i.Email,
+                        Depot = i.Depot,
+                        ProjectCode = i.Code,
+                        ProjectName = i.ProjectName,
+                        Address = i.ProjectAddress,
+                        Territory = i.Territory,
+                        Zone = i.Zone,
+                        VisitDate = CustomConvertExtension.ObjectToDateString(i.ActualVisitDate),
+                        BrandName = i.MatarialGroupOrBrandName + '(' + i.MaterialGroupOrBrand + ')',
+                        BrandDescription = i.MaterialDescription,
+                        Quantity = i.Quantity,
+                        TotalAmount = i.TotalAmount,
+                        ProductSourcing = i.DropdownName,
+                        DealerIdAndName = i.ProductSourcingRemarks
+                    });
+                }
+                reportResult.Add(new LeadBusinessReportResultModel
+                {
+                    UserId = "Total",
+                    Depot = item.FirstOrDefault().Depot,
+                    ProjectCode = item.FirstOrDefault().Code,
+                    ProjectName = item.FirstOrDefault().ProjectName,
+                    Address = item.FirstOrDefault().ProjectAddress,
+                    Territory = item.FirstOrDefault().Territory,
+                    Zone = item.FirstOrDefault().Zone,
+                    VisitDate = CustomConvertExtension.ObjectToDateString(item.FirstOrDefault().ActualVisitDate),
+                    BrandName = item.FirstOrDefault().MatarialGroupOrBrandName + '(' + item.FirstOrDefault().MaterialGroupOrBrand + ')',
+                    BrandDescription = item.FirstOrDefault().MaterialDescription,
+                    Quantity = item.Sum(x => x.Quantity),
+                    TotalAmount = item.Sum(x => x.TotalAmount),
+                    ProductSourcing = "",
+                    DealerIdAndName = ""
+                });
+            }
+
+            reportData = reportResult.Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<LeadBusinessReportResultModel>();
+            queryResult.Items = reportData;
+            queryResult.TotalFilter = reportResult.Count();
+            queryResult.Total = reportResult.Count();
+
+            return queryResult;
+        }
+
         public async Task<QueryResultModel<PainterRegistrationReportResultModel>> GetPainterRegistrationReportAsync(PainterRegistrationReportSearchModel query)
         {
             var reportResult = new List<PainterRegistrationReportResultModel>();
