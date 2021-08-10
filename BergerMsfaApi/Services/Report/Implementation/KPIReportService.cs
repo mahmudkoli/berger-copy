@@ -489,7 +489,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 .Select(x => new
                 {
                     x.Month,
-                    x.Target
+                    x.ColorBankInstallTarget
                 }).ToListAsync();
 
             var targetList2 =
@@ -500,7 +500,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 .Select(x => new
                 {
                     x.Month,
-                    x.Target
+                    x.ColorBankInstallTarget
                 }).ToListAsync();
 
             targetList.AddRange(targetList2);
@@ -515,7 +515,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     Actual = actual = colorBankMachineDataModels.Count(x => CustomConvertExtension.ObjectToDateTime(x.InstallDate).Month == item.Key),
                     Month = item.Value,
-                    Target = target = targetList.FirstOrDefault(x => x.Month == item.Key)?.Target ?? 0,
+                    Target = target = targetList.FirstOrDefault(x => x.Month == item.Key)?.ColorBankInstallTarget ?? 0,
                     TargetAchievement = GetAchivement(target, actual)
                 };
                 result.Add(addItem);
