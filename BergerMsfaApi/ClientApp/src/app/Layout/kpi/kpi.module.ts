@@ -8,10 +8,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { SharedMasterModule } from 'src/app/Shared/Modules/shared-master/shared-master.module';
+import { ColorBankTargetSetupComponent } from './color-bank-target-setup/color-bank-target-setup.component';
 
 
 @NgModule({
-  declarations: [NewDealerDevelopmentComponent],
+  declarations: [NewDealerDevelopmentComponent, ColorBankTargetSetupComponent],
   imports: [
     CommonModule,
     KpiRoutingModule,
