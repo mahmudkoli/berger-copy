@@ -43,6 +43,7 @@ import { BillingAnalysisReportComponent } from './billing-analysis/billing-analy
 import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
+import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
 
 @NgModule({
     declarations: [
@@ -79,6 +80,7 @@ import { InactivePainterReportComponent } from './inactive-painter/inactive-pain
       BusinessCallAnalysisReportComponent,
       StrikeRateKpiReportComponent,
       BillingAnalysisReportComponent,
+      UniverseReachAnalysisReportComponent,
       ModalBillingAnalysisDetailsComponent,
       FinancialCollectionPlanReportComponent,
       AddhocSubDealerSalescallReportComponent,

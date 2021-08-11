@@ -202,7 +202,8 @@ export class UniverseReachAnalysisAddComponent implements OnInit, OnDestroy {
 	}
 
 	getCurrentFiscalYear(): string {
-		return `${this.getCFYFD().getFullYear()}-${this.getCFYLD().getFullYear().toString().substring(2)}`;
+		// return `${this.getCFYFD().getFullYear()}-${this.getCFYLD().getFullYear().toString().substring(2)}`;
+		return `${this.getCFYFD().getFullYear()}-${(this.getCFYFD().getFullYear()%100)+1}`;
 	}
 
 	getCFYFD(): Date {

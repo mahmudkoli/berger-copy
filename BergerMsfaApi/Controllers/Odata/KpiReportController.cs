@@ -2,7 +2,9 @@
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Models.Report;
+using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,13 +20,16 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
+        private readonly IUniverseReachAnalysisService _universeReachAnalysisService;
 
         public KpiReportController(
             IKpiDataService kpiDataService,
-            IKPIReportService kpiReportService)
+            IKPIReportService kpiReportService,
+            IUniverseReachAnalysisService universeReachAnalysisService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;
+            _universeReachAnalysisService = universeReachAnalysisService;
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]
@@ -187,6 +192,34 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _kpiReportService.GetBillingAnalysisKPIReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetUniverseReachAnalysis")]
+        public async Task<IActionResult> GetUniverseReachAnalysisReportReport([FromQuery] UniverseReachAnalysisReportSearchModel model)
+        {
+            try
+            {
+                var result = await _universeReachAnalysisService.GetUniverseReachAnalysisReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadUniverseReachAnalysis")]
+        public async Task<IActionResult> DownloadUniverseReachAnalysisReportReport([FromQuery] UniverseReachAnalysisReportSearchModel model)
+        {
+            try
+            {
+                var result = await _universeReachAnalysisService.GetUniverseReachAnalysisReportAsync(model);
                 return Ok(result);
             }
             catch (Exception ex)

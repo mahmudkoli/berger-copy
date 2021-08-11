@@ -418,6 +418,19 @@ export class BillingAnalysisKpiReportQuery extends ReportBaseQuery {
     }
 }
 
+export class UniverseReachAnalysisKpiReportQuery extends ReportBaseQuery {
+    year: number;
+
+    constructor(init?: Partial<UniverseReachAnalysisKpiReportQuery>) {
+        super();
+        Object.assign(this, init);
+        this.year = new Date().getUTCFullYear()
+    }
+
+    clear() {
+    }
+}
+
 export class CollectionPlanKpiReportQuery {
     depot: string;
     territory: string;

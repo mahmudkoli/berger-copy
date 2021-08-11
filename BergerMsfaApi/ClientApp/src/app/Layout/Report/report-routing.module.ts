@@ -38,6 +38,7 @@ import { AddhocDealerSalescallReportComponent } from './addhoc-dealer-salescall/
 import { BillingAnalysisReportComponent } from './billing-analysis/billing-analysis-report.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
+import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
 
 const routes: Routes = [
   {
@@ -262,6 +263,13 @@ const routes: Routes = [
         component: BillingAnalysisReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Billing Analysis Report', },
+      },
+
+      {
+        path: 'universe-reach-analysis',
+        component: UniverseReachAnalysisReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Universe Reach Analysis Report', },
       },
 
       {

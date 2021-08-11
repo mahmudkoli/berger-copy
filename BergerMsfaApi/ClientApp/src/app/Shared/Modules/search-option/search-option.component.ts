@@ -563,7 +563,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
   getYears(): any[] {
     let years: any[] = [];
     let currentYear: number = new Date().getFullYear();
-    for (let i = currentYear - 10; i < currentYear; i++) {
+    for (let i = currentYear - 10; i <= currentYear; i++) {
       years.push({ id: i, name: i.toString() });
     }
     return years.reverse();

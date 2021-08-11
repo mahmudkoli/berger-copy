@@ -20,6 +20,7 @@ namespace BergerMsfaApi.Services.KPI.interfaces
         Task<bool> IsExitsUniverseReachAnalysissAsync(int id, string businessArea, string territory, string fiscalYear = null);
         Task<SaveAppUniverseReachAnalysisModel> GetAppUniverseReachAnalysissAsync(AppUniverseReachAnalysisQueryObjectModel query);
         Task<int> UpdateAppUniverseReachAnalysissAsync(SaveAppUniverseReachAnalysisModel model);
+        Task<IList<UniverseReachAnalysisReportResultModel>> GetUniverseReachAnalysisReportAsync(UniverseReachAnalysisReportSearchModel query);
         string GetCurrentFiscalYear();
         #endregion
     }

@@ -505,6 +505,20 @@ export class ReportService {
     }/DownloadBillingAnalysis?${this.commonService.toQueryString(filter)}`;
   }
 
+  getUniverseReachAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetUniverseReachAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadUniverseReachAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadUniverseReachAnalysis?${this.commonService.toQueryString(filter)}`;
+  }
+
   getFinancialCollectionPlan(filter?) {
     return this.http.get<APIResponse>(
       `${

@@ -5,6 +5,7 @@ using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Mappings;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -81,5 +82,41 @@ namespace BergerMsfaApi.Models.KPI
     {
         public string BusinessArea { get; set; } // Plant, Depot
         public string Territory { get; set; }
+    }
+
+    public class UniverseReachAnalysisReportSearchModel
+    {
+        [JsonIgnore]
+        public bool ForApp { get; set; }
+        public string Depot { get; set; }
+        public IList<string> SalesGroups { get; set; }
+        public IList<string> Territories { get; set; }
+        public int Year { get; set; }
+
+        public UniverseReachAnalysisReportSearchModel()
+        {
+            this.SalesGroups = new List<string>();
+            this.Territories = new List<string>();
+        }
+    }
+
+    public class UniverseReachAnalysisReportResultModel : IMapFrom<UniverseReachAnalysis>
+    {
+        public string Territory { get; set; }
+        public int OutletNumber { get; set; }
+        public int DirectCovered { get; set; }
+        public int IndirectCovered { get; set; }
+        public int UnCovered { get; set; }
+        public int DirectTarget { get; set; }
+        public int IndirectTarget { get; set; }
+        public int DirectActual { get; set; }
+        public int IndirectActual { get; set; }
+        public int IndirectManual { get; set; }
+        public int Covered { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<UniverseReachAnalysis, UniverseReachAnalysisReportResultModel>();
+        }
     }
 }
