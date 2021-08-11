@@ -1,0 +1,10 @@
+<div class="col col-md-12">
+    <app-search-option [searchOptionQuery]="searchOptionQuery" [searchOptionSettings]="searchOptionSettings" 
+        (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"></app-search-option>
+        <app-p-table [pTableSetting]="ptableSettings" [pTableMasterData]="data"
+         [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
+
+       >
+</app-p-table>
+
+        </div>

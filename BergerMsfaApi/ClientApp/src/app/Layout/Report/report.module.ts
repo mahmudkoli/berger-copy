@@ -44,6 +44,8 @@ import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-d
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
 import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
+import { NewDealerDevelopmentListComponent } from './new-dealer-development-list/new-dealer-development-list.component';
+import { DealerConversionComponent } from './dealer-conversion/dealer-conversion.component';
 
 @NgModule({
     declarations: [
@@ -85,7 +87,9 @@ import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/
       FinancialCollectionPlanReportComponent,
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
-      InactivePainterReportComponent
+      InactivePainterReportComponent,
+      NewDealerDevelopmentListComponent,
+      DealerConversionComponent
     ],
   imports: [
       CommonModule,

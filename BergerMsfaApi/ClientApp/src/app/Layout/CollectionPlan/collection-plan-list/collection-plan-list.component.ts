@@ -140,6 +140,7 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
+		enabledTotal:true,
 		// pageSize: 10,
 		enabledPagination: true,
 		enabledDeleteBtn: true,

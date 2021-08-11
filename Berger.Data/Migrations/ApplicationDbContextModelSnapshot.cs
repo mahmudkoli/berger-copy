@@ -1897,6 +1897,9 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("FiscalYear")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
@@ -3655,6 +3658,12 @@ namespace Berger.Data.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<int>("ColorBankInstallTarget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColorBankProductivityTarget")
+                        .HasColumnType("int");
+
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
@@ -3671,9 +3680,6 @@ namespace Berger.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Target")
                         .HasColumnType("int");
 
                     b.Property<string>("Territory")
