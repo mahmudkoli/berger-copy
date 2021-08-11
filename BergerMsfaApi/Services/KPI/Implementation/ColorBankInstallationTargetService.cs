@@ -14,9 +14,9 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             _repository = repository;
         }
 
-        public async IList<ColorBankInstallationTarget> GetFyYearData(int year,string depot,string territory)
-        {
-           await _repository.FindAllAsync(x => x.Year == year && x.BusinessArea == depot && x.Territory == territory);
-        }
+        //public async IList<ColorBankInstallationTarget> GetFyYearData(int year,string depot,string territory)
+        //{
+        //   await _repository.FindAllAsync(x => x.Year == year && x.BusinessArea == depot && x.Territory == territory);
+        //}
     }
 }
