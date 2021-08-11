@@ -28,16 +28,22 @@ namespace BergerMsfaApi.Services.KPI.Implementation
     {
         public readonly IRepository<UniverseReachAnalysis> _UniverseReachAnalysisSvc;
         private readonly IRepository<Depot> _depotSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<CustomerGroup> _customerGroupSvc;
         public readonly IMapper _mapper;
 
         public UniverseReachAnalysisService(
             IRepository<UniverseReachAnalysis> UniverseReachAnalysisSvc,
             IRepository<Depot> depotSvc,
+            IRepository<DealerInfo> dealerInfoSvc,
+            IRepository<CustomerGroup> customerGroupSvc,
             IMapper mapper
             )
         {
             _UniverseReachAnalysisSvc = UniverseReachAnalysisSvc;
             this._depotSvc = depotSvc;
+            this._dealerInfoSvc = dealerInfoSvc;
+            _customerGroupSvc = customerGroupSvc;
             _mapper = mapper;
         }
 
@@ -208,13 +214,114 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                                         && x.Territory == query.Territory && x.FiscalYear == fiscalYear);
             if(existingUniverseReachAnalysis == null) throw new Exception("Universe/Reach Plan of this area and this fiscal year is not found.");
             var result = _mapper.Map<SaveAppUniverseReachAnalysisModel>(existingUniverseReachAnalysis);
+
+            var CFYFD = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now);
+            var CFYLD = Berger.Odata.Extensions.DateTimeExtension.GetCFYLD(DateTime.Now);
+
+            var resultDealer = (from dealer in (await _dealerInfoSvc.FindAllAsync(x => true))
+                                join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
+                                on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                                into cust
+                                from cu in cust.DefaultIfEmpty()
+                                where (
+                                    (dealer.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                        && dealer.Division == ConstantsODataValue.DivisionDecorative) &&
+                                    (dealer.BusinessArea == query.BusinessArea
+                                        && dealer.Territory == query.Territory) &&
+                                    (
+                                        CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date >= CFYFD.Date
+                                        && CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date <= CFYLD.Date
+                                    )
+                                )
+                                select new 
+                                {
+                                    Id = dealer.Id,
+                                    CustomerNo = dealer.CustomerNo,
+                                    IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
+                                }).ToList();
+
+            result.DirectActual = resultDealer.Where(x => !x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+            result.IndirectActual = resultDealer.Where(x => x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+
             return result;
+        }
+
+        public async Task<IList<UniverseReachAnalysisReportResultModel>> GetUniverseReachAnalysisReportAsync(UniverseReachAnalysisReportSearchModel query)
+        {
+            var CFYFD = new DateTime(query.Year, 4, 1);
+            var CFYLD = new DateTime(query.Year+1, 3, 31);
+
+            var fiscalYear = $"{CFYFD.Year}-{(CFYLD.Year % 100)}";
+            //var fiscalYear = $"{CFYFD}-{CFYLD.ToString().Substring(2)}";
+
+            var result = (await _UniverseReachAnalysisSvc.FindAllAsync(x => x.FiscalYear == fiscalYear && x.BusinessArea == query.Depot
+                                                                            && (!query.Territories.Any() || query.Territories.Contains(x.Territory)))).ToList();
+
+            var resultDealer = (from dealer in (await _dealerInfoSvc.FindAllAsync(x => true))
+                                join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
+                                on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                                into cust
+                                from cu in cust.DefaultIfEmpty()
+                                where (
+                                    (dealer.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                        && dealer.Division == ConstantsODataValue.DivisionDecorative) &&
+                                    (dealer.BusinessArea == query.Depot
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(dealer.SalesGroup))
+                                        && (!query.Territories.Any() || query.Territories.Contains(dealer.Territory))) &&
+                                    (
+                                        CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date >= CFYFD.Date
+                                        && CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date <= CFYLD.Date
+                                    )
+                                )
+                                select new
+                                {
+                                    Id = dealer.Id,
+                                    CustomerNo = dealer.CustomerNo,
+                                    Territory = dealer.Territory,
+                                    IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
+                                }).ToList();
+
+            var returnResult = _mapper.Map<IList<UniverseReachAnalysisReportResultModel>>(result);
+
+            foreach (var res in returnResult)
+            {
+                res.DirectActual = resultDealer.Where(x => x.Territory == res.Territory && !x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+                res.IndirectActual = resultDealer.Where(x => x.Territory == res.Territory && x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+
+                res.UnCovered = res.OutletNumber - (res.DirectCovered + res.IndirectCovered);
+                res.Covered = res.UnCovered - (res.DirectActual + res.IndirectActual + res.IndirectManual);
+            }
+
+            if (query.ForApp)
+            {
+                returnResult = new List<UniverseReachAnalysisReportResultModel>() 
+                {
+                    new UniverseReachAnalysisReportResultModel ()
+                    {
+                        Territory = null,
+                        OutletNumber = returnResult.Sum(x => x.OutletNumber),
+                        DirectCovered = returnResult.Sum(x => x.DirectCovered),
+                        IndirectCovered = returnResult.Sum(x => x.IndirectCovered),
+                        UnCovered = returnResult.Sum(x => x.UnCovered),
+                        DirectTarget = returnResult.Sum(x => x.DirectTarget),
+                        IndirectTarget = returnResult.Sum(x => x.IndirectTarget),
+                        DirectActual = returnResult.Sum(x => x.DirectActual),
+                        IndirectActual = returnResult.Sum(x => x.IndirectActual),
+                        IndirectManual = returnResult.Sum(x => x.IndirectManual),
+                        Covered = returnResult.Sum(x => x.Covered),
+                    }
+                };
+            }
+
+            return returnResult;
         }
 
         public string GetCurrentFiscalYear()
         {
-            var year = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now).Year;
-            var fiscalYear = $"{year}-{(year % 100) + 1}";
+            var CFYFD = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now).Year;
+            var CFYLD = Berger.Odata.Extensions.DateTimeExtension.GetCFYLD(DateTime.Now).Year;
+            //var fiscalYear = $"{CFYFD}-{CFYLD.ToString().Substring(2)}";
+            var fiscalYear = $"{CFYFD}-{(CFYFD % 100) + 1}";
             return fiscalYear;
         }
         #endregion

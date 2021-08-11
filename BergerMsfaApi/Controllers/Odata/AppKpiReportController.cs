@@ -5,6 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Models.KPI;
+using BergerMsfaApi.Models.Report;
+using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Filters;
@@ -22,12 +25,15 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
+        private readonly IUniverseReachAnalysisService _universeReachAnalysisService;
         private readonly INewDealerDevelopmentService _newDealerDevelopmentService;
-
-        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService, INewDealerDevelopmentService newDealerDevelopmentService)
+        
+        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService, 
+          IUniverseReachAnalysisService universeReachAnalysisService, INewDealerDevelopmentService newDealerDevelopmentService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;
+            _universeReachAnalysisService = universeReachAnalysisService;
             _newDealerDevelopmentService = newDealerDevelopmentService;
         }
 
@@ -67,6 +73,21 @@ namespace BergerMsfaApi.Controllers.Odata
             try
             {
                 var result = await _kpiReportService.GetBillingAnalysisKPIReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUniverseReachAnalysis")]
+        public async Task<IActionResult> GetUniverseReachAnalysisReportReport([FromQuery] UniverseReachAnalysisReportSearchModel model)
+        {
+            try
+            {
+                model.ForApp = true;
+                var result = await _universeReachAnalysisService.GetUniverseReachAnalysisReportAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
