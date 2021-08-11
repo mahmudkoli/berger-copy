@@ -552,36 +552,93 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
         {
             var reportResult = new List<CollectionPlanKPIReportResultModel>();
-            var currentDate = DateTime.Now;
+            
 
-            var dealerIds = await (from diInfo in _context.DealerInfos
-                                   where (
-                                       diInfo.BusinessArea == query.Depot
-                                       && query.Territory == diInfo.Territory
-                                   )
-                                   select diInfo.CustomerNo).Distinct().ToListAsync();
 
-            var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
-            var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
-            var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
+            foreach (var item in query.Territory)
+            {
+                var currentDate = DateTime.Now;
 
-            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
-            var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
+                var dealerIds = await (from diInfo in _context.DealerInfos
+                                       where (
+                                           diInfo.BusinessArea == query.Depot
+                                           && item==diInfo.Territory
+                                           && string.IsNullOrEmpty(query.SalesGroups)?true: query.SalesGroups==diInfo.SalesGroup
+                                       )
+                                       select diInfo.CustomerNo).Distinct().ToListAsync();
 
-            var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
-                                    && x.BusinessArea == query.Depot && query.Territory == x.Territory
+                var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
+                var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
+
+                var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+                var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
+                var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
+                                    && x.BusinessArea == query.Depot && item == x.Territory
                                     && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
 
-            reportResult.Add(new CollectionPlanKPIReportResultModel
-            {
-                SlippageAmount = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
-                CollectionTargetAmount = targetAmount,
-                CollectionActualAmount = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
-                CollectionActualSlippageAmount = collectionData.Where(x => slippageData.Any(y => x.CustomerNo == y.CustomerNo)).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount))
-            });
+                var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+
+                reportResult.Add(new CollectionPlanKPIReportResultModel
+                {
+                    Territory = item,
+                    ImmediateLMSlippageAmount = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount)),
+                    MTDCollectionPlan = targetAmount,
+                    MTDActualCollection = actualCollection,
+                    TargetAch = GetAchivement(targetAmount, actualCollection)
+                });
+            }
+
 
             return reportResult;
         }
+
+
+        public async Task<CollectionPlanKPIReportResultModel> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query)
+        {
+            var reportResult = new CollectionPlanKPIReportResultModel();
+
+
+                var currentDate = DateTime.Now;
+
+            foreach (var item in query.Territory)
+            {
+                var dealerIds = await (from diInfo in _context.DealerInfos
+                                       where (
+                                           diInfo.BusinessArea == query.Depot
+                                           && item == diInfo.Territory
+                                           && query.SalesGroups!=null ? query.SalesGroups.Contains(diInfo.SalesGroup) :true
+                                       )
+                                       select diInfo.CustomerNo).Distinct().ToListAsync();
+
+                var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
+                var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
+
+                var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+                var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
+                var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
+                                    && x.BusinessArea == query.Depot && item == x.Territory
+                                    && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
+
+                var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+
+
+                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount+ slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan+ targetAmount;
+                reportResult.MTDActualCollection = reportResult.MTDActualCollection+ actualCollection;
+                reportResult.TargetAch = reportResult.TargetAch+ GetAchivement(targetAmount, actualCollection);
+             
+            }
+
+                
+            
+
+
+            return reportResult;
+        }
+
+
 
         public decimal GetPercentage(decimal total, decimal value)
         {
