@@ -28,16 +28,22 @@ namespace BergerMsfaApi.Services.KPI.Implementation
     {
         public readonly IRepository<UniverseReachAnalysis> _UniverseReachAnalysisSvc;
         private readonly IRepository<Depot> _depotSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly IRepository<CustomerGroup> _customerGroupSvc;
         public readonly IMapper _mapper;
 
         public UniverseReachAnalysisService(
             IRepository<UniverseReachAnalysis> UniverseReachAnalysisSvc,
             IRepository<Depot> depotSvc,
+            IRepository<DealerInfo> dealerInfoSvc,
+            IRepository<CustomerGroup> customerGroupSvc,
             IMapper mapper
             )
         {
             _UniverseReachAnalysisSvc = UniverseReachAnalysisSvc;
             this._depotSvc = depotSvc;
+            this._dealerInfoSvc = dealerInfoSvc;
+            _customerGroupSvc = customerGroupSvc;
             _mapper = mapper;
         }
 
@@ -208,6 +214,35 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                                         && x.Territory == query.Territory && x.FiscalYear == fiscalYear);
             if(existingUniverseReachAnalysis == null) throw new Exception("Universe/Reach Plan of this area and this fiscal year is not found.");
             var result = _mapper.Map<SaveAppUniverseReachAnalysisModel>(existingUniverseReachAnalysis);
+
+            var CFYFD = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now);
+            var CFYLD = Berger.Odata.Extensions.DateTimeExtension.GetCFYLD(DateTime.Now);
+
+            var resultDealer = (from dealer in (await _dealerInfoSvc.FindAllAsync(x => true))
+                                join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
+                                on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                                into cust
+                                from cu in cust.DefaultIfEmpty()
+                                where (
+                                    (dealer.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                        && dealer.Division == ConstantsODataValue.DivisionDecorative) &&
+                                    (dealer.BusinessArea == query.BusinessArea
+                                        && dealer.Territory == query.Territory) &&
+                                    (
+                                        CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date >= CFYFD.Date
+                                        && CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date <= CFYLD.Date
+                                    )
+                                )
+                                select new 
+                                {
+                                    Id = dealer.Id,
+                                    CustomerNo = dealer.CustomerNo,
+                                    IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
+                                }).ToList();
+
+            result.DirectActual = resultDealer.Where(x => !x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+            result.IndirectActual = resultDealer.Where(x => x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
+
             return result;
         }
 
