@@ -14,7 +14,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }
         //public string ProductSourcing { get; set; }
-        public int ProductSourcingId { get; set; }
+        public int? ProductSourcingId { get; set; }
         public DropdownDetail ProductSourcing { get; set; }
         public string ProductSourcingRemarks { get; set; } // multiple dealer id and name separated by comma
         public bool IsColorSchemeGiven { get; set; }
