@@ -18,8 +18,6 @@ namespace Berger.Data.MsfaEntity.KPI
         public int IndirectCovered { get; set; }
         public int DirectTarget { get; set; }
         public int IndirectTarget { get; set; }
-        //public int DirectActual { get; set; }
-        //public int IndirectActual { get; set; }
         public int IndirectManual { get; set; }
     }
 }

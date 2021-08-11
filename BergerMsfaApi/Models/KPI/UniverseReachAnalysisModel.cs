@@ -62,6 +62,7 @@ namespace BergerMsfaApi.Models.KPI
         public void Mapping(Profile profile)
         {
             profile.CreateMap<UniverseReachAnalysis, SaveAppUniverseReachAnalysisModel>();
+            profile.CreateMap<SaveAppUniverseReachAnalysisModel, UniverseReachAnalysis>();
         }
     }
 

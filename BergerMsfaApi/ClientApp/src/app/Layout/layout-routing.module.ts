@@ -137,6 +137,13 @@ const routes: Routes = [
             (m) => m.CollectionPlanModule
           ),
       },
+      {
+        path: 'universe-reach-analysis',
+        loadChildren: () =>
+          import('./UniverseReachAnalysis/universe-reach-analysis.module').then(
+            (m) => m.UniverseReachAnalysisModule
+          ),
+      },
     ],
   },
 ];
