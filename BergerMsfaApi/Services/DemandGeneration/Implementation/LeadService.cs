@@ -162,6 +162,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatusLeadCompleted)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.SwappingCompetition)
+                                        .Include(i => i.LeadFollowUps).ThenInclude(i => i.ActualVolumeSolds).ThenInclude(i => i.BrandInfo)
                                         .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement).ThenInclude(i => i.ProductSourcing),
                                 true
                             );

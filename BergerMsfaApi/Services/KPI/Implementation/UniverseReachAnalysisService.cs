@@ -1,0 +1,222 @@
+﻿using AutoMapper;
+using Berger.Common.Constants;
+using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.Master;
+using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.Scheme;
+using Berger.Odata.Services;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.KPI;
+using BergerMsfaApi.Models.Scheme;
+using BergerMsfaApi.Repositories;
+using BergerMsfaApi.Services.KPI.interfaces;
+using BergerMsfaApi.Services.Scheme.interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using X.PagedList;
+
+namespace BergerMsfaApi.Services.KPI.Implementation
+{
+    public class UniverseReachAnalysisService : IUniverseReachAnalysisService
+    {
+        public readonly IRepository<UniverseReachAnalysis> _UniverseReachAnalysisSvc;
+        private readonly IRepository<Depot> _depotSvc;
+        public readonly IMapper _mapper;
+
+        public UniverseReachAnalysisService(
+            IRepository<UniverseReachAnalysis> UniverseReachAnalysisSvc,
+            IRepository<Depot> depotSvc,
+            IMapper mapper
+            )
+        {
+            _UniverseReachAnalysisSvc = UniverseReachAnalysisSvc;
+            this._depotSvc = depotSvc;
+            _mapper = mapper;
+        }
+
+        #region Collection Plan
+        public async Task<QueryResultModel<UniverseReachAnalysisModel>> GetAllUniverseReachAnalysissAsync(UniverseReachAnalysisQueryObjectModel query)
+        {
+            var columnsMap = new Dictionary<string, Expression<Func<UniverseReachAnalysis, object>>>()
+            {
+                ["businessArea"] = v => v.BusinessArea,
+                ["territory"] = v => v.Territory,
+                ["fiscalYear"] = v => v.FiscalYear
+            };
+
+            var result = await _UniverseReachAnalysisSvc.GetAllIncludeAsync(
+                                x => x,
+                                x => (string.IsNullOrEmpty(query.BusinessArea) || x.BusinessArea == query.BusinessArea) 
+                                        && (!query.Territories.Any() || query.Territories.Contains(x.Territory)),
+                                x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                                null,
+                                query.Page,
+                                query.PageSize,
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<UniverseReachAnalysisModel>>(result.Items);
+
+            var queryResult = new QueryResultModel<UniverseReachAnalysisModel>();
+            queryResult.Items = modelResult;
+            queryResult.TotalFilter = result.TotalFilter;
+            queryResult.Total = result.Total;
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<UniverseReachAnalysisModel>> GetAllUniverseReachAnalysissByCurrentUserAsync(UniverseReachAnalysisQueryObjectModel query)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var orderby = new string[] { "fiscalYear", "businessArea", "territory" };
+
+            Expression<Func<UniverseReachAnalysis, bool>> filterFunc = x => (string.IsNullOrEmpty(query.BusinessArea) || x.BusinessArea == query.BusinessArea)
+                                                                            && (!query.Territories.Any() || query.Territories.Contains(x.Territory));
+
+            var totalCount = await (from cpInfo in _UniverseReachAnalysisSvc.FindAll(filterFunc) select cpInfo).CountAsync();
+
+            var filterCount = await (from cpInfo in _UniverseReachAnalysisSvc.FindAll(filterFunc)
+                               join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
+                               from dpInfo in cpdLeftJoin.DefaultIfEmpty()
+                               //where (
+                               //    (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                               //    dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                               //)
+                               select cpInfo
+                               ).CountAsync();
+
+            var result = await (from cpInfo in _UniverseReachAnalysisSvc.FindAll(filterFunc)
+                          join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
+                          from dpInfo in cpdLeftJoin.DefaultIfEmpty()
+                          //where (
+                          //    (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                          //    dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                          //)
+                          orderby
+                                @orderby[0] == query.SortBy && query.IsSortAscending ? cpInfo.FiscalYear : null,
+                                @orderby[0] == query.SortBy && @orderby[1] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? null : cpInfo.FiscalYear descending,
+                                @orderby[1] == query.SortBy && query.IsSortAscending ? dpInfo.Name1 : null,
+                                @orderby[1] == query.SortBy && @orderby[0] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? null : dpInfo.Name1 descending,
+                                @orderby[2] == query.SortBy && query.IsSortAscending ? cpInfo.Territory : null,
+                                @orderby[2] == query.SortBy && @orderby[0] != query.SortBy && @orderby[1] != query.SortBy && !query.IsSortAscending ? null : cpInfo.Territory descending
+                          select new UniverseReachAnalysisModel()
+                          {
+                              Id = cpInfo.Id,
+                              BusinessArea = $"{dpInfo.Name1} ({dpInfo.Werks})",
+                              Territory = cpInfo.Territory,
+                              FiscalYear = cpInfo.FiscalYear,
+                              OutletNumber = cpInfo.OutletNumber,
+                              DirectCovered = cpInfo.DirectCovered,
+                              IndirectCovered = cpInfo.IndirectCovered,
+                              DirectTarget = cpInfo.DirectTarget,
+                              IndirectTarget = cpInfo.IndirectTarget,
+                              IndirectManual = cpInfo.IndirectManual,
+                          }
+                        ).Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
+
+            var queryResult = new QueryResultModel<UniverseReachAnalysisModel>();
+            queryResult.Items = result;
+            queryResult.TotalFilter = filterCount;
+            queryResult.Total = totalCount;
+
+            return queryResult;
+        }
+
+        public async Task<IList<UniverseReachAnalysisModel>> GetAllUniverseReachAnalysissAsync()
+        {
+            var result = await _UniverseReachAnalysisSvc.GetAllIncludeAsync(x => x,
+                            null,
+                            null,
+                            null,
+                            true);
+
+            var modelResult = _mapper.Map<IList<UniverseReachAnalysisModel>>(result);
+
+            return modelResult;
+        }
+
+        public async Task<UniverseReachAnalysisModel> GetUniverseReachAnalysissByIdAsync(int id)
+        {
+            var result = await _UniverseReachAnalysisSvc.GetFirstOrDefaultIncludeAsync(x => x,
+                            x => x.Id == id,
+                            null,
+                            null,
+                            true);
+
+            var modelResult = _mapper.Map<UniverseReachAnalysisModel>(result);
+
+            return modelResult;
+        }
+
+        public async Task<int> AddUniverseReachAnalysissAsync(SaveUniverseReachAnalysisModel model)
+        {
+            var UniverseReachAnalysis = _mapper.Map<UniverseReachAnalysis>(model);
+            var fiscalYear = this.GetCurrentFiscalYear();
+            UniverseReachAnalysis.FiscalYear = fiscalYear;
+            var result = await _UniverseReachAnalysisSvc.CreateAsync(UniverseReachAnalysis);
+            return result.Id;
+        }
+
+        public async Task<int> UpdateUniverseReachAnalysissAsync(SaveUniverseReachAnalysisModel model)
+        {
+            var existingUniverseReachAnalysis = await _UniverseReachAnalysisSvc.FindAsync(x => x.Id == model.Id);
+            existingUniverseReachAnalysis.BusinessArea = model.BusinessArea;
+            existingUniverseReachAnalysis.Territory = model.Territory;
+            existingUniverseReachAnalysis.OutletNumber = model.OutletNumber;
+            existingUniverseReachAnalysis.DirectCovered = model.DirectCovered;
+            existingUniverseReachAnalysis.IndirectCovered = model.IndirectCovered;
+            existingUniverseReachAnalysis.DirectTarget = model.DirectTarget;
+            existingUniverseReachAnalysis.IndirectTarget = model.IndirectTarget;
+            existingUniverseReachAnalysis.IndirectManual = model.IndirectManual;
+            var result = await _UniverseReachAnalysisSvc.UpdateAsync(existingUniverseReachAnalysis);
+            return result.Id;
+        }
+
+        public async Task<int> DeleteUniverseReachAnalysissAsync(int id)
+        {
+            var result = await _UniverseReachAnalysisSvc.DeleteAsync(f => f.Id == id);
+            return result;
+        }
+
+        public async Task<bool> IsExitsUniverseReachAnalysissAsync(int id, string businessArea, string territory, string fiscalYear = null)
+        {
+            var result = await _UniverseReachAnalysisSvc.IsExistAsync(f => f.Id != id && 
+                                                    f.BusinessArea == businessArea && f.Territory == territory &&
+                                                    (string.IsNullOrEmpty(fiscalYear) || f.FiscalYear == fiscalYear));
+            return result;
+        }
+
+        public async Task<int> UpdateAppUniverseReachAnalysissAsync(SaveAppUniverseReachAnalysisModel model)
+        {
+            var existingUniverseReachAnalysis = await _UniverseReachAnalysisSvc.FindAsync(x => x.Id == model.Id);
+            existingUniverseReachAnalysis.IndirectManual = model.IndirectManual;
+            var result = await _UniverseReachAnalysisSvc.UpdateAsync(existingUniverseReachAnalysis);
+            return result.Id;
+        }
+
+        public async Task<SaveAppUniverseReachAnalysisModel> GetAppUniverseReachAnalysissAsync(AppUniverseReachAnalysisQueryObjectModel query)
+        {
+            var fiscalYear = this.GetCurrentFiscalYear();
+            var existingUniverseReachAnalysis = await _UniverseReachAnalysisSvc.FindAsync(x => x.BusinessArea == query.BusinessArea 
+                                                        && x.Territory == query.Territory && x.FiscalYear == fiscalYear);
+            if(existingUniverseReachAnalysis == null) throw new Exception("Universe/Reach Plan of this area and this fiscal year is not found.");
+            var result = _mapper.Map<SaveAppUniverseReachAnalysisModel>(existingUniverseReachAnalysis);
+            return result;
+        }
+
+        public string GetCurrentFiscalYear()
+        {
+            var year = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now).Year;
+            var fiscalYear = $"{year}-{(year % 100) + 1}";
+            return fiscalYear;
+        }
+        #endregion
+    }
+}

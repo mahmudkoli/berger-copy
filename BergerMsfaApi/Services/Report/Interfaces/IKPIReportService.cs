@@ -1,20 +1,16 @@
-﻿using BergerMsfaApi.Models.Common;
-using BergerMsfaApi.Models.DealerSalesCall;
-using BergerMsfaApi.Models.Report;
-using System;
+﻿using BergerMsfaApi.Models.Report;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.Report.Interfaces
 {
     public interface IKPIReportService
     {
-        Task<IList<StrikeRateKPIReportResultModel>> GetStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query);
-        Task<IList<BusinessCallKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query);
+        Task<IList<StrikeRateKPIReportResultModel>> PremiumBrandBillingStrikeRateKPIReportAsync(StrikeRateKPIReportSearchModel query, EnumReportFor reportFor);
+        Task<IList<BusinessCallBaseKPIReportResultModel>> GetBusinessCallKPIReportAsync(BusinessCallKPIReportSearchModel query, EnumReportFor reportFor);
         Task<IList<BillingAnalysisKPIReportResultModel>> GetBillingAnalysisKPIReportAsync(BillingAnalysisKPIReportSearchModel query);
         Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query);
         Task<CollectionPlanKPIReportResultModel> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query);
+        Task<IList<ColorBankInstallationPlanVsActualKPIReportResultModel>> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query);
     }
 }

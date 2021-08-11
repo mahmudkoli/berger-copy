@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210810135048_ColorBankInstallationTarget-ColorBankInstall-Productivity")]
+    partial class ColorBankInstallationTargetColorBankInstallProductivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -921,7 +923,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("ProductSamplingBrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductSourcingId")
+                    b.Property<int>("ProductSourcingId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductSourcingRemarks")
@@ -4105,7 +4107,9 @@ namespace Berger.Data.Migrations
                 {
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProductSourcing")
                         .WithMany()
-                        .HasForeignKey("ProductSourcingId");
+                        .HasForeignKey("ProductSourcingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", b =>

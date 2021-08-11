@@ -238,4 +238,8 @@ fileChangeEvent(fileInput: any) {
 	}
 }
 
+	changeDealer() {
+		
+	}
+
 }

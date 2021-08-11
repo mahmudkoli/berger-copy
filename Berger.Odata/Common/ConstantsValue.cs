@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Berger.Odata.Common
+﻿namespace Berger.Odata.Common
 {
     public class ConstantsValue
     {
@@ -27,5 +21,7 @@ namespace Berger.Odata.Common
         public const string BergerCompanyCode = "1000";
         public const string BergerSourceClient = "REP";
         public const string ChequeBounceStatus = "Z1";
+        public const int FyYearFirstMonth = 4;
+        public const int FyYearLastMonth = 3;
     }
 }

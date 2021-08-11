@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Models.KPI
     {
         public int Year { get; set; } 
         public string Territory { get; set; }
-        public string SalesGroup { get; set; }
+        //public string SalesGroup { get; set; }
         public string Depot { get; set; }
     }
 

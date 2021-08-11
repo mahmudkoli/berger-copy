@@ -217,11 +217,8 @@ export class ActiveSummeryReportQuery extends ReportBaseQuery {
 
 export class OSOver90DaysTrendReportQuery extends ReportBaseQuery {
     creditControlArea: number;
-    dealerId: number;
-    fromMonth:any;
-	fromYear:any;
-	toMonth:any;
-	toYear:any;
+    month:number;
+	year:number;
 
     constructor(init?: Partial<OSOver90DaysTrendReportQuery>) {
         super();
