@@ -92,6 +92,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public LeadFollowUpModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.ActualVolumeSoldInteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldExteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldUnderCoats = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldTopCoats = new List<LeadActualVolumeSoldModel>();
         }
 
         public void StringToList(LeadFollowUp src, LeadFollowUpModel dest)
@@ -104,7 +108,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldInteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldExteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Exterior)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
@@ -112,7 +116,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldExteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldUnderCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.UnderCoat)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
@@ -120,7 +124,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldTopCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldTopCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.TopCoat)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId,
