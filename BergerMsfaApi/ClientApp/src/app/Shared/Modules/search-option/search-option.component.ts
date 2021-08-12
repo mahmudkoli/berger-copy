@@ -571,10 +571,10 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 	getFiscalYears(): any[] {
 		let years: any[] = [];
 		let currentYear: number = new Date().getFullYear();
-		for(let i = (currentYear - 10); i < (currentYear + 3); i++) {
-			years.push({'id':i,'name':i.toString()+' - '+(i+1).toString()});
+		for(let i = currentYear - 10; i <= currentYear; i++) {
+			years.push({ id: i, name: i.toString()+'-'+((i%100)+1).toString() });
 		}
-		return years;
+		return years.reverse();
 	}
 
 	checkDifferenceMonth(fromYear:number,fromMonth:number,toYear:number,toMonth:number,monthDiffCount:number) : boolean | false {
