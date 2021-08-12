@@ -69,6 +69,7 @@ export class DealerInfoQuery extends QueryObject {
     salesGroups: string[];
     territories: string[];
     zones: string[];
+    dealerId: number;
 
     constructor(init?: Partial<DealerInfoQuery>) {
         super();
@@ -80,5 +81,6 @@ export class DealerInfoQuery extends QueryObject {
         this.salesGroups = [];
         this.territories = [];
         this.zones = [];
+        this.dealerId = 0;
     }
 }

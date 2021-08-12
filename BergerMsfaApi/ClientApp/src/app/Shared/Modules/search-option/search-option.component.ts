@@ -630,7 +630,6 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     this.dealerFilter.zones=controls['zones'].value;
     this.dealerFilter.salesGroups=controls['salesGroups'].value;
     
-    console.log(this.dealerFilter);
 
     this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
       this.dealers=res.data;
