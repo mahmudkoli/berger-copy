@@ -486,6 +486,53 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
+        public async Task<IList<AppDealerInfoModel>> GetDealerListByArea(AreaDealerSearchModel model)
+        {
+            model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
+
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
+                (((!(model.Depots != null && model.Depots.Any()) || model.Depots==x.BusinessArea) &&
+                (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
+                (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
+                (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
+                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone))));
+
+            var result = (from dealer in _dealerInfoSvc.FindAll(dealerPredicate)
+                          join custGrp in _customerGroupSvc.GetAll()
+                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                          into cust
+                          from cu in cust.DefaultIfEmpty()
+
+                          join focusDealer in _focusDealerSvc.GetAll()
+                          on dealer.Id equals focusDealer.DealerId
+                          into focus
+                          from fd in focus.DefaultIfEmpty()
+
+                          where ((EnumDealerCategory.All == model.DealerCategory) ||
+                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date))
+                         
+
+                          select new AppDealerInfoModel
+                          {
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date,
+                          }).ToList();
+
+            return result;
+        }
+
         public async Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))

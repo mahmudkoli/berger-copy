@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -298,6 +299,20 @@ namespace BergerMsfaApi.Controllers.Common
                     },
                 }.OrderBy(x => x.Text).ToList();
                 return OkResult(list);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("GetDealerByArea")]
+        public async Task<IActionResult> GetDealerByArea(AreaDealerSearchModel model)
+        {
+            try
+            {
+                var result = await _commonSvc.GetDealerListByArea(model);
+                return OkResult(result);
             }
             catch (Exception ex)
             {

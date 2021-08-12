@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Models.Dealer
         public string Address { get; set; }
         public bool IsFocused { get; set; }
         public bool IsSubdealer { get; set; }
-        public DateTime VisitDate { get; set; }
+        //public DateTime VisitDate { get; set; }
         public string PlanDate { get; set; }
     }
 
@@ -67,6 +67,7 @@ namespace BergerMsfaApi.Models.Dealer
         public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
+        public int DealerId { get; set; }
 
         public DealerInfoQueryObjectModel()
         {

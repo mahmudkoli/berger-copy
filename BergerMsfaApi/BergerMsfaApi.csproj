@@ -58,6 +58,7 @@
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Compile Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <Compile Remove="Interfaces\**" />
+    <Compile Remove="Logs\**" />
     <Compile Remove="Models\DailyActivities\**" />
     <Compile Remove="Models\Reports\**" />
     <Compile Remove="Services\DailyPOSM\**" />
@@ -66,6 +67,7 @@
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <Content Remove="Interfaces\**" />
+    <Content Remove="Logs\**" />
     <Content Remove="Models\DailyActivities\**" />
     <Content Remove="Models\Reports\**" />
     <Content Remove="Services\DailyPOSM\**" />
@@ -73,6 +75,7 @@
     <Content Remove="wwwroot\uploads\images\**" />
     <EmbeddedResource Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <EmbeddedResource Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Logs\**" />
     <EmbeddedResource Remove="Models\DailyActivities\**" />
     <EmbeddedResource Remove="Models\Reports\**" />
     <EmbeddedResource Remove="Services\DailyPOSM\**" />
@@ -81,6 +84,7 @@
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\src\app\Layout\cm-user-details\user-info\**" />
     <None Remove="Interfaces\**" />
+    <None Remove="Logs\**" />
     <None Remove="Models\DailyActivities\**" />
     <None Remove="Models\Reports\**" />
     <None Remove="Services\DailyPOSM\**" />
@@ -129,11 +133,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logs\" />
     <Folder Include="Models\NewFolder\" />
-    <Folder Include="Logs\" />
-    <Folder Include="wwwroot\Logs\" />
-    <Folder Include="wwwroot\Logs\Worker\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

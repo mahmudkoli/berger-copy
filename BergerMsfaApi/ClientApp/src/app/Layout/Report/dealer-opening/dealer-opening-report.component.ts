@@ -176,7 +176,7 @@ export class DealerOpeningReportComponent implements OnInit, OnDestroy {
 		// pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
-		enabledTotal: this.enabledTotal,
+		enabledTotal: false,
 		enabledExcelDownload: true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({

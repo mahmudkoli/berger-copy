@@ -25,6 +25,7 @@ export class SearchOptionQuery extends QueryObject {
     toYear: number;
     month: number;
     year: number;
+    fiscalYear: number
     text1: string;
     text2: string;
     text3: string;
@@ -100,9 +101,20 @@ export enum EnumSearchOption {
     ToYear='toYear',
     Month='month',
     Year='year',
+    FiscalYear='fiscalYear',
     Text1='text1',
     Text2='text2',
     Text3='text3',
     ValueVolumeResultType='valueVolumeResultType',
     CustomerClassificationType='customerClassificationType',
+}
+
+
+export class DealerFilter{
+    depots: string;
+    salesGroups: string[];
+    territories: string[];
+    zones: string[];
+    salesOffices: string[];
+    dealerCategory:number
 }

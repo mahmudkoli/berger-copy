@@ -74,7 +74,22 @@ namespace BergerMsfaApi.Models.Report
     public class CollectionPlanKPIReportSearchModel
     {
         public string Depot { get; set; }
-        public string Territory { get; set; }
+        public List<string> Territory { get; set; }
+        public string SalesGroups { get; set; }
+    }
+
+    public class CollectionPlanKPIReportSearchModelForApp
+    {
+        public string Depot { get; set; }
+        public List<string> Territory { get; set; }
+        public List<string> SalesGroups { get; set; }
+        public CollectionPlanKPIReportSearchModelForApp()
+        {
+            this.Territory = new List<string>();
+            this.SalesGroups = new List<string>();
+            this.Depot = string.Empty;
+        }
+
     }
 
     public enum EnumReportFor

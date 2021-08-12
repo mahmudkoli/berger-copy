@@ -172,6 +172,20 @@ namespace Berger.Odata.Services
             //return await Task.FromResult(data);
             return await Task.Run(() => data);
         }
+
+        public async Task<IList<ColorBankMachineDataModel>> GetColorBankMachine(string query)
+        {
+            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.ColorBankMachine}{query}";
+
+            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            var parsedData = Parser<ColorBankMachineDataRootModel>.ParseJson(responseBody);
+            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+
+            //return await Task.FromResult(data);
+            return await Task.Run(() => data);
+        }
+
+
         #endregion
 
         #region Get selectable data
@@ -2004,7 +2018,52 @@ namespace Berger.Odata.Services
 
             return data;
         }
+
+
+
+
+
+
         #endregion
+
+
+        #region color bank install machine
+
+        public async Task<IList<ColorBankMachineDataModel>> GetColorBankInstallData(SelectQueryOptionBuilder selectQueryBuilder, string depot = "", string startDate = "", string endDate = "")
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            if (!string.IsNullOrWhiteSpace(depot))
+            {
+                filterQueryBuilder.Equal(ColorBankInstalColumnDef.Depot, depot);
+            }
+
+            if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And()
+                    .StartGroup()
+                    .GreaterThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, startDate)
+                    .And()
+                    .LessThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, endDate)
+                    .EndGroup();
+            }
+
+
+
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                //.AppendQuery(topQuery)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await GetColorBankMachine(queryBuilder.Query)).ToList();
+            return data;
+        }
+
+        #endregion
+
+
+
+
 
         #region calculate data
         public decimal GetGrowth(decimal lyValue, decimal cyValue)

@@ -137,6 +137,17 @@ const routes: Routes = [
             (m) => m.CollectionPlanModule
           ),
       },
+      {
+        path: 'universe-reach-analysis',
+        loadChildren: () =>
+          import('./UniverseReachAnalysis/universe-reach-analysis.module').then(
+            (m) => m.UniverseReachAnalysisModule
+          ),
+      },
+      {
+        path: 'kpi',
+        loadChildren: () => import('./kpi/kpi.module').then((m) => m.KpiModule),
+      },
     ],
   },
 ];

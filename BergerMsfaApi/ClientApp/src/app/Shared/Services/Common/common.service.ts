@@ -265,4 +265,12 @@ export class CommonService {
       params,
     });
   }
+
+
+  getDealerByArea(filter) {
+    return this.http.post<APIResponse>(
+        this.baseUrl
+      +`v1/Common/GetDealerByArea`,filter
+    );
+  }
 }

@@ -11,7 +11,8 @@ namespace Berger.Data.MsfaEntity.Target
         public string Territory { get; set; }
         public int Year { get; set; }
         public int Month { get; set; }
-        public int Target { get; set; }
+        public int ColorBankInstallTarget { get; set; }
+        public int ColorBankProductivityTarget { get; set; }
 
     }
 }

@@ -111,10 +111,11 @@ namespace BergerMsfaApi.Models.Report
 
     public class CollectionPlanKPIReportResultModel
     {
-        public decimal SlippageAmount { get; set; }
-        public decimal CollectionTargetAmount { get; set; }
-        public decimal CollectionActualAmount { get; set; }
-        public decimal CollectionActualSlippageAmount { get; set; }
+        public string Territory { get; set; }
+        public decimal ImmediateLMSlippageAmount { get; set; }
+        public decimal MTDCollectionPlan { get; set; }
+        public decimal MTDActualCollection { get; set; }
+        public decimal TargetAch { get; set; }
 
         public CollectionPlanKPIReportResultModel()
         {
@@ -128,5 +129,19 @@ namespace BergerMsfaApi.Models.Report
         public int Target { get; set; }
         public int Actual { get; set; }
         public decimal TargetAchievement { get; set; }
+    }
+
+
+    public class CollectionPlanKPIReportResultModelForApp
+    {
+        public decimal ImmediateLMSlippageAmount { get; set; }
+        public decimal MTDCollectionPlan { get; set; }
+        public decimal MTDActualCollection { get; set; }
+        public decimal TargetAch { get; set; }
+
+        public CollectionPlanKPIReportResultModelForApp()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
     }
 }

@@ -39,6 +39,9 @@ import { BillingAnalysisReportComponent } from './billing-analysis/billing-analy
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
 import { LeadBusinessUpdateReportComponent } from './lead-business-update/lead-business-update-report.component';
+import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
+import { NewDealerDevelopmentListComponent } from './new-dealer-development-list/new-dealer-development-list.component';
+import { DealerConversionComponent } from './dealer-conversion/dealer-conversion.component';
 
 const routes: Routes = [
   {
@@ -269,6 +272,27 @@ const routes: Routes = [
         component: BillingAnalysisReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
         data: { title: 'Billing Analysis Report', },
+      },
+
+      {
+        path: 'universe-reach-analysis',
+        component: UniverseReachAnalysisReportComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'Universe Reach Analysis Report', }
+      },
+      {
+        path: 'dealer-opening-status',
+        component: NewDealerDevelopmentListComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: 'New Dealer Opening Status Report',}
+      },
+
+
+      {
+        path: 'dealer-conversion',
+        component: DealerConversionComponent,
+        // canActivate: [AuthGuard, PermissionGuard],
+        data: { title: ' Dealer Conversion from Competition:',}
       },
 
       {

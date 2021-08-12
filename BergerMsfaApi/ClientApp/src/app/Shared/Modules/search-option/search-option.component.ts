@@ -17,6 +17,7 @@ import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dr
 import { Enums } from '../../Enums/enums';
 import { AlertService } from '../alert/alert.service';
 import {
+  DealerFilter,
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
@@ -36,25 +37,27 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 
   searchOptionForm: FormGroup;
   employeeRole: EnumEmployeeRole;
+  dealerFilter:DealerFilter=new DealerFilter();
 
-  depots: any[] = [];
-  salesGroups: any[] = [];
-  territories: any[] = [];
-  zones: any[] = [];
-  users: any[] = [];
-  dealers: any[] = [];
-  creditControlAreas: any[] = [];
-  paintingStages: any[] = [];
-  projectStatuses: any[] = [];
-  painters: any[] = [];
-  painterTypes: any[] = [];
-  paymentMethods: any[] = [];
-  paymentFroms: any[] = [];
-  brands: any[] = [];
-  materialCodes: any[] = [];
-  months: any[] = [];
-  years: any[] = [];
-  activitySummaries: any[] = [];
+    depots: any[] = [];
+    salesGroups: any[] = [];
+    territories: any[]=[]
+    zones: any[] = [];
+    users: any[] = [];
+	dealers: any[] = [];
+	creditControlAreas: any[] = [];
+    paintingStages: any[] = [];
+    projectStatuses: any[] = [];
+    painters: any[] = [];
+    painterTypes: any[] = [];
+    paymentMethods: any[] = [];
+    paymentFroms: any[] = [];
+    brands: any[] = [];
+    materialCodes: any[] = [];
+	months: any[] = [];
+	years: any[] = [];
+	fiscalYears: any[] = [];
+	activitySummaries: any[] = [];
 
   valueVolumeResultTypes: any[] = Enums.valueVolumeResultType;
   customerClassificationTypes: any[] = Enums.customerClassificationType;
@@ -80,41 +83,40 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((el) => el.unsubscribe());
   }
 
-  createForm() {
-    this.searchOptionForm = this.formBuilder.group({
-      depot: [this.searchOptionQuery.depot],
-      salesGroups: [this.searchOptionQuery.salesGroups],
-      territories: [this.searchOptionQuery.territories],
-      zones: [this.searchOptionQuery.zones],
-      fromDate: [],
-      toDate: [],
-      date: [],
-      userId: [this.searchOptionQuery.userId],
-      dealerId: [this.searchOptionQuery.dealerId],
-      creditControlArea: [this.searchOptionQuery.creditControlArea],
-      paintingStageId: [this.searchOptionQuery.paintingStageId],
-      projectStatusId: [this.searchOptionQuery.projectStatusId],
-      painterId: [this.searchOptionQuery.painterId],
-      painterTypeId: [this.searchOptionQuery.painterTypeId],
-      paymentMethodId: [this.searchOptionQuery.paymentMethodId],
-      paymentFromId: [this.searchOptionQuery.paymentFromId],
-      brands: [this.searchOptionQuery.brands],
-      materialCodes: [this.searchOptionQuery.materialCodes],
-      fromMonth: [this.searchOptionQuery.fromMonth],
-      toMonth: [this.searchOptionQuery.toMonth],
-      fromYear: [this.searchOptionQuery.fromYear],
-      toYear: [this.searchOptionQuery.toYear],
-      month: [this.searchOptionQuery.month],
-      year: [this.searchOptionQuery.year],
-      text1: [this.searchOptionQuery.text1],
-      text2: [this.searchOptionQuery.text2],
-      text3: [this.searchOptionQuery.text3],
-      activitySummary: [this.searchOptionQuery.activitySummary],
-      valueVolumeResultType: [this.searchOptionQuery.valueVolumeResultType],
-      customerClassificationType: [
-        this.searchOptionQuery.customerClassificationType,
-      ],
-    });
+	createForm() {
+		this.searchOptionForm = this.formBuilder.group({
+			depot: [this.searchOptionQuery.depot],
+			salesGroups: [this.searchOptionQuery.salesGroups],
+			territories: [this.searchOptionQuery.territories],
+			zones: [this.searchOptionQuery.zones],
+			fromDate: [],
+			toDate: [],
+			date: [],
+			userId: [this.searchOptionQuery.userId],
+			dealerId: [this.searchOptionQuery.dealerId],
+			creditControlArea: [this.searchOptionQuery.creditControlArea],
+			paintingStageId: [this.searchOptionQuery.paintingStageId],
+			projectStatusId: [this.searchOptionQuery.projectStatusId],
+			painterId: [this.searchOptionQuery.painterId],
+			painterTypeId: [this.searchOptionQuery.painterTypeId],
+			paymentMethodId: [this.searchOptionQuery.paymentMethodId],
+			paymentFromId: [this.searchOptionQuery.paymentFromId],
+			brands:[this.searchOptionQuery.brands],
+			materialCodes:[this.searchOptionQuery.materialCodes],
+			fromMonth: [this.searchOptionQuery.fromMonth],
+			toMonth: [this.searchOptionQuery.toMonth],
+			fromYear: [this.searchOptionQuery.fromYear],
+			toYear: [this.searchOptionQuery.toYear],
+			month: [this.searchOptionQuery.month],
+			year: [this.searchOptionQuery.year],
+			fiscalYear: [this.searchOptionQuery.fiscalYear],
+			text1: [this.searchOptionQuery.text1],
+			text2: [this.searchOptionQuery.text2],
+			text3: [this.searchOptionQuery.text3],
+			activitySummary: [this.searchOptionQuery.activitySummary],
+			valueVolumeResultType: [this.searchOptionQuery.valueVolumeResultType],
+			customerClassificationType: [this.searchOptionQuery.customerClassificationType],
+		});
 
     if (this.searchOptionQuery.fromDate) {
       const fromDate = new Date(this.searchOptionQuery.fromDate);
@@ -320,48 +322,45 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(forkJoinSubscription2);
     this.subscriptions.push(forkJoinSubscription3);
 
-    this.months = this.getMonths();
-    this.years = this.getYears();
-  }
+		this.months = this.getMonths();
+		this.years = this.getYears();
+		this.fiscalYears=this.getFiscalYears()
+    }
 
-  onSubmitSearch() {
-    const controls = this.searchOptionForm.controls;
-    this.searchOptionQuery.page = 1;
-    this.searchOptionQuery.depot = controls['depot'].value;
-    this.searchOptionQuery.salesGroups = controls['salesGroups'].value;
-    this.searchOptionQuery.territories = controls['territories'].value;
-    this.searchOptionQuery.zones = controls['zones'].value;
-    this.searchOptionQuery.userId = controls['userId'].value;
-    this.searchOptionQuery.dealerId = controls['dealerId'].value;
-    this.searchOptionQuery.creditControlArea =
-      controls['creditControlArea'].value;
-    this.searchOptionQuery.paintingStageId = controls['paintingStageId'].value;
-    this.searchOptionQuery.projectStatusId = controls['projectStatusId'].value;
-    this.searchOptionQuery.painterId = controls['painterId'].value;
-    this.searchOptionQuery.painterTypeId = controls['painterTypeId'].value;
-    this.searchOptionQuery.paymentMethodId = controls['paymentMethodId'].value;
-    this.searchOptionQuery.paymentFromId = controls['paymentFromId'].value;
-    this.searchOptionQuery.fromMonth = controls['fromMonth'].value;
-    this.searchOptionQuery.toMonth = controls['toMonth'].value;
-    this.searchOptionQuery.fromYear = controls['fromYear'].value;
-    this.searchOptionQuery.toYear = controls['toYear'].value;
-    this.searchOptionQuery.month = controls['month'].value;
-    this.searchOptionQuery.year = controls['year'].value;
-    this.searchOptionQuery.text1 = controls['text1'].value;
-    this.searchOptionQuery.text2 = controls['text2'].value;
-    this.searchOptionQuery.text3 = controls['text3'].value;
-    this.searchOptionQuery.brands = controls['brands'].value;
-    this.searchOptionQuery.materialCodes = controls['materialCodes'].value;
-    this.searchOptionQuery.activitySummary = controls['activitySummary'].value;
-    this.searchOptionQuery.valueVolumeResultType =
-      controls['valueVolumeResultType'].value;
-    this.searchOptionQuery.customerClassificationType =
-      controls['customerClassificationType'].value;
-
-    if (this._allDealers && this.searchOptionQuery.dealerId)
-      this.searchOptionQuery.customerNo = this._allDealers.find(
-        (x) => x.id == this.searchOptionQuery.dealerId
-      ).customerNo;
+	onSubmitSearch() {
+		const controls = this.searchOptionForm.controls;
+		this.searchOptionQuery.page = 1;
+		this.searchOptionQuery.depot = controls['depot'].value;
+		this.searchOptionQuery.salesGroups = controls['salesGroups'].value;
+		this.searchOptionQuery.territories = controls['territories'].value;
+		this.searchOptionQuery.zones = controls['zones'].value;
+		this.searchOptionQuery.userId = controls['userId'].value;
+		this.searchOptionQuery.dealerId = controls['dealerId'].value;
+		this.searchOptionQuery.creditControlArea = controls['creditControlArea'].value;
+		this.searchOptionQuery.paintingStageId = controls['paintingStageId'].value;
+		this.searchOptionQuery.projectStatusId = controls['projectStatusId'].value;
+		this.searchOptionQuery.painterId = controls['painterId'].value;
+		this.searchOptionQuery.painterTypeId = controls['painterTypeId'].value;
+		this.searchOptionQuery.paymentMethodId = controls['paymentMethodId'].value;
+		this.searchOptionQuery.paymentFromId = controls['paymentFromId'].value;
+		this.searchOptionQuery.fromMonth = controls['fromMonth'].value;
+		this.searchOptionQuery.toMonth = controls['toMonth'].value;
+		this.searchOptionQuery.fromYear = controls['fromYear'].value;
+		this.searchOptionQuery.toYear = controls['toYear'].value;
+		this.searchOptionQuery.month = controls['month'].value;
+		this.searchOptionQuery.year = controls['year'].value;
+		this.searchOptionQuery.fiscalYear = controls['fiscalYear'].value;
+		this.searchOptionQuery.text1 = controls['text1'].value;
+		this.searchOptionQuery.text2 = controls['text2'].value;
+		this.searchOptionQuery.text3 = controls['text3'].value;
+		this.searchOptionQuery.brands = controls['brands'].value;
+		this.searchOptionQuery.materialCodes = controls['materialCodes'].value;
+		this.searchOptionQuery.activitySummary = controls['activitySummary'].value;
+		this.searchOptionQuery.valueVolumeResultType = controls['valueVolumeResultType'].value;
+		this.searchOptionQuery.customerClassificationType = controls['customerClassificationType'].value;
+		
+		if (this._allDealers && this.searchOptionQuery.dealerId)
+			this.searchOptionQuery.customerNo = this._allDealers.find(x => x.id == this.searchOptionQuery.dealerId).customerNo;
 
     const fromDate = controls['fromDate'].value;
     if (fromDate && fromDate.year && fromDate.month && fromDate.day) {
@@ -563,36 +562,56 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
   getYears(): any[] {
     let years: any[] = [];
     let currentYear: number = new Date().getFullYear();
-    for (let i = currentYear - 10; i < currentYear; i++) {
+    for (let i = currentYear - 10; i <= currentYear; i++) {
       years.push({ id: i, name: i.toString() });
     }
     return years.reverse();
   }
 
-  checkDifferenceMonth(
-    fromYear: number,
-    fromMonth: number,
-    toYear: number,
-    toMonth: number,
-    monthDiffCount: number
-  ): boolean | false {
-    var fromDate = new Date(fromYear, fromMonth - 1);
-    var toDate = new Date(toYear, toMonth - 1);
-    // let monthCount = 0;
-    // 	monthCount = (toDate.getFullYear() - fromDate.getFullYear()) * 12;
-    // 	monthCount -= fromDate.getMonth()+1;
-    // 	monthCount += toDate.getMonth()+1;
-    // 	monthCount += 1;
-    // return (monthCount <= 0 ? 0 : monthCount)===monthDiffCount;
-    return (
-      toDate.getMonth() +
-        1 -
-        (fromDate.getMonth() + 1) +
-        12 * (toDate.getFullYear() - fromDate.getFullYear()) +
-        1 ===
-      monthDiffCount
-    );
-  }
+	getFiscalYears(): any[] {
+		let years: any[] = [];
+		let currentYear: number = new Date().getFullYear();
+		for(let i = (currentYear - 10); i < (currentYear + 3); i++) {
+			years.push({'id':i,'name':i.toString()+' - '+(i+1).toString()});
+		}
+		return years;
+	}
+
+	checkDifferenceMonth(fromYear:number,fromMonth:number,toYear:number,toMonth:number,monthDiffCount:number) : boolean | false {
+		var fromDate = new Date(fromYear, fromMonth-1);
+		var toDate = new Date(toYear, toMonth-1);
+		// let monthCount = 0;
+		// 	monthCount = (toDate.getFullYear() - fromDate.getFullYear()) * 12;
+		// 	monthCount -= fromDate.getMonth()+1;
+		// 	monthCount += toDate.getMonth()+1;
+		// 	monthCount += 1;
+		// return (monthCount <= 0 ? 0 : monthCount)===monthDiffCount;
+		return ((toDate.getMonth()+1) - (fromDate.getMonth()+1) + (12 * (toDate.getFullYear() - fromDate.getFullYear())) + 1)===monthDiffCount;
+	}
+  // checkDifferenceMonth(
+  //   fromYear: number,
+  //   fromMonth: number,
+  //   toYear: number,
+  //   toMonth: number,
+  //   monthDiffCount: number
+  // ): boolean | false {
+  //   var fromDate = new Date(fromYear, fromMonth - 1);
+  //   var toDate = new Date(toYear, toMonth - 1);
+  //   // let monthCount = 0;
+  //   // 	monthCount = (toDate.getFullYear() - fromDate.getFullYear()) * 12;
+  //   // 	monthCount -= fromDate.getMonth()+1;
+  //   // 	monthCount += toDate.getMonth()+1;
+  //   // 	monthCount += 1;
+  //   // return (monthCount <= 0 ? 0 : monthCount)===monthDiffCount;
+  //   return (
+  //     toDate.getMonth() +
+  //       1 -
+  //       (fromDate.getMonth() + 1) +
+  //       12 * (toDate.getFullYear() - fromDate.getFullYear()) +
+  //       1 ===
+  //     monthDiffCount
+  //   );
+  // }
 
   getToYearMonth(
     fromYear: number,
@@ -602,5 +621,19 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     var date = new Date(fromYear, fromMonth - 1);
     date.setMonth(date.getMonth() + monthDiffCount - 1);
     return { year: date.getFullYear(), month: date.getMonth() + 1 };
+  }
+
+  changeDealerShow(){
+		const controls = this.searchOptionForm.controls;
+    this.dealerFilter.depots=controls['depot'].value;
+    this.dealerFilter.territories=controls['territories'].value;
+    this.dealerFilter.zones=controls['zones'].value;
+    this.dealerFilter.salesGroups=controls['salesGroups'].value;
+    
+
+    this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
+      this.dealers=res.data;
+    })
+
   }
 }

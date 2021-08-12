@@ -18,6 +18,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
     public class FocusDealerController : BaseController
     {
         private readonly IFocusDealerService _focusDealerService;
+        
         public FocusDealerController(
             IFocusDealerService focusDealerService)
         {
@@ -122,6 +123,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+
+       
 
         [HttpPost("UpdateDealerStatus")]
         public async Task<IActionResult> DealerStatusUpdate([FromBody] DealerInfoStatusModel dealer)
