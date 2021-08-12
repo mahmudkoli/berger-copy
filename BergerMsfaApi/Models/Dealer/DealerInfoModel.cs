@@ -67,6 +67,7 @@ namespace BergerMsfaApi.Models.Dealer
         public IList<string> SalesGroups { get; set; }
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
+        public int DealerId { get; set; }
 
         public DealerInfoQueryObjectModel()
         {

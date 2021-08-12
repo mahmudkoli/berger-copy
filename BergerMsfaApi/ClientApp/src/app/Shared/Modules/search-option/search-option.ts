@@ -108,3 +108,13 @@ export enum EnumSearchOption {
     ValueVolumeResultType='valueVolumeResultType',
     CustomerClassificationType='customerClassificationType',
 }
+
+
+export class DealerFilter{
+    depots: string;
+    salesGroups: string[];
+    territories: string[];
+    zones: string[];
+    salesOffices: string[];
+    dealerCategory:number
+}

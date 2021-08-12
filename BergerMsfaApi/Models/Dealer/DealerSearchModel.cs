@@ -35,4 +35,26 @@ namespace BergerMsfaApi.Models.Dealer
             this.Zones = new List<string>();
         }
     }
+
+
+    public class AreaDealerSearchModel
+    {
+        public string Depots { get; set; }
+        public IList<string> SalesOffices { get; set; }
+        public IList<string> SalesGroups { get; set; }
+        public IList<string> Territories { get; set; }
+        public IList<string> Zones { get; set; }
+        public EnumDealerCategory? DealerCategory { get; set; }
+
+        public AreaDealerSearchModel()
+        {
+            this.Depots = string.Empty;
+            this.SalesOffices = new List<string>();
+            this.SalesGroups = new List<string>();
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
+
+
+    }
 }

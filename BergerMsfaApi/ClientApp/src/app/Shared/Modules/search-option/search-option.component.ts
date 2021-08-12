@@ -17,6 +17,7 @@ import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dr
 import { Enums } from '../../Enums/enums';
 import { AlertService } from '../alert/alert.service';
 import {
+  DealerFilter,
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
@@ -36,6 +37,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 
   searchOptionForm: FormGroup;
   employeeRole: EnumEmployeeRole;
+  dealerFilter:DealerFilter=new DealerFilter();
 
     depots: any[] = [];
     salesGroups: any[] = [];
@@ -619,5 +621,19 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     var date = new Date(fromYear, fromMonth - 1);
     date.setMonth(date.getMonth() + monthDiffCount - 1);
     return { year: date.getFullYear(), month: date.getMonth() + 1 };
+  }
+
+  changeDealerShow(){
+		const controls = this.searchOptionForm.controls;
+    this.dealerFilter.depots=controls['depot'].value;
+    this.dealerFilter.territories=controls['territories'].value;
+    this.dealerFilter.zones=controls['zones'].value;
+    this.dealerFilter.salesGroups=controls['salesGroups'].value;
+    
+
+    this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
+      this.dealers=res.data;
+    })
+
   }
 }

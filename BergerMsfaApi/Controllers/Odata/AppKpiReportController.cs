@@ -17,7 +17,7 @@ using BergerMsfaApi.Models.KPI;
 namespace BergerMsfaApi.Controllers.Odata
 {
     //[AuthorizeFilter]
-    [AuthorizeFilter]
+    //[AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
