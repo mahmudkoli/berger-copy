@@ -86,16 +86,19 @@ namespace BergerMsfaApi.Models.Report
         public string BrandUsedExteriorBrandName { get; set; }
         public string BrandUsedUnderCoatBrandName { get; set; }
         public string BrandUsedTopCoatBrandName { get; set; }
+        
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
         public decimal ActualPaintJobCompletedInterior { get; set; }
         public decimal ActualPaintJobCompletedExterior { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        
+        public decimal ActualVolumeSoldInteriorLitre { get; set; }
         public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        public decimal ActualVolumeSoldExteriorLitre { get; set; }
         public decimal ActualVolumeSoldExteriorKg { get; set; }
         public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
         public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        
         public decimal BergerValueSales { get; set; }
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }
@@ -106,6 +109,24 @@ namespace BergerMsfaApi.Models.Report
         public string NextVisitDate { get; set; }
         public string Comments { get; set; }
         public string ImageUrl { get; set; }
+    }
+
+    public class LeadBusinessReportResultModel
+    {
+        public string UserId { get; set; }
+        public string Depot { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public string Address { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string VisitDate { get; set; }
+        public string BrandName { get; set; }
+        public string BrandDescription { get; set; }
+        public int Quantity { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string ProductSourcing { get; set; }
+        public string DealerIdAndName { get; set; }
     }
 
     #region Nasir

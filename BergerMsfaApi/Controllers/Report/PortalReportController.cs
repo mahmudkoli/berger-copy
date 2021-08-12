@@ -123,6 +123,38 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        [HttpGet("GetLeadBusinessUpdate")]
+        public async Task<IActionResult> GetLeadBusinessUpdate([FromQuery] LeadBusinessReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetLeadBusinessUpdateReportAsync(query);
+
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadLeadBusinessUpdate")]
+        public async Task<IActionResult> DownloadLeadBusinessUpdate([FromQuery] LeadBusinessReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetLeadBusinessUpdateReportAsync(query);
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #region Nasir
         [HttpGet("GetPainterRegistration")]
         public async Task<IActionResult> GetPainterRegistration([FromQuery] PainterRegistrationReportSearchModel query)

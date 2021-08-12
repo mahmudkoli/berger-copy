@@ -220,28 +220,28 @@ namespace BergerMsfaApi.Services.AlertNotification
 
                     title = $"Occasion to Celebrate.";
 
-                    if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.DOB).Date)
+                    if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.DOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.DOB).Month)
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name: Birthdays.";
 
 
                     }
-                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Date)
+                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Month)
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Spouse Birthdays.";
 
                     }
-                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.FirsChildDOB).Date)
+                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.FirsChildDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.FirsChildDOB).Month)
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:First Child Birthdays.";
 
                     }
-                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.SecondChildDOB).Date)
+                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.SecondChildDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.SecondChildDOB).Month)
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Second Child Birthdays.";
 
                     }
-                    else if (today.Date == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Date)
+                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Month)
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Third Child Birthdays.";
 
