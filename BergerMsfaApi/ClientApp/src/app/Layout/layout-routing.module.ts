@@ -138,11 +138,15 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'dealer-opening-status',
+        path: 'universe-reach-analysis',
         loadChildren: () =>
-          import('./kpi/kpi.module').then(
-            (m) => m.KpiModule
+          import('./UniverseReachAnalysis/universe-reach-analysis.module').then(
+            (m) => m.UniverseReachAnalysisModule
           ),
+      },
+      {
+        path: 'kpi',
+        loadChildren: () => import('./kpi/kpi.module').then((m) => m.KpiModule),
       },
     ],
   },
