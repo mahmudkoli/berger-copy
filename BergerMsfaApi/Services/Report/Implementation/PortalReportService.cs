@@ -328,81 +328,194 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var reportResult = new List<LeadFollowUpDetailsReportResultModel>();
 
-            var leads = await _leadFollowUpRepository.GetAllIncludeAsync(x => x,
-                            x => (!query.UserId.HasValue || x.LeadGeneration.UserId == query.UserId.Value)
-                                //&& (!query.EmployeeRole.HasValue || x.LeadGeneration.User.EmployeeRole == query.EmployeeRole.Value)
-                                && (string.IsNullOrWhiteSpace(query.Depot) || x.LeadGeneration.Depot == query.Depot)
-                                && (!query.Territories.Any() || query.Territories.Contains(x.LeadGeneration.Territory))
-                                && (!query.Zones.Any() || query.Zones.Contains(x.LeadGeneration.Zone))
-                                && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
-                                && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
-                                && (string.IsNullOrWhiteSpace(query.ProjectName) || x.LeadGeneration.ProjectName.Contains(query.ProjectName))
-                                && (string.IsNullOrWhiteSpace(query.ProjectCode) || x.LeadGeneration.Code.Contains(query.ProjectCode))
-                                && (!query.ProjectStatusId.HasValue || x.ProjectStatusId == query.ProjectStatusId.Value),
-                            x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
-                            x => x.Include(i => i.TypeOfClient).Include(i => i.SwappingCompetition).Include(i => i.ProjectStatus)
-                                .Include(i => i.LeadGeneration).ThenInclude(i => i.User),
-                            query.Page,
-                            query.PageSize,
-                            true);
+            var leadFollowUp = await (from lf in _context.LeadFollowUps
+                              join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id
+                              join ui in _context.UserInfos on lg.UserId equals ui.Id
+                              join las in _context.LeadActualVolumeSold on lf.Id equals las.LeadFollowUpId into lasleft
+                              from lasInfo in lasleft.DefaultIfEmpty()
+                              join bi in _context.BrandInfos on lasInfo.BrandInfoId equals bi.Id into bileft
+                              from biInfo in bileft.DefaultIfEmpty()
+                              join bfi in _context.BrandFamilyInfos on biInfo.MaterialGroupOrBrand equals bfi.MatarialGroupOrBrand into bfileft
+                              from bfiInfo in bfileft.DefaultIfEmpty()
+                              join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id into lbaleft
+                              from lbaInfo in lbaleft.DefaultIfEmpty()
+                              join dd in _context.DropdownDetails on lf.SwappingCompetitionId equals dd.Id into ddleft
+                              from ddInfo in ddleft.DefaultIfEmpty()
+                              join dt in _context.DropdownDetails on lf.TypeOfClientId equals dt.Id into dtleft
+                              from dtInfo in dtleft.DefaultIfEmpty()
+                              join dps in _context.DropdownDetails on lf.ProjectStatusId equals dps.Id into dpsleft
+                              from dpsInfo in dpsleft.DefaultIfEmpty()
+                              where (
+                                   (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
+                                  && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
+                                  && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
+                                  && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
+                                  && (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
+                                  && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)
+                                  && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
+                                  && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
+                                  && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
+                              )
+                              select new
+                              {
+                                  projectCode = lg.Code,
+                                  projectName = lg.ProjectName,
+                                  depot = lg.Depot,
+                                  userId = ui.Email,
+                                  territory = lg.Territory,
+                                  zone = lg.Zone,
+                                  planVistDate = lf.NextVisitDatePlan,
+                                  actualVisitDate = lf.ActualVisitDate,
+                                  typeOfClient = dtInfo.DropdownName,
+                                  projectAddress = lg.ProjectAddress,
+                                  keyContactPerson = lf.KeyContactPersonName,
+                                  keyContactPersonMobile = lf.KeyContactPersonMobile,
+                                  paintContractorName = lf.PaintContractorName,
+                                  paintContractorMobile = lf.PaintContractorMobile,
+                                  numberOfStoriedBuilding = lf.NumberOfStoriedBuilding,
+                                  expectedValue = lf.ExpectedValue,
+                                  expectedMonthlyBusinessValue = lf.ExpectedMonthlyBusinessValue,
+                                  swappingCompetition = ddInfo.DropdownName,
+                                  swappingCompetitionAnotherCompetitorName = lf.SwappingCompetitionAnotherCompetitorName,
+                                  upTradingFromBrandName = lf.UpTradingFromBrandName,
+                                  upTradingToBrandName = lf.UpTradingToBrandName,
+                                  brandUsedInteriorBrandName = lf.BrandUsedInteriorBrandName,
+                                  brandUsedExteriorBrandName = lf.BrandUsedExteriorBrandName,
+                                  brandUsedUnderCoatBrandName = lf.BrandUsedUnderCoatBrandName,
+                                  brandUsedTopCoatBrandName = lf.BrandUsedTopCoatBrandName,
+                                  
+                                  totalPaintingAreaSqftInterior = lf.TotalPaintingAreaSqftInterior,
+                                  totalPaintingAreaSqftExterior = lf.TotalPaintingAreaSqftExterior,
+                                  actualPaintJobCompletedInterior = lf.ActualPaintJobCompletedInteriorPercentage,
+                                  actualPaintJobCompletedExterior = lf.ActualPaintJobCompletedExteriorPercentage,
 
-            reportResult = leads.Items.Select(x =>
+                                  bergerValueSales = lbaInfo.BergerValueSales,
+                                  bergerPremiumBrandSalesValue = lbaInfo.BergerValueSales,
+                                  competitionValueSales = lbaInfo.BergerValueSales,
+                                  projectStatus = dpsInfo.DropdownName,
+                                  isColorSchemeGiven = lbaInfo.IsColorSchemeGiven,
+                                  isProductSampling = lbaInfo.IsProductSampling,
+                                  comments = lbaInfo.RemarksOrOutcome,
+                                  nextVisitDate = lbaInfo.NextVisitDate,
+                                  imageUrl = lbaInfo.PhotoCaptureUrl,
+
+                                  materialGroupOrBrandId = biInfo.MaterialGroupOrBrand,
+                                  matarialGroupOrBrandName = bfiInfo.MatarialGroupOrBrandName,
+                                  materialDescription = biInfo.MaterialDescription,
+                                  quantity = lasInfo.Quantity,
+                                  totalAmount = lasInfo.TotalAmount,
+                                  actualVolumeSoldType = lasInfo.ActualVolumeSoldType,
+
+                                  leadfolowupId = lf.Id,
+                              }).ToListAsync();
+
+            var groupOfleadFollowUp = leadFollowUp.GroupBy(x => new { x.leadfolowupId }).Select(x => new {
+                projectCode = x.FirstOrDefault().projectCode,
+                projectName = x.FirstOrDefault().projectName,
+                depot = x.FirstOrDefault().depot,
+                userId = x.FirstOrDefault().userId,
+                territory = x.FirstOrDefault().territory,
+                zone = x.FirstOrDefault().zone,
+                planVistDate = x.FirstOrDefault().planVistDate,
+                actualVisitDate = x.FirstOrDefault().actualVisitDate,
+                typeOfClient = x.FirstOrDefault().typeOfClient,
+                projectAddress = x.FirstOrDefault().projectAddress,
+                keyContactPerson = x.FirstOrDefault().keyContactPerson,
+                keyContactPersonMobile = x.FirstOrDefault().keyContactPersonMobile,
+                paintContractorName = x.FirstOrDefault().paintContractorName,
+                paintContractorMobile = x.FirstOrDefault().paintContractorMobile,
+                numberOfStoriedBuilding = x.FirstOrDefault().numberOfStoriedBuilding,
+                expectedValue = x.FirstOrDefault().expectedValue,
+                expectedMonthlyBusinessValue = x.FirstOrDefault().expectedMonthlyBusinessValue,
+                swappingCompetition = x.FirstOrDefault().swappingCompetition,
+                swappingCompetitionAnotherCompetitorName = x.FirstOrDefault().swappingCompetitionAnotherCompetitorName,
+                upTradingFromBrandName = x.FirstOrDefault().upTradingFromBrandName,
+                upTradingToBrandName = x.FirstOrDefault().upTradingToBrandName,
+                brandUsedInteriorBrandName = x.FirstOrDefault().brandUsedInteriorBrandName,
+                brandUsedExteriorBrandName = x.FirstOrDefault().brandUsedExteriorBrandName,
+                brandUsedUnderCoatBrandName = x.FirstOrDefault().brandUsedUnderCoatBrandName,
+                brandUsedTopCoatBrandName = x.FirstOrDefault().brandUsedTopCoatBrandName,
+
+                totalPaintingAreaSqftInterior = x.FirstOrDefault().totalPaintingAreaSqftInterior,
+                totalPaintingAreaSqftExterior = x.FirstOrDefault().totalPaintingAreaSqftExterior,
+                actualPaintJobCompletedInterior = x.FirstOrDefault().actualPaintJobCompletedInterior,
+                actualPaintJobCompletedExterior = x.FirstOrDefault().actualPaintJobCompletedExterior,
+
+                actualVolumeSoldInteriorLitre = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior && x.materialDescription.EndsWith("L")).Sum(x => x.totalAmount),
+                actualVolumeSoldInteriorKg = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior && x.materialDescription.EndsWith("KG")).Sum(x => x.totalAmount),
+                actualVolumeSoldExteriorLitre = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.Exterior && x.materialDescription.EndsWith("L")).Sum(x => x.totalAmount),
+                actualVolumeSoldExteriorKg = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.Exterior && x.materialDescription.EndsWith("KG")).Sum(x => x.totalAmount),
+                actualVolumeSoldUnderCoatGallon = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.UnderCoat).Sum(x => x.totalAmount),
+                actualVolumeSoldTopCoatGallon = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.TopCoat).Sum(x => x.totalAmount),
+
+                bergerValueSales = x.FirstOrDefault().bergerValueSales,
+                bergerPremiumBrandSalesValue = x.FirstOrDefault().bergerValueSales,
+                competitionValueSales = x.FirstOrDefault().bergerValueSales,
+                projectStatus = x.FirstOrDefault().projectStatus,
+                isColorSchemeGiven = x.FirstOrDefault().isColorSchemeGiven,
+                isProductSampling = x.FirstOrDefault().isProductSampling,
+                comments = x.FirstOrDefault().comments,
+                nextVisitDate = x.FirstOrDefault().nextVisitDate,
+                imageUrl = x.FirstOrDefault().imageUrl,
+            });
+
+            reportResult = groupOfleadFollowUp.Select(x =>
             {
                 var reportModel = new LeadFollowUpDetailsReportResultModel();
-                reportModel.ProjectCode = x.LeadGeneration.Code;
-                reportModel.ProjectName = x.LeadGeneration.ProjectName;
-                reportModel.Depot = x.LeadGeneration.Depot;
-                //reportModel.DepotName = x.LeadGeneration.DepotName;
-                reportModel.UserId = x.LeadGeneration.User?.Email ?? string.Empty;
-                reportModel.Territory = x.LeadGeneration.Territory;
-                reportModel.Zone = x.LeadGeneration.Zone;
-                reportModel.PlanVisitDatePlan = CustomConvertExtension.ObjectToDateString(x.NextVisitDatePlan);
-                reportModel.ActualVisitDate = CustomConvertExtension.ObjectToDateString(x.ActualVisitDate);
-                reportModel.TypeOfClient = x.TypeOfClient?.DropdownName ?? string.Empty;
-                reportModel.ProjectAddress = x.LeadGeneration.ProjectAddress;
-                reportModel.KeyContactPersonName = x.KeyContactPersonName;
-                reportModel.KeyContactPersonMobile = x.KeyContactPersonMobile;
-                reportModel.PaintContractorName = x.PaintContractorName;
-                reportModel.PaintContractorMobile = x.PaintContractorMobile;
-                reportModel.PaintContractorMobile = x.PaintContractorMobile;
-                reportModel.NumberOfStoriedBuilding = x.NumberOfStoriedBuilding;
-                reportModel.ExpectedValue = x.ExpectedValue;
-                reportModel.ExpectedMonthlyBusinessValue = x.ExpectedMonthlyBusinessValue;
-                reportModel.SwappingCompetition = x.SwappingCompetition?.DropdownName ?? string.Empty;
-                reportModel.SwappingCompetitionAnotherCompetitorName = x.SwappingCompetitionAnotherCompetitorName;
-                reportModel.UpTradingFromBrandName = x.UpTradingFromBrandName;
-                reportModel.UpTradingToBrandName = x.UpTradingToBrandName;
-                reportModel.BrandUsedInteriorBrandName = x.BrandUsedInteriorBrandName;
-                reportModel.BrandUsedExteriorBrandName = x.BrandUsedExteriorBrandName;
-                reportModel.BrandUsedUnderCoatBrandName = x.BrandUsedUnderCoatBrandName;
-                reportModel.BrandUsedTopCoatBrandName = x.BrandUsedTopCoatBrandName;
-                reportModel.TotalPaintingAreaSqftInterior = x.TotalPaintingAreaSqftInterior;
-                reportModel.TotalPaintingAreaSqftExterior = x.TotalPaintingAreaSqftExterior;
-                reportModel.ActualPaintJobCompletedInterior = x.ActualPaintJobCompletedInteriorPercentage;
-                reportModel.ActualPaintJobCompletedExterior = x.ActualPaintJobCompletedExteriorPercentage;
-                //reportModel.ActualVolumeSoldInteriorGallon = x.ActualVolumeSoldInteriorGallon;
-                //reportModel.ActualVolumeSoldInteriorKg = x.ActualVolumeSoldInteriorKg;
-                //reportModel.ActualVolumeSoldExteriorGallon = x.ActualVolumeSoldExteriorGallon;
-                //reportModel.ActualVolumeSoldExteriorKg = x.ActualVolumeSoldExteriorKg;
-                //reportModel.ActualVolumeSoldUnderCoatGallon = x.ActualVolumeSoldUnderCoatGallon;
-                //reportModel.ActualVolumeSoldTopCoatGallon = x.ActualVolumeSoldTopCoatGallon;
-                reportModel.BergerValueSales = x.BusinessAchievement?.BergerValueSales ?? (decimal)0;
-                reportModel.BergerPremiumBrandSalesValue = x.BusinessAchievement?.BergerValueSales ?? (decimal)0;
-                reportModel.CompetitionValueSales = x.BusinessAchievement?.BergerValueSales ?? (decimal)0;
-                //reportModel.ProductSourcing = x.BusinessAchievement?.ProductSourcing ?? string.Empty;
-                reportModel.ProjectStatus = x.ProjectStatus?.DropdownName ?? string.Empty;
-                reportModel.IsColorSchemeGiven = x.BusinessAchievement?.IsColorSchemeGiven ?? false ? "YES" : "NO";
-                reportModel.IsProductSampling = x.BusinessAchievement?.IsProductSampling ?? false ? "YES" : "NO";
-                reportModel.Comments = x.BusinessAchievement?.RemarksOrOutcome ?? string.Empty;
-                reportModel.NextVisitDate = CustomConvertExtension.ObjectToDateString(x.BusinessAchievement?.NextVisitDate);
-                reportModel.ImageUrl = x.BusinessAchievement?.PhotoCaptureUrl ?? string.Empty;
+                reportModel.ProjectCode = x.projectCode;
+                reportModel.ProjectName = x.projectName;
+                reportModel.Depot = x.depot;
+                reportModel.UserId = x.userId;
+                reportModel.Territory = x.territory;
+                reportModel.Zone = x.zone;
+                reportModel.PlanVisitDatePlan = CustomConvertExtension.ObjectToDateString(x.planVistDate);
+                reportModel.ActualVisitDate = CustomConvertExtension.ObjectToDateString(x.actualVisitDate);
+                reportModel.TypeOfClient = x.typeOfClient;
+                reportModel.ProjectAddress = x.projectAddress;
+                reportModel.KeyContactPersonName = x.keyContactPerson;
+                reportModel.KeyContactPersonMobile = x.keyContactPersonMobile;
+                reportModel.PaintContractorName = x.paintContractorName;
+                reportModel.PaintContractorMobile = x.paintContractorMobile;
+                reportModel.NumberOfStoriedBuilding = x?.numberOfStoriedBuilding ?? (int)0;
+                reportModel.ExpectedValue = x?.expectedValue ?? (decimal)0;
+                reportModel.ExpectedMonthlyBusinessValue = x?.expectedMonthlyBusinessValue ?? (decimal)0;
+                reportModel.SwappingCompetition = x.swappingCompetition;
+                reportModel.SwappingCompetitionAnotherCompetitorName = x.swappingCompetitionAnotherCompetitorName;
+                reportModel.UpTradingFromBrandName = x.upTradingFromBrandName;
+                reportModel.UpTradingToBrandName = x.upTradingToBrandName;
+                reportModel.BrandUsedInteriorBrandName = x.brandUsedInteriorBrandName;
+                reportModel.BrandUsedExteriorBrandName = x.brandUsedExteriorBrandName;
+                reportModel.BrandUsedUnderCoatBrandName = x.brandUsedUnderCoatBrandName;
+                reportModel.BrandUsedTopCoatBrandName = x.brandUsedTopCoatBrandName;
+
+                reportModel.TotalPaintingAreaSqftInterior = x?.totalPaintingAreaSqftInterior ?? (int)0;
+                reportModel.TotalPaintingAreaSqftExterior = x?.totalPaintingAreaSqftExterior ?? (int)0;
+                reportModel.ActualPaintJobCompletedInterior = x?.actualPaintJobCompletedInterior ?? (decimal)0;
+                reportModel.ActualPaintJobCompletedExterior = x?.actualPaintJobCompletedExterior ?? (decimal)0;
+
+                reportModel.ActualVolumeSoldInteriorLitre = x?.actualVolumeSoldInteriorLitre ?? (decimal)0;
+                reportModel.ActualVolumeSoldInteriorKg = x?.actualVolumeSoldInteriorKg ?? (decimal)0;
+                reportModel.ActualVolumeSoldExteriorLitre = x?.actualVolumeSoldExteriorLitre ?? (decimal)0;
+                reportModel.ActualVolumeSoldExteriorKg = x?.actualVolumeSoldExteriorKg ?? (decimal)0;
+                reportModel.ActualVolumeSoldUnderCoatGallon = x?.actualVolumeSoldUnderCoatGallon ?? (decimal)0;
+                reportModel.ActualVolumeSoldTopCoatGallon = x?.actualVolumeSoldTopCoatGallon ?? (decimal)0;
+
+                reportModel.BergerValueSales = x?.bergerValueSales ?? (decimal)0;
+                reportModel.BergerPremiumBrandSalesValue = x?.bergerPremiumBrandSalesValue ?? (decimal)0; ;
+                reportModel.CompetitionValueSales = x?.competitionValueSales ?? (decimal)0;
+                reportModel.ProjectStatus = x.projectStatus;
+                reportModel.IsColorSchemeGiven = x?.isColorSchemeGiven ?? false ? "YES" : "NO";
+                reportModel.IsProductSampling = x?.isProductSampling ?? false ? "YES" : "NO";
+                reportModel.Comments = x.comments ?? string.Empty;
+                reportModel.NextVisitDate = CustomConvertExtension.ObjectToDateString(x?.nextVisitDate);
+                reportModel.ImageUrl = x?.imageUrl ?? string.Empty;
                 return reportModel;
-            }).ToList();
+            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<LeadFollowUpDetailsReportResultModel>();
             queryResult.Items = reportResult;
-            queryResult.TotalFilter = leads.TotalFilter;
-            queryResult.Total = leads.Total;
+            queryResult.TotalFilter = groupOfleadFollowUp.Count();
+            queryResult.Total = groupOfleadFollowUp.Count();
 
             return queryResult;
         }
