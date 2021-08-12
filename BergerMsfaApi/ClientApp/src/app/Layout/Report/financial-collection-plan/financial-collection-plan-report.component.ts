@@ -30,7 +30,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	
 	// ptable settings
 	enabledTotal: boolean = false;
-	tableName: string = 'Collection Plan Report';
+	tableName: string = 'Slippage Vs Collection';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -74,7 +74,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	searchConfiguration() {
 		this.query = new CollectionPlanKpiReportQuery({
 			depot: '',
-			territory: '',
+			territory:[],
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -84,12 +84,15 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup}),
+		
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.territory = queryObj.territories[0];
+		this.query.territory = queryObj.territories;
+		this.query.salesGroups =queryObj.salesGroups!=null?queryObj.salesGroups[0]:null;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}

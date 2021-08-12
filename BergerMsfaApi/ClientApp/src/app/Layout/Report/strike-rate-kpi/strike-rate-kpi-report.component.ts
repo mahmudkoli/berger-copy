@@ -57,7 +57,8 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
   ) {
     // client side paggination
     this.PAGE_SIZE = 2147483647; // Int32 max value
-    this.ptableSettings.pageSize = 10;
+    this.ptableSettings.pageSize = 50;
+    this.ptableSettings.defaultPaggingSize = 50;
     this.ptableSettings.enabledServerSitePaggination = false;
     // server side paggination
     // this.PAGE_SIZE = commonService.PAGE_SIZE;

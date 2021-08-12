@@ -37,3 +37,22 @@ export enum EnumType {
     MobileApp = 1,
     Alert = 2
 }
+
+
+export class EnumMonthLabel{
+    public static EnumMonth :  MapObject[] = [
+        { id : 1, label : "Apr" },
+        { id : 2, label : "May" },
+        { id : 3, label : "Jun" },
+        { id : 4, label : "Jul" },
+        { id : 5, label : "Aug" },
+        { id : 6, label : "Sep" },
+        { id : 7, label : "Oct" },
+        { id : 8, label : "Nov" },
+        { id : 9, label : "Dec" },
+        { id : 10, label : "Jan" },
+        { id : 11, label : "Feb" },
+        { id : 12, label : "Mar" }
+
+    ];
+}

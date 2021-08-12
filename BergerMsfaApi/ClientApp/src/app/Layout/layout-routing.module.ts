@@ -144,6 +144,10 @@ const routes: Routes = [
             (m) => m.UniverseReachAnalysisModule
           ),
       },
+      {
+        path: 'kpi',
+        loadChildren: () => import('./kpi/kpi.module').then((m) => m.KpiModule),
+      },
     ],
   },
 ];

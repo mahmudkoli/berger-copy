@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BergerMsfaApi.Models.Report;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,10 +10,14 @@ using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using BergerMsfaApi.Filters;
+using BergerMsfaApi.Services.KPI.interfaces;
+using BergerMsfaApi.Models.KPI;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
     //[AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -21,11 +26,15 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
         private readonly IUniverseReachAnalysisService _universeReachAnalysisService;
-        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService, IUniverseReachAnalysisService universeReachAnalysisService)
+        private readonly INewDealerDevelopmentService _newDealerDevelopmentService;
+        
+        public AppKpiReportController(IKpiDataService kpiDataService, IKPIReportService kpiReportService, 
+          IUniverseReachAnalysisService universeReachAnalysisService, INewDealerDevelopmentService newDealerDevelopmentService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;
             _universeReachAnalysisService = universeReachAnalysisService;
+            _newDealerDevelopmentService = newDealerDevelopmentService;
         }
 
         [HttpGet("GetBusinessCallAnalysis")]
@@ -94,7 +103,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+                var result = await _kpiReportService.GetColorBankInstallationPlanVsActual(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -117,6 +126,78 @@ namespace BergerMsfaApi.Controllers.Odata
         //        return ExceptionResult(ex);
         //    }
         //}
+        [HttpGet("GetFinancialCollectionPlan")]
+        public async Task<IActionResult> GetFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModelForApp model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetFinancialCollectionPlanKPIReportForAppAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
+
+
+        [HttpGet("GetDealerConversionData")]
+        public async Task<IActionResult> GetDealerConversionData([FromQuery] SearchNewDealerDevelopment model)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.GetDealerConversionByYearAsync(model);
+
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("SaveDealerConversion")]
+        public async Task<IActionResult> SaveDealerConversion(IList<NewDealerDevelopmentSaveModel> model)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.AddDealerConversionAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetDealerOpeningStatusReport")]
+        public async Task<IActionResult> GetDealerOpeningStatusReport([FromQuery] SearchNewDealerDevelopment model)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.GetNewDealerDevelopment(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
+        [HttpGet("GetDealerConversionReport")]
+        public async Task<IActionResult> GetDealerConversionReport([FromQuery] SearchNewDealerDevelopment model)
+        {
+            try
+            {
+                var result = await _newDealerDevelopmentService.GetDealerConversion(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }
