@@ -104,7 +104,10 @@ export class DealerConversionComponent implements OnInit {
 	console.log(obj);
 	this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 		return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-			showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) ,
+			displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+		
+		} as colDef;
 	});
 	
 	// this.ptableSettings.tableColDef.push(
