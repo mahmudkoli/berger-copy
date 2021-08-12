@@ -29,7 +29,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
     {
         public readonly IRepository<NewDealerDevelopment> _repository;
         public readonly IRepository<DealerInfo> _dealerInfo;
-      
+
 
         public NewDealerDevelopmentService(
             IRepository<NewDealerDevelopment> repository,
@@ -45,11 +45,11 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
         public async Task<int> AddNewDealerDevelopmentAsync(IList<NewDealerDevelopment> model)
         {
-            
+
             var count = model.Where(p => p.Id > 0).Count();
             if (count == 0)
             {
-                var result =await _repository.CreateListAsync(model.ToList());
+                var result = await _repository.CreateListAsync(model.ToList());
             }
             else
             {
@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                 }
 
             }
-            var res =await _repository.UpdateListAsync(lstNewDealerConversion);
+            var res = await _repository.UpdateListAsync(lstNewDealerConversion);
 
             return result;
         }
@@ -92,30 +92,30 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var currentYear = await _repository.Where(p => p.BusinessArea == query.Depot &&
 
                                               p.Territory == query.Territory &&
-                                              p.FiscalYear == query.Year ).ToListAsync();
+                                              p.FiscalYear == query.Year).ToListAsync();
 
-          
+
             newDealerDevelopementList.AddRange(currentYear);
 
-            if (newDealerDevelopementList.Count ==0)
+            if (newDealerDevelopementList.Count == 0)
             {
-                for (int i = 1; i <=12; i++)
+                for (int i = 1; i <= 12; i++)
                 {
                     monthNumber = i + 3;
                     var res = new NewDealerDevelopment()
                     {
-                        BusinessArea=query.Depot,
-                        Territory=query.Territory,
-                        Month=i,
-                        Year=query.Year,
-                        FiscalYear= query.Year,
-                        ConversionTarget =0,
-                        Target=0
+                        BusinessArea = query.Depot,
+                        Territory = query.Territory,
+                        Month = i,
+                        Year = query.Year,
+                        FiscalYear = query.Year,
+                        ConversionTarget = 0,
+                        Target = 0
                     };
                     if (i > 9)
                     {
-                        monthNumber = i -9;
-                        res.Year = query.Year+1;
+                        monthNumber = i - 9;
+                        res.Year = query.Year + 1;
                     }
                     res.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(res.Year);
                     newDealerDevelopementList.Add(res);
@@ -129,11 +129,11 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                     monthNumber = item.Month + 3;
                     if (item.Month > 9)
                     {
-                        monthNumber = item.Month -9;
+                        monthNumber = item.Month - 9;
 
                     }
 
-                    item.MonthName= CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year);
+                    item.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year);
                 }
             }
 
@@ -152,7 +152,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                              p.FiscalYear == query.Year).ToListAsync();
 
 
-            currentYear.OrderBy(p=>p.Month);
+            currentYear.OrderBy(p => p.Month);
 
             if (currentYear.Count == 12)
             {
@@ -173,10 +173,10 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     var result = new NewDealerDevelopmentModel()
                     {
-                        MonthName= CultureInfo.CurrentCulture. DateTimeFormat.GetMonthName(monthNumber)+"-"+ GetYear(item.Year),
-                        Target=item.Target,
-                        Actual=actual,
-                        TargetAch= GetAchivement(item.Target, actual)
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year),
+                        Target = item.Target,
+                        Actual = actual,
+                        TargetAch = GetAchivement(item.Target, actual)
                     };
                     newDealerDevelopementList.Add(result);
                 }
@@ -217,7 +217,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     var result = new DealerConversionModel()
                     {
-                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber)+ "-"+ GetYear(item.Year),
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year),
                         ConversionTarget = item.ConversionTarget,
                         NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
                     };
@@ -230,17 +230,19 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
 
 
-        private int GetActualDealer(int monthnumber,int year)
+        private int GetActualDealer(int monthnumber, int year)
         {
 
-            
+
 
 
             var monthName = CultureInfo.CurrentCulture.
             DateTimeFormat.GetMonthName
             (monthnumber);
 
-            var count = _dealerInfo.Where(p => p.CreatedTime.Month == monthnumber && p.CreatedTime.Year == year).Count();
+            var count = _dealerInfo.Where(p => p.CreatedTime.Month == monthnumber && p.CreatedTime.Year == year &&
+                                               p.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+               p.Division == ConstantsODataValue.DivisionDecorative).Count();
 
             return count;
 
@@ -290,8 +292,8 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     var result = new NewDealerDevelopmentSaveModel()
                     {
-                        Id=item.Id,
-                        Actual= actual,
+                        Id = item.Id,
+                        Actual = actual,
                         MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year),
                         ConversionTarget = item.ConversionTarget,
                         NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,

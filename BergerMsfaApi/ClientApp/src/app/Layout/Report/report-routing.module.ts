@@ -271,13 +271,13 @@ const routes: Routes = [
         path: 'universe-reach-analysis',
         component: UniverseReachAnalysisReportComponent,
         // canActivate: [AuthGuard, PermissionGuard],
-        data: { title: 'Universe Reach Analysis Report', 
+        data: { title: 'Universe Reach Analysis Report', }
       },
       {
         path: 'dealer-opening-status',
         component: NewDealerDevelopmentListComponent,
         // canActivate: [AuthGuard, PermissionGuard],
-        data: { title: 'New Dealer Opening Status Report',
+        data: { title: 'New Dealer Opening Status Report',}
       },
 
 
@@ -285,7 +285,7 @@ const routes: Routes = [
         path: 'dealer-conversion',
         component: DealerConversionComponent,
         // canActivate: [AuthGuard, PermissionGuard],
-        data: { title: ' Dealer Conversion from Competition:',
+        data: { title: ' Dealer Conversion from Competition:',}
       },
 
       {

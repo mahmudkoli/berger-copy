@@ -539,8 +539,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      businessAreaName = depinfo.Name1,
                                      salesOffice = sginfo.Name,
                                      saleGroupName = sginfo.Name,
-                                     territoryName = tinfo.Name,
-                                     zoneName = zinfo.Name,
+                                     territoryName = tinfo.Code,
+                                     zoneName = zinfo.Code,
                                      d.EmployeeId
                                  }).ToListAsync();
 
@@ -1088,8 +1088,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          userInfo.Email,
                                          diInfo.BusinessArea,
                                          depot = depinfo.Name1,
-                                         territoryName = tinfo.Name,
-                                         zoneName = zinfo.Name,
+                                         territoryName = tinfo.Code,
+                                         zoneName = zinfo.Code,
                                          diInfo.CustomerNo,
                                          diInfo.CustomerName,
                                          jpminfo.PlanDate,

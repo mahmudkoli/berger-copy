@@ -196,6 +196,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                         x.CustomerNo.Contains(query.GlobalSearchValue)) &&
                                     (string.IsNullOrEmpty(query.Depot) || x.BusinessArea == query.Depot) &&
                                     (!query.Territories.Any() || query.Territories.Contains(x.Territory)) &&
+                                    (query.DealerId==0 || query.DealerId==x.Id) &&
+
                                     (!query.Zones.Any() || query.Zones.Contains(x.CustZone))),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,

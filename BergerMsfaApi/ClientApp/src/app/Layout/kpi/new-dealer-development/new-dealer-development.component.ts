@@ -4,6 +4,7 @@ import { forkJoin, Subscription } from 'rxjs';
 import { NewDealerDevelopmentQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { EnumMonthLabel } from 'src/app/Shared/Enums/employee-role';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NewDealerDevelopmentService } from 'src/app/Shared/Services/KPI/NewDealerDevelopmentService';
 
@@ -24,7 +25,8 @@ export class NewDealerDevelopmentComponent implements OnInit {
   constructor(
     private newDealerDevelopmentService:NewDealerDevelopmentService,
     private commonService: CommonService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private alertService: AlertService
   ) { }
 
   ngOnInit() {
@@ -70,7 +72,11 @@ export class NewDealerDevelopmentComponent implements OnInit {
   SaveOrUpdateData() {
 
 this.newDealerDevelopmentService.SaveOrUpdateNewDealerDevelopment(this.data).subscribe(
-      res => console.log(res),
+      res =>{
+
+        if(res){}
+        this.alertService.tosterSuccess("New Dealer Development Save Successfully")
+      },
       error => console.log(error),
       () => console.log('done')
     );

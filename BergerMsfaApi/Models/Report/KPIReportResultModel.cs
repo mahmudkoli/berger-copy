@@ -134,7 +134,6 @@ namespace BergerMsfaApi.Models.Report
 
     public class CollectionPlanKPIReportResultModelForApp
     {
-        public string Territory { get; set; }
         public decimal ImmediateLMSlippageAmount { get; set; }
         public decimal MTDCollectionPlan { get; set; }
         public decimal MTDActualCollection { get; set; }

@@ -521,11 +521,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 result.Add(addItem);
             }
 
-            result.Add( new ColorBankInstallationPlanVsActualKPIReportResultModel
+            result.Add(new ColorBankInstallationPlanVsActualKPIReportResultModel
             {
                 Month = "Total",
-                Target = target=result.Sum(x=>x.Target),
-                Actual = actual=result.Sum(x=>x.Actual),
+                Target = target = result.Sum(x => x.Target),
+                Actual = actual = result.Sum(x => x.Actual),
                 TargetAchievement = GetAchivement(target, actual)
             });
             return result;
@@ -552,7 +552,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
         {
             var reportResult = new List<CollectionPlanKPIReportResultModel>();
-            
+
 
 
             foreach (var item in query.Territory)
@@ -562,8 +562,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var dealerIds = await (from diInfo in _context.DealerInfos
                                        where (
                                            diInfo.BusinessArea == query.Depot
-                                           && item==diInfo.Territory
-                                           && string.IsNullOrEmpty(query.SalesGroups)?true: query.SalesGroups==diInfo.SalesGroup
+                                           && item == diInfo.Territory &&
+                                           diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                                            diInfo.Division == ConstantsODataValue.DivisionDecorative
+                                           && string.IsNullOrEmpty(query.SalesGroups) ? true : query.SalesGroups == diInfo.SalesGroup
                                        )
                                        select diInfo.CustomerNo).Distinct().ToListAsync();
 
@@ -594,20 +596,23 @@ namespace BergerMsfaApi.Services.Report.Implementation
         }
 
 
-        public async Task<CollectionPlanKPIReportResultModel> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query)
+        public async Task<CollectionPlanKPIReportResultModelForApp> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query)
         {
-            var reportResult = new CollectionPlanKPIReportResultModel();
+            var reportResult = new CollectionPlanKPIReportResultModelForApp();
 
 
-                var currentDate = DateTime.Now;
 
             foreach (var item in query.Territory)
             {
+                var currentDate = DateTime.Now;
+
                 var dealerIds = await (from diInfo in _context.DealerInfos
                                        where (
                                            diInfo.BusinessArea == query.Depot
-                                           && item == diInfo.Territory
-                                           && query.SalesGroups!=null ? query.SalesGroups.Contains(diInfo.SalesGroup) :true
+                                           && item == diInfo.Territory &&
+                                           diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                                            diInfo.Division == ConstantsODataValue.DivisionDecorative
+                                           && query.SalesGroups.Count==0 ? true : query.SalesGroups.Contains(diInfo.SalesGroup)
                                        )
                                        select diInfo.CustomerNo).Distinct().ToListAsync();
 
@@ -624,15 +629,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
 
 
-                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount+ slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
-                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan+ targetAmount;
-                reportResult.MTDActualCollection = reportResult.MTDActualCollection+ actualCollection;
-                reportResult.TargetAch = reportResult.TargetAch+ GetAchivement(targetAmount, actualCollection);
-             
+                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount + slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan + targetAmount;
+                reportResult.MTDActualCollection = reportResult.MTDActualCollection + actualCollection;
+                reportResult.TargetAch = reportResult.TargetAch + GetAchivement(targetAmount, actualCollection);
+
             }
 
-                
-            
+
+
 
 
             return reportResult;
