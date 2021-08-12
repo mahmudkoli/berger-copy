@@ -166,6 +166,7 @@ export class PremiumBrandsContributionReportComponent
         showTotal: this.allTotalKeysOfNumberType
           ? typeof obj[key] === 'number'
           : this.totalKeys.includes(key),
+        type: typeof obj[key] === 'number' ? 'text' : null, 
         displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
       } as colDef;
     });
