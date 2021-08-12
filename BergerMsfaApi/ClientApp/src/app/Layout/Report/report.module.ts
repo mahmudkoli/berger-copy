@@ -89,7 +89,7 @@ import { DealerConversionComponent } from './dealer-conversion/dealer-conversion
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
       InactivePainterReportComponent,
-      LeadBusinessUpdateReportComponent
+      LeadBusinessUpdateReportComponent,
       NewDealerDevelopmentListComponent,
       DealerConversionComponent
     ],
