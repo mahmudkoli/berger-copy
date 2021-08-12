@@ -594,9 +594,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
         }
 
 
-        public async Task<CollectionPlanKPIReportResultModel> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query)
+        public async Task<CollectionPlanKPIReportResultModelForApp> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query)
         {
-            var reportResult = new CollectionPlanKPIReportResultModel();
+            var reportResult = new CollectionPlanKPIReportResultModelForApp();
 
 
                 var currentDate = DateTime.Now;
@@ -607,7 +607,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        where (
                                            diInfo.BusinessArea == query.Depot
                                            && item == diInfo.Territory
-                                           && query.SalesGroups!=null ? query.SalesGroups.Contains(diInfo.SalesGroup) :true
+                                           && query.SalesGroups != null ? query.SalesGroups.Contains(diInfo.SalesGroup) : true
                                        )
                                        select diInfo.CustomerNo).Distinct().ToListAsync();
 
@@ -624,15 +624,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
 
 
-                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount+ slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
-                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan+ targetAmount;
-                reportResult.MTDActualCollection = reportResult.MTDActualCollection+ actualCollection;
-                reportResult.TargetAch = reportResult.TargetAch+ GetAchivement(targetAmount, actualCollection);
-             
+                reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount + slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
+                reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan + targetAmount;
+                reportResult.MTDActualCollection = reportResult.MTDActualCollection + actualCollection;
+                reportResult.TargetAch = reportResult.TargetAch + GetAchivement(targetAmount, actualCollection);
+
             }
 
-                
-            
+
+
 
 
             return reportResult;

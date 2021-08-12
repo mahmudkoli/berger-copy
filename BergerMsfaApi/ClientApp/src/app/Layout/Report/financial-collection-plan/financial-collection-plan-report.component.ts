@@ -29,7 +29,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	totalFilterDataLength: number = 0; // for server side paggination
 	
 	// ptable settings
-	enabledTotal: boolean = false;
+	enabledTotal: boolean = true;
 	tableName: string = 'Slippage Vs Collection';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};

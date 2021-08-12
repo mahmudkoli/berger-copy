@@ -32,7 +32,7 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Tinting Machine Report';
+	tableName: string = 'Color Bank Status Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -92,7 +92,7 @@ export class TintingMachineReportComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.UserId}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
