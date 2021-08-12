@@ -267,7 +267,7 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             var monthCount = 3;
             var premiumBrands = new List<string>();
-            //var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
@@ -277,6 +277,10 @@ namespace Berger.Odata.Services
                             .AddProperty(DataColumnDef.Date);
 
             premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                division: ConstantsValue.DivisionDecorative));
 
             monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
                 depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
@@ -291,7 +295,7 @@ namespace Berger.Odata.Services
                 int number = i;
                 var monthName = fromDate.GetMonthName(number);
                 //var dictDataLY = monthlyDictLY[monthName].ToList();
-                var dictDataLY = monthlyDictCY[monthName].Where(x => x.Division == ConstantsValue.DivisionDecorative).ToList();
+                var dictDataLY = monthlyDictLY[monthName].ToList();
                 var dictDataCY = monthlyDictCY[monthName].ToList();
 
                 res.MonthlyTargetData.Add(new MonthlyDataModel()
@@ -589,7 +593,7 @@ namespace Berger.Odata.Services
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             var monthCount = 3;
             var premiumBrands = new List<string>();
-            //var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
+            var monthlyDictLY = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictCY = new Dictionary<string, IList<SalesDataModel>>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
@@ -599,6 +603,10 @@ namespace Berger.Odata.Services
                             .AddProperty(DataColumnDef.Date);
 
             premiumBrands = (await _odataBrandService.GetPremiumBrandCodesAsync()).ToList();
+
+            monthlyDictLY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
+                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
+                division: ConstantsValue.DivisionDecorative));
 
             monthlyDictCY = (await this.GetQuarterlyActualData(selectQueryBuilder, model.FromYear, model.FromMonth,
                 depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
@@ -618,8 +626,7 @@ namespace Berger.Odata.Services
                 {
                     int number = i;
                     var monthName = fromDate.GetMonthName(number);
-                    //var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
-                    var dictDataLY = monthlyDictCY[monthName].Where(x => x.Division == ConstantsValue.DivisionDecorative && x.Territory == territory).ToList();
+                    var dictDataLY = monthlyDictLY[monthName].Where(x => x.Territory == territory).ToList();
                     var dictDataCY = monthlyDictCY[monthName].Where(x => x.Territory == territory).ToList();
 
                     res.MonthlyTargetData.Add(new MonthlyDataModel()
@@ -708,7 +715,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth, 
-            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false)
+            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false, string division = "")
         {
             var fromDate = (new DateTime(fromYear, fromMonth, 1));
             var monthCount = 3;
@@ -720,7 +727,7 @@ namespace Berger.Odata.Services
 
             var actualData = (await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
                 depots: depots, salesGroups: salesGroups, territories: territories,
-                brands: brands)).ToList();
+                brands: brands, division: division)).ToList();
 
             for (var i = 0; i < monthCount; i++)
             {

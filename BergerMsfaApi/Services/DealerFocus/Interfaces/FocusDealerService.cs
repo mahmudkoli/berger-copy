@@ -487,7 +487,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
                     x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                     x.Division == ConstantsODataValue.DivisionDecorative && 
-                    (dealerIdList.Contains(x.CustomerNo) || x.IsExclusive))
+                    (dealerIdList.Contains(x.CustomerNo) 
+                    //|| x.IsExclusive
+                    ))
                 .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
@@ -507,16 +509,16 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
 
-                if (dealerInfo.IsExclusive && excelModel != null) continue; // check if already same status then no need to update;
+                //if (dealerInfo.IsExclusive && excelModel != null) continue; // check if already same status then no need to update;
 
-                dealerInfo.IsExclusive = excelModel != null;
+                //dealerInfo.IsExclusive = excelModel != null;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
                     DealerInfoId = dealerInfo.Id,
                     UserId = userId,
                     PropertyName = "AP",
-                    PropertyValue = dealerInfo.IsExclusive ? "Yes" : "No"
+                    //PropertyValue = dealerInfo.IsExclusive ? "Yes" : "No"
                 };
 
                 updatedDealerInfos.Add(dealerInfo);
@@ -617,7 +619,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
                     x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                     x.Division == ConstantsODataValue.DivisionDecorative && 
-                    (dealerIdList.Contains(x.CustomerNo) || x.IsAP))
+                    (dealerIdList.Contains(x.CustomerNo) 
+                    //|| x.IsAP
+                    ))
                 .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
@@ -637,16 +641,16 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
 
-                if (dealerInfo.IsAP && excelModel != null) continue; // check if already same status then no need to update;
+                //if (dealerInfo.IsAP && excelModel != null) continue; // check if already same status then no need to update;
 
-                dealerInfo.IsAP = excelModel != null;
+                //dealerInfo.IsAP = excelModel != null;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
                     DealerInfoId = dealerInfo.Id,
                     UserId = userId,
                     PropertyName = "AP",
-                    PropertyValue = dealerInfo.IsAP ? "Yes" : "No"
+                    //PropertyValue = dealerInfo.IsAP ? "Yes" : "No"
                 };
 
                 updatedDealerInfos.Add(dealerInfo);
