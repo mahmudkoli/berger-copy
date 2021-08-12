@@ -45,6 +45,13 @@ namespace BergerMsfaApi.Models.Report
         public int? ProjectStatusId { get; set; }
     }
 
+    public class LeadBusinessReportSearchModel : ReportBaseSearchModel
+    {
+        public string ProjectName { get; set; }
+        public string ProjectCode { get; set; }
+        public int? ProjectStatusId { get; set; }
+    }
+
     public class PainterRegistrationReportSearchModel : ReportBaseSearchModel
     {
         public int? PainterId { get; set; }

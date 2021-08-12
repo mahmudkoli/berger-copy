@@ -6,7 +6,7 @@ import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { delay, finalize, take } from 'rxjs/operators';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadFollowUpDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { LeadBusinessUpdateQuery, LeadFollowUpDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
@@ -16,14 +16,14 @@ import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 
 @Component({
-    selector: 'app-lead-followup-details-report',
-    templateUrl: './lead-followup-details-report.component.html',
-    styleUrls: ['./lead-followup-details-report.component.css']
+    selector: 'app-lead-business-update-report',
+    templateUrl: './lead-business-update-report.component.html',
+    styleUrls: ['./lead-business-update-report.component.css']
 })
-export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
+export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 
 	// data list
-	query: LeadFollowUpDetailsQuery;
+	query: LeadBusinessUpdateQuery;
 	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	data: any[];
@@ -31,10 +31,13 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	totalFilterDataLength: number = 0; // for server side paggination
 
 	// ptable settings
-	enabledTotal: boolean = true;
-	tableName: string = 'Lead FollowUp Details Report';
+	enabledTotal: boolean = false;
+	tableName: string = 'Lead Business Update Report';
 	// renameKeys: any = {'userId':'// User Id //'};
-	renameKeys: any = {};
+	renameKeys: any = {
+		// 'totalAmount' : 'Total Amount in BDT',
+		// 'dealerIdAndName' : 'Dealer ID & Name'
+	};
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
@@ -68,8 +71,8 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	}
 
 	//#region need to change for another report
-	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadFollowUpDetailsApiUrl(query);
-	getData = (query) => this.reportService.getLeadFollowUpDetails(query);
+	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadBusinessUpdate(query);
+	getData = (query) => this.reportService.getLeadBusinessUpdate(query);
 	
 	searchConfiguration() {
 		this.query = new LeadFollowUpDetailsQuery({
@@ -149,18 +152,13 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
 				showTotal: (this.allTotalKeysOfNumberType ? 
-				(typeof obj[key] === 'number') 
-				: this.totalKeys.includes(key)), 
-				type: typeof obj[key] === 'number' ? 'text' : null,
-				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+					(typeof obj[key] === 'number') 
+					: this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null, 
+				displayType: typeof obj[key] === 'number' ? 
+					key==='Total Amount' ? 'number-format-color-fraction' : 'number-format-color' : null,
 			} as colDef;
 		});
-
-		var columName = this.ptableSettings.tableColDef.filter(x => x.internalName == 'imageUrl');
-		if(columName.length > 0){
-			columName[0].type = 'image';
-		}
-
 		// console.log(this.ptableSettings.tableColDef); 
 	}
 
