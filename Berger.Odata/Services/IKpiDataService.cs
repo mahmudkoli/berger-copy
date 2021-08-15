@@ -9,6 +9,7 @@ namespace Berger.Odata.Services
     public interface IKpiDataService
     {
         Task<List<TerritoryTargetAchievementResultModel>> GetTerritoryTargetAchivement(TerritoryTargetAchievementSearchModel model);
+        Task<List<AppTargetAchievementResultModel>> GetAppTargetAchievement(TerritoryTargetAchievementSearchModel model);
         Task<List<DealerWiseTargetAchievementResultModel>> GetDealerWiseTargetAchivement(DealerWiseTargetAchievementSearchModel model);
         Task<List<ProductWiseTargetAchievementResultModel>> GetProductWiseTargetAchivement(ProductWiseTargetAchievementSearchModel model);
     }

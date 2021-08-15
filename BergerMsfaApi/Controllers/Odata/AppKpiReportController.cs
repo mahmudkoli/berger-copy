@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Models.KPI;
+using Berger.Odata.Model;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
@@ -35,6 +36,20 @@ namespace BergerMsfaApi.Controllers.Odata
             _kpiReportService = kpiReportService;
             _universeReachAnalysisService = universeReachAnalysisService;
             _newDealerDevelopmentService = newDealerDevelopmentService;
+        }
+
+        [HttpGet("GetTargetAchievement")]
+        public async Task<IActionResult> GetTargetAchievement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        {
+            try
+            {
+                var data = await _kpiDataService.GetAppTargetAchievement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
 
         [HttpGet("GetBusinessCallAnalysis")]
