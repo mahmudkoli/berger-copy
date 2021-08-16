@@ -132,7 +132,7 @@
             <div class="form-row"> -->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Designation</label>
+                        <label class="">Designation</label>
                         <input type="text" autocomplete="off" class="form-control" formControlName="designation"
                                [ngClass]="{'is-valid':ufControls.designation.touched && !ufControls.designation.errors,
                                'is-invalid':ufControls.designation.touched && ufControls.designation.errors }" />
@@ -143,7 +143,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Department</label>
+                        <label class="">Department</label>
                         <input type="text" autocomplete="off" class="form-control" formControlName="department"
                                [ngClass]="{'is-valid':ufControls.department.touched && !ufControls.department.errors,
                                'is-invalid':ufControls.department.touched && ufControls.department.errors }" />
@@ -168,7 +168,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Manager Name</label>
+                        <label class="">Manager Name</label>
                         <input type="text" autocomplete="off" class="form-control" formControlName="managerName"
                                [ngClass]="{'is-valid':ufControls.managerName.touched && !ufControls.managerName.errors,
                                'is-invalid':ufControls.managerName.touched && ufControls.managerName.errors }" />
@@ -181,7 +181,7 @@
             <div class="form-row"> -->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Plant</label>
+                        <label class="">Plant</label>
                         <ng-select formControlName="plantIds" multiple="multiple">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
@@ -193,7 +193,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Sale Office</label>
+                        <label class="">Sale Office</label>
                         <ng-select formControlName="saleOfficeIds" multiple="multiple">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of saleOffices;" [value]="ur.code">{{ur.name}}</ng-option>
@@ -205,7 +205,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Sale Group</label>
+                        <label class="">Sale Group</label>
                         <ng-select formControlName="areaIds" multiple="multiple">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of areaGroups;" [value]="ur.code">{{ur.name}}</ng-option>
@@ -217,7 +217,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Territory</label>
+                        <label class="">Territory</label>
                         <ng-select formControlName="territoryIds" multiple="multiple">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
@@ -229,7 +229,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
-                        <label class="required">Zone</label>
+                        <label class="">Zone</label>
                         <ng-select formControlName="zoneIds" multiple="multiple">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of zones;" [value]="ur.code">{{ur.name}}</ng-option>

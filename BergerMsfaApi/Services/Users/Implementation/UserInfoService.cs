@@ -272,6 +272,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<UserInfo, object>>>()
             {
+                ["userName"] = v => v.UserName,
                 ["fullName"] = v => v.FullName,
                 ["designation"] = v => v.Designation,
                 ["department"] = v => v.Department,

@@ -84,7 +84,7 @@ namespace BergerMsfaApi.ActiveDirectory
                     }
                 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -98,6 +98,7 @@ namespace BergerMsfaApi.ActiveDirectory
             model.FirstName = GetProperty(directoryUser, AdProperties.FIRSTNAME);
             model.MiddleName = GetProperty(directoryUser, AdProperties.MIDDLENAME);
             model.LastName = GetProperty(directoryUser, AdProperties.LASTNAME);
+            model.DisplayName = GetProperty(directoryUser, AdProperties.DISPLAYNAME);
             model.LoginName = GetProperty(directoryUser, AdProperties.LOGINNAME);
             String userPrincipalName = GetProperty(directoryUser, AdProperties.USERPRINCIPALNAME);
             if (!string.IsNullOrEmpty(userPrincipalName))
