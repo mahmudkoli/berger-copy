@@ -95,7 +95,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.FiscalYear, isRequired:true}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -103,7 +103,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
-		this.query.year = queryObj.year;
+		this.query.year = queryObj.fiscalYear;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
