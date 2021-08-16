@@ -624,16 +624,19 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
   }
 
   changeDealerShow(){
-		const controls = this.searchOptionForm.controls;
-    this.dealerFilter.depots=controls['depot'].value;
-    this.dealerFilter.territories=controls['territories'].value;
-    this.dealerFilter.zones=controls['zones'].value;
-    this.dealerFilter.salesGroups=controls['salesGroups'].value;
-    
-
-    this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
-      this.dealers=res.data;
-    })
+    if(this.hasSearchOption('dealerId')){
+      const controls = this.searchOptionForm.controls;
+      this.dealerFilter.depots=controls['depot'].value;
+      this.dealerFilter.territories=controls['territories'].value;
+      this.dealerFilter.zones=controls['zones'].value;
+      this.dealerFilter.salesGroups=controls['salesGroups'].value;
+      
+  
+      this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
+        this.dealers=res.data;
+      })
+    }
+		
 
   }
 }
