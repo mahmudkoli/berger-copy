@@ -66,6 +66,20 @@ export class ReportService {
     }/DownloadLeadFollowUpDetails?${this.commonService.toQueryString(filter)}`;
   }
 
+  getLeadBusinessUpdate(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetLeadBusinessUpdate?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadLeadBusinessUpdate(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadLeadBusinessUpdate?${this.commonService.toQueryString(filter)}`;
+  }
+
   getPainterRegistration(filter?) {
     return this.http.get<APIResponse>(
       `${
