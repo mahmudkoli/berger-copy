@@ -38,12 +38,40 @@ namespace BergerMsfaApi.Controllers.Odata
             _newDealerDevelopmentService = newDealerDevelopmentService;
         }
 
-        [HttpGet("GetTargetAchievement")]
-        public async Task<IActionResult> GetTargetAchievement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        [HttpGet("GetSalesTargetAchievement")]
+        public async Task<IActionResult> GetTargetAchievement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
-                var data = await _kpiDataService.GetAppTargetAchievement(model);
+                var data = await _kpiDataService.GetAppSalesTargetAchievement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetDealerWiseTargetAchievement")]
+        public async Task<IActionResult> GetDealerWiseTargetAchievement([FromQuery] DealerWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                var data = await _kpiDataService.GetAppDealerWiseTargetAchievement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetProductWiseTargetAchievement")]
+        public async Task<IActionResult> GetProductWiseTargetAchivement([FromQuery] ProductWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                var data = await _kpiDataService.GetAppProductWiseTargetAchievement(model);
                 return OkResult(data);
             }
             catch (Exception ex)

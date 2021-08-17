@@ -376,6 +376,8 @@ export class DealerWiseTargetAchivementQuery extends ReportBaseQuery {
 
 export class ProductWiseTargetAchivementQuery extends ReportBaseQuery {
     resultType: number;
+    brands: string[];
+    division: string;
 
     constructor(init?: Partial<ProductWiseTargetAchivementQuery>) {
         super();

@@ -11,6 +11,7 @@ export class SearchOptionQuery extends QueryObject {
     userId: number;
     dealerId: number;
     creditControlArea: string;
+    division: string;
     paintingStageId: number;
     projectStatusId: number;
     painterId: number;
@@ -86,6 +87,7 @@ export enum EnumSearchOption {
     UserId='userId',
     DealerId='dealerId',
     CreditControlArea='creditControlArea',
+    Division='division',
     PaintingStageId='paintingStageId',
     ProjectStatusId='projectStatusId',
     PainterId='painterId',
