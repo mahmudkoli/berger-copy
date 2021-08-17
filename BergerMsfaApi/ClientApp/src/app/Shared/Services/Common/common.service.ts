@@ -228,6 +228,12 @@ export class CommonService {
     );
   }
 
+  getDivisionList() {
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/GetDivisionList'
+    );
+  }
+
   getBrandDropDown() {
     return this.http.get<APIResponse>(
       this.baseUrl + 'v1/Common/GetBrandDropDown'

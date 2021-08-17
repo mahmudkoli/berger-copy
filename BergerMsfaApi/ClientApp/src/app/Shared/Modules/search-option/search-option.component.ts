@@ -46,6 +46,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     users: any[] = [];
 	dealers: any[] = [];
 	creditControlAreas: any[] = [];
+	divisions: any[] = [];
     paintingStages: any[] = [];
     projectStatuses: any[] = [];
     painters: any[] = [];
@@ -95,6 +96,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			userId: [this.searchOptionQuery.userId],
 			dealerId: [this.searchOptionQuery.dealerId],
 			creditControlArea: [this.searchOptionQuery.creditControlArea],
+			division: [this.searchOptionQuery.division],
 			paintingStageId: [this.searchOptionQuery.paintingStageId],
 			projectStatusId: [this.searchOptionQuery.projectStatusId],
 			painterId: [this.searchOptionQuery.painterId],
@@ -308,11 +310,15 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       this.hasSearchOption(EnumSearchOption.ActivitySummary)
         ? this.commonService.getActivitySummaryDropDown()
         : of(APIResponse),
+        this.hasSearchOption(EnumSearchOption.Division)
+          ? this.commonService.getDivisionList()
+          : of(APIResponse),
     ]).subscribe(
-      ([brands, materialCodes, activitySummaries]) => {
+      ([brands, materialCodes, activitySummaries, divisions]) => {
         this.brands = brands.data;
         this.materialCodes = materialCodes.data;
         this.activitySummaries = activitySummaries.data;
+        this.divisions = divisions.data;
       },
       (err) => {},
       () => {}
@@ -337,6 +343,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.userId = controls['userId'].value;
 		this.searchOptionQuery.dealerId = controls['dealerId'].value;
 		this.searchOptionQuery.creditControlArea = controls['creditControlArea'].value;
+		this.searchOptionQuery.division = controls['division'].value;
 		this.searchOptionQuery.paintingStageId = controls['paintingStageId'].value;
 		this.searchOptionQuery.projectStatusId = controls['projectStatusId'].value;
 		this.searchOptionQuery.painterId = controls['painterId'].value;

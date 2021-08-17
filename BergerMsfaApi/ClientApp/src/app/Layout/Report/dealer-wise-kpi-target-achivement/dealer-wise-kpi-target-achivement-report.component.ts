@@ -78,7 +78,6 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 			depot: '',
 			salesGroups: [],
 			territories: [],
-			zones: [],
 			fromDate: null,
 			toDate: null,
 			customerNo: null,
@@ -92,10 +91,9 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:false}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -103,7 +101,6 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
-		this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.customerNo = queryObj.customerNo;

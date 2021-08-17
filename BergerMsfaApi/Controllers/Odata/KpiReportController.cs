@@ -33,7 +33,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]
-        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("DownloadTerritoryTargetAchivement")]
-        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
