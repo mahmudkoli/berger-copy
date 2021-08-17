@@ -29,7 +29,7 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	totalFilterDataLength: number = 0; // for server side paggination
 	
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Product Wise Target Achievement Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
@@ -169,6 +169,10 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'brandId',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

@@ -27,7 +27,7 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Sales Target Achievement Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
@@ -166,6 +166,12 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			// {columnName:'territory',columnValues:['T002'],rowStyles:{'font-weight': 'bold','background-color': 'red'}},
+			// {columnName:'territory',columnValues:['T005'],rowStyles:{'font-weight': 'bold','color': 'red'}},
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
