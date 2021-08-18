@@ -69,8 +69,6 @@ namespace BergerMsfaApi.Models.Report
 
     }
 
-
-
     public class CollectionPlanKPIReportSearchModel
     {
         public string Depot { get; set; }

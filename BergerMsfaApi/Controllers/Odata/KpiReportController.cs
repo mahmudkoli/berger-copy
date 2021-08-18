@@ -8,6 +8,8 @@ using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
@@ -255,5 +257,23 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model, EnumReportFor.App);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
     }
 }

@@ -157,21 +157,21 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
-        
-        //[HttpGet("GetColorBankProductivity")]
-        //[ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
-        //public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
-        //{
-        //    try
-        //    {
-        //        var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
+
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model,EnumReportFor.App);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
         [HttpGet("GetFinancialCollectionPlan")]
         public async Task<IActionResult> GetFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModelForApp model)
         {
