@@ -805,20 +805,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                  from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                  join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                  from cainfo in caleftjoin.DefaultIfEmpty()
+                                 join uarea in _context.UserZoneAreaMappings on uinfo.Id equals uarea.UserInfoId into uarealeftjoin
+                                 from uareaInfo in uarealeftjoin.DefaultIfEmpty()
+                                 join dep in _context.Depots on uareaInfo.PlantId equals dep.Werks into depleftjoin
+                                 from depinfo in depleftjoin.DefaultIfEmpty()
                                  join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                  from dinfo in dleftjoin.DefaultIfEmpty()
-                                 join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
-                                 from tinfo in tleftjoin.DefaultIfEmpty()
-                                 join z in _context.Zone on dinfo.CustZone equals z.Code into zleftjoin
-                                 from zinfo in zleftjoin.DefaultIfEmpty()
-                                 join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
-                                 from depinfo in depleftjoin.DefaultIfEmpty()
                                  where (
-                                   dctinfo.DropdownName == ConstantsCustomerTypeValue.Dealer
-                                   && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
-                                   && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
-                                   && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
+                                   dctinfo.DropdownCode == ConstantsCustomerTypeValue.DealerDropdownCode
+                                   && (query.Depot == uareaInfo.PlantId)
+                                   && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
+                                   && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
+                                   && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
                                    && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                   && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                    && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                    && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                    && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
@@ -842,22 +842,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      p.MobileNumber,
                                      depotId = depinfo.Werks,
                                      depotName = depinfo.Name1,
-                                     territoryName = tinfo.Name,
-                                     zoneName = zinfo.Name,
+                                     territory = uareaInfo.TerritoryId,
+                                     zone = uareaInfo.ZoneId,
                                      p.DealerId,
                                      dinfo.CustomerNo
-                                 }).ToListAsync();
+                                 }).Distinct().ToListAsync();
 
             reportResult = dealers.Select(x => new DealerCollectionReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
                 DepotId = x.depotId,
                 DepotName = x.depotName,
-                Territory = x.territoryName,
-                Zone = x.zoneName,
+                Territory = x.territory,
+                Zone = x.zone,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
-                DealerId = x?.CustomerNo.ToString(),
+                DealerId = x.CustomerNo,
                 DealerName = x.Name,
                 PaymentMethod = x.paymentMethod,
                 CreditControlArea = x.creditControlArea,
@@ -889,20 +889,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                     join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                     from cainfo in caleftjoin.DefaultIfEmpty()
+                                    join uarea in _context.UserZoneAreaMappings on uinfo.Id equals uarea.UserInfoId into uarealeftjoin
+                                    from uareaInfo in uarealeftjoin.DefaultIfEmpty()
+                                    join dep in _context.Depots on uareaInfo.PlantId equals dep.Werks into depleftjoin
+                                    from depinfo in depleftjoin.DefaultIfEmpty()
                                     join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                     from dinfo in dleftjoin.DefaultIfEmpty()
-                                    join t in _context.Territory on dinfo.Territory equals t.Code into tleftjoin
-                                    from tinfo in tleftjoin.DefaultIfEmpty()
-                                    join z in _context.Zone on dinfo.CustZone equals z.Code into zleftjoin
-                                    from zinfo in zleftjoin.DefaultIfEmpty()
-                                    join dep in _context.Depots on dinfo.BusinessArea equals dep.Werks into depleftjoin
-                                    from depinfo in depleftjoin.DefaultIfEmpty()
                                     where (
-                                      dctinfo.DropdownName == ConstantsCustomerTypeValue.SubDealer
-                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
-                                      && (!query.Territories.Any() || query.Territories.Contains(dinfo.Territory))
-                                      && (!query.Zones.Any() || query.Zones.Contains(dinfo.CustZone))
+                                      dctinfo.DropdownCode == ConstantsCustomerTypeValue.SubDealerDropdownCode
+                                      && (query.Depot == uareaInfo.PlantId)
+                                      && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
+                                      && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
+                                      && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
                                       && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
+                                      && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                       && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                       && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                       && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
@@ -926,22 +926,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         p.MobileNumber,
                                         depotId = depinfo.Werks,
                                         depotName = depinfo.Name1,
-                                        territoryName = tinfo.Name,
-                                        zoneName = zinfo.Name,
+                                        territory = uareaInfo.TerritoryId,
+                                        zone = uareaInfo.ZoneId,
                                         p.DealerId,
                                         dinfo.CustomerNo
-                                    }).ToListAsync();
+                                    }).Distinct().ToListAsync();
 
             reportResult = subDealers.Select(x => new SubDealerCollectionReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
                 DepotId = x.depotId,
                 DepotName = x.depotName,
-                Territory = x.territoryName,
-                Zone = x.zoneName,
+                Territory = x.territory,
+                Zone = x.zone,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
-                SubDealerCode = x?.CustomerNo.ToString(),
+                SubDealerId = x.CustomerNo,
                 SubDealerName = x.Name,
                 SubDealerMobileNumber = x.MobileNumber,
                 SubDealerAddress = x.Address,
@@ -975,11 +975,19 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                    join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                    from cainfo in caleftjoin.DefaultIfEmpty()
+                                   join uarea in _context.UserZoneAreaMappings on uinfo.Id equals uarea.UserInfoId into uarealeftjoin
+                                   from uareaInfo in uarealeftjoin.DefaultIfEmpty()
+                                   join dep in _context.Depots on uareaInfo.PlantId equals dep.Werks into depleftjoin
+                                   from depinfo in depleftjoin.DefaultIfEmpty()
                                    where (
-                                     dctinfo.DropdownName == ConstantsCustomerTypeValue.Customer
-                                     && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                     dctinfo.DropdownCode == ConstantsCustomerTypeValue.CustomerDropdownCode
+                                      && (query.Depot == uareaInfo.PlantId)
+                                      && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
+                                      && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
+                                      && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
                                      && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                     && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
+                                     && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                     //&& (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                    )
@@ -999,16 +1007,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        p.ManualNumber,
                                        p.Remarks,
                                        p.Name,
-                                       p.MobileNumber
-                                   }).ToListAsync();
+                                       p.MobileNumber,
+                                       depotId = depinfo.Werks,
+                                       depotName = depinfo.Name1,
+                                       territory = uareaInfo.TerritoryId,
+                                       zone = uareaInfo.ZoneId
+                                   }).Distinct().ToListAsync();
 
             reportResult = customers.Select(x => new CustomerCollectionReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
-                //DepotId = "",
-                //DepotName = "",
-                //Territory = "",
-                //Zone = "",
+                DepotId = x.depotId,
+                DepotName = x.depotName,
+                Territory = x.territory,
+                Zone = x.zone,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
                 CustomerName = x.Name,
@@ -1044,11 +1056,19 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         from dpminfo in dpmleftjoin.DefaultIfEmpty()
                                         join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                         from cainfo in caleftjoin.DefaultIfEmpty()
+                                        join uarea in _context.UserZoneAreaMappings on uinfo.Id equals uarea.UserInfoId into uarealeftjoin
+                                        from uareaInfo in uarealeftjoin.DefaultIfEmpty()
+                                        join dep in _context.Depots on uareaInfo.PlantId equals dep.Werks into depleftjoin
+                                        from depinfo in depleftjoin.DefaultIfEmpty()
                                         where (
-                                          dctinfo.DropdownName == ConstantsCustomerTypeValue.DirectProject
-                                          && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                          dctinfo.DropdownCode == ConstantsCustomerTypeValue.DirectProjectDropdownCode
+                                          && (query.Depot == uareaInfo.PlantId)
+                                          && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
+                                          && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
+                                          && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
                                           && (!query.PaymentMethodId.HasValue || p.PaymentMethodId == query.PaymentMethodId.Value)
-                                          && (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
+                                          && (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
+                                          //&& (!query.DealerId.HasValue || p.DealerId == query.DealerId.Value.ToString())
                                           && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                           && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                         )
@@ -1066,16 +1086,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                             p.Number,
                                             p.Amount,
                                             p.ManualNumber,
-                                            p.Remarks
-                                        }).ToListAsync();
+                                            p.Remarks,
+                                            depotId = depinfo.Werks,
+                                            depotName = depinfo.Name1,
+                                            territory = uareaInfo.TerritoryId,
+                                            zone = uareaInfo.ZoneId
+                                        }).Distinct().ToListAsync();
 
             reportResult = directProjects.Select(x => new DirectProjectCollectionReportResultModel
             {
                 UserId = x?.Email ?? string.Empty,
-                //DepotId = "",
-                //DepotName = "",
-                //Territory = "",
-                //Zone = "",
+                DepotId = x.depotId,
+                DepotName = x.depotName,
+                Territory = x.territory,
+                Zone = x.zone,
                 CollectionDate = CustomConvertExtension.ObjectToDateString(x.CollectionDate),
                 TypeOfCustomer = x.customerType,
                 ProjectSapId = x.SapId,
@@ -2685,7 +2709,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uareaInfo.AreaId))
                                         && (!query.Territories.Any() || query.Territories.Contains(uareaInfo.TerritoryId))
                                         && (!query.Zones.Any() || query.Zones.Contains(uareaInfo.ZoneId))
-                                        && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == uareaInfo.PlantId)
+                                        //&& (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == uareaInfo.PlantId)
                                         && (string.IsNullOrWhiteSpace(query.Depot) || query.Depot == uareaInfo.PlantId)
                                         && (!query.UserId.HasValue || p.EmployeeId == userinfo.EmployeeId)
                                     )
@@ -2830,7 +2854,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 },
                 new ActiveSummaryReportResultModel
                 {
-                    //TODO: need to update collection value
                     Activity="TOTAL COLLECTION VALUE",
                     Target="N/A",
                     Actual =  (string.IsNullOrWhiteSpace(query.ActivitySummary) || query.ActivitySummary.ToLower()=="TOTAL COLLECTION VALUE".ToLower())?

@@ -105,23 +105,21 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                               DealerId = dsc.DealerId
                                           }).Distinct().ToListAsync();
 
-            //TODO: need to update query after painter call modification
             var painterCall = await (from pc in _context.PainterCalls
                                      join p in _context.Painters on pc.PainterId equals p.Id into pleftjoin
                                      from pInfo in pleftjoin.DefaultIfEmpty()
                                      where (
                                         (pc.CreatedTime.Date == currentDate.Date)
                                         && (!area.Depots.Any() || area.Depots.Contains(pInfo.Depot))
-                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(pInfo.SaleGroup))
-                                        && (!area.Territories.Any() || area.Territories.Contains(pInfo.Territory))
-                                        && (!area.Zones.Any() || area.Zones.Contains(pInfo.Zone))
+                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
+                                        && (!area.Territories.Any() || area.Territories.Contains(pc.Territory))
+                                        && (!area.Zones.Any() || area.Zones.Contains(pc.Zone))
                                     )
                                      select new
                                      {
                                          PainterCallId = pc.Id
                                      }).Distinct().ToListAsync();
 
-            //TODO: need to update after dropdown modification
             var collection = await (from p in _context.Payments
                                     join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
                                     from dctinfo in dctleftjoin.DefaultIfEmpty()
@@ -141,14 +139,15 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                     {
                                         CollectionId = p.Id,
                                         CustomerTypeId = p.CustomerTypeId,
-                                        CustomerTypeName = dctinfo.DropdownName,
+                                        CustomerTypeCode = dctinfo.DropdownCode,
                                         Amount = p.Amount
                                     }).Distinct().ToListAsync();
 
-            //TODO: need to update after lead followup modification
             var lead = await (from lg in _context.LeadGenerations
                               join lf in _context.LeadFollowUps on lg.Id equals lf.LeadGenerationId into lfleftjoin
                               from lfInfo in lfleftjoin.DefaultIfEmpty()
+                              join lba in _context.LeadBusinessAchievements on lfInfo.BusinessAchievementId equals lba.Id into lbaleftjoin
+                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
                               where (
                                   (lg.CreatedTime.Date == currentDate.Date || lfInfo.CreatedTime.Date == currentDate.Date)
                                   && (!area.Depots.Any() || area.Depots.Contains(lg.Depot))
@@ -161,7 +160,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                   LeadFollowUpId = lfInfo.Id,
                                   LeadGenerationDate = lg.CreatedTime,
                                   LeadFollowUpDate = lfInfo.CreatedTime,
-                                  DGABusinessValue = lfInfo.ExpectedValue
+                                  DGABusinessValue = lbaInfo.BergerValueSales
                               }).Distinct().ToListAsync();
 
             var noOfBillingDealer = await _salesDataService.NoOfBillingDealer(area, ConstantsODataValue.DivisionDecorative, ConstantsODataValue.DistrbutionChannelDealer);
@@ -176,10 +175,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
                 NoOfBillingDealer = noOfBillingDealer,
                 PainterCall = painterCall.Select(x => x.PainterCallId).Distinct().Count(x => x > 0),
-                CollectionFromDealer = collection.Where(x => x.CustomerTypeName == ConstantsCustomerTypeValue.Dealer).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
-                CollectionFromSubDealer = collection.Where(x => x.CustomerTypeName == ConstantsCustomerTypeValue.SubDealer).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
-                CollectionFromDirectProject = collection.Where(x => x.CustomerTypeName == ConstantsCustomerTypeValue.DirectProject).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
-                CollectionFromCustomer = collection.Where(x => x.CustomerTypeName == ConstantsCustomerTypeValue.Customer).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
+                CollectionFromDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
+                CollectionFromSubDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.SubDealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
+                CollectionFromDirectProject = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DirectProjectDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
+                CollectionFromCustomer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.CustomerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 LeadGenerationNo = lead.Where(x => x.LeadGenerationDate.Date == currentDate.Date).Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0),
                 LeadFollowupNo = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0),
                 DGABusinessValue = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue),

@@ -207,7 +207,7 @@ namespace BergerMsfaApi.Models.Report
         public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
-        public string SubDealerCode { get; set; }
+        public string SubDealerId { get; set; }
         public string SubDealerName { get; set; }
         public string SubDealerMobileNumber { get; set; }
         public string SubDealerAddress { get; set; }
@@ -223,10 +223,10 @@ namespace BergerMsfaApi.Models.Report
     public class CustomerCollectionReportResultModel
     {
         public string UserId { get; set; }
-        //public string DepotId { get; set; }
-        //public string DepotName { get; set; }
-        //public string Territory { get; set; }
-        //public string Zone { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string CustomerName { get; set; }
@@ -244,10 +244,10 @@ namespace BergerMsfaApi.Models.Report
     public class DirectProjectCollectionReportResultModel
     {
         public string UserId { get; set; }
-        //public string DepotId { get; set; }
-        //public string DepotName { get; set; }
-        //public string Territory { get; set; }
-        //public string Zone { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string ProjectSapId { get; set; }
