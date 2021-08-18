@@ -105,6 +105,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         // debugger;
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(mySelect);
+        let message=this.journeyPlanStatus.status==PlanStatus.Rejected?"Are you sure to reject journey plan?":"Are you sure to approve journey plan?";
       
         if (this.journeyPlanStatus.status == PlanStatus.Rejected) {
             if (!this.journeyPlanStatus.comment) {
@@ -114,7 +115,8 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         }
 
 
-        this.alertService.confirm(`Are you sure to change status?`, () => {
+
+        this.alertService.confirm(message, () => {
 
             //if (PlanStatus.Rejected == Number(mySelect)) {
             //    alert("Rejected");

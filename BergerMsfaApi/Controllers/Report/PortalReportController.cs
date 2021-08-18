@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Excel.Interface;
-using System.Collections.Generic;
 
 namespace BergerMsfaApi.Controllers.Report
 {
@@ -751,10 +750,15 @@ namespace BergerMsfaApi.Controllers.Report
 
 
                 var data = await _excelReaderService.WriteToFileWithImage(datatabledata);
+                //var contentStream = await data.ReadAsStreamAsync();
 
-                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
+                var result = File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                sFileName);
 
-                //return Ok(datatabledata);
+                return result;
+                
             }
             catch (Exception ex)
             {
