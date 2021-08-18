@@ -98,6 +98,28 @@ namespace Berger.Odata.Services
                 reportResult.Add(result);
             }
 
+            if (!model.ForApp && reportResult.Any() && reportResult.Count > 1)
+            {
+                var result = new TerritoryTargetAchievementResultModel()
+                {
+                    Territory = "Total",
+
+                    LiquidTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.LiquidTarget)),
+                    LiquidActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.LiquidActual)),
+                    LiquidAcv = _odataService.GetAchivement(target, actual),
+
+                    PowderTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.PowderTarget)),
+                    PowderActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.PowderActual)),
+                    PowderAcv = _odataService.GetAchivement(target, actual),
+
+                    ValueTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ValueTarget)),
+                    ValueActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ValueActual)),
+                    ValueAcv = _odataService.GetAchivement(target, actual),
+                };
+
+                reportResult.Add(result);
+            }
+
             return reportResult;
         }
 
@@ -212,6 +234,28 @@ namespace Berger.Odata.Services
                 reportResult.Add(result);
             }
 
+            if (!model.ForApp && reportResult.Any() && reportResult.Count > 1)
+            {
+                var result = new DealerWiseTargetAchievementResultModel()
+                {
+                    Territory = "Total",
+
+                    LiquidTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.LiquidTarget)),
+                    LiquidActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.LiquidActual)),
+                    LiquidAcv = _odataService.GetAchivement(target, actual),
+
+                    PowderTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.PowderTarget)),
+                    PowderActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.PowderActual)),
+                    PowderAcv = _odataService.GetAchivement(target, actual),
+
+                    ValueTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ValueTarget)),
+                    ValueActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ValueActual)),
+                    ValueAcv = _odataService.GetAchivement(target, actual),
+                };
+
+                reportResult.Add(result);
+            }
+
             return reportResult;
         }
 
@@ -296,6 +340,7 @@ namespace Berger.Odata.Services
                     {
                         BrandId = brand.MatarialGroupOrBrand,
                         BrandName = brand.BrandName,
+
                         ProductTarget = target = valueTarget.Where(x => x.MatarialGroupOrBrand == brand.MatarialGroupOrBrand).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
                         ProductActual = actual = valueActual.Where(x => x.MatarialGroupOrBrand == brand.MatarialGroupOrBrand).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount)),
                         ProductAcv = _odataService.GetAchivement(target, actual),
@@ -311,12 +356,26 @@ namespace Berger.Odata.Services
                     {
                         BrandId = brand.MatarialGroupOrBrand,
                         BrandName = brand.BrandName,
+
                         ProductTarget = target = valueTarget.Where(x => x.MatarialGroupOrBrand == brand.MatarialGroupOrBrand).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume)),
                         ProductActual = actual = valueActual.Where(x => x.MatarialGroupOrBrand == brand.MatarialGroupOrBrand).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume)),
                         ProductAcv = _odataService.GetAchivement(target, actual),
                     };
                     reportResult.Add(result);
                 }
+            }
+
+            if (!model.ForApp && reportResult.Any() && reportResult.Count > 1)
+            {
+                var result = new ProductWiseTargetAchievementResultModel()
+                {
+                    BrandId = "Total",
+
+                    ProductTarget = target = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ProductTarget)),
+                    ProductActual = actual = reportResult.Sum(x => CustomConvertExtension.ObjectToDecimal(x.ProductActual)),
+                    ProductAcv = _odataService.GetAchivement(target, actual),
+                };
+                reportResult.Add(result);
             }
 
             return reportResult;

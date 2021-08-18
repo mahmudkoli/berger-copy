@@ -43,6 +43,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
+                model.ForApp = true;
                 var data = await _kpiDataService.GetAppSalesTargetAchievement(model);
                 return OkResult(data);
             }
@@ -57,6 +58,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
+                model.ForApp = true;
                 var data = await _kpiDataService.GetAppDealerWiseTargetAchievement(model);
                 return OkResult(data);
             }
@@ -71,6 +73,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
+                model.ForApp = true;
                 var data = await _kpiDataService.GetAppProductWiseTargetAchievement(model);
                 return OkResult(data);
             }

@@ -29,7 +29,7 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	totalFilterDataLength: number = 0; // for server side paggination
 	
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Product Wise Target Achievement Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
@@ -138,8 +138,12 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			return { 
+				headerName: this.commonService.insertSpaces(key), internalName: key, 
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)), 
+				type: typeof obj[key] === 'number' ? 'text' : null, 
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+			} as colDef;
 		});
 		
 	}
@@ -165,6 +169,10 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'brandId',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

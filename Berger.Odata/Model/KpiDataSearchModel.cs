@@ -7,6 +7,7 @@ namespace Berger.Odata.Model
 {
     public class KpiDataSearchModel 
     {
+        public bool ForApp { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public string Depot { get; set; }

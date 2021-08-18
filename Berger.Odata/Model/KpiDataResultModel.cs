@@ -6,7 +6,6 @@ namespace Berger.Odata.Model
 {
     public class KpiTargetAchievementResultModel
     {
-        public string Territory { get; set; }
         public decimal LiquidTarget { get; set; }
         public decimal LiquidActual { get; set; }
         public decimal LiquidAcv { get; set; }
@@ -18,9 +17,9 @@ namespace Berger.Odata.Model
         public decimal ValueAcv { get; set; }
     }
 
-    public class TerritoryTargetAchievementResultModel : KpiTargetAchievementResultModel 
+    public class TerritoryTargetAchievementResultModel : KpiTargetAchievementResultModel
     {
-
+        public string Territory { get; set; }
     }
 
     public class AppTargetAchievementResultModel
@@ -31,8 +30,9 @@ namespace Berger.Odata.Model
         public decimal Achievement { get; set; }
     }
 
-    public class DealerWiseTargetAchievementResultModel : KpiTargetAchievementResultModel 
+    public class DealerWiseTargetAchievementResultModel : KpiTargetAchievementResultModel
     {
+        public string Territory { get; set; }
         public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
     }

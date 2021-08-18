@@ -1213,4 +1213,26 @@ export class PTableComponent implements OnInit, DoCheck {
                                 minimumFractionDigits: fractionDigit, maximumFractionDigits: fractionDigit });
     return formatValue;
   }
+
+  conditionalRowStyles(dataObj) {
+    let styles: any = {};
+    if (this.pTableSetting.enabledConditionalRowStyles) {
+      const columnHeaders = this.pTableSetting.conditionalRowStyles.filter(x => 
+                      this.pTableSetting.tableColDef.find(y => x.columnName == y.internalName));
+      columnHeaders.forEach(ch => {
+        if (ch.columnValues.indexOf(dataObj[ch.columnName]) > -1) {
+          if (ch.rowStyles) { 
+            styles = ch.rowStyles; 
+          } else {
+            styles = {
+              'font-weight': 'bold',
+              'background-color': '#e8edff',
+            }
+          }
+          return;
+        }
+      });
+    } 
+    return styles;
+  }
 }

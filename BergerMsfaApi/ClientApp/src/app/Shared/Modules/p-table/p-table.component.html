@@ -606,6 +606,8 @@
                   class="individual-ptable-record-{{
                     body[pTableSetting.columnNameSetAsClass]
                   }}"
+
+                  [ngStyle]="conditionalRowStyles(body)"
                 >
                   <td *ngIf="pTableSetting.enabledSerialNo">
                     {{ startPageNo + counter }}

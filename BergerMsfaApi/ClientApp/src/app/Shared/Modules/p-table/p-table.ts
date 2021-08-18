@@ -45,6 +45,8 @@ export interface IPTableSetting {
   downloadDataApiUrl?: string | null;
   enabledDetailsEditDeleteBtn?: boolean | false;
   enabledDetailsBtn?: boolean | false;
+  enabledConditionalRowStyles?: boolean | false;
+  conditionalRowStyles?: IConditionalRowStyle[] | null; 
 }
 
 export interface colDef {
@@ -80,4 +82,10 @@ export interface IPTableServerQueryObj {
   pageSize: number;
   orderBy: string;
   isOrderAsc: boolean;
+}
+
+export interface IConditionalRowStyle {
+  columnName: string;
+  columnValues: string[];
+  rowStyles?: any | null;
 }
