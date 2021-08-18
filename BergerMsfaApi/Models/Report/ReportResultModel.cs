@@ -123,7 +123,7 @@ namespace BergerMsfaApi.Models.Report
         public string VisitDate { get; set; }
         public string BrandName { get; set; }
         public string BrandDescription { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
         public decimal TotalAmount { get; set; }
         public string ProductSourcing { get; set; }
         public string DealerIdAndName { get; set; }

@@ -589,7 +589,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 }
                 reportResult.Add(new LeadBusinessReportResultModel
                 {
-                    UserId = "Total",
+                    UserId = "Sub Total",
                     Depot = item.FirstOrDefault().Depot,
                     ProjectCode = item.FirstOrDefault().Code,
                     ProjectName = item.FirstOrDefault().ProjectName,
@@ -597,12 +597,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Territory = item.FirstOrDefault().Territory,
                     Zone = item.FirstOrDefault().Zone,
                     VisitDate = CustomConvertExtension.ObjectToDateString(item.FirstOrDefault().ActualVisitDate),
-                    BrandName = item.FirstOrDefault().MatarialGroupOrBrandName + '(' + item.FirstOrDefault().MaterialGroupOrBrand + ')',
-                    BrandDescription = item.FirstOrDefault().MaterialDescription,
-                    Quantity = item.Sum(x => x.Quantity),
+                    //BrandName = item.FirstOrDefault().MatarialGroupOrBrandName + '(' + item.FirstOrDefault().MaterialGroupOrBrand + ')',
+                    //BrandDescription = item.FirstOrDefault().MaterialDescription,
+                    //Quantity = item.Sum(x => x.Quantity),
                     TotalAmount = item.Sum(x => x.TotalAmount),
-                    ProductSourcing = "",
-                    DealerIdAndName = ""
+                    //ProductSourcing = "",
+                    //DealerIdAndName = ""
+                });
+            }
+
+            // for grand total
+            if (reportResult.Any())
+            {
+                reportResult.Add(new LeadBusinessReportResultModel
+                {
+                    UserId = "Grand Total",
+                    TotalAmount = reportResult.Where(x => x.UserId == "Sub Total").Sum(x => x.TotalAmount),
                 });
             }
 
