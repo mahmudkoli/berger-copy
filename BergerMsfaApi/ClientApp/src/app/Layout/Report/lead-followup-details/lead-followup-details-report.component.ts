@@ -35,9 +35,13 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	tableName: string = 'Lead FollowUp Details Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
-	allTotalKeysOfNumberType: boolean = true;
+	allTotalKeysOfNumberType: boolean = false;
 	// totalKeys: any[] = ['totalCall'];
-	totalKeys: any[] = [];
+	totalKeys: any[] = ['actualVolumeSoldInteriorLitre','actualVolumeSoldInteriorKg','actualVolumeSoldExteriorLitre','actualVolumeSoldExteriorKg',
+						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales'];
+	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue','actualPaintJobCompletedInterior','actualPaintJobCompletedExterior',
+						'actualVolumeSoldInteriorLitre','actualVolumeSoldInteriorKg','actualVolumeSoldExteriorLitre','actualVolumeSoldExteriorKg',
+						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -151,8 +155,8 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 				showTotal: (this.allTotalKeysOfNumberType ? 
 				(typeof obj[key] === 'number') 
 				: this.totalKeys.includes(key)), 
-				type: typeof obj[key] === 'number' ? 'text' : null,
-				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null, 
 			} as colDef;
 		});
 

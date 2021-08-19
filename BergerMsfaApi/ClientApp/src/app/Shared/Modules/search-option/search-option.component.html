@@ -135,6 +135,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('division')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('division')}">Division</label>
+                    <ng-select [items]="divisions" formControlName="division" bindValue="divisionCode" bindLabel="description" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.division.touched && formControls.division.errors">
+                        <span *ngIf="formControls.division.errors.required">Division is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('paintingStageId')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('paintingStageId')}">Painting Stage</label>

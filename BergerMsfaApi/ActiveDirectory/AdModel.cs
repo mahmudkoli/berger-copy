@@ -14,6 +14,7 @@ namespace BergerMsfaApi.ActiveDirectory
         public String MiddleName { get; set; }
 
         public String LastName { get; set; }
+        public String DisplayName { get; set; }
 
         public String LoginName { get; set; }
 

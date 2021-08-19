@@ -153,6 +153,10 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+								enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

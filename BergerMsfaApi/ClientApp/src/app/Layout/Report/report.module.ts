@@ -47,6 +47,8 @@ import { LeadBusinessUpdateReportComponent } from './lead-business-update/lead-b
 import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
 import { NewDealerDevelopmentListComponent } from './new-dealer-development-list/new-dealer-development-list.component';
 import { DealerConversionComponent } from './dealer-conversion/dealer-conversion.component';
+import { ColorBankInstallationPlanVsActualComponent } from './color-bank-installation-plan-vs-actual/color-bank-installation-plan-vs-actual.component';
+import { ColorBankProductivityComponent } from './color-bank-productivity/color-bank-productivity.component';
 
 @NgModule({
     declarations: [
@@ -91,7 +93,9 @@ import { DealerConversionComponent } from './dealer-conversion/dealer-conversion
       InactivePainterReportComponent,
       LeadBusinessUpdateReportComponent,
       NewDealerDevelopmentListComponent,
-      DealerConversionComponent
+      DealerConversionComponent,
+      ColorBankInstallationPlanVsActualComponent,
+      ColorBankProductivityComponent
     ],
   imports: [
       CommonModule,

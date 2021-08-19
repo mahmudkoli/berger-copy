@@ -54,6 +54,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IMapper _mapper;
         private readonly IColorBankInstallMachine _colorBankInstallMachine;
         private readonly IRepository<ColorBankInstallationTarget> _colorBankInstallRepository;
+        private readonly IODataService _oDataService;
+        private readonly IRepository<BrandInfo> _brandRepository;
+        private readonly IRepository<DealerInfo> _dealerInfoRepository;
 
         public Dictionary<int, (int Start, int End)> WeeklyCalculationDict = new Dictionary<int, (int Start, int End)>()
         {
@@ -71,7 +74,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IAuthService authService,
                 IMapper mapper,
                 IColorBankInstallMachine colorBankInstallMachine,
-                IRepository<ColorBankInstallationTarget> colorBankInstallRepository)
+                IRepository<ColorBankInstallationTarget> colorBankInstallRepository,
+                IODataService oDataService,
+                IRepository<BrandInfo> brandRepository,
+                IRepository<DealerInfo> dealerInfoRepository)
         {
             this._context = context;
             this._salesDataService = salesDataService;
@@ -82,6 +88,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
             this._mapper = mapper;
             _colorBankInstallMachine = colorBankInstallMachine;
             _colorBankInstallRepository = colorBankInstallRepository;
+            _oDataService = oDataService;
+            _brandRepository = brandRepository;
+            _dealerInfoRepository = dealerInfoRepository;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -412,7 +421,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
-            //TODO: need to recheck
             var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories);
             //var billingOData = new List<KPIBusinessAnalysisKPIReportResultModel>();
             var tempDealer = new List<string>();
@@ -531,6 +539,160 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return result;
         }
 
+        public async Task<IList<ColorBankProductivityBase>> GetColorBankProductivity(ColorBankProductivityKpiReportSearchModel query, EnumReportFor reportFor)
+        {
+            DateTime today = DateTime.Now;
+            int year = query.Year;
+            DateTime compareDate = new DateTime(year, ConstantsValue.FyYearFirstMonth, 1);
+
+            DateTime currentYearStartDate = compareDate.GetCFYFD();
+            DateTime currentYearEndDate = compareDate.GetCFYLD();
+
+            DateTime lastYearStartDate = compareDate.GetLFYFD();
+            DateTime lastYearEndDate = compareDate.GetLFYLD();
+
+            if (year == today.Year)
+            {
+                currentYearEndDate = today.AddMonths(-1).GetCYLD();
+            }
+
+            var productivityTarget =
+                await _colorBankInstallRepository.FindByCondition(x =>
+                        x.BusinessArea == query.Depot &&
+                        (!query.Territories.Any() || query.Territories.Contains(x.Territory)) &&
+                        x.Year == query.Year && x.Month >= ConstantsValue.FyYearFirstMonth)
+                        .Select(x => new
+                        {
+                            x.Month,
+                            x.ColorBankProductivityTarget
+                        }).ToListAsync();
+
+            var productivityTarget2 =
+                await _colorBankInstallRepository.FindByCondition(x =>
+                        x.BusinessArea == query.Depot &&
+                        (!query.Territories.Any() || query.Territories.Contains(x.Territory)) &&
+                        x.Year == query.Year + 1 && x.Month <= ConstantsValue.FyYearLastMonth)
+                        .Select(x => new
+                        {
+                            x.Month,
+                            x.ColorBankProductivityTarget
+                        }).ToListAsync();
+
+
+
+            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+
+            selectCustomerQueryBuilder.AddProperty(DataColumnDef.MatrialCode).AddProperty(DataColumnDef.Volume).AddProperty(DataColumnDef.Territory);
+
+            var depotList = new List<string>
+            {
+                query.Depot
+            };
+
+            var dbCbBrandList = await _brandRepository.FindByCondition(x => x.IsCBInstalled).Select(x => x.MaterialCode).ToListAsync();
+
+            var currentYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: currentYearStartDate.SalesSearchDateFormat(), endDate: currentYearEndDate.SalesSearchDateFormat(),
+                salesGroups: query.SalesGroups, territories: query.Territories);
+
+
+            var lastYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: lastYearStartDate.SalesSearchDateFormat(), endDate: lastYearEndDate.SalesSearchDateFormat(),
+                salesGroups: query.SalesGroups, territories: query.Territories);
+
+            currentYearSales = currentYearSales.Where(x => dbCbBrandList.Contains(x.MatrialCode)).ToList();
+            lastYearSales = lastYearSales.Where(x => dbCbBrandList.Contains(x.MatrialCode)).ToList();
+
+            var currentYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, currentYearStartDate.DateTimeFormat(), currentYearEndDate.DateTimeFormat());
+            var lastYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, lastYearStartDate.DateTimeFormat(), lastYearEndDate.DateTimeFormat());
+
+            var customerList = await _dealerInfoRepository.FindByCondition(x => x.BusinessArea == query.Depot &&
+                                                                                      (!query.Territories.Any() ||
+                                                                                       query.Territories.Contains(x.Territory)) &&
+                                                                                      (!query.SalesGroups.Any() ||
+                                                                                       query.Territories.Contains(x.SalesGroup)) &&
+                                                                                      (!query.Zones.Any() ||
+                                                                                       query.Territories.Contains(x.CustZone)))
+                .Select(x => new { x.CustomerNo, x.Territory }).Distinct().ToListAsync();
+
+            int totalMonth = (currentYearEndDate.Year - currentYearStartDate.Year) * 12 + currentYearEndDate.Month - currentYearStartDate.Month;
+            var result = new List<ColorBankProductivityBase>();
+
+            foreach (string territory in query.Territories)
+            {
+                var bankProductivityBase = reportFor == EnumReportFor.App ? new ColorBankProductivityBase() : new ColorBankProductivityWeb { Territory = territory };
+
+                decimal currentYearTotalSales = currentYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
+                decimal lastYearTotalSales = lastYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
+
+                int lastYearInstall = lastYearInstallList.Count(x => customerList.Where(z => z.Territory == territory).Select(y => y.CustomerNo).Contains(x.CustomerNo));
+                int currentYearInstall = currentYearInstallList.Count(x => customerList.Where(z => z.Territory == territory).Select(y => y.CustomerNo).Contains(x.CustomerNo));
+
+                bankProductivityBase.CYActualProductivity = 0;
+                bankProductivityBase.LYProductivity = 0;
+                try
+                {
+                    bankProductivityBase.CYActualProductivity = (currentYearTotalSales / currentYearInstall) / totalMonth;
+
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                try
+                {
+                    bankProductivityBase.LYProductivity = (lastYearTotalSales / lastYearInstall) / totalMonth;
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                bankProductivityBase.ProductivityTarget = productivityTarget.Sum(x => x.ColorBankProductivityTarget) +
+                                                          productivityTarget2.Sum(x => x.ColorBankProductivityTarget);
+
+                bankProductivityBase.ProductivityGrowth = _oDataService.GetGrowth(bankProductivityBase.LYProductivity, bankProductivityBase.CYActualProductivity);
+
+                result.Add(bankProductivityBase);
+            }
+
+            decimal currentYear;
+            decimal lastYear;
+
+            if (reportFor == EnumReportFor.App)
+            {
+
+                var colorBankProductivityBase = new ColorBankProductivityBase
+                {
+                    CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
+                    LYProductivity = lastYear = result.Sum(x => x.LYProductivity),
+                    ProductivityTarget = result.Sum(x => x.ProductivityTarget),
+                    ProductivityGrowth = _oDataService.GetGrowth(lastYear, currentYear)
+                };
+
+                result = new List<ColorBankProductivityBase>
+                {
+                    colorBankProductivityBase
+                };
+            }
+
+            if (query.Territories.Count > 1)
+            {
+                result.Add(new ColorBankProductivityWeb
+                {
+                    Territory = "Total",
+                    CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
+                    LYProductivity = lastYear = result.Sum(x => x.LYProductivity),
+                    ProductivityTarget = result.Sum(x => x.ProductivityTarget),
+                    ProductivityGrowth = _oDataService.GetGrowth(lastYear, currentYear)
+                });
+            }
+
+            return result;
+        }
+
+
+
+
         private Dictionary<int, string> GetBergerFyMonth()
         {
             var result = new Dictionary<int, string>();
@@ -622,7 +784,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            && item == diInfo.Territory &&
                                            diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                                             diInfo.Division == ConstantsODataValue.DivisionDecorative
-                                           && query.SalesGroups.Count==0 ? true : query.SalesGroups.Contains(diInfo.SalesGroup)
+                                           && query.SalesGroups.Count == 0 ? true : query.SalesGroups.Contains(diInfo.SalesGroup)
                                        )
                                        select diInfo.CustomerNo).Distinct().ToListAsync();
 

@@ -95,6 +95,13 @@ namespace BergerMsfaApi.Controllers.Users
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
+                var isExists = await _userInfoService.IsUserNameExistAsync(model.UserName.Trim());
+                if (isExists)
+                {
+                    ModelState.AddModelError("", "Already exists this user.");
+                    return ValidationResult(ModelState);
+                }
+
                 var result = await _userInfoService.CreateAsync(model);
                 return OkResult(result);
             }
@@ -111,6 +118,13 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
+
+                var isExists = await _userInfoService.IsUserNameExistAsync(model.UserName.Trim(), model.Id);
+                if (isExists)
+                {
+                    ModelState.AddModelError("", "Already exists this user.");
+                    return ValidationResult(ModelState);
+                }
 
                 var result = await _userInfoService.UpdateAsync(model);
                 return OkResult(result);

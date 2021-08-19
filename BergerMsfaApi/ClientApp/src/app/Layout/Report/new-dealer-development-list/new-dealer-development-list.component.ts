@@ -52,6 +52,10 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 		enabledTotal: false,
 		
 		enabledDataLength: true,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'monthName',columnValues:['Total']}
+		],
 	};
 
   searchConfiguration() {
@@ -87,7 +91,6 @@ export class NewDealerDevelopmentListComponent implements OnInit {
   loadData() {
     this.newDealerDevelopmentService.GetDealerOpeningStatus(this.query).subscribe(
       (res:any) =>{
-		  console.log(res.data.length,"GetDealerOpeningStatus");
 		  if(res.data.length===0){
 			this.data = []; 
 			this.alertService.titleTosterInfo("No data found")

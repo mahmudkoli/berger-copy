@@ -8,6 +8,8 @@ using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
@@ -33,7 +35,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]
-        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
@@ -47,7 +49,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("DownloadTerritoryTargetAchivement")]
-        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
@@ -255,5 +257,36 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("GetColorBankInstallationPlanVsActual")]
+        [ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankInstallationPlanVsActual([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model, EnumReportFor.Web);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }

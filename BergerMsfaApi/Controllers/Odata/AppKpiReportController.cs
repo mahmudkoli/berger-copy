@@ -38,12 +38,43 @@ namespace BergerMsfaApi.Controllers.Odata
             _newDealerDevelopmentService = newDealerDevelopmentService;
         }
 
-        [HttpGet("GetTargetAchievement")]
-        public async Task<IActionResult> GetTargetAchievement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        [HttpGet("GetSalesTargetAchievement")]
+        public async Task<IActionResult> GetTargetAchievement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
-                var data = await _kpiDataService.GetAppTargetAchievement(model);
+                model.ForApp = true;
+                var data = await _kpiDataService.GetAppSalesTargetAchievement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetDealerWiseTargetAchievement")]
+        public async Task<IActionResult> GetDealerWiseTargetAchievement([FromQuery] DealerWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                model.ForApp = true;
+                var data = await _kpiDataService.GetAppDealerWiseTargetAchievement(model);
+                return OkResult(data);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetProductWiseTargetAchievement")]
+        public async Task<IActionResult> GetProductWiseTargetAchivement([FromQuery] ProductWiseTargetAchievementSearchModel model)
+        {
+            try
+            {
+                model.ForApp = true;
+                var data = await _kpiDataService.GetAppProductWiseTargetAchievement(model);
                 return OkResult(data);
             }
             catch (Exception ex)
@@ -126,21 +157,21 @@ namespace BergerMsfaApi.Controllers.Odata
                 return ExceptionResult(ex);
             }
         }
-        
-        //[HttpGet("GetColorBankProductivity")]
-        //[ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
-        //public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
-        //{
-        //    try
-        //    {
-        //        var result = _kpiReportService.GetColorBankInstallationPlanVsActual(model);
-        //        return OkResult(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ExceptionResult(ex);
-        //    }
-        //}
+
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model,EnumReportFor.App);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
         [HttpGet("GetFinancialCollectionPlan")]
         public async Task<IActionResult> GetFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModelForApp model)
         {

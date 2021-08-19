@@ -34,6 +34,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
+	fractionKeys: any[] = ['bergerValueSales','bergerPremiumBrandValueSales','competitionValueSales'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -134,6 +135,8 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 	}

@@ -1554,7 +1554,8 @@ namespace Berger.Odata.Services
             string division = "",
             string channel = "",
             string classification = "",
-            string creditControlArea = "")
+            string creditControlArea = "",
+            string customerNo = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder
@@ -1582,6 +1583,11 @@ namespace Berger.Odata.Services
             if (creditControlArea != "-1" && !string.IsNullOrEmpty(creditControlArea))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.CreditControlArea, creditControlArea);
+            }
+
+            if (customerNo != "-1" && !string.IsNullOrEmpty(customerNo))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.CustomerNoOrSoldToParty, customerNo);
             }
 
             if (depots != null && depots.Any())
@@ -1674,7 +1680,8 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             IList<string> brands = null,
             string division = "",
-            string channel = "")
+            string channel = "",
+            string customerNo = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder
@@ -1692,6 +1699,11 @@ namespace Berger.Odata.Services
             if (channel != "-1" && !string.IsNullOrEmpty(channel))
             {
                 filterQueryBuilder.And().Equal(DataColumnDef.MTS_DistributionChannel, channel);
+            }
+
+            if (customerNo != "-1" && !string.IsNullOrEmpty(customerNo))
+            {
+                filterQueryBuilder.And().Equal(DataColumnDef.MTS_CustomerNo, customerNo);
             }
 
             if (depots != null && depots.Any())

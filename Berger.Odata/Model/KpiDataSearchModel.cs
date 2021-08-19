@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Berger.Common.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,22 +7,17 @@ namespace Berger.Odata.Model
 {
     public class KpiDataSearchModel 
     {
+        public bool ForApp { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public string Depot { get; set; }
         public List<string> SalesGroups { get; set; }
         public List<string> Territories { get; set; }
-        public List<string> Zones { get; set; }
     }
 
-    public class TerritoryTargetAchievementSearchModel
-        //: KpiDataSearchModel
+    public class SalesTargetAchievementSearchModel : KpiDataSearchModel
     {
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
-        public string Depot { get; set; }
-        public List<string> SalesGroups { get; set; }
-        public List<string> Territories { get; set; }
+
     }
     
     public class DealerWiseTargetAchievementSearchModel : KpiDataSearchModel
@@ -31,7 +27,9 @@ namespace Berger.Odata.Model
 
     public class ProductWiseTargetAchievementSearchModel : KpiDataSearchModel
     {
-        public int ResultType { get; set; }
+        public List<string> Brands { get; set; }
+        public string Division { get; set; }
+        public KpiResultType ResultType { get; set; }
     }
 
 }

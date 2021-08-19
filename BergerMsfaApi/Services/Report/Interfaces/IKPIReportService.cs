@@ -12,5 +12,6 @@ namespace BergerMsfaApi.Services.Report.Interfaces
         Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query);
         Task<CollectionPlanKPIReportResultModelForApp> GetFinancialCollectionPlanKPIReportForAppAsync(CollectionPlanKPIReportSearchModelForApp query);
         Task<IList<ColorBankInstallationPlanVsActualKPIReportResultModel>> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query);
+        Task<IList<ColorBankProductivityBase>> GetColorBankProductivity(ColorBankProductivityKpiReportSearchModel query, EnumReportFor reportFor);
     }
 }
