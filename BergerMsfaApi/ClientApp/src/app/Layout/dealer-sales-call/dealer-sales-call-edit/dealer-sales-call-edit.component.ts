@@ -173,6 +173,12 @@ id:number;
 
   addDealerSalesIssueTable() {
 	const obj = new DealerSalesIssue();
+	console.log(obj)
+	obj.quantity=0;
+	obj.priorityId=1;
+	obj.dealerSalesIssueCategoryId=1
+	// if(obj.dealerSalesCallId==0 || obj.priorityId==0 || obj.quantity==null)
+	// return;
 	obj.dealerSalesCallId=this.id;
 	this.dealerSalesIssues.push(obj)
   }

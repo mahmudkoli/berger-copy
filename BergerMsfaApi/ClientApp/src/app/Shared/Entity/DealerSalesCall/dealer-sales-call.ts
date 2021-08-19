@@ -191,7 +191,10 @@ export class DealerSalesIssue {
     Object.assign(this, init);
   }
 
-  clear() {}
+  clear() {
+    this.priorityId=1;
+    this.quantity=0;
+  }
 }
 
 export class DealerSalesCallQuery extends QueryObject {
