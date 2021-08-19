@@ -737,20 +737,7 @@ namespace BergerMsfaApi.Controllers.Report
 
                 dynamic datatabledata = _portalReportService.GetSnapShotReportBySp(query);
 
-                //foreach (var item in datatabledata)
-                //{
-                //    foreach (KeyValuePair<string, object> kvp in item)
-                //    {
-                //        var result = kvp;
-
-
-                //    }
-                   
-                //}
-
-
                 var data = await _excelReaderService.WriteToFileWithImage(datatabledata);
-                //var contentStream = await data.ReadAsStreamAsync();
 
                 var result = File(
                 data,

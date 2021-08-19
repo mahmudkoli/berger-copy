@@ -41,6 +41,6 @@ namespace BergerMsfaApi.Models.KPI
         public string MonthName { get; set; }
         //public int Month { get; set; }
         public int ConversionTarget { get; set; }
-        public int NumberofConvertedfromCompetition { get; set; }
+        public int NumberOfConvertedFromCompetition { get; set; }
     }
 }
