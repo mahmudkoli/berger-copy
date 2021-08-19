@@ -36,7 +36,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
   totalFilterDataLength: number = 0; // for server side paggination
 
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'Premium Brands Growth Report';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
@@ -235,7 +235,11 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,
+    )}`,    
+    enabledConditionalRowStyles:true,
+    conditionalRowStyles: [
+        {columnName:'territory',columnValues:['Total']}
+    ],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

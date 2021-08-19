@@ -37,7 +37,7 @@ export class MtsValueTargetAchivementReportComponent
   totalFilterDataLength: number = 0; // for server side paggination
 
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'MTS Value Target Achivement';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
@@ -237,7 +237,11 @@ export class MtsValueTargetAchivementReportComponent
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,
+    )}`,    
+    enabledConditionalRowStyles:true,
+    conditionalRowStyles: [
+        {columnName:'territory',columnValues:['Total']}
+    ],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

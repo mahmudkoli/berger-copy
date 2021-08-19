@@ -392,7 +392,7 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return await ToPortalModel(result);
+            return await ToPortalModel(result, EnumQuarterlyPerformanceModel.MTSValueTargetAchivement);
         }
 
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetBillingDealerQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
@@ -454,7 +454,7 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return await ToPortalModel(result);
+            return await ToPortalModel(result, EnumQuarterlyPerformanceModel.BillingDealerQuarterlyGrowth);
         }
 
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetEnamelPaintsQuarterlyGrowth(PortalQuarterlyPerformanceSearchModel model)
@@ -520,7 +520,7 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return await ToPortalModel(result);
+            return await ToPortalModel(result, EnumQuarterlyPerformanceModel.EnamelPaintsQuarterlyGrowt);
         }
 
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsGrowth(PortalQuarterlyPerformanceSearchModel model)
@@ -585,7 +585,7 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return await ToPortalModel(result);
+            return await ToPortalModel(result, EnumQuarterlyPerformanceModel.PremiumBrandsGrowth);
         }
 
         public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> GetPremiumBrandsContribution(PortalQuarterlyPerformanceSearchModel model)
@@ -650,10 +650,10 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            return await ToPortalModel(result);
+            return await ToPortalModel(result, EnumQuarterlyPerformanceModel.PremiumBrandsContribution);
         }
 
-        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> ToPortalModel(List<QuarterlyPerformanceDataResultModel> data)
+        public async Task<IList<PortalQuarterlyPerformanceDataResultModel>> ToPortalModel(List<QuarterlyPerformanceDataResultModel> data, EnumQuarterlyPerformanceModel reportType)
         {
             var result = new List<PortalQuarterlyPerformanceDataResultModel>();
 
@@ -681,6 +681,46 @@ namespace Berger.Odata.Services
 
                 result.Add(res);
             }
+
+            #region for total
+            if(result.Any())
+            {
+                var resO = new PortalQuarterlyPerformanceDataResultModel();
+                resO.Territory = "Total";
+
+                resO.FirstMonthTargetAmount = result.Sum(x => x.FirstMonthTargetAmount);
+                resO.SecondMonthTargetAmount = result.Sum(x => x.SecondMonthTargetAmount);
+                resO.ThirdMonthTargetAmount = result.Sum(x => x.ThirdMonthTargetAmount);
+
+                resO.FirstMonthActualAmount = result.Sum(x => x.FirstMonthActualAmount);
+                resO.SecondMonthActualAmount = result.Sum(x => x.SecondMonthActualAmount);
+                resO.ThirdMonthActualAmount = result.Sum(x => x.ThirdMonthActualAmount);
+
+                resO.TotalTarget = result.Sum(x => x.FirstMonthTargetAmount);
+                resO.TotalActual = result.Sum(x => x.FirstMonthTargetAmount);
+
+                switch (reportType)
+                {
+                    case EnumQuarterlyPerformanceModel.MTSValueTargetAchivement:
+                        resO.AchivementOrGrowth = _odataService.GetAchivement(resO.TotalActual, resO.TotalTarget);
+                        break;
+                    case EnumQuarterlyPerformanceModel.BillingDealerQuarterlyGrowth:
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        break;
+                    case EnumQuarterlyPerformanceModel.EnamelPaintsQuarterlyGrowt:
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        break;
+                    case EnumQuarterlyPerformanceModel.PremiumBrandsGrowth:
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        break;
+                    case EnumQuarterlyPerformanceModel.PremiumBrandsContribution:
+                        resO.AchivementOrGrowth = _odataService.GetContribution(resO.TotalActual, resO.TotalTarget);
+                        break;
+                }
+
+                result.Add(resO);
+            }
+            #endregion
 
             return result;
         }
