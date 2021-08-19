@@ -192,8 +192,6 @@ export class DealerSalesIssue {
   }
 
   clear() {
-    this.priorityId=1;
-    this.quantity=0;
   }
 }
 
