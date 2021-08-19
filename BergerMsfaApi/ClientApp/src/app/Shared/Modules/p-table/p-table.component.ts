@@ -1206,6 +1206,7 @@ export class PTableComponent implements OnInit, DoCheck {
   }
 
   numberFormatColor(value,displayType) {
+    if(value===undefined||value===null) return '';
     const numberFormatColorFraction = displayType == 'number-format-color-fraction' || displayType == 'number-format-color-bg-fraction';
     const fractionDigit = numberFormatColorFraction ? 2 : 0;
     const formatValue = Number(value).toLocaleString('en-US', 

@@ -41,6 +41,7 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = true;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = [];
+	fractionKeys: any[] = ['totalAmount'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -154,9 +155,8 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 				showTotal: (this.allTotalKeysOfNumberType ? 
 					(typeof obj[key] === 'number') 
 					: this.totalKeys.includes(key)),
-				type: typeof obj[key] === 'number' ? 'text' : null, 
-				displayType: typeof obj[key] === 'number' ? 
-					key==='Total Amount' ? 'number-format-color-fraction' : 'number-format-color' : null,
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null, 
 			} as colDef;
 		});
 		// console.log(this.ptableSettings.tableColDef); 
@@ -183,6 +183,10 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'userId',columnValues:['Sub Total', 'Grand Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
