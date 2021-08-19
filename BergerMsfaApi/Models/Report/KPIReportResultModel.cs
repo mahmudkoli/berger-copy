@@ -51,7 +51,7 @@ namespace BergerMsfaApi.Models.Report
 
     public class BusinessCallWebKPIReportResultModel : BusinessCallBaseKPIReportResultModel
     {
-      
+
         public string Date { get; set; }
         public int ExclusiveNoOfCallTarget { get; set; }
         public int ExclusiveNoOfCallActual { get; set; }
@@ -131,6 +131,18 @@ namespace BergerMsfaApi.Models.Report
         public decimal TargetAchievement { get; set; }
     }
 
+    public class ColorBankProductivityBase
+    {
+        public decimal LYProductivity { get; set; }
+        public int ProductivityTarget { get; set; }
+        public decimal CYActualProductivity { get; set; }
+        public decimal ProductivityGrowth { get; set; }
+    }
+
+    public class ColorBankProductivityWeb : ColorBankProductivityBase
+    {
+        public string Territory { get; set; }
+    }
 
     public class CollectionPlanKPIReportResultModelForApp
     {
