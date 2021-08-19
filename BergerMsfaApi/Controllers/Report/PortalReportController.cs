@@ -734,6 +734,11 @@ namespace BergerMsfaApi.Controllers.Report
 
             try
             {
+                if (string.IsNullOrEmpty(query.Depot))
+                {
+                    throw new Exception("Please select mandatory field.");
+                    
+                }
 
                 dynamic datatabledata = _portalReportService.GetSnapShotReportBySp(query);
 
