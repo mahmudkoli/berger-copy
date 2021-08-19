@@ -149,7 +149,7 @@ export class DealerCollectionReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 'number-format-color' : null, 
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 	}
