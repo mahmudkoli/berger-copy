@@ -227,7 +227,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
         {
-            var result= await _roleSvc.GetAllAsync();
+            var result= await _roleSvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<Role, RoleModel>();
         }
 
