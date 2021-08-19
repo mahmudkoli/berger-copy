@@ -54,6 +54,13 @@ namespace BergerMsfaApi.Controllers.Users
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
+                bool loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
+                if (!loginSuccess)
+                {
+                    ModelState.AddModelError("", "UserName or password is invalid.");
+                    return ValidationResult(ModelState);
+                }
+
                 bool isAdLoginSuccess = _adservice.AuthenticateUser(model.UserName, model.Password);
                 if (!isAdLoginSuccess)
                 {
@@ -61,10 +68,10 @@ namespace BergerMsfaApi.Controllers.Users
                     return ValidationResult(ModelState);
                 }
 
-                bool loginSuccess = await _userService.IsUserNameExistAsync(model.UserName);
-                if (!loginSuccess)
+                bool isActive = await _userService.IsActiveUserAsync(model.UserName);
+                if (!isActive)
                 {
-                    ModelState.AddModelError("", "UserName or password is invalid.");
+                    ModelState.AddModelError("", "User is not active to access. Please contact with Admin.");
                     return ValidationResult(ModelState);
                 }
 
