@@ -20,7 +20,7 @@ namespace Berger.Common.Enumerations
 
     public enum EnumBussinesCategory
     {
-        [Description("Exclusive")]
+        [Description("None")]
         None= 0,
 
         [Description("Exclusive")]
