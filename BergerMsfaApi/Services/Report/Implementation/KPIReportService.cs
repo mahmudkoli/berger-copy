@@ -656,10 +656,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 result.Add(bankProductivityBase);
             }
 
+            decimal currentYear;
+            decimal lastYear;
+
             if (reportFor == EnumReportFor.App)
             {
-                decimal currentYear;
-                decimal lastYear;
+
                 var colorBankProductivityBase = new ColorBankProductivityBase
                 {
                     CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
@@ -672,6 +674,18 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 {
                     colorBankProductivityBase
                 };
+            }
+
+            if (query.Territories.Count > 1)
+            {
+                result.Add(new ColorBankProductivityWeb
+                {
+                    Territory = "Total",
+                    CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
+                    LYProductivity = lastYear = result.Sum(x => x.LYProductivity),
+                    ProductivityTarget = result.Sum(x => x.ProductivityTarget),
+                    ProductivityGrowth = _oDataService.GetGrowth(lastYear, currentYear)
+                });
             }
 
             return result;
