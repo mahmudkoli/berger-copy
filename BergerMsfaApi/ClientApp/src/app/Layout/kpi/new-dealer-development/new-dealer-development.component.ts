@@ -7,6 +7,7 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { NewDealerDevelopmentService } from 'src/app/Shared/Services/KPI/NewDealerDevelopmentService';
+import { AuthService } from 'src/app/Shared/Services/Users';
 
 @Component({
   selector: 'app-new-dealer-development',
@@ -26,7 +27,8 @@ export class NewDealerDevelopmentComponent implements OnInit {
     private newDealerDevelopmentService:NewDealerDevelopmentService,
     private commonService: CommonService,
     private formBuilder: FormBuilder,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -41,7 +43,7 @@ export class NewDealerDevelopmentComponent implements OnInit {
 		const _query = new NewDealerDevelopmentQuery();
 		_query.depot = controls['depot'].value;
 		_query.territory = controls['territory'].value;
-    _query.year=new Date().getFullYear();
+    _query.year=this.commonService.getFiscalYear();
 		return _query;
 	}
 
@@ -70,14 +72,21 @@ export class NewDealerDevelopmentComponent implements OnInit {
   }
 
   SaveOrUpdateData() {
+    
 
 this.newDealerDevelopmentService.SaveOrUpdateNewDealerDevelopment(this.data).subscribe(
       res =>{
+        if(res){
+          let message=res.data===0?"New Dealer Development Save Successfully":"New Dealer Development Update Successfully";
 
-        if(res){}
-        this.alertService.tosterSuccess("New Dealer Development Save Successfully")
+          this.alertService.tosterSuccess(message)
+
+        }
       },
-      error => console.log(error),
+      error => {
+        this.alertService.titleTosterWarning("Unable to save data")
+
+      },
       () => console.log('done')
     );
 }

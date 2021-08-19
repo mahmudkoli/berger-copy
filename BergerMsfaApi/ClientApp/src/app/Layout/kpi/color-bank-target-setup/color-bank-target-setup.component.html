@@ -1,7 +1,131 @@
 <div class="col col-md-12">
-  <app-search-option
-    [searchOptionQuery]="searchOptionQuery"
-    [searchOptionSettings]="searchOptionSettings"
-    (searchOptionQueryCallbackFn)="searchOptionQueryCallbackFn($event)"
-  ></app-search-option>
+  <div class="p-3 bg-white mb-3 rounded">
+    <form [formGroup]="searchForm" (ngSubmit)="loadData()" *ngIf="searchForm">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="position-relative form-group">
+            <label>Depot</label>
+            <ng-select
+              [items]="depotList"
+              formControlName="depot"
+              bindValue="code"
+              bindLabel="name"
+              [multiple]="false"
+              [virtualScroll]="true"
+              required
+            >
+            </ng-select>
+
+            <small
+              class="text-danger"
+              *ngIf="formControls.depot.touched && formControls.depot.errors"
+            >
+              <span *ngIf="formControls.depot.errors.required"
+                >Depot is <strong>required</strong></span
+              >
+            </small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="position-relative form-group">
+            <label>Territory</label>
+            <ng-select
+              [items]="territoryList"
+              formControlName="territory"
+              bindValue="code"
+              bindLabel="name"
+              [multiple]="false"
+              [virtualScroll]="true"
+              required
+            >
+            </ng-select>
+            <small
+              class="text-danger"
+              *ngIf="
+                formControls.territory.touched && formControls.territory.errors
+              "
+            >
+              <span *ngIf="formControls.territory.errors.required"
+                >Territory is <strong>required</strong></span
+              >
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="text-center m-3 w-100">
+          <button
+            type="button"
+            [disabled]="searchForm.invalid"
+            (click)="loadData()"
+            class="btn btn-primary btn-login d-block rounded-0 w-100"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="data" class="col col-md-12">
+  <div class="p-3 bg-white mb-3 rounded">
+    <h3>Color Bank Installation Target</h3>
+    <div class="table-responsive">
+      <table class="table">
+        <tr>
+          <th>Month</th>
+          <!-- <th>Year</th> -->
+          <th>Install Target</th>
+          <th>Productivity Target</th>
+
+          <!-- <th></th> -->
+        </tr>
+        <tr *ngFor="let item of data">
+          <td>
+            <div class="input-group">
+              <input
+                class="form-control"
+                type="text"
+                value="{{ item.monthName }} - {{ item.year }}"
+                name="monthName"
+                disabled
+              />
+            </div>
+          </td>
+          <td>
+            <div class="input-group">
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="item.colorBankInstallTarget"
+                name="colorBankInstallTarget"
+                [disabled]="item.id > 0 && !authService.isAdmin"
+              />
+            </div>
+          </td>
+          <td>
+            <div class="input-group">
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="item.colorBankProductivityTarget"
+                name="colorBankProductivityTarget"
+                [disabled]="item.id > 0 && !authService.isAdmin"
+              />
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button
+      type="submit"
+      class="mb-2 btn btn-primary"
+      (click)="SaveOrUpdateData()"
+    >
+      <i class="fa fa-save pr-1"></i> Save
+    </button>
+  </div>
 </div>

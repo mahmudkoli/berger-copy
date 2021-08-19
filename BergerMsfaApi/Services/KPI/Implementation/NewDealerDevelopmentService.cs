@@ -180,6 +180,15 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                     };
                     newDealerDevelopementList.Add(result);
                 }
+
+                var totalSet = new NewDealerDevelopmentModel()
+                {
+                    MonthName = "Total",
+                    Target = newDealerDevelopementList.Sum(p=>p.Target),
+                    Actual = newDealerDevelopementList.Sum(p => p.Actual),
+                    TargetAch = GetAchivement(newDealerDevelopementList.Sum(p => p.Target), newDealerDevelopementList.Sum(p => p.Actual))
+                };
+                newDealerDevelopementList.Add(totalSet);
             }
 
             return newDealerDevelopementList;
@@ -219,10 +228,19 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                     {
                         MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber) + "-" + GetYear(item.Year),
                         ConversionTarget = item.ConversionTarget,
-                        NumberofConvertedfromCompetition = item.NumberofConvertedfromCompetition,
+                        NumberOfConvertedFromCompetition = item.NumberofConvertedfromCompetition,
                     };
                     newDealerDevelopementList.Add(result);
                 }
+
+
+                //var totalSet = new DealerConversionModel()
+                //{
+                //    MonthName = "Total",
+                //    ConversionTarget = newDealerDevelopementList.Sum(p=>p.ConversionTarget),
+                //    NumberofConvertedfromCompetition = newDealerDevelopementList.Sum(p => p.NumberofConvertedfromCompetition),
+                //};
+                //newDealerDevelopementList.Add(totalSet);
             }
 
             return newDealerDevelopementList;
@@ -251,7 +269,8 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
         public decimal GetAchivement(decimal target, decimal actual)
         {
-            return target > 0 ? ((actual / target)) * 100 : decimal.Zero;
+            var res= Convert.ToDecimal((target > 0 ? ((actual / target)) * 100 : decimal.Zero).ToString("0.00"));
+            return res;
         }
 
         private string GetYear(int year)

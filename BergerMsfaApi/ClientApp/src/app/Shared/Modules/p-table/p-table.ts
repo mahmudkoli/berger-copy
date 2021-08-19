@@ -43,6 +43,7 @@ export interface IPTableSetting {
   newRecordButtonText?: string | 'New Record';
   newRecordButtonIcon?: string | 'fa fa-plus';
   downloadDataApiUrl?: string | null;
+  downloadFileFromServer?: boolean | false;
   enabledDetailsEditDeleteBtn?: boolean | false;
   enabledDetailsBtn?: boolean | false;
   enabledConditionalRowStyles?: boolean | false;

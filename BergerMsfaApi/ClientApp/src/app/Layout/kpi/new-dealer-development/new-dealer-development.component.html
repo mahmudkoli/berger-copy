@@ -1,24 +1,4 @@
 <div class="col col-md-12">
-    
-    <!-- <div class="col-md-3">
-        <div class="position-relative form-group">
-            <label class="required">Depot</label>
-            <ng-select [(ngModel)]="dealerSalesCall.dealerSatisfactionId" required>
-                <ng-option *ngFor="let dealerSatisfaction of dealerSatisfactionlst;" [value]="dealerSatisfaction.id">{{dealerSatisfaction.dropdownName}}</ng-option>
-            </ng-select>
-            
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="position-relative form-group">
-            <label class="required">Territory</label>
-            <ng-select [(ngModel)]="dealerSalesCall.dealerSatisfactionId">
-                <ng-option *ngFor="let dealerSatisfaction of dealerSatisfactionlst;" [value]="dealerSatisfaction.id">{{dealerSatisfaction.dropdownName}}</ng-option>
-            </ng-select>
-            
-        </div>
-    </div> -->
-
     <div class="p-3 bg-white mb-3 rounded">
         <form [formGroup]="searchForm" (ngSubmit)="loadData()" *ngIf="searchForm">
             <div class="row">
@@ -72,25 +52,16 @@
                 <div class="input-group">
                     <input class="form-control" type="text" [(ngModel)]="item.monthName"
                            name="monthName" disabled>
-                   
                 </div>
         </td>
-            <!-- <td><input type="text" [(ngModel)]="item.companyName" name="companyName"></td> -->
-            
-            
-            <!-- <td><div class="input-group">
-                <input class="form-control" type="text" [(ngModel)]="item.year"
-                       name="year" disabled>
-               
-            </div></td> -->
             <td><div class="input-group">
                 <input class="form-control" type="number" [(ngModel)]="item.target"
-                       name="target">
+                       name="target" [disabled]="item.id > 0 && !authService.isAdmin">
                
             </div></td>
             <td><div class="input-group">
                 <input class="form-control" type="number" [(ngModel)]="item.conversionTarget"
-                       name="conversionTarget">
+                       name="conversionTarget" [disabled]="item.id > 0 && !authService.isAdmin">
                
             </div></td>
             <!-- <td> <button (click) = "deleteDealerCompetitionSalesRow(i)"><i class="fa fa-trash"></i></button></td>

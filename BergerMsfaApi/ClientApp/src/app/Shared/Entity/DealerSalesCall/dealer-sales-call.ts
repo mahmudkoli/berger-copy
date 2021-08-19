@@ -191,7 +191,8 @@ export class DealerSalesIssue {
     Object.assign(this, init);
   }
 
-  clear() {}
+  clear() {
+  }
 }
 
 export class DealerSalesCallQuery extends QueryObject {

@@ -530,7 +530,9 @@ export class ReportService {
   public downloadUniverseReachAnalysis(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadUniverseReachAnalysis?${this.commonService.toQueryString(filter)}`;
+    }/DownloadUniverseReachAnalysis?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getFinancialCollectionPlan(filter?) {
@@ -579,5 +581,23 @@ export class ReportService {
     }/DownloadAddhocSubDealerSalesCall?${this.commonService.toQueryString(
       filter
     )}`;
+  }
+
+  getColorBankInstallationPlanVsActual(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetColorBankInstallationPlanVsActual?${this.commonService.toQueryString(
+        filter
+      )}`
+    );
+  }
+
+  getColorBankProductivity(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetColorBankProductivity?${this.commonService.toQueryString(filter)}`
+    );
   }
 }

@@ -258,14 +258,13 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-
-        [HttpGet("GetColorBankProductivity")]
-        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        [HttpGet("GetColorBankInstallationPlanVsActual")]
+        [ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankInstallationPlanVsActual([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
         {
             try
             {
-                var result = await _kpiReportService.GetColorBankProductivity(model, EnumReportFor.App);
+                var result = await _kpiReportService.GetColorBankInstallationPlanVsActual(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -274,6 +273,20 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model, EnumReportFor.Web);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
 
     }
 }

@@ -483,7 +483,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<ColorBankInstallationPlanVsActualKPIReportResultModel>> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query)
         {
             var result = new List<ColorBankInstallationPlanVsActualKPIReportResultModel>();
-            var bergerFyMonth = GetBergerFyMonth();
+            var bergerFyMonth = ConstantsValue.GetBergerFyMonth();
             DateTime dateTime = new DateTime(query.Year, 4, 1);
 
             var startDate = dateTime.GetCFYFD().DateTimeFormat();
@@ -655,10 +655,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 result.Add(bankProductivityBase);
             }
 
+            decimal currentYear;
+            decimal lastYear;
+
             if (reportFor == EnumReportFor.App)
             {
-                decimal currentYear;
-                decimal lastYear;
+
                 var colorBankProductivityBase = new ColorBankProductivityBase
                 {
                     CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
@@ -673,28 +675,20 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 };
             }
 
-            return result;
-        }
-
-
-
-
-        private Dictionary<int, string> GetBergerFyMonth()
-        {
-            var result = new Dictionary<int, string>();
-
-            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
-            DateTime compareDate = date.AddMonths(12);
-
-            while (date != compareDate)
+            if (query.Territories.Count > 1)
             {
-                result.Add(date.Month, date.ToString("MMM"));
-                date = date.AddMonths(1);
+                result.Add(new ColorBankProductivityWeb
+                {
+                    Territory = "Total",
+                    CYActualProductivity = currentYear = result.Sum(x => x.CYActualProductivity),
+                    LYProductivity = lastYear = result.Sum(x => x.LYProductivity),
+                    ProductivityTarget = result.Sum(x => x.ProductivityTarget),
+                    ProductivityGrowth = _oDataService.GetGrowth(lastYear, currentYear)
+                });
             }
 
             return result;
         }
-
 
 
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
@@ -703,19 +697,18 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
 
 
-            foreach (var item in query.Territory)
+            foreach (var item in query.Territories)
             {
                 var currentDate = DateTime.Now;
 
-                var dealerIds = await (from diInfo in _context.DealerInfos
-                                       where (
-                                           diInfo.BusinessArea == query.Depot
-                                           && item == diInfo.Territory &&
-                                           diInfo.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
-                                            diInfo.Division == ConstantsODataValue.DivisionDecorative
-                                           && string.IsNullOrEmpty(query.SalesGroups) ? true : query.SalesGroups == diInfo.SalesGroup
-                                       )
-                                       select diInfo.CustomerNo).Distinct().ToListAsync();
+                var dealerIds = await  _context.DealerInfos.
+                                       Where(p=>
+                                           p.BusinessArea == query.Depot
+                                           && item == p.Territory &&
+                                           p.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                                            p.Division == ConstantsODataValue.DivisionDecorative
+                                           && query.SalesGroups.Count == 0 ? true : query.SalesGroups.Contains(p.SalesGroup)
+                                       ).Select( p=>p.CustomerNo).Distinct().ToListAsync();
 
                 var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
                 var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
@@ -739,6 +732,17 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 });
             }
 
+
+            var totalset= new CollectionPlanKPIReportResultModel
+            {
+                Territory = "Total",
+                ImmediateLMSlippageAmount = reportResult.Sum(x=>x.ImmediateLMSlippageAmount),
+                MTDCollectionPlan = reportResult.Sum(x => x.MTDCollectionPlan),
+                MTDActualCollection = reportResult.Sum(x => x.MTDActualCollection),
+                TargetAch = GetAchivement(reportResult.Sum(x => x.MTDCollectionPlan), reportResult.Sum(x => x.MTDActualCollection))
+            };
+
+            reportResult.Add(totalset);
 
             return reportResult;
         }
