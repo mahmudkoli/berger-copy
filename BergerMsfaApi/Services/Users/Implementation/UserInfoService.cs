@@ -5,6 +5,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
+using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
@@ -181,6 +182,11 @@ namespace BergerMsfaApi.Services.Users.Implementation
         public async Task<bool> IsUserNameExistAsync(string username, int id = 0)
         {
             return await _userInfoRepo.IsExistAsync(s => s.UserName.ToLower() == username.ToLower() && s.Id != id);
+        }
+
+        public async Task<bool> IsActiveUserAsync(string username, int id = 0)
+        {
+            return await _userInfoRepo.IsExistAsync(s => s.Status == Status.Active && s.UserName.ToLower() == username.ToLower() && s.Id != id);
         }
 
         public async Task<bool> IsRoleLinkWithUserExistAsync(int roleid, int userinfoId)

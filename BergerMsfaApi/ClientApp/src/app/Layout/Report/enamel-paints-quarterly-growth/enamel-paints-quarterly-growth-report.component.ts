@@ -37,7 +37,7 @@ export class EnamelPaintsQuarterlyGrowthReportComponent
   totalFilterDataLength: number = 0; // for server side paggination
 
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'Enamel Paints Quarterly Growth';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
@@ -235,7 +235,11 @@ export class EnamelPaintsQuarterlyGrowthReportComponent
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,
+    )}`,     
+    enabledConditionalRowStyles:true,
+    conditionalRowStyles: [
+        {columnName:'territory',columnValues:['Total']}
+    ],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
