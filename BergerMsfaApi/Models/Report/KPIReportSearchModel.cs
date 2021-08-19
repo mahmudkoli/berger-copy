@@ -71,9 +71,15 @@ namespace BergerMsfaApi.Models.Report
 
     public class CollectionPlanKPIReportSearchModel
     {
+        public CollectionPlanKPIReportSearchModel()
+        {
+            this.Territories = new List<string>();
+            this.SalesGroups = new List<string>();
+            this.Depot = string.Empty;
+        }
         public string Depot { get; set; }
-        public List<string> Territory { get; set; }
-        public string SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
+        public List<string> SalesGroups { get; set; }
     }
 
     public class CollectionPlanKPIReportSearchModelForApp

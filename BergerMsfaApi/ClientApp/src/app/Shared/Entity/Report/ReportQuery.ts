@@ -419,9 +419,9 @@ export class UniverseReachAnalysisKpiReportQuery extends ReportBaseQuery {
 }
 
 export class CollectionPlanKpiReportQuery {
-  depot: string;
-  territory = [];
-  salesGroups: string;
+    depot: string;
+    territories=[];
+    salesGroups= [];
 
   constructor(init?: Partial<CollectionPlanKpiReportQuery>) {
     Object.assign(this, init);

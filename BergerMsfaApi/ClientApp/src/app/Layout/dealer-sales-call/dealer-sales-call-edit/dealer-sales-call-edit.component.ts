@@ -65,7 +65,6 @@ id:number;
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
 			this.id=id
-			console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
 				this.dealerSalesCallService.getDealerSalesCall(id)
@@ -119,19 +118,6 @@ id:number;
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Priority),
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.CBMachineMantainance),
         this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.ISSUES_01),
-
-
-
-
-
-
-
-
-
-        // this.dynamicDropdownService.GetDropdownByTypeCd(EnumDynamicTypeCode.Customer),
-        //       this.commonService.getCreditControlAreaList(),
-  
-  
           ]).subscribe(([users, dealer,marchendising,Ratings,ProductLifting,SubDealerInfluence,PainterInfluence,Satisfaction,company,priority,CBMachineMantainance,issue]) => {
               this.userList = users.data;
               this.dealerList = dealer.data;
@@ -173,29 +159,36 @@ id:number;
 
   addDealerSalesIssueTable() {
 	const obj = new DealerSalesIssue();
+	console.log(obj);
+	// if(obj.dealerSalesCallId==0 || obj.priorityId==0 || obj.quantity==null)
+	// return;
 	obj.dealerSalesCallId=this.id;
+	obj.comments="";
+	obj.priorityId=0;
+	obj.dealerSalesIssueCategoryId=0;
+	obj.quantity=0;
 	this.dealerSalesIssues.push(obj)
   }
 
   save(){
 	  this.dealerSalesCall.dealerCompetitionSales=this.dealerCompetitionSales;
 	  this.dealerSalesCall.dealerSalesIssues=this.dealerSalesIssues;
-	  console.log(this.dealerSalesCall);
-
-	  this.dealerSalesCallService.updateDealerSalesCall(this.dealerSalesCall)
-	  .pipe(finalize(() => this.alertService.fnLoading(false))) 
-	  .subscribe(res=>{
-		  console.log(res);
-		  if(res.statusCode==200){
-			this.alertService.tosterSuccess("Dealer Sales Call Update successfully.");	
-			  this.router.navigate(['/dealer-sales-call']);
-		  }
-		  else{
-			  this.alertService.tosterWarning("Dealer Sales Call Update failed.");
-		  }
-		  
-	  })
+		this.dealerSalesCallService.updateDealerSalesCall(this.dealerSalesCall)
+		.pipe(finalize(() => this.alertService.fnLoading(false))) 
+		.subscribe(res=>{
+			console.log(res);
+			if(res.statusCode==200){
+			  this.alertService.tosterSuccess("Dealer Sales Call Update successfully.");	
+				this.router.navigate(['/dealer-sales-call']);
+			}
+			else{
+				this.alertService.tosterWarning("Dealer Sales Call Update failed.");
+			}
+			
+		})  
   }
+
+
 
 
   fileChangeEvents(fileInput: any) {
