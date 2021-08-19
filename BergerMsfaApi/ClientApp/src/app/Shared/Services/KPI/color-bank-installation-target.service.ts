@@ -13,12 +13,22 @@ export class ColorBankInstallationTargetService {
     @Inject('BASE_URL') baseUrl: string,
     private commonService: CommonService
   ) {
-    this.ColorBankInstallationTargetEndPoint = `${this.baseUrl}/v1/CollectionConfig`;
+    this.baseUrl = baseUrl + 'api';
+    this.ColorBankInstallationTargetEndPoint = `${this.baseUrl}/v1/ColorBankInstallationTarget`;
   }
 
-  getCollectionConfigs() {
+  getCollectionConfigs(filter?) {
     return this.http.get<APIResponse>(
-      `${this.ColorBankInstallationTargetEndPoint}`
+      `${
+        this.ColorBankInstallationTargetEndPoint
+      }/getTarget?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  saveOrUpdateInstallTarget(filter) {
+    return this.http.post<APIResponse>(
+      `${this.ColorBankInstallationTargetEndPoint}`,
+      filter
     );
   }
 }

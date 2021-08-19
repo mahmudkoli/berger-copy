@@ -195,11 +195,15 @@ export class CommonService {
   }
 
   getUserInfoListByCurrentUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser'
+    );
   }
 
   getUserInfoListByCurrentUserWithoutZoUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser'
+    );
   }
 
   getUserInfoList() {
@@ -272,11 +276,19 @@ export class CommonService {
     });
   }
 
-
   getDealerByArea(filter) {
     return this.http.post<APIResponse>(
-        this.baseUrl
-      +`v1/Common/GetDealerByArea`,filter
+      this.baseUrl + `v1/Common/GetDealerByArea`,
+      filter
     );
+  }
+
+  public getFiscalYear() {
+    let curentDate = new Date();
+    if (curentDate.getMonth() >= 3) {
+      return curentDate.getFullYear();
+    } else {
+      return curentDate.getFullYear() - 1;
+    }
   }
 }

@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { StrikeRateKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { finalize } from 'rxjs/operators';
+import { ColorBankTargetSetupKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
   SearchOptionSettings,
 } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ColorBankInstallationTargetService } from 'src/app/Shared/Services/KPI/color-bank-installation-target.service';
+import { AuthService } from 'src/app/Shared/Services/Users';
 
 @Component({
   selector: 'app-color-bank-target-setup',
@@ -15,12 +22,15 @@ import {
 })
 export class ColorBankTargetSetupComponent implements OnInit {
   // data list
-  query: StrikeRateKpiReportQuery;
+  query: ColorBankTargetSetupKpiReportQuery;
   searchOptionQuery: SearchOptionQuery;
   PAGE_SIZE: number;
   data: any[];
   totalDataLength: number = 0; // for server side paggination
   totalFilterDataLength: number = 0; // for server side paggination
+
+  depotList = [];
+  territoryList = [];
 
   // ptable settings
   enabledTotal: boolean = false;
@@ -30,34 +40,72 @@ export class ColorBankTargetSetupComponent implements OnInit {
   allTotalKeysOfNumberType: boolean = true;
   // totalKeys: any[] = ['totalCall'];
   totalKeys: any[] = [];
-
+  searchForm: FormGroup;
   // Subscriptions
   private subscriptions: Subscription[] = [];
 
-  constructor() {}
+  constructor(
+    private colorBankInstallationTargetService: ColorBankInstallationTargetService,
+    private alertService: AlertService,
+    private commonService: CommonService,
+    private formBuilder: FormBuilder,
+    public authService: AuthService
+  ) {}
 
   ngOnInit() {
-    this.searchConfiguration();
+    this.populateDropdown();
+    this.initCollectionForm();
+  }
+
+  initCollectionForm() {
+    this.createForm();
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach((el) => el.unsubscribe());
   }
 
+  prepareNewDealerEntry(): ColorBankTargetSetupKpiReportQuery {
+    const controls = this.searchForm.controls;
+    const _query = new ColorBankTargetSetupKpiReportQuery();
+    _query.depot = controls['depot'].value;
+    _query.territory = controls['territory'].value;
+    _query.year = this.commonService.getFiscalYear();
+    return _query;
+  }
+
+  createForm() {
+    this.searchForm = this.formBuilder.group({
+      depot: [''],
+      territory: [''],
+    });
+  }
+
+  get formControls() {
+    return this.searchForm.controls;
+  }
+  populateDropdown(): void {
+    // this.loadDynamicDropdown();
+
+    const forkJoinSubscription1 = forkJoin([
+      this.commonService.getDepotList(),
+      this.commonService.getTerritoryList(),
+    ]).subscribe(
+      ([depot, territory]) => {
+        this.depotList = depot.data;
+        this.territoryList = territory.data;
+      },
+      (err) => {},
+      () => {}
+    );
+
+    this.subscriptions.push(forkJoinSubscription1);
+  }
+
   searchConfiguration() {
-    this.query = new StrikeRateKpiReportQuery({
-      page: 1,
-      pageSize: this.PAGE_SIZE,
-      sortBy: 'createdTime',
-      isSortAscending: false,
-      globalSearchValue: '',
+    this.query = new ColorBankTargetSetupKpiReportQuery({
       depot: '',
-      salesGroups: [],
       territories: [],
-      zones: [],
-      month: null,
-      year: null,
-      reportType: null,
     });
     this.searchOptionQuery = new SearchOptionQuery();
     this.searchOptionQuery.clear();
@@ -74,7 +122,7 @@ export class ColorBankTargetSetupComponent implements OnInit {
         isRequired: true,
       }),
       new SearchOptionDef({
-        searchOption: EnumSearchOption.Year,
+        searchOption: EnumSearchOption.FiscalYear,
         isRequired: true,
       }),
     ],
@@ -83,16 +131,49 @@ export class ColorBankTargetSetupComponent implements OnInit {
   searchOptionQueryCallbackFn(queryObj: SearchOptionQuery) {
     console.log('Search option query callback: ', queryObj);
     this.query.depot = queryObj.depot;
-    this.query.salesGroups = queryObj.salesGroups;
     this.query.territories = queryObj.territories;
-    this.query.zones = queryObj.zones;
-    this.query.month = queryObj.month;
-    this.query.year = queryObj.year;
-    this.query.reportType = queryObj.customerClassificationType;
+    this.query.year = queryObj.fiscalYear;
+    this.loadData();
+  }
 
-    // this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(
-    //   this.query
-    // );
-    // this.loadReportsPage();
+  getData = (query) =>
+    this.colorBankInstallationTargetService.getCollectionConfigs(query);
+
+  loadData() {
+    const query = this.prepareNewDealerEntry();
+    this.alertService.fnLoading(true);
+    const reportsSubscription = this.getData(query)
+      .pipe(
+        finalize(() => {
+          this.alertService.fnLoading(false);
+        })
+      )
+      .subscribe(
+        (res) => {
+          this.data = res.data;
+          // this.totalDataLength = res.data.length;
+          //this.totalFilterDataLength = res.data.length;
+          //this.ptableColDefGenerate();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    this.subscriptions.push(reportsSubscription);
+  }
+
+  SaveOrUpdateData() {
+    this.colorBankInstallationTargetService
+      .saveOrUpdateInstallTarget(this.data)
+      .subscribe(
+        (res) => {
+          this.alertService.tosterSuccess(
+            'Color Bank Installation Targer Set Successfully'
+          );
+          this.loadData();
+        },
+        (error) => console.log(error),
+        () => console.log('done')
+      );
   }
 }

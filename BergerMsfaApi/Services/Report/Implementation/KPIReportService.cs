@@ -483,7 +483,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         public async Task<IList<ColorBankInstallationPlanVsActualKPIReportResultModel>> GetColorBankInstallationPlanVsActual(ColorBankInstallationPlanVsActualKpiReportSearchModel query)
         {
             var result = new List<ColorBankInstallationPlanVsActualKPIReportResultModel>();
-            var bergerFyMonth = GetBergerFyMonth();
+            var bergerFyMonth = ConstantsValue.GetBergerFyMonth();
             DateTime dateTime = new DateTime(query.Year, 4, 1);
 
             var startDate = dateTime.GetCFYFD().DateTimeFormat();
@@ -689,26 +689,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             return result;
         }
-
-
-
-
-        private Dictionary<int, string> GetBergerFyMonth()
-        {
-            var result = new Dictionary<int, string>();
-
-            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
-            DateTime compareDate = date.AddMonths(12);
-
-            while (date != compareDate)
-            {
-                result.Add(date.Month, date.ToString("MMM"));
-                date = date.AddMonths(1);
-            }
-
-            return result;
-        }
-
 
 
         public async Task<IList<CollectionPlanKPIReportResultModel>> GetFinancialCollectionPlanKPIReportAsync(CollectionPlanKPIReportSearchModel query)
