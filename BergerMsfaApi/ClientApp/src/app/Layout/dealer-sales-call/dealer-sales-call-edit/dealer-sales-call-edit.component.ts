@@ -164,8 +164,8 @@ id:number;
 	// return;
 	obj.dealerSalesCallId=this.id;
 	obj.comments="";
-	obj.priorityId=0;
-	obj.dealerSalesIssueCategoryId=0;
+	obj.priorityId=61;
+	obj.dealerSalesIssueCategoryId=23;
 	obj.quantity=0;
 	this.dealerSalesIssues.push(obj)
   }
