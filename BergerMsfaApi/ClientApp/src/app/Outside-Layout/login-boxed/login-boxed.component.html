@@ -20,11 +20,11 @@
           <input [type]="passwordTextType ? 'text' : 'password'" autocomplete="off" class="form-control form-control-login rounded-0" formControlName="password" placeholder="Enter your password"
               [ngClass]="{'is-valid':ufControls.password.touched && !ufControls.password.errors,
               'is-invalid':ufControls.password.touched && ufControls.password.errors }" />
-            <!-- <div class="input-group-append" (click)="togglePasswordTextType()">
+            <div class="input-group-append" (click)="togglePasswordTextType()">
                 <span class="input-group-text">
                     <i class="fa" [ngClass]="{ 'fa-eye-slash': !passwordTextType, 'fa-eye': passwordTextType }"></i>
                 </span>
-            </div> -->
+            </div>
         </div>
         <!-- <small class="text-danger" *ngIf="ufControls.password.touched && ufControls.password.errors">
             <span *ngIf="ufControls.password.errors.required">Password is <strong>required</strong></span>

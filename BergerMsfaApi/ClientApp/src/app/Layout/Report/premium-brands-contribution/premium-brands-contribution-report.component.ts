@@ -39,7 +39,7 @@ export class PremiumBrandsContributionReportComponent
   totalDataLength: number = 0; // for server side paggination
   totalFilterDataLength: number = 0; // for server side paggination
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'Premium Brands Contribution Report';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
@@ -238,7 +238,11 @@ export class PremiumBrandsContributionReportComponent
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,
+    )}`,    
+    enabledConditionalRowStyles:true,
+    conditionalRowStyles: [
+        {columnName:'territory',columnValues:['Total']}
+    ],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
