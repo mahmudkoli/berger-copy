@@ -99,7 +99,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
            // var u = _userInfosvc.GetAll().ToList();
            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
-            var result = await _userInfosvc.GetAllAsync();
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -113,7 +113,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -121,9 +122,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && (((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
                                 (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
-                                && (f.EmployeeRole != EnumEmployeeRole.ZO));
+                                && (f.EmployeeRole != EnumEmployeeRole.ZO)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -226,7 +227,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
         {
-            var result= await _roleSvc.GetAllAsync();
+            var result= await _roleSvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<Role, RoleModel>();
         }
 

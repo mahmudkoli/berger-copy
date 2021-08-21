@@ -18,6 +18,7 @@ import { ExcelService } from './service/excel.service';
 import { PDFService } from './service/pdf.service';
 import { PrintService } from './service/print.service';
 declare var jQuery: any;
+import { downloadFile } from 'file-saver';
 @Component({
   selector: 'app-p-table',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -1124,17 +1125,53 @@ export class PTableComponent implements OnInit, DoCheck {
     ) {
       this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`).subscribe(
         (res) => {
-          let data = res as any[];
+          if(this.pTableSetting.downloadFileFromServer) {
+            console.log(res);
+          }
+          else{
+            let data = res as any[];
+
           this.excelService.exportAsExcelFile(data, this.pTableSetting);
+          }
+          
         },
         (err) => {
           console.error(err);
         }
       );
     } else {
-      this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+
+      if(this.pTableSetting.downloadFileFromServer) {
+        this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`,
+        { responseType: 'blob' as 'json' }
+           
+      )
+      .subscribe(
+          (res) => {
+            // console.log(res);
+            // downloadFile(res,'SnapShotResult.xlsx')
+            const blob = new Blob([res], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            const url = window.URL.createObjectURL(blob);
+            // window.open(url);
+            var link=document.createElement('a');
+                link.href=window.URL.createObjectURL(blob);
+                link.download="SnapShotResult.xlsx";
+                link.click();
+            
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+      }
+      
+      else{
+        this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+      }
     }
   }
+
+
 
   onScroll(event, doc) {
     if (this.pTableSetting.enabledAutoScrolled) {

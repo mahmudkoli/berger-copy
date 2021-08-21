@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NewDealerDevelopmentQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
@@ -24,6 +25,8 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 
   constructor(private newDealerDevelopmentService:NewDealerDevelopmentService,
 	private commonService: CommonService,
+    private alertService: AlertService,
+
 	) { }
 
   ngOnInit() {
@@ -45,10 +48,14 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
-		pageSize: 12,
-		enabledTotal: true,
+		pageSize: 13,
+		enabledTotal: false,
 		
 		enabledDataLength: true,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'monthName',columnValues:['Total']}
+		],
 	};
 
   searchConfiguration() {
@@ -83,8 +90,19 @@ export class NewDealerDevelopmentListComponent implements OnInit {
 
   loadData() {
     this.newDealerDevelopmentService.GetDealerOpeningStatus(this.query).subscribe(
-      (res:any) =>{this.data = res.data; this.totalDataLength = res.length;
-	this.ptableColDefGenerate();
+      (res:any) =>{
+		  if(res.data.length===0){
+			this.data = []; 
+			this.alertService.titleTosterInfo("No data found")
+			  
+		  }
+		  else{
+			  this.data = res.data; 
+			  this.totalDataLength = res.data.length;
+			this.ptableColDefGenerate();
+
+		  }
+		  
 	}
 	
       ,

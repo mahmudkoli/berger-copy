@@ -631,7 +631,7 @@
             <tr *ngFor="let item of dealerSalesIssues; let i = index">
                 <td>
                     <div class="position-relative form-group">
-                        <ng-select [(ngModel)]="item.dealerSalesIssueCategoryId">
+                        <ng-select [(ngModel)]="item.dealerSalesIssueCategoryId" required>
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dealerSalesIssueCategory of dealerSalesIssueCategorylst;" [value]="dealerSalesIssueCategory.id">{{dealerSalesIssueCategory.dropdownName}}</ng-option>
                         </ng-select>
@@ -669,8 +669,7 @@
                     </td>
                 <td>
                     <div class="position-relative form-group">
-                        <ng-select [(ngModel)]="item.priorityId">
-                            <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-select [(ngModel)]="item.priorityId" required>
                             <ng-option *ngFor="let priority of prioritylst;" [value]="priority.id">{{priority.dropdownName}}</ng-option>
                         </ng-select>
                         

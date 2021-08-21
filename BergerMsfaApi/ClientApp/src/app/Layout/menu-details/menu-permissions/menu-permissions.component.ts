@@ -106,7 +106,7 @@ export class MenuPermissionsComponent implements OnInit {
 
   selectMenu(event, menuObj) {
     // console.log("menuObj: ", menuObj, this.selectedMenuPermissions);
-    if (menuObj.isParent) {
+    if (menuObj.isParent && this.type!=EnumType.MobileApp) {
       return;
     }
 
@@ -178,11 +178,25 @@ export class MenuPermissionsComponent implements OnInit {
     // console.log("arr: ", arr);
     for (var i in arr) {
       let hasPermission = arr[i].menuPermissions.length != 0 ? arr[i].menuPermissions.find(p => p.empRoleId == this.empRoleId) : null;
-      let menuChecked = hasPermission != null ? "checked" : (arr[i].isParent ? "checked" : null);
+      let menuChecked = hasPermission != null ? "checked" : null;
+      // let menuChecked = hasPermission != null ? "checked" : (arr[i].isParent ? "checked" : null);
+
       arr[i].menuChecked = menuChecked;
       // console.log("childArray: ", i, arr[i]);
 
-      if (!arr[i].isParent && hasPermission != null) {
+      // if (!arr[i].isParent && hasPermission != null) {
+      //   let menuPermission = new MenuPermission();
+      //   menuPermission.id = hasPermission.id;
+      //   menuPermission.menuId = hasPermission.menuId,
+      //     menuPermission.empRoleId = hasPermission.empRoleId;
+      //     menuPermission.type = hasPermission.type;
+
+
+      //   this.selectedMenuPermissions.push(menuPermission);
+      //   this.updatedMenuPermissions.push(menuPermission);
+      // }
+
+      if (hasPermission != null) {
         let menuPermission = new MenuPermission();
         menuPermission.id = hasPermission.id;
         menuPermission.menuId = hasPermission.menuId,
@@ -193,6 +207,7 @@ export class MenuPermissionsComponent implements OnInit {
         this.selectedMenuPermissions.push(menuPermission);
         this.updatedMenuPermissions.push(menuPermission);
       }
+      
 
       if (arr[i].children.length) {
         this.setCheckedToMenuNestedChildrenByEmpId(arr[i].children);

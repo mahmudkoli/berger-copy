@@ -265,6 +265,7 @@ namespace BergerMsfaApi
             app.UseAuthorization();
             app.UseRequestLocalization();
             app.UseMiddleware<ItemInHttpContextMiddleware>();
+            app.UseMiddleware<ActiveUserMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Services.Excel.Interface;
 
 namespace BergerMsfaApi.Controllers.Report
 {
@@ -18,13 +19,16 @@ namespace BergerMsfaApi.Controllers.Report
     {
         private readonly IPortalReportService _portalReportService;
         private readonly ICommonService _commonService;
+        private readonly IExcelReaderService _excelReaderService;
 
         public PortalReportController(
                 IPortalReportService portalReportService,
-                ICommonService commonService)
+                ICommonService commonService,
+                IExcelReaderService excelReaderService)
         {
             _portalReportService = portalReportService;
             _commonService = commonService;
+            _excelReaderService = excelReaderService;
         }
 
         [HttpGet("GetLeadSummary")]
@@ -698,24 +702,55 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        //[HttpGet("DownloadSnapShotReport")]
+        //public IActionResult DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        //{
+        //    try
+        //    {
+        //        query.Page = 1;
+        //        query.PageSize = int.MaxValue;
+        //        var result = _portalReportService.GetSnapShotReportBySp(query);
+
+        //        _commonService.SetEmptyString(result.Items.ToList(),
+        //            nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
+        //            nameof(MerchendizingSnapShotReportResultModel.GlowSignBoard),
+        //            nameof(MerchendizingSnapShotReportResultModel.ProductDisplay),
+        //            nameof(MerchendizingSnapShotReportResultModel.Scheme),
+        //            nameof(MerchendizingSnapShotReportResultModel.Brochure),
+        //            nameof(MerchendizingSnapShotReportResultModel.Others));
+
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex);
+        //    }
+        //}
+        
         [HttpGet("DownloadSnapShotReport")]
-        public IActionResult DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        public async Task<IActionResult> DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
         {
+            string sFileName = @"SnapShotResult.xlsx";
+
             try
             {
-                query.Page = 1;
-                query.PageSize = int.MaxValue;
-                var result = _portalReportService.GetSnapShotReportBySp(query);
+                if (string.IsNullOrEmpty(query.Depot))
+                {
+                    throw new Exception("Please select mandatory field.");
+                    
+                }
 
-                _commonService.SetEmptyString(result.Items.ToList(),
-                    nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
-                    nameof(MerchendizingSnapShotReportResultModel.GlowSignBoard),
-                    nameof(MerchendizingSnapShotReportResultModel.ProductDisplay),
-                    nameof(MerchendizingSnapShotReportResultModel.Scheme),
-                    nameof(MerchendizingSnapShotReportResultModel.Brochure),
-                    nameof(MerchendizingSnapShotReportResultModel.Others));
+                dynamic datatabledata = _portalReportService.GetSnapShotReportBySp(query);
 
-                return Ok(result);
+                var data = await _excelReaderService.WriteToFileWithImage(datatabledata);
+
+                var result = File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                sFileName);
+
+                return result;
+                
             }
             catch (Exception ex)
             {

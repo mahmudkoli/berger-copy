@@ -29,7 +29,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	totalFilterDataLength: number = 0; // for server side paggination
 	
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Slippage Vs Collection';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
@@ -74,7 +74,8 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	searchConfiguration() {
 		this.query = new CollectionPlanKpiReportQuery({
 			depot: '',
-			territory:[],
+			territories:[],
+			salesGroups:[]
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -91,8 +92,8 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.territory = queryObj.territories;
-		this.query.salesGroups =queryObj.salesGroups!=null?queryObj.salesGroups[0]:null;
+		this.query.territories = queryObj.territories;
+		this.query.salesGroups =queryObj.salesGroups;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -152,6 +153,10 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+								enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

@@ -38,7 +38,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private alertService: AlertService,
-        private journeyPlanService: JourneyPlanService
+        private journeyPlanService: JourneyPlanService,
     ) {
         this.pagingConfig = new APIModel(1, 10);
         this._initPermissionGroup();
@@ -129,6 +129,18 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
            let find = this.journeyPlanList.find(f => f.id==info.event.id && f.planDate == info.event.startStr);
            this.onDetail(find);
        }
+
+       if (info.event.title == "Delete") {
+        let find = this.journeyPlanList.find(f => f.id==info.event.id && f.planDate == info.event.startStr);
+        // console.log(find.planDate,new Date().toISOString('y'));
+        let planDate=new Date(find.planDate);
+        let currentDate=new Date();
+        if(planDate>=currentDate){
+            console.log(find);
+            this.delete(find.id);
+
+        }
+    }
         
         // change the border color just for fun
         //info.el.style.borderColor = 'red';
@@ -204,6 +216,8 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                         events.push({ id: plan.id, title: `${plan.employeeName}`, date: plan.planDate, employeeId: plan.employeeId, backgroundColor: '#f58442' });
                         events.push({ id: plan.id, title: `${plan.planStatusInText}`, date: plan.planDate, employeeId: plan.employeeId });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#ce42f5' });
+                        events.push({ id: plan.id, title: 'Delete', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#f54272' });
+
 
                     });
 
@@ -274,5 +288,6 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             this.alertService.tosterDanger(errorDetails.error.msg);
         }
     }
+
 
 }
