@@ -554,6 +554,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             if (year == today.Year)
             {
                 currentYearEndDate = today.AddMonths(-1).GetCYLD();
+                lastYearEndDate = today.AddMonths(-1).GetLYLD();
             }
 
             var productivityTarget =
