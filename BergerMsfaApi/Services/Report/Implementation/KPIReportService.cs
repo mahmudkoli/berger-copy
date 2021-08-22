@@ -127,6 +127,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          DealerClasification = diInfo.CustomerClasification,
                                          JourneyPlanDate = jpminfo.PlanDate,
                                          JourneyPlanId = jpd.PlanId,
+                                         CustomerNo = diInfo.CustomerNo
                                      }).ToListAsync();
 
             var fromDate = new DateTime(query.Year, query.Month, 01);
@@ -135,23 +136,32 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var premiumBrands = _context.BrandInfos.Where(x => x.IsPremium).Select(x => x.MaterialGroupOrBrand).Distinct().ToList();
             var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
 
+            var monthlyBillingCount = 0;
+            var monthlyActualVisitCount = 0;
+
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 var reportModel = new StrikeRateKPIReportResultModel();
 
-                var actualVisitCount = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date
+                var actualVisit = dealerVisit.Where(x => x.JourneyPlanDate.Date == date.Date
                                                         && ((query.ReportType == EnumStrikeRateReportType.All) ||
                                                             (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                 x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                    .Select(x => x.DealerId).Distinct().Count();
+                                                    .Select(x => x.CustomerNo).Distinct();
 
-                var billingCount = billingOData.Where(x => x.DateTime.Date == date.Date
+                var actualVisitCount = actualVisit.Count();
+                monthlyActualVisitCount += actualVisit.Count();
+
+                var billing = billingOData.Where(x => x.DateTime.Date == date.Date
                                                     && ((query.ReportType == EnumStrikeRateReportType.All) ||
                                                         (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                .Select(x => new { x.CustomerNo }).Distinct().Count();
+                                                .Select(x => x.CustomerNo).Distinct();
+
+                var billingCount = actualVisit.Where(x => billing.Contains(x)).Count();
+                monthlyBillingCount += billing.Count();
 
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
@@ -190,13 +200,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var weekResults = reportResult.Where(x => x.Date.StartsWith("Week")).ToList();
 
-            int noOfPremiumBrandBilling = 0;
-            int actual = 0;
             var businessCallWebKpiReportResultModel = new StrikeRateKPIReportResultModel
             {
-                NoOfCallActual = actual = weekResults.Sum(x => x.NoOfCallActual),
-                NoOfPremiumBrandBilling = noOfPremiumBrandBilling = weekResults.Sum(x => x.NoOfPremiumBrandBilling),
-                BillingPercentage = this.GetAchivement(actual, noOfPremiumBrandBilling),
+                NoOfCallActual = monthlyActualVisitCount,
+                NoOfPremiumBrandBilling = monthlyBillingCount,
+                BillingPercentage = this.GetAchivement(monthlyActualVisitCount, monthlyBillingCount),
                 Date = "Total",
             };
 

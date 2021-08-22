@@ -225,6 +225,10 @@ export class BusinessCallAnalysisReportComponent implements OnInit, OnDestroy {
         globalSearchValue: '',
       })
     )}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'date',columnValues:['Total','Week 1','Week 2','Week 3','Week 4','Week 5']}
+		],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
