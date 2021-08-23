@@ -208,7 +208,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('brands')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('brands')}">Brands</label>
-                    <ng-select [items]="brands" formControlName="brands" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="brands" formControlName="brands" (change)="changeBrandShow()" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.brands.touched && formControls.brands.errors">
                         <span *ngIf="formControls.brands.errors.required">Brands is <strong>required</strong></span>

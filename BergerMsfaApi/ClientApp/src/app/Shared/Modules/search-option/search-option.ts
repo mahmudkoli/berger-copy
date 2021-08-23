@@ -120,3 +120,7 @@ export class DealerFilter{
     salesOffices: string[];
     dealerCategory:number
 }
+
+export class BrandFilter {
+    brands: string[];
+}

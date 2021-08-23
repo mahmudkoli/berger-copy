@@ -244,9 +244,9 @@ export class CommonService {
     );
   }
 
-  getMaterialGroupOrBrand() {
+  getMaterialGroupOrBrand(filter?) {
     return this.http.get<APIResponse>(
-      this.baseUrl + 'v1/Common/GetMaterialGroupOrBrand'
+      this.baseUrl + `v1/Common/GetMaterialGroupOrBrand?${this.toQueryString(filter)}`
     );
   }
 

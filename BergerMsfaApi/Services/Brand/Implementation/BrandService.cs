@@ -231,13 +231,15 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             }, null, x => x.OrderBy(y => y.MatarialGroupOrBrandName), null, true);
         }
 
-        public async Task<IList<KeyValuePairObjectModel>> GetBrandDropDownAsync()
+        public async Task<IList<KeyValuePairObjectModel>> GetBrandDropDownAsync(BrandFilterModel model)
         {
             return await _brandInfoRepository.GetAllIncludeAsync(x => new KeyValuePairObjectModel()
             {
                 Text = x.MaterialDescription + " (" + x.MaterialCode + ")",
                 Value = x.MaterialCode
-            }, null, x => x.OrderBy(y => y.MaterialDescription), null, true);
+            },
+            x => (!model.Brands.Any() || model.Brands.Contains(x.MaterialGroupOrBrand)), 
+            x => x.OrderBy(y => y.MaterialDescription), null, true);
         }
     }
 
@@ -248,6 +250,16 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         public string MaterialDescription { get; set; }
         public string MaterialGroupOrBrand { get; set; }
         public string MaterialGroupOrBrandName { get; set; }
+    }
+
+    public class BrandFilterModel
+    {
+        public IList<string> Brands { get; set; }
+
+        public BrandFilterModel()
+        {
+            this.Brands = new List<string>();
+        }
     }
 }
 
