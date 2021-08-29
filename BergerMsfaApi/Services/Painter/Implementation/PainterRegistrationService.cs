@@ -264,8 +264,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                       PainterImageUrl=p.PainterImageUrl,
                                       Phone=p.Phone,
                                       SaleGroupName= sginfo.Name,
-                                      TerritoryName= tinfo.Name,
-                                      ZoneName= zinfo.Name,
+                                      TerritoryName= p.Territory,
+                                      ZoneName= p.Zone,
                                       DepotName= depinfo.Name1,
                                       Status =(int)p.Status
                                   }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
