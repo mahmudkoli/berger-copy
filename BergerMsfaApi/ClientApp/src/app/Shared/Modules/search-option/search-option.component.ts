@@ -17,6 +17,7 @@ import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dr
 import { Enums } from '../../Enums/enums';
 import { AlertService } from '../alert/alert.service';
 import {
+  BrandFilter,
   DealerFilter,
   EnumSearchOption,
   SearchOptionDef,
@@ -645,5 +646,23 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     }
 		
 
+  }
+
+  changeBrandShow() {
+    if (this.hasSearchOption('materialCodes')) {
+      const controls = this.searchOptionForm.controls;
+      const brandFilter=new BrandFilter()
+      brandFilter.brands=controls['brands'].value;
+      if (brandFilter.brands && brandFilter.brands.length > 0) {
+      this.commonService.getMaterialGroupOrBrand(brandFilter)
+        .subscribe(res => {
+          this.materialCodes=res.data;
+        },
+        err => { },
+        () => { });
+      } else {
+        this.materialCodes=[];
+      }
+    }
   }
 }

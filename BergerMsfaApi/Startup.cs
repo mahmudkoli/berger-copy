@@ -63,6 +63,7 @@ namespace BergerMsfaApi
             var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
+            services.AddDbContext<SAPDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SAPDbContext))));
 
             services.AddAuthentication(opt =>
                 {

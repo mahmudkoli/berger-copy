@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Services.Brand.Implementation;
 using BergerMsfaApi.Services.Brand.Interfaces;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -239,11 +240,11 @@ namespace BergerMsfaApi.Controllers.Common
         }
 
         [HttpGet("GetMaterialGroupOrBrand")]
-        public async Task<IActionResult> GetMaterialGroupOrBrand()
+        public async Task<IActionResult> GetMaterialGroupOrBrand([FromQuery] BrandFilterModel model)
         {
             try
             {
-                var result = await _brandService.GetBrandDropDownAsync();
+                var result = await _brandService.GetBrandDropDownAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)

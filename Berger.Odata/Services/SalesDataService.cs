@@ -926,7 +926,8 @@ namespace Berger.Odata.Services
                 res.DepotCode = item.PlantOrBusinessArea;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
-                res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
+                //res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
+                res.NumberOfDealer = dealer.Where(x => x.BusinessArea == item.PlantOrBusinessArea).Select(x => x.CustomerNo).Distinct().Count();
                 result.Add(res);
             }
 

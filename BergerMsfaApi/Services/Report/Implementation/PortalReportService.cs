@@ -345,6 +345,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                               from dtInfo in dtleft.DefaultIfEmpty()
                               join dps in _context.DropdownDetails on lf.ProjectStatusId equals dps.Id into dpsleft
                               from dpsInfo in dpsleft.DefaultIfEmpty()
+                              join d in _context.Depots on lg.Depot equals d.Werks into dleftjoin
+                              from dinfo in dleftjoin.DefaultIfEmpty()
                               where (
                                    (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
                                   && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
@@ -361,6 +363,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   projectCode = lg.Code,
                                   projectName = lg.ProjectName,
                                   depot = lg.Depot,
+                                  depotName = dinfo.Name1,
                                   userId = ui.Email,
                                   territory = lg.Territory,
                                   zone = lg.Zone,
@@ -413,6 +416,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 projectCode = x.FirstOrDefault().projectCode,
                 projectName = x.FirstOrDefault().projectName,
                 depot = x.FirstOrDefault().depot,
+                depotName = x.FirstOrDefault().depotName,
                 userId = x.FirstOrDefault().userId,
                 territory = x.FirstOrDefault().territory,
                 zone = x.FirstOrDefault().zone,
@@ -465,6 +469,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.ProjectCode = x.projectCode;
                 reportModel.ProjectName = x.projectName;
                 reportModel.Depot = x.depot;
+                reportModel.DepotName = x.depotName;
                 reportModel.UserId = x.userId;
                 reportModel.Territory = x.territory;
                 reportModel.Zone = x.zone;
