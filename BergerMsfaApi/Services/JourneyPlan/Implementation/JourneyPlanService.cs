@@ -122,7 +122,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
                                         Territory = dealer.Territory,
-                                        VisitDate = planDetail.VisitDate
+                                        //VisitDate = planDetail.VisitDate
                                     }).ToList()
             }).ToList();
 
@@ -256,7 +256,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
                                         IsFocused = (fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date) ? true : false,
-                                        VisitDate = planDetail.VisitDate
+                                        //VisitDate = planDetail.VisitDate
                                     }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
 
             };
@@ -312,7 +312,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         ContactNo = dealer.ContactNo,
                                         Address = dealer.Address,
                                         IsFocused = (fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date) ? true : false,
-                                        VisitDate = planDetail.VisitDate,
+                                        //VisitDate = planDetail.VisitDate,
                                         AccountGroup = dealer.AccountGroup,
                                         PlanDate = plan.PlanDate.ToString("yyyy-MM-dd")
                                     }).ToList().Select(s => s).GroupBy(n => new { n.Id }).Select(g => g.FirstOrDefault()).ToList(),
@@ -420,7 +420,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                                         CustomerName = dealer.CustomerName,
                                         CustomerNo = dealer.CustomerNo,
                                         Territory = dealer.Territory,
-                                        VisitDate = planDetail.VisitDate
+                                        //VisitDate = planDetail.VisitDate
                                     }).ToList()
             }).ToList();
 

@@ -18,6 +18,7 @@ import { ExcelService } from './service/excel.service';
 import { PDFService } from './service/pdf.service';
 import { PrintService } from './service/print.service';
 declare var jQuery: any;
+import { downloadFile } from 'file-saver';
 @Component({
   selector: 'app-p-table',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -1124,17 +1125,53 @@ export class PTableComponent implements OnInit, DoCheck {
     ) {
       this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`).subscribe(
         (res) => {
-          let data = res as any[];
+          if(this.pTableSetting.downloadFileFromServer) {
+            console.log(res);
+          }
+          else{
+            let data = res as any[];
+
           this.excelService.exportAsExcelFile(data, this.pTableSetting);
+          }
+          
         },
         (err) => {
           console.error(err);
         }
       );
     } else {
-      this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+
+      if(this.pTableSetting.downloadFileFromServer) {
+        this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`,
+        { responseType: 'blob' as 'json' }
+           
+      )
+      .subscribe(
+          (res) => {
+            // console.log(res);
+            // downloadFile(res,'SnapShotResult.xlsx')
+            const blob = new Blob([res], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            const url = window.URL.createObjectURL(blob);
+            // window.open(url);
+            var link=document.createElement('a');
+                link.href=window.URL.createObjectURL(blob);
+                link.download="SnapShotResult.xlsx";
+                link.click();
+            
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+      }
+      
+      else{
+        this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+      }
     }
   }
+
+
 
   onScroll(event, doc) {
     if (this.pTableSetting.enabledAutoScrolled) {
@@ -1206,11 +1243,34 @@ export class PTableComponent implements OnInit, DoCheck {
   }
 
   numberFormatColor(value,displayType) {
+    if(value===undefined||value===null) return '';
     const numberFormatColorFraction = displayType == 'number-format-color-fraction' || displayType == 'number-format-color-bg-fraction';
     const fractionDigit = numberFormatColorFraction ? 2 : 0;
     const formatValue = Number(value).toLocaleString('en-US', 
                             { style: 'decimal', minimumIntegerDigits: 1, 
                                 minimumFractionDigits: fractionDigit, maximumFractionDigits: fractionDigit });
     return formatValue;
+  }
+
+  conditionalRowStyles(dataObj) {
+    let styles: any = {};
+    if (this.pTableSetting.enabledConditionalRowStyles) {
+      const columnHeaders = this.pTableSetting.conditionalRowStyles.filter(x => 
+                      this.pTableSetting.tableColDef.find(y => x.columnName == y.internalName));
+      columnHeaders.forEach(ch => {
+        if (ch.columnValues.indexOf(dataObj[ch.columnName]) > -1) {
+          if (ch.rowStyles) { 
+            styles = ch.rowStyles; 
+          } else {
+            styles = {
+              'font-weight': 'bold',
+              'background-color': '#e8edff',
+            }
+          }
+          return;
+        }
+      });
+    } 
+    return styles;
   }
 }

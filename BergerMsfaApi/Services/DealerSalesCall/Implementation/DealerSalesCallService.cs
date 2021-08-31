@@ -32,6 +32,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
     public class DealerSalesCallService : IDealerSalesCallService
     {
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<DSC.DealerCompetitionSales> _dealerCompetitionSalesRepository;
+        private readonly IRepository<DSC.DealerSalesIssue> _dealerSalesIssueRepository;
+
         private readonly IRepository<EmailConfigForDealerSalesCall> _repository;
         private readonly IDropdownService _dropdownService;
         private readonly IFileUploadService _fileUploadService;
@@ -52,7 +55,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IRepository<DealerInfo> dealerInfo,
                 IRepository<Depot> plantSvc,
                 IEmailSender emailSender,
-                IFinancialDataService financialDataService
+                IFinancialDataService financialDataService,
+                IRepository<DSC.DealerCompetitionSales> dealerCompetitionSalesRepository,
+                IRepository<DSC.DealerSalesIssue> dealerSalesIssueRepository
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
@@ -65,6 +70,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             _userInfo = userInfo;
             this.dealerInfo = dealerInfo;
             this._plantSvc = plantSvc;
+            _dealerCompetitionSalesRepository = dealerCompetitionSalesRepository;
+            _dealerSalesIssueRepository = dealerSalesIssueRepository;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -84,6 +91,56 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
+
+            await SendIssueEmail(result.Id);
+
+            return result.Id;
+        }
+
+        public async Task<int> UpdateAsync(AppDealerSalesCallModel model)
+        {
+            
+
+
+            var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
+
+
+            var dealerSalesIssues = dealerSalesCall.DealerSalesIssues.ToList();
+            var dealerCompetitionSales = dealerSalesCall.DealerCompetitionSales.ToList();
+
+            dealerSalesCall.DealerSalesIssues = null;
+            dealerSalesCall.DealerCompetitionSales = null;
+
+
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageBase64))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                model.CompetitionProductDisplayImageUrl=model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageBase64))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                model.CompetitionSchemeModalityImageUrl = model.CompetitionSchemeModalityImageBase64.Substring(model.CompetitionSchemeModalityImageBase64.LastIndexOf(',') + 1);
+
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+            }
+
+            var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
+
+
+            var issue = await _dealerSalesIssueRepository.DeleteAsync(p=>p.DealerSalesCallId==dealerSalesCall.Id);
+
+
+            var issuecategoryAdd = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesIssues);
+
+
+            var dealerCompetitionSalesEdit = await _dealerCompetitionSalesRepository.UpdateListAsync(dealerCompetitionSales);
+
+
+
 
             await SendIssueEmail(result.Id);
 
@@ -456,5 +513,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 throw ex;
             }
         }
+
+       
     }
 }

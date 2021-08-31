@@ -2,10 +2,14 @@
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Models.Report;
+using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
@@ -18,17 +22,20 @@ namespace BergerMsfaApi.Controllers.Odata
     {
         private readonly IKpiDataService _kpiDataService;
         private readonly IKPIReportService _kpiReportService;
+        private readonly IUniverseReachAnalysisService _universeReachAnalysisService;
 
         public KpiReportController(
             IKpiDataService kpiDataService,
-            IKPIReportService kpiReportService)
+            IKPIReportService kpiReportService,
+            IUniverseReachAnalysisService universeReachAnalysisService)
         {
             _kpiDataService = kpiDataService;
             _kpiReportService = kpiReportService;
+            _universeReachAnalysisService = universeReachAnalysisService;
         }
 
         [HttpGet("GetTerritoryTargetAchivement")]
-        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> GetTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
@@ -42,7 +49,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
         [HttpGet("DownloadTerritoryTargetAchivement")]
-        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] TerritoryTargetAchievementSearchModel model)
+        public async Task<IActionResult> DownloadTerritoryTargetAchivement([FromQuery] SalesTargetAchievementSearchModel model)
         {
             try
             {
@@ -116,7 +123,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -130,7 +137,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model);
+                var result = await _kpiReportService.GetBusinessCallKPIReportAsync(model, EnumReportFor.Web);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -139,12 +146,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("GetStrikeRateOnBusinessCall")]
-        public async Task<IActionResult> GetStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
+        [HttpGet("GetPremiumBrandBillingStrikeRate")]
+        public async Task<IActionResult> GetPremiumBrandBillingStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
         {
             try
             {
-                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                var result = await _kpiReportService.PremiumBrandBillingStrikeRateKPIReportAsync(model,EnumReportFor.Web);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -153,12 +160,12 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
-        [HttpGet("DownloadStrikeRateOnBusinessCall")]
+        [HttpGet("DownloadPremiumBrandBillingStrikeRate")]
         public async Task<IActionResult> DownloadStrikeRateKPIReport([FromQuery] StrikeRateKPIReportSearchModel model)
         {
             try
             {
-                var result = await _kpiReportService.GetStrikeRateKPIReportAsync(model);
+                var result = await _kpiReportService.PremiumBrandBillingStrikeRateKPIReportAsync(model,EnumReportFor.Web);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -195,6 +202,34 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        [HttpGet("GetUniverseReachAnalysis")]
+        public async Task<IActionResult> GetUniverseReachAnalysisReportReport([FromQuery] UniverseReachAnalysisReportSearchModel model)
+        {
+            try
+            {
+                var result = await _universeReachAnalysisService.GetUniverseReachAnalysisReportAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadUniverseReachAnalysis")]
+        public async Task<IActionResult> DownloadUniverseReachAnalysisReportReport([FromQuery] UniverseReachAnalysisReportSearchModel model)
+        {
+            try
+            {
+                var result = await _universeReachAnalysisService.GetUniverseReachAnalysisReportAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet("GetFinancialCollectionPlan")]
         public async Task<IActionResult> GetFinancialCollectionPlanKPIReport([FromQuery] CollectionPlanKPIReportSearchModel model)
         {
@@ -222,5 +257,36 @@ namespace BergerMsfaApi.Controllers.Odata
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("GetColorBankInstallationPlanVsActual")]
+        [ProducesResponseType(typeof(IList<ColorBankInstallationPlanVsActualKPIReportResultModel>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankInstallationPlanVsActual([FromQuery] ColorBankInstallationPlanVsActualKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankInstallationPlanVsActual(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetColorBankProductivity")]
+        [ProducesResponseType(typeof(IList<ColorBankProductivityBase>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetColorBankProductivity([FromQuery] ColorBankProductivityKpiReportSearchModel model)
+        {
+            try
+            {
+                var result = await _kpiReportService.GetColorBankProductivity(model, EnumReportFor.Web);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
     }
 }

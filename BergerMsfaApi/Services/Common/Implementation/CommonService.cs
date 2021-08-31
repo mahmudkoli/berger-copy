@@ -99,7 +99,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
            // var u = _userInfosvc.GetAll().ToList();
            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
          
-            var result = await _userInfosvc.GetAllAsync();
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -113,7 +113,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => (appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId));
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -121,9 +122,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && (((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
                                 (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
-                                && (f.EmployeeRole != EnumEmployeeRole.ZO));
+                                && (f.EmployeeRole != EnumEmployeeRole.ZO)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
 
@@ -226,7 +227,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
         {
-            var result= await _roleSvc.GetAllAsync();
+            var result= await _roleSvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<Role, RoleModel>();
         }
 
@@ -482,6 +483,53 @@ namespace BergerMsfaApi.Services.Common.Implementation
                               IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date,
                           }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
+
+            return result;
+        }
+
+        public async Task<IList<AppDealerInfoModel>> GetDealerListByArea(AreaDealerSearchModel model)
+        {
+            model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
+
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
+                (((!(model.Depots != null && model.Depots.Any()) || model.Depots==x.BusinessArea) &&
+                (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
+                (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
+                (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
+                (!(model.Zones != null && model.Zones.Any()) || model.Zones.Contains(x.CustZone))));
+
+            var result = (from dealer in _dealerInfoSvc.FindAll(dealerPredicate)
+                          join custGrp in _customerGroupSvc.GetAll()
+                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                          into cust
+                          from cu in cust.DefaultIfEmpty()
+
+                          join focusDealer in _focusDealerSvc.GetAll()
+                          on dealer.Id equals focusDealer.DealerId
+                          into focus
+                          from fd in focus.DefaultIfEmpty()
+
+                          where ((EnumDealerCategory.All == model.DealerCategory) ||
+                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date))
+                         
+
+                          select new AppDealerInfoModel
+                          {
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                             fd.ValidFrom.Date <= DateTime.Now.Date,
+                          }).ToList();
 
             return result;
         }

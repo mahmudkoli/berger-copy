@@ -926,7 +926,8 @@ namespace Berger.Odata.Services
                 res.DepotCode = item.PlantOrBusinessArea;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
-                res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
+                //res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
+                res.NumberOfDealer = dealer.Where(x => x.BusinessArea == item.PlantOrBusinessArea).Select(x => x.CustomerNo).Distinct().Count();
                 result.Add(res);
             }
 
@@ -1214,11 +1215,11 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones)
+        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories)
         {
-            var currentDate = new DateTime(year, month, 01);
-            var fromDate = currentDate.GetCYFD().DateFormat();
-            var toDate = currentDate.GetCYLD().DateFormat();
+            var filterDate = new DateTime(year, month, 01);
+            var fromDate = filterDate.GetCYFD().SalesSearchDateFormat();
+            var toDate = filterDate.GetCYLD().SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
@@ -1226,7 +1227,8 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
-            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones)).ToList();
+            var data = (await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate, 
+                                            depots: new List<string> { depot }, salesGroups: salesGroups, territories: territories)).ToList();
 
             var result = data.Select(x =>
                                 new KPIBusinessAnalysisKPIReportResultModel()

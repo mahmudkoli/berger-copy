@@ -195,11 +195,15 @@ export class CommonService {
   }
 
   getUserInfoListByCurrentUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser'
+    );
   }
 
   getUserInfoListByCurrentUserWithoutZoUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser'
+    );
   }
 
   getUserInfoList() {
@@ -228,15 +232,21 @@ export class CommonService {
     );
   }
 
+  getDivisionList() {
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/GetDivisionList'
+    );
+  }
+
   getBrandDropDown() {
     return this.http.get<APIResponse>(
       this.baseUrl + 'v1/Common/GetBrandDropDown'
     );
   }
 
-  getMaterialGroupOrBrand() {
+  getMaterialGroupOrBrand(filter?) {
     return this.http.get<APIResponse>(
-      this.baseUrl + 'v1/Common/GetMaterialGroupOrBrand'
+      this.baseUrl + `v1/Common/GetMaterialGroupOrBrand?${this.toQueryString(filter)}`
     );
   }
 
@@ -264,5 +274,21 @@ export class CommonService {
     return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, {
       params,
     });
+  }
+
+  getDealerByArea(filter) {
+    return this.http.post<APIResponse>(
+      this.baseUrl + `v1/Common/GetDealerByArea`,
+      filter
+    );
+  }
+
+  public getFiscalYear() {
+    let curentDate = new Date();
+    if (curentDate.getMonth() >= 3) {
+      return curentDate.getFullYear();
+    } else {
+      return curentDate.getFullYear() - 1;
+    }
   }
 }

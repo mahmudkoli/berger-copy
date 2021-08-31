@@ -58,4 +58,18 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+
+    public class PortalOSOver90DaysTrendResultModel
+    {
+        public string Month { get; internal set; }
+        public decimal OSOver90Days { get; internal set; }
+        public decimal Difference { get; internal set; }
+        public decimal Sales { get; internal set; }
+        public decimal OSPercentageWithSales { get; internal set; }
+
+        public PortalOSOver90DaysTrendResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
 }

@@ -66,6 +66,20 @@ export class ReportService {
     }/DownloadLeadFollowUpDetails?${this.commonService.toQueryString(filter)}`;
   }
 
+  getLeadBusinessUpdate(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.reportsEndpoint
+      }/GetLeadBusinessUpdate?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadLeadBusinessUpdate(filter?) {
+    return `${
+      this.reportsEndpoint
+    }/DownloadLeadBusinessUpdate?${this.commonService.toQueryString(filter)}`;
+  }
+
   getPainterRegistration(filter?) {
     return this.http.get<APIResponse>(
       `${
@@ -280,14 +294,14 @@ export class ReportService {
   public getOsOver90DaysTrend(filter?) {
     return this.http.get<APIResponse>(
       `${
-        this.reportsEndpoint
+        this.quaterlyReportEndpoint
       }/OsOver90daysTrendReport?${this.commonService.toQueryString(filter)}`
     );
   }
 
   public downloadOsOver90DaysTrend(filter?) {
     return `${
-      this.reportsEndpoint
+      this.quaterlyReportEndpoint
     }/DownloadOsOver90daysTrendReport?${this.commonService.toQueryString(
       filter
     )}`;
@@ -404,47 +418,59 @@ export class ReportService {
       this.reportsEndpoint
     }/DownloadLogInReport?${this.commonService.toQueryString(filter)}`;
   }
-  
+
   getTerritoryTargetAchivement(filter?) {
     return this.http.get<APIResponse>(
       `${
         this.kpiReportEndpoint
-      }/GetTerritoryTargetAchivement?${this.commonService.toQueryString(filter)}`
+      }/GetTerritoryTargetAchivement?${this.commonService.toQueryString(
+        filter
+      )}`
     );
   }
 
   public DownloadTerritoryTargetAchivement(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadTerritoryTargetAchivement?${this.commonService.toQueryString(filter)}`;
+    }/DownloadTerritoryTargetAchivement?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getDealerWiseTargetAchivement(filter?) {
     return this.http.get<APIResponse>(
       `${
         this.kpiReportEndpoint
-      }/GetDealerWiseTargetAchivement?${this.commonService.toQueryString(filter)}`
+      }/GetDealerWiseTargetAchivement?${this.commonService.toQueryString(
+        filter
+      )}`
     );
   }
 
   public DownloadDealerWiseTargetAchivement(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadDealerWiseTargetAchivement?${this.commonService.toQueryString(filter)}`;
+    }/DownloadDealerWiseTargetAchivement?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getProductWiseTargetAchivement(filter?) {
     return this.http.get<APIResponse>(
       `${
         this.kpiReportEndpoint
-      }/GetProductWiseTargetAchivement?${this.commonService.toQueryString(filter)}`
+      }/GetProductWiseTargetAchivement?${this.commonService.toQueryString(
+        filter
+      )}`
     );
   }
 
   public DownloadProductWiseTargetAchivement(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadProductWiseTargetAchivement?${this.commonService.toQueryString(filter)}`;
+    }/DownloadProductWiseTargetAchivement?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getBusinessCallAnalysis(filter?) {
@@ -465,14 +491,18 @@ export class ReportService {
     return this.http.get<APIResponse>(
       `${
         this.kpiReportEndpoint
-      }/GetStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`
+      }/GetPremiumBrandBillingStrikeRate?${this.commonService.toQueryString(
+        filter
+      )}`
     );
   }
 
   public downloadStrikeRateOnBusinessCall(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadStrikeRateOnBusinessCall?${this.commonService.toQueryString(filter)}`;
+    }/DownloadPremiumBrandBillingStrikeRate?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getBillingAnalysis(filter?) {
@@ -489,6 +519,22 @@ export class ReportService {
     }/DownloadBillingAnalysis?${this.commonService.toQueryString(filter)}`;
   }
 
+  getUniverseReachAnalysis(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetUniverseReachAnalysis?${this.commonService.toQueryString(filter)}`
+    );
+  }
+
+  public downloadUniverseReachAnalysis(filter?) {
+    return `${
+      this.kpiReportEndpoint
+    }/DownloadUniverseReachAnalysis?${this.commonService.toQueryString(
+      filter
+    )}`;
+  }
+
   getFinancialCollectionPlan(filter?) {
     return this.http.get<APIResponse>(
       `${
@@ -500,7 +546,9 @@ export class ReportService {
   public downloadFinancialCollectionPlan(filter?) {
     return `${
       this.kpiReportEndpoint
-    }/DownloadFinancialCollectionPlan?${this.commonService.toQueryString(filter)}`;
+    }/DownloadFinancialCollectionPlan?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getAddhocDealerSalesCall(filter?) {
@@ -514,7 +562,9 @@ export class ReportService {
   public downloadAddhocDealerSalesCall(filter?) {
     return `${
       this.reportsEndpoint
-    }/DownloadAddhocDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+    }/DownloadAddhocDealerSalesCall?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
   getAddhocSubDealerSalesCall(filter?) {
@@ -528,7 +578,26 @@ export class ReportService {
   public downloadAddhocSubDealerSalesCall(filter?) {
     return `${
       this.reportsEndpoint
-    }/DownloadAddhocSubDealerSalesCall?${this.commonService.toQueryString(filter)}`;
+    }/DownloadAddhocSubDealerSalesCall?${this.commonService.toQueryString(
+      filter
+    )}`;
   }
 
+  getColorBankInstallationPlanVsActual(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetColorBankInstallationPlanVsActual?${this.commonService.toQueryString(
+        filter
+      )}`
+    );
+  }
+
+  getColorBankProductivity(filter?) {
+    return this.http.get<APIResponse>(
+      `${
+        this.kpiReportEndpoint
+      }/GetColorBankProductivity?${this.commonService.toQueryString(filter)}`
+    );
+  }
 }

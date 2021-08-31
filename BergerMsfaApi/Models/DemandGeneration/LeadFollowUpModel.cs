@@ -76,12 +76,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string BrandUsedTopCoatBrandName { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
-        public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
-        public decimal ActualVolumeSoldExteriorKg { get; set; }
-        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
-        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorKg { get; set; }
+        //public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldExteriorKg { get; set; }
+        //public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         public int BusinessAchievementId { get; set; }
         public LeadBusinessAchievementModel BusinessAchievement { get; set; }
         public IList<LeadActualVolumeSoldModel> ActualVolumeSoldInteriors { get; set; }
@@ -92,6 +92,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public LeadFollowUpModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.ActualVolumeSoldInteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldExteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldUnderCoats = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldTopCoats = new List<LeadActualVolumeSoldModel>();
         }
 
         public void StringToList(LeadFollowUp src, LeadFollowUpModel dest)
@@ -104,7 +108,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldInteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldExteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Exterior)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
@@ -112,7 +116,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldExteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldUnderCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.UnderCoat)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
@@ -120,7 +124,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                     Quantity = x.Quantity, TotalAmount = x.TotalAmount,
                                                     ActualVolumeSoldType = x.ActualVolumeSoldType
                                                 }).ToList();
-            dest.ActualVolumeSoldTopCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+            dest.ActualVolumeSoldTopCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.TopCoat)
                                                 .Select(x => new LeadActualVolumeSoldModel
                                                 {
                                                     Id = x.Id, LeadFollowUpId = x.LeadFollowUpId,
@@ -222,6 +226,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusLeadCompletedText { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
+        public string ProjectStatusHandOverRemarks { get; set; }
         public decimal ProjectStatusPartialBusinessPercentage { get; set; }
         public bool HasSwappingCompetition { get; set; }
         public int? SwappingCompetitionId { get; set; }
@@ -248,12 +253,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public IList<string> BrandUsedTopCoatBrandNames { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
-        public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
-        public decimal ActualVolumeSoldExteriorKg { get; set; }
-        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
-        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorKg { get; set; }
+        //public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldExteriorKg { get; set; }
+        //public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         //public int BusinessAchievementId { get; set; }
         public SaveLeadBusinessAchievementModel BusinessAchievement { get; set; }
         public IList<SaveLeadActualVolumeSoldModel> ActualVolumeSoldInteriors { get; set; }

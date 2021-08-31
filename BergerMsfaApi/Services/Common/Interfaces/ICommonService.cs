@@ -16,6 +16,7 @@ namespace BergerMsfaApi.Services.Common.Interfaces
     public interface ICommonService
     {
         Task<IEnumerable<DealerInfoModel>> GetDealerInfoList();
+        Task<IList<AppDealerInfoModel>> GetDealerListByArea(AreaDealerSearchModel model);
         Task<IEnumerable<UserInfoModel>> GetUserInfoList();
         Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUser();
         Task<IEnumerable<UserInfoModel>> GetUserInfoListByCurrentUserWithoutZoUser();

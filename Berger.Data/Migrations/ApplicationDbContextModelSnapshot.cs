@@ -921,7 +921,7 @@ namespace Berger.Data.Migrations
                     b.Property<string>("ProductSamplingBrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProductSourcingId")
+                    b.Property<int?>("ProductSourcingId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductSourcingRemarks")
@@ -1707,9 +1707,6 @@ namespace Berger.Data.Migrations
                     b.Property<int>("DealerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("JourneyPlanMasterId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
@@ -1722,12 +1719,9 @@ namespace Berger.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("VisitDate")
-                        .HasColumnType("Date");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("JourneyPlanMasterId");
+                    b.HasIndex("PlanId");
 
                     b.ToTable("JourneyPlanDetails");
                 });
@@ -1927,6 +1921,60 @@ namespace Berger.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NewDealerDevelopments");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.KPI.UniverseReachAnalysis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BusinessArea")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DirectCovered")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DirectTarget")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FiscalYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IndirectCovered")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IndirectManual")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IndirectTarget")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OutletNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Territory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UniverseReachAnalysis");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Master.CreditControlArea", b =>
@@ -3051,16 +3099,10 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Division")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAP")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsExclusive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLastYearAppointed")
@@ -4105,9 +4147,7 @@ namespace Berger.Data.Migrations
                 {
                     b.HasOne("Berger.Data.MsfaEntity.Setup.DropdownDetail", "ProductSourcing")
                         .WithMany()
-                        .HasForeignKey("ProductSourcingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductSourcingId");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.DemandGeneration.LeadFollowUp", b =>
@@ -4260,7 +4300,9 @@ namespace Berger.Data.Migrations
                 {
                     b.HasOne("Berger.Data.MsfaEntity.JourneyPlanMaster", "JourneyPlanMaster")
                         .WithMany("JourneyPlanDetail")
-                        .HasForeignKey("JourneyPlanMasterId");
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.KPI.CollectionPlan", b =>

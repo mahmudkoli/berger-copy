@@ -107,7 +107,8 @@ namespace Berger.Odata.Services
             string division = "",
             string channel = "",
             string classification = "",
-            string creditControlArea = "");
+            string creditControlArea = "",
+            string customerNo = "");
 
         Task<IList<MTSDataModel>> GetMTSData(SelectQueryOptionBuilder selectQueryBuilder,
             string startDate, string endDate, IList<string> depots = null,
@@ -115,7 +116,8 @@ namespace Berger.Odata.Services
             IList<string> territories = null, IList<string> zones = null,
             IList<string> brands = null,
             string division = "",
-            string channel = "");
+            string channel = "",
+            string customerNo = "");
 
         Task<IList<CustomerDataModel>> GetCustomerData(SelectQueryOptionBuilder selectQueryBuilder,
             IList<string> depots = null,
@@ -147,5 +149,8 @@ namespace Berger.Odata.Services
         decimal GetContribution(decimal first, decimal second);
 
         #endregion
+
+        Task<IList<ColorBankMachineDataModel>> GetColorBankMachine(string query);
+        Task<IList<ColorBankMachineDataModel>> GetColorBankInstallData(SelectQueryOptionBuilder selectQueryBuilder, string depot = "", string startDate = "", string endDate = "");
     }
 }

@@ -5,7 +5,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('depot')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('depot')}">Depot</label>
-                    <ng-select [items]="depots" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true">
+                    <ng-select [items]="depots" (change)="changeDealerShow()" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.depot.touched && formControls.depot.errors">
                         <span *ngIf="formControls.depot.errors.required">Depot is <strong>required</strong></span>
@@ -15,7 +15,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('salesGroups')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('salesGroups')}">Sales Groups</label>
-                    <ng-select [items]="salesGroups" formControlName="salesGroups" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="salesGroups" (change)="changeDealerShow()" formControlName="salesGroups" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.salesGroups.touched && formControls.salesGroups.errors">
                         <span *ngIf="formControls.salesGroups.errors.required">Sales Group is <strong>required</strong></span>
@@ -25,7 +25,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('territories')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('territories')}">Territories</label>
-                    <ng-select [items]="territories" formControlName="territories" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="territories" (change)="changeDealerShow()" formControlName="territories" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.territories.touched && formControls.territories.errors">
                         <span *ngIf="formControls.territories.errors.required">Territory is <strong>required</strong></span>
@@ -35,7 +35,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('zones')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('zones')}">Zones</label>
-                    <ng-select [items]="zones" formControlName="zones" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="zones" (change)="changeDealerShow()" formControlName="zones" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.zones.touched && formControls.zones.errors">
                         <span *ngIf="formControls.zones.errors.required">Zone is <strong>required</strong></span>
@@ -135,6 +135,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('division')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('division')}">Division</label>
+                    <ng-select [items]="divisions" formControlName="division" bindValue="divisionCode" bindLabel="description" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.division.touched && formControls.division.errors">
+                        <span *ngIf="formControls.division.errors.required">Division is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('paintingStageId')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('paintingStageId')}">Painting Stage</label>
@@ -198,7 +208,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('brands')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('brands')}">Brands</label>
-                    <ng-select [items]="brands" formControlName="brands" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="brands" formControlName="brands" (change)="changeBrandShow()" bindValue="value" bindLabel="text" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.brands.touched && formControls.brands.errors">
                         <span *ngIf="formControls.brands.errors.required">Brands is <strong>required</strong></span>
@@ -302,6 +312,16 @@
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.year.touched && formControls.year.errors">
                         <span *ngIf="formControls.year.errors.required">Year is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('fiscalYear')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('fiscalYear')}">Fiscal Year</label>
+                    <ng-select [items]="fiscalYears" formControlName="fiscalYear" bindValue="id" bindLabel="name" [multiple]="false">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.fiscalYear.touched && formControls.fiscalYear.errors">
+                        <span *ngIf="formControls.fiscalYear.errors.required">Fiscal Year is <strong>required</strong></span>
                     </small>
                 </div>
             </div>

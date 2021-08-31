@@ -44,7 +44,7 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
-			console.log(id);
+			// console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
 				this.collectionPlanService.getCollectionPlanById(id)

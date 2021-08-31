@@ -1,0 +1,711 @@
+<div class="card-shadow-warning border mb-3 card card-body border-warning">
+    <h5 class="card-title"><strong>Dealer Sales Call Details:</strong></h5>
+
+    <div class="card-body">
+        <div class="row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label>Employee Name</label>
+                        <ng-select [(ngModel)]="dealerSalesCall.userId" [multiple]="false" [virtualScroll]="true" (change)="changeDealer()">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let dl of userList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        </ng-select>
+                       
+                    </div>
+                </div>
+            
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Dealer Name</label>
+                    <ng-select [(ngModel)]="dealerSalesCall.dealerId" [multiple]="false" [virtualScroll]="true" (change)="changeDealer()">
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of dealerList;" [value]="dl.id">{{dl.customerName}}</ng-option>
+                    </ng-select>
+                   
+                </div>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isTargetPromotionCommunicated"
+                               name="isTargetPromotionCommunicated" [checked]="dealerSalesCall.isTargetPromotionCommunicated">
+                       
+                               <label class="form-check-label">Is Target Promotion Communicated </label>
+                 
+                </div>
+            </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isTargetCommunicated"
+                               name="isTargetCommunicated" [checked]="dealerSalesCall.isTargetCommunicated">
+                       
+                               <label class="form-check-label">Is Target Communicated </label>
+                 
+                </div>
+            </div>
+
+                    
+               
+            </div>
+        </div>
+
+        <div class="row">
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+
+                <label for="name">Secondary Sales Ratings</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.secondarySalesRatingsText"
+                           name="secondarySalesRatingsText">
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="position-relative form-group">
+
+                <label for="name">Secondary Sales Reason Title</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.secondarySalesReasonTitle"
+                           name="secondarySalesReasonTitle">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Secondary Sales Reason Remarks</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.secondarySalesReasonRemarks"
+                               name="secondarySalesReasonRemarks">
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasOS"
+                           name="hasOS" [checked]="dealerSalesCall.hasOS">
+                   
+                           <label class="form-check-label">Has OS </label>
+             
+            </div>
+        </div>
+            </div>
+        </div>
+
+       
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isOSCommunicated"
+                               name="isOSCommunicated" [checked]="dealerSalesCall.isOSCommunicated">
+                       
+                               <label class="form-check-label">Is OS Communicated </label>
+                 
+                </div>
+                    
+                    
+                   
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasSlippage"
+                               name="hasSlippage" [checked]="dealerSalesCall.hasSlippage">
+                       
+                               <label class="form-check-label">Has Slippage </label>
+                 
+                </div>
+                   
+                   
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isSlippageCommunicated"
+                               name="isSlippageCommunicated" [checked]="dealerSalesCall.isSlippageCommunicated">
+                       
+                               <label class="form-check-label">Is Slippage Communicated </label>
+                 
+                </div>
+                   
+                   
+                   
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isPremiumProductCommunicated"
+                               name="isPremiumProductCommunicated" [checked]="dealerSalesCall.isPremiumProductCommunicated">
+                       
+                               <label class="form-check-label">Is Premium Product Communicated </label>
+                 
+                </div>
+                    
+
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isPremiumProductLifting"
+                               name="isPremiumProductLifting" [checked]="dealerSalesCall.isPremiumProductLifting">
+                       
+                               <label class="form-check-label">Is Premium Product Lifting </label>
+                 
+                </div>
+                    
+                    
+                   
+                </div>
+            </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Premium Product Lifting</label>
+                        <ng-select [(ngModel)]="dealerSalesCall.premiumProductLiftingId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let premiumProductLifting of premiumProductLiftinglst;" [value]="premiumProductLifting.id">{{premiumProductLifting.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="name">Premium Product Lifting Others</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.premiumProductLiftingOthers"
+                               name="premiumProductLiftingOthers">
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isPremiumProductLifting"
+                               name="isPremiumProductLifting" [checked]="dealerSalesCall.isCBInstalled">
+                       
+                               <label class="form-check-label">Is CB Installed </label>
+                 
+                </div>
+                   
+                    
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCBProductivityCommunicated"
+                               name="isCBProductivityCommunicated" [checked]="dealerSalesCall.isCBProductivityCommunicated">
+                       
+                               <label class="form-check-label">Is CB Productivity Communicated </label>
+                 
+                </div>
+                
+                    
+                   
+                </div>
+            </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Merchendising</label>
+                        <ng-select [(ngModel)]="dealerSalesCall.merchendisingId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let merchendising of merchendisinglst;" [value]="merchendising.id">{{merchendising.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasSubDealerInfluence"
+                               name="hasSubDealerInfluence" [checked]="dealerSalesCall.hasSubDealerInfluence">
+                       
+                               <label class="form-check-label">Has Sub Dealer Influence </label>
+                 
+                </div>
+                    
+                   
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Sub Dealer Influence</label>
+                    <ng-select [(ngModel)]="dealerSalesCall.subDealerInfluenceId">
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let subDealerInfluence of subDealerInfluencelst;" [value]="subDealerInfluence.id">{{subDealerInfluence.dropdownName}}</ng-option>
+                    </ng-select>
+                    
+                </div>
+            </div>
+        </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasPainterInfluence"
+                                   name="hasPainterInfluence" [checked]="dealerSalesCall.hasPainterInfluence">
+                           
+                                   <label class="form-check-label">Has Painter Influence </label>
+                     
+                    </div>
+                    
+                        
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Painter Influence</label>
+                        <ng-select [(ngModel)]="dealerSalesCall.painterInfluenceId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let painterInfluence of painterInfluencelst;" [value]="painterInfluence.id">{{painterInfluence.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                </div>
+            </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isShopManProductKnowledgeDiscussed"
+                               name="isShopManProductKnowledgeDiscussed" [checked]="dealerSalesCall.isShopManProductKnowledgeDiscussed">
+                       
+                               <label class="form-check-label">Is Shop Man Product Knowledge Discussed </label>
+                 
+                </div>
+                    
+                   
+                   
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isShopManSalesTechniquesDiscussed"
+                               name="isShopManSalesTechniquesDiscussed" [checked]="dealerSalesCall.isShopManSalesTechniquesDiscussed">
+                       
+                               <label class="form-check-label">Is Shop Man Sales Techniques Discussed </label>
+                 
+                </div>
+                  
+                   
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="position-relative form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isShopManMerchendizingImprovementDiscussed"
+                                   name="isShopManMerchendizingImprovementDiscussed" [checked]="dealerSalesCall.isShopManMerchendizingImprovementDiscussed">
+                           
+                                   <label class="form-check-label">Is Shop Man Merchendizing Improvement Discussed </label>
+                     
+                    </div>
+                
+                   
+                </div>
+            </div>
+        </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasCompetitionPresence"
+                               name="hasCompetitionPresence" [checked]="dealerSalesCall.hasCompetitionPresence">
+                       
+                               <label class="form-check-label">Has Competition Presence</label>
+                 
+                </div>
+                   
+                </div>
+            </div>
+    </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <div class="position-relative form-group">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCompetitionServiceBetterThanBPBL"
+                        name="isCompetitionServiceBetterThanBPBL" [checked]="dealerSalesCall.isCompetitionServiceBetterThanBPBL">
+                
+                        <label class="form-check-label">Has Competition Presence</label>
+          
+                        
+                       
+                    </div>   
+            </div>
+                
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Competition Service Better Than BPBL Remarks</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionServiceBetterThanBPBLRemarks"
+                               name="competitionServiceBetterThanBPBLRemarks">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isCompetitionProductDisplayBetterThanBPBL"
+                           name="isCompetitionProductDisplayBetterThanBPBL" [checked]="dealerSalesCall.isCompetitionProductDisplayBetterThanBPBL">
+                   
+                           <label class="form-check-label">Is Competition Product Display Better Than BPBL</label>
+             
+                   
+                        </div>
+                   
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Competition Product Display Better Than BPBL Remarks</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionProductDisplayBetterThanBPBLRemarks"
+                               name="competitionProductDisplayBetterThanBPBLRemarks">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p><span><strong>Competition Product Display Image:</strong></span> 
+                    <img *ngIf='dealerSalesCall.competitionProductDisplayImageUrl' [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px">
+                </p>
+                <input type='file' (change)="fileChangeEvents($event)">
+
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="competitionSchemeModalityComments">Competition Scheme Modality Comments</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionSchemeModalityComments"
+                               name="competitionSchemeModalityComments">
+                       
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p><span><strong>Competition Scheme Modality Image:</strong></span> 
+                    <img *ngIf='dealerSalesCall.competitionSchemeModalityImageUrl' [src]="dealerSalesCall.competitionSchemeModalityImageUrl" alt="Photo" width="150px" height="180px">
+                </p>
+                <input type='file' (change)="fileChangeEvent($event)">
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="competitionShopBoysComments">Competition Shop Boys Comments</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.competitionShopBoysComments"
+                               name="competitionShopBoysComments">
+                       
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasDealerSalesIssue"
+                           name="hasDealerSalesIssue" [checked]="dealerSalesCall.hasDealerSalesIssue">
+                   
+                           <label class="form-check-label">Has Dealer Sales Issue</label>
+                    
+                </div>
+                    
+                   
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label class="required">Dealer Satisfaction Reason</label>
+                    <ng-select [(ngModel)]="dealerSalesCall.dealerSatisfactionId">
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dealerSatisfaction of dealerSatisfactionlst;" [value]="dealerSatisfaction.id">{{dealerSatisfaction.dropdownName}}</ng-option>
+                    </ng-select>
+                    
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Dealer Satisfaction Reason</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.dealerSatisfactionReason"
+                               name="dealerSatisfactionReason">
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.isSubDealerCall"
+                           name="isSubDealerCall" [checked]="dealerSalesCall.isSubDealerCall">
+                   
+                           <label class="form-check-label">Is Sub Dealer Call</label>
+                </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="dealerSalesCall.hasBPBLSales"
+                           name="hasBPBLSales" [checked]="dealerSalesCall.hasBPBLSales">
+                   
+                           <label class="form-check-label">Has BPBL Sales</label>
+                   
+                </div>
+                    
+                   
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">BPBL Average Monthly Sales</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.bPBLAverageMonthlySales"
+                               name="bPBLAverageMonthlySales">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">BPBL Actual MTD Sales</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="dealerSalesCall.bPBLActualMTDSales"
+                               name="bPBLActualMTDSales">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col col-md-12">
+        <h3>Dealer Competition Sales</h3>
+    <div class="table-responsive">
+	<table class="table">
+		<tr>
+			<th>Company Name</th>
+			<th>Average Monthly Sales</th>
+			<th>Actual MTD Sales</th>
+			<!-- <th></th> -->
+		</tr>
+		<tr *ngFor="let item of dealerCompetitionSales; let i = index">
+            <td>
+            <div class="position-relative form-group">
+                <ng-select [(ngModel)]="item.companyId" disabled>
+                    <!-- <ng-option>--Select--</ng-option> -->
+                    <ng-option *ngFor="let company of companylst;" [value]="company.id">{{company.dropdownName}}</ng-option>
+                </ng-select>
+                
+            </div>
+        </td>
+			<!-- <td><input type="text" [(ngModel)]="item.companyName" name="companyName"></td> -->
+            
+            
+			<td><div class="input-group">
+                <input class="form-control" type="text" [(ngModel)]="item.averageMonthlySales"
+                       name="averageMonthlySales">
+               
+            </div></td>
+			<td><div class="input-group">
+                <input class="form-control" type="text" [(ngModel)]="item.actualMTDSales"
+                       name="actualMTDSales">
+               
+            </div></td>
+			<!-- <td> <button (click) = "deleteDealerCompetitionSalesRow(i)"><i class="fa fa-trash"></i></button></td>
+			<td *ngIf="(dealerCompetitionSales.length-1)==i"> <button (click)="addDealerCompetitionSalesTable()">Add Row</button></td> -->
+
+		</tr>
+	</table>
+</div>
+    </div>
+
+    <div class="col col-md-12">
+        <h3>Dealer Sales Issues</h3>
+        <div class="table-responsive">
+        <table class="table" cellspacing="0"
+        width="100%">
+            <tr>
+                <th>Dealer Sales Issue Category</th>
+                <th>Material Name</th>
+                <th>Material Group</th>
+                <th>Quantity</th>
+                <th>Batch Number</th>
+                <th>Comments</th>
+                <th>Priority</th>
+                <th>Has CB Machine Mantainance</th>
+                <th>CB Machine Mantainance</th>
+                <th>CB Machine Mantainance Regular Reason</th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr *ngFor="let item of dealerSalesIssues; let i = index">
+                <td>
+                    <div class="position-relative form-group">
+                        <ng-select [(ngModel)]="item.dealerSalesIssueCategoryId" required>
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let dealerSalesIssueCategory of dealerSalesIssueCategorylst;" [value]="dealerSalesIssueCategory.id">{{dealerSalesIssueCategory.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                    </td>
+                <td>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.materialName"
+                               name="materialName">
+                            </div></td>
+                <td>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.materialGroup"
+                               name="materialGroup">
+                            </div>
+                    </td>
+                <td>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.quantity"
+                               name="quantity">
+                            </div>
+                    </td>
+                <td>
+                    
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.batchNumber"
+                               name="batchNumber">
+                            </div></td>
+                <td>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.comments"
+                               name="comments">
+                            </div>
+                    </td>
+                <td>
+                    <div class="position-relative form-group">
+                        <ng-select [(ngModel)]="item.priorityId" required>
+                            <ng-option *ngFor="let priority of prioritylst;" [value]="priority.id">{{priority.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                    </td>
+                <td><input type="checkbox" [(ngModel)]="item.hasCBMachineMantainance" name="hasCBMachineMantainance" [checked]="item.hasCBMachineMantainance"></td>
+                <td>
+                    <div class="position-relative form-group">
+                        <ng-select [(ngModel)]="item.cBMachineMantainanceId">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let cBMachineMantainance of cBMachineMantainancelst;" [value]="cBMachineMantainance.id">{{cBMachineMantainance.dropdownName}}</ng-option>
+                        </ng-select>
+                        
+                    </div>
+                    </td>
+                <td>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="item.cBMachineMantainanceRegularReason"
+                               name="cBMachineMantainanceRegularReason">
+                            </div>
+                    </td>
+                   
+
+                <td> <button (click) = "deleteDealerSalesIssueRow(i)"><i class="fa fa-trash"></i></button></td>
+                <td *ngIf="(dealerSalesIssues.length-1)==i"> <button (click)="addDealerSalesIssueTable()"><i class="fa fa-plus"></i></button></td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+    
+    <div class="d-flex justify-content-end">
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="save()"><i
+            class="pe-7s-back pr-1"></i> Save </button>
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="backToTheList()"><i
+                class="pe-7s-back pr-1"></i> Back </button>
+    </div>
+</div>

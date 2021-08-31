@@ -11,7 +11,7 @@ namespace Berger.Odata.Common
         public static string InvoiceNumber = "VBELN";
         public static string Volume = "VOLUM";
         public static string DeliveryDate = "ERSDA";
-        public static string DeliveryTime = "ERZET"; //TODO: must be changed
+        public static string DeliveryTime = "ERFZEIT";
         public static string DriverName = "DRIVERNAME";
         public static string DriverMobileNo = "TELF1";
         public static string CustomerNo = "KUNAG";

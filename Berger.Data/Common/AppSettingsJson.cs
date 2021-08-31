@@ -23,6 +23,15 @@ namespace Berger.Data.Common
             }
         }
 
+        public static string SAPConnectionString
+        {
+            get
+            {
+                var config = GetAppSettings();
+                return config.GetConnectionString("SAPDbContext");
+            }
+        }
+
         public static IConfigurationRoot GetAppSettings()
         {
             string applicationExeDirectory = Directory.GetCurrentDirectory();

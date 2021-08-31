@@ -35,9 +35,10 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 	tableName: string = 'Lead Generation Details Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
-	allTotalKeysOfNumberType: boolean = true;
+	allTotalKeysOfNumberType: boolean = false;
 	// totalKeys: any[] = ['totalCall'];
-	totalKeys: any[] = [];
+	totalKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue'];
+	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -145,6 +146,8 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 

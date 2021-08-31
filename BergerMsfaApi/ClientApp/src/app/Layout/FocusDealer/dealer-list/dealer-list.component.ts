@@ -66,6 +66,8 @@ export class DealerListComponent implements OnInit, OnDestroy {
         new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole: true }),
         new SearchOptionDef({ searchOption: EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole: true }),
         new SearchOptionDef({ searchOption: EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole: true }),
+        new SearchOptionDef({ searchOption: EnumSearchOption.DealerId }),
+
 		]});
 
 
@@ -74,6 +76,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
     this.query.salesGroups = queryObj.salesGroups;
     this.query.territories = queryObj.territories;
     this.query.zones = queryObj.zones;
+    this.query.dealerId = queryObj.dealerId;
     this.loadDealersPage();
   }
 

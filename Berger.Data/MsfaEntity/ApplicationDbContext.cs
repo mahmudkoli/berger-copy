@@ -178,6 +178,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Division> Divisions { get; set; }
         public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
         public DbSet<NewDealerDevelopment> NewDealerDevelopments { get; set; }
+        public DbSet<UniverseReachAnalysis> UniverseReachAnalysis { get; set; }
 
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
@@ -191,6 +192,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<LeadGeneration> LeadGenerations { get; set; }
         public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
         public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
+        public DbSet<LeadActualVolumeSold> LeadActualVolumeSold { get; set; }
         #endregion
 
         #region Tinting

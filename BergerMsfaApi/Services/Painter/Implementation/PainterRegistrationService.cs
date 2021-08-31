@@ -264,8 +264,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                       PainterImageUrl=p.PainterImageUrl,
                                       Phone=p.Phone,
                                       SaleGroupName= sginfo.Name,
-                                      TerritoryName= tinfo.Name,
-                                      ZoneName= zinfo.Name,
+                                      TerritoryName= p.Territory,
+                                      ZoneName= p.Zone,
                                       DepotName= depinfo.Name1,
                                       Status =(int)p.Status
                                   }).Skip(this.SkipCount(query)).Take(query.PageSize).ToListAsync();
@@ -403,6 +403,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             _painter.PainterNo = GeneratePainterNo(userId).Result;
             _painter.Status = Status.Active;
+            //TODO: need to generate code
             _painter.PainterCode = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
 
             var result = await _painterSvc.CreateAsync(_painter);

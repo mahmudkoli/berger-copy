@@ -30,7 +30,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	
 	// ptable settings
 	enabledTotal: boolean = false;
-	tableName: string = 'Collection Plan Report';
+	tableName: string = 'Slippage Vs Collection';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -74,7 +74,8 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	searchConfiguration() {
 		this.query = new CollectionPlanKpiReportQuery({
 			depot: '',
-			territory: '',
+			territories:[],
+			salesGroups:[]
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -84,12 +85,15 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup}),
+		
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.territory = queryObj.territories[0];
+		this.query.territories = queryObj.territories;
+		this.query.salesGroups =queryObj.salesGroups;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -120,7 +124,10 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).filter(f => !this.ignoreKeys.includes(f)).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) ,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+			
+			} as colDef;
 		});
 	}
 
@@ -146,6 +153,10 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+								enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

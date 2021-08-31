@@ -167,7 +167,7 @@ export class CollectionEntryListComponent implements OnInit {
           internalName: 'amount',
           sort: true,
           type: 'text',
-          displayType: 'number-format-color'
+          displayType: 'number-format-color-fraction'
         },
         {
           headerName: 'Number(Manual)',
@@ -235,7 +235,7 @@ export class CollectionEntryListComponent implements OnInit {
           internalName: 'amount',
           sort: true,
           type: 'text',
-          displayType: 'number-format-color'
+          displayType: 'number-format-color-fraction'
         },
         {
           headerName: 'Number(Manual)',
@@ -303,7 +303,7 @@ export class CollectionEntryListComponent implements OnInit {
           internalName: 'amount',
           sort: true,
           type: 'text',
-          displayType: 'number-format-color'
+          displayType: 'number-format-color-fraction'
         },
         {
           headerName: 'Number(Manual)',
@@ -371,7 +371,7 @@ export class CollectionEntryListComponent implements OnInit {
           internalName: 'amount',
           sort: true,
           type: 'text',
-          displayType: 'number-format-color'
+          displayType: 'number-format-color-fraction'
         },
         {
           headerName: 'Number(Manual)',

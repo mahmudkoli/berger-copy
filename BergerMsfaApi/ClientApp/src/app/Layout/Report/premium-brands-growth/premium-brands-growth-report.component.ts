@@ -36,7 +36,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
   totalFilterDataLength: number = 0; // for server side paggination
 
   // ptable settings
-  enabledTotal: boolean = true;
+  enabledTotal: boolean = false;
   tableName: string = 'Premium Brands Growth Report';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
@@ -56,13 +56,13 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
     private dynamicDropdownService: DynamicDropdownService
   ) {
     // client side paggination
-    // this.PAGE_SIZE = 2147483647; // Int32 max value
-    // this.ptableSettings.pageSize = 10;
-    // this.ptableSettings.enabledServerSitePaggination = false;
+    this.PAGE_SIZE = 2147483647; // Int32 max value
+    this.ptableSettings.pageSize = 10;
+    this.ptableSettings.enabledServerSitePaggination = false;
     // server side paggination
-    this.PAGE_SIZE = commonService.PAGE_SIZE;
-    this.ptableSettings.pageSize = this.PAGE_SIZE;
-    this.ptableSettings.enabledServerSitePaggination = true;
+    // this.PAGE_SIZE = commonService.PAGE_SIZE;
+    // this.ptableSettings.pageSize = this.PAGE_SIZE;
+    // this.ptableSettings.enabledServerSitePaggination = true;
   }
 
   ngOnInit() {
@@ -164,6 +164,8 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
         showTotal: this.allTotalKeysOfNumberType
           ? typeof obj[key] === 'number'
           : this.totalKeys.includes(key),
+        type: typeof obj[key] === 'number' ? 'text' : null, 
+        displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
       } as colDef;
     });
 
@@ -233,7 +235,11 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,
+    )}`,    
+    enabledConditionalRowStyles:true,
+    conditionalRowStyles: [
+        {columnName:'territory',columnValues:['Total']}
+    ],
   };
 
   serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {

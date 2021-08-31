@@ -59,8 +59,8 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string PassportNo { get; set; }
         public string NationalIdNo { get; set; }
         public string BrithCertificateNo { get; set; }
-        [RegularExpression(
-            "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$", ErrorMessage = "painter image must be properly base64 formatted.")]
+        //[RegularExpression(
+        //    "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$", ErrorMessage = "painter image must be properly base64 formatted.")]
         public string PainterImageUrl { get; set; }
         public int PainterCatId { get; set; }
         public string PainterCatName { get; set; }

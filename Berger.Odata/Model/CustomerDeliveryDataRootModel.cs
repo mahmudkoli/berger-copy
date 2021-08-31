@@ -15,6 +15,7 @@ namespace Berger.Odata.Model
         public string ERSDA { get; set; }
         public string FKDAT { get; set; }
         public string ERZET { get; set; }
+        public string ERFZEIT { get; set; }
         public string VOLUM { get; set; }
         public string DRIVERNAME { get; set; }
 
@@ -26,7 +27,7 @@ namespace Berger.Odata.Model
             model.InvoiceNumber = this.VBELN;
             model.Volume = this.VOLUM;
             model.DeliveryDate = this.ERSDA;
-            model.DeliveryTime = this.ERZET; //TODO: must be changed
+            model.DeliveryTime = this.ERFZEIT;
             model.DriverName = this.DRIVERNAME;
             model.DriverMobileNo = this.TELF1;
             model.CustomerNo = this.KUNAG;

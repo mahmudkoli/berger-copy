@@ -43,6 +43,12 @@ import { BillingAnalysisReportComponent } from './billing-analysis/billing-analy
 import { ModalBillingAnalysisDetailsComponent } from './modal-billing-analysis-details/modal-billing-analysis-details.component';
 import { FinancialCollectionPlanReportComponent } from './financial-collection-plan/financial-collection-plan-report.component';
 import { InactivePainterReportComponent } from './inactive-painter/inactive-painter-report.component';
+import { LeadBusinessUpdateReportComponent } from './lead-business-update/lead-business-update-report.component';
+import { UniverseReachAnalysisReportComponent } from './universe-reach-analysis/universe-reach-analysis-report.component';
+import { NewDealerDevelopmentListComponent } from './new-dealer-development-list/new-dealer-development-list.component';
+import { DealerConversionComponent } from './dealer-conversion/dealer-conversion.component';
+import { ColorBankInstallationPlanVsActualComponent } from './color-bank-installation-plan-vs-actual/color-bank-installation-plan-vs-actual.component';
+import { ColorBankProductivityComponent } from './color-bank-productivity/color-bank-productivity.component';
 
 @NgModule({
     declarations: [
@@ -79,11 +85,17 @@ import { InactivePainterReportComponent } from './inactive-painter/inactive-pain
       BusinessCallAnalysisReportComponent,
       StrikeRateKpiReportComponent,
       BillingAnalysisReportComponent,
+      UniverseReachAnalysisReportComponent,
       ModalBillingAnalysisDetailsComponent,
       FinancialCollectionPlanReportComponent,
       AddhocSubDealerSalescallReportComponent,
       AddhocDealerSalescallReportComponent,
-      InactivePainterReportComponent
+      InactivePainterReportComponent,
+      LeadBusinessUpdateReportComponent,
+      NewDealerDevelopmentListComponent,
+      DealerConversionComponent,
+      ColorBankInstallationPlanVsActualComponent,
+      ColorBankProductivityComponent
     ],
   imports: [
       CommonModule,

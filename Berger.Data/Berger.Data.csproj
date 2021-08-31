@@ -10,6 +10,10 @@
     <Compile Remove="Migrations\20210502184955_CollectionPlanAdded.Designer.cs" />
     <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.cs" />
     <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.Designer.cs" />
+    <Compile Remove="Migrations\20210811111202_UniverseReachAnalysis.cs" />
+    <Compile Remove="Migrations\20210811111202_UniverseReachAnalysis.Designer.cs" />
+    <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.cs" />
+    <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

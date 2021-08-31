@@ -40,10 +40,10 @@ namespace Berger.Common.Constants
 
     public static class ConstantsCustomerTypeValue
     {
-        public const string Dealer = "Dealer";
-        public const string SubDealer = "Sub-Dealer";
-        public const string Customer = "Customer";
-        public const string DirectProject = "Direct Project";
+        public const string DealerDropdownCode = "Customer01_01";
+        public const string SubDealerDropdownCode = "Customer01_02";
+        public const string CustomerDropdownCode = "Customer01_03";
+        public const string DirectProjectDropdownCode = "Customer01_04";
     }
 
     public static class ConstantPaintUsageMTDValue

@@ -31,7 +31,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 	totalFilterDataLength: number = 0; // for server side paggination
 
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Sub Dealer Issue Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {

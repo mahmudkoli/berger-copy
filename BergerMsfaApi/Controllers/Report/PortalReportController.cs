@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Filters;
+using BergerMsfaApi.Services.Excel.Interface;
 
 namespace BergerMsfaApi.Controllers.Report
 {
@@ -18,13 +19,16 @@ namespace BergerMsfaApi.Controllers.Report
     {
         private readonly IPortalReportService _portalReportService;
         private readonly ICommonService _commonService;
+        private readonly IExcelReaderService _excelReaderService;
 
         public PortalReportController(
                 IPortalReportService portalReportService,
-                ICommonService commonService)
+                ICommonService commonService,
+                IExcelReaderService excelReaderService)
         {
             _portalReportService = portalReportService;
             _commonService = commonService;
+            _excelReaderService = excelReaderService;
         }
 
         [HttpGet("GetLeadSummary")]
@@ -114,6 +118,38 @@ namespace BergerMsfaApi.Controllers.Report
                 var result = await _portalReportService.GetLeadFollowUpDetailsReportAsync(query);
                 
                 _commonService.SetEmptyString(result.Items.ToList(), nameof(LeadFollowUpDetailsReportResultModel.ImageUrl));
+
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetLeadBusinessUpdate")]
+        public async Task<IActionResult> GetLeadBusinessUpdate([FromQuery] LeadBusinessReportSearchModel query)
+        {
+            try
+            {
+                var result = await _portalReportService.GetLeadBusinessUpdateReportAsync(query);
+
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("DownloadLeadBusinessUpdate")]
+        public async Task<IActionResult> DownloadLeadBusinessUpdate([FromQuery] LeadBusinessReportSearchModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _portalReportService.GetLeadBusinessUpdateReportAsync(query);
 
                 return Ok(result.Items);
             }
@@ -666,56 +702,55 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        //[HttpGet("DownloadSnapShotReport")]
+        //public IActionResult DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        //{
+        //    try
+        //    {
+        //        query.Page = 1;
+        //        query.PageSize = int.MaxValue;
+        //        var result = _portalReportService.GetSnapShotReportBySp(query);
+
+        //        _commonService.SetEmptyString(result.Items.ToList(),
+        //            nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
+        //            nameof(MerchendizingSnapShotReportResultModel.GlowSignBoard),
+        //            nameof(MerchendizingSnapShotReportResultModel.ProductDisplay),
+        //            nameof(MerchendizingSnapShotReportResultModel.Scheme),
+        //            nameof(MerchendizingSnapShotReportResultModel.Brochure),
+        //            nameof(MerchendizingSnapShotReportResultModel.Others));
+
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex);
+        //    }
+        //}
+        
         [HttpGet("DownloadSnapShotReport")]
-        public IActionResult DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
+        public async Task<IActionResult> DownloadSnapShotReport([FromQuery] MerchendizingSnapShotReportSearchModel query)
         {
+            string sFileName = @"SnapShotResult.xlsx";
+
             try
             {
-                query.Page = 1;
-                query.PageSize = int.MaxValue;
-                var result = _portalReportService.GetSnapShotReportBySp(query);
+                if (string.IsNullOrEmpty(query.Depot))
+                {
+                    throw new Exception("Please select mandatory field.");
+                    
+                }
 
-                _commonService.SetEmptyString(result.Items.ToList(),
-                    nameof(MerchendizingSnapShotReportResultModel.CompetitionDisplay),
-                    nameof(MerchendizingSnapShotReportResultModel.GlowSignBoard),
-                    nameof(MerchendizingSnapShotReportResultModel.ProductDisplay),
-                    nameof(MerchendizingSnapShotReportResultModel.Scheme),
-                    nameof(MerchendizingSnapShotReportResultModel.Brochure),
-                    nameof(MerchendizingSnapShotReportResultModel.Others));
+                dynamic datatabledata = _portalReportService.GetSnapShotReportBySp(query);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-        #endregion
+                var data = await _excelReaderService.WriteToFileWithImage(datatabledata);
 
-        #region Os over 90 days Trend Report
-        [HttpGet("OsOver90daysTrendReport")]
-        public async Task<IActionResult> OsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
-        {
-            try
-            {
-                var result = await _portalReportService.GetOsOver90daysTrendReport(query);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        } 
+                var result = File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                sFileName);
 
-        [HttpGet("DownloadOsOver90daysTrendReport")]
-        public async Task<IActionResult> DownloadOsOver90daysTrendReport([FromQuery] OsOver90daysTrendReportSearchModel query)
-        {
-            try
-            {
-                query.Page = 1;
-                query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetOsOver90daysTrendReport(query);
-                return Ok(result.Items);
+                return result;
+                
             }
             catch (Exception ex)
             {
