@@ -494,7 +494,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                (((!(model.Depots != null && model.Depots.Any()) || model.Depots==x.BusinessArea) &&
+                (((string.IsNullOrEmpty(model.Depots) || model.Depots==x.BusinessArea) &&
                 (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
                 (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
                 (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&

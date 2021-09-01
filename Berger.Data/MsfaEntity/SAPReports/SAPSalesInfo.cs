@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Berger.Data.MsfaEntity.SAPTables
+namespace Berger.Data.MsfaEntity.SAPReports
 {
     [Table("SAPSalesInfos")]
     public class SAPSalesInfo

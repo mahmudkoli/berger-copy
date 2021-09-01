@@ -97,5 +97,15 @@ namespace Berger.Odata.Repositories
                                                             int? skip = null,
                                                             int? take = null);
     }
+
+    public interface IODataApplicationRepository<TEntity> :IODataRepository<TEntity> where TEntity : class
+    {
+
+    }
+
+    public interface IODataSAPRepository<TEntity> :IODataRepository<TEntity> where TEntity : class
+    {
+
+    }
 }
 
