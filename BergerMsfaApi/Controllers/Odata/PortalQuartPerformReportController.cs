@@ -19,11 +19,11 @@ namespace BergerMsfaApi.Controllers.Odata
 
         public PortalQuartPerformReportController(
             IQuarterlyPerformanceDataService quarterlyPerformanceDataService
-            //, IFinancialDataService financialDataService
+            , IFinancialDataService financialDataService
             )
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
-            //_financialDataService = financialDataService;
+            _financialDataService = financialDataService;
         }
 
         [HttpGet("GetMTSValueTargetAchivement")]

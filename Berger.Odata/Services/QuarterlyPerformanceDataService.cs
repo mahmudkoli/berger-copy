@@ -762,7 +762,7 @@ namespace Berger.Odata.Services
             }
 
             #region for total
-            if(result.Any())
+            if (result.Any())
             {
                 var resO = new PortalQuarterlyPerformanceDataResultModel();
                 resO.Territory = "Total";
@@ -804,7 +804,7 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<Dictionary<string, IList<MTSDataModel>>> GetQuarterlyTargetData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth, 
+        public async Task<Dictionary<string, IList<MTSDataModel>>> GetQuarterlyTargetData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth,
             List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false)
         {
             var fromDate = (new DateTime(fromYear, fromMonth, 1));
@@ -833,7 +833,7 @@ namespace Berger.Odata.Services
             return monthlyDictTarget;
         }
 
-        public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth, 
+        public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth,
             List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false, string division = "")
         {
             var fromDate = (new DateTime(fromYear, fromMonth, 1));
@@ -866,6 +866,11 @@ namespace Berger.Odata.Services
         public async Task<Dictionary<string, IList<QuarterlyPerformanceReport>>> GetQuarterlyActualData(int fromYear, int fromMonth,
             List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, bool isLastYear = false)
         {
+
+            depots ??= new List<string>();
+            territories ??= new List<string>();
+            salesGroups ??= new List<string>();
+
             var fromDate = (new DateTime(fromYear, fromMonth, 1));
             var monthCount = 3;
             var mtsBrands = new List<string>();
@@ -874,9 +879,19 @@ namespace Berger.Odata.Services
             var fromDateAll = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD());
             var toDateAll = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD());
 
-            var actualData = (await _oDataQuartPerformRepository.FindAllAsync(x => 
-                                        new DateTime(x.Year, x.Month, 01).Date >= fromDateAll.Date 
-                                        && new DateTime(x.Year, x.Month, 01).Date <= toDateAll.Date)).ToList();
+            List<int> dateTime = new List<int>();
+
+            while (fromDateAll <= toDateAll)
+            {
+                dateTime.Add(fromDateAll.Year + fromDateAll.Month);
+                fromDateAll = fromDateAll.AddMonths(1);
+            }
+
+            var actualData = (await _oDataQuartPerformRepository.FindAllAsync(x =>
+                dateTime.Contains(x.Year + x.Month) &&
+                (!territories.Any() || territories.Contains(x.Territory)) &&
+                (!depots.Any() || depots.Contains(x.Depot)) &&
+                (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)))).ToList();
 
             for (var i = 0; i < monthCount; i++)
             {
@@ -884,7 +899,7 @@ namespace Berger.Odata.Services
                 var startDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYFD() : fromDate.GetMonthDate(number).GetCYFD());
                 var endDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYLD() : fromDate.GetMonthDate(number).GetCYLD());
 
-                var data = actualData.Where(x => new DateTime(x.Year, x.Month, 01).Date >= startDate.Date 
+                var data = actualData.Where(x => new DateTime(x.Year, x.Month, 01).Date >= startDate.Date
                                                 && new DateTime(x.Year, x.Month, 01).Date <= endDate.Date).ToList();
                 var monthName = fromDate.GetMonthName(number);
 

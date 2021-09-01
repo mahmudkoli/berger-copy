@@ -1,5 +1,4 @@
 ﻿using Berger.Data.Common;
-using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
@@ -762,20 +761,6 @@ namespace Berger.Odata.Repositories
             }
 
             return query;
-        }
-    }
-
-    public class ODataApplicationRepository<TEntity> : ODataRepository<TEntity>, IODataApplicationRepository<TEntity>  where TEntity : class
-    {
-        public ODataApplicationRepository(ApplicationDbContext context, IUnitOfWork uow) : base(context, uow)
-        {
-        }
-    }
-
-    public class ODataSAPRepository<TEntity> : ODataRepository<TEntity>, IODataApplicationRepository<TEntity>  where TEntity : class
-    {
-        public ODataSAPRepository(SAPDbContext context, IUnitOfWork uow) : base(context, uow)
-        {
         }
     }
 }
