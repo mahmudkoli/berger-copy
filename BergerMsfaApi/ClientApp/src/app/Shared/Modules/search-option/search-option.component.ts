@@ -641,7 +641,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       
   
       this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
-        this.dealers=res.data;
+        // this.dealers=res.data;
+        this._allDealers = res.data;
+        this.updateDealerSubDealerShow();
       })
     }
 		
