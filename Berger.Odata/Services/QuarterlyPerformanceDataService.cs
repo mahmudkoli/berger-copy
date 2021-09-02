@@ -879,16 +879,16 @@ namespace Berger.Odata.Services
             var fromDateAll = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD());
             var toDateAll = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD());
 
-            List<int> dateTime = new List<int>();
+            List<string> dateTime = new List<string>();
 
             while (fromDateAll <= toDateAll)
             {
-                dateTime.Add(fromDateAll.Year + fromDateAll.Month);
+                dateTime.Add($"{fromDateAll.Year}{fromDateAll.Month}");
                 fromDateAll = fromDateAll.AddMonths(1);
             }
 
             var actualData = (await _oDataQuartPerformRepository.FindAllAsync(x =>
-                dateTime.Contains(x.Year + x.Month) &&
+                dateTime.Contains($"{x.Year}{x.Month}") &&
                 (!territories.Any() || territories.Contains(x.Territory)) &&
                 (!depots.Any() || depots.Contains(x.Depot)) &&
                 (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)))).ToList();
