@@ -355,7 +355,7 @@ namespace Berger.Odata.Services
             res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
             res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-            res.AchivementOrGrowth = _odataService.GetContribution(res.TotalActual, res.TotalTarget);
+            res.AchivementOrGrowth = _odataService.GetContribution(res.TotalTarget, res.TotalActual);
 
             result.Add(res);
 
@@ -724,7 +724,7 @@ namespace Berger.Odata.Services
                 res.TotalTarget = res.MonthlyTargetData.Sum(s => s.Amount);
                 res.TotalActual = res.MonthlyActualData.Sum(s => s.Amount);
 
-                res.AchivementOrGrowth = _odataService.GetContribution(res.TotalActual, res.TotalTarget);
+                res.AchivementOrGrowth = _odataService.GetContribution(res.TotalTarget, res.TotalActual);
 
                 result.Add(res);
             }
@@ -762,7 +762,7 @@ namespace Berger.Odata.Services
             }
 
             #region for total
-            if (result.Any())
+            if (result.Any() && result.Count() > 1)
             {
                 var resO = new PortalQuarterlyPerformanceDataResultModel();
                 resO.Territory = "Total";
@@ -775,25 +775,25 @@ namespace Berger.Odata.Services
                 resO.SecondMonthActualAmount = result.Sum(x => x.SecondMonthActualAmount);
                 resO.ThirdMonthActualAmount = result.Sum(x => x.ThirdMonthActualAmount);
 
-                resO.TotalTarget = result.Sum(x => x.FirstMonthTargetAmount);
-                resO.TotalActual = result.Sum(x => x.FirstMonthTargetAmount);
+                resO.TotalTarget = resO.FirstMonthTargetAmount + resO.SecondMonthTargetAmount + resO.ThirdMonthTargetAmount;
+                resO.TotalActual = resO.FirstMonthActualAmount + resO.SecondMonthActualAmount + resO.ThirdMonthActualAmount;
 
                 switch (reportType)
                 {
                     case EnumQuarterlyPerformanceModel.MTSValueTargetAchivement:
-                        resO.AchivementOrGrowth = _odataService.GetAchivement(resO.TotalActual, resO.TotalTarget);
+                        resO.AchivementOrGrowth = _odataService.GetAchivement(resO.TotalTarget, resO.TotalActual);
                         break;
                     case EnumQuarterlyPerformanceModel.BillingDealerQuarterlyGrowth:
-                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalTarget, resO.TotalActual);
                         break;
                     case EnumQuarterlyPerformanceModel.EnamelPaintsQuarterlyGrowt:
-                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalTarget, resO.TotalActual);
                         break;
                     case EnumQuarterlyPerformanceModel.PremiumBrandsGrowth:
-                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalActual, resO.TotalTarget);
+                        resO.AchivementOrGrowth = _odataService.GetGrowth(resO.TotalTarget, resO.TotalActual);
                         break;
                     case EnumQuarterlyPerformanceModel.PremiumBrandsContribution:
-                        resO.AchivementOrGrowth = _odataService.GetContribution(resO.TotalActual, resO.TotalTarget);
+                        resO.AchivementOrGrowth = _odataService.GetContribution(resO.TotalTarget, resO.TotalActual);
                         break;
                 }
 
@@ -883,12 +883,12 @@ namespace Berger.Odata.Services
 
             while (fromDateAll <= toDateAll)
             {
-                dateTime.Add($"{fromDateAll.Year}{fromDateAll.Month}");
+                dateTime.Add(fromDateAll.Year.ToString()+fromDateAll.Month.ToString());
                 fromDateAll = fromDateAll.AddMonths(1);
             }
 
             var actualData = (await _oDataQuartPerformRepository.FindAllAsync(x =>
-                dateTime.Contains($"{x.Year}{x.Month}") &&
+                dateTime.Contains((x.Year.ToString()+x.Month.ToString())) &&
                 (!territories.Any() || territories.Contains(x.Territory)) &&
                 (!depots.Any() || depots.Contains(x.Depot)) &&
                 (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)))).ToList();

@@ -18,9 +18,8 @@ namespace BergerMsfaApi.Controllers.Odata
         private readonly IFinancialDataService _financialDataService;
 
         public PortalQuartPerformReportController(
-            IQuarterlyPerformanceDataService quarterlyPerformanceDataService
-            , IFinancialDataService financialDataService
-            )
+            IQuarterlyPerformanceDataService quarterlyPerformanceDataService, 
+            IFinancialDataService financialDataService)
         {
             _quarterlyPerformanceDataService = quarterlyPerformanceDataService;
             _financialDataService = financialDataService;
