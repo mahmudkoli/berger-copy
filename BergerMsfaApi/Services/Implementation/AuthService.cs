@@ -92,9 +92,10 @@ namespace BergerMsfaApi.Services.Implementation
                                 );
 
                 #region only use for mobile
-                var dealerOpeningsHierarchyList = await _commonService.GetPSATZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
-                var painterRegistrationsHierarchyList = await _commonService.GetPATZHierarchy(userInfo.PlantIds, userInfo.AreaIds, userInfo.TerritoryIds, userInfo.ZoneIds);
-                var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                var dealerOpeningsHierarchyList = await _commonService.GetPSTZHierarchy(userInfo.PlantIds, userInfo.SaleOfficeIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                var painterRegistrationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                //var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
+                var leadGenerationsHierarchyList = painterRegistrationsHierarchyList;
 
                 var plants = await _commonService.GetDepotList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
                                                                     || (userInfo.PlantIds != null && userInfo.PlantIds.Any(y => y == x.Werks)));
