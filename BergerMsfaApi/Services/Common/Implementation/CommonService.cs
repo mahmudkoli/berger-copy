@@ -301,6 +301,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId)
         {
             //var userId = AppIdentity.AppUser.UserId;
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             var userInfo = await _userService.GetUserAsync(userId);
 
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
@@ -317,6 +318,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup 
                          into cust from cu in cust.DefaultIfEmpty()
+                         where
+                         ( 
+                            ((int)EnumEmployeeRole.ZO != employeeRole || 
+                            (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
+                         )
                          select new AppDealerInfoModel
                          { 
                             Id = dealer.Id,
@@ -391,6 +397,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             model.DealerName = model.DealerName ?? string.Empty;
 
             var userId = AppIdentity.AppUser.UserId;
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             var userInfo = await _userService.GetUserAsync(userId);
 
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
@@ -419,6 +426,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
+                          && ((int)EnumEmployeeRole.ZO != employeeRole ||
+                             (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
+                         
 
                           select new AppDealerInfoModel
                           {
@@ -439,6 +449,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IList<AppDealerInfoModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
         {
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             model.PageNo = model.PageNo ?? 1;
             model.PageSize = model.PageSize ?? int.MaxValue;
             model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
@@ -469,6 +480,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
+                          && ((int)EnumEmployeeRole.ZO != employeeRole ||
+                             (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
 
                           select new AppDealerInfoModel
                           {
