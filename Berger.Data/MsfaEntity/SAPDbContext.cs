@@ -79,5 +79,7 @@ namespace Berger.Data.MsfaEntity
 
         public DbSet<SAPSalesInfo> SAPSalesInfos { get; set; }
         public DbSet<QuarterlyPerformanceReport> QuarterlyPerformanceReports { get; set; }
+        public DbSet<SummaryPerformanceReport> SummaryPerformanceReports { get; set; }
+        public DbSet<CustomerPerformanceReport> CustomerPerformanceReports { get; set; }
     }
 }

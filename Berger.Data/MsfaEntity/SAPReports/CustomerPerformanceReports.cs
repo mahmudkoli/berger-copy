@@ -8,29 +8,28 @@ using System.Threading.Tasks;
 
 namespace Berger.Data.MsfaEntity.SAPReports
 {
-    public class QuarterlyPerformanceReport
+    public class CustomerPerformanceReport
     {
         public int Id { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime SyncTime { get; set; }
         [MaxLength(50)]
-        public string Depot { get; set; }
+        public string CustomerNo { get; set; }
+        [MaxLength(200)]
+        public string CustomerName { get; set; }
         [MaxLength(50)]
-        public string SalesGroup { get; set; }
+        public string Division { get; set; }
         [MaxLength(50)]
-        public string Territory { get; set; }
+        public string Brand { get; set; }
         public int Year { get; set; }
         public int Month { get; set; }
-        public int NoOfBillingDealer { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal MTSValue { get; set; }
+        public decimal Value { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal EnamelVolume { get; set; }
+        public decimal Volume { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PremiumValue { get; set; }
+        public decimal TillDateValue { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PremiumVolume { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal DecorativeValue { get; set; }
+        public decimal TillDateVolume { get; set; }
     }
 }

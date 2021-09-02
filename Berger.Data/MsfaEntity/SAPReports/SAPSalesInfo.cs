@@ -54,9 +54,9 @@ namespace Berger.Data.MsfaEntity.SAPReports
         [Column("kukla")]
         [MaxLength(50)]
         public string CustomerClassification { get; set; }
-        [Column("fkdat")]
+        [Column("fkdat", TypeName = "datetime")]
         [MaxLength(50)]
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
         [Column("posnr")]
         [MaxLength(50)]
         public string LineNumber { get; set; }
@@ -81,18 +81,18 @@ namespace Berger.Data.MsfaEntity.SAPReports
         [Column("spart_text")]
         [MaxLength(200)]
         public string DivisionName { get; set; }
-        [Column("Revenue")]
+        [Column("Revenue", TypeName = "decimal(18,2)")]
         [MaxLength(200)]
-        public string NetAmount { get; set; }
+        public decimal NetAmount { get; set; }
         [Column("gsber")]
         [MaxLength(50)]
         public string PlantOrBusinessArea { get; set; }
-        [Column("fkimg")]
+        [Column("fkimg", TypeName = "decimal(18,2)")]
         [MaxLength(50)]
-        public string Quantity { get; set; }
-        [Column("volum")]
+        public decimal Quantity { get; set; }
+        [Column("volum", TypeName = "decimal(18,2)")]
         [MaxLength(200)]
-        public string Volume { get; set; }
+        public decimal Volume { get; set; }
         [Column("ktokd")]
         [MaxLength(50)]
         public string CustomerAccountGroup { get; set; }
