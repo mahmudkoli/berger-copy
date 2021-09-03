@@ -34,6 +34,7 @@ namespace Berger.Odata.Repositories
         Task<int> ExecuteSqlCommandAsync(string sqlCommand, params object[] parameters);
         IEnumerable<dynamic> DynamicListFromSql(string Sql, Dictionary<string, object> Params, bool isStoredProcedure = false);
         (IList<T> Items, int Total, int TotalFilter) GetDataBySP<T>(string sql, IList<(string Key, object Value, bool IsOut)> parameters);
+        IList<T> GetDataBySP<T>(string sql, IList<(string Key, object Value)> parameters);
         #endregion
 
         #region LINQ ASYNC
