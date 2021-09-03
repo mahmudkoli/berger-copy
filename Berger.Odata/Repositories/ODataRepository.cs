@@ -238,7 +238,7 @@ namespace Berger.Odata.Repositories
             return (items, totalCount ?? 0, filteredCount ?? 0);
         }
         
-        public IList<T> GetDataBySP<T>(string sql, IList<(string Key, object Value)> parameters)
+        public IList<T> GetDataBySP<T>(string sql, IList<(string Key, object Value)> parameters, params string[] ignoreProperties)
         {
             var items = new List<T>();
 
@@ -267,6 +267,8 @@ namespace Berger.Odata.Repositories
 
                         foreach (var property in properties)
                         {
+                            if (ignoreProperties != null && ignoreProperties.Contains(property.Name)) continue;
+
                             if(!reader.IsDBNull(reader.GetOrdinal(property.Name)))
                                 property.SetValue(instance, reader[property.Name]);
                         }
