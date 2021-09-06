@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Common.Model;
@@ -13,6 +14,7 @@ using Berger.Odata.Extensions;
 using Berger.Odata.Model;
 using Berger.Odata.Model.SPModels;
 using Berger.Odata.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Berger.Odata.Services
 {
@@ -22,18 +24,20 @@ namespace Berger.Odata.Services
         private readonly IODataBrandService _odataBrandService;
         private readonly IODataCommonService _odataCommonService;
         private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
-
+        private readonly IODataSAPRepository<CustomerPerformanceReport> _customerPerformanceReportRepository;
+        private readonly IODataSAPRepository<ColorBankPerformanceReport> _colorBankPerformanceSapRepository;
         public SalesDataService(
             IODataService odataService,
             IODataBrandService odataBrandService,
             IODataCommonService odataCommonService,
-            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo
-        )
+            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo, IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository, IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository, IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository)
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
             _odataCommonService = odataCommonService;
             _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
+            _customerPerformanceReportRepository = customerPerformanceReportRepository;
+            _colorBankPerformanceSapRepository = colorBankPerformanceSapRepository;
         }
 
         #region During dealer visit
@@ -129,89 +133,193 @@ namespace Berger.Odata.Services
             return returnResult;
         }
 
+        public async Task<IList<CustomerPerformanceReport>> GetCustomerWiseRevenue(Expression<Func<CustomerPerformanceReport, 
+            CustomerPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null)
+        {
+            brands ??= new List<string>();
+            division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
+            DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
+            DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
+            List<string> yearMonthString = new List<string>();
+            while (stDate < edDate)
+            {
+                yearMonthString.Add(stDate.Year + "-" + stDate.Month);
+                stDate = stDate.AddMonths(1);
+            }
+
+            return await _customerPerformanceReportRepository.GetAllIncludeAsync(selectProperty, x =>
+                    yearMonthString.Contains((x.Year.ToString() + "-" + x.Month.ToString())) &&
+                    (string.IsNullOrWhiteSpace(customerNo) || x.CustomerNo == customerNo) &&
+                    (division == "-1" || x.Division == division) &&
+                    (!brands.Any() || brands.Contains(x.Brand)), null, null, true
+            );
+        }
+
+
+        private async Task<IList<CustomerPerformanceReport>> GetCbProductCustomerWiseRevenue(string customerNo, string startDate, string endDate, string division = "-1")
+        {
+            division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
+
+            DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
+            DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
+
+
+            List<string> yearMonthString = new List<string>();
+            while (stDate < edDate)
+            {
+                yearMonthString.Add(stDate.Year + "-" + stDate.Month);
+                stDate = stDate.AddMonths(1);
+            }
+
+
+            return await _colorBankPerformanceSapRepository.FindByCondition(x =>
+                    yearMonthString.Contains((x.Year.ToString() + "-" + x.Month.ToString())) &&
+                                                                (string.IsNullOrWhiteSpace(customerNo) ||
+                                                                 x.CustomerNo == customerNo) &&
+                                                                (division == "-1" || x.Division == division))
+                   .GroupBy(x => new { x.Brand, Year = x.Year, Month = x.Month })
+                   .Select(x => new CustomerPerformanceReport
+                   {
+                       Brand = x.Key.Brand,
+                       TillDateValue = x.Sum(y => y.TillDateValue),
+                       Year = x.Key.Year,
+                       Month = x.Key.Month,
+                   }).ToListAsync();
+        }
+
+
+
         public async Task<IList<BrandWiseMTDResultModel>> GetBrandWiseMTDDetails(BrandWiseMTDSearchModel model)
         {
             var currentDate = DateTime.Now;
             var previousMonthCount = 3;
             var cbMaterialCodes = new List<string>();
 
-            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
-            var cylcd = currentDate.GetCYLCD().SalesSearchDateFormat();
+            var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cylcd = currentDate.GetCYLCD().DateFormat();//.SalesSearchDateFormat();
 
-            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
-            var lylcd = currentDate.GetLYLCD().SalesSearchDateFormat();
+            var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lylcd = currentDate.GetLYLCD().DateFormat();//.SalesSearchDateFormat();
 
-            var dataLy = new List<SalesDataModel>();
-            var dataCy = new List<SalesDataModel>();
-            var previousMonthDict = new Dictionary<string, IList<SalesDataModel>>();
+            IList<CustomerPerformanceReport> dataLy = new List<CustomerPerformanceReport>();
+            IList<CustomerPerformanceReport> dataCy = new List<CustomerPerformanceReport>();
+            var previousMonthDict = new Dictionary<string, IList<CustomerPerformanceReport>>();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.Division)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                    .AddProperty(DataColumnDef.Division)
+            //                    .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+            //                    .AddProperty(DataColumnDef.Date)
+            //                    .AddProperty(DataColumnDef.NetAmount)
+            //                    .AddProperty(DataColumnDef.MatarialGroupOrBrand)
+            //                    .AddProperty(DataColumnDef.MatarialGroupOrBrandName);
+
+
+
+            var startDate = currentDate.GetMonthDate(-3).GetCYFD().DateFormat();
+            var endDate = currentDate.GetMonthDate(-1).GetCYLD().DateFormat();
+
+            IList<CustomerPerformanceReport> data = new List<CustomerPerformanceReport>();
+            var brandFamilyInfos = await _odataBrandService.GetBrandFamilyInfosAsync();
 
             if (model.IsOnlyCBMaterial)
             {
-                cbMaterialCodes = (await _odataBrandService.GetCBMaterialCodesAsync()).ToList();
+                dataCy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, cyfd, cylcd, model.Division);
+                dataLy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, lyfd, lylcd, model.Division);
+                data = await GetCbProductCustomerWiseRevenue(model.CustomerNo, startDate, endDate, model.Division);
+            }
+            else
+            {
+
+                dataCy = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
+                {
+                    Brand = x.Brand,
+                    TillDateValue = x.TillDateValue
+                }, model.CustomerNo, cyfd, cylcd, model.Division);
+
+                dataLy = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
+                {
+                    Brand = x.Brand,
+                    TillDateValue = x.TillDateValue
+                }, model.CustomerNo, lyfd, lylcd, model.Division);
+
+                data = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
+                {
+                    Brand = x.Brand,
+                    TillDateValue = x.TillDateValue,
+                    Year = x.Year,
+                    Month = x.Month
+                }, model.CustomerNo, startDate,
+                   endDate, model.Division);
             }
 
-            dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, cbMaterialCodes)).ToList();
+            //dataLy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lylcd, model.Division, cbMaterialCodes)).ToList();
+            // dataCy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, cbMaterialCodes)).ToList();
 
-            dataCy = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cylcd, model.Division, cbMaterialCodes)).ToList();
 
-            for (var i = 1; i <= previousMonthCount; i++)
+
+
+
+            for (int i = 1; i <= previousMonthCount; i++)
             {
                 int number = i * -1;
-                var startDate = currentDate.GetMonthDate(number).GetCYFD().DateFormat();
-                var endDate = currentDate.GetMonthDate(number).GetCYLD().DateFormat();
-
-                var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, startDate, endDate, model.Division, cbMaterialCodes)).ToList();
+                DateTime date = currentDate.AddMonths(number);
                 var monthName = currentDate.GetMonthName(number);
 
-                previousMonthDict.Add(monthName, data);
+                previousMonthDict.Add(monthName, data.Where(x => x.Year == date.Year && x.Month == date.Month).ToList());
             }
+
+
+
+            //for (var i = 1; i <= previousMonthCount; i++)
+            //{
+            //    int number = i * -1;
+            //    //  var startDate = currentDate.GetMonthDate(number).GetCYFD().DateFormat();
+            //    //  var endDate = currentDate.GetMonthDate(number).GetCYLD().DateFormat();
+
+            //    var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, startDate, endDate, model.Division, cbMaterialCodes)).ToList();
+            //    var monthName = currentDate.GetMonthName(number);
+
+            //    previousMonthDict.Add(monthName, data);
+            //}
 
             var result = new List<BrandWiseMTDResultModel>();
 
-            var brandCodes = dataLy.Select(x => x.MatarialGroupOrBrand)
-                                .Concat(dataCy.Select(x => x.MatarialGroupOrBrand))
-                                    .Concat(previousMonthDict.Values.SelectMany(x => x).Select(x => x.MatarialGroupOrBrand))
+            var brandCodes = dataLy.Select(x => x.Brand)
+                                .Concat(dataCy.Select(x => x.Brand))
+                                    .Concat(previousMonthDict.Values.SelectMany(x => x).Select(x => x.Brand))
                                         .Distinct().ToList();
 
             foreach (var brandCode in brandCodes)
             {
                 var res = new BrandWiseMTDResultModel { PreviousMonthData = new List<BrandWiseMTDPreviousModel>() };
 
-                if (dataLy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataLy.Any(x => x.Brand == brandCode))
                 {
-                    var mtdAmtLy = dataLy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    var lastYearSingleData = dataLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
+                    var mtdAmtLy = dataLy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
+                    var lastYearSingleData = dataLy.FirstOrDefault(x => x.Brand == brandCode);
 
                     if (lastYearSingleData != null)
                     {
-                        var brandNameLy = $"{lastYearSingleData.MatarialGroupOrBrandName} ({lastYearSingleData.MatarialGroupOrBrand })";
+                        // var brandNameLy = $"{lastYearSingleData.Brand} ({lastYearSingleData.Brand })";
 
-                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameLy : res.MatarialGroupOrBrand;
+                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? lastYearSingleData.Brand : res.MatarialGroupOrBrand;
                     }
 
                     res.LYMTD = mtdAmtLy;
                 }
 
-                if (dataCy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataCy.Any(x => x.Brand == brandCode))
                 {
-                    var mtdAmtCy = dataCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+                    var mtdAmtCy = dataCy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
 
-                    var cySingleData = dataCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
+                    var cySingleData = dataCy.FirstOrDefault(x => x.Brand == brandCode);
 
                     if (cySingleData != null)
                     {
-                        var brandNameCy = $"{cySingleData.MatarialGroupOrBrandName} ({cySingleData.MatarialGroupOrBrand })";
+                        // var brandNameCy = $"{cySingleData.Brand} ({cySingleData.Brand })";
 
-                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameCy : res.MatarialGroupOrBrand;
+                        res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? cySingleData.Brand : res.MatarialGroupOrBrand;
                     }
 
                     res.CYMTD = mtdAmtCy;
@@ -224,17 +332,17 @@ namespace Berger.Odata.Services
                     var dictData = previousMonthDict[monthName].ToList();
                     var mtdAmt = decimal.Zero;
 
-                    if (dictData.Any(x => x.MatarialGroupOrBrand == brandCode))
+                    if (dictData.Any(x => x.Brand == brandCode))
                     {
-                        mtdAmt = dictData.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+                        mtdAmt = dictData.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
 
-                        var mtdSingleData = dictData.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode);
+                        var mtdSingleData = dictData.FirstOrDefault(x => x.Brand == brandCode);
 
                         if (mtdSingleData != null)
                         {
-                            var brandName = $"{mtdSingleData.MatarialGroupOrBrandName} ({mtdSingleData.MatarialGroupOrBrand })";
+                            //var brandName = $"{mtdSingleData.Brand} ({mtdSingleData.Brand })";
 
-                            res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandName : res.MatarialGroupOrBrand;
+                            res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? mtdSingleData.Brand : res.MatarialGroupOrBrand;
                         }
                     }
 
@@ -246,8 +354,11 @@ namespace Berger.Odata.Services
                 result.Add(res);
             }
 
-            result.ForEach(x => x.MatarialGroupOrBrand = model.IsOnlyCBMaterial ? null : x.MatarialGroupOrBrand);
 
+            result.ForEach(x => x.MatarialGroupOrBrand = model.IsOnlyCBMaterial
+                ? null
+                : (brandFamilyInfos.FirstOrDefault(y => y.MatarialGroupOrBrand == x.MatarialGroupOrBrand)?
+                    .MatarialGroupOrBrandName ?? x.MatarialGroupOrBrand) + $" ({x.MatarialGroupOrBrand})");
 
             return result;
         }
@@ -258,46 +369,82 @@ namespace Berger.Odata.Services
             var filterDate = new DateTime(model.Year, model.Month, 01);
             var mtsBrandCodes = new List<string>();
 
-            var cyfd = filterDate.GetCYFD().SalesSearchDateFormat();
-            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
-            var cyld = filterDate.GetCYLD().SalesSearchDateFormat();
+            var cyfd = filterDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cfyfd = filterDate.GetCFYFD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = filterDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lyfd = filterDate.GetLYFD().SalesSearchDateFormat();
-            var lfyfd = filterDate.GetLFYFD().SalesSearchDateFormat();
-            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
+            var lyfd = filterDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lfyfd = filterDate.GetLFYFD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = filterDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
-                                    .AddProperty(model.VolumeOrValue == EnumVolumeOrValue.Volume
-                                                ? DataColumnDef.Volume
-                                                : DataColumnDef.NetAmount)
-                                    .AddProperty(model.BrandOrDivision == EnumBrandOrDivision.Division
-                                                ? DataColumnDef.Division
-                                                : DataColumnDef.MatarialGroupOrBrand);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
+            //                        .AddProperty(model.VolumeOrValue == EnumVolumeOrValue.Volume
+            //                                    ? DataColumnDef.Volume
+            //                                    : DataColumnDef.NetAmount)
+            //                        .AddProperty(model.BrandOrDivision == EnumBrandOrDivision.Division
+            //                                    ? DataColumnDef.Division
+            //                                    : DataColumnDef.MatarialGroupOrBrand);
 
             if (model.BrandOrDivision == EnumBrandOrDivision.MTSBrands)
             {
                 mtsBrandCodes = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
             }
 
-            var dataLyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld,
-                                    division: model.Division, brands: mtsBrandCodes)).ToList();
 
-            var dataCyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cyld,
-                                    division: model.Division, brands: mtsBrandCodes)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lfyfd, lyld,
-                                    division: model.Division, brands: mtsBrandCodes)).ToList();
+            var dataLyMtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume,
+                Division = x.Division
+            }, model.CustomerNo, lyfd, lyld, model.Division, mtsBrandCodes);
 
-            var dataCyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cfyfd, cyld,
-                                    division: model.Division, brands: mtsBrandCodes)).ToList();
+            var dataCyMtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume,
+                Division = x.Division
+            }, model.CustomerNo, cyfd, cyld, model.Division, mtsBrandCodes);
 
-            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(
-                                                            model.VolumeOrValue == EnumVolumeOrValue.Volume ? x.Volume : x.NetAmount);
-            Func<SalesDataModel, string> selectFunc = x => model.BrandOrDivision == EnumBrandOrDivision.Division ?
-                                                            x.Division : x.MatarialGroupOrBrand;
-            Func<SalesDataModel, string, bool> predicateFunc = (x, val) => model.BrandOrDivision == EnumBrandOrDivision.Division ?
-                                                                    x.Division == val : x.MatarialGroupOrBrand == val;
+            var dataLyYtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume,
+                Division = x.Division
+            }, model.CustomerNo, lfyfd, lyld, model.Division, mtsBrandCodes);
+
+            var dataCyYtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume,
+                Division = x.Division
+            }, model.CustomerNo, cfyfd, cyld, model.Division, mtsBrandCodes);
+
+
+
+            //var dataLyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lyfd, lyld,
+            //                        division: model.Division, brands: mtsBrandCodes)).ToList();
+
+            //var dataCyMtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cyfd, cyld,
+            //                        division: model.Division, brands: mtsBrandCodes)).ToList();
+
+            //var dataLyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, lfyfd, lyld,
+            //                        division: model.Division, brands: mtsBrandCodes)).ToList();
+
+            //var dataCyYtd = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, cfyfd, cyld,
+            //                        division: model.Division, brands: mtsBrandCodes)).ToList();
+
+            Func<CustomerPerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(
+                                                            model.VolumeOrValue == EnumVolumeOrValue.Volume ? x.Volume : x.Value);
+            Func<CustomerPerformanceReport, string> selectFunc = x => model.BrandOrDivision == EnumBrandOrDivision.Division ?
+                                                            x.Division : x.Brand;
+            Func<CustomerPerformanceReport, string, bool> predicateFunc = (x, val) => model.BrandOrDivision == EnumBrandOrDivision.Division ?
+                                                                    x.Division == val : x.Brand == val;
 
             var brandsOrDivisions = dataLyMtd.Select(selectFunc)
                                         .Concat(dataCyMtd.Select(selectFunc))
@@ -305,11 +452,11 @@ namespace Berger.Odata.Services
                                                 .Concat(dataCyYtd.Select(selectFunc))
                                                     .Distinct().ToList();
 
-            var depots = dataLyMtd.Select(x => x.PlantOrBusinessArea)
-                            .Concat(dataCyMtd.Select(x => x.PlantOrBusinessArea))
-                                .Concat(dataLyYtd.Select(x => x.PlantOrBusinessArea))
-                                    .Concat(dataCyYtd.Select(x => x.PlantOrBusinessArea))
-                                        .Distinct().ToList();
+            //var depots = dataLyMtd.Select(x => x.PlantOrBusinessArea)
+            //                .Concat(dataCyMtd.Select(x => x.PlantOrBusinessArea))
+            //                    .Concat(dataLyYtd.Select(x => x.PlantOrBusinessArea))
+            //                        .Concat(dataCyYtd.Select(x => x.PlantOrBusinessArea))
+            //                            .Distinct().ToList();
 
             var brandFamilyInfos = new List<BrandFamilyInfo>();
             var divisions = new List<Division>();
@@ -329,29 +476,29 @@ namespace Berger.Odata.Services
             {
                 foreach (var item in dataLyMtd)
                 {
-                    item.MatarialGroupOrBrand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand)?
-                                                        .MatarialGroupOrBrandFamily ?? item.MatarialGroupOrBrand;
+                    item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?
+                                                        .MatarialGroupOrBrandFamily ?? item.Brand;
                 }
                 foreach (var item in dataCyMtd)
                 {
-                    item.MatarialGroupOrBrand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand)?
-                                                        .MatarialGroupOrBrandFamily ?? item.MatarialGroupOrBrand;
+                    item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?
+                                                        .MatarialGroupOrBrandFamily ?? item.Brand;
                 }
                 foreach (var item in dataLyYtd)
                 {
-                    item.MatarialGroupOrBrand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand)?
-                                                        .MatarialGroupOrBrandFamily ?? item.MatarialGroupOrBrand;
+                    item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?
+                                                        .MatarialGroupOrBrandFamily ?? item.Brand;
                 }
                 foreach (var item in dataCyYtd)
                 {
-                    item.MatarialGroupOrBrand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand)?
-                                                        .MatarialGroupOrBrandFamily ?? item.MatarialGroupOrBrand;
+                    item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?
+                                                        .MatarialGroupOrBrandFamily ?? item.Brand;
                 }
 
-                brandsOrDivisions = dataLyMtd.Select(x => x.MatarialGroupOrBrand)
-                                    .Concat(dataCyMtd.Select(x => x.MatarialGroupOrBrand))
-                                        .Concat(dataLyYtd.Select(x => x.MatarialGroupOrBrand))
-                                            .Concat(dataCyYtd.Select(x => x.MatarialGroupOrBrand))
+                brandsOrDivisions = dataLyMtd.Select(x => x.Brand)
+                                    .Concat(dataCyMtd.Select(x => x.Brand))
+                                        .Concat(dataLyYtd.Select(x => x.Brand))
+                                            .Concat(dataCyYtd.Select(x => x.Brand))
                                                 .Distinct().ToList();
             }
             #endregion
@@ -478,15 +625,15 @@ namespace Berger.Odata.Services
             Func<spYTDTBrnadPerformanceReport, string, bool> predicateFunc = (x, val) => x.BrandOrDivision == val;
 
             var brandsOrDivisions = dataActual.Select(selectFunc)
-                                        //.Concat(dataCyMtd.Select(selectFunc))
-                                        //    .Concat(dataLyYtd.Select(selectFunc))
-                                        //        .Concat(dataCyYtd.Select(selectFunc))
+                                                    //.Concat(dataCyMtd.Select(selectFunc))
+                                                    //    .Concat(dataLyYtd.Select(selectFunc))
+                                                    //        .Concat(dataCyYtd.Select(selectFunc))
                                                     .Distinct().ToList();
 
             var depots = dataActual.SelectMany(x => x.Depots)
-                            //.Concat(dataCyMtd.Select(x => x.PlantOrBusinessArea))
-                            //    .Concat(dataLyYtd.Select(x => x.PlantOrBusinessArea))
-                            //        .Concat(dataCyYtd.Select(x => x.PlantOrBusinessArea))
+                                        //.Concat(dataCyMtd.Select(x => x.PlantOrBusinessArea))
+                                        //    .Concat(dataLyYtd.Select(x => x.PlantOrBusinessArea))
+                                        //        .Concat(dataCyYtd.Select(x => x.PlantOrBusinessArea))
                                         .Distinct().ToList();
 
             var brandFamilyInfos = new List<BrandFamilyInfo>();
@@ -512,9 +659,9 @@ namespace Berger.Odata.Services
                 }
 
                 brandsOrDivisions = dataActual.Select(x => x.BrandOrDivision)
-                                    //.Concat(dataCyMtd.Select(x => x.MatarialGroupOrBrand))
-                                    //    .Concat(dataLyYtd.Select(x => x.MatarialGroupOrBrand))
-                                    //        .Concat(dataCyYtd.Select(x => x.MatarialGroupOrBrand))
+                                                //.Concat(dataCyMtd.Select(x => x.MatarialGroupOrBrand))
+                                                //    .Concat(dataLyYtd.Select(x => x.MatarialGroupOrBrand))
+                                                //        .Concat(dataCyYtd.Select(x => x.MatarialGroupOrBrand))
                                                 .Distinct().ToList();
             }
             #endregion
@@ -1238,7 +1385,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(DataColumnDef.Date)
                                 .AddProperty(DataColumnDef.NetAmount);
 
-            var data = (await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate, 
+            var data = (await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
                                             depots: new List<string> { depot }, salesGroups: salesGroups, territories: territories)).ToList();
 
             var result = data.Select(x =>

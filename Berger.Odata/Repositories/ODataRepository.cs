@@ -805,5 +805,10 @@ namespace Berger.Odata.Repositories
 
             return query;
         }
+
+        public virtual IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression)
+        {
+            return DbSet.Where(expression).AsNoTracking();
+        }
     }
 }

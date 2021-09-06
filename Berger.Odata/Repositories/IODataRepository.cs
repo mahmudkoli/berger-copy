@@ -97,6 +97,10 @@ namespace Berger.Odata.Repositories
                                                             string includeProperties = null,
                                                             int? skip = null,
                                                             int? take = null);
+
+
+        IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression);
+
     }
 }
 
