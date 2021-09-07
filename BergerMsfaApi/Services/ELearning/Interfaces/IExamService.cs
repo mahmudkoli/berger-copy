@@ -15,5 +15,6 @@ namespace BergerMsfaApi.Services.ELearning.Interfaces
         Task<IList<AppQuestionSetModel>> GetAllQuestionSetAsync();
         Task<AppQuestionSetModel> GetAllQuestionByQuestionSetIdAsync(int id);
         Task<AppQuestionAnswerResultModel> SaveQuestionAnswerAsync(AppQuestionSetModel model);
+        Task<IList<AppUserQuestionAnswerModel>> GetAllExamReportByCurrentUserAsync();
     }
 }

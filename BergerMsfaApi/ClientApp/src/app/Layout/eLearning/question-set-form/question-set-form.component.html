@@ -40,6 +40,18 @@
                 </div>
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+                        <label class="">Depots</label>
+                        <ng-select formControlName="depots" [multiple]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let ur of depots;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.depots.touched && formControls.depots.errors">
+                            <span *ngIf="formControls.depots.errors.required">Depots is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
                         <label class="required">Level</label>
                         <input type="number" class="form-control" formControlName="level"
                                 [ngClass]="{'is-valid':formControls.level.touched && !formControls.level.errors,
@@ -68,6 +80,49 @@
                                 'is-invalid':formControls.passMark.touched && formControls.passMark.errors }" />
                         <small class="text-danger" *ngIf="formControls.passMark.touched && formControls.passMark.errors">
                             <span *ngIf="formControls.passMark.errors.required">Pass Mark is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Time Out (In Minute)</label>
+                        <input type="number" class="form-control" formControlName="timeOutMinute"
+                                [ngClass]="{'is-valid':formControls.timeOutMinute.touched && !formControls.timeOutMinute.errors,
+                                'is-invalid':formControls.timeOutMinute.touched && formControls.timeOutMinute.errors }" />
+                        <small class="text-danger" *ngIf="formControls.timeOutMinute.touched && formControls.timeOutMinute.errors">
+                            <span *ngIf="formControls.timeOutMinute.errors.required">Time Out is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Start Date</label>
+                        <div class="input-group w-100">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="startDateDp" formControlName="startDate" 
+                                ngbDatepicker #startDateDp="ngbDatepicker" [minDate]="{year: 2020, month: 1, day: 1}"
+                                [maxDate]="{year: 2040, month: 12, day: 31}" [placement]="'bottom'">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="startDateDp.toggle()" type="button"></button>
+                            </div>
+                        </div>
+                        <small class="text-danger" *ngIf="formControls.startDate.touched && formControls.startDate.errors">
+                            <span *ngIf="formControls.startDate.errors.required">Start Date is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">End Date</label>
+                        <div class="input-group w-100">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="endDateDp" formControlName="endDate" 
+                                ngbDatepicker #endDateDp="ngbDatepicker" [minDate]="{year: 2020, month: 1, day: 1}"
+                                [maxDate]="{year: 2040, month: 12, day: 31}" [placement]="'bottom'">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="endDateDp.toggle()" type="button"></button>
+                            </div>
+                        </div>
+                        <small class="text-danger" *ngIf="formControls.endDate.touched && formControls.endDate.errors">
+                            <span *ngIf="formControls.endDate.errors.required">End Date is <strong>required</strong></span>
                         </small>
                     </div>
                 </div>

@@ -77,8 +77,8 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		this.query = new ELearningDocumentQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'title',
-			isSortAscending: true,
+			sortBy: 'uploadDate',
+			isSortAscending: false,
 			globalSearchValue: ''
 		});
 	}
@@ -124,9 +124,12 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		tableName: 'ELearning List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Title', width: '40%', internalName: 'title', sort: true, type: "" },
-			{ headerName: 'Category', width: '45%', internalName: 'categoryText', sort: true, type: "" },
-			{ headerName: 'Status', width: '15%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'Title', width: '15%', internalName: 'title', sort: true, type: "" },
+			{ headerName: 'Category', width: '15%', internalName: 'categoryText', sort: true, type: "" },
+			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'Upload Date', width: '10%', internalName: 'uploadDate', sort: true, type: "" },
+			{ headerName: 'Attached File Name', width: '25%', internalName: 'attachedFileName', sort: false, type: "" },
+			{ headerName: 'Attached Link Address', width: '25%', internalName: 'attachedLinkAddress', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,

@@ -13,6 +13,7 @@ import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { FileUpload } from 'primeng/fileupload';
 import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { Status } from 'src/app/Shared/Enums/status';
 
 @Component({
 	selector: 'app-eLearning-form-new',
@@ -61,6 +62,7 @@ export class ELearningFormNewComponent implements OnInit, OnDestroy {
 			} else {
 				this.eLearningDocument = new ELearningDocument();
 				this.eLearningDocument.clear();
+				this.eLearningDocument.status = Status.Active;
 				this.initELearningDocuments();
 			}
 		});

@@ -117,46 +117,46 @@ namespace BergerMsfaApi.Controllers.ELearning
             }
         }
 
-        [HttpPost("AddAttachmentFile")]
-        public async Task<IActionResult> AddAttachmentFile([FromForm] SaveELearningAttachmentModel model)
-        {
-            try
-            {
-                var result = await _eLearningService.AddAttachmentAsync(model.ELearningDocumentId, model.AttachmentFile);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPost("AddAttachmentFile")]
+        //public async Task<IActionResult> AddAttachmentFile([FromForm] SaveELearningAttachmentModel model)
+        //{
+        //    try
+        //    {
+        //        var result = await _eLearningService.AddAttachmentAsync(model.ELearningDocumentId, model.AttachmentFile);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpPost("AddAttachmentLink")]
-        public async Task<IActionResult> AddAttachmentLink([FromBody] SaveELearningAttachmentModel model)
-        {
-            try
-            {
-                var result = await _eLearningService.AddAttachmentAsync(model.ELearningDocumentId, model.AttachmentLink);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpPost("AddAttachmentLink")]
+        //public async Task<IActionResult> AddAttachmentLink([FromBody] SaveELearningAttachmentModel model)
+        //{
+        //    try
+        //    {
+        //        var result = await _eLearningService.AddAttachmentAsync(model.ELearningDocumentId, model.AttachmentLink);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
 
-        [HttpDelete("DeleteAttachment/{attachmentId}")]
-        public async Task<IActionResult> DeleteAttachment(int attachmentId)
-        {
-            try
-            {
-                var result = await _eLearningService.DeleteAttachmentAsync(attachmentId);
-                return OkResult(result);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
+        //[HttpDelete("DeleteAttachment/{attachmentId}")]
+        //public async Task<IActionResult> DeleteAttachment(int attachmentId)
+        //{
+        //    try
+        //    {
+        //        var result = await _eLearningService.DeleteAttachmentAsync(attachmentId);
+        //        return OkResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ExceptionResult(ex);
+        //    }
+        //}
     }
 }

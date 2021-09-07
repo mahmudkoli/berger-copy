@@ -19,6 +19,7 @@ import { QuestionSetCollection } from 'src/app/Shared/Entity/ELearning/questionS
 import { ModalQuestionSetOptionFormComponent } from '../modal-question-set-option-form/modal-question-set-option-form.component';
 import { QuestionService } from 'src/app/Shared/Services/ELearning/question.service';
 import { Question } from 'src/app/Shared/Entity/ELearning/question';
+import { Status } from 'src/app/Shared/Enums/status';
 
 @Component({
 	selector: 'app-question-set-form',
@@ -33,6 +34,7 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
 	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
 	questionSetCollections: QuestionSetCollection[] = [];
+	depots: any[] = [];
 	
 	private subscriptions: Subscription[] = [];
 
@@ -50,6 +52,7 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.loadELearningDocuments();
+		this.loadDepots();
 
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
@@ -76,6 +79,7 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 			} else {
 				this.questionSet = new QuestionSet();
 				this.questionSet.clear();
+				this.questionSet.status = Status.Active;
 				this.initQuestionSets();
 			}
 		});
@@ -92,6 +96,19 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
 				this.eLearningDocuments = res.data;
+			},
+			error => {
+				this.throwError(error);
+			});
+		this.subscriptions.push(categorySubscription);
+	}
+
+	loadDepots() {
+		this.alertService.fnLoading(true);
+		const categorySubscription = this.commonService.getDepotList()
+			.pipe(finalize(() => this.alertService.fnLoading(false)))
+			.subscribe(res => {
+				this.depots = res.data;
 			},
 			error => {
 				this.throwError(error);
@@ -167,8 +184,33 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 			level: [this.questionSet.level, [Validators.required]],
 			totalMark: [this.questionSet.totalMark, [Validators.required]],
 			passMark: [this.questionSet.passMark, [Validators.required]],
+			timeOutMinute: [this.questionSet.timeOutMinute, [Validators.required]],
+			startDate: [],
+			endDate: [],
+			depots: [this.questionSet.depots],
 			status: [this.questionSet.status, [Validators.required]]
 		});
+
+		if(this.questionSet.startDate) {
+			const dateStr = new Date(this.questionSet.startDate);
+			this.questionSetForm.controls.startDate.setValue({
+				year: dateStr.getFullYear(),
+				month: dateStr.getMonth()+1,
+				day: dateStr.getDate()
+			});
+		}
+		if(this.questionSet.endDate) {
+			const dateStr = new Date(this.questionSet.endDate);
+			this.questionSetForm.controls.endDate.setValue({
+				year: dateStr.getFullYear(),
+				month: dateStr.getMonth()+1,
+				day: dateStr.getDate()
+			});
+		}
+		this.questionSetForm.controls.startDate.setValidators([Validators.required]);
+		this.questionSetForm.controls.startDate.updateValueAndValidity();
+		this.questionSetForm.controls.endDate.setValidators([Validators.required]);
+		this.questionSetForm.controls.endDate.updateValueAndValidity();
 	}
 
 	get formControls() { return this.questionSetForm.controls; }
@@ -204,10 +246,21 @@ export class QuestionSetFormComponent implements OnInit, OnDestroy {
 		_questionSet.level = controls['level'].value;
 		_questionSet.totalMark = controls['totalMark'].value;
 		_questionSet.passMark = controls['passMark'].value;
+		_questionSet.timeOutMinute = controls['timeOutMinute'].value;
+		_questionSet.depots = controls['depots'].value;
 		_questionSet.status = controls['status'].value;
 		if(this.questionSetCollections && this.questionSetCollections.length > 0)
 			_questionSet.questionSetCollections = this.questionSetCollections.filter(x => x.isSelected);
 			
+		const startDate = controls['startDate'].value;
+		if(startDate && startDate.year && startDate.month && startDate.day) {
+			_questionSet.startDate = new Date(startDate.year,startDate.month-1,startDate.day);
+		}	
+		const endDate = controls['endDate'].value;
+		if(endDate && endDate.year && endDate.month && endDate.day) {
+			_questionSet.endDate = new Date(endDate.year,endDate.month-1,endDate.day);
+		}
+
 		return _questionSet;
 	}
 

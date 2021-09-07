@@ -10,6 +10,7 @@ import { Question, QuestionQuery } from 'src/app/Shared/Entity/ELearning/questio
 import { QuestionService } from 'src/app/Shared/Services/ELearning/question.service';
 import { UserQuestionAnswer, UserQuestionAnswerQuery } from 'src/app/Shared/Entity/ELearning/userQuestionAnswer';
 import { ExamService } from 'src/app/Shared/Services/ELearning/exam.service';
+import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 
 @Component({
 	selector: 'app-exam-report-list',
@@ -53,6 +54,8 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
+	getDownloadDataApiUrl = (query) => this.examService.downloadAllExamReport(query);
+
 	loadUserQuestionAnswersPage() {
 		// this.searchConfiguration();
 		this.alertService.fnLoading(true);
@@ -64,14 +67,14 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 					this.examReports = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
-					this.examReports.forEach(obj => {
-						obj.statusText = obj.status == 0 ? 'Inactive' : 'Active';
-						obj.passedText = obj.passed ? 'YES' : 'NO';
-						obj.questionSetTitle = obj.questionSet != null ? obj.questionSet.title : '';
-						obj.questionSetLevel = obj.questionSet != null ? `${obj.questionSet.level}` : '';
-						obj.questionSetTotalMark = obj.questionSet != null ? `${obj.questionSet.totalMark}` : '';
-						obj.questionSetPassMark = obj.questionSet != null ? `${obj.questionSet.passMark}` : '';
-					});
+					// this.examReports.forEach(obj => {
+					// 	obj.statusText = obj.status == 0 ? 'Inactive' : 'Active';
+					// 	obj.passedText = obj.passed ? 'YES' : 'NO';
+					// 	obj.questionSetTitle = obj.questionSet != null ? obj.questionSet.title : '';
+					// 	obj.questionSetLevel = obj.questionSet != null ? `${obj.questionSet.level}` : '';
+					// 	obj.questionSetTotalMark = obj.questionSet != null ? `${obj.questionSet.totalMark}` : '';
+					// 	obj.questionSetPassMark = obj.questionSet != null ? `${obj.questionSet.passMark}` : '';
+					// });
 				},
 				(error) => {
 					console.log(error);
@@ -83,10 +86,11 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 		this.query = new UserQuestionAnswerQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'userFullName',
-			isSortAscending: true,
+			sortBy: 'examDate',
+			isSortAscending: false,
 			globalSearchValue: ''
 		});
+		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 	}
 
 	// toggleActiveInactive(id) {
@@ -103,13 +107,15 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			{ headerName: 'User Full Name', width: '15%', internalName: 'userFullName', sort: true, type: "" },
-			{ headerName: 'Question Set Title', width: '25%', internalName: 'questionSetTitle', sort: true, type: "" },
-			{ headerName: 'Question Set Level', width: '10%', internalName: 'questionSetLevel', sort: true, type: "" },
-			{ headerName: 'Total Mark', width: '10%', internalName: 'questionSetTotalMark', sort: true, type: "" },
-			{ headerName: 'Pass Mark', width: '10%', internalName: 'questionSetPassMark', sort: false, type: "" },
-			{ headerName: 'User Mark', width: '10%', internalName: 'totalMark', sort: true, type: "" },
-			{ headerName: 'Passed', width: '10%', internalName: 'passedText', sort: true, type: "" },
-			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'EmployeeId', width: '10%', internalName: 'employeeId', sort: false, type: "" },
+			{ headerName: 'Question Set Title', width: '20%', internalName: 'questionSetTitle', sort: true, type: "" },
+			{ headerName: 'Set Level', width: '10%', internalName: 'questionSetLevel', sort: true, type: "" },
+			{ headerName: 'Exam Date', width: '10%', internalName: 'examDate', sort: true, type: "" },
+			{ headerName: 'Total Mark', width: '10%', internalName: 'totalMark', sort: true, type: "" },
+			{ headerName: 'Pass Mark', width: '10%', internalName: 'passMark', sort: false, type: "" },
+			{ headerName: 'User Mark', width: '10%', internalName: 'userMark', sort: true, type: "" },
+			{ headerName: 'Pass Status', width: '10%', internalName: 'passStatus', sort: true, type: "" },
+			// { headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -121,6 +127,15 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 		enabledRecordCreateBtn: false,
 		enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
+		enabledExcelDownload: true,
+		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
+								new QueryObject({
+									page: 1,
+									pageSize: 2147483647, // Int32 max value
+									sortBy: 'examDate',
+									isSortAscending: false,
+									globalSearchValue: ''
+								}))}`,
 	};
 	
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
@@ -132,6 +147,7 @@ export class ExamReportListComponent implements OnInit, OnDestroy {
 			isSortAscending: queryObj.isOrderAsc,
 			globalSearchValue: queryObj.searchVal
 		});
+		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadUserQuestionAnswersPage();
 	}
 }
