@@ -133,7 +133,7 @@ namespace Berger.Odata.Services
             return returnResult;
         }
 
-        public async Task<IList<CustomerPerformanceReport>> GetCustomerWiseRevenue(Expression<Func<CustomerPerformanceReport, 
+        public async Task<IList<CustomerPerformanceReport>> GetCustomerWiseRevenue(Expression<Func<CustomerPerformanceReport,
             CustomerPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null)
         {
             brands ??= new List<string>();
@@ -155,10 +155,44 @@ namespace Berger.Odata.Services
             );
         }
 
+        public async Task<IList<ColorBankPerformanceReport>> GetCbProductReport(Expression<Func<ColorBankPerformanceReport,
+            ColorBankPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null,
+            List<string> depots = null,
+            List<string> territories = null,
+            List<string> salesGroup = null
+            )
+        {
+            brands ??= new List<string>();
+            depots ??= new List<string>();
+            territories ??= new List<string>();
+            salesGroup ??= new List<string>();
 
-        private async Task<IList<CustomerPerformanceReport>> GetCbProductCustomerWiseRevenue(string customerNo, string startDate, string endDate, string division = "-1")
+            division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
+            DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
+            DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
+            List<string> yearMonthString = new List<string>();
+            while (stDate < edDate)
+            {
+                yearMonthString.Add(stDate.Year + "-" + stDate.Month);
+                stDate = stDate.AddMonths(1);
+            }
+
+            return await _colorBankPerformanceSapRepository.GetAllIncludeAsync(selectProperty, x =>
+                    yearMonthString.Contains((x.Year.ToString() + "-" + x.Month.ToString())) &&
+                    (string.IsNullOrWhiteSpace(customerNo) || x.CustomerNo == customerNo) &&
+                    (division == "-1" || x.Division == division) &&
+                    (!depots.Any() || depots.Contains(x.Depot)) &&
+                    (!territories.Any() || territories.Contains(x.Territory)) &&
+                    (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup)) &&
+                    (!brands.Any() || brands.Contains(x.Brand)), null, null, true
+            );
+        }
+
+
+        public async Task<IList<CustomerPerformanceReport>> GetCbProductCustomerWiseRevenue(string customerNo, string startDate, string endDate, string division = "-1")
         {
             division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
+
 
             DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
             DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
@@ -393,7 +427,7 @@ namespace Berger.Odata.Services
 
 
 
-            var dataLyMtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            var dataLyMtd = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
             {
                 Brand = x.Brand,
                 Value = x.Value,
@@ -401,7 +435,7 @@ namespace Berger.Odata.Services
                 Division = x.Division
             }, model.CustomerNo, lyfd, lyld, model.Division, mtsBrandCodes);
 
-            var dataCyMtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            var dataCyMtd = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
             {
                 Brand = x.Brand,
                 Value = x.Value,
@@ -409,7 +443,7 @@ namespace Berger.Odata.Services
                 Division = x.Division
             }, model.CustomerNo, cyfd, cyld, model.Division, mtsBrandCodes);
 
-            var dataLyYtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            var dataLyYtd = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
             {
                 Brand = x.Brand,
                 Value = x.Value,
@@ -417,7 +451,7 @@ namespace Berger.Odata.Services
                 Division = x.Division
             }, model.CustomerNo, lfyfd, lyld, model.Division, mtsBrandCodes);
 
-            var dataCyYtd = await  GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            var dataCyYtd = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
             {
                 Brand = x.Brand,
                 Value = x.Value,

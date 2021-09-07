@@ -3,41 +3,21 @@ using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity;
-using Berger.Data.MsfaEntity.CollectionEntry;
-using Berger.Data.MsfaEntity.DealerFocus;
-using Berger.Data.MsfaEntity.DemandGeneration;
-using Berger.Data.MsfaEntity.Hirearchy;
-using Berger.Data.MsfaEntity.Master;
-using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
-using Berger.Data.MsfaEntity.Setup;
-using Berger.Data.MsfaEntity.Tinting;
-using Berger.Data.MsfaEntity.Users;
-using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
-using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Repositories;
-using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
-using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
-using BergerMsfaApi.Services.Setup.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Data.MsfaEntity.Target;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
-using Berger.Odata.Model;
 using Berger.Odata.Services;
-using BergerMsfaApi.Services.Implementation;
 using BergerMsfaApi.Services.Interfaces;
 using DSC = Berger.Data.MsfaEntity.DealerSalesCall;
 
@@ -57,6 +37,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
         private readonly IODataService _oDataService;
         private readonly IRepository<BrandInfo> _brandRepository;
         private readonly IRepository<DealerInfo> _dealerInfoRepository;
+        private readonly IKpiDataService _kpiDataService;
 
         public Dictionary<int, (int Start, int End)> WeeklyCalculationDict = new Dictionary<int, (int Start, int End)>()
         {
@@ -77,7 +58,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 IRepository<ColorBankInstallationTarget> colorBankInstallRepository,
                 IODataService oDataService,
                 IRepository<BrandInfo> brandRepository,
-                IRepository<DealerInfo> dealerInfoRepository)
+                IRepository<DealerInfo> dealerInfoRepository, IKpiDataService kpiDataService)
         {
             this._context = context;
             this._salesDataService = salesDataService;
@@ -91,6 +72,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             _oDataService = oDataService;
             _brandRepository = brandRepository;
             _dealerInfoRepository = dealerInfoRepository;
+            _kpiDataService = kpiDataService;
         }
 
         private int SkipCount(QueryObjectModel query) => (query.Page - 1) * query.PageSize;
@@ -134,7 +116,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
             var premiumBrands = _context.BrandInfos.Where(x => x.IsPremium).Select(x => x.MaterialGroupOrBrand).Distinct().ToList();
-            var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
+
+
+            var depotList = string.IsNullOrWhiteSpace(query.Depot) ? new List<string>() : new List<string> { query.Depot };
+
+
+            var billingOData = await _kpiDataService.GetKpiPerformanceReport(x => new KPIPerformanceReport()
+            {
+                Date = x.Date,
+                CustomerClassification = x.CustomerClassification
+            }, fromDate.DateFormat(),
+                toDate.DateFormat(),
+                depotList, query.SalesGroups, query.Territories, brands: premiumBrands);
+
+
+
+            // var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
 
             var monthlyBillingCount = 0;
             var monthlyActualVisitCount = 0;
@@ -153,7 +150,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 var actualVisitCount = actualVisit.Count();
                 monthlyActualVisitCount += actualVisit.Count();
 
-                var billing = billingOData.Where(x => x.DateTime.Date == date.Date
+                var billing = billingOData.Where(x => x.Date.Date == date.Date
                                                     && ((query.ReportType == EnumStrikeRateReportType.All) ||
                                                         (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                             x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
@@ -429,7 +426,19 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var fromDate = new DateTime(query.Year, query.Month, 01);
             var toDate = new DateTime(query.Year, query.Month, DateTime.DaysInMonth(query.Year, query.Month));
 
-            var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories);
+
+            var depotList = string.IsNullOrWhiteSpace(query.Depot) ? new List<string>() : new List<string> { query.Depot };
+
+
+            var billingOData = await _kpiDataService.GetKpiPerformanceReport(x => new KPIPerformanceReport()
+            {
+                CustomerNo = x.CustomerNo,
+            }, fromDate.DateFormat(),
+                toDate.DateFormat(),
+                depotList, query.SalesGroups, query.Territories);
+
+
+            // var billingOData = await _salesDataService.GetKPIBusinessAnalysisKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories);
             //var billingOData = new List<KPIBusinessAnalysisKPIReportResultModel>();
             var tempDealer = new List<string>();
             var tempNoOfDealer = 0;
@@ -598,17 +607,38 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 query.Depot
             };
 
-            var dbCbBrandList = await _brandRepository.FindByCondition(x => x.IsCBInstalled).Select(x => x.MaterialCode).ToListAsync();
-
-            var currentYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: currentYearStartDate.SalesSearchDateFormat(), endDate: currentYearEndDate.SalesSearchDateFormat(),
-                salesGroups: query.SalesGroups, territories: query.Territories);
+            //var dbCbBrandList = await _brandRepository.FindByCondition(x => x.IsCBInstalled).Select(x => x.MaterialCode).ToListAsync();
 
 
-            var lastYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: lastYearStartDate.SalesSearchDateFormat(), endDate: lastYearEndDate.SalesSearchDateFormat(),
-                salesGroups: query.SalesGroups, territories: query.Territories);
+            var currentYearSales = await _salesDataService.GetCbProductReport(x => new ColorBankPerformanceReport
+            {
+                Territory = x.Territory,
+                Volume = x.Volume,
+                CustomerNo = x.CustomerNo
+            }, null,
+                startDate: currentYearStartDate.DateFormat(), endDate: currentYearEndDate.DateFormat(),
+                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories);
 
-            currentYearSales = currentYearSales.Where(x => dbCbBrandList.Contains(x.MatrialCode)).ToList();
-            lastYearSales = lastYearSales.Where(x => dbCbBrandList.Contains(x.MatrialCode)).ToList();
+            var lastYearSales = await _salesDataService.GetCbProductReport(x => new ColorBankPerformanceReport
+            {
+                Territory = x.Territory,
+                Volume = x.Volume,
+                CustomerNo = x.CustomerNo
+            }, null,
+                startDate: lastYearStartDate.DateFormat(), endDate: lastYearEndDate.DateFormat(),
+                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories);
+
+
+
+            //var currentYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: currentYearStartDate.SalesSearchDateFormat(), endDate: currentYearEndDate.SalesSearchDateFormat(),
+            //    salesGroups: query.SalesGroups, territories: query.Territories);
+
+
+            //var lastYearSales = await _oDataService.GetSalesData(selectCustomerQueryBuilder, depots: depotList, startDate: lastYearStartDate.SalesSearchDateFormat(), endDate: lastYearEndDate.SalesSearchDateFormat(),
+            //    salesGroups: query.SalesGroups, territories: query.Territories);
+
+            //  currentYearSales = currentYearSales.Where(x => dbCbBrandList.Contains(x.Brand)).ToList();
+            // lastYearSales = lastYearSales.Where(x => dbCbBrandList.Contains(x.Brand)).ToList();
 
             var currentYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, currentYearStartDate.DateTimeFormat(), currentYearEndDate.DateTimeFormat());
             var lastYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, lastYearStartDate.DateTimeFormat(), lastYearEndDate.DateTimeFormat());
@@ -710,14 +740,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 var currentDate = DateTime.Now;
 
-                var dealerIds = await  _context.DealerInfos.
-                                       Where(p=>
+                var dealerIds = await _context.DealerInfos.
+                                       Where(p =>
                                            p.BusinessArea == query.Depot
                                            && item == p.Territory &&
                                            p.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                                             p.Division == ConstantsODataValue.DivisionDecorative
                                            && query.SalesGroups.Count == 0 ? true : query.SalesGroups.Contains(p.SalesGroup)
-                                       ).Select( p=>p.CustomerNo).Distinct().ToListAsync();
+                                       ).Select(p => p.CustomerNo).Distinct().ToListAsync();
 
                 var fromDate = new DateTime(currentDate.Year, currentDate.Month, 01);
                 var toDate = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
@@ -742,10 +772,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
             }
 
 
-            var totalset= new CollectionPlanKPIReportResultModel
+            var totalset = new CollectionPlanKPIReportResultModel
             {
                 Territory = "Total",
-                ImmediateLMSlippageAmount = reportResult.Sum(x=>x.ImmediateLMSlippageAmount),
+                ImmediateLMSlippageAmount = reportResult.Sum(x => x.ImmediateLMSlippageAmount),
                 MTDCollectionPlan = reportResult.Sum(x => x.MTDCollectionPlan),
                 MTDActualCollection = reportResult.Sum(x => x.MTDActualCollection),
                 TargetAch = GetAchivement(reportResult.Sum(x => x.MTDCollectionPlan), reportResult.Sum(x => x.MTDActualCollection))

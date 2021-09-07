@@ -36,5 +36,13 @@ namespace Berger.Odata.Services
         Task<IList<ReportClubSupremePerformance>> GetReportClubSupremePerformance(ClubSupremePerformanceSearchModel model, List<CustNClubMappingVm> clubSupremeDealers, ClubSupremeReportType reportType);
 
         Task<IList<CustomerPerformanceReport>> GetCustomerWiseRevenue(Expression<Func<CustomerPerformanceReport, CustomerPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null);
+        Task<IList<CustomerPerformanceReport>> GetCbProductCustomerWiseRevenue(string customerNo, string startDate, string endDate, string division = "-1");
+
+        Task<IList<ColorBankPerformanceReport>> GetCbProductReport(Expression<Func<ColorBankPerformanceReport,
+                ColorBankPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null,
+            List<string> depots = null,
+            List<string> territories = null,
+            List<string> salesGroup = null
+        );
     }
 }
