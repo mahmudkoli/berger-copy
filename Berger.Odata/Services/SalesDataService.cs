@@ -26,16 +26,17 @@ namespace Berger.Odata.Services
         private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
         private readonly IODataSAPRepository<CustomerPerformanceReport> _customerPerformanceReportRepository;
         private readonly IODataSAPRepository<ColorBankPerformanceReport> _colorBankPerformanceSapRepository;
+        private readonly IODataSAPRepository<CategoryWisePerformanceReport> _categoryWisePerformanceReportSapRepository;
         private readonly IODataSAPRepository<SAPSalesInfo> _sapSalesInfoRepository;
-
+        private readonly IODataApplicationRepository<DealerInfo> _dealarInfoRepository;
         public SalesDataService(
             IODataService odataService,
             IODataBrandService odataBrandService,
             IODataCommonService odataCommonService,
-            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo, 
-            IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository, 
-            IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository, 
-            IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository)
+            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo,
+            IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository,
+            IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository,
+            IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository, IODataSAPRepository<CategoryWisePerformanceReport> categoryWisePerformanceReportSapRepository, IODataApplicationRepository<DealerInfo> dealarInfoRepository)
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
@@ -43,6 +44,8 @@ namespace Berger.Odata.Services
             _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
             _customerPerformanceReportRepository = customerPerformanceReportRepository;
             _colorBankPerformanceSapRepository = colorBankPerformanceSapRepository;
+            _categoryWisePerformanceReportSapRepository = categoryWisePerformanceReportSapRepository;
+            _dealarInfoRepository = dealarInfoRepository;
             _sapSalesInfoRepository = sapSalesInfoRepository;
         }
 
@@ -1042,18 +1045,44 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer)
+
+        public async Task<IList<CategoryWisePerformanceReport>> GetCategoryWisePerformanceReports(Expression<Func<CategoryWisePerformanceReport,
+            CategoryWisePerformanceReport>> selectProperty, string startDate, string endDate, IList<string> depots = null, IList<string> territories = null, IList<string> zones = null, IList<string> customerNos = null)
+        {
+            depots ??= new List<string>();
+            territories ??= new List<string>();
+            zones ??= new List<string>();
+            customerNos ??= new List<string>();
+
+            DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
+            DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
+            List<string> yearMonthString = new List<string>();
+            while (stDate < edDate)
+            {
+                yearMonthString.Add(stDate.Year + "-" + stDate.Month);
+                stDate = stDate.AddMonths(1);
+            }
+
+            return await _categoryWisePerformanceReportSapRepository.GetAllIncludeAsync(selectProperty, x =>
+                yearMonthString.Contains((x.Year.ToString() + "-" + x.Month.ToString())) &&
+                (!depots.Any() || depots.Contains(x.Depot)) &&
+                (!customerNos.Any() || customerNos.Contains(x.CustomerNo)) &&
+                (!territories.Any() || territories.Contains(x.Territory)) &&
+                (!zones.Any() || zones.Contains(x.Zone)), null, null, true);
+        }
+        public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> GetReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model,
+            List<string> lastYearAppointedDealer)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
-            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
-            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+            var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
+            var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
-            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
+            var lfyfd = currentDate.GetLFYFD().DateFormat();//.SalesSearchDateFormat();
+            var cfyfd = currentDate.GetCFYFD().DateFormat();//.SalesSearchDateFormat();
 
 
 
@@ -1069,11 +1098,38 @@ namespace Berger.Odata.Services
                 .AddProperty(DataColumnDef.CustomerNo);
 
 
-            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //  var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //  var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+            var dataCyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Value = x.Value,
+                Depot = x.Depot,
+                CustomerNo = x.CustomerNo
+            }, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+            var dataLyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Value = x.Value,
+                Depot = x.Depot,
+                CustomerNo = x.CustomerNo
+            }, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+
+            var dataLyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Value = x.Value,
+                Depot = x.Depot,
+                CustomerNo = x.CustomerNo
+            }, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+            var dataCyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Value = x.Value,
+                Depot = x.Depot,
+                CustomerNo = x.CustomerNo
+            }, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+
+            //var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
 
             //var dataCyMtdTask = (_odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones));
@@ -1091,38 +1147,55 @@ namespace Berger.Odata.Services
             //var dataLyYtd = await dataLyYtdTask;
             //var dataCyYtd = await dataCyYtdTask;
 
-            Func<SalesDataModel, SalesDataModel> concatSelectFunc = x => new SalesDataModel
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> concatSelectFunc = x => new CategoryWisePerformanceReport
             {
-                NetAmount = x.NetAmount,
-                PlantOrBusinessArea = x.PlantOrBusinessArea,
+                Value = x.Value,
+                Depot = x.Depot,
                 CustomerNo = x.CustomerNo
             };
 
-            Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> selectFunc = x => new CategoryWisePerformanceReport
             {
-                NetAmount = x.NetAmount,
-                PlantOrBusinessArea = x.PlantOrBusinessArea
+                Value = x.Value,
+                Depot = x.Depot
             };
 
-            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
-            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea;
+            Func<CategoryWisePerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.Value);
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport, bool> predicateFunc = (x, val) => x.Depot == val.Depot;
 
             var concatAllList = dataLyMtd.Select(concatSelectFunc)
                 .Concat(dataCyMtd.Select(concatSelectFunc))
                 .Concat(dataLyYtd.Select(concatSelectFunc))
                 .Concat(dataCyYtd.Select(concatSelectFunc))
-                .GroupBy(p => new { p.PlantOrBusinessArea, p.CustomerNo })
+                .GroupBy(p => new { p.Depot, p.CustomerNo })
                 .Select(g => g.First());
 
 
             concatAllList = concatAllList.Where(x => lastYearAppointedDealer.Contains(x.CustomerNo)).ToList();
 
-            concatAllList = concatAllList.Select(selectFunc).GroupBy(p => p.PlantOrBusinessArea).Select(g => g.First()).ToList();
+            concatAllList = concatAllList.Select(selectFunc).GroupBy(p => p.Depot).Select(g => g.First()).ToList();
 
             var result = new List<RptLastYearAppointDlerPerformanceSummaryResultModel>();
 
-            var dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
-                zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
+            model.Zones = model.Zones ??= new List<string>();
+            model.Depots = model.Depots ??= new List<string>();
+            model.Territories = model.Territories ??= new List<string>();
+
+            var dealer = await _dealarInfoRepository.FindByCondition(x =>
+
+                (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                x.Channel == ConstantsValue.DistrbutionChannelDealer
+            ).Select(x => new
+            {
+                x.BusinessArea,
+                x.CustomerNo
+            }).Distinct().ToListAsync();
+
+
+            //var dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
+            //    zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
 
 
             foreach (var item in concatAllList)
@@ -1153,29 +1226,31 @@ namespace Berger.Odata.Services
                     res.CYYTD = amtCyYtd;
                 }
 
-                res.DepotCode = item.PlantOrBusinessArea;
+                res.DepotCode = item.Depot;
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
                 //res.NumberOfDealer = dealer.Count(x => x.BusinessArea == item.PlantOrBusinessArea);
-                res.NumberOfDealer = dealer.Where(x => x.BusinessArea == item.PlantOrBusinessArea).Select(x => x.CustomerNo).Distinct().Count();
+                res.NumberOfDealer = dealer.Where(x => x.BusinessArea == item.Depot).Select(x => x.CustomerNo).Distinct().Count();
                 result.Add(res);
             }
 
             return result;
         }
-        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model, List<string> lastYearAppointedDealer)
+
+        public async Task<IList<RptLastYearAppointDlrPerformanceDetailResultModel>> GetReportLastYearAppointedDealerPerformanceDetail(LastYearAppointedDealerPerformanceSearchModel model,
+            List<string> lastYearAppointedDealer)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
-            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
-            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+            var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
+            var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
+            var lfyfd = currentDate.GetLFYFD().DateFormat();//.SalesSearchDateFormat();
 
-            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
+            var cfyfd = currentDate.GetCFYFD().DateFormat();//.SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder
@@ -1187,17 +1262,61 @@ namespace Berger.Odata.Services
                 .AddProperty(DataColumnDef.CustomerName);
 
 
-            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-
-
-            Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
+            var dataCyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
             {
-                NetAmount = x.NetAmount,
-                PlantOrBusinessArea = x.PlantOrBusinessArea,
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+            var dataLyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+
+            var dataLyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+            var dataCyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones, lastYearAppointedDealer)).ToList();
+
+
+
+
+
+
+            //var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+            //var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> selectFunc = x => new CategoryWisePerformanceReport
+            {
+                Value = x.Value,
+                Depot = x.Depot,
                 Territory = x.Territory,
                 Zone = x.Zone,
                 CustomerName = x.CustomerName,
@@ -1206,22 +1325,22 @@ namespace Berger.Odata.Services
 
             var concatAllList = dataLyMtd.Select(selectFunc)
                 .Concat(dataCyMtd.Select(selectFunc))
-                .GroupBy(p => new { p.PlantOrBusinessArea, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
+                .GroupBy(p => new { p.Depot, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
                 .Select(g => g.First());
 
             concatAllList = concatAllList.Where(x => lastYearAppointedDealer.Contains(x.CustomerNo)).ToList();
 
             var result = new List<RptLastYearAppointDlrPerformanceDetailResultModel>();
-            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea && x.Territory == val.Territory
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport, bool> predicateFunc = (x, val) => x.Depot == val.Depot && x.Territory == val.Territory
                 && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
-            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+            Func<CategoryWisePerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.Value);
 
             foreach (var item in concatAllList)
             {
 
                 var res = new RptLastYearAppointDlrPerformanceDetailResultModel
                 {
-                    DepotCode = item.PlantOrBusinessArea,
+                    DepotCode = item.Depot,
                     Territory = item.Territory,
                     Zone = item.Zone,
                     CustomerNo = item.CustomerNo,
@@ -1262,21 +1381,24 @@ namespace Berger.Odata.Services
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
-            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
-            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+            var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
+            var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
 
-            var lfyfd = currentDate.GetLFYFD().SalesSearchDateFormat();
-            var cfyfd = currentDate.GetCFYFD().SalesSearchDateFormat();
+            var lfyfd = currentDate.GetLFYFD().DateFormat();//.SalesSearchDateFormat();
+            var cfyfd = currentDate.GetCFYFD().DateFormat();//.SalesSearchDateFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
-            Func<SalesDataModel, SalesDataModel> selectFunc;
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> selectFunc;
 
             var dealerSelect = new SelectQueryOptionBuilder()
                 .AddProperty(nameof(CustomerDataModel.CustomerNo));
+
+
+
 
             IList<CustomerDataModel> dealer = new List<CustomerDataModel>();
 
@@ -1286,15 +1408,27 @@ namespace Berger.Odata.Services
                     .AddProperty(DataColumnDef.CustomerNo)
                     .AddProperty(DataColumnDef.NetAmount);
 
-                selectFunc = x => new SalesDataModel
+                selectFunc = x => new CategoryWisePerformanceReport
                 {
-                    NetAmount = x.NetAmount,
+                    Value = x.Value,
                     CustomerName = x.CustomerName,
                     CustomerNo = x.CustomerNo
                 };
 
-                dealer = await _odataService.GetCustomerData(dealerSelect, depots: model.Depots, territories: model.Territories,
-                   zones: model.Zones, channel: ConstantsValue.DistrbutionChannelDealer);
+                model.Zones = model.Zones ??= new List<string>();
+                model.Depots = model.Depots ??= new List<string>();
+                model.Territories = model.Territories ??= new List<string>();
+
+                dealer = await _dealarInfoRepository.FindByCondition(x =>
+                    (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                   (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                   (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                   x.Channel == ConstantsValue.DistrbutionChannelDealer
+               ).Select(x => new CustomerDataModel()
+               {
+                   BusinessArea = x.BusinessArea,
+                   CustomerNo = x.CustomerNo
+               }).Distinct().ToListAsync();
 
             }
             else
@@ -1307,10 +1441,10 @@ namespace Berger.Odata.Services
                     .AddProperty(DataColumnDef.NetAmount)
                     .AddProperty(DataColumnDef.CustomerName);
 
-                selectFunc = x => new SalesDataModel
+                selectFunc = x => new CategoryWisePerformanceReport
                 {
-                    NetAmount = x.NetAmount,
-                    PlantOrBusinessArea = x.PlantOrBusinessArea,
+                    Value = x.Value,
+                    Depot = x.Depot,
                     Territory = x.Territory,
                     Zone = x.Zone,
                     CustomerName = x.CustomerName,
@@ -1319,31 +1453,76 @@ namespace Berger.Odata.Services
 
             }
 
-            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+            var dataCyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            
+            var dataLyMtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            
+            var dataLyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            
+            var dataCyYtd = (await GetCategoryWisePerformanceReports(x => new CategoryWisePerformanceReport()
+            {
+                Depot = x.Depot,
+                Territory = x.Territory,
+                Zone = x.Zone,
+                Value = x.Value,
+                CustomerNo = x.CustomerNo,
+                CustomerName = x.CustomerName
+            }, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+
+
+
+
+
+            //var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
+            //var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
 
             var concatAllList = dataLyMtd.Select(selectFunc)
                 .Concat(dataCyMtd.Select(selectFunc))
-                .GroupBy(p => new { p.PlantOrBusinessArea, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
+                .GroupBy(p => new { p.Depot, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
                 .Select(g => g.First());
 
             concatAllList = concatAllList.Where(x => clubSupremeDealers.Select(y => y.CustomerNo).Contains(x.CustomerNo)).ToList();
 
             var result = new List<ReportClubSupremePerformance>();
 
-            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.PlantOrBusinessArea == val.PlantOrBusinessArea && x.Territory == val.Territory
+            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport, bool> predicateFunc = (x, val) => x.Depot == val.Depot && x.Territory == val.Territory
                 && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
-            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+            Func<CategoryWisePerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.Value);
 
             foreach (var item in concatAllList)
             {
                 var res = reportType == ClubSupremeReportType.Detail
                     ? (ReportClubSupremePerformance)new ReportClubSupremePerformanceDetail
                     {
-                        DepotCode = item.PlantOrBusinessArea,
+                        DepotCode = item.Depot,
                         Territory = item.Territory,
                         Zone = item.Zone,
                         CustomerNo = item.CustomerNo,
@@ -1518,7 +1697,7 @@ namespace Berger.Odata.Services
             //                                        territories: area.Territories, zones: area.Zones,
             //                                        division: model.Division);
 
-            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x => 
+            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x =>
                                 new { x.InvoiceNoOrBillNo, x.CustomerNo, x.CustomerName, x.NetAmount },
                                 x => x.Date.Date == currentDate.Date
                                     && (!area.Depots.Any() || area.Depots.Contains(x.PlantOrBusinessArea))
