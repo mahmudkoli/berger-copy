@@ -83,5 +83,6 @@ namespace Berger.Data.MsfaEntity
         public DbSet<CustomerPerformanceReport> CustomerPerformanceReports { get; set; }
         public DbSet<ColorBankPerformanceReport> ColorBankPerformanceReports { get; set; }
         public DbSet<KPIPerformanceReport> KpiPerformanceReports { get; set; }
+        public DbSet<CategoryWisePerformanceReport> CategoryWisePerformanceReports { get; set; }
     }
 }

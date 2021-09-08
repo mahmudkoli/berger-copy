@@ -2081,8 +2081,8 @@ namespace Berger.Odata.Services
         public decimal GetGrowth(decimal lyValue, decimal cyValue)
         {
             if (lyValue == 0 && cyValue == 0) return decimal.Parse("0.000");
-            else if (lyValue == 0 && cyValue > 0) return decimal.Parse("0.000");
-            else if (lyValue > 0 && cyValue == 0) return decimal.Parse("-100.000");
+            else if (lyValue == 0 && cyValue != 0) return decimal.Parse("0.000");
+            else if (lyValue != 0 && cyValue == 0) return decimal.Parse("-100.000");
             else return ((cyValue - lyValue) * 100) / lyValue;
         }
 

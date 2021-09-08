@@ -779,10 +779,10 @@ namespace Berger.Odata.Services
         public async Task<IList<CategoryWiseDealerPerformanceResultModel>> GetCategoryWiseDealerPerformance(CategoryWiseDealerPerformanceSearchModel model)
         {
             //var filterDate = DateTime.Now.AddMonths(-1);
-            var filterDate = new DateTime(model.Year, model.Month, 01);
-            var customerCount = 10;
-            var notPurchasedFromDate = filterDate.AddMonths(-2).GetCYFD();
-            var notPurchasedToDate = filterDate.GetCYLD();
+            //var filterDate = new DateTime(model.Year, model.Month, 01);
+            //var customerCount = 10;
+            //var notPurchasedFromDate = filterDate.AddMonths(-2).GetCYFD();
+            //var notPurchasedToDate = filterDate.GetCYLD();
 
             var customerClassification = model.Category switch
             {
@@ -792,104 +792,136 @@ namespace Berger.Odata.Services
                 _ => string.Empty
             };
 
-            var cyfd = filterDate.GetCYFD().SalesSearchDateFormat();
-            var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
-            var cyld = filterDate.GetCYLD().SalesSearchDateFormat();
+            //var cyfd = filterDate.GetCYFD().SalesSearchDateFormat();
+            //var cfyfd = filterDate.GetCFYFD().SalesSearchDateFormat();
+            //var cyld = filterDate.GetCYLD().SalesSearchDateFormat();
 
-            var lyfd = filterDate.GetLYFD().SalesSearchDateFormat();
-            var lfyfd = filterDate.GetLFYFD().SalesSearchDateFormat();
-            var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
+            //var lyfd = filterDate.GetLYFD().SalesSearchDateFormat();
+            //var lfyfd = filterDate.GetLFYFD().SalesSearchDateFormat();
+            //var lyld = filterDate.GetLYLD().SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                    .AddProperty(DataColumnDef.CustomerName)
+            //                    .AddProperty(DataColumnDef.Date)
+            //                    .AddProperty(DataColumnDef.NetAmount);
 
-            var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld,
-                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                    classification: customerClassification)).ToList();
+            //var dataLyMtd = (await _odataService.GetSalesData(selectQueryBuilder, lyfd, lyld,
+            //                        depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                        classification: customerClassification)).ToList();
 
-            var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld,
-                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                    classification: customerClassification)).ToList();
+            //var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld,
+            //                        depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                        classification: customerClassification)).ToList();
 
-            var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld,
-                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                    classification: customerClassification)).ToList();
+            //var dataLyYtd = (await _odataService.GetSalesData(selectQueryBuilder, lfyfd, lyld,
+            //                        depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                        classification: customerClassification)).ToList();
 
-            var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld,
-                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                    classification: customerClassification)).ToList();
+            //var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld,
+            //                        depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                        classification: customerClassification)).ToList();
+
+
+            var dataActual = _summaryPerformanceReportRepo.GetDataBySP<spCategoryWisePerformanceReport>("spGetCategoryWiseDealerPerformanceReports", new List<(string, object)>
+            {
+                ("Depots", string.Join(",",model.Depots)),
+                ("Territories", string.Join(",",model.Territories)),
+                ("Zones", string.Join(",",model.Zones)),
+                ("Year", model.Year),
+                ("Month", model.Month),
+                ("CustomerClassification", customerClassification),
+                ("PerformanceCategory", model.PerformanceCategory),
+            });
 
             var result = new List<CategoryWiseDealerPerformanceResultModel>();
 
-            if (model.PerformanceCategory == EnumDealerPerformanceCategory.TopPerformer || model.PerformanceCategory == EnumDealerPerformanceCategory.BottomPerformer)
+            #region from sap
+            //if (model.PerformanceCategory == EnumDealerPerformanceCategory.TopPerformer || model.PerformanceCategory == EnumDealerPerformanceCategory.BottomPerformer)
+            //{
+            //var dataLyGroup = dataLyYtd.GroupBy(x => x.CustomerNoOrSoldToParty).Select(x =>
+            //                            new CategoryWiseDealerPerformanceResultModel()
+            //                            {
+            //                                CustomerNo = x.Key,
+            //                                CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
+            //                                LYYTD = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+            //                            });
+
+            //var performerData = model.PerformanceCategory == EnumDealerPerformanceCategory.TopPerformer
+            //                        ? dataLyGroup.OrderByDescending(o => o.LYYTD).Take(customerCount)
+            //                        : dataLyGroup.OrderBy(o => o.LYYTD).Take(customerCount);
+
+            //    var ranking = 1;
+
+            //    foreach (var item in performerData)
+            //    {
+            //        var res = new CategoryWiseDealerPerformanceResultModel();
+            //        res.Ranking = ranking++;
+            //        res.CustomerNo = item.CustomerNo;
+            //        res.CustomerName = item.CustomerName;
+            //        res.CYMTD = dataCyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.LYMTD = dataLyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.CYYTD = dataCyYtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.LYYTD = item.LYYTD;
+            //        res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+            //        res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+
+            //        result.Add(res);
+            //    }
+            //}
+            //else if (model.PerformanceCategory == EnumDealerPerformanceCategory.NotPurchasedLastMonth)
+            //{
+            //    // without sales last month
+            //    var notPurchasedCyData = dataCyYtd.Where(x => !(x.Date.SalesResultDateFormat().Date >= notPurchasedFromDate.Date
+            //                                                    && x.Date.SalesResultDateFormat().Date <= notPurchasedToDate.Date));
+
+            //    // not sales only last month
+            //    var notPurchasedCyGroupData = dataCyYtd.Where(x => !notPurchasedCyData.Any(y => y.CustomerNoOrSoldToParty == x.CustomerNoOrSoldToParty))
+            //                                    .GroupBy(x => x.CustomerNoOrSoldToParty).Select(x =>
+            //                                    new CategoryWiseDealerPerformanceResultModel()
+            //                                    {
+            //                                        CustomerNo = x.Key,
+            //                                        CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
+            //                                        CYYTD = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
+            //                                    })
+            //                                    .OrderByDescending(x => x.CYYTD);
+
+            //    var ranking = 1;
+
+            //    foreach (var item in notPurchasedCyGroupData)
+            //    {
+            //        var res = new CategoryWiseDealerPerformanceResultModel();
+            //        res.Ranking = ranking++;
+            //        res.CustomerNo = item.CustomerNo;
+            //        res.CustomerName = item.CustomerName;
+            //        res.LYMTD = dataLyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.CYMTD = dataCyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.LYYTD = dataLyYtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
+            //        res.CYYTD = item.CYYTD;
+            //        res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+            //        res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+
+            //        result.Add(res);
+            //    }
+            //}
+            #endregion
+
+            var ranking = 1;
+
+            foreach (var item in dataActual)
             {
-                var dataLyGroup = dataLyYtd.GroupBy(x => x.CustomerNoOrSoldToParty).Select(x =>
-                                            new CategoryWiseDealerPerformanceResultModel()
-                                            {
-                                                CustomerNo = x.Key,
-                                                CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
-                                                LYYTD = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                                            });
+                var res = new CategoryWiseDealerPerformanceResultModel();
+                res.Ranking = ranking++;
+                res.CustomerNo = item.CustomerNo;
+                res.CustomerName = item.CustomerName;
+                res.LYMTD = dataActual.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => x.LYMTD);
+                res.CYMTD = dataActual.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => x.CYMTD);
+                res.LYYTD = dataActual.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => x.LYYTD);
+                res.CYYTD = dataActual.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => x.CYYTD);
+                res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+                res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
 
-                var performerData = model.PerformanceCategory == EnumDealerPerformanceCategory.TopPerformer
-                                        ? dataLyGroup.OrderByDescending(o => o.LYYTD).Take(customerCount)
-                                        : dataLyGroup.OrderBy(o => o.LYYTD).Take(customerCount);
-
-                var ranking = 1;
-
-                foreach (var item in performerData)
-                {
-                    var res = new CategoryWiseDealerPerformanceResultModel();
-                    res.Ranking = ranking++;
-                    res.CustomerNo = item.CustomerNo;
-                    res.CustomerName = item.CustomerName;
-                    res.CYMTD = dataCyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.LYMTD = dataLyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.CYYTD = dataCyYtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.LYYTD = item.LYYTD;
-                    res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
-                    res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
-
-                    result.Add(res);
-                }
-            }
-            else if (model.PerformanceCategory == EnumDealerPerformanceCategory.NotPurchasedLastMonth)
-            {
-                // without sales last month
-                var notPurchasedCyData = dataCyYtd.Where(x => !(x.Date.SalesResultDateFormat().Date >= notPurchasedFromDate.Date
-                                                                && x.Date.SalesResultDateFormat().Date <= notPurchasedToDate.Date));
-
-                // not sales only last month
-                var notPurchasedCyGroupData = dataCyYtd.Where(x => !notPurchasedCyData.Any(y => y.CustomerNoOrSoldToParty == x.CustomerNoOrSoldToParty))
-                                                .GroupBy(x => x.CustomerNoOrSoldToParty).Select(x =>
-                                                new CategoryWiseDealerPerformanceResultModel()
-                                                {
-                                                    CustomerNo = x.Key,
-                                                    CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
-                                                    CYYTD = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount))
-                                                })
-                                                .OrderByDescending(x => x.CYYTD);
-
-                var ranking = 1;
-
-                foreach (var item in notPurchasedCyGroupData)
-                {
-                    var res = new CategoryWiseDealerPerformanceResultModel();
-                    res.Ranking = ranking++;
-                    res.CustomerNo = item.CustomerNo;
-                    res.CustomerName = item.CustomerName;
-                    res.LYMTD = dataLyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.CYMTD = dataCyMtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.LYYTD = dataLyYtd.Where(f => f.CustomerNo == item.CustomerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                    res.CYYTD = item.CYYTD;
-                    res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
-                    res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
-
-                    result.Add(res);
-                }
+                result.Add(res);
             }
 
             return result;
