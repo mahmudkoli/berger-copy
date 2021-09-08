@@ -26,6 +26,7 @@ namespace Berger.Odata.Services
         private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
         private readonly IODataSAPRepository<CustomerPerformanceReport> _customerPerformanceReportRepository;
         private readonly IODataSAPRepository<ColorBankPerformanceReport> _colorBankPerformanceSapRepository;
+        private readonly IODataSAPRepository<CustomerInvoiceReport> _customerInvoiceReportRepository;
         private readonly IODataSAPRepository<SAPSalesInfo> _sapSalesInfoRepository;
 
         public SalesDataService(
@@ -34,8 +35,9 @@ namespace Berger.Odata.Services
             IODataCommonService odataCommonService,
             IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo, 
             IODataSAPRepository<CustomerPerformanceReport> customerPerformanceReportRepository, 
-            IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository, 
-            IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository)
+            IODataSAPRepository<CustomerInvoiceReport> customerInvoiceReportRepository, 
+            IODataSAPRepository<ColorBankPerformanceReport> colorBankPerformanceSapRepository, 
+            IODataSAPRepository<SAPSalesInfo> sapSalesInfoRepository)
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
@@ -43,6 +45,7 @@ namespace Berger.Odata.Services
             _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
             _customerPerformanceReportRepository = customerPerformanceReportRepository;
             _colorBankPerformanceSapRepository = colorBankPerformanceSapRepository;
+            _customerInvoiceReportRepository = customerInvoiceReportRepository;
             _sapSalesInfoRepository = sapSalesInfoRepository;
         }
 
@@ -53,25 +56,33 @@ namespace Berger.Odata.Services
             //var fromDate = currentDate.AddMonths(-1).GetCYFD().DateFormat();
             //var toDate = currentDate.GetCYLD().DateFormat();
 
-            var fromDate = model.FromDate.SalesSearchDateFormat();
-            var toDate = model.ToDate.SalesSearchDateFormat();
+            //var fromDate = model.FromDate.SalesSearchDateFormat();
+            //var toDate = model.ToDate.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.Time);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                    .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+            //                    .AddProperty(DataColumnDef.Date)
+            //                    .AddProperty(DataColumnDef.NetAmount)
+            //                    .AddProperty(DataColumnDef.Time);
 
-            var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
+            //var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, model.CustomerNo, fromDate, toDate, model.Division)).ToList();
+            var data = await _customerInvoiceReportRepository.GetAllIncludeAsync(
+                x => new { x.InvoiceNoOrBillNo, x.Date, x.Value, x.Time },
+                x => x.CustomerNo == model.CustomerNo
+                    && (string.IsNullOrEmpty(model.Division) || x.Division == model.Division)
+                    && x.Date.Date >= model.FromDate.Date && x.Date.Date <= model.ToDate.Date,
+                null, null, true);
 
-            var result = data.Select(x =>
+            var groupData = data.GroupBy(x => x.InvoiceNoOrBillNo).ToList();
+
+            var result = groupData.Select(x =>
                                 new InvoiceHistoryResultModel()
                                 {
-                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
-                                    Date = x.Date.ReturnDateFormatDate(),
-                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
-                                    Time = x.Time.ReturnDateFormatTime()
+                                    InvoiceNoOrBillNo = x.Key,
+                                    Date = (x.FirstOrDefault()?.Date??default(DateTime)).ToString("dd-MM-yyyy"),
+                                    NetAmount = x.Sum(s => s.Value),
+                                    Time = x.FirstOrDefault()?.Time??string.Empty
                                 }).ToList();
 
             return result;
@@ -79,50 +90,56 @@ namespace Berger.Odata.Services
 
         public async Task<InvoiceDetailsResultModel> GetInvoiceDetails(InvoiceDetailsSearchModel model)
         {
-            var filterQueryBuilder = new FilterQueryOptionBuilder();
-            filterQueryBuilder.Equal(DataColumnDef.InvoiceNoOrBillNo, model.InvoiceNo);
+            //var filterQueryBuilder = new FilterQueryOptionBuilder();
+            //filterQueryBuilder.Equal(DataColumnDef.InvoiceNoOrBillNo, model.InvoiceNo);
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.Division)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.DivisionName)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.LineNumber)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.Quantity)
-                                .AddProperty(DataColumnDef.MatrialCode)
-                                .AddProperty(DataColumnDef.MatarialDescription)
-                                .AddProperty(DataColumnDef.UnitOfMeasure);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                    .AddProperty(DataColumnDef.CustomerName)
+            //                    .AddProperty(DataColumnDef.Division)
+            //                    .AddProperty(DataColumnDef.Date)
+            //                    .AddProperty(DataColumnDef.DivisionName)
+            //                    .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+            //                    .AddProperty(DataColumnDef.LineNumber)
+            //                    .AddProperty(DataColumnDef.NetAmount)
+            //                    .AddProperty(DataColumnDef.Quantity)
+            //                    .AddProperty(DataColumnDef.MatrialCode)
+            //                    .AddProperty(DataColumnDef.MatarialDescription)
+            //                    .AddProperty(DataColumnDef.UnitOfMeasure);
 
-            var queryBuilder = new QueryOptionBuilder();
-            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
-                        .AppendQuery(selectQueryBuilder.Select);
+            //var queryBuilder = new QueryOptionBuilder();
+            //queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+            //            .AppendQuery(selectQueryBuilder.Select);
 
-            var data = await _odataService.GetSalesData(queryBuilder.Query);
+            //var data = await _odataService.GetSalesData(queryBuilder.Query);
+
+            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(
+                x => new { x.InvoiceNoOrBillNo, x.Date, x.NetAmount, x.Time, x.MatrialCode, 
+                    x.MatarialDescription, x.Quantity, x.UnitOfMeasure, x.LineNumber, x.CustomerNo, x.CustomerName, x.Division, x.DivisionName },
+                x => x.InvoiceNoOrBillNo == model.InvoiceNo,
+                null, null, true);
 
             var result = data.Select(x => new InvoiceItemDetailsResultModel()
             {
-                NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
-                Quantity = CustomConvertExtension.ObjectToDecimal(x.Quantity),
+                NetAmount = x.NetAmount,
+                Quantity = x.Quantity,
                 MatrialCode = x.MatrialCode,
                 MatarialDescription = x.MatarialDescription,
                 Unit = x.UnitOfMeasure,
-                LineNumber = x.LineNumber,
+                LineNumber = CustomConvertExtension.ObjectToInt(x.LineNumber).ToString(),
             }).ToList();
 
             var returnResult = new InvoiceDetailsResultModel();
 
             if (data.Any())
             {
-                returnResult.InvoiceNoOrBillNo = data.FirstOrDefault().InvoiceNoOrBillNo;
-                returnResult.Date = data.FirstOrDefault().Date.ReturnDateFormatDate();
-                returnResult.NetAmount = data.Sum(x => CustomConvertExtension.ObjectToDecimal(x.NetAmount));
-                returnResult.CustomerNo = data.FirstOrDefault().CustomerNoOrSoldToParty;
-                returnResult.CustomerName = data.FirstOrDefault().CustomerName;
-                returnResult.Division = data.FirstOrDefault().Division;
-                returnResult.DivisionName = data.FirstOrDefault().DivisionName;
+                returnResult.InvoiceNoOrBillNo = data.FirstOrDefault()?.InvoiceNoOrBillNo??string.Empty;
+                returnResult.Date = (data.FirstOrDefault()?.Date ?? default(DateTime)).ToString("dd-MM-yyyy");
+                returnResult.NetAmount = data.Sum(x => x.NetAmount);
+                returnResult.CustomerNo = data.FirstOrDefault()?.CustomerNo ?? string.Empty;
+                returnResult.CustomerName = data.FirstOrDefault()?.CustomerName ?? string.Empty;
+                returnResult.Division = data.FirstOrDefault()?.Division ?? string.Empty;
+                returnResult.DivisionName = data.FirstOrDefault()?.DivisionName ?? string.Empty;
 
                 returnResult.InvoiceItemDetails = result;
 
@@ -1484,9 +1501,9 @@ namespace Berger.Odata.Services
             //                                        territories: area.Territories, zones: area.Zones,
             //                                        division: division, channel: channel);
 
-            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x => x.CustomerNo,
+            var data = await _customerInvoiceReportRepository.GetAllIncludeAsync(x => x.CustomerNo,
                                 x => x.Date.Date == currentDate.Date
-                                    && (!area.Depots.Any() || area.Depots.Contains(x.PlantOrBusinessArea))
+                                    && (!area.Depots.Any() || area.Depots.Contains(x.Depot))
                                     && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                                     && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                                     && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
@@ -1518,10 +1535,10 @@ namespace Berger.Odata.Services
             //                                        territories: area.Territories, zones: area.Zones,
             //                                        division: model.Division);
 
-            var data = await _sapSalesInfoRepository.GetAllIncludeAsync(x => 
-                                new { x.InvoiceNoOrBillNo, x.CustomerNo, x.CustomerName, x.NetAmount },
+            var data = await _customerInvoiceReportRepository.GetAllIncludeAsync(x => 
+                                new { x.InvoiceNoOrBillNo, x.CustomerNo, x.CustomerName, x.Value },
                                 x => x.Date.Date == currentDate.Date
-                                    && (!area.Depots.Any() || area.Depots.Contains(x.PlantOrBusinessArea))
+                                    && (!area.Depots.Any() || area.Depots.Contains(x.Depot))
                                     && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                                     && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                                     && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
@@ -1537,7 +1554,7 @@ namespace Berger.Odata.Services
                                     InvoiceNoOrBillNo = x.Key,
                                     CustomerNo = x.FirstOrDefault()?.CustomerNo ?? string.Empty,
                                     CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty,
-                                    NetAmount = x.Sum(s => s.NetAmount)
+                                    NetAmount = x.Sum(s => s.Value)
                                 }).ToList();
 
             return result;
