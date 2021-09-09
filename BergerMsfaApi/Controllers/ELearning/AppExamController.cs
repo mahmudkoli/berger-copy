@@ -68,5 +68,19 @@ namespace BergerMsfaApi.Controllers.ELearning
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("GetUserExamReport")]
+        public async Task<IActionResult> GetUserExamReport()
+        {
+            try
+            {
+                var result = await _examService.GetAllExamReportByCurrentUserAsync();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

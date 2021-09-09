@@ -1,0 +1,5 @@
+.required::after {
+  color: #da9297 !important;
+  content: "*";
+  padding-left: 3px;
+}

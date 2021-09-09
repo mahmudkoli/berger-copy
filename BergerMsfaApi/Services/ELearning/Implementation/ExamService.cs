@@ -55,14 +55,18 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 ["userFullName"] = v => v.UserInfo.FullName,
                 ["questionSetTitle"] = v => v.QuestionSet.Title,
                 ["questionSetLevel"] = v => v.QuestionSet.Level,
-                ["questionSetTotalMark"] = v => v.QuestionSet.TotalMark,
-                ["totalMark"] = v => v.TotalMark,
-                ["passedText"] = v => v.Passed,
+                ["totalMark"] = v => v.QuestionSet.TotalMark,
+                ["userMark"] = v => v.TotalMark,
+                ["passStatus"] = v => v.Passed,
+                ["examDate"] = v => v.CreatedTime,
             };
 
             var result = await _userQuestionAnswerRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.QuestionSet.Title.Contains(query.GlobalSearchValue)),
+                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || 
+                                x.UserInfo.FullName.Contains(query.GlobalSearchValue) || 
+                                x.UserInfo.EmployeeId == query.GlobalSearchValue || 
+                                x.QuestionSet.Title.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.UserInfo).Include(i => i.QuestionSet),
                                 query.Page,
@@ -82,10 +86,15 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<IList<AppQuestionSetModel>> GetAllQuestionSetAsync()
         {
+            var depots = AppIdentity.AppUser.PlantIdList;
+            var datetime = DateTime.Now;
+
             var result = await _questionSetRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => x.Status == Status.Active,
-                                null,
+                                x => x.Status == Status.Active
+                                    && (!depots.Any() || !x.QuestionSetDepots.Any() || x.QuestionSetDepots.Any(x => depots.Contains(x.Depot)))
+                                    && (datetime.Date >= x.StartDate.Date && datetime.Date <= x.EndDate.Date),
+                                x => x.OrderByDescending(o => o.CreatedTime),
                                 null,
                                 true
                             );
@@ -107,7 +116,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 true
                             );
 
-            if (questionSet == null) throw new Exception();
+            if (questionSet == null) throw new Exception("Question Set not found.");
 
             var modelQuestionSet = new AppQuestionSetModel();
                 modelQuestionSet.Id = questionSet.Id;
@@ -115,6 +124,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 modelQuestionSet.Level = questionSet.Level;
                 modelQuestionSet.TotalMark = questionSet.TotalMark;
                 modelQuestionSet.PassMark = questionSet.PassMark;
+                modelQuestionSet.TimeOutMinute = questionSet.TimeOutMinute;
+                modelQuestionSet.StartDate = questionSet.StartDate.ToString("dd-MM-yyyy");
+                modelQuestionSet.EndDate = questionSet.EndDate.ToString("dd-MM-yyyy");
                 modelQuestionSet.Questions = new List<AppQuestionModel>();
 
             foreach (var qus in questionSet.QuestionSetCollections.Where(x => x.Status == Status.Active))
@@ -201,6 +213,23 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             qusAnsResultModel.Passed = userQusAns.Passed;
 
             return qusAnsResultModel;
+        }
+
+        public async Task<IList<AppUserQuestionAnswerModel>> GetAllExamReportByCurrentUserAsync()
+        {
+            var currentUserId = AppIdentity.AppUser.UserId;
+
+            var result = await _userQuestionAnswerRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.UserInfoId == currentUserId && x.Status == Status.Active,
+                                x => x.OrderByDescending(o => o.CreatedTime),
+                                x => x.Include(i => i.QuestionSet),
+                                true
+                            );
+
+            var modelResult = _mapper.Map<IList<AppUserQuestionAnswerModel>>(result);
+
+            return modelResult;
         }
     }
 }

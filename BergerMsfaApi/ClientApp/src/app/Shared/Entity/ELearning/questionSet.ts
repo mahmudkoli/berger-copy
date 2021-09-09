@@ -8,10 +8,14 @@ export class QuestionSet {
     level: number;
     totalMark: number;
     passMark: number;
+    timeOutMinute: number;
+    startDate: Date;
+    endDate: Date;
     eLearningDocumentId: number;
     eLearningDocument: ELearningDocument;
     status: number;
     questionSetCollections: QuestionSetCollection[];
+    depots: string[];
 
     statusText: string;
     
@@ -25,9 +29,13 @@ export class QuestionSet {
         this.level = null;
         this.totalMark = null;
         this.passMark = null;
+        this.timeOutMinute = null;
+        this.startDate = null;
+        this.endDate = null;
         this.eLearningDocumentId = null;
         this.status = null;
         this.questionSetCollections = [];
+        this.depots = [];
         this.statusText = '';
     }
 }
@@ -38,9 +46,13 @@ export class SaveQuestionSet {
     level: number;
     totalMark: number;
     passMark: number;
+    timeOutMinute: number;
+    startDate: Date;
+    endDate: Date;
     eLearningDocumentId: number;
     status: number;
     questionSetCollections: QuestionSetCollection[];
+    depots: string[];
     
     constructor(init?: Partial<SaveQuestionSet>) {
         Object.assign(this, init);
@@ -52,9 +64,13 @@ export class SaveQuestionSet {
         this.level = null;
         this.totalMark = null;
         this.passMark = null;
+        this.timeOutMinute = null;
+        this.startDate = null;
+        this.endDate = null;
         this.eLearningDocumentId = null;
         this.status = null;
         this.questionSetCollections = [];
+        this.depots = [];
     }
 }
 
