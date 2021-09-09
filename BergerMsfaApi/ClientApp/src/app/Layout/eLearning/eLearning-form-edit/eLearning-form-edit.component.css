@@ -1,7 +1,13 @@
 .strikeout {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
 
 .non-strikeout {
-    text-decoration: none;
+  text-decoration: none;
+}
+
+.required::after {
+  color: #da9297 !important;
+  content: "*";
+  padding-left: 3px;
 }

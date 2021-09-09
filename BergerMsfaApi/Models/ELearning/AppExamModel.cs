@@ -14,7 +14,17 @@ namespace BergerMsfaApi.Models.ELearning
         public int Level { get; set; }
         public int TotalMark { get; set; }
         public int PassMark { get; set; }
+        public int TimeOutMinute { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public IList<AppQuestionModel> Questions { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<QuestionSet, AppQuestionSetModel>()
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("dd-MM-yyyy")))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("dd-MM-yyyy")));
+        }
     }
 
     public class AppQuestionModel

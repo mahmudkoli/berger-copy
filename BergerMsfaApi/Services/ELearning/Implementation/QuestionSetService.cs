@@ -25,6 +25,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
         private readonly IRepository<QuestionOption> _questionOptionRepository;
         private readonly IRepository<QuestionSet> _questionSetRepository;
         private readonly IRepository<QuestionSetCollection> _questionSetCollectionRepository;
+        private readonly IRepository<QuestionSetDepot> _questionSetDepotRepository;
         private readonly IMapper _mapper;
 
         public QuestionSetService(
@@ -32,6 +33,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                 IRepository<QuestionOption> questionOptionRepository,
                 IRepository<QuestionSet> questionSetRepository,
                 IRepository<QuestionSetCollection> questionSetCollectionRepository,
+                IRepository<QuestionSetDepot> questionSetDepotRepository,
                 IMapper mapper
             )
         {
@@ -39,6 +41,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             this._questionOptionRepository = questionOptionRepository;
             this._questionSetRepository = questionSetRepository;
             this._questionSetCollectionRepository = questionSetCollectionRepository;
+            this._questionSetDepotRepository = questionSetDepotRepository;
             this._mapper = mapper;
         }
 
@@ -87,7 +90,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 x => x,
                                 x => x.Id == id,
                                 null,
-                                x => x.Include(i => i.QuestionSetCollections),
+                                x => x.Include(i => i.QuestionSetCollections).Include(i => i.QuestionSetDepots),
                                 true
                             );
 
@@ -113,6 +116,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             eLearningDocument.ELearningDocumentId = model.ELearningDocumentId;
             eLearningDocument.TotalMark = model.TotalMark;
             eLearningDocument.PassMark = model.PassMark;
+            eLearningDocument.TimeOutMinute = model.TimeOutMinute;
+            eLearningDocument.StartDate = model.StartDate;
+            eLearningDocument.EndDate = model.EndDate;
             eLearningDocument.Status = model.Status;
             eLearningDocument.ModifiedTime = DateTime.Now;
 
@@ -156,6 +162,27 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
             if (newAttachmentss.Any())
                 await _questionSetCollectionRepository.CreateListAsync(newAttachmentss);
+            #endregion
+
+            #region delete and add previous depots
+            var previousDepots = (await _questionSetDepotRepository.GetAllIncludeAsync(
+                                x => x,
+                                x => x.QuestionSetId == model.Id,
+                                null,
+                                null,
+                                true
+                            )).ToList();
+
+            var newDepots = model.Depots.Select(x => new QuestionSetDepot { QuestionSetId = model.Id, Depot = x }).ToList();
+
+            if(!(previousDepots.All(x => newDepots.Any(y => y.Depot == x.Depot)) && newDepots.All(x => previousDepots.Any(y => x.Depot == y.Depot))))
+            {
+                if (newDepots.Any())
+                    await _questionSetDepotRepository.CreateListAsync(newDepots);
+
+                if (previousDepots.Any())
+                    await _questionSetDepotRepository.DeleteListAsync(previousDepots);
+            }
             #endregion
 
             return result.Id;

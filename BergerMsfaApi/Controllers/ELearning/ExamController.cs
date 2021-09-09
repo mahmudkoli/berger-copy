@@ -35,5 +35,21 @@ namespace BergerMsfaApi.Controllers.ELearning
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpGet("DownloadAllExamReport")]
+        public async Task<IActionResult> DownloadAllExamReport([FromQuery] QueryObjectModel query)
+        {
+            try
+            {
+                query.Page = 1;
+                query.PageSize = int.MaxValue;
+                var result = await _examService.GetAllExamReportAsync(query);
+                return Ok(result.Items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

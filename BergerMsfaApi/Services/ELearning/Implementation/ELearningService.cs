@@ -41,6 +41,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<int> AddAsync(SaveELearningDocumentModel model)
         {
+            var fileExistingCheck = await IsSameNameFileExistsAsync(model.ELearningAttachmentFiles, model.Id);
+            if (fileExistingCheck.IsExists) throw new Exception("File already exists: " + string.Join(", ", fileExistingCheck.ExistsFileNames));
+
             var eLearningDocument = _mapper.Map<ELearningDocument>(model);
 
             if(model.ELearningAttachmentFiles != null && model.ELearningAttachmentFiles.Any())
@@ -49,8 +52,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
                 foreach (var item in model.ELearningAttachmentFiles)
                 {
-                    var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
-                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+                    //var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
+                    //var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+                    var attachment = await SaveFileAsync(item);
                     eLearningDocument.ELearningAttachments.Add(attachment);
                 }
             }
@@ -79,13 +83,14 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             {
                 ["title"] = v => v.Title,
                 ["categoryText"] = v => v.Category.DropdownName,
+                ["uploadDate"] = v => v.CreatedTime,
             };
 
             var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
                                 x => x,
                                 x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.Title.Contains(query.GlobalSearchValue) || x.Category.DropdownName.Contains(query.GlobalSearchValue)),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
-                                x => x.Include(i => i.Category),
+                                x => x.Include(i => i.Category).Include(i => i.ELearningAttachments),
                                 query.Page,
                                 query.PageSize,
                                 true
@@ -106,7 +111,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
                                 x => x,
                                 x => x.Status == Status.Active && x.CategoryId == categoryId,
-                                null,
+                                x => x.OrderByDescending(o => o.CreatedTime),
                                 x => x.Include(i => i.Category),
                                 true
                             );
@@ -121,7 +126,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             var result = await _eLearningDocumentRepository.GetAllIncludeAsync(
                                 x => x,
                                 x => x.Status == Status.Active,
-                                null,
+                                x => x.OrderByDescending(o => o.CreatedTime),
                                 x => x.Include(i => i.Category),
                                 true
                             );
@@ -148,6 +153,11 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<int> UpdateAsync(SaveELearningDocumentModel model)
         {
+            model.ELearningAttachments ??= new List<ELearningAttachmentModel>();
+            var existingAttachFileNames = model.ELearningAttachments?.Select(x => x.Name).ToList();
+            var fileExistingCheck = await IsSameNameFileExistsAsync(model.ELearningAttachmentFiles, model.Id, existingAttachFileNames);
+            if (fileExistingCheck.IsExists) throw new Exception("File already exists: " + string.Join(", ", fileExistingCheck.ExistsFileNames));
+
             var eLearningDocument = await _eLearningDocumentRepository.GetFirstOrDefaultIncludeAsync(
                                 x => x,
                                 x => x.Id == model.Id,
@@ -156,7 +166,7 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
                                 true
                             );
 
-            if (eLearningDocument == null) throw new Exception();
+            if (eLearningDocument == null) throw new Exception("ELearning Document not found.");
 
             eLearningDocument.Title = model.Title;
             eLearningDocument.CategoryId = model.CategoryId;
@@ -197,8 +207,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             {
                 foreach (var item in model.ELearningAttachmentFiles)
                 {
-                    var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
-                    var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+                    //var fileName = $"{Path.GetFileNameWithoutExtension(item.FileName)}_{Guid.NewGuid()}";
+                    //var attachment = await SaveFileAsync(item, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+                    var attachment = await SaveFileAsync(item);
                     attachment.ELearningDocumentId = eLearningDocument.Id;
                     newAttachments.Add(attachment);
                 }
@@ -242,8 +253,9 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
 
         public async Task<ELearningAttachmentModel> AddAttachmentAsync(int eLearningDocumentId, IFormFile file)
         {
-            var fileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}";
-            var attachment = await SaveFileAsync(file, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+            //var fileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}";
+            //var attachment = await SaveFileAsync(file, fileName, FileUploadCode.ELearning, EnumAttachmentType.File);
+            var attachment = await SaveFileAsync(file);
 
             var eLearningAttachment = await _eLearningAttachmentRepository.CreateAsync(attachment);
 
@@ -297,13 +309,31 @@ namespace BergerMsfaApi.Services.ELearning.Implementation
             return result;
         }
 
-        private async Task<ELearningAttachment> SaveFileAsync(IFormFile file, string fileName, FileUploadCode fileUploadCode, EnumAttachmentType attachmentType)
+        private async Task<ELearningAttachment> SaveFileAsync(IFormFile file)
         {
-            var path = await _fileUploadService.SaveFileAsync(file, fileName, fileUploadCode);
+            var fileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}";
+            var path = await _fileUploadService.SaveFileAsync(file, fileName, FileUploadCode.ELearning);
 
-            var attachment = new ELearningAttachment(fileName, path, file.Length, Path.GetExtension(file.FileName), attachmentType);
+            var attachment = new ELearningAttachment(file.FileName, path, file.Length, Path.GetExtension(file.FileName), EnumAttachmentType.File);
 
             return attachment;
+        }
+
+        private async Task<(bool IsExists, List<string> ExistsFileNames)> IsSameNameFileExistsAsync(IList<IFormFile> files, int eLearingDocumentId, IList<string> existingAttachFileNames = null)
+        {
+            var filenames = files == null ? new List<string>() : files.Select(x => x.FileName).ToList();
+            var isExists = false;
+            var existsFileNames = new List<string>();
+
+            foreach (var fileName in filenames)
+            {
+                if ((existingAttachFileNames != null && existingAttachFileNames.Contains(fileName)) || await _eLearningAttachmentRepository.IsExistAsync(x => x.ELearningDocumentId != eLearingDocumentId && fileName.ToLower()==x.Name.ToLower()))
+                {
+                    isExists = true;
+                    existsFileNames.Add(fileName);
+                }
+            }
+            return (isExists, existsFileNames);
         }
     }
 }
