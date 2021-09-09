@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
+  //  [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

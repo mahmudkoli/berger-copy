@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20210811111202_UniverseReachAnalysis.Designer.cs" />
     <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.cs" />
     <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.Designer.cs" />
+    <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.cs" />
+    <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

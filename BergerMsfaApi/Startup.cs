@@ -90,13 +90,17 @@ namespace BergerMsfaApi
             services.AddScoped<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>().HttpContext.User);
             services.AddScoped<IUserRequest, UserRequest>();
 
-            services.AddScoped<DbContext, ApplicationDbContext>();
+            //services.AddScoped<DbContext, ApplicationDbContext>();
+            services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<SAPDbContext, SAPDbContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddScoped<IODataService, ODataService>();
-            services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            //services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            services.AddScoped(typeof(IODataApplicationRepository<>), typeof(ODataApplicationRepository<>));
+            services.AddScoped(typeof(IODataSAPRepository<>), typeof(ODataSAPRepository<>));
             services.AddScoped<IODataCommonService, ODataCommonService>();
             services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
