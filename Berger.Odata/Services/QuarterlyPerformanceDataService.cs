@@ -833,35 +833,35 @@ namespace Berger.Odata.Services
             return monthlyDictTarget;
         }
 
-        public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth,
-            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false, string division = "")
-        {
-            var fromDate = (new DateTime(fromYear, fromMonth, 1));
-            var monthCount = 3;
-            var mtsBrands = new List<string>();
-            var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
+        //public async Task<Dictionary<string, IList<SalesDataModel>>> GetQuarterlyActualData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth,
+        //    List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false, string division = "")
+        //{
+        //    var fromDate = (new DateTime(fromYear, fromMonth, 1));
+        //    var monthCount = 3;
+        //    var mtsBrands = new List<string>();
+        //    var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
 
-            var fromDateStr = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD()).SalesSearchDateFormat();
-            var toDateStr = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD()).SalesSearchDateFormat();
+        //    var fromDateStr = (isLastYear ? fromDate.GetMonthDate(0).GetLYFD() : fromDate.GetMonthDate(0).GetCYFD()).SalesSearchDateFormat();
+        //    var toDateStr = (isLastYear ? fromDate.GetMonthDate(2).GetLYLD() : fromDate.GetMonthDate(2).GetCYLD()).SalesSearchDateFormat();
 
-            var actualData = (await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
-                depots: depots, salesGroups: salesGroups, territories: territories,
-                brands: brands, division: division)).ToList();
+        //    var actualData = (await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
+        //        depots: depots, salesGroups: salesGroups, territories: territories,
+        //        brands: brands, division: division)).ToList();
 
-            for (var i = 0; i < monthCount; i++)
-            {
-                int number = i;
-                var startDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYFD() : fromDate.GetMonthDate(number).GetCYFD());
-                var endDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYLD() : fromDate.GetMonthDate(number).GetCYLD());
+        //    for (var i = 0; i < monthCount; i++)
+        //    {
+        //        int number = i;
+        //        var startDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYFD() : fromDate.GetMonthDate(number).GetCYFD());
+        //        var endDate = (isLastYear ? fromDate.GetMonthDate(number).GetLYLD() : fromDate.GetMonthDate(number).GetCYLD());
 
-                var data = actualData.Where(x => x.Date.SalesResultDateFormat().Date >= startDate.Date && x.Date.SalesResultDateFormat().Date <= endDate.Date).ToList();
-                var monthName = fromDate.GetMonthName(number);
+        //        var data = actualData.Where(x => x.Date.SalesResultDateFormat().Date >= startDate.Date && x.Date.SalesResultDateFormat().Date <= endDate.Date).ToList();
+        //        var monthName = fromDate.GetMonthName(number);
 
-                monthlyDictActual.Add(monthName, data);
-            }
+        //        monthlyDictActual.Add(monthName, data);
+        //    }
 
-            return monthlyDictActual;
-        }
+        //    return monthlyDictActual;
+        //}
 
         public async Task<Dictionary<string, IList<QuarterlyPerformanceReport>>> GetQuarterlyActualData(int fromYear, int fromMonth,
             List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, bool isLastYear = false)

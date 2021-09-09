@@ -318,28 +318,28 @@ namespace Berger.Odata.Services
             return returnResult;
         }
 
-        private async Task<IList<(string MatarialGroupOrBrand, string CustomerNo, string CustomerName, decimal ActualValue, decimal ActualVolume)>> GetSalesDataValueVolume(string customerNo, string fromDate, string toDate, List<string> brands = null)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.Volume);
+        //private async Task<IList<(string MatarialGroupOrBrand, string CustomerNo, string CustomerName, decimal ActualValue, decimal ActualVolume)>> GetSalesDataValueVolume(string customerNo, string fromDate, string toDate, List<string> brands = null)
+        //{
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo)
+        //                        .AddProperty(DataColumnDef.CustomerName)
+        //                        .AddProperty(DataColumnDef.MatarialGroupOrBrand)
+        //                        .AddProperty(DataColumnDef.NetAmount)
+        //                        .AddProperty(DataColumnDef.Volume);
 
-            var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, customerNo, fromDate, toDate, brands: brands)).ToList();
+        //    var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, customerNo, fromDate, toDate, brands: brands)).ToList();
 
-            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
-                                                                    (
-                                                                        MatarialGroupOrBrand: x.Key,
-                                                                        CustomerNo: x.FirstOrDefault().CustomerNo,
-                                                                        CustomerName: x.FirstOrDefault().CustomerName,
-                                                                        ActualValue: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount)),
-                                                                        ActualVolume: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                                                                    )).ToList();
+        //    var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
+        //                                                            (
+        //                                                                MatarialGroupOrBrand: x.Key,
+        //                                                                CustomerNo: x.FirstOrDefault().CustomerNo,
+        //                                                                CustomerName: x.FirstOrDefault().CustomerName,
+        //                                                                ActualValue: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount)),
+        //                                                                ActualVolume: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+        //                                                            )).ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
             string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)

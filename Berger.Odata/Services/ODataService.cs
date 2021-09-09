@@ -31,14 +31,16 @@ namespace Berger.Odata.Services
         #region get data
         public async Task<IList<SalesDataModel>> GetSalesData(string query)
         {
-            string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.SalesUrl}{query}";
+            //string fullUrl = $"{_appSettings.BaseAddress}{_appSettings.SalesUrl}{query}";
 
-            var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
-            var parsedData = Parser<SalesDataRootModel>.ParseJson(responseBody);
-            var data = parsedData.Results.Select(x => x.ToModel()).ToList();
+            //var responseBody = _httpClientService.GetHttpResponse(fullUrl, _appSettings.UserName, _appSettings.Password);
+            //var parsedData = Parser<SalesDataRootModel>.ParseJson(responseBody);
+            //var data = parsedData.Results.Select(x => x.ToModel()).ToList();
 
-            //return await Task.FromResult(data);
-            return await Task.Run(() => data);
+            ////return await Task.FromResult(data);
+            //return await Task.Run(() => data);
+
+            return new List<SalesDataModel>();
         }
 
         public async Task<IList<MTSDataModel>> GetMTSData(string query)

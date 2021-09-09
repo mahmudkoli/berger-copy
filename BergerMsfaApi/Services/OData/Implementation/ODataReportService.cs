@@ -187,55 +187,55 @@ namespace BergerMsfaApi.Services.OData.Implementation
             return result;
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds)
-        {
-            var customerNoList = new List<string>();
+        //public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds)
+        //{
+        //    var customerNoList = new List<string>();
 
-            if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
-            {
-                customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
-                    .Select(x => x.CustomerNo).ToListAsync();
-            }
-            else
-            {
-                customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.ClubSupremeType > 0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
-                    .Select(x => x.CustomerNo).ToListAsync();
-            }
-
-
-            if (!customerNoList.Any())
-                return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
+        //    if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
+        //    {
+        //        customerNoList = await _dealerInfoRepository
+        //            .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+        //            .Select(x => x.CustomerNo).ToListAsync();
+        //    }
+        //    else
+        //    {
+        //        customerNoList = await _dealerInfoRepository
+        //            .FindByCondition(x => x.ClubSupremeType > 0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+        //            .Select(x => x.CustomerNo).ToListAsync();
+        //    }
 
 
-            var result = new List<ReportDealerPerformanceResultModel>
-            {
-                new ReportDealerPerformanceResultModel()
-                {
-                    Territory = model.Territory,
-                    NumberOfDealer = customerNoList.Count()
-                }
-            };
+        //    if (!customerNoList.Any())
+        //        return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
 
 
-            var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
-                await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+        //    var result = new List<ReportDealerPerformanceResultModel>
+        //    {
+        //        new ReportDealerPerformanceResultModel()
+        //        {
+        //            Territory = model.Territory,
+        //            NumberOfDealer = customerNoList.Count()
+        //        }
+        //    };
 
-            if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
-            {
-                reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
-               {
-                   x.NumberOfDealer = customerNoList.Count();
-                   x.Territory = model.Territory;
-               });
-                return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
-            }
-            else
-            {
-                return result;
-            }
-        }
+
+        //    var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
+        //        await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+
+        //    if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
+        //    {
+        //        reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
+        //       {
+        //           x.NumberOfDealer = customerNoList.Count();
+        //           x.Territory = model.Territory;
+        //       });
+        //        return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
+        //    }
+        //    else
+        //    {
+        //        return result;
+        //    }
+        //}
 
 
         public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model)

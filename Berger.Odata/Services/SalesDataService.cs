@@ -948,114 +948,114 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<string> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
-        {
-            var currentDate = DateTime.Now.AddMonths(-1);
-            var mtsBrandCodes = new List<string>();
+        //public async Task<IList<ReportDealerPerformanceResultModel>> GetReportDealerPerformance(IList<string> dealerIds, DealerPerformanceReportType dealerPerformanceReportType)
+        //{
+        //    var currentDate = DateTime.Now.AddMonths(-1);
+        //    var mtsBrandCodes = new List<string>();
 
-            var cyfd = currentDate.GetCYFD().DateFormat();
-            var cylcd = currentDate.GetCYLCD().DateFormat();
-            var cyld = currentDate.GetCYLD().DateFormat();
+        //    var cyfd = currentDate.GetCYFD().DateFormat();
+        //    var cylcd = currentDate.GetCYLCD().DateFormat();
+        //    var cyld = currentDate.GetCYLD().DateFormat();
 
-            var lyfd = currentDate.GetLYFD().DateFormat();
-            var lylcd = currentDate.GetLYLCD().DateFormat();
-            var lyld = currentDate.GetLYLD().DateFormat();
+        //    var lyfd = currentDate.GetLYFD().DateFormat();
+        //    var lylcd = currentDate.GetLYLCD().DateFormat();
+        //    var lyld = currentDate.GetLYLD().DateFormat();
 
-            var lfyfd = currentDate.GetLFYFD().DateFormat();
-            var lfylcd = currentDate.GetLFYLCD().DateFormat();
-            var lfyld = currentDate.GetLFYLD().DateFormat();
+        //    var lfyfd = currentDate.GetLFYFD().DateFormat();
+        //    var lfylcd = currentDate.GetLFYLCD().DateFormat();
+        //    var lfyld = currentDate.GetLFYLD().DateFormat();
 
-            var cfyfd = currentDate.GetCFYFD().DateFormat();
-            var cfylcd = currentDate.GetCFYLCD().DateFormat();
-            var cfyld = currentDate.GetCFYLD().DateFormat();
+        //    var cfyfd = currentDate.GetCFYFD().DateFormat();
+        //    var cfylcd = currentDate.GetCFYLCD().DateFormat();
+        //    var cfyld = currentDate.GetCFYLD().DateFormat();
 
-            var dataLyMtd = new List<SalesDataModel>();
-            var dataCyMtd = new List<SalesDataModel>();
-            var dataLyYtd = new List<SalesDataModel>();
-            var dataCyYtd = new List<SalesDataModel>();
+        //    var dataLyMtd = new List<SalesDataModel>();
+        //    var dataCyMtd = new List<SalesDataModel>();
+        //    var dataLyYtd = new List<SalesDataModel>();
+        //    var dataCyYtd = new List<SalesDataModel>();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder
-                .AddProperty(DataColumnDef.NetAmount)
-                .AddProperty(DataColumnDef.Territory);
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder
+        //        .AddProperty(DataColumnDef.NetAmount)
+        //        .AddProperty(DataColumnDef.Territory);
 
-            if (dealerPerformanceReportType == DealerPerformanceReportType.ClubSupremeTerritoryAndDealerWise)
-            {
-                selectQueryBuilder
-                    .AddProperty(DataColumnDef.CustomerNo)
-                    .AddProperty(DataColumnDef.CustomerName);
-            }
+        //    if (dealerPerformanceReportType == DealerPerformanceReportType.ClubSupremeTerritoryAndDealerWise)
+        //    {
+        //        selectQueryBuilder
+        //            .AddProperty(DataColumnDef.CustomerNo)
+        //            .AddProperty(DataColumnDef.CustomerName);
+        //    }
 
-            string division = "-1";
+        //    string division = "-1";
 
-            dataLyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lyfd, lylcd, division, brands: mtsBrandCodes)).ToList();
+        //    dataLyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lyfd, lylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataCyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cylcd, division, brands: mtsBrandCodes)).ToList();
+        //    dataCyMtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cyfd, cylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataLyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfylcd, division, brands: mtsBrandCodes)).ToList();
+        //    dataLyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, lfyfd, lfylcd, division, brands: mtsBrandCodes)).ToList();
 
-            dataCyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfylcd, division, brands: mtsBrandCodes)).ToList();
+        //    dataCyYtd = (await _odataService.GetSalesDataByMultipleCustomerAndDivision(selectQueryBuilder, dealerIds, cfyfd, cfylcd, division, brands: mtsBrandCodes)).ToList();
 
-            Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
-            {
-                NetAmount = x.NetAmount,
-                Territory = x.Territory,
-                CustomerNo = x.CustomerNo,
-                CustomerName = x.CustomerName
-            };
+        //    Func<SalesDataModel, SalesDataModel> selectFunc = x => new SalesDataModel
+        //    {
+        //        NetAmount = x.NetAmount,
+        //        Territory = x.Territory,
+        //        CustomerNo = x.CustomerNo,
+        //        CustomerName = x.CustomerName
+        //    };
 
-            Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
-            Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.Territory == val.Territory && x.CustomerName == val.CustomerName && x.CustomerNo == val.CustomerNo;
+        //    Func<SalesDataModel, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.NetAmount);
+        //    Func<SalesDataModel, SalesDataModel, bool> predicateFunc = (x, val) => x.Territory == val.Territory && x.CustomerName == val.CustomerName && x.CustomerNo == val.CustomerNo;
 
-            var concatAllList = dataLyMtd.Select(selectFunc)
-                .Concat(dataCyMtd.Select(selectFunc))
-                .Concat(dataLyYtd.Select(selectFunc))
-                .Concat(dataCyYtd.Select(selectFunc))
-                .GroupBy(p => new { p.Territory, p.CustomerName, p.CustomerNo })
-                .Select(g => g.First());
+        //    var concatAllList = dataLyMtd.Select(selectFunc)
+        //        .Concat(dataCyMtd.Select(selectFunc))
+        //        .Concat(dataLyYtd.Select(selectFunc))
+        //        .Concat(dataCyYtd.Select(selectFunc))
+        //        .GroupBy(p => new { p.Territory, p.CustomerName, p.CustomerNo })
+        //        .Select(g => g.First());
 
-            var result = new List<ReportDealerPerformanceResultModel>();
+        //    var result = new List<ReportDealerPerformanceResultModel>();
 
 
-            foreach (var item in concatAllList)
-            {
-                var res = new ReportDealerPerformanceResultModel();
+        //    foreach (var item in concatAllList)
+        //    {
+        //        var res = new ReportDealerPerformanceResultModel();
 
-                if (dataLyMtd.Any(x => predicateFunc(x, item)))
-                {
-                    var amtLyMtd = dataLyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
-                    res.LYMTD = amtLyMtd;
-                }
+        //        if (dataLyMtd.Any(x => predicateFunc(x, item)))
+        //        {
+        //            var amtLyMtd = dataLyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+        //            res.LYMTD = amtLyMtd;
+        //        }
 
-                if (dataCyMtd.Any(x => predicateFunc(x, item)))
-                {
-                    var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
-                    res.CYMTD = amtCyMtd;
-                }
+        //        if (dataCyMtd.Any(x => predicateFunc(x, item)))
+        //        {
+        //            var amtCyMtd = dataCyMtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+        //            res.CYMTD = amtCyMtd;
+        //        }
 
-                if (dataLyYtd.Any(x => predicateFunc(x, item)))
-                {
-                    var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
-                    res.LYYTD = amtLyYtd;
-                }
+        //        if (dataLyYtd.Any(x => predicateFunc(x, item)))
+        //        {
+        //            var amtLyYtd = dataLyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+        //            res.LYYTD = amtLyYtd;
+        //        }
 
-                if (dataCyYtd.Any(x => predicateFunc(x, item)))
-                {
-                    var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
-                    res.CYYTD = amtCyYtd;
-                }
+        //        if (dataCyYtd.Any(x => predicateFunc(x, item)))
+        //        {
+        //            var amtCyYtd = dataCyYtd.Where(x => predicateFunc(x, item)).Sum(calcFunc);
+        //            res.CYYTD = amtCyYtd;
+        //        }
 
-                res.Territory = item.Territory;
-                res.DealerId = item.CustomerNo;
-                res.DealerName = item.CustomerName;
-                res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
-                res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+        //        res.Territory = item.Territory;
+        //        res.DealerId = item.CustomerNo;
+        //        res.DealerName = item.CustomerName;
+        //        res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
+        //        res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
 
-                result.Add(res);
-            }
+        //        result.Add(res);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
 
         public async Task<IList<CategoryWisePerformanceReport>> GetCategoryWisePerformanceReports(Expression<Func<CategoryWisePerformanceReport,
@@ -1605,60 +1605,60 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands)
-        {
-            var currentDate = new DateTime(year, month, 01);
-            var fromDate = currentDate.GetCYFD().DateFormat();
-            var toDate = currentDate.GetCYLD().DateFormat();
+        //public async Task<IList<KPIStrikRateKPIReportResultModel>> GetKPIStrikeRateKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories, List<string> zones, List<string> brands)
+        //{
+        //    var currentDate = new DateTime(year, month, 01);
+        //    var fromDate = currentDate.GetCYFD().DateFormat();
+        //    var toDate = currentDate.GetCYLD().DateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.CustomerClassification)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrand);
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+        //                        .AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+        //                        .AddProperty(DataColumnDef.Date)
+        //                        .AddProperty(DataColumnDef.NetAmount)
+        //                        .AddProperty(DataColumnDef.CustomerClassification)
+        //                        .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
-            var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones, brands: brands)).ToList();
+        //    var data = (await _odataService.GetSalesDataByMultipleArea(selectQueryBuilder, fromDate, toDate, depot, salesGroups: salesGroups, territories: territories, zones: zones, brands: brands)).ToList();
 
-            var result = data.Select(x =>
-                                new KPIStrikRateKPIReportResultModel()
-                                {
-                                    CustomerNo = x.CustomerNoOrSoldToParty,
-                                    InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
-                                    DateTime = x.Date.DateFormatDate(),
-                                    Date = x.Date.ReturnDateFormatDate(),
-                                    NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
-                                    CustomerClassification = x.CustomerClassification,
-                                    MatarialGroupOrBrand = x.MatarialGroupOrBrand,
-                                }).ToList();
+        //    var result = data.Select(x =>
+        //                        new KPIStrikRateKPIReportResultModel()
+        //                        {
+        //                            CustomerNo = x.CustomerNoOrSoldToParty,
+        //                            InvoiceNoOrBillNo = x.InvoiceNoOrBillNo,
+        //                            DateTime = x.Date.DateFormatDate(),
+        //                            Date = x.Date.ReturnDateFormatDate(),
+        //                            NetAmount = CustomConvertExtension.ObjectToDecimal(x.NetAmount),
+        //                            CustomerClassification = x.CustomerClassification,
+        //                            MatarialGroupOrBrand = x.MatarialGroupOrBrand,
+        //                        }).ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories)
-        {
-            var filterDate = new DateTime(year, month, 01);
-            var fromDate = filterDate.GetCYFD().SalesSearchDateFormat();
-            var toDate = filterDate.GetCYLD().SalesSearchDateFormat();
+        //public async Task<IList<KPIBusinessAnalysisKPIReportResultModel>> GetKPIBusinessAnalysisKPIReport(int year, int month, string depot, List<string> salesGroups, List<string> territories)
+        //{
+        //    var filterDate = new DateTime(year, month, 01);
+        //    var fromDate = filterDate.GetCYFD().SalesSearchDateFormat();
+        //    var toDate = filterDate.GetCYLD().SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
-                                .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(DataColumnDef.NetAmount);
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder.AddProperty(DataColumnDef.InvoiceNoOrBillNo)
+        //                        .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+        //                        .AddProperty(DataColumnDef.Date)
+        //                        .AddProperty(DataColumnDef.NetAmount);
 
-            var data = (await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
-                                            depots: new List<string> { depot }, salesGroups: salesGroups, territories: territories)).ToList();
+        //    var data = (await _odataService.GetSalesData(selectQueryBuilder, fromDate, toDate,
+        //                                    depots: new List<string> { depot }, salesGroups: salesGroups, territories: territories)).ToList();
 
-            var result = data.Select(x =>
-                                new KPIBusinessAnalysisKPIReportResultModel()
-                                {
-                                    CustomerNo = x.CustomerNoOrSoldToParty,
-                                }).ToList();
+        //    var result = data.Select(x =>
+        //                        new KPIBusinessAnalysisKPIReportResultModel()
+        //                        {
+        //                            CustomerNo = x.CustomerNoOrSoldToParty,
+        //                        }).ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<int> NoOfBillingDealer(AreaSearchCommonModel area, string division = "", string channel = "")
         {
@@ -1734,43 +1734,43 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
-            string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)
-        {
-            var fromDateStr = fromDate.SalesSearchDateFormat();
-            var toDateStr = toDate.SalesSearchDateFormat();
+        //public async Task<IList<SalesDataModel>> GetMTDActual(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
+        //    string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)
+        //{
+        //    var fromDateStr = fromDate.SalesSearchDateFormat();
+        //    var toDateStr = toDate.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
-                                .AddProperty(DataColumnDef.Date)
-                                .AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
-                                            ? DataColumnDef.Volume
-                                            : DataColumnDef.NetAmount);
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder.AddProperty(DataColumnDef.PlantOrBusinessArea)
+        //                        .AddProperty(DataColumnDef.Date)
+        //                        .AddProperty(volumeOrValue == EnumVolumeOrValue.Volume
+        //                                    ? DataColumnDef.Volume
+        //                                    : DataColumnDef.NetAmount);
 
-            if (type.HasValue) selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
+        //    if (type.HasValue) selectQueryBuilder.AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
-            var brands = new List<string>();
+        //    var brands = new List<string>();
 
-            if (category.HasValue && category.Value == EnumBrandCategory.Liquid)
-            {
-                brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
-            }
-            else if (category.HasValue && category.Value == EnumBrandCategory.Powder)
-            {
-                brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
-            }
+        //    if (category.HasValue && category.Value == EnumBrandCategory.Liquid)
+        //    {
+        //        brands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
+        //    }
+        //    else if (category.HasValue && category.Value == EnumBrandCategory.Powder)
+        //    {
+        //        brands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
+        //    }
 
-            if (type.HasValue && type.Value == EnumBrandType.MTSBrands)
-            {
-                brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
-            }
+        //    if (type.HasValue && type.Value == EnumBrandType.MTSBrands)
+        //    {
+        //        brands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+        //    }
 
-            var result = await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
-                            depots: area.Depots, territories: area.Territories, zones: area.Zones,
-                            brands: brands, division: division);
+        //    var result = await _odataService.GetSalesData(selectQueryBuilder, fromDateStr, toDateStr,
+        //                    depots: area.Depots, territories: area.Territories, zones: area.Zones,
+        //                    brands: brands, division: division);
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<IList<CustomerDeliveryNoteResultModel>> GetCustomerDeliveryNote(CustomerDeliveryNoteSearchModel model)
         {
