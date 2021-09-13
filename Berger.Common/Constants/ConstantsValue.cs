@@ -111,4 +111,14 @@ namespace Berger.Common.Constants
         public const string CreditLimitCrossNotifiction  = "Credit Limit Cross Notifiction ";
     }
 
+    public static class ConstantDealerOpeningValue
+    {
+        public const string Application_Form = "Application_Form";
+        public const string Trade_Licensee = "Trade_Licensee";
+        public const string NID_Passport_Birth = "NID_Passport_Birth";
+        public const string Photograph_of_proprietor = "Photograph_of_proprietor";
+        public const string Nominee_NID_PASSPORT_BIRTH = "Nominee_NID_PASSPORT_BIRTH";
+        public const string Nominee_Photograph = "Nominee_Photograph";
+        public const string Cheque = "Cheque";
+    }
 }

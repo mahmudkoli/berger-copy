@@ -765,7 +765,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      saleGroupName = sginfo.Name,
                                      territoryName = tinfo.Code,
                                      zoneName = zinfo.Code,
-                                     d.EmployeeId
+                                     d.EmployeeId,
+                                     d.DealerOpeningStatus
                                  }).ToListAsync();
 
             var dealerAttachments = await (from doa in _context.DealerOpeningAttachments
@@ -789,14 +790,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Territory = x.territoryName,
                 Zone = x.zoneName,
                 EmployeeId = x.EmployeeId,
-                DealershipOpeningApplicationForm = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Application Form" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                TradeLicensee = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Trade Licensee" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                IdentificationNo = dealerAttachments.FirstOrDefault(y => y.attachmentName == "NID/Passport/Birth" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                PhotographOfproprietor = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Photograph of proprietor" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                NomineeIdentificationNo = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee NID/PASSPORT/BIRTH" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                NomineePhotograph = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Nominee/Photograph" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                Cheque = dealerAttachments.FirstOrDefault(y => y.attachmentName == "Cheque" && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
-                CurrentStatusOfThisApplication = "",
+                DealershipOpeningApplicationForm = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Application_Form.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                TradeLicensee = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Trade_Licensee.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                IdentificationNo = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.NID_Passport_Birth.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                PhotographOfproprietor = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Photograph_of_proprietor.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                NomineeIdentificationNo = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Nominee_NID_PASSPORT_BIRTH.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                NomineePhotograph = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Nominee_Photograph.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                Cheque = dealerAttachments.FirstOrDefault(y => (y.attachmentName ?? "").ToLower() == ConstantDealerOpeningValue.Cheque.ToLower() && y.dealerOpeningId == x.dealerId)?.Path ?? string.Empty,
+                CurrentStatusOfThisApplication = ((DealerOpeningStatus)x.DealerOpeningStatus).ToString(),
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<DealerOpeningReportResultModel>();

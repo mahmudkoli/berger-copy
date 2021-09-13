@@ -2,6 +2,7 @@
 using System.Data;
 using System.IO;
 using System.Threading.Tasks;
+using BergerMsfaApi.Models.Report;
 using Microsoft.AspNetCore.Http;
 
 namespace BergerMsfaApi.Services.Excel.Interface
@@ -13,5 +14,6 @@ namespace BergerMsfaApi.Services.Excel.Interface
 
         public byte[] WriteToFile<T>(List<T> data);
         public Task<MemoryStream> WriteToFileWithImage(dynamic datas);
+        Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas);
     }
 }

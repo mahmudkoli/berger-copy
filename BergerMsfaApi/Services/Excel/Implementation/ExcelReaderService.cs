@@ -293,5 +293,116 @@ namespace BergerMsfaApi.Services.Excel.Implementation
             return memory;
         }
 
+
+        public async Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas)
+        {
+            var rootFolder = hostEnvironment.WebRootPath;
+            var sFileName = @"DealerOpeningReport.xlsx";
+            var memory = new MemoryStream();
+
+            using (var fs = new FileStream(sFileName, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet("DealerOpening");
+                excelSheet.DefaultRowHeight =(short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowcount = 0;
+
+                IRow row = excelSheet.CreateRow(rowcount);
+
+                var colNames = new Dictionary<string, string>() 
+                {
+                    { nameof(DealerOpeningReportResultModel.UserId),"User Id" },
+                    { nameof(DealerOpeningReportResultModel.DealrerOpeningCode),"Dealrer Opening Code" },
+                    { nameof(DealerOpeningReportResultModel.BusinessArea),"Business Area" },
+                    { nameof(DealerOpeningReportResultModel.BusinessAreaName),"Business Area Name" },
+                    { nameof(DealerOpeningReportResultModel.SalesOffice),"Sales Office" },
+                    { nameof(DealerOpeningReportResultModel.SalesGroup),"Sales Group" },
+                    { nameof(DealerOpeningReportResultModel.Territory),"Territory" },
+                    { nameof(DealerOpeningReportResultModel.Zone),"Zone" },
+                    { nameof(DealerOpeningReportResultModel.EmployeeId),"Employee Id" },
+                    { nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
+                    { nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
+                    { nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
+                    { nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
+                    { nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
+                    { nameof(DealerOpeningReportResultModel.CurrentStatusOfThisApplication),"Current Status Of This Application" },
+                };
+
+                var imageColNames = new Dictionary<string, string>() 
+                {
+                    { nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
+                    { nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
+                    { nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
+                    { nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
+                    { nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
+                };
+
+                int i = 0;
+                foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
+                {
+                    if (colNames.TryGetValue(prop.Name, out string colName))
+                        row.CreateCell(i).SetCellValue(colName);
+                    else
+                        row.CreateCell(i).SetCellValue(prop.Name);
+
+                    i++;
+                }
+
+                rowcount++;
+                row = excelSheet.CreateRow(rowcount);
+
+                foreach (var item in datas)
+                {
+                    i = 0;
+                    foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
+                    {
+                        var rowValue = (string)prop.GetValue(item, null);
+
+                        if (imageColNames.ContainsKey(prop.Name))
+                        {
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            {
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, rowValue));
+                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+
+                                anchor.Col1 = i;
+                                anchor.Row1 = rowcount;
+
+                                IPicture picture = drawing.CreatePicture(anchor, pic);
+
+                                picture.Resize(1);
+                            }
+                        }
+                        else 
+                        {
+                            row.CreateCell(i).SetCellValue(rowValue);
+                        }
+                        
+                        i++;
+                    }
+
+                    rowcount++;
+                    row = excelSheet.CreateRow(rowcount);
+                }
+
+                workbook.Write(fs);
+            }
+
+            using (var stream = new FileStream(sFileName, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            memory.Position = 0;
+            return memory;
+        }
     }
 }
