@@ -37,6 +37,9 @@ namespace Berger.Data.MsfaEntity.CollectionEntry
         [ForeignKey("CreditControlAreaId")]
         public CreditControlArea CreditControlArea { get; set; }
         public string EmployeeId { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
     }
 
 }

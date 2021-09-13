@@ -96,6 +96,7 @@ namespace BergerMsfaApi.Services.Implementation
                 var painterRegistrationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 //var leadGenerationsHierarchyList = await _commonService.GetPTZHierarchy(userInfo.PlantIds, userInfo.TerritoryIds, userInfo.ZoneIds);
                 var leadGenerationsHierarchyList = painterRegistrationsHierarchyList;
+                var collectionEntriesHierarchyList = painterRegistrationsHierarchyList;
 
                 var plants = await _commonService.GetDepotList(x => (EnumEmployeeRole.Admin == userInfo.EmployeeRole || userInfo.EmployeeRole == EnumEmployeeRole.GM)
                                                                     || (userInfo.PlantIds != null && userInfo.PlantIds.Any(y => y == x.Werks)));
@@ -118,6 +119,7 @@ namespace BergerMsfaApi.Services.Implementation
                     DealerOpeningsHierarchyList = dealerOpeningsHierarchyList, // only for app end
                     PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList, // only for app end
                     LeadGenerationsHierarchyList = leadGenerationsHierarchyList, // only for app end
+                    CollectionEntriesHierarchyList = collectionEntriesHierarchyList, // only for app end
                     Plants = plants, // only for app end
                     SalesOffices = saleOffices, // only for app end
                     Areas = areas, // only for app end

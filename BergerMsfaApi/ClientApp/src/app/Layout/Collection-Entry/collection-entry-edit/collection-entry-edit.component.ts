@@ -30,6 +30,9 @@ export class CollectionEntryEditComponent implements OnInit {
 	lstCustomerType:any[] = [];
 	lstCreditControl:any[] = [];
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
+    depots: any[] = [];
+    territories: any[]=[]
+    zones: any[] = [];
 	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload;
 
 	private subscriptions: Subscription[] = [];
@@ -91,8 +94,23 @@ export class CollectionEntryEditComponent implements OnInit {
 			
 
         }, (err) => { }, () => { });
+		
+		const forkJoinSubscription2 = forkJoin([
+			this.commonService.getDepotList(),
+			this.commonService.getTerritoryList(),
+			this.commonService.getZoneList()
+		  ]).subscribe(
+			([plants, territories, zones]) => {
+			  this.depots = plants.data;
+			  this.territories = territories.data;
+			  this.zones = zones.data;
+			},
+			(err) => {},
+			() => {}
+		  );
 
 		this.subscriptions.push(forkJoinSubscription1);
+		this.subscriptions.push(forkJoinSubscription2);
     }
 
 	initCollectionForm() {
@@ -117,7 +135,10 @@ export class CollectionEntryEditComponent implements OnInit {
 			dealerId: [this.payment.dealerId?parseInt(this.payment.dealerId):null],
 			paymenyMethodId: [this.payment.paymentMethodId],
 			creditControlArea: [this.payment.creditControlAreaId],
-			customerTypeId: [this.payment.customerTypeId]
+			customerTypeId: [this.payment.customerTypeId],
+			depot: [this.payment.depot],
+			territory: [this.payment.territory],
+			zone: [this.payment.zone],
 		
 		});
 
@@ -167,6 +188,9 @@ console.log(this.paymentForm);
 		_payments.status=this.payment.status;
 		_payments.collectionDate=this.payment.collectionDate;
 		_payments.sapId=this.payment.sapId;
+		_payments.depot=controls['depot'].value;
+		_payments.territory=controls['territory'].value;
+		_payments.zone=controls['zone'].value;
 		// _payments.name=this.payment.name;
 
 
