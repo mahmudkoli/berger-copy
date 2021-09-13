@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
+using Berger.Odata.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Berger.Odata.Services
@@ -17,14 +20,17 @@ namespace Berger.Odata.Services
     {
         private readonly IODataService _odataService;
         private readonly IODataCommonService _odataCommonService;
+        private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
 
         public FinancialDataService(
             IODataService odataService,
-            IODataCommonService odataCommonService
+            IODataCommonService odataCommonService,
+            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo
             )
         {
             _odataService = odataService;
             _odataCommonService = odataCommonService;
+            _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
         }
 
         public async Task<IList<OutstandingDetailsResultModel>> GetOutstandingDetails(OutstandingDetailsSearchModel model)
@@ -198,36 +204,51 @@ namespace Berger.Odata.Services
             var smDate = currentDate.AddMonths(-2);
             var tmDate = currentDate.AddMonths(-1);
 
+            var salesDates = new List<string>
+            {
+                fmDate.Year.ToString()+fmDate.Month.ToString(),
+                smDate.Year.ToString()+smDate.Month.ToString(),
+                tmDate.Year.ToString()+tmDate.Month.ToString()
+            };
+
             var filterFinancialEndDateFM = fmDate.GetCYLD().FinancialSearchDateTimeFormat();
             var filterFinancialEndDateSM = smDate.GetCYLD().FinancialSearchDateTimeFormat();
             var filterFinancialEndDateTM = tmDate.GetCYLD().FinancialSearchDateTimeFormat();
 
-            var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
-            var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
-            var fmFromDate = fmDate.GetCYFD();
-            var fmToDate = fmDate.GetCYLD();
-            var smFromDate = smDate.GetCYFD();
-            var smToDate = smDate.GetCYLD();
-            var tmFromDate = tmDate.GetCYFD();
-            var tmToDate = tmDate.GetCYLD();
+            //var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
+            //var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
+            //var fmFromDate = fmDate.GetCYFD();
+            //var fmToDate = fmDate.GetCYLD();
+            //var smFromDate = smDate.GetCYFD();
+            //var smToDate = smDate.GetCYLD();
+            //var tmFromDate = tmDate.GetCYFD();
+            //var tmToDate = tmDate.GetCYLD();
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
-            var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
-            selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                        .AddProperty(DataColumnDef.Date)
-                                        .AddProperty(DataColumnDef.NetAmount);
+            //var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
+            //selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                            .AddProperty(DataColumnDef.Date)
+            //                            .AddProperty(DataColumnDef.NetAmount);
 
             var selectFinancialQueryBuilder = new SelectQueryOptionBuilder();
             selectFinancialQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                                         .AddProperty(FinancialColDef.Age)
                                         .AddProperty(FinancialColDef.Amount);
 
-            var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
-                                filterSalesFromDate, filterSalesToDate,
-                                depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                creditControlArea: model.CreditControlArea)).ToList();
+            //var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
+            //                    filterSalesFromDate, filterSalesToDate,
+            //                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                    creditControlArea: model.CreditControlArea)).ToList();
+
+            var salesData = await _summaryPerformanceReportRepo.FindAll(
+                x => salesDates.Contains(x.Year.ToString()+x.Month.ToString())
+                    && (!model.Depots.Any() || model.Depots.Contains(x.Depot))
+                    && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                    && (!model.Zones.Any() || model.Zones.Contains(x.Zone))
+                    && (string.IsNullOrEmpty(model.CreditControlArea) || model.CreditControlArea == x.CreditControlArea)
+                ).GroupBy(x=>x.Month).Select(x => new { Month = x.Key, Value = x.Sum(y=>y.Value) }).ToListAsync();
 
             var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
                                 depots: model.Depots, territories: model.Territories, zones: model.Zones,
@@ -274,9 +295,8 @@ namespace Berger.Odata.Services
             resFM.Month = fmDate.ToString("MMMM");
             resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resFM.Difference = 0;
-            resFM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= fmFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= fmToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resFM.Sales = salesData.Where(x => x.Month == fmDate.Month)
+                                    .Sum(s => s.Value);
             resFM.OSPercentageWithSales = _odataService.GetPercentage(resFM.Sales, resFM.OSOver90Days);
 
             result.Add(resFM);
@@ -285,9 +305,8 @@ namespace Berger.Odata.Services
             resSM.Month = smDate.ToString("MMMM");
             resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
-            resSM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= smFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= smToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resSM.Sales = salesData.Where(x => x.Month == smDate.Month)
+                                    .Sum(s => s.Value);
             resSM.OSPercentageWithSales = _odataService.GetPercentage(resSM.Sales, resSM.OSOver90Days);
 
             result.Add(resSM);
@@ -296,9 +315,8 @@ namespace Berger.Odata.Services
             resTM.Month = tmDate.ToString("MMMM");
             resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
-            resTM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= tmFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= tmToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resTM.Sales = salesData.Where(x => x.Month == tmDate.Month)
+                                    .Sum(s => s.Value);
             resTM.OSPercentageWithSales = _odataService.GetPercentage(resTM.Sales, resTM.OSOver90Days);
 
             result.Add(resTM);
@@ -313,39 +331,55 @@ namespace Berger.Odata.Services
             var smDate = currentDate.AddMonths(-1);
             var tmDate = currentDate;
 
+            var salesDates = new List<string>
+            {
+                fmDate.Year.ToString()+fmDate.Month.ToString(),
+                smDate.Year.ToString()+smDate.Month.ToString(),
+                tmDate.Year.ToString()+tmDate.Month.ToString()
+            };
+
             var filterFinancialEndDateFM = fmDate.GetCYLD().FinancialSearchDateTimeFormat();
             var filterFinancialEndDateSM = smDate.GetCYLD().FinancialSearchDateTimeFormat();
             var filterFinancialEndDateTM = tmDate.GetCYLD().FinancialSearchDateTimeFormat();
 
-            var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
-            var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
-            var fmFromDate = fmDate.GetCYFD();
-            var fmToDate = fmDate.GetCYLD();
-            var smFromDate = smDate.GetCYFD();
-            var smToDate = smDate.GetCYLD();
-            var tmFromDate = tmDate.GetCYFD();
-            var tmToDate = tmDate.GetCYLD();
+            //var filterSalesFromDate = fmDate.GetCYFD().SalesSearchDateFormat();
+            //var filterSalesToDate = tmDate.GetCYLD().SalesSearchDateFormat();
+            //var fmFromDate = fmDate.GetCYFD();
+            //var fmToDate = fmDate.GetCYLD();
+            //var smFromDate = smDate.GetCYFD();
+            //var smToDate = smDate.GetCYLD();
+            //var tmFromDate = tmDate.GetCYFD();
+            //var tmToDate = tmDate.GetCYLD();
 
             var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
             selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
-            var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
-            selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                                        .AddProperty(DataColumnDef.Date)
-                                        .AddProperty(DataColumnDef.NetAmount);
+            //var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
+            //selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+            //                            .AddProperty(DataColumnDef.Date)
+            //                            .AddProperty(DataColumnDef.NetAmount);
 
             var selectFinancialQueryBuilder = new SelectQueryOptionBuilder();
             selectFinancialQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                                         .AddProperty(FinancialColDef.Age)
                                         .AddProperty(FinancialColDef.Amount);
 
-            var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
-                                filterSalesFromDate, filterSalesToDate,
-                                depots: new List<string> { model.Depot }, territories: model.Territories, zones: model.Zones,
-                                creditControlArea: model.CreditControlArea)).ToList();
+            //var salesData = (await _odataService.GetSalesData(selectSalesQueryBuilder,
+            //                    filterSalesFromDate, filterSalesToDate,
+            //                    depots: new List<string> { model.Depot }, territories: model.Territories, zones: model.Zones,
+            //                    creditControlArea: model.CreditControlArea)).ToList();
+
+            var salesData = await _summaryPerformanceReportRepo.FindAll(
+                x => salesDates.Contains(x.Year.ToString() + x.Month.ToString())
+                    && (string.IsNullOrEmpty(model.Depot) || model.Depot==x.Depot)
+                    && (!model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
+                    && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                    && (!model.Zones.Any() || model.Zones.Contains(x.Zone))
+                    && (string.IsNullOrEmpty(model.CreditControlArea) || model.CreditControlArea == x.CreditControlArea)
+                ).GroupBy(x => x.Month).Select(x => new { Month = x.Key, Value = x.Sum(y => y.Value) }).ToListAsync();
 
             var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
-                                depots: new List<string> { model.Depot }, territories: model.Territories, zones: model.Zones,
+                                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, zones: model.Zones,
                                 channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
@@ -389,9 +423,8 @@ namespace Berger.Odata.Services
             resFM.Month = fmDate.ToString("MMMM");
             resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resFM.Difference = 0;
-            resFM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= fmFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= fmToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resFM.Sales = salesData.Where(x => fmDate.Month==x.Month)
+                                    .Sum(s => s.Value);
             resFM.OSPercentageWithSales = _odataService.GetPercentage(resFM.Sales, resFM.OSOver90Days);
 
             result.Add(resFM);
@@ -400,9 +433,8 @@ namespace Berger.Odata.Services
             resSM.Month = smDate.ToString("MMMM");
             resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
-            resSM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= smFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= smToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resSM.Sales = salesData.Where(x => smDate.Month == x.Month)
+                                    .Sum(s => s.Value);
             resSM.OSPercentageWithSales = _odataService.GetPercentage(resSM.Sales, resSM.OSOver90Days);
 
             result.Add(resSM);
@@ -411,9 +443,8 @@ namespace Berger.Odata.Services
             resTM.Month = tmDate.ToString("MMMM");
             resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
-            resTM.Sales = salesData.Where(x => x.Date.SalesResultDateFormat().Date >= tmFromDate.Date
-                                             && x.Date.SalesResultDateFormat().Date <= tmToDate.Date)
-                                    .Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount));
+            resTM.Sales = salesData.Where(x => tmDate.Month == x.Month)
+                                    .Sum(s => s.Value);
             resTM.OSPercentageWithSales = _odataService.GetPercentage(resTM.Sales, resTM.OSOver90Days);
 
             result.Add(resTM);

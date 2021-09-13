@@ -237,6 +237,49 @@ namespace Berger.Odata.Repositories
 
             return (items, totalCount ?? 0, filteredCount ?? 0);
         }
+        
+        public IList<T> GetDataBySP<T>(string sql, IList<(string Key, object Value)> parameters, params string[] ignoreProperties)
+        {
+            var items = new List<T>();
+
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = sql;
+                command.CommandType = CommandType.StoredProcedure;
+                if (command.Connection.State != ConnectionState.Open) { command.Connection.Open(); }
+
+                foreach (var param in parameters)
+                {
+                    DbParameter dbParameter = command.CreateParameter();
+                    dbParameter.ParameterName = param.Key;
+                    dbParameter.Value = param.Value;
+                    command.Parameters.Add(dbParameter);
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var itemType = typeof(T);
+                        var constructor = itemType.GetConstructor(new Type[] { });
+                        var instance = constructor.Invoke(new object[] { });
+                        var properties = itemType.GetProperties();
+
+                        foreach (var property in properties)
+                        {
+                            if (ignoreProperties != null && ignoreProperties.Contains(property.Name)) continue;
+
+                            if(!reader.IsDBNull(reader.GetOrdinal(property.Name)))
+                                property.SetValue(instance, reader[property.Name]);
+                        }
+
+                        items.Add((T)instance);
+                    }
+                }
+            }
+
+            return items;
+        }
         #endregion
 
         #region LINQ ASYNC
@@ -761,6 +804,11 @@ namespace Berger.Odata.Repositories
             }
 
             return query;
+        }
+
+        public virtual IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression)
+        {
+            return DbSet.Where(expression).AsNoTracking();
         }
     }
 }

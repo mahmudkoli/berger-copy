@@ -1402,6 +1402,9 @@ namespace Berger.Data.Migrations
                     b.Property<int>("ELearningDocumentId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -1414,7 +1417,13 @@ namespace Berger.Data.Migrations
                     b.Property<int>("PassMark")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeOutMinute")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -1468,6 +1477,26 @@ namespace Berger.Data.Migrations
                     b.HasIndex("QuestionSetId");
 
                     b.ToTable("QuestionSetCollections");
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.QuestionSetDepot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Depot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuestionSetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionSetId");
+
+                    b.ToTable("QuestionSetDepots");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.UserQuestionAnswer", b =>
@@ -4261,6 +4290,15 @@ namespace Berger.Data.Migrations
 
                     b.HasOne("Berger.Data.MsfaEntity.ELearning.QuestionSet", "QuestionSet")
                         .WithMany("QuestionSetCollections")
+                        .HasForeignKey("QuestionSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.ELearning.QuestionSetDepot", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.ELearning.QuestionSet", "QuestionSet")
+                        .WithMany("QuestionSetDepots")
                         .HasForeignKey("QuestionSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

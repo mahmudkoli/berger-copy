@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
@@ -13,22 +14,22 @@ namespace Berger.Odata.Services
     {
         private readonly IODataService _odataService;
         private readonly IODataBrandService _odataBrandService;
-
+        private readonly ISalesDataService _salesDataService;
         public MTSDataService(
             IODataService odataService,
-            IODataBrandService odataBrandService
-            )
+            IODataBrandService odataBrandService, ISalesDataService salesDataService)
         {
             _odataService = odataService;
             _odataBrandService = odataBrandService;
+            _salesDataService = salesDataService;
         }
 
         public async Task<IList<MTSResultModel>> GetMTSUpdate(MTSSearchModelBase model)
         {
             var currentDateStr = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
             var currentDate = (new DateTime(model.Year, model.Month, 1));
-            var fromDate = currentDate.GetCYFD().SalesSearchDateFormat();
-            var toDate = currentDate.GetCYLD().SalesSearchDateFormat();
+            var fromDate = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var toDate = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
             var mtsBrandCodes = new List<string>();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
@@ -41,12 +42,22 @@ namespace Berger.Odata.Services
 
             var dataTarget = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentDateStr, mtsBrandCodes)).ToList();
 
-            var dataActual = await GetSalesDataValueVolume(model.CustomerNo, fromDate, toDate, mtsBrandCodes);
+
+            var dataActual = await _salesDataService.GetCustomerWiseRevenue(x => new CustomerPerformanceReport
+            {
+                Brand = x.Brand,
+                Volume = x.Volume,
+                CustomerName = x.CustomerName,
+                CustomerNo = x.CustomerNo,
+            }, model.CustomerNo, fromDate, toDate, "-1", mtsBrandCodes);
+
+
+            //var dataActual = await GetSalesDataValueVolume(model.CustomerNo, fromDate, toDate, mtsBrandCodes);
 
             var result = new List<MTSResultModel>();
 
             var brandCodes = dataTarget.Select(x => x.MatarialGroupOrBrand)
-                                .Concat(dataActual.Select(x => x.MatarialGroupOrBrand))
+                                .Concat(dataActual.Select(x => x.Brand))
                                     .Distinct().ToList();
 
             foreach (var brandCode in brandCodes)
@@ -66,12 +77,12 @@ namespace Berger.Odata.Services
                     res.TargetVolume = volTar;
                 }
 
-                if (dataActual.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataActual.Any(x => x.Brand == brandCode))
                 {
-                    var volAct = dataActual.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => x.ActualVolume);
-                    var brandNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
-                    var custNoAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
-                    var custNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
+                    var volAct = dataActual.Where(x => x.Brand == brandCode).Sum(x => x.Volume);
+                    var brandNameAct = dataActual.FirstOrDefault(x => x.Brand == brandCode).Brand;
+                    var custNoAct = dataActual.FirstOrDefault(x => x.Brand == brandCode).CustomerNo;
+                    var custNameAct = dataActual.FirstOrDefault(x => x.Brand == brandCode).CustomerName;
 
                     res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameAct : res.MatarialGroupOrBrand;
                     res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoAct : res.CustomerNo;
@@ -110,10 +121,10 @@ namespace Berger.Odata.Services
         {
             var currentDateStr = $"{string.Format("{0:0000}", model.Year)}.{string.Format("{0:00}", model.Month)}";
             var currentDate = (new DateTime(model.Year, model.Month, 1));
-            var lyfd = currentDate.GetLYFD().SalesSearchDateFormat();
-            var lyld = currentDate.GetLYLD().SalesSearchDateFormat();
-            var cyfd = currentDate.GetCYFD().SalesSearchDateFormat();
-            var cyld = currentDate.GetCYLD().SalesSearchDateFormat();
+            var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
+            var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
             List<string> premiumBrandCodes;
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
@@ -127,21 +138,36 @@ namespace Berger.Odata.Services
 
             var dataTargetCy = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentDateStr, premiumBrandCodes)).ToList();
 
-            var dataActualLy = await GetSalesDataValueVolume(model.CustomerNo, lyfd, lyld, premiumBrandCodes);
+            var dataActualLy = await _salesDataService.GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume
+            }, model.CustomerNo, lyfd, lyld, "-1", premiumBrandCodes);
 
-            var dataActualCy = await GetSalesDataValueVolume(model.CustomerNo, cyfd, cyld, premiumBrandCodes);
+            var dataActualCy = await _salesDataService.GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Volume = x.Volume
+            }, model.CustomerNo, cyfd, cyld, "-1", premiumBrandCodes);
+
+
+            //var dataActualLy = await GetSalesDataValueVolume(model.CustomerNo, lyfd, lyld, premiumBrandCodes);
+
+            // var dataActualCy = await GetSalesDataValueVolume(model.CustomerNo, cyfd, cyld, premiumBrandCodes);
 
             var result = new List<PerformanceResultModel>();
 
             var brandCodes = dataTargetCy.Select(x => x.MatarialGroupOrBrand)
-                                .Concat(dataActualLy.Select(x => x.MatarialGroupOrBrand))
-                                    .Concat(dataActualCy.Select(x => x.MatarialGroupOrBrand))
+                                .Concat(dataActualLy.Select(x => x.Brand))
+                                    .Concat(dataActualCy.Select(x => x.Brand))
                                             .Distinct().ToList();
 
 
-            Func<(string MatarialGroupOrBrand, string CustomerNo, string CustomerName, decimal ActualValue, decimal ActualVolume), decimal> sumFunc
-                = x => model.VolumeOrValue == EnumVolumeOrValue.Value ? CustomConvertExtension.ObjectToDecimal(x.ActualValue) //revenue
-                : CustomConvertExtension.ObjectToDecimal(x.ActualVolume); // volume
+            Func<CustomerPerformanceReport, decimal> sumFunc
+                = x => model.VolumeOrValue == EnumVolumeOrValue.Value ? CustomConvertExtension.ObjectToDecimal(x.Value) //revenue
+                : CustomConvertExtension.ObjectToDecimal(x.Volume); // volume
 
             Func<MTSDataModel, decimal> funcTarget = x =>
                 model.VolumeOrValue == EnumVolumeOrValue.Value
@@ -168,18 +194,18 @@ namespace Berger.Odata.Services
                     res.CMTarget = volTarCy;
                 }
 
-                if (dataActualCy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataActualCy.Any(x => x.Brand == brandCode))
                 {
-                    var volActCy = dataActualCy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => sumFunc(x));
-                    var brandNameActCy = dataActualCy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    var volActCy = dataActualCy.Where(x => x.Brand == brandCode).Sum(x => sumFunc(x));
+                    var brandNameActCy = dataActualCy.FirstOrDefault(x => x.Brand == brandCode).Brand;
                     res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameActCy : res.MatarialGroupOrBrand;
                     res.CMActual = volActCy;
                 }
 
-                if (dataActualLy.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataActualLy.Any(x => x.Brand == brandCode))
                 {
-                    var volActLy = dataActualLy.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => sumFunc(x));
-                    var brandNameActLy = dataActualLy.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    var volActLy = dataActualLy.Where(x => x.Brand == brandCode).Sum(x => sumFunc(x));
+                    var brandNameActLy = dataActualLy.FirstOrDefault(x => x.Brand == brandCode).Brand;
                     res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameActLy : res.MatarialGroupOrBrand;
                     res.LYMTD = volActLy;
                 }
@@ -195,7 +221,7 @@ namespace Berger.Odata.Services
             {
                 var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
 
-                var allBrandFamilyData= await _odataBrandService.GetBrandFamilyInfosAsync(x => brands.Contains(x.MatarialGroupOrBrand));
+                var allBrandFamilyData = await _odataBrandService.GetBrandFamilyInfosAsync(x => brands.Contains(x.MatarialGroupOrBrand));
 
                 //var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands)).ToList();
 
@@ -228,12 +254,18 @@ namespace Berger.Odata.Services
 
             var dataTarget = (await _odataService.GetMTSDataByCustomerAndDate(selectQueryBuilder, model.CustomerNo, currentDateStr)).ToList();
 
-            var dataActual = await GetSalesDataValueVolume(model.CustomerNo, fromDate, toDate);
+            var dataActual = await _salesDataService.GetCustomerWiseRevenue(x => new CustomerPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value
+            }, model.CustomerNo, fromDate, toDate, "-1");
+
+            //  var dataActual = await GetSalesDataValueVolume(model.CustomerNo, fromDate, toDate);
 
             var result = new List<ValueTargetResultModel>();
 
             var brandCodes = dataTarget.Select(x => x.MatarialGroupOrBrand)
-                                .Concat(dataActual.Select(x => x.MatarialGroupOrBrand))
+                                .Concat(dataActual.Select(x => x.Brand))
                                     .Distinct().ToList();
 
             foreach (var brandCode in brandCodes)
@@ -248,21 +280,21 @@ namespace Berger.Odata.Services
                     //var custNameTar = dataTarget.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
 
                     //res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameTar : res.MatarialGroupOrBrand;
-                   // res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoTar : res.CustomerNo;
-                   // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameTar : res.CustomerName;
+                    // res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoTar : res.CustomerNo;
+                    // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameTar : res.CustomerName;
                     res.TargetValue = volTar;
                 }
 
-                if (dataActual.Any(x => x.MatarialGroupOrBrand == brandCode))
+                if (dataActual.Any(x => x.Brand == brandCode))
                 {
-                    var volAct = dataActual.Where(x => x.MatarialGroupOrBrand == brandCode).Sum(x => x.ActualVolume);
-                   // var brandNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
+                    var volAct = dataActual.Where(x => x.Brand == brandCode).Sum(x => x.Value);
+                    // var brandNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).MatarialGroupOrBrand;
                     //var custNoAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerNo;
                     //var custNameAct = dataActual.FirstOrDefault(x => x.MatarialGroupOrBrand == brandCode).CustomerName;
 
                     //res.MatarialGroupOrBrand = string.IsNullOrEmpty(res.MatarialGroupOrBrand) ? brandNameAct : res.MatarialGroupOrBrand;
-                  //  res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoAct : res.CustomerNo;
-                   // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameAct : res.CustomerName;
+                    //  res.CustomerNo = string.IsNullOrEmpty(res.CustomerNo) ? custNoAct : res.CustomerNo;
+                    // res.CustomerName = string.IsNullOrEmpty(res.CustomerName) ? custNameAct : res.CustomerName;
                     res.ActualValue = volAct;
                 }
 
@@ -286,28 +318,28 @@ namespace Berger.Odata.Services
             return returnResult;
         }
 
-        private async Task<IList<(string MatarialGroupOrBrand, string CustomerNo, string CustomerName, decimal ActualValue, decimal ActualVolume)>> GetSalesDataValueVolume(string customerNo, string fromDate, string toDate, List<string> brands = null)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo)
-                                .AddProperty(DataColumnDef.CustomerName)
-                                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
-                                .AddProperty(DataColumnDef.NetAmount)
-                                .AddProperty(DataColumnDef.Volume);
+        //private async Task<IList<(string MatarialGroupOrBrand, string CustomerNo, string CustomerName, decimal ActualValue, decimal ActualVolume)>> GetSalesDataValueVolume(string customerNo, string fromDate, string toDate, List<string> brands = null)
+        //{
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder();
+        //    selectQueryBuilder.AddProperty(DataColumnDef.CustomerNo)
+        //                        .AddProperty(DataColumnDef.CustomerName)
+        //                        .AddProperty(DataColumnDef.MatarialGroupOrBrand)
+        //                        .AddProperty(DataColumnDef.NetAmount)
+        //                        .AddProperty(DataColumnDef.Volume);
 
-            var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, customerNo, fromDate, toDate, brands: brands)).ToList();
+        //    var data = (await _odataService.GetSalesDataByCustomerAndDivision(selectQueryBuilder, customerNo, fromDate, toDate, brands: brands)).ToList();
 
-            var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
-                                                                    (
-                                                                        MatarialGroupOrBrand: x.Key,
-                                                                        CustomerNo: x.FirstOrDefault().CustomerNo,
-                                                                        CustomerName: x.FirstOrDefault().CustomerName,
-                                                                        ActualValue: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount)),
-                                                                        ActualVolume: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
-                                                                    )).ToList();
+        //    var result = data.GroupBy(x => x.MatarialGroupOrBrand).Select(x =>
+        //                                                            (
+        //                                                                MatarialGroupOrBrand: x.Key,
+        //                                                                CustomerNo: x.FirstOrDefault().CustomerNo,
+        //                                                                CustomerName: x.FirstOrDefault().CustomerName,
+        //                                                                ActualValue: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.NetAmount)),
+        //                                                                ActualVolume: x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Volume))
+        //                                                            )).ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<IList<MTSDataModel>> GetMTDTarget(AppAreaSearchCommonModel area, DateTime fromDate, DateTime toDate,
             string division, EnumVolumeOrValue volumeOrValue, EnumBrandCategory? category, EnumBrandType? type)

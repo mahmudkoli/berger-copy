@@ -15,27 +15,27 @@ namespace Berger.Odata.Services
             _odataService = odataService;
         }
 
-        public async Task<IList<SalesDataModel>> GetDailySalesData(DateTime startDate, DateTime endDate)
-        {
-            var selectQueryBuilder = new SelectQueryOptionBuilder()
-                .AddProperty(DataColumnDef.Division)
-                .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
-                .AddProperty(DataColumnDef.SalesGroup)
-                .AddProperty(DataColumnDef.SalesOffice)
-                .AddProperty(DataColumnDef.Division)
-                .AddProperty(DataColumnDef.Zone)
-                .AddProperty(DataColumnDef.Territory)
-                .AddProperty(DataColumnDef.CustomerAccountGroup)
-                .AddProperty(DataColumnDef.MatarialGroupOrBrand)
-                .AddProperty(DataColumnDef.PlantOrBusinessArea)
-                .AddProperty(DataColumnDef.Volume)
-                .AddProperty(DataColumnDef.NetAmount)
-                .AddProperty(DataColumnDef.DistributionChannel)
-                .AddProperty(DataColumnDef.Date);
+        //public async Task<IList<SalesDataModel>> GetDailySalesData(DateTime startDate, DateTime endDate)
+        //{
+        //    var selectQueryBuilder = new SelectQueryOptionBuilder()
+        //        .AddProperty(DataColumnDef.Division)
+        //        .AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
+        //        .AddProperty(DataColumnDef.SalesGroup)
+        //        .AddProperty(DataColumnDef.SalesOffice)
+        //        .AddProperty(DataColumnDef.Division)
+        //        .AddProperty(DataColumnDef.Zone)
+        //        .AddProperty(DataColumnDef.Territory)
+        //        .AddProperty(DataColumnDef.CustomerAccountGroup)
+        //        .AddProperty(DataColumnDef.MatarialGroupOrBrand)
+        //        .AddProperty(DataColumnDef.PlantOrBusinessArea)
+        //        .AddProperty(DataColumnDef.Volume)
+        //        .AddProperty(DataColumnDef.NetAmount)
+        //        .AddProperty(DataColumnDef.DistributionChannel)
+        //        .AddProperty(DataColumnDef.Date);
 
-            return await _odataService.GetSalesData(selectQueryBuilder, startDate.SalesSearchDateFormat(), endDate.SalesSearchDateFormat(), null,
-                 null, null, null, null, null, "", "");
-        }
+        //    return await _odataService.GetSalesData(selectQueryBuilder, startDate.SalesSearchDateFormat(), endDate.SalesSearchDateFormat(), null,
+        //         null, null, null, null, null, "", "");
+        //}
 
         public async Task<IList<MTSDataModel>> GetMonthlyTarget(DateTime fromDate,DateTime toDate)
         {

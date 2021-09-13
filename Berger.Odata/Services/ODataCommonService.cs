@@ -15,17 +15,17 @@ namespace Berger.Odata.Services
 {
     public class ODataCommonService : IODataCommonService
     {
-        private readonly IODataRepository<CreditControlArea> _creditControlAreaRepository;
-        private readonly IODataRepository<RPRSPolicy> _rPRSPolicyRepository;
-        private readonly IODataRepository<Depot> _depotRepository;
-        private readonly IODataRepository<Division> _divisionRepository;
+        private readonly IODataApplicationRepository<CreditControlArea> _creditControlAreaRepository;
+        private readonly IODataApplicationRepository<RPRSPolicy> _rPRSPolicyRepository;
+        private readonly IODataApplicationRepository<Depot> _depotRepository;
+        private readonly IODataApplicationRepository<Division> _divisionRepository;
         private readonly IMapper _mapper;
 
         public ODataCommonService(
-            IODataRepository<CreditControlArea> creditControlAreaRepository,
-            IODataRepository<RPRSPolicy> rPRSPolicyRepository,
-            IODataRepository<Depot> depotRepository,
-            IODataRepository<Division> divisionRepository,
+           IODataApplicationRepository<CreditControlArea> creditControlAreaRepository,
+           IODataApplicationRepository<RPRSPolicy> rPRSPolicyRepository,
+           IODataApplicationRepository<Depot> depotRepository,
+           IODataApplicationRepository<Division> divisionRepository,
             IMapper mapper)
         {
             _creditControlAreaRepository = creditControlAreaRepository;

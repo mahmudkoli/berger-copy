@@ -34,6 +34,7 @@ namespace Berger.Odata.Repositories
         Task<int> ExecuteSqlCommandAsync(string sqlCommand, params object[] parameters);
         IEnumerable<dynamic> DynamicListFromSql(string Sql, Dictionary<string, object> Params, bool isStoredProcedure = false);
         (IList<T> Items, int Total, int TotalFilter) GetDataBySP<T>(string sql, IList<(string Key, object Value, bool IsOut)> parameters);
+        IList<T> GetDataBySP<T>(string sql, IList<(string Key, object Value)> parameters, params string[] ignoreProperties);
         #endregion
 
         #region LINQ ASYNC
@@ -96,6 +97,10 @@ namespace Berger.Odata.Repositories
                                                             string includeProperties = null,
                                                             int? skip = null,
                                                             int? take = null);
+
+
+        IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression);
+
     }
 }
 
