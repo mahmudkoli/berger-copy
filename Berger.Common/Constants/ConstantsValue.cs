@@ -73,14 +73,14 @@ namespace Berger.Common.Constants
 
     public static class ConstantIssuesValue
     {
-        public const string POSMaterialShort = "POS Material Short";
-        public const string ShadeCard = "Shade Card";
-        public const string ShopSignComplain = "Shop Sign Complain";
-        public const string DeliveryIssue = "Delivery Issue";
-        public const string Others = "Others";
-        public const string DamageProduct = "Damage Product";
-        public const string CBMachineMantainance = "CB Machine Mantainance";
-        public const string ProductComplaint = "Product Complain";
+        public const string POSMaterialShortDropdownCode = "ISSUES01_02";
+        public const string ShadeCardDropdownCode = "ISSUES01_03";
+        public const string ShopSignComplainDropdownCode = "ISSUES01_06";
+        public const string DeliveryIssueDropdownCode = "ISSUES01_07";
+        public const string OthersDropdownCode = "ISSUES01_08";
+        public const string DamageProductDropdownCode = "ISSUES01_04";
+        public const string CBMachineMantainanceDropdownCode = "ISSUES01_05";
+        public const string ProductComplaintDropdownCode = "ISSUES01_01";
     }
 
     public static class ConstantSnapShotValue
