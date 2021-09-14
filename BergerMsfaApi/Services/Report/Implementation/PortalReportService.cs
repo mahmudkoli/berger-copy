@@ -2224,9 +2224,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      {
                                          userInfo.Email,
                                          diInfo.BusinessArea,
+                                         depotId = depInfo.Werks,
                                          depot = depInfo.Name1,
-                                         territory = tInfo.Name,
-                                         zone = zInfo.Name,
+                                         territory = tInfo.Code,
+                                         zone = zInfo.Code,
                                          dscInfo.DealerId,
                                          diInfo.CustomerNo,
                                          diInfo.CustomerName,
@@ -2248,7 +2249,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 dealerSalesCallId = x.Key,
                 userId = x.FirstOrDefault()?.Email,
-                depotId = x.FirstOrDefault()?.DealerId,
+                depotId = x.FirstOrDefault()?.depotId,
                 depotName = x.FirstOrDefault()?.depot,
                 territoryName = x.FirstOrDefault()?.territory,
                 zoneName = x.FirstOrDefault()?.zone,
@@ -2365,9 +2366,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         {
                                             userInfo.Email,
                                             diInfo.BusinessArea,
+                                            depotId = depInfo.Werks,
                                             depot = depInfo.Name1,
-                                            territory = tInfo.Name,
-                                            zone = zInfo.Name,
+                                            territory = tInfo.Code,
+                                            zone = zInfo.Code,
                                             dscInfo.DealerId,
                                             diInfo.CustomerNo,
                                             diInfo.CustomerName,
@@ -2389,7 +2391,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 dealerSalesCallId = x.Key,
                 userId = x.FirstOrDefault()?.Email,
-                depotId = x.FirstOrDefault()?.DealerId,
+                depotId = x.FirstOrDefault()?.depotId,
                 depotName = x.FirstOrDefault()?.depot,
                 territoryName = x.FirstOrDefault()?.territory,
                 zoneName = x.FirstOrDefault()?.zone,
