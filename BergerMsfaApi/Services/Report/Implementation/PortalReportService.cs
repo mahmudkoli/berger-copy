@@ -640,10 +640,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   from userInfo in uleftjoin.DefaultIfEmpty()
                                   join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
                                   from dropDownInfo in dleftjoin.DefaultIfEmpty()
-                                  join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
-                                  from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
-                                  from diInfo in dileftjoin.DefaultIfEmpty()
+                                  //join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                  //from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                  //join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                  //from diInfo in dileftjoin.DefaultIfEmpty()
                                   join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
                                   from depinfo in depleftjoin.DefaultIfEmpty()
                                   join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
@@ -666,6 +666,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   )
                                   select new
                                   {
+                                      PainterId=p.Id,
                                       userInfo.Email,
                                       territoryName = tinfo.Name,
                                       zoneName = zinfo.Name,
@@ -685,14 +686,50 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       identification = !string.IsNullOrEmpty(p.NationalIdNo) ? p.NationalIdNo
                                                        : (!string.IsNullOrEmpty(p.PassportNo) ? p.PassportNo
                                                        : (!string.IsNullOrEmpty(p.BrithCertificateNo)) ? p.BrithCertificateNo : string.Empty),
-                                      p.AttachedDealerCd,
-                                      diInfo.CustomerName,
+                                      //p.AttachedDealerId,
+                                      //diInfo.CustomerName,
                                       appInstalledStatus = p.IsAppInstalled ? "Installed" : "Not Installed",
                                       p.Remark,
                                       avgMonthlyUse = p.AvgMonthlyVal.ToString(),
                                       bergerLoyalty = p.Loyality.ToString(),
                                       p.PainterImageUrl
                                   }).OrderByDescending(o => o.CreatedTime).ToListAsync();
+
+            var attachDealers = await (from adp in _context.AttachedDealerPainters
+                                       join p in _context.Painters on adp.PainterId equals p.Id into pleftjoin
+                                       from pInfo in pleftjoin.DefaultIfEmpty()
+                                       join di in _context.DealerInfos on adp.DealerId equals di.Id into dileftjoin
+                                       from diInfo in dileftjoin.DefaultIfEmpty()
+                                       join u in _context.UserInfos on pInfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                       from userInfo in uleftjoin.DefaultIfEmpty()
+                                       join d in _context.DropdownDetails on pInfo.PainterCatId equals d.Id into dleftjoin
+                                       from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                                       join dep in _context.Depots on pInfo.Depot equals dep.Werks into depleftjoin
+                                       from depinfo in depleftjoin.DefaultIfEmpty()
+                                       join sg in _context.SaleGroup on pInfo.SaleGroup equals sg.Code into sgleftjoin
+                                       from sginfo in sgleftjoin.DefaultIfEmpty()
+                                       join t in _context.Territory on pInfo.Territory equals t.Code into tleftjoin
+                                       from tinfo in tleftjoin.DefaultIfEmpty()
+                                       join z in _context.Zone on pInfo.Zone equals z.Code into zleftjoin
+                                       from zinfo in zleftjoin.DefaultIfEmpty()
+                                       where (
+                                          (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                          && (string.IsNullOrWhiteSpace(query.Depot) || pInfo.Depot == query.Depot)
+                                          && (!query.SalesGroups.Any() || query.SalesGroups.Contains(pInfo.SaleGroup))
+                                          && (!query.Territories.Any() || query.Territories.Contains(pInfo.Territory))
+                                          && (!query.Zones.Any() || query.Zones.Contains(pInfo.Zone))
+                                          && (!query.FromDate.HasValue || pInfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                          && (!query.ToDate.HasValue || pInfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                          && (!query.PainterId.HasValue || pInfo.Id == query.PainterId.Value)
+                                          && (!query.PainterType.HasValue || pInfo.PainterCatId == query.PainterType.Value)
+                                          && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || pInfo.Phone == query.PainterMobileNo)
+                                       )
+                                       select new
+                                       {
+                                           adp.PainterId,
+                                           DealerId=diInfo.CustomerNo,
+                                           DealerName = diInfo.CustomerName
+                                       }).ToListAsync();
 
             reportResult = painters.Select(x => new PainterRegistrationReportResultModel
             {
@@ -713,8 +750,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 AccountNumber = x.AccDbblNumber,
                 AccountHolderName = x.AccDbblHolderName,
                 IdentificationNo = x.identification,
-                AttachedTaggedDealerId = x.AttachedDealerCd,
-                AttachedTaggedDealerName = x.CustomerName,
+                AttachedTaggedDealerId = string.Join(", ", attachDealers.Where(y=>x.PainterId==y.PainterId).Select(s => s.DealerId).Distinct()),
+                AttachedTaggedDealerName = string.Join(", ", attachDealers.Where(y => x.PainterId == y.PainterId).Select(s => s.DealerName).Distinct()),
                 APPInstalledStatus = x.appInstalledStatus,
                 APPNotInstalledReason = x.Remark,
                 AverageMonthlyUse = x.avgMonthlyUse,
@@ -1158,16 +1195,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        from tinfo in tleftjoin.DefaultIfEmpty()
                                        join z in _context.Zone on pinfo.Zone equals z.Code into zleftjoin
                                        from zinfo in zleftjoin.DefaultIfEmpty()
-                                       join adp in _context.AttachedDealerPainters on pinfo.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
-                                       from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                       join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
-                                       from diInfo in dileftjoin.DefaultIfEmpty()
+                                       //join adp in _context.AttachedDealerPainters on pinfo.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                       //from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                       //join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                       //from diInfo in dileftjoin.DefaultIfEmpty()
                                        where (
                                        (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                        && (string.IsNullOrWhiteSpace(query.Depot) || pinfo.Depot == query.Depot)
-                                       && (!query.SalesGroups.Any() || query.SalesGroups.Contains(pinfo.SaleGroup))
-                                       && (!query.Territories.Any() || query.Territories.Contains(pinfo.Territory))
-                                       && (!query.Zones.Any() || query.Zones.Contains(pinfo.Zone))
+                                       && (!query.SalesGroups.Any() || query.SalesGroups.Contains(pcinfo.SaleGroup))
+                                       && (!query.Territories.Any() || query.Territories.Contains(pcinfo.Territory))
+                                       && (!query.Zones.Any() || query.Zones.Contains(pcinfo.Zone))
                                        && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
                                        && (!query.ToDate.HasValue || pcinfo.CreatedTime.Date <= query.ToDate.Value.Date)
                                        && (!query.PainterId.HasValue || pinfo.Id == query.PainterId.Value)
@@ -1176,6 +1213,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    orderby pcinfo.CreatedTime descending
                                        select new
                                        {
+                                           PainterCallId=pcinfo.Id,
                                            userInfo.Email,
                                            painterId = pcinfo.PainterId.ToString(),
                                            painterNo = pinfo.PainterNo,
@@ -1194,8 +1232,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            identification = !string.IsNullOrEmpty(pinfo.NationalIdNo) ? pinfo.NationalIdNo
                                                               : (!string.IsNullOrEmpty(pinfo.PassportNo) ? pinfo.PassportNo
                                                               : (!string.IsNullOrEmpty(pinfo.BrithCertificateNo)) ? pinfo.BrithCertificateNo : string.Empty),
-                                           pinfo.AttachedDealerCd,
-                                           diInfo.CustomerName,
+                                           //pinfo.AttachedDealerCd,
+                                           //diInfo.CustomerName,
                                            shamparkaAppStatus = pinfo.IsAppInstalled ? "Installed" : "Not Installed",
                                            loyality = pinfo.Loyality.ToString(),
                                            painterSchemeCommunication = pcinfo.HasSchemeComnunaction ? "Yes" : "No",
@@ -1207,6 +1245,43 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            issueWithDbblAccount = pcinfo.HasDbblIssue ? "Yes" : "No",
                                            pcinfo.Comment
                                        }).Distinct().ToListAsync();
+
+            var attachDealers = await (from adp in _context.AttachedDealerPainterCalls
+                                       join pc in _context.PainterCalls on adp.PainterCallId equals pc.Id into pcleftjoin
+                                       from pcinfo in pcleftjoin.DefaultIfEmpty()
+                                       join p in _context.Painters on pcinfo.PainterId equals p.Id into pleftjoin
+                                       from pInfo in pleftjoin.DefaultIfEmpty()
+                                       join di in _context.DealerInfos on adp.DealerId equals di.Id into dileftjoin
+                                       from diInfo in dileftjoin.DefaultIfEmpty()
+                                       join u in _context.UserInfos on pInfo.EmployeeId equals u.EmployeeId into uleftjoin
+                                       from userInfo in uleftjoin.DefaultIfEmpty()
+                                       join d in _context.DropdownDetails on pInfo.PainterCatId equals d.Id into dleftjoin
+                                       from dropDownInfo in dleftjoin.DefaultIfEmpty()
+                                       join dep in _context.Depots on pInfo.Depot equals dep.Werks into depleftjoin
+                                       from depinfo in depleftjoin.DefaultIfEmpty()
+                                       join sg in _context.SaleGroup on pInfo.SaleGroup equals sg.Code into sgleftjoin
+                                       from sginfo in sgleftjoin.DefaultIfEmpty()
+                                       join t in _context.Territory on pInfo.Territory equals t.Code into tleftjoin
+                                       from tinfo in tleftjoin.DefaultIfEmpty()
+                                       join z in _context.Zone on pInfo.Zone equals z.Code into zleftjoin
+                                       from zinfo in zleftjoin.DefaultIfEmpty()
+                                       where (
+                                          (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
+                                           && (string.IsNullOrWhiteSpace(query.Depot) || pInfo.Depot == query.Depot)
+                                           && (!query.SalesGroups.Any() || query.SalesGroups.Contains(pcinfo.SaleGroup))
+                                           && (!query.Territories.Any() || query.Territories.Contains(pcinfo.Territory))
+                                           && (!query.Zones.Any() || query.Zones.Contains(pcinfo.Zone))
+                                           && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
+                                           && (!query.ToDate.HasValue || pcinfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                           && (!query.PainterId.HasValue || pInfo.Id == query.PainterId.Value)
+                                           && (!query.PainterType.HasValue || pInfo.PainterCatId == query.PainterType.Value)
+                                       )
+                                       select new
+                                       {
+                                           adp.PainterCallId,
+                                           DealerId = diInfo.CustomerNo,
+                                           DealerName = diInfo.CustomerName
+                                       }).ToListAsync();
 
             var paintersCallMtd = await (from pmtd in _context.PainterCompanyMTDValues
                                          join dd in _context.DropdownDetails on pmtd.CompanyId equals dd.Id into ddleftjoin
@@ -1241,8 +1316,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 AccountNumber = x.AccDbblNumber,
                 AcccountHolderName = x.AccDbblNumber,
                 IdentificationNo = x.identification,
-                AttachedTaggedDealerId = x.AttachedDealerCd,
-                AttachedTaggedDealerName = x.CustomerName,
+                AttachedTaggedDealerId = string.Join(", ", attachDealers.Where(y => x.PainterCallId == y.PainterCallId).Select(s => s.DealerId).Distinct()),
+                AttachedTaggedDealerName = string.Join(", ", attachDealers.Where(y => x.PainterCallId == y.PainterCallId).Select(s => s.DealerName).Distinct()),
                 ShamparkaAppInstallStatus = x.shamparkaAppStatus,
                 BergerLoyalty = x.loyality,
                 PainterSchemeCommunication = x.painterSchemeCommunication,

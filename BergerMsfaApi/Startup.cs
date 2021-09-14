@@ -35,6 +35,7 @@ using BergerMsfaApi.Services.Excel.Interface;
 using BergerMsfaApi.Services.AlertNotification;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.KPI.Implementation;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace BergerMsfaApi
 {
@@ -178,6 +179,20 @@ namespace BergerMsfaApi
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = int.MaxValue;
+            });
+
+            services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = long.MaxValue; // <-- !!! long.MaxValue
+                o.MultipartBoundaryLengthLimit = int.MaxValue;
+                o.MultipartHeadersCountLimit = int.MaxValue;
+                o.MultipartHeadersLengthLimit = int.MaxValue;
+            });
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
@@ -244,6 +259,12 @@ namespace BergerMsfaApi
                     await next(context);
                 }
             ));
+
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null; // unlimited I guess
+            //    await next.Invoke();
+            //});
 
             HttpHelper.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             app.UseHttpsRedirection();

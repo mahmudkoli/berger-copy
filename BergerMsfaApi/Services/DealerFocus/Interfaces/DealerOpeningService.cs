@@ -298,6 +298,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model)
         {
+            if (model.DealerOpeningAttachments.Any() && _fileUploadSvc.IsMaxSizeExceded(model.DealerOpeningAttachments.Select(s => s.Path).ToList(), 20))
+                throw new Exception("Maximum file size 20 MB allowed.");
+
             //var mapper = new MapperConfiguration(cfg =>
             //{
             //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
@@ -330,8 +333,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     {
                         attach.Path = await _fileUploadSvc.SaveImageAsync(
                             attach.Path,
-                            fileName, FileUploadCode.DealerOpening,
-                            300, 300);
+                            fileName, FileUploadCode.DealerOpening);
                     }
                     catch (System.Exception e)
                     {

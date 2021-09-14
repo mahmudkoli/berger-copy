@@ -13,6 +13,6 @@ namespace BergerMsfaApi
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
-            //.UseUrls("http://localhost:7800","https://localhost:7801");
+        //.UseUrls("http://localhost:7800","https://localhost:7801");
     }
 }

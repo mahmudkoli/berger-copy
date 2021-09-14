@@ -232,10 +232,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                   from userInfo in uleftjoin.DefaultIfEmpty()
                                   join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
                                   from dropDownInfo in dleftjoin.DefaultIfEmpty()
-                                  join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
-                                  from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
-                                  from diInfo in dileftjoin.DefaultIfEmpty()
+                                  //join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                  //from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                  //join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                  //from diInfo in dileftjoin.DefaultIfEmpty()
                                   join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
                                   from depinfo in depleftjoin.DefaultIfEmpty()
                                   join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
