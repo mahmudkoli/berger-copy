@@ -40,6 +40,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpPost("CreateDealerOpening")]
+        [RequestSizeLimit(31457280)] // 30MB
         public async Task<IActionResult> CreateDealerOpeningAsync([FromBody] DealerOpeningModel model)
         {
             try

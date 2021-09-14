@@ -393,8 +393,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   actualPaintJobCompletedExterior = lf.ActualPaintJobCompletedExteriorPercentage,
 
                                   bergerValueSales = lbaInfo.BergerValueSales,
-                                  bergerPremiumBrandSalesValue = lbaInfo.BergerValueSales,
-                                  competitionValueSales = lbaInfo.BergerValueSales,
+                                  bergerPremiumBrandSalesValue = lbaInfo.BergerPremiumBrandSalesValue,
+                                  competitionValueSales = lbaInfo.CompetitionValueSales,
                                   projectStatus = dpsInfo.DropdownName,
                                   isColorSchemeGiven = lbaInfo.IsColorSchemeGiven,
                                   isProductSampling = lbaInfo.IsProductSampling,
@@ -453,8 +453,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 actualVolumeSoldTopCoatGallon = x.Where(x => x.actualVolumeSoldType == EnumLeadActualVolumeSoldType.TopCoat).Sum(x => x.totalAmount),
 
                 bergerValueSales = x.FirstOrDefault().bergerValueSales,
-                bergerPremiumBrandSalesValue = x.FirstOrDefault().bergerValueSales,
-                competitionValueSales = x.FirstOrDefault().bergerValueSales,
+                bergerPremiumBrandSalesValue = x.FirstOrDefault().bergerPremiumBrandSalesValue,
+                competitionValueSales = x.FirstOrDefault().competitionValueSales,
                 projectStatus = x.FirstOrDefault().projectStatus,
                 isColorSchemeGiven = x.FirstOrDefault().isColorSchemeGiven,
                 isProductSampling = x.FirstOrDefault().isProductSampling,

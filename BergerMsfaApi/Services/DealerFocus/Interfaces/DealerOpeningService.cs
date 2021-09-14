@@ -257,7 +257,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             await _dealerOpeningSvc.UpdateAsync(dealer);
             await DealerStatusLog(dealer, "DealerStatus", model.Status.ToString());
-            if (emailConfig != null)
+            if (emailConfig != null && isApproved)
             {
                 await sendEmail(emailConfig.Email, dealer.Id);
             }
