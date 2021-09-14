@@ -168,7 +168,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       case EnumEmployeeRole.AM:
         conditionalRequiredOptions = [
           EnumSearchOption.Depot,
-          EnumSearchOption.SalesGroup,
+          // EnumSearchOption.SalesGroup,
           EnumSearchOption.Territory,
         ];
         break;
@@ -492,7 +492,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       case EnumEmployeeRole.AM:
         isRequired =
           searchOptionDef.searchOption == EnumSearchOption.Depot ||
-          searchOptionDef.searchOption == EnumSearchOption.SalesGroup ||
+          // searchOptionDef.searchOption == EnumSearchOption.SalesGroup ||
           searchOptionDef.searchOption == EnumSearchOption.Territory;
         break;
       case EnumEmployeeRole.TM_TO:

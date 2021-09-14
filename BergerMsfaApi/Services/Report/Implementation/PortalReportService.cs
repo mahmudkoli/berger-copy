@@ -148,10 +148,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<LeadSummaryReportResultModel>> GetLeadSummaryReportAsync(LeadSummaryReportSearchModel query)
         {
-            var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
-            {
-                ["createdTime"] = v => v.CreatedTime,
-            };
+            //var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
+            //{
+            //    ["createdTime"] = v => v.CreatedTime,
+            //};
 
             var reportResult = new List<LeadSummaryReportResultModel>();
 
@@ -163,7 +163,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
                                 && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
                                 && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date),
-                            x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
+                            x => x.OrderByDescending(o => o.CreatedTime),
                             x => x.Include(i => i.User)
                                 .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
                                 .Include(i => i.LeadFollowUps).ThenInclude(i => i.BusinessAchievement),
@@ -207,10 +207,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<LeadGenerationDetailsReportResultModel>> GetLeadGenerationDetailsReportAsync(LeadGenerationDetailsReportSearchModel query)
         {
-            var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
-            {
-                ["createdTime"] = v => v.CreatedTime,
-            };
+            //var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
+            //{
+            //    ["createdTime"] = v => v.CreatedTime,
+            //};
 
             var reportResult = new List<LeadGenerationDetailsReportResultModel>();
 
@@ -309,7 +309,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Remarks = x.Remarks,
                 ImageUrl = x.PhotoCaptureUrl,
                 OtherClientName = x.OtherClientName
-            }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+            }).OrderByDescending(o => o.LeadCreatedDate).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<LeadGenerationDetailsReportResultModel>();
             queryResult.Items = reportResult;
@@ -321,10 +321,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
         public async Task<QueryResultModel<LeadFollowUpDetailsReportResultModel>> GetLeadFollowUpDetailsReportAsync(LeadFollowUpDetailsReportSearchModel query)
         {
-            var columnsMap = new Dictionary<string, Expression<Func<LeadFollowUp, object>>>()
-            {
-                ["createdTime"] = v => v.CreatedTime,
-            };
+            //var columnsMap = new Dictionary<string, Expression<Func<LeadFollowUp, object>>>()
+            //{
+            //    ["createdTime"] = v => v.CreatedTime,
+            //};
 
             var reportResult = new List<LeadFollowUpDetailsReportResultModel>();
 
@@ -461,7 +461,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 comments = x.FirstOrDefault().comments,
                 nextVisitDate = x.FirstOrDefault().nextVisitDate,
                 imageUrl = x.FirstOrDefault().imageUrl,
-            });
+            }).OrderByDescending(o => o.actualVisitDate);
 
             reportResult = groupOfleadFollowUp.Select(x =>
             {
@@ -655,6 +655,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   where (
                                      (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                      && (string.IsNullOrWhiteSpace(query.Depot) || p.Depot == query.Depot)
+                                     && (!query.SalesGroups.Any() || query.SalesGroups.Contains(p.SaleGroup))
                                      && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
                                      && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
                                      && (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -691,7 +692,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       avgMonthlyUse = p.AvgMonthlyVal.ToString(),
                                       bergerLoyalty = p.Loyality.ToString(),
                                       p.PainterImageUrl
-                                  }).ToListAsync();
+                                  }).OrderByDescending(o => o.CreatedTime).ToListAsync();
 
             reportResult = painters.Select(x => new PainterRegistrationReportResultModel
             {
@@ -750,10 +751,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
                                    && (string.IsNullOrWhiteSpace(query.Depot) || d.BusinessArea == query.Depot)
                                    && (!query.Territories.Any() || query.Territories.Contains(d.Territory))
+                                   && (!query.SalesGroups.Any() || query.SalesGroups.Contains(d.SaleGroup))
                                    && (!query.Zones.Any() || query.Zones.Contains(d.Zone))
                                    && (!query.FromDate.HasValue || d.CreatedTime.Date >= query.FromDate.Value.Date)
                                    && (!query.ToDate.HasValue || d.CreatedTime.Date <= query.ToDate.Value.Date)
                                  )
+                                 orderby d.CreatedTime descending
                                  select new
                                  {
                                      uinfo.Email,
@@ -837,7 +840,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                    && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                  )
-                                 orderby p.CreatedTime descending
+                                 orderby p.CollectionDate descending
                                  select new
                                  {
                                      uinfo.Email,
@@ -920,7 +923,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                       && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                       && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                     )
-                                    orderby p.CreatedTime descending
+                                    orderby p.CollectionDate descending
                                     select new
                                     {
                                         uinfo.Email,
@@ -1003,7 +1006,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                    )
-                                   orderby p.CreatedTime descending
+                                   orderby p.CollectionDate descending
                                    select new
                                    {
                                        uinfo.Email,
@@ -1083,7 +1086,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                           && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                         )
-                                        orderby p.CreatedTime descending
+                                        orderby p.CollectionDate descending
                                         select new
                                         {
                                             uinfo.Email,
@@ -1162,6 +1165,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        where (
                                        (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                        && (string.IsNullOrWhiteSpace(query.Depot) || pinfo.Depot == query.Depot)
+                                       && (!query.SalesGroups.Any() || query.SalesGroups.Contains(pinfo.SaleGroup))
                                        && (!query.Territories.Any() || query.Territories.Contains(pinfo.Territory))
                                        && (!query.Zones.Any() || query.Zones.Contains(pinfo.Zone))
                                        && (!query.FromDate.HasValue || pcinfo.CreatedTime.Date >= query.FromDate.Value.Date)
@@ -1169,6 +1173,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        && (!query.PainterId.HasValue || pinfo.Id == query.PainterId.Value)
                                        && (!query.PainterType.HasValue || pinfo.PainterCatId == query.PainterType.Value)
                                    )
+                                   orderby pcinfo.CreatedTime descending
                                        select new
                                        {
                                            userInfo.Email,
@@ -1506,10 +1511,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || jpm.PlanDate.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || jpm.PlanDate.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (!query.DealerId.HasValue || dsc.DealerId == query.DealerId.Value)
                                      )
+                                     orderby jpm.PlanDate descending
                                      select new
                                      {
                                          dsc.Id,
@@ -1521,7 +1528,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          dsc.DealerId,
                                          diInfo.CustomerNo,
                                          diInfo.CustomerName,
-                                         dsc.CreatedTime,
+                                         jpm.PlanDate,
                                          dsc.IsTargetPromotionCommunicated,
                                          ssStatus = ssddinfo.DropdownName,
                                          dsc.SecondarySalesReasonRemarks,
@@ -1578,7 +1585,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.zone,
                 DealerId = x.CustomerNo.ToString(),
                 DealerName = x.CustomerName,
-                VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.PlanDate),
                 TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
                 Target = x.IsTargetCommunicated ? "Yes" : "No",
                 SsStatus = x.ssStatus,
@@ -1676,10 +1683,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || jpm.PlanDate.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || jpm.PlanDate.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (!query.SubDealerId.HasValue || dsc.DealerId == query.SubDealerId.Value)
                                      )
+                                     orderby jpm.PlanDate descending
                                      select new
                                      {
                                          dsc.Id,
@@ -1691,7 +1700,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          dsc.DealerId,
                                          diInfo.CustomerNo,
                                          diInfo.CustomerName,
-                                         dsc.CreatedTime,
+                                         jpm.PlanDate,
                                          dsc.IsTargetPromotionCommunicated,
                                          ssStatus = ssddinfo.DropdownName,
                                          dsc.SecondarySalesReasonRemarks,
@@ -1743,7 +1752,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Zone = x.zone,
                 SubDealerId = x.CustomerNo.ToString(),
                 SubDealerName = x.CustomerName,
-                VisitDate = CustomConvertExtension.ObjectToDateString(x.CreatedTime),
+                VisitDate = CustomConvertExtension.ObjectToDateString(x.PlanDate),
                 TradePromotion = x.IsTargetPromotionCommunicated ? "Yes" : "No",
                 SsStatus = x.ssStatus,
                 SsReasonForPourOrAverage = x.SecondarySalesReasonRemarks,
@@ -1838,10 +1847,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (!query.DealerId.HasValue || dsc.DealerId == query.DealerId.Value)
                                      )
+                                     orderby dsc.CreatedTime descending
                                      select new
                                      {
                                          dsc.Id,
@@ -2008,10 +2019,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (!query.SubDealerId.HasValue || dsc.DealerId == query.SubDealerId.Value)
                                      )
+                                     orderby dsc.CreatedTime descending
                                      select new
                                      {
                                          dsc.Id,
@@ -2165,6 +2178,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                         && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                         && (!query.DealerId.HasValue || dscInfo.DealerId == query.DealerId.Value)
@@ -2229,7 +2243,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.priority,
                 othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.Comments,
                 othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.priority
-            }).ToList();
+            }).OrderByDescending(o => o.visitDate).ToList();
 
             reportResult = groupdealerIssue.Select(x => new DealerIssueReportResultModel
             {
@@ -2305,6 +2319,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                            && (!query.FromDate.HasValue || dscInfo.CreatedTime.Date >= query.FromDate.Value.Date)
                                            && (!query.ToDate.HasValue || dscInfo.CreatedTime.Date <= query.ToDate.Value.Date)
+                                           && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                            && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                            && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                            && (!query.SubDealerId.HasValue || dscInfo.DealerId == query.SubDealerId.Value)
@@ -2358,7 +2373,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 cbmPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.CBMachineMantainance)?.priority,
                 othersComments = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.Comments,
                 othersPriority = x.FirstOrDefault(y => y.issueCategory == ConstantIssuesValue.Others)?.priority
-            }).ToList();
+            }).OrderByDescending(o => o.visitDate).ToList();
 
             reportResult = groupSubDealerIssue.Select(x => new SubDealerIssueReportResultModel
             {
@@ -3062,10 +3077,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var loginInfo = await (from ll in _context.LoginLogs
                                    join u in _context.UserInfos on ll.UserId equals u.Id into uleft
                                    from uInfo in uleft.DefaultIfEmpty()
+                                   join uz in _context.UserZoneAreaMappings on uInfo.Id equals uz.UserInfoId into uzleft
+                                   from uzInfo in uzleft.DefaultIfEmpty()
                                    where (
                                       (!query.UserId.HasValue || uInfo.Id == query.UserId.Value)
                                       && (!query.FromDate.HasValue || ll.LoggedInTime.Date >= query.FromDate.Value.Date)
                                       && (!query.ToDate.HasValue || ll.LoggedInTime <= query.ToDate.Value.Date)
+                                        && (string.IsNullOrWhiteSpace(query.Depot) || uzInfo.PlantId == query.Depot)
+                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(uzInfo.AreaId))
+                                        && (!query.Territories.Any() || query.Territories.Contains(uzInfo.TerritoryId))
+                                        && (!query.Zones.Any() || query.Zones.Contains(uzInfo.ZoneId))
                                    )
                                    select new
                                    {
@@ -3129,6 +3150,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                    && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
                                                    && (!query.FromDate.HasValue || ms.CreatedTime.Date >= query.FromDate.Value.Date)
                                                    && (!query.ToDate.HasValue || ms.CreatedTime.Date <= query.ToDate.Value.Date)
+                                                   && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                                    && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                                    && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                                    && (!query.DealerId.HasValue || ms.DealerId == query.DealerId.Value)
@@ -3171,7 +3193,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     others = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Others)?.ImageUrl,
                     oRemarks = x.FirstOrDefault(y => y.categoryName == ConstantSnapShotValue.Others)?.Remarks,
                     otherSnapshotTypeName = x.FirstOrDefault()?.OthersSnapShotCategoryName
-                });
+                }).OrderByDescending(o => o.snapShotDate);
 
             reportResult = groupmerchendizingSnapShot.Select(x => new MerchendizingSnapShotReportResultModel
             {
@@ -3437,6 +3459,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                     && (!query.PainterId.HasValue || p.Id == query.PainterId.Value)
                                     && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
                                )
+                               orderby psl.CreatedTime descending
                                select new
                                {
                                    p.Depot,
@@ -3459,7 +3482,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                    poAccDbblNumber = p.AccDbblNumber,
                                    puAccDbblNumber = pcInfo?.AccDbblNumber,
                                    psl.Reason
-                               }).OrderByDescending(x => x.Id).ToList();
+                               }).ToList();
 
             var reportData = Painterdata.GroupBy(x => x.PainterId).Select(x => new
             {
