@@ -1327,6 +1327,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        && (jpminfo.PlanStatus == PlanStatus.Approved)
                                        && (!query.UserId.HasValue || userInfo.Id == query.UserId.Value)
                                        && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
+                                       && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                        && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
                                        && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                        && (!query.DealerId.HasValue || jpd.DealerId == query.DealerId.Value)
@@ -1346,6 +1347,42 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          JourneyPlanId = dscinfo.JourneyPlanId
                                      }).Distinct().ToListAsync();
 
+            var adHocDealerCalls = await (from dsc in _context.DealerSalesCalls
+                                     join di in _context.DealerInfos on dsc.DealerId equals di.Id into dileftjoin
+                                     from diInfo in dileftjoin.DefaultIfEmpty()
+                                     join dep in _context.Depots on diInfo.BusinessArea equals dep.Werks into depleftjoin
+                                     from depinfo in depleftjoin.DefaultIfEmpty()
+                                     join t in _context.Territory on diInfo.Territory equals t.Code into tleftjoin
+                                     from tinfo in tleftjoin.DefaultIfEmpty()
+                                     join z in _context.Zone on diInfo.CustZone equals z.Code into zleftjoin
+                                     from zinfo in zleftjoin.DefaultIfEmpty()
+                                     join u in _context.UserInfos on dsc.UserId equals u.Id into uleftjoin
+                                     from userInfo in uleftjoin.DefaultIfEmpty()
+                                     where (
+                                        (dsc.CreatedTime.Month == month && dsc.CreatedTime.Year == year)
+                                       && (dsc.JourneyPlanId == null)
+                                       && (!query.UserId.HasValue || dsc.UserId == query.UserId.Value)
+                                       && (string.IsNullOrWhiteSpace(query.Depot) || diInfo.BusinessArea == query.Depot)
+                                       && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                       && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                       && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                       && (!query.DealerId.HasValue || dsc.DealerId == query.DealerId.Value)
+                                     )
+                                     select new
+                                     {
+                                         userInfo.EmployeeId,
+                                         dsc.DealerId,
+                                         userInfo.Email,
+                                         diInfo.BusinessArea,
+                                         depot = depinfo.Name1,
+                                         territoryName = tinfo.Code,
+                                         zoneName = zinfo.Code,
+                                         diInfo.CustomerNo,
+                                         diInfo.CustomerName,
+                                         dsc.CreatedTime,
+                                         JourneyPlanId = dsc.JourneyPlanId
+                                     }).ToListAsync();
+
             var dealerVisitGroup = dealerVisit.GroupBy(x => new { x.EmployeeId, x.DealerId }).Select(x => new
             {
                 userId = x.FirstOrDefault()?.Email,
@@ -1356,70 +1393,70 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 dealerId = x.FirstOrDefault()?.CustomerNo.ToString() ?? string.Empty,
                 dealerName = x.FirstOrDefault()?.CustomerName,
 
-                d1 = x.Count(c => c?.PlanDate.Day == 1) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 1) > 0 ? "Visited" : "Not Visited" : "",
-                d2 = x.Count(c => c?.PlanDate.Day == 2) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 2) > 0 ? "Visited" : "Not Visited" : "",
-                d3 = x.Count(c => c?.PlanDate.Day == 3) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 3) > 0 ? "Visited" : "Not Visited" : "",
-                d4 = x.Count(c => c?.PlanDate.Day == 4) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 4) > 0 ? "Visited" : "Not Visited" : "",
-                d5 = x.Count(c => c?.PlanDate.Day == 5) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 5) > 0 ? "Visited" : "Not Visited" : "",
-                d6 = x.Count(c => c?.PlanDate.Day == 6) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 6) > 0 ? "Visited" : "Not Visited" : "",
-                d7 = x.Count(c => c?.PlanDate.Day == 7) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 7) > 0 ? "Visited" : "Not Visited" : "",
-                d8 = x.Count(c => c?.PlanDate.Day == 8) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 8) > 0 ? "Visited" : "Not Visited" : "",
-                d9 = x.Count(c => c?.PlanDate.Day == 9) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 9) > 0 ? "Visited" : "Not Visited" : "",
-                d10 = x.Count(c => c?.PlanDate.Day == 10) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 10) > 0 ? "Visited" : "Not Visited" : "",
-                d11 = x.Count(c => c?.PlanDate.Day == 11) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 11) > 0 ? "Visited" : "Not Visited" : "",
-                d12 = x.Count(c => c?.PlanDate.Day == 12) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 12) > 0 ? "Visited" : "Not Visited" : "",
-                d13 = x.Count(c => c?.PlanDate.Day == 13) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 13) > 0 ? "Visited" : "Not Visited" : "",
-                d14 = x.Count(c => c?.PlanDate.Day == 14) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 14) > 0 ? "Visited" : "Not Visited" : "",
-                d15 = x.Count(c => c?.PlanDate.Day == 15) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 15) > 0 ? "Visited" : "Not Visited" : "",
-                d16 = x.Count(c => c?.PlanDate.Day == 16) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 16) > 0 ? "Visited" : "Not Visited" : "",
-                d17 = x.Count(c => c?.PlanDate.Day == 17) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 17) > 0 ? "Visited" : "Not Visited" : "",
-                d18 = x.Count(c => c?.PlanDate.Day == 18) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 18) > 0 ? "Visited" : "Not Visited" : "",
-                d19 = x.Count(c => c?.PlanDate.Day == 19) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 19) > 0 ? "Visited" : "Not Visited" : "",
-                d20 = x.Count(c => c?.PlanDate.Day == 20) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 20) > 0 ? "Visited" : "Not Visited" : "",
-                d21 = x.Count(c => c?.PlanDate.Day == 21) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 21) > 0 ? "Visited" : "Not Visited" : "",
-                d22 = x.Count(c => c?.PlanDate.Day == 22) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 22) > 0 ? "Visited" : "Not Visited" : "",
-                d23 = x.Count(c => c?.PlanDate.Day == 23) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 23) > 0 ? "Visited" : "Not Visited" : "",
-                d24 = x.Count(c => c?.PlanDate.Day == 24) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 24) > 0 ? "Visited" : "Not Visited" : "",
-                d25 = x.Count(c => c?.PlanDate.Day == 25) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 25) > 0 ? "Visited" : "Not Visited" : "",
-                d26 = x.Count(c => c?.PlanDate.Day == 26) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 26) > 0 ? "Visited" : "Not Visited" : "",
-                d27 = x.Count(c => c?.PlanDate.Day == 27) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 27) > 0 ? "Visited" : "Not Visited" : "",
-                d28 = x.Count(c => c?.PlanDate.Day == 28) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 28) > 0 ? "Visited" : "Not Visited" : "",
-                d29 = x.Count(c => c?.PlanDate.Day == 29) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 29) > 0 ? "Visited" : "Not Visited" : "",
-                d30 = x.Count(c => c?.PlanDate.Day == 30) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
-                d31 = x.Count(c => c?.PlanDate.Day == 31) > 0 ?
-                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
-                targetVisits = tvist = x.Count(c => c?.PlanDate.Month == month && c?.PlanDate.Year == year),
-                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != null && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)),
+                d1 = x.Count(c => c?.PlanDate.Day == 1) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 1) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 1) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 1) > 0 ? "Visited" : "Not Visited" : "",
+                d2 = x.Count(c => c?.PlanDate.Day == 2) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 2) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 2) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 2) > 0 ? "Visited" : "Not Visited" : "",
+                d3 = x.Count(c => c?.PlanDate.Day == 3) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 3) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 3) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 3) > 0 ? "Visited" : "Not Visited" : "",
+                d4 = x.Count(c => c?.PlanDate.Day == 4) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 4) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 4) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 4) > 0 ? "Visited" : "Not Visited" : "",
+                d5 = x.Count(c => c?.PlanDate.Day == 5) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 5) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 5) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 5) > 0 ? "Visited" : "Not Visited" : "",
+                d6 = x.Count(c => c?.PlanDate.Day == 6) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 6) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 6) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 6) > 0 ? "Visited" : "Not Visited" : "",
+                d7 = x.Count(c => c?.PlanDate.Day == 7) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 7) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 7) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 7) > 0 ? "Visited" : "Not Visited" : "",
+                d8 = x.Count(c => c?.PlanDate.Day == 8) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 8) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 8) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 8) > 0 ? "Visited" : "Not Visited" : "",
+                d9 = x.Count(c => c?.PlanDate.Day == 9) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 9) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 9) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 9) > 0 ? "Visited" : "Not Visited" : "",
+                d10 = x.Count(c => c?.PlanDate.Day == 10) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 10) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 10) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 10) > 0 ? "Visited" : "Not Visited" : "",
+                d11 = x.Count(c => c?.PlanDate.Day == 11) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 11) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 11) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 11) > 0 ? "Visited" : "Not Visited" : "",
+                d12 = x.Count(c => c?.PlanDate.Day == 12) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 12) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 12) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 12) > 0 ? "Visited" : "Not Visited" : "",
+                d13 = x.Count(c => c?.PlanDate.Day == 13) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 13) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 13) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 13) > 0 ? "Visited" : "Not Visited" : "",
+                d14 = x.Count(c => c?.PlanDate.Day == 14) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 14) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 14) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 14) > 0 ? "Visited" : "Not Visited" : "",
+                d15 = x.Count(c => c?.PlanDate.Day == 15) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 15) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 15) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 15) > 0 ? "Visited" : "Not Visited" : "",
+                d16 = x.Count(c => c?.PlanDate.Day == 16) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 16) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 16) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 16) > 0 ? "Visited" : "Not Visited" : "",
+                d17 = x.Count(c => c?.PlanDate.Day == 17) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 17) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 17) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 17) > 0 ? "Visited" : "Not Visited" : "",
+                d18 = x.Count(c => c?.PlanDate.Day == 18) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 18) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 18) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 18) > 0 ? "Visited" : "Not Visited" : "",
+                d19 = x.Count(c => c?.PlanDate.Day == 19) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 19) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 19) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 19) > 0 ? "Visited" : "Not Visited" : "",
+                d20 = x.Count(c => c?.PlanDate.Day == 20) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 20) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 20) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 20) > 0 ? "Visited" : "Not Visited" : "",
+                d21 = x.Count(c => c?.PlanDate.Day == 21) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 21) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 21) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 21) > 0 ? "Visited" : "Not Visited" : "",
+                d22 = x.Count(c => c?.PlanDate.Day == 22) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 22) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 22) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 22) > 0 ? "Visited" : "Not Visited" : "",
+                d23 = x.Count(c => c?.PlanDate.Day == 23) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 23) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 23) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 23) > 0 ? "Visited" : "Not Visited" : "",
+                d24 = x.Count(c => c?.PlanDate.Day == 24) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 24) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 24) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 24) > 0 ? "Visited" : "Not Visited" : "",
+                d25 = x.Count(c => c?.PlanDate.Day == 25) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 25) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 25) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 25) > 0 ? "Visited" : "Not Visited" : "",
+                d26 = x.Count(c => c?.PlanDate.Day == 26) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 26) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 26) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 26) > 0 ? "Visited" : "Not Visited" : "",
+                d27 = x.Count(c => c?.PlanDate.Day == 27) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 27) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 27) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 27) > 0 ? "Visited" : "Not Visited" : "",
+                d28 = x.Count(c => c?.PlanDate.Day == 28) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 28) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 28) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 28) > 0 ? "Visited" : "Not Visited" : "",
+                d29 = x.Count(c => c?.PlanDate.Day == 29) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 29) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 29) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 29) > 0 ? "Visited" : "Not Visited" : "",
+                d30 = x.Count(c => c?.PlanDate.Day == 30) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 30) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 30) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 30) > 0 ? "Visited" : "Not Visited" : "",
+                d31 = x.Count(c => c?.PlanDate.Day == 31) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 31) > 0 ?
+                                        x.Count(c => c?.JourneyPlanId != null && c?.PlanDate.Day == 31) > 0 || adHocDealerCalls.Count(c => c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId && c?.CreatedTime.Day == 31) > 0 ? "Visited" : "Not Visited" : "",
+                targetVisits = tvist = x.Count(c => c?.PlanDate.Month == month && c?.PlanDate.Year == year) + adHocDealerCalls.Count(c => c?.CreatedTime.Month == month && c?.CreatedTime.Year == year && c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId),
+                actualVisits = avisit = x.Count(c => c?.JourneyPlanId != null && (c?.PlanDate.Month == month && c?.PlanDate.Year == year)) + adHocDealerCalls.Count(c => c?.CreatedTime.Month == month && c?.CreatedTime.Year == year && c.EmployeeId == x.Key.EmployeeId && c.DealerId == x.Key.DealerId),
                 notVisits = (tvist - avisit)
             }).ToList();
 
