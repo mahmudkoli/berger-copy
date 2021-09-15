@@ -32,7 +32,7 @@ export class AddhocDealerSalescallReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Addhoc Dealer Sales Call Report';
+	tableName: string = 'AdHoc Dealer Sales Call Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {
 		'ssStatus' : 'Status',

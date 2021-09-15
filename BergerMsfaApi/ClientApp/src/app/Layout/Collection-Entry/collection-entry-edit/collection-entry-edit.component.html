@@ -14,6 +14,48 @@
                 <!-- <div class="col-md-6" *ngIf="payment.dealerId!=null"> -->
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+                        <label class="required">Depot</label>
+                        <ng-select formControlName="depot" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let em of depots;" [value]="em.code">{{em.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger"
+                            *ngIf="formControls.depot.touched && formControls.depot.errors">
+                            <span *ngIf="formControls.depot.errors.required">Depot is
+                                <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select formControlName="territory" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let em of territories;" [value]="em.code">{{em.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger"
+                            *ngIf="formControls.territory.touched && formControls.territory.errors">
+                            <span *ngIf="formControls.territory.errors.required">Territory is
+                                <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Zone</label>
+                        <ng-select formControlName="zone" [multiple]="false" [virtualScroll]="true">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let em of zones;" [value]="em.code">{{em.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger"
+                            *ngIf="formControls.zone.touched && formControls.zone.errors">
+                            <span *ngIf="formControls.zone.errors.required">Zone is
+                                <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
                         <label>Dealer</label>
                         <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true" (change)="changeDealer()">
                             <!-- <ng-option>--Select--</ng-option> -->

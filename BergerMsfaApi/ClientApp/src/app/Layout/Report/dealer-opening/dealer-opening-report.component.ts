@@ -178,6 +178,7 @@ export class DealerOpeningReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: false,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,

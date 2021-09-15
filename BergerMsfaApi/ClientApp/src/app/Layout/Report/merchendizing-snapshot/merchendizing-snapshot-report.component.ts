@@ -31,7 +31,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = false;
-	tableName: string = 'Merchendizing Snapshot Report';
+	tableName: string = 'Merchandising Snapshot Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	// renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;

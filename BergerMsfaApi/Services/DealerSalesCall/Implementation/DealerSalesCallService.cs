@@ -452,7 +452,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                     body += $"{Environment.NewLine}{Environment.NewLine}";
 
-                    if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ProductComplaint)
+                    if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.ProductComplaintDropdownCode)
                     {
                         body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
                             $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +
@@ -461,17 +461,17 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ShopSignComplain)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.ShopSignComplainDropdownCode)
                     {
                         body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DeliveryIssue)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.DeliveryIssueDropdownCode)
                     {
                         body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DamageProduct)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.DamageProductDropdownCode)
                     {
                         body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
                             $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +

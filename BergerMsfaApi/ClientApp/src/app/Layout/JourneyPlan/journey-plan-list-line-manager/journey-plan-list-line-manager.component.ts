@@ -140,6 +140,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
             this.delete(find.id);
 
         }
+        else this.alertService.alert("Can not delete pervious plan.");
     }
         
         // change the border color just for fun
@@ -212,12 +213,15 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                     this.pagingConfig = res.data;
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                     let events = [];
+                    let currentDate=new Date();
                     this.journeyPlanList.forEach(plan => {
+                        let planDate=new Date(plan.planDate);
                         events.push({ id: plan.id, title: `${plan.employeeName}`, date: plan.planDate, employeeId: plan.employeeId, backgroundColor: '#f58442' });
                         events.push({ id: plan.id, title: `${plan.planStatusInText}`, date: plan.planDate, employeeId: plan.employeeId });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#ce42f5' });
-                        events.push({ id: plan.id, title: 'Delete', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#f54272' });
-
+                        if(planDate>=currentDate){
+                            events.push({ id: plan.id, title: 'Delete', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#f54272' });
+                        } 
 
                     });
 
@@ -260,7 +264,7 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
     delete(id: number) {
         console.log("Id:", id);
-        this.alertService.confirm("Are you sure you want to delete this item?", () => {
+        this.alertService.confirm("Are you sure you want to delete this journey plan?", () => {
             this.alertService.fnLoading(true);
             this.journeyPlanService.delete(id).subscribe(
                 (res: any) => {

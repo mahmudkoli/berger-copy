@@ -207,25 +207,55 @@ namespace BergerMsfaApi.Controllers.Report
             }
         }
 
+        //[HttpGet("DownloadDealerOpening")]
+        //public async Task<IActionResult> DownloadDealerOpening([FromQuery] DealerOpeningReportSearchModel query)
+        //{
+        //    try
+        //    {
+        //        query.Page = 1;
+        //        query.PageSize = int.MaxValue;
+        //        var result = await _portalReportService.GetDealerOpeningReportAsync(query);
+
+        //        _commonService.SetEmptyString(result.Items.ToList(), 
+        //            nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),
+        //            nameof(DealerOpeningReportResultModel.NomineePhotograph),
+        //            nameof(DealerOpeningReportResultModel.PhotographOfproprietor),
+        //            nameof(DealerOpeningReportResultModel.Cheque),
+        //            nameof(DealerOpeningReportResultModel.TradeLicensee),
+        //            nameof(DealerOpeningReportResultModel.IdentificationNo),
+        //            nameof(DealerOpeningReportResultModel.NomineeIdentificationNo));
+
+        //        return Ok(result.Items);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex);
+        //    }
+        //}
+
         [HttpGet("DownloadDealerOpening")]
         public async Task<IActionResult> DownloadDealerOpening([FromQuery] DealerOpeningReportSearchModel query)
         {
+            string sFileName = @"DealerOpeningReport.xlsx";
+
             try
             {
+                if (string.IsNullOrEmpty(query.Depot))
+                {
+                    throw new Exception("Please select mandatory field.");
+                }
+
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetDealerOpeningReportAsync(query);
+                var dataResult = await _portalReportService.GetDealerOpeningReportAsync(query);
 
-                _commonService.SetEmptyString(result.Items.ToList(), 
-                    nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),
-                    nameof(DealerOpeningReportResultModel.NomineePhotograph),
-                    nameof(DealerOpeningReportResultModel.PhotographOfproprietor),
-                    nameof(DealerOpeningReportResultModel.Cheque),
-                    nameof(DealerOpeningReportResultModel.TradeLicensee),
-                    nameof(DealerOpeningReportResultModel.IdentificationNo),
-                    nameof(DealerOpeningReportResultModel.NomineeIdentificationNo));
+                var data = await _excelReaderService.DealerOpeningWriteToFileWithImage(dataResult.Items);
 
-                return Ok(result.Items);
+                var result = File(data,
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                sFileName);
+
+                return result;
             }
             catch (Exception ex)
             {

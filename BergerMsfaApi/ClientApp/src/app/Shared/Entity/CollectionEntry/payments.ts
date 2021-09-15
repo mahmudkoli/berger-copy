@@ -20,5 +20,8 @@ export class Payments{
     status: number;
     collectionDate:string;
     sapId:number;
+    depot: string;
+    territory: string;
+    zone: string;
 
 }

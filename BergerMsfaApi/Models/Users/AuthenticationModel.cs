@@ -15,6 +15,7 @@ namespace BergerMsfaApi.Models.Users
         public IList<MobileAppMenuPermissionModel> AppMenuPermission { get; set; }
         public IList<KeyValuePairModel> PainterRegistrationsHierarchyList { get; set; }
         public IList<KeyValuePairModel> LeadGenerationsHierarchyList { get; set; }
+        public IList<KeyValuePairModel> CollectionEntriesHierarchyList { get; set; }
         public IList<KeyValuePairAreaModel> Plants { get; set; }
         public IList<KeyValuePairAreaModel> SalesOffices { get; set; }
         public IList<KeyValuePairAreaModel> Areas { get; set; }
@@ -43,6 +44,7 @@ namespace BergerMsfaApi.Models.Users
             this.AppMenuPermission = new List<MobileAppMenuPermissionModel>();
             this.PainterRegistrationsHierarchyList = new List<KeyValuePairModel>();
             this.LeadGenerationsHierarchyList = new List<KeyValuePairModel>();
+            this.CollectionEntriesHierarchyList = new List<KeyValuePairModel>();
             this.Plants = new List<KeyValuePairAreaModel>();
             this.SalesOffices = new List<KeyValuePairAreaModel>();
             this.Areas = new List<KeyValuePairAreaModel>();

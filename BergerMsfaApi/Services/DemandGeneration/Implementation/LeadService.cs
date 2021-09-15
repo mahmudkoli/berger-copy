@@ -263,6 +263,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.ExpectedMonthlyBusinessValue = leadFollowUp.ExpectedMonthlyBusinessValue;
                 modelResult.TotalPaintingAreaSqftInterior = leadFollowUp.TotalPaintingAreaSqftInterior;
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
+                modelResult.ActualPaintJobCompletedInteriorPercentage = leadFollowUp.ActualPaintJobCompletedInteriorPercentage;
+                modelResult.ActualPaintJobCompletedExteriorPercentage = leadFollowUp.ActualPaintJobCompletedExteriorPercentage;
 
                 modelResult.ProjectStatusPartialBusinessPercentage = leadFollowUp.ProjectStatusPartialBusinessPercentage;
                 modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
