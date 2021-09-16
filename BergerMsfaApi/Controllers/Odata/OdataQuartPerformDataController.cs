@@ -29,7 +29,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = new List<QuarterlyPerformanceDataResultModel>();
+                var result = new List<AppQuarterlyPerformanceDataResultModel>();
 
                 if (model.QuarterlyPerformanceType == EnumQuarterlyPerformanceModel.MTSValueTargetAchivement)
                 {
