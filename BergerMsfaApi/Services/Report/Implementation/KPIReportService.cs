@@ -617,7 +617,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 CustomerNo = x.CustomerNo
             }, null,
                 startDate: currentYearStartDate.DateFormat(), endDate: currentYearEndDate.DateFormat(),
-                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories);
+                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories,zones:query.Zones);
 
             var lastYearSales = await _salesDataService.GetCbProductReport(x => new ColorBankPerformanceReport
             {
@@ -626,7 +626,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 CustomerNo = x.CustomerNo
             }, null,
                 startDate: lastYearStartDate.DateFormat(), endDate: lastYearEndDate.DateFormat(),
-                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories);
+                depots: depotList, salesGroup: query.SalesGroups, territories: query.Territories, zones: query.Zones);
 
 
 
@@ -652,7 +652,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                                        query.Territories.Contains(x.CustZone)))
                 .Select(x => new { x.CustomerNo, x.Territory }).Distinct().ToListAsync();
 
-            int totalMonth = (currentYearEndDate.Year - currentYearStartDate.Year) * 12 + currentYearEndDate.Month - currentYearStartDate.Month;
+            int totalMonth = (currentYearEndDate.Year - currentYearStartDate.Year) * 12 + (currentYearEndDate.Month - currentYearStartDate.Month) + 1;
             var result = new List<ColorBankProductivityBase>();
 
             foreach (string territory in query.Territories)

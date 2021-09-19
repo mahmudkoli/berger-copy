@@ -180,13 +180,15 @@ namespace Berger.Odata.Services
             ColorBankPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null,
             List<string> depots = null,
             List<string> territories = null,
-            List<string> salesGroup = null
+            List<string> salesGroup = null,
+            List<string> zones = null
             )
         {
             brands ??= new List<string>();
             depots ??= new List<string>();
             territories ??= new List<string>();
             salesGroup ??= new List<string>();
+            zones ??= new List<string>();
 
             division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
             DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
@@ -205,7 +207,8 @@ namespace Berger.Odata.Services
                     (!depots.Any() || depots.Contains(x.Depot)) &&
                     (!territories.Any() || territories.Contains(x.Territory)) &&
                     (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup)) &&
-                    (!brands.Any() || brands.Contains(x.Brand)), null, null, true
+                    (!brands.Any() || brands.Contains(x.Brand)) &&
+                    (!zones.Any() || zones.Contains(x.Zone)), null, null, true
             );
         }
 
@@ -1389,7 +1392,8 @@ namespace Berger.Odata.Services
 
             return result;
         }
-        public async Task<IList<ReportClubSupremePerformance>> GetReportClubSupremePerformance(ClubSupremePerformanceSearchModel model, List<CustNClubMappingVm> clubSupremeDealers, ClubSupremeReportType reportType)
+        public async Task<IList<ReportClubSupremePerformance>> GetReportClubSupremePerformance(ClubSupremePerformanceSearchModel model,
+            List<CustNClubMappingVm> clubSupremeDealers, ClubSupremeReportType reportType)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
 
@@ -1431,16 +1435,16 @@ namespace Berger.Odata.Services
                 model.Depots = model.Depots ??= new List<string>();
                 model.Territories = model.Territories ??= new List<string>();
 
-                dealer = await _dealarInfoRepository.FindByCondition(x =>
-                    (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
-                   (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
-                   (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
-                   x.Channel == ConstantsValue.DistrbutionChannelDealer
-               ).Select(x => new CustomerDataModel()
-               {
-                   BusinessArea = x.BusinessArea,
-                   CustomerNo = x.CustomerNo
-               }).Distinct().ToListAsync();
+               // dealer = await _dealarInfoRepository.FindByCondition(x =>
+               //     (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+               //    (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+               //    (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+               //    x.Channel == ConstantsValue.DistrbutionChannelDealer
+               //).Select(x => new CustomerDataModel()
+               //{
+               //    BusinessArea = x.BusinessArea,
+               //    CustomerNo = x.CustomerNo
+               //}).Distinct().ToListAsync();
 
             }
             else
@@ -1516,25 +1520,30 @@ namespace Berger.Odata.Services
             //var dataCyYtd = (await _odataService.GetSalesData(selectQueryBuilder, cfyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
 
 
-            var concatAllList = dataLyMtd.Select(selectFunc)
-                .Concat(dataCyMtd.Select(selectFunc))
-                .GroupBy(p => new { p.Depot, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
-                .Select(g => g.First());
+            //var concatAllList = dataLyMtd.Select(selectFunc)
+            //    .Concat(dataCyMtd.Select(selectFunc))
+            //    .Concat(dataCyYtd.Select(selectFunc))
+            //    .Concat(dataLyYtd.Select(selectFunc))
+            //    .GroupBy(p => new { p.Depot, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
+            //    .Select(g => g.First());
 
-            concatAllList = concatAllList.Where(x => clubSupremeDealers.Select(y => y.CustomerNo).Contains(x.CustomerNo)).ToList();
+            //concatAllList = concatAllList.Where(x => clubSupremeDealers.Select(y => y.CustomerNo).Contains(x.CustomerNo)).ToList();
 
             var result = new List<ReportClubSupremePerformance>();
+            
 
-            Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport, bool> predicateFunc = (x, val) => x.Depot == val.Depot && x.Territory == val.Territory
+            Func<CategoryWisePerformanceReport, CustNClubMappingVm, bool> predicateFunc = (x, val) => x.Depot == val.DepotCode && x.Territory == val.Territory
                 && x.CustomerNo == val.CustomerNo && x.Zone == val.Zone;
-            Func<CategoryWisePerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.Value);
 
-            foreach (var item in concatAllList)
+            Func<CategoryWisePerformanceReport, decimal> calcFunc = x => CustomConvertExtension.ObjectToDecimal(x.Value);
+            
+
+            foreach (var item in clubSupremeDealers)
             {
                 var res = reportType == ClubSupremeReportType.Detail
                     ? (ReportClubSupremePerformance)new ReportClubSupremePerformanceDetail
                     {
-                        DepotCode = item.Depot,
+                        DepotCode = item.DepotCode,
                         Territory = item.Territory,
                         Zone = item.Zone,
                         CustomerNo = item.CustomerNo,
@@ -1542,7 +1551,7 @@ namespace Berger.Odata.Services
                     }
                     : new ReportClubSupremePerformanceSummary()
                     {
-                        NumberOfDealer = dealer.FirstOrDefault(x => x.CustomerNo == item.CustomerNo) == null ? 0 : 1
+                        NumberOfDealer = 1
                     };
 
                 res.ClubStatus = EnumExtension.GetEnumDescription(clubSupremeDealers.FirstOrDefault(x => x.CustomerNo == item.CustomerNo)?.ClubSupreme ?? 0);

@@ -70,14 +70,23 @@ namespace Berger.Odata.Services
             var depotList = string.IsNullOrWhiteSpace(model.Depot) ? new List<string>() : new List<string> { model.Depot };
 
 
-            valueActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
+            liquidActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
                 Brand = x.Brand,
                 Value = x.Value,
                 Territory = x.Territory
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
-                depotList, model.SalesGroups, model.Territories);
+                depotList, model.SalesGroups, model.Territories, brands: liquidBrands);
+
+            powderActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
+            {
+                Brand = x.Brand,
+                Value = x.Value,
+                Territory = x.Territory
+            }, model.FromDate.DateFormat(),
+                model.ToDate.DateFormat(),
+                depotList, model.SalesGroups, model.Territories, brands: powderBrands);
 
 
 
@@ -85,10 +94,12 @@ namespace Berger.Odata.Services
             //                model.FromDate.SalesSearchDateFormat(), model.ToDate.SalesSearchDateFormat(),
             //                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories)).ToList();
 
-            liquidActual = valueActual.Where(x => liquidBrands.Contains(x.Brand)).ToList();
-            powderActual = valueActual.Where(x => powderBrands.Contains(x.Brand)).ToList();
+           // liquidActual = valueActual.Where(x => liquidBrands.Contains(x.Brand)).ToList();
+           // powderActual = valueActual.Where(x => powderBrands.Contains(x.Brand)).ToList();
 
-            var territoies = (from a in valueActual select a.Territory).Union(from t in valueTarget select t.Territory).Distinct().ToList();
+            var territoies = (from a in liquidActual select a.Territory)
+                .Union(from a in powderActual select a.Territory)
+                .Union(from t in valueTarget select t.Territory).Distinct().ToList();
 
             decimal target = 0;
             decimal actual = 0;
@@ -472,7 +483,7 @@ namespace Berger.Odata.Services
             DateTime edDate = DateTime.ParseExact(endDate, "yyyy.MM.dd", null);
 
             return await _oDataKPIPerformanceReportRepository.GetAllIncludeAsync(selectProperty, x =>
-                    (!territories.Any() || brands.Contains(x.Brand)) &&
+                    (!brands.Any() || brands.Contains(x.Brand)) &&
                     (!territories.Any() || territories.Contains(x.Territory)) &&
                     (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)) &&
                     (!depots.Any() || depots.Contains(x.Depot)) &&

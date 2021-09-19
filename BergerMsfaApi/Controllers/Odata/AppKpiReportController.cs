@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.KPI;
-using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using BergerMsfaApi.Filters;
-using BergerMsfaApi.Services.KPI.interfaces;
-using BergerMsfaApi.Models.KPI;
 using Berger.Odata.Model;
 
 namespace BergerMsfaApi.Controllers.Odata

@@ -42,7 +42,8 @@ namespace Berger.Odata.Services
                 ColorBankPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null,
             List<string> depots = null,
             List<string> territories = null,
-            List<string> salesGroup = null
+            List<string> salesGroup = null,
+            List<string> zones = null
         );
     }
 }
