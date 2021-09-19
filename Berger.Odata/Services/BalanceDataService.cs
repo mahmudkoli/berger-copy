@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Berger.Common.Extensions;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
+using Berger.Odata.Repositories;
 
 namespace Berger.Odata.Services
 {
@@ -13,14 +15,17 @@ namespace Berger.Odata.Services
     {
         private readonly IODataService _odataService;
         private readonly IODataCommonService _odataCommonService;
+        private readonly IODataApplicationRepository<DealerInfo> _dealarInfoRepository;
 
         public BalanceDataService(
             IODataService odataService,
-            IODataCommonService odataCommonService
+            IODataCommonService odataCommonService,
+            IODataApplicationRepository<DealerInfo> dealarInfoRepository
             )
         {
             _odataService = odataService;
             _odataCommonService = odataCommonService;
+            _dealarInfoRepository = dealarInfoRepository;
         }
 
         public async Task<IList<CollectionHistoryResultModel>> GetMRHistory(CollectionHistorySearchModel model)
@@ -190,7 +195,7 @@ namespace Berger.Odata.Services
                                               currentDate.GetMonthLastDate()).Select(x =>
                                 new ChequeBounceDetailResultModel()
                                 {
-                                    Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd.MM.yyyy"),
+                                    Date = CustomConvertExtension.ObjectToDateTime(x.ClearDate).DateFormat("dd.MM.yyyy"),
                                     CreditControlArea = x.CreditControlArea,
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount),
                                     ChequeNo = x.ChequeNo,
@@ -303,7 +308,7 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
                                 .AddProperty(CollectionColDef.CustomerName)
-                                .AddProperty(CollectionColDef.PostingDate)
+                                //.AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.ClearDate)
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.ChequeNo);
@@ -337,12 +342,19 @@ namespace Berger.Odata.Services
 
             if (customerNos == null || !customerNos.Any())
             {
-                var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-                selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
+                //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+                //selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
-                var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
-                                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                    channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
+                //var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+                //                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
+                //                    channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
+
+                var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
+                                    x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                    && (model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                    && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                    && x.Channel == ConstantsValue.DistrbutionChannelDealer,
+                                    null, null, true));
 
                 customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
             }
@@ -405,7 +417,7 @@ namespace Berger.Odata.Services
             {
                 CustomerNo = s.CustomerNo,
                 CustomerName = s.CustomerName,
-                Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                Date = CustomConvertExtension.ObjectToDateTime(s.ClearDate).DateFormat("dd MMM yyyy"),
                 ChequeNo = s.ChequeNo,
                 Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
             }).ToList();

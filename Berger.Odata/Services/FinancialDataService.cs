@@ -7,6 +7,7 @@ using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPReports;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
@@ -21,16 +22,19 @@ namespace Berger.Odata.Services
         private readonly IODataService _odataService;
         private readonly IODataCommonService _odataCommonService;
         private readonly IODataSAPRepository<SummaryPerformanceReport> _summaryPerformanceReportRepo;
+        private readonly IODataApplicationRepository<DealerInfo> _dealarInfoRepository;
 
         public FinancialDataService(
             IODataService odataService,
             IODataCommonService odataCommonService,
-            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo
+            IODataSAPRepository<SummaryPerformanceReport> summaryPerformanceReportRepo,
+            IODataApplicationRepository<DealerInfo> dealarInfoRepository
             )
         {
             _odataService = odataService;
             _odataCommonService = odataCommonService;
             _summaryPerformanceReportRepo = summaryPerformanceReportRepo;
+            _dealarInfoRepository = dealarInfoRepository;
         }
 
         public async Task<IList<OutstandingDetailsResultModel>> GetOutstandingDetails(OutstandingDetailsSearchModel model)
@@ -199,6 +203,7 @@ namespace Berger.Odata.Services
 
         public async Task<IList<OSOver90DaysTrendReportResultModel>> GetOSOver90DaysTrendReport(OSOver90DaysTrendSearchModel model)
         {
+            if (model.CreditControlArea == "-1") model.CreditControlArea = string.Empty;
             var currentDate = DateTime.Now;
             var fmDate = currentDate.AddMonths(-3);
             var smDate = currentDate.AddMonths(-2);
@@ -224,8 +229,8 @@ namespace Berger.Odata.Services
             //var tmFromDate = tmDate.GetCYFD();
             //var tmToDate = tmDate.GetCYLD();
 
-            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
+            //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            //selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
             //var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
             //selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -250,9 +255,17 @@ namespace Berger.Odata.Services
                     && (string.IsNullOrEmpty(model.CreditControlArea) || model.CreditControlArea == x.CreditControlArea)
                 ).GroupBy(x=>x.Month).Select(x => new { Month = x.Key, Value = x.Sum(y=>y.Value) }).ToListAsync();
 
-            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
-                                depots: model.Depots, territories: model.Territories, zones: model.Zones,
-                                channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+            //var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+            //                    depots: model.Depots, territories: model.Territories, zones: model.Zones,
+            //                    channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
+                                x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
+                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
 
@@ -326,6 +339,7 @@ namespace Berger.Odata.Services
         
         public async Task<IList<PortalOSOver90DaysTrendResultModel>> GetPortalOSOver90DaysTrendReport(PortalOSOver90DaysTrendSearchModel model)
         {
+            if (model.CreditControlArea == "-1") model.CreditControlArea = string.Empty;
             var currentDate = new DateTime(model.Year, model.Month, 01);
             var fmDate = currentDate.AddMonths(-2);
             var smDate = currentDate.AddMonths(-1);
@@ -351,8 +365,8 @@ namespace Berger.Odata.Services
             //var tmFromDate = tmDate.GetCYFD();
             //var tmToDate = tmDate.GetCYLD();
 
-            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
-            selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
+            //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            //selectCustomerQueryBuilder.AddProperty(nameof(CustomerDataModel.CustomerNo));
 
             //var selectSalesQueryBuilder = new SelectQueryOptionBuilder();
             //selectSalesQueryBuilder.AddProperty(DataColumnDef.CustomerNoOrSoldToParty)
@@ -378,9 +392,18 @@ namespace Berger.Odata.Services
                     && (string.IsNullOrEmpty(model.CreditControlArea) || model.CreditControlArea == x.CreditControlArea)
                 ).GroupBy(x => x.Month).Select(x => new { Month = x.Key, Value = x.Sum(y => y.Value) }).ToListAsync();
 
-            var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
-                                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, zones: model.Zones,
-                                channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+            //var customerData = (await _odataService.GetCustomerData(selectCustomerQueryBuilder,
+            //                    depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, zones: model.Zones,
+            //                    channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
+
+            var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
+                                x => (string.IsNullOrEmpty(model.Depot) || model.Depot == x.BusinessArea)
+                                && (model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
+                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
+                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
 

@@ -242,6 +242,7 @@ namespace Berger.Odata.Services
                        TillDateValue = x.Sum(y => y.TillDateValue),
                        Year = x.Key.Year,
                        Month = x.Key.Month,
+                       Value = x.Sum(y => y.Value)
                    }).ToListAsync();
         }
 
@@ -306,7 +307,8 @@ namespace Berger.Odata.Services
                     Brand = x.Brand,
                     TillDateValue = x.TillDateValue,
                     Year = x.Year,
-                    Month = x.Month
+                    Month = x.Month,
+                    Value = x.Value
                 }, model.CustomerNo, startDate,
                    endDate, model.Division);
             }
@@ -392,7 +394,7 @@ namespace Berger.Odata.Services
 
                     if (dictData.Any(x => x.Brand == brandCode))
                     {
-                        mtdAmt = dictData.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
+                        mtdAmt = dictData.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value));
 
                         var mtdSingleData = dictData.FirstOrDefault(x => x.Brand == brandCode);
 
@@ -413,9 +415,7 @@ namespace Berger.Odata.Services
             }
 
 
-            result.ForEach(x => x.MatarialGroupOrBrand = model.IsOnlyCBMaterial
-                ? null
-                : (brandFamilyInfos.FirstOrDefault(y => y.MatarialGroupOrBrand == x.MatarialGroupOrBrand)?
+            result.ForEach(x => x.MatarialGroupOrBrand = (brandFamilyInfos.FirstOrDefault(y => y.MatarialGroupOrBrand == x.MatarialGroupOrBrand)?
                     .MatarialGroupOrBrandName ?? x.MatarialGroupOrBrand) + $" ({x.MatarialGroupOrBrand})");
 
             return result;
