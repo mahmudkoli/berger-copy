@@ -6,13 +6,13 @@ import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import {
   colDef,
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
@@ -168,6 +168,7 @@ export class ColorBankProductivityComponent implements OnInit, OnDestroy {
           showTotal: this.allTotalKeysOfNumberType
             ? typeof obj[key] === 'number'
             : this.totalKeys.includes(key),
+          type: typeof obj[key] === 'number' ? 'text' : null,
           displayType:
             typeof obj[key] === 'number'
               ? 'number-format-color-fraction'

@@ -180,13 +180,15 @@ namespace Berger.Odata.Services
             ColorBankPerformanceReport>> selectProperty, string customerNo, string startDate, string endDate, string division = "-1", List<string> brands = null,
             List<string> depots = null,
             List<string> territories = null,
-            List<string> salesGroup = null
+            List<string> salesGroup = null,
+            List<string> zones = null
             )
         {
             brands ??= new List<string>();
             depots ??= new List<string>();
             territories ??= new List<string>();
             salesGroup ??= new List<string>();
+            zones ??= new List<string>();
 
             division = string.IsNullOrWhiteSpace(division) ? "-1" : division;
             DateTime stDate = DateTime.ParseExact(startDate, "yyyy.MM.dd", null);
@@ -205,7 +207,8 @@ namespace Berger.Odata.Services
                     (!depots.Any() || depots.Contains(x.Depot)) &&
                     (!territories.Any() || territories.Contains(x.Territory)) &&
                     (!salesGroup.Any() || salesGroup.Contains(x.SalesGroup)) &&
-                    (!brands.Any() || brands.Contains(x.Brand)), null, null, true
+                    (!brands.Any() || brands.Contains(x.Brand)) &&
+                    (!zones.Any() || zones.Contains(x.Zone)), null, null, true
             );
         }
 
