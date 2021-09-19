@@ -56,6 +56,20 @@ namespace Berger.Odata.Services
 
             var result = new List<MTSResultModel>();
 
+            var brandFamilyInfos = (await _odataBrandService.GetBrandFamilyInfosAsync()).ToList();
+
+            foreach (var item in dataActual)
+            {
+                item.Brand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.Brand)?
+                                                    .MatarialGroupOrBrandFamily ?? item.Brand;
+            }
+
+            foreach (var item in dataTarget)
+            {
+                item.MatarialGroupOrBrand = brandFamilyInfos.FirstOrDefault(x => x.MatarialGroupOrBrand == item.MatarialGroupOrBrand)?
+                                                    .MatarialGroupOrBrandFamily ?? item.MatarialGroupOrBrand;
+            }
+
             var brandCodes = dataTarget.Select(x => x.MatarialGroupOrBrand)
                                 .Concat(dataActual.Select(x => x.Brand))
                                     .Distinct().ToList();
@@ -98,18 +112,10 @@ namespace Berger.Odata.Services
             #region get brand data
             if (result.Any())
             {
-                var brands = result.Select(x => x.MatarialGroupOrBrand).Distinct().ToList();
-
-                var allBrandFamilyData = (await _odataService.GetBrandFamilyDataByBrands(brands, true))
-                                            .GroupBy(x => x.MatarialGroupOrBrandFamily).ToList();
-
                 foreach (var item in result)
                 {
-                    var brandFamilyData = allBrandFamilyData.FirstOrDefault(x => x.Key == item.MatarialGroupOrBrand);
-                    if (brandFamilyData != null)
-                    {
-                        item.MatarialGroupOrBrand = string.Join(", ", brandFamilyData.Select(x => x.MatarialGroupOrBrandName));
-                    }
+                    var brandFamilyData = brandFamilyInfos.Where(x => x.MatarialGroupOrBrandFamily == item.MatarialGroupOrBrand);
+                    item.MatarialGroupOrBrand = string.Join(", ", brandFamilyData.Select(x => $"{x.MatarialGroupOrBrandName} ({x.MatarialGroupOrBrand})"));
                 }
             }
             #endregion
