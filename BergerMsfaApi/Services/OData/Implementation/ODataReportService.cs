@@ -336,7 +336,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
         {
             var clubSupremeDealers = _dealerInfoRepository
                 .Where(x => x.ClubSupremeType > 0 && model.Depots.Contains(x.BusinessArea) && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None))
-                .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType }).Distinct()
+                .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType, DepotCode = x.BusinessArea, Territory = x.Territory, Zone = x.CustZone, CustomerName = x.CustomerName }).Distinct()
                 .ToList();
 
             var result = await _salesDataService.GetReportClubSupremePerformance(model, clubSupremeDealers, reportType);
