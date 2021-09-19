@@ -190,7 +190,7 @@ namespace Berger.Odata.Services
                                               currentDate.GetMonthLastDate()).Select(x =>
                                 new ChequeBounceDetailResultModel()
                                 {
-                                    Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd.MM.yyyy"),
+                                    Date = CustomConvertExtension.ObjectToDateTime(x.ClearDate).DateFormat("dd.MM.yyyy"),
                                     CreditControlArea = x.CreditControlArea,
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount),
                                     ChequeNo = x.ChequeNo,
