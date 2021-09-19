@@ -303,7 +303,7 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
                                 .AddProperty(CollectionColDef.CustomerName)
-                                .AddProperty(CollectionColDef.PostingDate)
+                                //.AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.ClearDate)
                                 .AddProperty(CollectionColDef.Amount)
                                 .AddProperty(CollectionColDef.ChequeNo);
@@ -405,7 +405,7 @@ namespace Berger.Odata.Services
             {
                 CustomerNo = s.CustomerNo,
                 CustomerName = s.CustomerName,
-                Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                Date = CustomConvertExtension.ObjectToDateTime(s.ClearDate).DateFormat("dd MMM yyyy"),
                 ChequeNo = s.ChequeNo,
                 Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
             }).ToList();
