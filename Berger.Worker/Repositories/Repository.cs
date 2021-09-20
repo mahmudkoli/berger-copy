@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 
-namespace BergerMsfaApi.Repositories
+namespace Berger.Worker.Repositories
 {
     
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class

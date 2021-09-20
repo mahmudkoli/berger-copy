@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Data.MsfaEntity.Sync;
 using Berger.Worker.Model;
 using Berger.Worker.Repositories;
-using Berger.Worker.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -15,20 +15,24 @@ using Microsoft.Extensions.Options;
 
 namespace Berger.Worker
 {
-    public class DailySalesNTargetDataWorker : BackgroundService
+    public class DailySalesDataSummaryUpdateWorker : BackgroundService
     {
-        private readonly ILogger<DailySalesNTargetDataWorker> _logger;
+        private readonly ILogger<DailySalesDataSummaryUpdateWorker> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<WorkerConfig> _appSettings;
-        private IWorkerSyncService _workerSyncService;
-        private string workerName = "DailySalesNTargetData Worker";
+        private string workerName = "DailySalesDataSummaryUpdate Worker";
+        private ISAPRepository<QuarterlyPerformanceReport> _sapRepository;
+        private readonly int _startTimeInMinutes = 30;
 
-        private IApplicationRepository<SyncSetup> _repository;
-        public DailySalesNTargetDataWorker(ILogger<DailySalesNTargetDataWorker> logger, IServiceProvider serviceProvider, IOptions<WorkerConfig> appSettings)
+        public DailySalesDataSummaryUpdateWorker(
+            ILogger<DailySalesDataSummaryUpdateWorker> logger, 
+            IServiceProvider serviceProvider, 
+            IOptions<WorkerConfig> appSettings)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _appSettings = appSettings;
+            _startTimeInMinutes = _appSettings.Value.DailySalesDataSummaryUpdateStartTimeInMinute;
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
@@ -54,8 +58,9 @@ namespace Berger.Worker
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
+                var today = DateTime.Now;
 
-                if (_appSettings.Value.RunDailySalesNTargetDataWorker)
+                if (_appSettings.Value.RunDailySalesDataSummaryUpdateWorker)
                 {
                     try
                     {
@@ -63,11 +68,10 @@ namespace Berger.Worker
 
                         using (var scope = _serviceProvider.CreateScope())
                         {
-                            _workerSyncService = scope.ServiceProvider.GetRequiredService<IWorkerSyncService>();
-
-                            await _workerSyncService.SyncDailySalesNTargetData();
+                            _sapRepository = scope.ServiceProvider.GetRequiredService<ISAPRepository<QuarterlyPerformanceReport>>();
+                            await _sapRepository.ExecuteSqlCommandAsync("spMsfaSalesDataAllSummaryUpdate");
+                            _logger.LogInformation("{workerName}  updated data at: {time}", workerName, DateTimeOffset.Now);
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -79,47 +83,12 @@ namespace Berger.Worker
                     }
                 }
 
-
-                var today = DateTime.Now;
-                var clockOut = new DateTime(today.Year, today.Month, today.Day, 23, 59, 0);
-                var clockIn = new DateTime(today.Year, today.Month, today.Day, 0, 0, 0);
-                var syncSetup = new SyncSetup();
-
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    _repository = scope.ServiceProvider.GetRequiredService<IApplicationRepository<SyncSetup>>();
-                    syncSetup = await _repository.FirstOrDefaultAsync(x => true);
-                }
-
-
-                DateTime nextRunTime = GetHourIntervals(clockIn, clockOut, syncSetup.SyncHourlyInterval).FirstOrDefault(x => x > today);
-
-                if (nextRunTime.Hour == 23 && nextRunTime.Minute == 59)
-                {
-                    nextRunTime = nextRunTime.AddMinutes(1);
-                }
-
+                DateTime nextRunTime = new DateTime(today.Year, today.Month, today.Day, today.Hour + 1, _startTimeInMinutes, 01);
                 TimeSpan actualTime = nextRunTime - today;
                 _logger.LogInformation($"{workerName} ______Next Service will run after: {actualTime}");
 
                 await Task.Delay(actualTime, stoppingToken);
             }
-        }
-
-
-        IEnumerable<DateTime> GetHourIntervals(DateTime clockIn, DateTime clockOut, int hourlyDelay)
-        {
-            yield return clockIn;
-
-            DateTime d = new DateTime(clockIn.Year, clockIn.Month, clockIn.Day, clockIn.Hour, 0, 0, clockIn.Kind).AddHours(hourlyDelay);
-
-            while (d < clockOut)
-            {
-                yield return d;
-                d = d.AddHours(hourlyDelay);
-            }
-
-            yield return clockOut;
         }
     }
 }

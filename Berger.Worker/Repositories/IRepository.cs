@@ -8,7 +8,7 @@ using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore.Query;
 using X.PagedList;
 
-namespace BergerMsfaApi.Repositories
+namespace Berger.Worker.Repositories
 {
     public interface IRepository<TEntity> : IDisposable where TEntity : class
     {

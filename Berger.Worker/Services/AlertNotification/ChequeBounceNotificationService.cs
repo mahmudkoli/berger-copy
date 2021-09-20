@@ -1,5 +1,5 @@
 ﻿using Berger.Data.MsfaEntity.AlertNotification;
-using BergerMsfaApi.Repositories;
+using Berger.Worker.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +10,8 @@ namespace Berger.Worker.Services.AlertNotification
 {
     public class ChequeBounceNotificationService : IChequeBounceNotificationService
     {
-        private readonly IRepository<ChequeBounceNotification> _repository;
-        public ChequeBounceNotificationService(IRepository<ChequeBounceNotification> repository)
+        private readonly IApplicationRepository<ChequeBounceNotification> _repository;
+        public ChequeBounceNotificationService(IApplicationRepository<ChequeBounceNotification> repository)
         {
             _repository = repository;
         }

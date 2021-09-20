@@ -1,5 +1,5 @@
 ﻿using Berger.Data.MsfaEntity.AlertNotification;
-using BergerMsfaApi.Repositories;
+using Berger.Worker.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +11,8 @@ namespace Berger.Worker.Services.AlertNotification
 {
    public class OccasionToCelebrateService: IOccasionToCelebrateService
     {
-        private readonly IRepository<OccasionToCelebrate> _repository;
-        public OccasionToCelebrateService(IRepository<OccasionToCelebrate> repository)
+        private readonly IApplicationRepository<OccasionToCelebrate> _repository;
+        public OccasionToCelebrateService(IApplicationRepository<OccasionToCelebrate> repository)
         {
             _repository = repository;
         }

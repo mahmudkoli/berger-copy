@@ -8,19 +8,19 @@ using Berger.Data.MsfaEntity.Sync;
 using Berger.Odata.Extensions;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
-using BergerMsfaApi.Repositories;
+using Berger.Worker.Repositories;
 
 namespace Berger.Worker.Services
 {
     public class WorkerSyncService : IWorkerSyncService
     {
         private readonly ISyncService _syncService;
-        private readonly IRepository<SyncDailySalesLog> _syncDailySalesLogRepository;
-        private readonly IRepository<SyncDailyTargetLog> _syncDailyTargetLogRepository;
-        private readonly IRepository<SyncSetup> _syncSetupRepository;
+        private readonly IApplicationRepository<SyncDailySalesLog> _syncDailySalesLogRepository;
+        private readonly IApplicationRepository<SyncDailyTargetLog> _syncDailyTargetLogRepository;
+        private readonly IApplicationRepository<SyncSetup> _syncSetupRepository;
 
-        public WorkerSyncService(ISyncService syncService, IRepository<SyncDailySalesLog> syncDailySalesLogRepository,
-            IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository, IRepository<SyncSetup> syncSetupRepository)
+        public WorkerSyncService(ISyncService syncService, IApplicationRepository<SyncDailySalesLog> syncDailySalesLogRepository,
+            IApplicationRepository<SyncDailyTargetLog> syncDailyTargetLogRepository, IApplicationRepository<SyncSetup> syncSetupRepository)
         {
             _syncService = syncService;
             _syncDailySalesLogRepository = syncDailySalesLogRepository;

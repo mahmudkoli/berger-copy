@@ -7,8 +7,8 @@ using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
 using Berger.Worker.Model;
+using Berger.Worker.Repositories;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,14 +18,14 @@ namespace Berger.Worker.Services
     {
         
         private readonly WorkerSettingsModel _appSettings;
-        private readonly IRepository<BrandFamilyInfo> _repo;
+        private readonly IApplicationRepository<BrandFamilyInfo> _repo;
         private readonly IHttpClientService _httpService;
         private readonly IDataEqualityComparer<BrandFamilyInfo> _dataComparer;
         private readonly ILogger<BrandFamilyInfo> _logger;
 
 
 
-        public BrandFamilyService(IRepository<BrandFamilyInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandFamilyInfo> comparer,ILogger<BrandFamilyInfo> logger, IOptions<WorkerSettingsModel> appSettings)
+        public BrandFamilyService(IApplicationRepository<BrandFamilyInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandFamilyInfo> comparer,ILogger<BrandFamilyInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
             _appSettings = appSettings.Value;
             _repo = repo;
