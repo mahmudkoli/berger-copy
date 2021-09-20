@@ -107,9 +107,13 @@ namespace Berger.Worker.Services
                     else
                     {
                         _logger.LogInformation("No new or Delete data found!!!Updating Data....Wait");
-                       dataFromDatabase = dataFromDatabase
-                            .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
-                            .ToList();
+                       //dataFromDatabase = dataFromDatabase
+                       //     .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
+                       //     .ToList();
+                        dataFromDatabase = dataFromDatabase.Join(mappedDataFromApi,
+                                                                db => db.CompositeKey,
+                                                                api => api.CompositeKey,
+                                                                (db, api) => db).ToList();
                         foreach (var dealerInfo in mappedDataFromApi)
                         {
                             var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
