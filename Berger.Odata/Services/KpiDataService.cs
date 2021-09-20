@@ -72,7 +72,6 @@ namespace Berger.Odata.Services
 
             liquidActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
-                Brand = x.Brand,
                 Value = x.Value,
                 Territory = x.Territory
             }, model.FromDate.DateFormat(),
@@ -81,21 +80,22 @@ namespace Berger.Odata.Services
 
             powderActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
-                Brand = x.Brand,
                 Value = x.Value,
                 Territory = x.Territory
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
                 depotList, model.SalesGroups, model.Territories, brands: powderBrands);
 
+            valueActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
+            {
+                Value = x.Value,
+                Territory = x.Territory
+            }, model.FromDate.DateFormat(),
+                model.ToDate.DateFormat(),
+                depotList, model.SalesGroups, model.Territories);
 
-
-            //valueActual = (await _odataService.GetSalesData(selectActualQueryBuilder,
-            //                model.FromDate.SalesSearchDateFormat(), model.ToDate.SalesSearchDateFormat(),
-            //                depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories)).ToList();
-
-           // liquidActual = valueActual.Where(x => liquidBrands.Contains(x.Brand)).ToList();
-           // powderActual = valueActual.Where(x => powderBrands.Contains(x.Brand)).ToList();
+            // liquidActual = valueActual.Where(x => liquidBrands.Contains(x.Brand)).ToList();
+            // powderActual = valueActual.Where(x => powderBrands.Contains(x.Brand)).ToList();
 
             var territoies = (from a in liquidActual select a.Territory)
                 .Union(from a in powderActual select a.Territory)
