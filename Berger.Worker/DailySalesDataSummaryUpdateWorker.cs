@@ -58,7 +58,7 @@ namespace Berger.Worker
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var today = DateTime.Now;
+                var todayHour = DateTime.Now.Hour;
 
                 if (_appSettings.Value.RunDailySalesDataSummaryUpdateWorker)
                 {
@@ -83,7 +83,8 @@ namespace Berger.Worker
                     }
                 }
 
-                DateTime nextRunTime = new DateTime(today.Year, today.Month, today.Day, today.Hour + 1, _startTimeInMinutes, 01);
+                var today = DateTime.Now;
+                DateTime nextRunTime = new DateTime(today.Year, today.Month, today.Day, todayHour + 1, _startTimeInMinutes, 01);
                 TimeSpan actualTime = nextRunTime - today;
                 _logger.LogInformation($"{workerName} ______Next Service will run after: {actualTime}");
 
