@@ -4,7 +4,7 @@ using Berger.Data.Common;
 using Berger.Data.MsfaEntity;
 using Berger.Worker.Common;
 using Berger.Worker.Services;
-using BergerMsfaApi.Repositories;
+using Berger.Worker.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,18 +62,24 @@ namespace Berger.Worker
                 .UseSerilog()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    string connectionString = hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext));
+                    string appConnectionString = hostContext.Configuration.GetConnectionString(nameof(ApplicationDbContext));
+                    string sapConnectionString = hostContext.Configuration.GetConnectionString(nameof(SAPDbContext));
                     services.Configure<WorkerSettingsModel>(options => hostContext.Configuration.GetSection("WorkerSettings").Bind(options));
                     services.Configure<WorkerConfig>(options => hostContext.Configuration.GetSection("WorkerConfig").Bind(options));
                     services.Configure<ODataSettingsModel>(options => hostContext.Configuration.GetSection("ODataSettings").Bind(options));
-                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-                    services.AddScoped<DbContext, ApplicationDbContext>();
+                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(appConnectionString));
+                    services.AddDbContext<SAPDbContext>(options => options.UseSqlServer(sapConnectionString, op => op.CommandTimeout(1800)));
+                    //services.AddScoped<DbContext, ApplicationDbContext>();
+                    services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
+                    services.AddScoped<SAPDbContext, SAPDbContext>();
                     services.AddScoped<ICustomerService, CustomerService>();
                     services.AddScoped<IBrandService, BrandService>();
                     services.AddScoped<IBrandFamilyService, BrandFamilyService>();
                     services.AddScoped<IHttpClientService, HttpClientService>();
                     services.AddScoped(typeof(IDataEqualityComparer<>), typeof(DataEqualityComparer<>));
-                    services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+                    //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+                    services.AddScoped(typeof(IApplicationRepository<>), typeof(ApplicationRepository<>));
+                    services.AddScoped(typeof(ISAPRepository<>), typeof(SAPRepository<>));
                     services.AddScoped<IUnitOfWork, ApplicationDbContext>();
                     services.AddScoped<IWorkerSyncService, WorkerSyncService>();
                     services.AddScoped<IODataService, ODataService>();
@@ -88,6 +94,7 @@ namespace Berger.Worker
                     services.AddHostedService<Worker>();
                     services.AddHostedService<DailySalesNTargetDataWorker>();
                     services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
+                    services.AddHostedService<DailySalesDataSummaryUpdateWorker>();
                 });
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Berger.Data.MsfaEntity.AlertNotification;
-using BergerMsfaApi.Repositories;
+using Berger.Worker.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +10,8 @@ namespace Berger.Worker.Services.AlertNotification
 {
    public class CreditLimitCrossNotifictionService: ICreditLimitCrossNotifictionService
     {
-        private readonly IRepository<CreditLimitCrossNotifiction> _repository;
-        public CreditLimitCrossNotifictionService(IRepository<CreditLimitCrossNotifiction> repository)
+        private readonly IApplicationRepository<CreditLimitCrossNotifiction> _repository;
+        public CreditLimitCrossNotifictionService(IApplicationRepository<CreditLimitCrossNotifiction> repository)
         {
             _repository = repository;
         }
