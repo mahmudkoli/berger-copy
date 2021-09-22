@@ -255,10 +255,10 @@ namespace Berger.Odata.Services
             var cbMaterialCodes = new List<string>();
 
             var cyfd = currentDate.GetCYFD().DateFormat();//.SalesSearchDateFormat();
-            var cylcd = currentDate.GetCYLCD().DateFormat();//.SalesSearchDateFormat();
+            var cyld = currentDate.GetCYLD().DateFormat();//.SalesSearchDateFormat();
 
             var lyfd = currentDate.GetLYFD().DateFormat();//.SalesSearchDateFormat();
-            var lylcd = currentDate.GetLYLCD().DateFormat();//.SalesSearchDateFormat();
+            var lyld = currentDate.GetLYLD().DateFormat();//.SalesSearchDateFormat();
 
             IList<CustomerPerformanceReport> dataLy = new List<CustomerPerformanceReport>();
             IList<CustomerPerformanceReport> dataCy = new List<CustomerPerformanceReport>();
@@ -283,8 +283,8 @@ namespace Berger.Odata.Services
 
             if (model.IsOnlyCBMaterial)
             {
-                dataCy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, cyfd, cylcd, model.Division);
-                dataLy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, lyfd, lylcd, model.Division);
+                dataCy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, cyfd, cyld, model.Division);
+                dataLy = await GetCbProductCustomerWiseRevenue(model.CustomerNo, lyfd, lyld, model.Division);
                 data = await GetCbProductCustomerWiseRevenue(model.CustomerNo, startDate, endDate, model.Division);
             }
             else
@@ -294,13 +294,13 @@ namespace Berger.Odata.Services
                 {
                     Brand = x.Brand,
                     TillDateValue = x.TillDateValue
-                }, model.CustomerNo, cyfd, cylcd, model.Division);
+                }, model.CustomerNo, cyfd, cyld, model.Division);
 
                 dataLy = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
                 {
                     Brand = x.Brand,
                     TillDateValue = x.TillDateValue
-                }, model.CustomerNo, lyfd, lylcd, model.Division);
+                }, model.CustomerNo, lyfd, lyld, model.Division);
 
                 data = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
                 {
