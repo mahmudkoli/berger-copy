@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Constants;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
@@ -50,7 +51,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Amount);
 
             //var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, creditControlArea: model.CreditControlArea)).ToList();
 
             Func<FinancialDataModel, bool> predicateFunc = x => (model.Days switch
             {
@@ -63,7 +64,7 @@ namespace Berger.Odata.Services
                 EnumOutstandingDetailsAgeDays._GT_90_Days => CustomConvertExtension.ObjectToInt(x.Age) > 90,
                 _ => true
             });
-            Func<FinancialDataModel, bool> predicateFuncFinal = x => predicateFunc(x) && x.CreditControlArea == model.CreditControlArea;
+            Func<FinancialDataModel, bool> predicateFuncFinal = x => predicateFunc(x);
 
             var result = data.Where(predicateFuncFinal).Select(x =>
                                 new OutstandingDetailsResultModel()
@@ -73,6 +74,8 @@ namespace Berger.Odata.Services
                                     PostingDate = x.PostingDate.ReturnDateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ"),
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
+
+            result = result.OrderBy(x => x.PostingDate.DateFormatDate("yyyy-MM-ddTHH:mm:ssZ")).ToList();
 
             return result;
         }
@@ -125,9 +128,11 @@ namespace Berger.Odata.Services
 
             foreach (var item in result)
             {
-                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+                item.CreditControlAreaName = $"{creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty} ({ConstantsApplication.SpaceString}{item.CreditControlArea})";
             }
             #endregion
+
+            result = result.OrderBy(x => x.CreditControlArea).ToList();
 
             return result;
         }
