@@ -9,6 +9,7 @@ using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.Logs;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.PainterRegistration;
@@ -241,6 +242,6 @@ namespace Berger.Data.MsfaEntity
 
         #endregion
 
-
+        public DbSet<ApplicationLog> ApplicationLogs { get; set; }
     }
 }
