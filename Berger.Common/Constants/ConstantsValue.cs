@@ -121,4 +121,9 @@ namespace Berger.Common.Constants
         public const string Nominee_Photograph = "Nominee_Photograph";
         public const string Cheque = "Cheque";
     }
+
+    public static class ConstantsApplication
+    {
+        public const string SerilogMSSqlServerTableName = "ApplicationLogs";
+    }
 }

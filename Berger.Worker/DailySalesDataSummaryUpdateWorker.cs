@@ -4,11 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Data.MsfaEntity.Sync;
 using Berger.Worker.Model;
 using Berger.Worker.Repositories;
-using Berger.Worker.Services;
-using Berger.Worker.Services.AlertNotification;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,20 +15,24 @@ using Microsoft.Extensions.Options;
 
 namespace Berger.Worker
 {
-    public class DailyAlertNotificationBulkUploadWorker : BackgroundService
+    public class DailySalesDataSummaryUpdateWorker : BackgroundService
     {
-        private readonly ILogger<DailyAlertNotificationBulkUploadWorker> _logger;
+        private readonly ILogger<DailySalesDataSummaryUpdateWorker> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IOptions<WorkerConfig> _appSettings;
-        private INotificationWorkerService _notificationWorker;
-        private string workerName = "DailyAlertNotificationBulkUpload Worker";
+        private string workerName = "DailySalesDataSummaryUpdate Worker";
+        private ISAPRepository<QuarterlyPerformanceReport> _sapRepository;
+        private readonly int _startTimeInMinutes = 30;
 
-        private IApplicationRepository<SyncSetup> _repository;
-        public DailyAlertNotificationBulkUploadWorker(ILogger<DailyAlertNotificationBulkUploadWorker> logger, IServiceProvider serviceProvider, IOptions<WorkerConfig> appSettings)
+        public DailySalesDataSummaryUpdateWorker(
+            ILogger<DailySalesDataSummaryUpdateWorker> logger, 
+            IServiceProvider serviceProvider, 
+            IOptions<WorkerConfig> appSettings)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _appSettings = appSettings;
+            _startTimeInMinutes = _appSettings.Value.DailySalesDataSummaryUpdateStartTimeInMinute;
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
@@ -55,8 +58,9 @@ namespace Berger.Worker
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
+                var todayHour = DateTime.Now.Hour;
 
-                if (_appSettings.Value.RunDailyAlertNotificationDataWorker)
+                if (_appSettings.Value.RunDailySalesDataSummaryUpdateWorker)
                 {
                     try
                     {
@@ -64,13 +68,10 @@ namespace Berger.Worker
 
                         using (var scope = _serviceProvider.CreateScope())
                         {
-                            _notificationWorker = scope.ServiceProvider.GetRequiredService<INotificationWorkerService>();
-                            await _notificationWorker.SavePaymnetFollowup();
-                            await _notificationWorker.SaveOccassionToCelebrste();
-                            await _notificationWorker.SaveCheckBounceNotification();
-                            await _notificationWorker.SaveCreaditLimitNotification();
+                            _sapRepository = scope.ServiceProvider.GetRequiredService<ISAPRepository<QuarterlyPerformanceReport>>();
+                            await _sapRepository.ExecuteSqlCommandAsync("spMsfaSalesDataAllSummaryUpdate");
+                            _logger.LogInformation("{workerName}  updated data at: {time}", workerName, DateTimeOffset.Now);
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -82,47 +83,13 @@ namespace Berger.Worker
                     }
                 }
 
-
                 var today = DateTime.Now;
-                var clockOut = new DateTime(today.Year, today.Month, today.Day, 23, 59, 0);
-                var clockIn = new DateTime(today.Year, today.Month, today.Day, 0, 0, 0);
-                var syncSetup = new SyncSetup();
-
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    _repository = scope.ServiceProvider.GetRequiredService<IApplicationRepository<SyncSetup>>();
-                    syncSetup = await _repository.FirstOrDefaultAsync(x => true);
-                }
-
-
-                DateTime nextRunTime = GetHourIntervals(clockIn, clockOut, syncSetup.SyncHourlyInterval).FirstOrDefault(x => x > today);
-
-                if (nextRunTime.Hour == 23 && nextRunTime.Minute == 59)
-                {
-                    nextRunTime = nextRunTime.AddMinutes(1);
-                }
-
+                DateTime nextRunTime = new DateTime(today.Year, today.Month, today.Day, todayHour + 1, _startTimeInMinutes, 01);
                 TimeSpan actualTime = nextRunTime - today;
                 _logger.LogInformation($"{workerName} ______Next Service will run after: {actualTime}");
 
                 await Task.Delay(actualTime, stoppingToken);
             }
-        }
-
-
-        IEnumerable<DateTime> GetHourIntervals(DateTime clockIn, DateTime clockOut, int hourlyDelay)
-        {
-            yield return clockIn;
-
-            DateTime d = new DateTime(clockIn.Year, clockIn.Month, clockIn.Day, clockIn.Hour, 0, 0, clockIn.Kind).AddHours(hourlyDelay);
-
-            while (d < clockOut)
-            {
-                yield return d;
-                d = d.AddHours(hourlyDelay);
-            }
-
-            yield return clockOut;
         }
     }
 }
