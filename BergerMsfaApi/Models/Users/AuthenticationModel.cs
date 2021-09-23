@@ -37,7 +37,7 @@ namespace BergerMsfaApi.Models.Users
         public int EmployeeRole { get; set; }
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
-
+        public string Designation { get; set; }
         public AuthenticateUserModel()
         {
             this.DealerOpeningsHierarchyList = new List<KeyValuePairModel>();

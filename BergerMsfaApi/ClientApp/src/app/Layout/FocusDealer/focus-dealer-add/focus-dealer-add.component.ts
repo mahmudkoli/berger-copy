@@ -22,6 +22,7 @@ export class FocusDealerAddComponent implements OnInit {
 	focusDealerForm: FormGroup;
     dealers: any[] = [];
     users: any[] = [];
+	territories:any[]=[];
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
 	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload;
 
@@ -66,11 +67,11 @@ export class FocusDealerAddComponent implements OnInit {
 
 	populateDropdownDataList() {
         const forkJoinSubscription1 = forkJoin([
-            this.commonService.getUserInfoListByCurrentUserWithoutZoUser(),
-            this.commonService.getDealerList('',[]),
-        ]).subscribe(([users, dealers]) => {
+			this.commonService.getTerritoryList(),
+			this.commonService.getUserInfoListByCurrentUserWithoutZoUser()
+        ]).subscribe(([territories,users]) => {
+			this.territories=territories.data,
             this.users = users.data;
-            this.dealers = dealers.data;
         }, (err) => { }, () => { });
 
 		this.subscriptions.push(forkJoinSubscription1);
@@ -78,14 +79,32 @@ export class FocusDealerAddComponent implements OnInit {
 
 	initFocusDealers() {
 		this.createForm();
+		this.territoryChange();
 	}
 
+	territoryChange = () => {
+
+		var controll = this.focusDealerForm.controls;
+
+		var territoryid = {
+			"territories":null
+		}
+		if(controll['territoryId'].value){
+			territoryid = {
+				"territories":[controll['territoryId'].value]
+			}
+		}else{
+			this.dealers=[];
+			controll['dealerId'].setValue(null);
+		}
+		this.commonService.GetDealerListWithTerritory(territoryid).subscribe(res=>{
+			this.dealers=res.data
+		})
+	  }
+
 	createForm() {
-		console.log('hi there')
-		console.log(this.focusDealer.validFrom)
-		console.log(this.focusDealer.validTo)
 		this.focusDealerForm = this.formBuilder.group({
-			territoryId: [this.focusDealer.territoryId, [Validators.required]],
+			territoryId: [this.focusDealer.territory, [Validators.required]],
 			dealerId: [this.focusDealer.dealerId, [Validators.required]],
 			employeeId: [this.focusDealer.employeeId, [Validators.required]],
 			validFrom: [],

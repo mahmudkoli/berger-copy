@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
@@ -63,6 +64,21 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             {
                 var userId = AppIdentity.AppUser.UserId;
                 var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+        
+        [HttpGet("GetDealerListWithTerritory")]
+        public async Task<IActionResult> GetDealerListWithTerritory([FromQuery] AreaDealerSearchModel model)
+        {
+            try
+            {
+                var userId = AppIdentity.AppUser.UserId;
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId, model.Territories);
                 return OkResult(result);
             }
             catch (Exception ex)

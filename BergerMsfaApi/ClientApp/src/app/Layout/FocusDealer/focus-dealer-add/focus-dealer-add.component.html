@@ -14,13 +14,14 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Territory</label>
-                        <ng-select formControlName="territoryId" [multiple]="false" [virtualScroll]="true">
+                        <ng-select formControlName="territoryId" [multiple]="false" [virtualScroll]="true"
+                            (change)="territoryChange()">
                             <!-- <ng-option>--Select--</ng-option> -->
-                            <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
+                            <ng-option *ngFor="let tr of territories;" [value]="tr.code">{{tr.name}}</ng-option>
                         </ng-select>
                         <small class="text-danger"
-                            *ngIf="formControls.dealerId.touched && formControls.dealerId.errors">
-                            <span *ngIf="formControls.dealerId.errors.required">Dealer is
+                            *ngIf="formControls.territoryId.touched && formControls.territoryId.errors">
+                            <span *ngIf="formControls.territoryId.errors.required">Territory is
                                 <strong>required</strong></span>
                         </small>
                     </div>

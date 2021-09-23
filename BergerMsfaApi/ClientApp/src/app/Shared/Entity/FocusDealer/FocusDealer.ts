@@ -3,7 +3,7 @@ import { QueryObject } from "../Common/query-object";
 export class FocusDealer {
     id: number;
     dealerId: number;
-    territoryId: number;
+    territory: string;
     employeeId: string;
     validFrom: Date;
     validTo: Date;
@@ -12,7 +12,6 @@ export class FocusDealer {
     dealerName: string;
     userFullName: string;
     depot: string;
-    territory: string;
     zone: string;
 
     constructor(init?: Partial<FocusDealer>) {

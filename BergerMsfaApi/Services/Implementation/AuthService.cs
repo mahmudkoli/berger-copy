@@ -141,7 +141,8 @@ namespace BergerMsfaApi.Services.Implementation
                     EmployeeRole = (int)userInfo.EmployeeRole,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
-                    AppMenuPermission = empMenu.ToList()
+                    AppMenuPermission = empMenu.ToList(),
+                    Designation = userInfo.Designation
 
                 };
 
