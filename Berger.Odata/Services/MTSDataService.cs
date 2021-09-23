@@ -218,8 +218,7 @@ namespace Berger.Odata.Services
                     res.LYMTD = volActLy;
                 }
                 res.RemainingTarget = res.CMTarget - res.CMActual;
-                res.TillDateGrowth = _odataService.GetTillDateGrowth(res.LYMTD, res.CMActual,
-                                        currentDate.GetCYLD().Day, countDays);
+                res.TillDateGrowth = _odataService.GetGrowth(res.LYMTD, res.CMActual);
 
                 result.Add(res);
             }
