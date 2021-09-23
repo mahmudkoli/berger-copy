@@ -1,7 +1,7 @@
-﻿import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CommonService } from '../Common/common.service';
+﻿import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { APIResponse } from '../../Entity/Response/api-response';
+import { CommonService } from '../Common/common.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +18,7 @@ export class DealerSalesCallService {
         this.baseUrl = baseUrl + 'api/';
         this.DealerSalesCallsEndpoint = this.baseUrl + 'v1/DealerSalesCall';
     }
-  
+
     getDealerSalesCall(id) {
       return this.http.get<APIResponse>(`${this.DealerSalesCallsEndpoint}/${id}`);
     }
@@ -27,14 +27,14 @@ export class DealerSalesCallService {
     updateDealerSalesCall(dealerSalesCall) {
       return this.http.put<any>(this.baseUrl + `v1/DealerSalesCall/UpdateDealerSalesCallList/`,dealerSalesCall);
     }
-  
+
     getDealerSalesCalls(filter?) {
       return this.http.get<APIResponse>(`${this.DealerSalesCallsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }
-  
 
 
-    
+
+
     public createEmailConfig(model) {
       // debugger;
       return this.http.post<APIResponse>(this.baseUrl + 'v1/EmailConfigDealerSales/CreateEmailConfig', model);
@@ -52,6 +52,12 @@ export class DealerSalesCallService {
   public getEmailConfigById(id) {
       return this.http.get<APIResponse>(this.baseUrl + 'v1/EmailConfigDealerSales/GetById/' + id);
   }
+
+public DeleteDealerOppeningEmailById(id){
+  return this.http.delete<APIResponse>(this.baseUrl + 'v1/EmailConfigDealerSales/DeleteById/' + id);
+
+}
+
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.DealerSalesCallsEndpoint}/activeInactive/${id}`, null);
     // }

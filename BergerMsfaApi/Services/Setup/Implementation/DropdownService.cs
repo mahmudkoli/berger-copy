@@ -49,7 +49,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             }).ToListAsync();
         }
 
-        public async  Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index, int pageSize)
+        public async Task<IPagedList<DropdownModel>> GetDropdownListPaging(int index, int pageSize)
         {
             IPagedList<DropdownDetail> result = await _dropdownDetail.GetAllPagedAsync(index, pageSize);
 
@@ -107,10 +107,10 @@ namespace BergerMsfaApi.Services.Setup.Implementation
         {
             var typeCode = _dropdownType.Find(x => x.Id == typeId).TypeCode;
 
-            var sequence = await _dropdownDetail.AnyAsync(f => f.TypeId == typeId) ? 
+            var sequence = await _dropdownDetail.AnyAsync(f => f.TypeId == typeId) ?
                         _dropdownDetail.Where(f => f.TypeId == typeId).OrderByDescending(f => f.DropdownCode).FirstOrDefault()?.DropdownCode?.Split('_').Last() : "";
 
-            if(sequence == null) 
+            if (sequence == null)
             {
                 return typeCode + "_01";
             }
@@ -118,7 +118,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
             {
                 Int32.TryParse(sequence, out int x);
                 var codeSequence = (x + 1).ToString().Length == 1 ? "0" + (x + 1) : (x + 1).ToString();
-                
+
                 return typeCode + "_" + codeSequence;
             }
         }
@@ -143,13 +143,13 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         public async Task<int> DeleteAsync(int id) => await _dropdownDetail.DeleteAsync(s => s.Id == id);
 
-        public async Task<bool> IsExistAsync(int id) =>  await _dropdownDetail.IsExistAsync(f => f.Id == id);
+        public async Task<bool> IsExistAsync(int id) => await _dropdownDetail.IsExistAsync(f => f.Id == id);
 
         public async Task<IEnumerable<DropdownModel>> GetDropdownByTypeCd(string typeCode)
         {
             var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == typeCode);
 
-            return await result.Select(s => new DropdownModel()
+            return await result.OrderBy(x => x.Sequence).Select(s => new DropdownModel()
             {
                 Id = s.Id,
                 TypeId = s.TypeId,
@@ -181,7 +181,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
 
         public async Task<IEnumerable<DropdownModel>> GetDropdownByTypeId(int typeId)
         {
-            var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f=>f.TypeId==typeId);
+            var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId == typeId);
 
             return await result.Select(s => new DropdownModel()
             {
@@ -204,22 +204,22 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                          where dt.TypeCode == DynamicTypeCode.PaintUsageCompany
                          select dd;
             //TypeId will change
-           // var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
+            // var result = _dropdownDetail.GetAllInclude(f => f.DropdownType).Where(f => f.TypeId ==16);
             var company = (from c in result
-                          join m in _painterCompanyMTDsvc.GetAll()
-                          on new { a=c.Id,b= PainterCallId } equals new { a=m.CompanyId,b=m.PainterCallId} into comLeftJoin
-                          from coms in comLeftJoin.DefaultIfEmpty()
-                          select new PainterCompanyMTDValueModel
-                          { 
-                              CompanyId=c.Id,
-                              CompanyName=c.DropdownName,
-                              Value=coms.Value,
-                              CountInPercent=coms!=null?coms.CountInPercent:0,
-                              CumelativeInPercent= coms != null ? coms.CountInPercent:0
-                          }).ToList();
+                           join m in _painterCompanyMTDsvc.GetAll()
+                           on new { a = c.Id, b = PainterCallId } equals new { a = m.CompanyId, b = m.PainterCallId } into comLeftJoin
+                           from coms in comLeftJoin.DefaultIfEmpty()
+                           select new PainterCompanyMTDValueModel
+                           {
+                               CompanyId = c.Id,
+                               CompanyName = c.DropdownName,
+                               Value = coms.Value,
+                               CountInPercent = coms != null ? coms.CountInPercent : 0,
+                               CumelativeInPercent = coms != null ? coms.CountInPercent : 0
+                           }).ToList();
 
             return company;
-          
+
         }
     }
 }

@@ -42,8 +42,8 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
         public async Task<IPagedList<TintingMachineModel>> GetAllAsync(int index, int pageSize, string search)
         {
             var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x,
-                            x => (string.IsNullOrEmpty(search) || x.Territory.Contains(search) || 
-                            x.UserInfo.FullName.Contains(search) || x.Company.DropdownName.Contains(search)), 
+                            x => (string.IsNullOrEmpty(search) || x.Territory.Contains(search) ||
+                            x.UserInfo.FullName.Contains(search) || x.Company.DropdownName.Contains(search)),
                             null,
                             x => x.Include(i => i.UserInfo).Include(i => i.Company),
                             index, pageSize, true);
@@ -76,7 +76,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             var result = await _tintingMachineSvc.GetAllIncludeAsync(
                                 x => x,
                                 x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.UserInfo.FullName.Contains(query.GlobalSearchValue) || x.Company.DropdownName.Contains(query.GlobalSearchValue) || x.Territory.Contains(query.GlobalSearchValue))
-                                && isPermitted? isPermitted:user.PlantIdList.Contains(x.Depot)
+                                && isPermitted ? isPermitted : user.PlantIdList.Contains(x.Depot)
                                 && isPermitted ? isPermitted : user.TerritoryIdList.Contains(x.Territory)
 
                                 ,
@@ -104,35 +104,42 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
             }
             #endregion
 
-            var queryResult = new QueryResultModel<TintingMachineModel>();
-            queryResult.Items = modelResult;
-            queryResult.TotalFilter = result.TotalFilter;
-            queryResult.Total = result.Total;
+            var queryResult = new QueryResultModel<TintingMachineModel>
+            {
+                Items = modelResult,
+                TotalFilter = result.TotalFilter,
+                Total = result.Total
+            };
 
             return queryResult;
         }
 
         public async Task<IList<SaveTintingMachineModel>> GetAllAsync(string territory, int userInfoId)
         {
+
+            string plantId = AppIdentity.AppUser.PlantIdList?.FirstOrDefault() ?? string.Empty;
+
             var allCompanies = await _dropdownService.GetDropdownByTypeCd(DynamicTypeCode.TintingCompany);
 
-            var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x, 
-                                    x => x.Territory == territory && x.UserInfoId == userInfoId, 
-                                    null, 
-                                    x => x.Include(i => i.UserInfo).Include(i => i.Company), 
+            var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x,
+                                    x => x.Territory == territory && x.Depot == plantId,// x.UserInfoId == userInfoId,
+                                    null,
+                                    x => x.Include(i => i.UserInfo).Include(i => i.Company),
                                     true);
 
             var modelResult = _mapper.Map<IList<SaveTintingMachineModel>>(result);
 
-            if(!modelResult.Any())
+            if (!modelResult.Any())
             {
                 foreach (var comp in allCompanies)
                 {
-                    var res = new SaveTintingMachineModel();
-                    res.Territory = territory;
-                    res.UserInfoId = userInfoId;
-                    res.CompanyId = comp.Id;
-                    res.CompanyName = comp.DropdownName;
+                    var res = new SaveTintingMachineModel
+                    {
+                        Territory = territory,
+                        UserInfoId = userInfoId,
+                        CompanyId = comp.Id,
+                        CompanyName = comp.DropdownName
+                    };
 
                     modelResult.Add(res);
                 }
@@ -143,31 +150,35 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
 
         public async Task<bool> UpdateAsync(List<SaveTintingMachineModel> model)
         {
+            string plantId = AppIdentity.AppUser.PlantIdList?.FirstOrDefault() ?? string.Empty;
+
             foreach (var tinMac in model)
             {
                 var existTinMac = await _tintingMachineSvc.GetFirstOrDefaultIncludeAsync(x => x,
                                                         f => f.CompanyId == tinMac.CompanyId
-                                                        && f.Territory == tinMac.Territory && 
-                                                        f.UserInfoId == tinMac.UserInfoId);
+                                                        && f.Territory == tinMac.Territory &&
+                                                        f.Depot == plantId);
                 if (existTinMac == null)
                 {
-                    existTinMac = new TintingMachine();
-                    existTinMac.Depot = AppIdentity.AppUser.PlantIdList?.FirstOrDefault() ?? string.Empty;
-                    existTinMac.Territory = tinMac.Territory;
-                    existTinMac.CompanyId = tinMac.CompanyId;
-                    existTinMac.UserInfoId = tinMac.UserInfoId;
-                    existTinMac.NoOfActiveMachine = tinMac.NoOfActiveMachine;
-                    existTinMac.NoOfInactiveMachine = tinMac.NoOfInactiveMachine;
-                    existTinMac.No = tinMac.No;
-                    existTinMac.Contribution = tinMac.Contribution;
-                    existTinMac.NoOfCorrection = 0;
-                    existTinMac.CreatedTime = DateTime.Now;
+                    existTinMac = new TintingMachine
+                    {
+                        Depot = plantId,
+                        Territory = tinMac.Territory,
+                        CompanyId = tinMac.CompanyId,
+                        UserInfoId = tinMac.UserInfoId,
+                        NoOfActiveMachine = tinMac.NoOfActiveMachine,
+                        NoOfInactiveMachine = tinMac.NoOfInactiveMachine,
+                        No = tinMac.No,
+                        Contribution = tinMac.Contribution,
+                        NoOfCorrection = 0,
+                        CreatedTime = DateTime.Now
+                    };
 
                     await _tintingMachineSvc.CreateAsync(existTinMac);
                 }
                 else
                 {
-                    if (existTinMac.NoOfActiveMachine > tinMac.NoOfActiveMachine || 
+                    if (existTinMac.NoOfActiveMachine > tinMac.NoOfActiveMachine ||
                         existTinMac.NoOfInactiveMachine > tinMac.NoOfInactiveMachine)
                     {
                         existTinMac.NoOfCorrection = existTinMac.NoOfCorrection + 1;
@@ -189,9 +200,9 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
 
         public async Task<IList<AppTintingMachineModel>> GetAllAsync(AppTintingMachineSearchModel model)
         {
+
             var result = await _tintingMachineSvc.GetAllIncludeAsync(x => x,
-                                    x => x.Depot == model.Depot && x.Territory == model.Territory
-                                     && (!model.UserId.HasValue || model.UserId.Value == x.UserInfoId),
+                                    x => x.Depot == model.Depot && x.Territory == model.Territory,
                                     null,
                                     x => x.Include(i => i.UserInfo).Include(i => i.Company),
                                     true);

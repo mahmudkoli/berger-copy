@@ -1,13 +1,13 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { TintingService } from '../../../Shared/Services/Tinting/TintingService';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { of, Subscription } from 'rxjs';
-import { TintingMachine, TintingMachineQuery } from 'src/app/Shared/Entity/Tinting/TintingMachine';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
+import { TintingMachine, TintingMachineQuery } from 'src/app/Shared/Entity/Tinting/TintingMachine';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { TintingService } from '../../../Shared/Services/Tinting/TintingService';
 
 @Component({
     selector: 'app-tintingmachine-list',
@@ -102,6 +102,7 @@ export class TintingmachineListComponent implements OnInit, OnDestroy {
 			{ headerName: 'No Of Inactive Machine', width: '10%', internalName: 'noOfInactiveMachine', sort: true, type: "" },
 			{ headerName: 'No', width: '10%', internalName: 'no', sort: true, type: "" },
 			{ headerName: 'Contribution', width: '10%', internalName: 'contribution', sort: true, type: "" },
+			{ headerName: 'Modified By', width: '10%', internalName: 'userFullName', sort: true, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -114,7 +115,7 @@ export class TintingmachineListComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new TintingMachineQuery({

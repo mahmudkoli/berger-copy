@@ -84,5 +84,19 @@ namespace BergerMsfaApi.Controllers.DealerFocus
                 return ExceptionResult(ex);
             }
         }
+        
+        [HttpDelete("deleteById/{id}")]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            try
+            {
+                var result = await _emailConfigService.DeleteDealerSalesEmailById(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

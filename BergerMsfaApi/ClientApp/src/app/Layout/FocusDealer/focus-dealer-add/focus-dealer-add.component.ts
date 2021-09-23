@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
-import { FocusDealerService } from '../../../Shared/Services/FocusDealer/focus-dealer.service';
-import { CommonService } from '../../../Shared/Services/Common/common.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { FocusDealer, SaveFocusDealer } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
+import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
+import { CommonService } from '../../../Shared/Services/Common/common.service';
+import { FocusDealerService } from '../../../Shared/Services/FocusDealer/focus-dealer.service';
 
 @Component({
     selector: 'app-focus-dealer-add',
@@ -85,6 +85,7 @@ export class FocusDealerAddComponent implements OnInit {
 		console.log(this.focusDealer.validFrom)
 		console.log(this.focusDealer.validTo)
 		this.focusDealerForm = this.formBuilder.group({
+			territoryId: [this.focusDealer.territoryId, [Validators.required]],
 			dealerId: [this.focusDealer.dealerId, [Validators.required]],
 			employeeId: [this.focusDealer.employeeId, [Validators.required]],
 			validFrom: [],

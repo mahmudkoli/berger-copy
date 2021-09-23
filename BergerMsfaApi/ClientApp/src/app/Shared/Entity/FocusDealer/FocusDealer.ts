@@ -3,6 +3,7 @@ import { QueryObject } from "../Common/query-object";
 export class FocusDealer {
     id: number;
     dealerId: number;
+    territoryId: number;
     employeeId: string;
     validFrom: Date;
     validTo: Date;
