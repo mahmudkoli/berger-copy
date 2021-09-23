@@ -198,7 +198,7 @@ namespace Berger.Odata.Services
                 var creditControlArea = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea);
 
                 item.CreditControlArea = creditControlArea != null ?
-                                            $"{creditControlArea.Description} ({creditControlArea.CreditControlAreaId})"
+                                            $"{creditControlArea.Description} ({ConstantsApplication.SpaceString}{creditControlArea.CreditControlAreaId})"
                                             : item.CreditControlArea;
             }
             #endregion
@@ -265,11 +265,10 @@ namespace Berger.Odata.Services
             //                    channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
 
             var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
-                                x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
-                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
-                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
-                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                 null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
@@ -403,11 +402,10 @@ namespace Berger.Odata.Services
 
             var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
                                 x => (string.IsNullOrEmpty(model.Depot) || model.Depot == x.BusinessArea)
-                                && (model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
-                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
-                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
-                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                && (!model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
+                                && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                 null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
@@ -513,7 +511,7 @@ namespace Berger.Odata.Services
 
             foreach (var customerNo in customerNos)
             {
-                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate, creditControlArea: model.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -521,7 +519,9 @@ namespace Berger.Odata.Services
             }
             #endregion
 
-            var result = data.Select(x =>
+            var result = data
+                            .Where(x => CustomConvertExtension.ObjectToInt(x.Age) == CustomConvertExtension.ObjectToInt(model.Age))
+                            .Select(x =>
                                 new PaymentFollowUpResultModel()
                                 {
                                     CustomerNo = x.CustomerNo,
@@ -557,7 +557,7 @@ namespace Berger.Odata.Services
                 }
 
                 item.DayLimitRPRS = dayCount;
-                item.RPRSDate = item.InvoiceDateTime.AddDays(dayCount).DateFormat("dd.MM.yyyy");
+                item.RPRSDate = item.InvoiceDateTime.AddDays(dayCount-1).DateFormat("dd.MM.yyyy");
             }
             
             return result;

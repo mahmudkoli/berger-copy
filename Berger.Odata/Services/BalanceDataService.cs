@@ -316,7 +316,8 @@ namespace Berger.Odata.Services
                                 //.AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.ClearDate)
                                 .AddProperty(CollectionColDef.Amount)
-                                .AddProperty(CollectionColDef.ChequeNo);
+                                .AddProperty(CollectionColDef.ChequeNo)
+                                .AddProperty(CollectionColDef.CollectionType);
 
             #region Filter by area and customer no
             //dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
@@ -355,9 +356,9 @@ namespace Berger.Odata.Services
                 //                    channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
 
                 var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
-                                    x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
-                                    && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                    && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                    x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                    && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                    && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
                                     && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                     null, null, true));
 
@@ -393,15 +394,15 @@ namespace Berger.Odata.Services
 
             var totalChqRec = new ChequeSummaryChequeDetailsReportModel();
             totalChqRec.ChequeDetailsName = "Total Chq Rec";
-            totalChqRec.MTDNoOfCheque = dataCm.Count();
-            totalChqRec.YTDNoOfCheque = dataCy.Count();
+            totalChqRec.MTDNoOfCheque = dataCm.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
+            totalChqRec.YTDNoOfCheque = dataCy.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
             totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
 
             var totalChqBncd = new ChequeSummaryChequeDetailsReportModel();
             totalChqBncd.ChequeDetailsName = "Total Chq Bncd";
-            totalChqBncd.MTDNoOfCheque = dataBounceCm.Count();
-            totalChqBncd.YTDNoOfCheque = dataBounceCy.Count();
+            totalChqBncd.MTDNoOfCheque = dataBounceCm.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
+            totalChqBncd.YTDNoOfCheque = dataBounceCy.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
             totalChqBncd.MTDTotalChequeValue = dataBounceCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             totalChqBncd.YTDTotalChequeValue = dataBounceCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
 
