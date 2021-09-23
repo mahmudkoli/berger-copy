@@ -973,7 +973,7 @@ namespace Berger.Odata.Services
             else if (string.IsNullOrEmpty(endDate))
             {
                 endDate = DateTime.Now.DateTimeFormat();
-                filterQueryBuilder.And().LessThanOrEqualDateTime(FinancialColDef.Date, endDate);
+                filterQueryBuilder.And().EqualDateTime(FinancialColDef.Date, endDate);
             }
 
             //var topQuery = $"$top=5";
@@ -1075,6 +1075,11 @@ namespace Berger.Odata.Services
             else if (!string.IsNullOrEmpty(endDate))
             {
                 filterQueryBuilder.And().LessThanOrEqualDateTime(BalanceColDef.PostingDate, endDate);
+            }
+            else if (string.IsNullOrEmpty(endDate))
+            {
+                endDate = DateTime.Now.DateTimeFormat();
+                filterQueryBuilder.And().EqualDateTime(BalanceColDef.PostingDate, endDate);
             }
 
             //var topQuery = $"$top=5";

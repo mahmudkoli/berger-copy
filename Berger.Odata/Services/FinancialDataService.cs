@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Berger.Common.Constants;
 using Berger.Common.Extensions;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
@@ -50,7 +51,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Amount);
 
             //var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
-            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo)).ToList();
+            var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, creditControlArea: model.CreditControlArea)).ToList();
 
             Func<FinancialDataModel, bool> predicateFunc = x => (model.Days switch
             {
@@ -63,7 +64,7 @@ namespace Berger.Odata.Services
                 EnumOutstandingDetailsAgeDays._GT_90_Days => CustomConvertExtension.ObjectToInt(x.Age) > 90,
                 _ => true
             });
-            Func<FinancialDataModel, bool> predicateFuncFinal = x => predicateFunc(x) && x.CreditControlArea == model.CreditControlArea;
+            Func<FinancialDataModel, bool> predicateFuncFinal = x => predicateFunc(x);
 
             var result = data.Where(predicateFuncFinal).Select(x =>
                                 new OutstandingDetailsResultModel()
@@ -73,6 +74,8 @@ namespace Berger.Odata.Services
                                     PostingDate = x.PostingDate.ReturnDateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ"),
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
+
+            result = result.OrderBy(x => x.PostingDate.DateFormatDate("yyyy-MM-ddTHH:mm:ssZ")).ToList();
 
             return result;
         }
@@ -125,9 +128,11 @@ namespace Berger.Odata.Services
 
             foreach (var item in result)
             {
-                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+                item.CreditControlAreaName = $"{creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty} ({ConstantsApplication.SpaceString}{item.CreditControlArea})";
             }
             #endregion
+
+            result = result.OrderBy(x => x.CreditControlArea).ToList();
 
             return result;
         }
@@ -193,7 +198,7 @@ namespace Berger.Odata.Services
                 var creditControlArea = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea);
 
                 item.CreditControlArea = creditControlArea != null ?
-                                            $"{creditControlArea.Description} ({creditControlArea.CreditControlAreaId})"
+                                            $"{creditControlArea.Description} ({ConstantsApplication.SpaceString}{creditControlArea.CreditControlAreaId})"
                                             : item.CreditControlArea;
             }
             #endregion
@@ -260,11 +265,10 @@ namespace Berger.Odata.Services
             //                    channel: ConstantsValue.DistrbutionChannelDealer, creditControlArea: model.CreditControlArea)).ToList();
 
             var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
-                                x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
-                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
-                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
-                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                 null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
@@ -398,11 +402,10 @@ namespace Berger.Odata.Services
 
             var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
                                 x => (string.IsNullOrEmpty(model.Depot) || model.Depot == x.BusinessArea)
-                                && (model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
-                                && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
-                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
-                                && (string.IsNullOrEmpty(model.CreditControlArea) || x.CreditControlArea == model.CreditControlArea),
+                                && (!model.SalesGroups.Any() || model.SalesGroups.Contains(x.SalesGroup))
+                                && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                 null, null, true));
 
             var customerNos = customerData.Select(x => x.CustomerNo).Distinct().ToList();
@@ -508,7 +511,7 @@ namespace Berger.Odata.Services
 
             foreach (var customerNo in customerNos)
             {
-                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate)).ToList();
+                var dataSingle = (await _odataService.GetFinancialData(selectQueryBuilder, customerNo, filterEndDate, creditControlArea: model.CreditControlArea)).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -516,7 +519,9 @@ namespace Berger.Odata.Services
             }
             #endregion
 
-            var result = data.Select(x =>
+            var result = data
+                            .Where(x => CustomConvertExtension.ObjectToInt(x.Age) == CustomConvertExtension.ObjectToInt(model.Age))
+                            .Select(x =>
                                 new PaymentFollowUpResultModel()
                                 {
                                     CustomerNo = x.CustomerNo,
@@ -552,7 +557,7 @@ namespace Berger.Odata.Services
                 }
 
                 item.DayLimitRPRS = dayCount;
-                item.RPRSDate = item.InvoiceDateTime.AddDays(dayCount).DateFormat("dd.MM.yyyy");
+                item.RPRSDate = item.InvoiceDateTime.AddDays(dayCount-1).DateFormat("dd.MM.yyyy");
             }
             
             return result;

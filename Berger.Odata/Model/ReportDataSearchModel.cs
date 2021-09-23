@@ -98,6 +98,8 @@ namespace Berger.Odata.Model
     public class PaymentFollowUpSearchModel : AppAreaSearchCommonModel
     {
         public IList<string> CustomerNos { get; set; }
+        public string CreditControlArea { get; set; }
+        public string Age { get; set; }
 
         public PaymentFollowUpSearchModel()
         {

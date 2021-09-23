@@ -42,10 +42,10 @@ namespace Berger.Odata.Services
             var currentDate = DateTime.Now;
             var filterDate = new DateTime(model.Year, model.Month, 01);
             var cyfd = filterDate.GetCYFD();
-            var cylcd = filterDate.GetCYLCD();
+            //var cylcd = filterDate.GetCYLCD();
             var cyld = filterDate.GetCYLD();
             var lyfd = filterDate.GetLYFD();
-            var lylcd = filterDate.GetLYLCD();
+            //var lylcd = filterDate.GetLYLCD();
             var lyld = filterDate.GetLYLD();
 
             //var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, model.Category, null);
@@ -128,10 +128,10 @@ namespace Berger.Odata.Services
             var currentDate = DateTime.Now;
             var filterDate = new DateTime(model.Year, model.Month, 01);
             var cyfd = filterDate.GetCYFD();
-            var cylcd = filterDate.GetCYLCD();
+            //var cylcd = filterDate.GetCYLCD();
             var cyld = filterDate.GetCYLD();
             var lyfd = filterDate.GetLYFD();
-            var lylcd = filterDate.GetLYLCD();
+            //var lylcd = filterDate.GetLYLCD();
             var lyld = filterDate.GetLYLD();
 
             //var cyDataActual = await _salesDataService.GetMTDActual(model, cyfd, cyld, model.Division, model.VolumeOrValue, null, model.Type);

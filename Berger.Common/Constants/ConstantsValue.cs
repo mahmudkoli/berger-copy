@@ -125,5 +125,6 @@ namespace Berger.Common.Constants
     public static class ConstantsApplication
     {
         public const string SerilogMSSqlServerTableName = "ApplicationLogs";
+        public const string SpaceString = " ";
     }
 }

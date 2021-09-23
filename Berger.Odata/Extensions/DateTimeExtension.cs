@@ -32,7 +32,7 @@ namespace Berger.Odata.Extensions
         ///<summary>
         ///Last Year Current Month Current Date.
         ///</summary>
-        public static DateTime GetLYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, DateTime.Now.AddYears(-1).Day));
+        //public static DateTime GetLYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, DateTime.Now.AddYears(-1).Day));
         ///<summary>
         ///Last Year Current Month Last Date.
         ///</summary>
@@ -45,7 +45,7 @@ namespace Berger.Odata.Extensions
         ///<summary>
         ///Current Year Current Month Current Date.
         ///</summary>
-        public static DateTime GetCYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.Year, date.Month, DateTime.Now.Day));
+        //public static DateTime GetCYLCD(this DateTime date) => Convert.ToDateTime(new DateTime(date.Year, date.Month, DateTime.Now.Day));
         ///<summary>
         ///Current Year Current Month Last Date.
         ///</summary>
@@ -58,7 +58,7 @@ namespace Berger.Odata.Extensions
         ///<summary>
         ///Last Fiscal Year Current Month Current Date.
         ///</summary>
-        public static DateTime GetLFYLCD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, date.Day));
+        //public static DateTime GetLFYLCD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.AddYears(-1).Year, date.Month, date.Day));
         ///<summary>
         ///Last Fiscal Year Last Month Last Date.
         ///</summary>
@@ -71,7 +71,7 @@ namespace Berger.Odata.Extensions
         ///<summary>
         ///Current Fiscal Year Current Month Current Date.
         ///</summary>
-        public static DateTime GetCFYLCD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.Year, date.Month, date.Day));
+        //public static DateTime GetCFYLCD(this DateTime date, int startMonth = 4) => Convert.ToDateTime(new DateTime(date.Year, date.Month, date.Day));
         ///<summary>
         ///Current Fiscal Year Last Month Last Date.
         ///</summary>

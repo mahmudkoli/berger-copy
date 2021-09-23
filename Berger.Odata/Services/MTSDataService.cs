@@ -180,7 +180,9 @@ namespace Berger.Odata.Services
                     ? CustomConvertExtension.ObjectToDecimal(x.TargetValue)
                     : CustomConvertExtension.ObjectToDecimal(x.TargetVolume);
 
-
+            var today = DateTime.Now;
+            var countDays = model.Year == today.Year && model.Month == today.Month
+                            ? today.Day : DateTime.DaysInMonth(model.Year, model.Month);
 
             foreach (var brandCode in brandCodes)
             {
@@ -217,7 +219,7 @@ namespace Berger.Odata.Services
                 }
                 res.RemainingTarget = res.CMTarget - res.CMActual;
                 res.TillDateGrowth = _odataService.GetTillDateGrowth(res.LYMTD, res.CMActual,
-                                        currentDate.GetCYLD().Day, currentDate.GetCYLCD().Day);
+                                        currentDate.GetCYLD().Day, countDays);
 
                 result.Add(res);
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Berger.Common.Constants;
 using Berger.Common.Extensions;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Common;
@@ -66,9 +67,11 @@ namespace Berger.Odata.Services
 
             foreach (var item in result)
             {
-                item.Division = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.Division)?.Description ?? string.Empty;
+                item.Division = $"{creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.Division)?.Description ?? string.Empty} ({ConstantsApplication.SpaceString}{item.Division})";
             }
             #endregion
+
+            result = result.OrderBy(x => x.Date.DateFormatDate("dd MMM yyyy")).ToList();
 
             return result;
         }
@@ -76,9 +79,9 @@ namespace Berger.Odata.Services
         public async Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model)
         {
             var currentDate = new DateTime(model.Year, model.Month, 1);
-            var fromDate = currentDate.GetCYFD();
+            //var fromDate = currentDate.GetCYFD();
             var toDate = currentDate.GetCYLD();
-            var fromDateStr = fromDate.DateTimeFormat();
+            //var fromDateStr = fromDate.DateTimeFormat();
             var toDateStr = toDate.DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
@@ -91,7 +94,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(BalanceColDef.PostingDateDoc)
                                 .AddProperty(BalanceColDef.Amount);
 
-            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDateStr, toDateStr, model.CreditControlArea)).ToList();
+            var data = (await _odataService.GetBalanceDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, endDate: toDateStr, creditControlArea: model.CreditControlArea)).ToList();
 
             var result = data.Select(x =>
             {
@@ -126,18 +129,20 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.BankName)
                                 .AddProperty(CollectionColDef.ClearDate)
                                 .AddProperty(CollectionColDef.Amount)
-                                .AddProperty(CollectionColDef.CreditControlArea);
+                                .AddProperty(CollectionColDef.CreditControlArea)
+                                .AddProperty(CollectionColDef.CollectionType);
 
 
             var receiveSelectQueryBuilder = new SelectQueryOptionBuilder();
             receiveSelectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
                                 .AddProperty(CollectionColDef.CustomerName)
-                                .AddProperty(CollectionColDef.DocNumber)
+                                //.AddProperty(CollectionColDef.DocNumber)
                                 .AddProperty(CollectionColDef.ChequeNo)
-                                .AddProperty(CollectionColDef.BankName)
+                                //.AddProperty(CollectionColDef.BankName)
                                 .AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.Amount)
-                                .AddProperty(CollectionColDef.CreditControlArea);
+                                //.AddProperty(CollectionColDef.CreditControlArea)
+                                .AddProperty(CollectionColDef.CollectionType);
 
             var chequeBounce = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(bounceSelectQueryBuilder, model.CustomerNo, startClearDate: fromDate, endClearDate: toDate, bounceStatus: ConstantsValue.ChequeBounceStatus, creditControlArea: model.CreditControlArea)).ToList();
             var chequeReceived = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(receiveSelectQueryBuilder, model.CustomerNo, startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea)).ToList();
@@ -148,10 +153,10 @@ namespace Berger.Odata.Services
             var totalChqRec = new ChequeBounceSummaryResultModel
             {
                 Category = "Total Cheque Receive",
-                MTDNoOfCheque = chequeReceived.Count(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
+                MTDNoOfCheque = chequeReceived.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val)) && CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                                           CustomConvertExtension.ObjectToDateTime(x.PostingDate) <=
-                                                          currentDate.GetMonthLastDate()),
-                YTDNoOfCheque = chequeReceived.Count(),
+                                                          currentDate.GetMonthLastDate()).Select(x => x.ChequeNo).Distinct().Count(),
+                YTDNoOfCheque = chequeReceived.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count(),
                 MTDChequeValue = chequeReceived
                     .Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                 CustomConvertExtension.ObjectToDateTime(x.PostingDate) <=
@@ -163,10 +168,10 @@ namespace Berger.Odata.Services
             var totalChqBncd = new ChequeBounceSummaryResultModel
             {
                 Category = "Total Cheque Bounced",
-                MTDNoOfCheque = chequeBounce.Count(x => CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
+                MTDNoOfCheque = chequeBounce.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val)) && CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
                                                         CustomConvertExtension.ObjectToDateTime(x.ClearDate) <=
-                                                        currentDate.GetMonthLastDate()),
-                YTDNoOfCheque = chequeBounce.Count(),
+                                                        currentDate.GetMonthLastDate()).Select(x => x.ChequeNo).Distinct().Count(),
+                YTDNoOfCheque = chequeBounce.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count(),
                 MTDChequeValue = chequeBounce.Where(x => CustomConvertExtension.ObjectToDateTime(x.ClearDate) >= currentDate &&
                                                          CustomConvertExtension.ObjectToDateTime(x.ClearDate) <=
                                                          currentDate.GetMonthLastDate())
@@ -180,9 +185,9 @@ namespace Berger.Odata.Services
                 MTDNoOfCheque = _odataService.GetPercentage(totalChqRec.MTDNoOfCheque, totalChqBncd.MTDNoOfCheque),
                 YTDNoOfCheque = _odataService.GetPercentage(totalChqRec.YTDNoOfCheque, totalChqBncd.YTDNoOfCheque),
                 MTDChequeValue =
-                    _odataService.GetPercentage(totalChqRec.MTDChequeValue, totalChqBncd.YTDChequeValue),
+                    _odataService.GetPercentage(totalChqRec.MTDChequeValue, totalChqBncd.MTDChequeValue),
                 YTDChequeValue =
-                    _odataService.GetPercentage(totalChqRec.MTDChequeValue, totalChqBncd.YTDChequeValue)
+                    _odataService.GetPercentage(totalChqRec.YTDChequeValue, totalChqBncd.YTDChequeValue)
             };
 
             result.ChequeBounceSummaryResultModels.Add(totalChqRec);
@@ -208,7 +213,7 @@ namespace Berger.Odata.Services
 
             foreach (var item in result.ChequeBounceDetailResultModels)
             {
-                item.CreditControlAreaName = creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty;
+                item.CreditControlAreaName = $"{creditControlAreas.FirstOrDefault(f => f.CreditControlAreaId.ToString() == item.CreditControlArea)?.Description ?? string.Empty} ({ConstantsApplication.SpaceString}{item.CreditControlArea})";
             }
             #endregion
 
@@ -311,7 +316,8 @@ namespace Berger.Odata.Services
                                 //.AddProperty(CollectionColDef.PostingDate)
                                 .AddProperty(CollectionColDef.ClearDate)
                                 .AddProperty(CollectionColDef.Amount)
-                                .AddProperty(CollectionColDef.ChequeNo);
+                                .AddProperty(CollectionColDef.ChequeNo)
+                                .AddProperty(CollectionColDef.CollectionType);
 
             #region Filter by area and customer no
             //dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
@@ -350,9 +356,9 @@ namespace Berger.Odata.Services
                 //                    channel: ConstantsValue.DistrbutionChannelDealer)).ToList();
 
                 var customerData = (await _dealarInfoRepository.GetAllIncludeAsync(x => new { x.CustomerNo },
-                                    x => (model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
-                                    && (model.Territories.Any() || model.Territories.Contains(x.Territory))
-                                    && (model.Zones.Any() || model.Zones.Contains(x.CustZone))
+                                    x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea))
+                                    && (!model.Territories.Any() || model.Territories.Contains(x.Territory))
+                                    && (!model.Zones.Any() || model.Zones.Contains(x.CustZone))
                                     && x.Channel == ConstantsValue.DistrbutionChannelDealer,
                                     null, null, true));
 
@@ -388,15 +394,15 @@ namespace Berger.Odata.Services
 
             var totalChqRec = new ChequeSummaryChequeDetailsReportModel();
             totalChqRec.ChequeDetailsName = "Total Chq Rec";
-            totalChqRec.MTDNoOfCheque = dataCm.Count();
-            totalChqRec.YTDNoOfCheque = dataCy.Count();
+            totalChqRec.MTDNoOfCheque = dataCm.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
+            totalChqRec.YTDNoOfCheque = dataCy.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
             totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
 
             var totalChqBncd = new ChequeSummaryChequeDetailsReportModel();
             totalChqBncd.ChequeDetailsName = "Total Chq Bncd";
-            totalChqBncd.MTDNoOfCheque = dataBounceCm.Count();
-            totalChqBncd.YTDNoOfCheque = dataBounceCy.Count();
+            totalChqBncd.MTDNoOfCheque = dataBounceCm.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
+            totalChqBncd.YTDNoOfCheque = dataBounceCy.Where(x => (x.blart == ConstantsValue.CollectionMoneyReceipt && long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
             totalChqBncd.MTDTotalChequeValue = dataBounceCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             totalChqBncd.YTDTotalChequeValue = dataBounceCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
 
