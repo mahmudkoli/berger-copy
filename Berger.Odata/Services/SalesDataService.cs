@@ -240,9 +240,11 @@ namespace Berger.Odata.Services
                    {
                        Brand = x.Key.Brand,
                        TillDateValue = x.Sum(y => y.TillDateValue),
+                       TillDateVolume = x.Sum(y => y.TillDateVolume),
                        Year = x.Key.Year,
                        Month = x.Key.Month,
-                       Value = x.Sum(y => y.Value)
+                       Value = x.Sum(y => y.Value),
+                       Volume = x.Sum(y => y.Volume)
                    }).ToListAsync();
         }
 
@@ -293,22 +295,26 @@ namespace Berger.Odata.Services
                 dataCy = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
                 {
                     Brand = x.Brand,
-                    TillDateValue = x.TillDateValue
+                    TillDateValue = x.TillDateValue,
+                    TillDateVolume = x.TillDateVolume
                 }, model.CustomerNo, cyfd, cyld, model.Division);
 
                 dataLy = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
                 {
                     Brand = x.Brand,
-                    TillDateValue = x.TillDateValue
+                    TillDateValue = x.TillDateValue,
+                    TillDateVolume = x.TillDateVolume
                 }, model.CustomerNo, lyfd, lyld, model.Division);
 
                 data = await GetCustomerWiseRevenue(x => new CustomerPerformanceReport
                 {
                     Brand = x.Brand,
                     TillDateValue = x.TillDateValue,
+                    TillDateVolume = x.TillDateVolume,
                     Year = x.Year,
                     Month = x.Month,
-                    Value = x.Value
+                    Value = x.Value,
+                    Volume = x.Volume
                 }, model.CustomerNo, startDate,
                    endDate, model.Division);
             }
@@ -356,7 +362,7 @@ namespace Berger.Odata.Services
 
                 if (dataLy.Any(x => x.Brand == brandCode))
                 {
-                    var mtdAmtLy = dataLy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
+                    var mtdAmtLy = dataLy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateVolume));
                     var lastYearSingleData = dataLy.FirstOrDefault(x => x.Brand == brandCode);
 
                     if (lastYearSingleData != null)
@@ -371,7 +377,7 @@ namespace Berger.Odata.Services
 
                 if (dataCy.Any(x => x.Brand == brandCode))
                 {
-                    var mtdAmtCy = dataCy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateValue));
+                    var mtdAmtCy = dataCy.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TillDateVolume));
 
                     var cySingleData = dataCy.FirstOrDefault(x => x.Brand == brandCode);
 
@@ -394,7 +400,7 @@ namespace Berger.Odata.Services
 
                     if (dictData.Any(x => x.Brand == brandCode))
                     {
-                        mtdAmt = dictData.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value));
+                        mtdAmt = dictData.Where(x => x.Brand == brandCode).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
 
                         var mtdSingleData = dictData.FirstOrDefault(x => x.Brand == brandCode);
 

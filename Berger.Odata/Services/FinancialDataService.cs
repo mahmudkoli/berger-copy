@@ -47,8 +47,9 @@ namespace Berger.Odata.Services
             selectQueryBuilder.AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.CreditControlArea)
                                 .AddProperty(FinancialColDef.Age)
-                                .AddProperty(FinancialColDef.PostingDate)
-                                .AddProperty(FinancialColDef.Amount);
+                                //.AddProperty(FinancialColDef.PostingDate)
+                                .AddProperty(FinancialColDef.Amount)
+                                .AddProperty(FinancialColDef.DueDate);
 
             //var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, fromDate)).ToList();
             var data = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, creditControlArea: model.CreditControlArea)).ToList();
@@ -71,11 +72,11 @@ namespace Berger.Odata.Services
                                 {
                                     InvoiceNo = x.InvoiceNo,
                                     Age = x.Age,
-                                    PostingDate = x.PostingDate.ReturnDateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ"),
+                                    PostingDate = x.DueDate.ReturnDateFormatDate(format: "yyyy-MM-ddTHH:mm:ssZ"),
                                     Amount = CustomConvertExtension.ObjectToDecimal(x.Amount)
                                 }).ToList();
 
-            result = result.OrderBy(x => x.PostingDate.DateFormatDate("yyyy-MM-ddTHH:mm:ssZ")).ToList();
+            result = result.OrderBy(x => x.PostingDate.DateFormatDate("dd MMM yyyy")).ToList();
 
             return result;
         }
