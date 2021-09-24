@@ -184,7 +184,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<DSC.DealerSalesCall, object>>>()
             {
-                ["dealerName"] = v => v.Dealer.CustomerName,
+                ["createdTime"] = v => v.CreatedTime,
+                ["userFullName"] = v => v.User.FullName,
                 ["userFullName"] = v => v.User.FullName,
             };
 

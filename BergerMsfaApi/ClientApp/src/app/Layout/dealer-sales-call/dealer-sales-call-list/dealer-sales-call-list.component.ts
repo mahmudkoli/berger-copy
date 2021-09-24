@@ -4,21 +4,20 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import {
   DealerSalesCall,
-  DealerSalesCallQuery,
+  DealerSalesCallQuery
 } from 'src/app/Shared/Entity/DealerSalesCall/dealer-sales-call';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import {
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from './../../../Shared/Modules/search-option/search-option';
 
 @Component({
@@ -126,8 +125,8 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query = new DealerSalesCallQuery({
       page: 1,
       pageSize: this.PAGE_SIZE,
-      sortBy: 'userFullName',
-      isSortAscending: true,
+      sortBy: 'createdTime',
+      isSortAscending: false,
       globalSearchValue: '',
     });
   }
