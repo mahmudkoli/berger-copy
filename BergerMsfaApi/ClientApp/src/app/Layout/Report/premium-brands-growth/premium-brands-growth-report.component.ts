@@ -1,19 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { forkJoin, Subscription } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
 import { PremiumBrandsGrowthReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import {
-  EnumEmployeeRole,
-  EnumEmployeeRoleLabel,
-} from 'src/app/Shared/Enums/employee-role';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import {
   colDef,
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
@@ -86,7 +81,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
       isSortAscending: false,
       globalSearchValue: '',
       depot: '',
-      salesGroups: [],
+     // salesGroups: [],
       territories: [],
       zones: [],
       fromMonth: null,
@@ -103,7 +98,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
     monthDifferenceCount: 3,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromMonth, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromYear, isRequired:true}),
@@ -164,7 +159,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
         showTotal: this.allTotalKeysOfNumberType
           ? typeof obj[key] === 'number'
           : this.totalKeys.includes(key),
-        type: typeof obj[key] === 'number' ? 'text' : null, 
+        type: typeof obj[key] === 'number' ? 'text' : null,
         displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
       } as colDef;
     });
@@ -235,7 +230,7 @@ export class PremiumBrandsGrowthReportComponent implements OnInit, OnDestroy {
         isSortAscending: false,
         globalSearchValue: '',
       })
-    )}`,    
+    )}`,
     enabledConditionalRowStyles:true,
     conditionalRowStyles: [
         {columnName:'territory',columnValues:['Total']}

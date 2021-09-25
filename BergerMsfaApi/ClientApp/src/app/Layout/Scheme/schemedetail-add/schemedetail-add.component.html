@@ -1,30 +1,47 @@
-
 <div class="main-card mb-3 card">
-    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
-        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
-        <!-- <div class="btn-actions-pane-right">
+  <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+    <!-- <div class="btn-actions-pane-right">
             <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
                 <fa class="mr-2" name="list"></fa>
                 Back to list
             </button>
         </div> -->
-    </div>
-    <div class="card-body">
-        <form [formGroup]="schemeDetailForm" (ngSubmit)="onSubmit()" *ngIf="schemeDetailForm">
-            <div class="form-row">
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Scheme Name</label>
-                        <ng-select formControlName="schemeMasterId">
-                            <!-- <ng-option>--Select--</ng-option> -->
+  </div>
+  <div class="card-body">
+    <form [formGroup]="schemeDetailForm" (ngSubmit)="onSubmit()" *ngIf="schemeDetailForm">
+      <div class="form-row">
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Scheme Name</label>
+            <input type="text" class="form-control" formControlName="schemeName" [ngClass]="{'is-valid':formControls.schemeName.touched && !formControls.schemeName.errors,
+                        'is-invalid':formControls.schemeName.touched && formControls.schemeName.errors }" />
+
+
+            <!-- <ng-select formControlName="schemeMasterId">
                             <ng-option *ngFor="let sm of schemeMasters;" [value]="sm.id">{{sm.label}}</ng-option>
-                        </ng-select>
-                        <small class="text-danger" *ngIf="formControls.schemeMasterId.touched && formControls.schemeMasterId.errors">
-                            <span *ngIf="formControls.schemeMasterId.errors.required">Scheme Master is <strong>required</strong></span>
-                        </small>
-                    </div>
-                </div>
-                <!-- <div class="col-md-6">
+                        </ng-select> -->
+            <small class="text-danger" *ngIf="formControls.schemeName.touched && formControls.schemeName.errors">
+              <span *ngIf="formControls.schemeName.errors.required">Scheme Name is <strong>required</strong></span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="!auth.isAdmin">
+          <div class="position-relative form-group">
+            <label for="name">Business Area</label>
+            <ng-select [multiple]="false" formControlName="businessArea" name="businessArea">
+              <!--<ng-option>--Select--</ng-option>-->
+              <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
+            </ng-select>
+            <small class="text-danger" *ngIf="formControls.businessArea.touched && formControls.businessArea.errors">
+              <span *ngIf="formControls.businessArea.errors.required">Business Area is <strong>required</strong></span>
+            </small>
+          </div>
+        </div>
+
+
+
+        <!-- <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Code</label>
                         <input type="text" class="form-control" formControlName="code"
@@ -36,184 +53,150 @@
                         </small>
                     </div>
                 </div> -->
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Brand</label>
-                        <input type="text" class="form-control" formControlName="brand"
-                                [ngClass]="{'is-valid':formControls.brand.touched && !formControls.brand.errors,
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Brand</label>
+            <input type="text" class="form-control" formControlName="brand" [ngClass]="{'is-valid':formControls.brand.touched && !formControls.brand.errors,
                                 'is-invalid':formControls.brand.touched && formControls.brand.errors }" />
-                        <small class="text-danger" *ngIf="formControls.brand.touched && formControls.brand.errors">
-                            <span *ngIf="formControls.brand.errors.required">Brand is <strong>required</strong></span>
-                            <span *ngIf="formControls.brand.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Rate In Ltr/Kg</label>
-                        <input type="text" class="form-control" formControlName="rateInLtrOrKg"
-                                [ngClass]="{'is-valid':formControls.rateInLtrOrKg.touched && !formControls.rateInLtrOrKg.errors,
+            <small class="text-danger" *ngIf="formControls.brand.touched && formControls.brand.errors">
+              <span *ngIf="formControls.brand.errors.required">Brand is <strong>required</strong></span>
+              <span *ngIf="formControls.brand.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Rate In Ltr/Kg</label>
+            <input type="text" class="form-control" formControlName="rateInLtrOrKg"
+              [ngClass]="{'is-valid':formControls.rateInLtrOrKg.touched && !formControls.rateInLtrOrKg.errors,
                                 'is-invalid':formControls.rateInLtrOrKg.touched && formControls.rateInLtrOrKg.errors }" />
-                        <small class="text-danger" *ngIf="formControls.rateInLtrOrKg.touched && formControls.rateInLtrOrKg.errors">
-                            <span *ngIf="formControls.rateInLtrOrKg.errors.required">Rate In Ltr/Kg is <strong>required</strong></span>
-                            <span *ngIf="formControls.rateInLtrOrKg.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Rate In SKU</label>
-                        <input type="text" class="form-control" formControlName="rateInSKU"
-                                [ngClass]="{'is-valid':formControls.rateInSKU.touched && !formControls.rateInSKU.errors,
+            <small class="text-danger" *ngIf="formControls.rateInLtrOrKg.touched && formControls.rateInLtrOrKg.errors">
+              <span *ngIf="formControls.rateInLtrOrKg.errors.required">Rate In Ltr/Kg is
+                <strong>required</strong></span>
+              <span *ngIf="formControls.rateInLtrOrKg.errors.pattern">Please, Enter valid characters (not only
+                spaces)</span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Rate In SKU</label>
+            <input type="text" class="form-control" formControlName="rateInSKU" [ngClass]="{'is-valid':formControls.rateInSKU.touched && !formControls.rateInSKU.errors,
                                 'is-invalid':formControls.rateInSKU.touched && formControls.rateInSKU.errors }" />
-                        <small class="text-danger" *ngIf="formControls.rateInSKU.touched && formControls.rateInSKU.errors">
-                            <span *ngIf="formControls.rateInSKU.errors.required">Rate In SKU is <strong>required</strong></span>
-                            <span *ngIf="formControls.rateInSKU.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">SLAB</label>
-                        <input type="text" class="form-control" formControlName="slab"
-                                [ngClass]="{'is-valid':formControls.slab.touched && !formControls.slab.errors,
+            <small class="text-danger" *ngIf="formControls.rateInSKU.touched && formControls.rateInSKU.errors">
+              <span *ngIf="formControls.rateInSKU.errors.required">Rate In SKU is <strong>required</strong></span>
+              <span *ngIf="formControls.rateInSKU.errors.pattern">Please, Enter valid characters (not only
+                spaces)</span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">SLAB</label>
+            <input type="text" class="form-control" formControlName="slab" [ngClass]="{'is-valid':formControls.slab.touched && !formControls.slab.errors,
                                 'is-invalid':formControls.slab.touched && formControls.slab.errors }" />
-                        <small class="text-danger" *ngIf="formControls.slab.touched && formControls.slab.errors">
-                            <span *ngIf="formControls.slab.errors.required">SLAB is <strong>required</strong></span>
-                            <span *ngIf="formControls.slab.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Condition & Benefit</label>
-                        <input type="text" class="form-control" formControlName="condition"
-                                [ngClass]="{'is-valid':formControls.condition.touched && !formControls.condition.errors,
+            <small class="text-danger" *ngIf="formControls.slab.touched && formControls.slab.errors">
+              <span *ngIf="formControls.slab.errors.required">SLAB is <strong>required</strong></span>
+              <span *ngIf="formControls.slab.errors.pattern">Please, Enter valid characters (not only spaces)</span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Condition & Benefit</label>
+            <input type="text" class="form-control" formControlName="condition" [ngClass]="{'is-valid':formControls.condition.touched && !formControls.condition.errors,
                                 'is-invalid':formControls.condition.touched && formControls.condition.errors }" />
-                        <small class="text-danger" *ngIf="formControls.condition.touched && formControls.condition.errors">
-                            <span *ngIf="formControls.condition.errors.required">Condition is <strong>required</strong></span>
-                            <span *ngIf="formControls.condition.errors.pattern">Please, Enter valid characters (not only spaces)</span>
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                      <label class="required">Benefit Start Date</label>
-                      <div class="input-group w-100">
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="benefitStartDate"
-                          [ngClass]="{
+            <small class="text-danger" *ngIf="formControls.condition.touched && formControls.condition.errors">
+              <span *ngIf="formControls.condition.errors.required">Condition is <strong>required</strong></span>
+              <span *ngIf="formControls.condition.errors.pattern">Please, Enter valid characters (not only
+                spaces)</span>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Benefit Start Date</label>
+            <div class="input-group w-100">
+              <input type="text" class="form-control" formControlName="benefitStartDate" [ngClass]="{
                             'is-valid':
                               formControls.benefitStartDate.touched &&
                               !formControls.benefitStartDate.errors,
                             'is-invalid':
                               formControls.benefitStartDate.touched &&
                               formControls.benefitStartDate.errors
-                          }"
-                          name="dpFromDate"
-                          ngbDatepicker
-                          #dpFromDate="ngbDatepicker"
-                          [placement]="'bottom'"
-                          placeholder="yyyy-mm-dd"
-                        />
-                        <div class="input-group-append">
-                          <button
-                            class="btn btn-outline-secondary calendar"
-                            (click)="dpFromDate.toggle()"
-                            type="button"
-                          ></button>
-                        </div>
-                      </div>
-                      <small
-                        class="text-danger"
-                        *ngIf="
+                          }" name="dpFromDate" ngbDatepicker #dpFromDate="ngbDatepicker" [placement]="'bottom'"
+                placeholder="yyyy-mm-dd" />
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dpFromDate.toggle()" type="button"></button>
+              </div>
+            </div>
+            <small class="text-danger" *ngIf="
                           (formControls.benefitStartDate.touched &&
                             formControls.benefitStartDate.errors) ||
                           (formControls.benefitStartDate.touched &&
                             formControls.benefitStartDate.invalid)
-                        "
-                      >
-                        <span *ngIf="formControls.benefitStartDate.errors.required"
-                          >Benefit Start Date is <strong>required</strong></span
-                        >
-                        <span *ngIf="!formControls.benefitStartDate.errors.required && formControls.benefitStartDate.invalid"
-                          >Please, Enter valid date (Ex: yyyy-mm-dd)</span
-                        >
-                      </small>
-                    </div>
-                  </div>
+                        ">
+              <span *ngIf="formControls.benefitStartDate.errors.required">Benefit Start Date is
+                <strong>required</strong></span>
+              <span
+                *ngIf="!formControls.benefitStartDate.errors.required && formControls.benefitStartDate.invalid">Please,
+                Enter valid date (Ex: yyyy-mm-dd)</span>
+            </small>
+          </div>
+        </div>
 
-                  <div class="col-md-6">
-                    <div class="position-relative form-group">
-                      <label>Benefit End Date</label>
-                      <div class="input-group w-100">
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="benefitEndDate"
-                          name="dpToDate"
-                          [ngClass]="{
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label>Benefit End Date</label>
+            <div class="input-group w-100">
+              <input type="text" class="form-control" formControlName="benefitEndDate" name="dpToDate" [ngClass]="{
                             'is-valid':
                               formControls.benefitEndDate.touched &&
                               !formControls.benefitEndDate.errors,
                             'is-invalid':
                               formControls.benefitEndDate.touched &&
                               formControls.benefitEndDate.errors
-                          }"
-                          ngbDatepicker
-                          #dpToDate="ngbDatepicker"
-                          [placement]="'bottom'"
-                          placeholder="yyyy-mm-dd"
-                        />
-                        <div class="input-group-append">
-                          <button
-                            class="btn btn-outline-secondary calendar"
-                            (click)="dpToDate.toggle()"
-                            type="button"
-                          ></button>
-                        </div>
-                      </div>
-                      <small
-                        class="text-danger"
-                        *ngIf="
+                          }" ngbDatepicker #dpToDate="ngbDatepicker" [placement]="'bottom'" placeholder="yyyy-mm-dd" />
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dpToDate.toggle()" type="button"></button>
+              </div>
+            </div>
+            <small class="text-danger" *ngIf="
                           (formControls.benefitEndDate.touched &&
                           formControls.benefitEndDate.errors) ||
                           (formControls.benefitEndDate.touched &&
                             formControls.benefitEndDate.invalid)
-                        "
-                      >
-                        <span *ngIf="formControls.benefitEndDate.errors.required"
-                          >Benefit End Date is <strong>required</strong></span
-                        >
-                        <span *ngIf="!formControls.benefitEndDate.errors.required && formControls.benefitEndDate.invalid"
-                          >Please, Enter valid date (Ex: yyyy-mm-dd)</span
-                        >
-                      </small>
-                    </div>
-                  </div>
+                        ">
+              <span *ngIf="formControls.benefitEndDate.errors.required">Benefit End Date is
+                <strong>required</strong></span>
+              <span *ngIf="!formControls.benefitEndDate.errors.required && formControls.benefitEndDate.invalid">Please,
+                Enter valid date (Ex: yyyy-mm-dd)</span>
+            </small>
+          </div>
+        </div>
 
 
 
-                <div class="col-md-6">
-                    <div class="position-relative form-group">
-                        <label class="required">Status</label>
-                        <ng-select formControlName="status">
-                            <!-- <ng-option>--Select--</ng-option> -->
-                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
-                        </ng-select>
-                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
-                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
-                        </small>
-                    </div>
-                </div>
-            </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="required">Status</label>
+            <ng-select formControlName="status">
+              <!-- <ng-option>--Select--</ng-option> -->
+              <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+            </ng-select>
+            <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+              <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+            </small>
+          </div>
+        </div>
+      </div>
 
-            <div class="d-flex justify-content-end">
-                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
-                <button type="submit" [disabled]="schemeDetailForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
-            </div>
-        </form>
-    </div>
+      <div class="d-flex justify-content-end">
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i
+            class="pe-7s-back pr-1"></i> Back </button>
+        <button type="submit" [disabled]="schemeDetailForm.invalid" class="mb-2 btn btn-primary"><i
+            class="fa fa-save pr-1"></i> Save </button>
+      </div>
+    </form>
+  </div>
 </div>

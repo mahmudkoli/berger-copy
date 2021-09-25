@@ -276,6 +276,13 @@ export class CommonService {
     });
   }
 
+  public GetDealerListWithTerritory(territories) {
+
+    return this.http.get<APIResponse>(
+      `${this.baseUrl}/v1/AppDealer/GetDealerListWithTerritory?${this.toQueryString(territories)}`
+    );
+  }
+
   getDealerByArea(filter) {
     return this.http.post<APIResponse>(
       this.baseUrl + `v1/Common/GetDealerByArea`,

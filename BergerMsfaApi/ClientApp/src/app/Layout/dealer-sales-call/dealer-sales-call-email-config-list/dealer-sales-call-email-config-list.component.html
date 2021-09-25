@@ -4,7 +4,7 @@
             <div class="table-header">
                 <h5 class="mb-3">Email Config For Dealer Sales Call</h5>
                 <div class="row">
-                    
+
                     <div class="col-md-12 text-right">
                         <button class="btn btn-sm btn-primary mr-2 pull-right" (click)="add()">New Record</button>
                     </div>
@@ -13,11 +13,12 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="dealerSalesIssueCategory.dropdownName">Issue Category<p-sortIcon field="dealerSalesIssueCategory.dropdownName"></p-sortIcon>
+                <th pSortableColumn="dealerSalesIssueCategory.dropdownName">Issue Category<p-sortIcon
+                        field="dealerSalesIssueCategory.dropdownName"></p-sortIcon>
                 </th>
                 <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon>
                 </th>
-                
+
                 <th></th>
             </tr>
         </ng-template>
@@ -27,8 +28,8 @@
                 <td>{{emailconfig.email}}</td>
 
                 <td>
-                    <i class="fa fa-edit mr-2" (click)="edit(emailconfig.id)"> </i>
-                    <!-- <i class="fa fa-trash" (click)="delete(emailconfig.id)"> </i> -->
+                    <i class="fa fa-edit mr-2" style="cursor: pointer;" (click)="edit(emailconfig.id)"> </i>
+                    <i class="fa fa-trash" style="cursor: pointer;color: red;" (click)="delete(emailconfig.id)"> </i>
                 </td>
             </tr>
         </ng-template>

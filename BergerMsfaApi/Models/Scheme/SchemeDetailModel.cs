@@ -29,17 +29,21 @@ namespace BergerMsfaApi.Models.Scheme
         public string BenefitEndDateText { get; set; }
 
         public int SchemeMasterId { get; set; }
-        public string SchemeMasterName { get; set; }
+       // public string SchemeMasterName { get; set; }
+        public string SchemeName { get; set; }
         public string SchemeMasterCondition { get; set; }
         public Status Status { get; set; }
+        public string SchemeType { get; set; }
+        public bool IsEditable { get; set; }
+        public string BusinessArea { get; set; }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<SchemeDetail, SchemeDetailModel>()
-                .ForMember(dest => dest.SchemeMasterName,
-                    opt => opt.MapFrom(src => src.SchemeMaster != null ? $"{src.SchemeMaster.SchemeName}" : string.Empty))
+                //.ForMember(dest => dest.SchemeMasterName,
+                //    opt => opt.MapFrom(src =>  $"{src.SchemeName}"))
                 .ForMember(dest => dest.SchemeMasterCondition,
-                    opt => opt.MapFrom(src => src.SchemeMaster != null ? $"{src.SchemeMaster.Condition}" : string.Empty));
+                    opt => opt.MapFrom(src =>  $"{src.Condition}" ));
 
             profile.CreateMap<SchemeDetailModel, SchemeDetail>();
         }
@@ -60,7 +64,9 @@ namespace BergerMsfaApi.Models.Scheme
         public string BenefitDate { get; set; }
 
 
-        public int SchemeMasterId { get; set; }
+        public string SchemeName { get; set; }
+        public string BusinessArea { get; set; }
+        public SchemeType SchemeType { get; set; }
         public Status Status { get; set; }
         public DateTime BenefitStartDate { get; set; }
         public DateTime? BenefitEndDate { get; set; }
@@ -95,18 +101,21 @@ namespace BergerMsfaApi.Models.Scheme
         public string SchemeMasterName { get; set; }
         public string SchemeMasterCondition { get; set; }
         public Status Status { get; set; }
+        public string SchemeType { get; set; }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<SchemeDetail, AppSchemeDetailModel>()
                 .ForMember(dest => dest.SchemeMasterName,
-                    opt => opt.MapFrom(src => src.SchemeMaster != null ? $"{src.SchemeMaster.SchemeName}" : string.Empty))
+                    opt => opt.MapFrom(src =>  $"{src.SchemeName}"))
                 .ForMember(dest => dest.SchemeMasterCondition,
-                    opt => opt.MapFrom(src => src.SchemeMaster != null ? $"{src.SchemeMaster.Condition}" : string.Empty))
+                    opt => opt.MapFrom(src =>  $"{src.Condition}" ))
                 .ForMember(dest => dest.BenefitStartDate,
                     opt => opt.MapFrom(src => src.BenefitStartDate != null ? $"{src.BenefitStartDate.ToString("yyyy-MM-dd")}" : string.Empty))
                 .ForMember(dest => dest.BenefitEndDate,
-                    opt => opt.MapFrom(src => src.BenefitEndDate != null ? $"{src.BenefitEndDate.Value.ToString("yyyy-MM-dd")}" : string.Empty));
+                    opt => opt.MapFrom(src => src.BenefitEndDate != null ? $"{src.BenefitEndDate.Value.ToString("yyyy-MM-dd")}" : string.Empty))
+                .ForMember(dest => dest.SchemeType,
+                    opt => opt.MapFrom(src => src.SchemeType ==Berger.Data.MsfaEntity.Scheme.SchemeType.National? "National Scheme" : "Regional Scheme"));
 
             profile.CreateMap<AppSchemeDetailModel, SchemeDetail>();
         }

@@ -57,6 +57,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
             {
                 ["userFullName"] = v => v.User.FullName,
+                ["createdTime"] = v => v.CreatedTime,
             };
 
             var result = await _leadGenerationRepository.GetAllIncludeAsync(

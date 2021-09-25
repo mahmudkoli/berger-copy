@@ -36,7 +36,7 @@ export class NewDealerDevelopmentComponent implements OnInit {
     this.initCollectionForm();
   }
 
-  
+
   prepareNewDealerEntry(): NewDealerDevelopmentQuery {
 		const controls = this.searchForm.controls;
 
@@ -55,7 +55,7 @@ export class NewDealerDevelopmentComponent implements OnInit {
 		this.searchForm = this.formBuilder.group({
 			depot: [''],
 			territory: [''],
-			
+
 		});
 
 	}
@@ -72,13 +72,13 @@ export class NewDealerDevelopmentComponent implements OnInit {
   }
 
   SaveOrUpdateData() {
-    
+
 
 this.newDealerDevelopmentService.SaveOrUpdateNewDealerDevelopment(this.data).subscribe(
       res =>{
         if(res){
           let message=res.data===0?"New Dealer Development Save Successfully":"New Dealer Development Update Successfully";
-
+          this.loadData();
           this.alertService.tosterSuccess(message)
 
         }
@@ -93,20 +93,20 @@ this.newDealerDevelopmentService.SaveOrUpdateNewDealerDevelopment(this.data).sub
 
 
 populateDropdown(): void {
-   
+
   // this.loadDynamicDropdown();
 
       const forkJoinSubscription1 = forkJoin([
           this.commonService.getDepotList(),
           this.commonService.getTerritoryList(),
       ]).subscribe(([depot, territory]) => {
-        
+
           this.depotList = depot.data;
           this.territoryList = territory.data;
       }, (err) => { }, () => { });
 
   this.subscriptions.push(forkJoinSubscription1);
-  
+
 }
 
 

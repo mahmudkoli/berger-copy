@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { AuthService } from 'src/app/Shared/Services/Users';
 import { SaveSchemeDetail, SchemeDetail } from '../../../Shared/Entity/Scheme/SchemeMaster';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
@@ -17,7 +18,7 @@ import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
   styleUrls: ['./schemedetail-add.component.css']
 })
 export class SchemedetailAddComponent implements OnInit, OnDestroy {
-
+	plants:[];
 	schemeDetail: SchemeDetail;
 	schemeDetailForm: FormGroup;
 	schemeMasters: MapObject[] = [];
@@ -32,7 +33,8 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		private alertService: AlertService,
 		private commonService: CommonService,
 		private schemeDetailService: SchemeService,
-		private formatter:NgbDateParserFormatter
+		private formatter:NgbDateParserFormatter,
+		public auth:AuthService
 		) { }
 
 	ngOnInit() {
@@ -56,6 +58,13 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 				this.initSchemeDetails();
 			}
 		});
+
+		this.commonService.getDepotList().subscribe((p) => {
+            this.plants = p.data;
+
+
+        }), (err: any) => console.log(err);
+
 		this.subscriptions.push(routeSubscription);
 	}
 
@@ -81,11 +90,8 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 	}
 
 	createForm() {
-		console.log('hi there')
-		console.log(this.schemeDetail.benefitStartDate)
-		console.log(this.schemeDetail.benefitEndDate)
 		this.schemeDetailForm = this.formBuilder.group({
-			schemeMasterId: [this.schemeDetail.schemeMasterId, [Validators.required]],
+			schemeName: [this.schemeDetail.schemeName, [Validators.required]],
 			code: [this.schemeDetail.code],
 			brand: [this.schemeDetail.brand],
 			rateInLtrOrKg: [this.schemeDetail.rateInLtrOrKg],
@@ -94,9 +100,11 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			condition: [this.schemeDetail.condition],
 			benefitStartDate: [],
 			benefitEndDate: [],
+			businessArea: [this.schemeDetail.businessArea, [Validators.required]],
+			schemeType: [this.schemeDetail.schemeType, [Validators.required]],
 			// benefitStartDate: [this.formatter.parse(this.schemeDetail.benefitStartDate.toString()),[Validators.required]],
 			// benefitEndDate: [this.formatter.parse(this.schemeDetail.benefitEndDate? this.schemeDetail.benefitEndDate.toString():null)],
-			
+
 			status: [this.schemeDetail.status, [Validators.required]]
 		});
 
@@ -117,6 +125,15 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 				day: toDate.getDate()
 			});
 		}
+
+
+		if (!this.auth.isAdmin) {
+			this.schemeDetailForm.controls['businessArea'].setValidators([Validators.required]);
+			this.schemeDetailForm.controls['schemeType'].setValue(2);
+		  } else {
+			this.schemeDetailForm.controls['schemeType'].setValue(1);
+			this.schemeDetailForm.controls['businessArea'].clearValidators();
+		  }
 
 		this.schemeDetailForm.controls.benefitStartDate.setValidators([Validators.required]);
 		this.schemeDetailForm.controls.benefitStartDate.updateValueAndValidity();
@@ -149,13 +166,15 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 		const _schemeDetail = new SaveSchemeDetail();
 		_schemeDetail.clear();
 		_schemeDetail.id = this.schemeDetail.id;
-		_schemeDetail.schemeMasterId = controls['schemeMasterId'].value;
 		_schemeDetail.code = controls['code'].value;
 		_schemeDetail.brand = controls['brand'].value;
 		_schemeDetail.rateInLtrOrKg = controls['rateInLtrOrKg'].value;
 		_schemeDetail.rateInSKU = controls['rateInSKU'].value;
 		_schemeDetail.slab = controls['slab'].value;
 		_schemeDetail.condition = controls['condition'].value;
+		_schemeDetail.businessArea = controls['businessArea'].value;
+		_schemeDetail.schemeName = controls['schemeName'].value;
+		_schemeDetail.schemeType = controls['schemeType'].value;
 
 		// if (controls['benefitStartDate'].value) {
 		// 	const value = controls['benefitStartDate'].value;
@@ -214,12 +233,12 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create Scheme Detail';
+		let result = 'Create Scheme';
 		if (!this.schemeDetail || !this.schemeDetail.id) {
 			return result;
 		}
 
-		result = `Edit Scheme Detail - ${this.schemeDetail.schemeMasterName}`;
+		result = `Edit Scheme - ${this.schemeDetail.schemeMasterName}`;
 		return result;
 	}
 
@@ -233,10 +252,10 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 
 	private throwError(errorDetails: any) {
 		// this.alertService.fnLoading(false);
-		console.log("error", errorDetails);
+		//consolelog("error", errorDetails);
 		let errList = errorDetails.error.errors;
 		if (errList.length) {
-			console.log("error", errList, errList[0].errorList[0]);
+			//consolelog("error", errList, errList[0].errorList[0]);
 			// this.alertService.tosterDanger(errList[0].errorList[0]);
 		} else {
 			// this.alertService.tosterDanger(errorDetails.error.message);

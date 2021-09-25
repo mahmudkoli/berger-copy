@@ -30,5 +30,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Implementation
         Task<EmailConfigForDealerSalesCall> UpdateDealerSalesCallAsync(EmailConfigForDealerSalesCall email);
         Task<IEnumerable<EmailConfigForDealerSalesCall>> GetEmailConfigDealerSalesCall();
         Task<EmailConfigForDealerSalesCall> GetByIdDealerSalesCall(int id);
+        Task<int> DeleteDealerOppeningEmailById(int id);
+        Task<int> DeleteDealerSalesEmailById(int id);
     }
 }

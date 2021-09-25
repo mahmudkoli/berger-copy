@@ -81,7 +81,7 @@ export class ColorBankInstallationPlanVsActualComponent
         searchOption: EnumSearchOption.Territory,
         isRequired: true,
       }),
-      new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup }),
+      //new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.FiscalYear,
         isRequired: true,

@@ -4,7 +4,6 @@ import { EmailConfigForDealerSalesCall } from 'src/app/Shared/Entity/DealerSales
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { ActivityPermissionService, PermissionGroup } from 'src/app/Shared/Services/Activity-Permission/activity-permission.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
-import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 
 @Component({
   selector: 'app-email-config-list',
@@ -21,13 +20,13 @@ export class DealerSalesCallEmailConfigListComponent implements OnInit {
       private activatedRoute: ActivatedRoute,
       private router: Router,
       private alertService: AlertService,
-      private dealerSalesCallService: DealerSalesCallService
+      private dealerSalesCallService: DealerSalesCallService,
   ) {
       this._initPermissionGroup();
   }
 
   ngOnInit() {
-     
+
       this.OnLoadEmailConfig();
 
   }
@@ -73,32 +72,32 @@ export class DealerSalesCallEmailConfigListComponent implements OnInit {
       else if (event.action == "delete-item") {
           this.delete(event.record.id);
       }
-  } private add() {
+  }  add() {
       this.router.navigate(['/dealer-sales-call/addemailconfig']);
   }
 
-  private edit(id: number) {
+   edit(id: number) {
       console.log('edit email config', id);
       this.router.navigate(['/dealer-sales-call/addemailconfig/' + id]);
   }
 
-  private delete(id: number) {
+   delete(id: number) {
     //   console.log("Id:", id);
-    //   this.alertService.confirm("Are you sure you want to delete this item?", () => {
-    //       this.focusDealerService.delete(id).subscribe(
-    //           (res: any) => {
-    //               console.log('res from del func', res);
-    //               this.alertService.tosterSuccess("dropdown has been deleted successfully.");
-    //               //this.fnFocusDealerList();
-    //               this.OnLoadEmailConfig();
-    //           },
-    //           (error) => {
-    //               console.log(error);
-    //           }
-    //       );
-    //   }, () => {
+      this.alertService.confirm("Are you sure you want to delete this item?", () => {
+          this.dealerSalesCallService.DeleteDealerOppeningEmailById(id).subscribe(
+              (res: any) => {
+                  console.log('res from del func', res);
+                  this.alertService.tosterSuccess("Email configuration has been successfully deleted.");
+                  //this.fnFocusDealerList();
+                  this.OnLoadEmailConfig();
+              },
+              (error) => {
+                  console.log(error);
+              }
+          );
+      }, () => {
 
-    //   });
+      });
   }
   private _initPermissionGroup() {
 

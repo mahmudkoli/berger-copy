@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { of, Subscription } from 'rxjs';
-import { delay, finalize, take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { FocusDealer, FocusDealerQuery } from 'src/app/Shared/Entity/FocusDealer/FocusDealer';
 import { EnumEmployeeRole } from 'src/app/Shared/Enums/employee-role';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
@@ -64,7 +64,7 @@ export class FocusDealerListComponent implements OnInit {
 		// console.log(this.isPermitted)
 		return this.isPermitted;
 	}
-  
+
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
@@ -73,7 +73,6 @@ export class FocusDealerListComponent implements OnInit {
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
-		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
@@ -87,7 +86,6 @@ export class FocusDealerListComponent implements OnInit {
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
-					console.log("res.data", res.data);
 					this.focusDealers = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
@@ -135,7 +133,6 @@ export class FocusDealerListComponent implements OnInit {
 				const deleteSubscription = this.focusDealerService.deleteFocusDealer(id)
 					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 					.subscribe((res: any) => {
-						console.log('res from del func', res);
 						this.alertService.tosterSuccess("Focus Dealer has been deleted successfully.");
 						this.loadFocusDealersPage();
 					},
@@ -174,7 +171,6 @@ export class FocusDealerListComponent implements OnInit {
 	};
 
 	public fnCustomTrigger(event) {
-		console.log("custom  click: ", event);
 
 		if (event.action == "new-record") {
 			this.newFocusDealer();
@@ -188,7 +184,6 @@ export class FocusDealerListComponent implements OnInit {
 	}
 
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
-		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;
 		this.query.pageSize = queryObj.pageSize;
 		this.query.sortBy = queryObj.orderBy || this.query.sortBy;

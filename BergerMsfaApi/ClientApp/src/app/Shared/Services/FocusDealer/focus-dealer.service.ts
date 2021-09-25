@@ -15,7 +15,7 @@ export class FocusDealerService {
   public emailConfigEndpoint: string;
   public excelEndpoint: string;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string, 
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
     private commonService: CommonService) {
       console.log('baseUrl: ', baseUrl);
       this.baseUrl = baseUrl + 'api/';
@@ -82,4 +82,17 @@ export class FocusDealerService {
   public excelDealerStatusUpdate(model: DealerStatusExcelImportModel) {
     return this.http.post<APIResponse>(`${this.excelEndpoint}/DealerStatusUpdate`, this.commonService.toFormData(model));
   }
+
+  public DeleteDealerOppeningEmailById(id){
+    return this.http.delete<APIResponse>(`${this.emailConfigEndpoint}/DeleteById/`+ id);
+
+  }
+
+
+
+
+
+
+
+
 }

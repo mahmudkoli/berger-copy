@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { BillingAnalysisKpiReportQuery, BusinessCallAnalysisReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { BillingAnalysisKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { ModalBillingAnalysisDetailsComponent } from '../modal-billing-analysis-details/modal-billing-analysis-details.component';
 
 @Component({
@@ -27,7 +27,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
+
 	// ptable settings
 	enabledTotal: boolean = false;
 	tableName: string = 'Billing Analysis Report';
@@ -71,7 +71,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadBillingAnalysis(query);
 	getData = (query) => this.reportService.getBillingAnalysis(query);
-	
+
 	searchConfiguration() {
 		this.query = new BillingAnalysisKpiReportQuery({
 			page: 1,
@@ -80,7 +80,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			month: null,
 			year: null
@@ -92,7 +92,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Month, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Year, isRequired:true}),
@@ -137,19 +137,19 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).filter(f => !this.ignoreKeys.includes(f)).map((key) => {
-			return { 
-				headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType 
-					? (typeof obj[key] === 'number') 
-					: this.totalKeys.includes(key)), 
-				type: typeof obj[key] === 'number' ? 'text' : null, 
-				displayType: typeof obj[key] === 'number' ? 
-					key==='Billing (%)' ? 'number-format-color-fraction' : 'number-format-color' : null, 
+			return {
+				headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType
+					? (typeof obj[key] === 'number')
+					: this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null,
+				displayType: typeof obj[key] === 'number' ?
+					key==='Billing (%)' ? 'number-format-color-fraction' : 'number-format-color' : null,
 			} as colDef;
 		});
-		
+
 		// this.ptableSettings.tableColDef.push(
-		// 	{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", 
+		// 	{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button",
 		// 		onClick: 'true', innerBtnIcon: "" } as colDef);
 	}
 
@@ -176,7 +176,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;
@@ -196,7 +196,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 			this.openDetailsModal(event.record);
 		}
 	}
-	
+
 	openDetailsModal(details: any) {
 		let ngbModalOptions: NgbModalOptions = {
 			backdrop: "static",
@@ -208,7 +208,7 @@ export class BillingAnalysisReportComponent implements OnInit, OnDestroy {
 			ngbModalOptions
 		);
 		modalRef.componentInstance.billingAnalysis = details;
-	
+
 		modalRef.result.then(
 			(result) => {
 				console.log(result);
