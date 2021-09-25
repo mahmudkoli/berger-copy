@@ -255,6 +255,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                      && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
                                      && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
                                   )
+                                  orderby p.CreatedTime descending
                                   select new PainterModel
                                   {
                                       Id=p.Id,
@@ -273,10 +274,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
 
 
-            var queryResult = new QueryResultModel<PainterModel>();
-            queryResult.Items = painters;
-            queryResult.TotalFilter = painters.Count();
-            queryResult.Total = painters.Count();
+            var queryResult = new QueryResultModel<PainterModel>
+            {
+                Items = painters,
+                TotalFilter = painters.Count(),
+                Total = painters.Count()
+            };
 
             return queryResult;
 
