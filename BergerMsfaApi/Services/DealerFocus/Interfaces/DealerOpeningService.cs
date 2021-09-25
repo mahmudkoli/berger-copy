@@ -521,7 +521,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     body += $"Dear Concern,{Environment.NewLine}";
 
                     body += string.Format("A new dealer open request has been generated from " +
-                        "“{0} & {1}” and got approved by “{2} & {3}”. " +
+                        "“{0} - {1}” and got approved by “{2} - {3}”. " +
                         "You are requested to open the new dealer in SAP by using the attached information.",
                         createdBy.UserName,
                         createdBy.Designation,
