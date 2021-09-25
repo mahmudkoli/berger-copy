@@ -6,13 +6,13 @@ import { ActiveSummeryReportQuery } from 'src/app/Shared/Entity/Report/ReportQue
 import {
   colDef,
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
@@ -82,7 +82,7 @@ export class ActiveSummeryReportComponent implements OnInit, OnDestroy {
       isSortAscending: false,
       globalSearchValue: '',
       depot: '',
-      salesGroups: [],
+      //salesGroups: [],
       territories: [],
       zones: [],
       userId: null,
@@ -99,10 +99,10 @@ export class ActiveSummeryReportComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.Depot,
         isRequiredBasedOnEmployeeRole: true,
       }),
-      new SearchOptionDef({
-        searchOption: EnumSearchOption.SalesGroup,
-        isRequiredBasedOnEmployeeRole: true,
-      }),
+      // new SearchOptionDef({
+      //   searchOption: EnumSearchOption.SalesGroup,
+      //   isRequiredBasedOnEmployeeRole: true,
+      // }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.Territory,
         isRequired: true,

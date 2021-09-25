@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { DealerWiseTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { DealerWiseTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-dealer-wise-kpi-target-achivement-report',
@@ -26,7 +26,7 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
+
 	// ptable settings
 	enabledTotal: boolean = false;
 	tableName: string = 'Dealer Wise Target Achievement Report';
@@ -76,7 +76,7 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			fromDate: null,
 			toDate: null,
@@ -89,7 +89,7 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:true}),
@@ -133,14 +133,14 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { 
-				headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return {
+				headerName: this.commonService.insertSpaces(key), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)),
-				type: typeof obj[key] === 'number' ? 'text' : null, 
-				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null, 
+				type: typeof obj[key] === 'number' ? 'text' : null,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
 			} as colDef;
 		});
-		
+
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -169,7 +169,7 @@ export class DealerWiseKpiTargetAchivementReportComponent implements OnInit, OnD
 			{columnName:'territory',columnValues:['Total']}
 		],
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

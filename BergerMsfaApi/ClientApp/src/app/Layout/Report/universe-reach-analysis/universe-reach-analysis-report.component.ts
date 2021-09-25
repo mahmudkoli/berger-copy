@@ -1,17 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { BillingAnalysisKpiReportQuery, BusinessCallAnalysisReportQuery, UniverseReachAnalysisKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { UniverseReachAnalysisKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
-import { ModalBillingAnalysisDetailsComponent } from '../modal-billing-analysis-details/modal-billing-analysis-details.component';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-universe-reach-analysis-report',
@@ -27,7 +26,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
+
 	// ptable settings
 	enabledTotal: boolean = true;
 	tableName: string = 'Universe Reach Analysis Report';
@@ -73,7 +72,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadUniverseReachAnalysis(query);
 	getData = (query) => this.reportService.getUniverseReachAnalysis(query);
-	
+
 	searchConfiguration() {
 		this.query = new UniverseReachAnalysisKpiReportQuery({
 			page: 1,
@@ -82,7 +81,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			year: null
 		});
@@ -93,7 +92,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FiscalYear, isRequired:true}),
 		]});
@@ -136,18 +135,18 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).filter(f => !this.ignoreKeys.includes(f)).map((key) => {
-			return { 
-				headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType 
-					? (typeof obj[key] === 'number') 
-					: this.totalKeys.includes(key)), 
-				type: typeof obj[key] === 'number' ? 'text' : null, 
-				displayType: typeof obj[key] === 'number' ? 'number-format-color' : null, 
+			return {
+				headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType
+					? (typeof obj[key] === 'number')
+					: this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color' : null,
 			} as colDef;
 		});
-		
+
 		// this.ptableSettings.tableColDef.push(
-		// 	{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", 
+		// 	{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button",
 		// 		onClick: 'true', innerBtnIcon: "" } as colDef);
 	}
 
@@ -174,7 +173,7 @@ export class UniverseReachAnalysisReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;
