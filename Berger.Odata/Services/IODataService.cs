@@ -57,7 +57,8 @@ namespace Berger.Odata.Services
         Task<IList<BalanceDataModel>> GetBalanceDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             string customerNo, string startDate = "", string endDate = "", string creditControlArea = "");
         Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "");
+            string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", 
+            string creditControlArea = "", string bounceStatus = "", string docType = "", string collectionType = "", bool isOnlyNotEmptyCheque = false);
         Task<IList<CollectionDataModel>> GetCollectionDataByMultipleCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
             List<string> dealerIds, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "");
         Task<IList<CustomerDataModel>> GetCustomerDataByCustomerNo(SelectQueryOptionBuilder selectQueryBuilder,
@@ -136,7 +137,8 @@ namespace Berger.Odata.Services
             IList<string> customerNos = null,
             string startPostingDate = "", string endPostingDate = "",
             string startClearDate = "", string endClearDate = "",
-            string creditControlArea = "", string bounceStatus = "");
+            string creditControlArea = "", string bounceStatus = "", 
+            string docType = "", string collectionType = "", bool isOnlyNotEmptyCheque = false);
         #endregion
 
         #region calculate data
