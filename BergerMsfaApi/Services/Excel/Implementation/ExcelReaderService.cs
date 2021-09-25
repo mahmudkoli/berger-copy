@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Report;
@@ -9,6 +10,7 @@ using BergerMsfaApi.Services.Excel.Interface;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -16,11 +18,11 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 {
     public class ExcelReaderService : IExcelReaderService
     {
-        private readonly IWebHostEnvironment hostEnvironment;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public ExcelReaderService(IWebHostEnvironment hostEnvironment)
         {
-            this.hostEnvironment = hostEnvironment;
+            this._hostEnvironment = hostEnvironment;
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {
@@ -125,7 +127,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             //List<string> property = new List<string>();
 
-            var rootFolder = hostEnvironment.WebRootPath;
+            var rootFolder = _hostEnvironment.WebRootPath;
 
 
             string sFileName = @"SnapShotResult.xlsx";
@@ -141,7 +143,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet("SnapShot");
-                excelSheet.DefaultRowHeight =(short)((int)excelSheet.DefaultRowHeight * 2);
+                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
@@ -162,10 +164,10 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                             row2.CreateCell(i).SetCellValue(kvp.Key.Replace('_', ' '));
                             lastcellspan++;
                         }
-                        else 
+                        else
                         {
                             row.CreateCell(i).SetCellValue(kvp.Key);
-                            
+
 
                             firstcellspan++;
                         }
@@ -175,8 +177,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                     }
 
-                    
-                        //var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, j, j);
+
+                    //var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, j, j);
 
 
                     var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, 0, 0);
@@ -222,53 +224,53 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     int i = 0;
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
-                        
-                            if (kvp.Key.Contains("_Image"))
+
+                        if (kvp.Key.Contains("_Image"))
+                        {
+                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, kvp.Value.ToString())))
                             {
-                                if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, kvp.Value.ToString())))
-                                {
-                                    byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
 
-                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
 
 
 
-                                    //Add a picture shape and set its position
+                                //Add a picture shape and set its position
 
-                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
 
-                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
 
-                                    //anchor.Dx1 = 0;
+                                //anchor.Dx1 = 0;
 
-                                    //anchor.Dy1 = 0;
+                                //anchor.Dy1 = 0;
 
-                                    anchor.Col1 = i;
+                                anchor.Col1 = i;
 
-                                    anchor.Row1 = rowcount;
+                                anchor.Row1 = rowcount;
 
-                                    IPicture picture = drawing.CreatePicture(anchor, pic);
-
-
-                                    //Automatically adjust the image size
-
-                                    picture.Resize(1);
-                                }
-                                else
-                                {
-                                    row.CreateCell(i).SetCellValue(kvp.Value.ToString());
-
-                                }
+                                IPicture picture = drawing.CreatePicture(anchor, pic);
 
 
+                                //Automatically adjust the image size
+
+                                picture.Resize(1);
                             }
-                            else 
+                            else
                             {
                                 row.CreateCell(i).SetCellValue(kvp.Value.ToString());
 
                             }
-                        
+
+
+                        }
+                        else
+                        {
+                            row.CreateCell(i).SetCellValue(kvp.Value.ToString());
+
+                        }
+
                         i++;
                     }
                     rowcount++;
@@ -276,7 +278,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 }
 
 
-               
+
                 workbook.Write(fs);
 
             }
@@ -294,9 +296,98 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         }
 
 
+
+        public async Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName, IList<T> data, Dictionary<string, string> colNames, Dictionary<string, string> imageColNames)
+        {
+            var rootFolder = _hostEnvironment.WebRootPath;
+            var sFileName = fileName;
+
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet(sheetName);
+                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowcount = 0;
+
+                IRow row = excelSheet.CreateRow(rowcount);
+
+                if (!colNames.Any())
+                {
+
+                    var properties = typeof(T).GetProperties()
+                        .Select(x => x.Name).ToList();
+
+                    foreach (string property in properties)
+                    {
+                        colNames.Add(property, property);
+                    }
+                }
+
+
+                int i = 0;
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    row.CreateCell(i)
+                        .SetCellValue(colNames.TryGetValue(prop.Name, out string colName) ? colName : prop.Name);
+
+                    i++;
+                }
+
+                rowcount++;
+                row = excelSheet.CreateRow(rowcount);
+
+                foreach (var item in data)
+                {
+                    i = 0;
+                    foreach (var prop in typeof(T).GetProperties())
+                    {
+                        var rowValue = prop.GetValue(item, null)?.ToString();
+
+                        if (imageColNames.ContainsKey(prop.Name))
+                        {
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            {
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, rowValue));
+                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+
+                                anchor.Col1 = i;
+                                anchor.Row1 = rowcount;
+
+                                IPicture picture = drawing.CreatePicture(anchor, pic);
+
+                                picture.Resize(1);
+                            }
+                        }
+                        else
+                        {
+                            row.CreateCell(i).SetCellValue(rowValue?.ToString());
+                        }
+
+                        i++;
+                    }
+
+                    rowcount++;
+                    row = excelSheet.CreateRow(rowcount);
+                }
+
+                workbook.Write(exportData);
+                var fileContentResult = new FileContentResult(exportData.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = fileName
+                };
+
+                return fileContentResult;
+            }
+
+        }
+
         public async Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas)
         {
-            var rootFolder = hostEnvironment.WebRootPath;
+            var rootFolder = _hostEnvironment.WebRootPath;
             var sFileName = @"DealerOpeningReport.xlsx";
             var memory = new MemoryStream();
 
@@ -305,12 +396,12 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 IWorkbook workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet("DealerOpening");
-                excelSheet.DefaultRowHeight =(short)((int)excelSheet.DefaultRowHeight * 2);
+                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
 
-                var colNames = new Dictionary<string, string>() 
+                var colNames = new Dictionary<string, string>()
                 {
                     { nameof(DealerOpeningReportResultModel.UserId),"User Id" },
                     { nameof(DealerOpeningReportResultModel.DealrerOpeningCode),"Dealrer Opening Code" },
@@ -331,7 +422,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     { nameof(DealerOpeningReportResultModel.CurrentStatusOfThisApplication),"Current Status Of This Application" },
                 };
 
-                var imageColNames = new Dictionary<string, string>() 
+                var imageColNames = new Dictionary<string, string>()
                 {
                     { nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
                     { nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
@@ -381,11 +472,11 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                                 picture.Resize(1);
                             }
                         }
-                        else 
+                        else
                         {
                             row.CreateCell(i).SetCellValue(rowValue);
                         }
-                        
+
                         i++;
                     }
 

@@ -756,7 +756,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 APPNotInstalledReason = x.Remark,
                 AverageMonthlyUse = x.avgMonthlyUse,
                 BergerLoyalty = x.bergerLoyalty,
-                PainterImageUrl = x.PainterImageUrl,
+                PainterImageUrl =x.PainterImageUrl,
             }).Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
 
             var queryResult = new QueryResultModel<PainterRegistrationReportResultModel>();

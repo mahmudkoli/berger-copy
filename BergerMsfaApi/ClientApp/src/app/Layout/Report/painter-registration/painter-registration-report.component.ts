@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadGenerationDetailsQuery, PainterRegisterQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { PainterRegisterQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-painter-registration-report',
@@ -32,14 +29,14 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 
 	// ptable settings
 	enabledTotal: boolean = true;
-	tableName: string = 'Painter Registration Report';
+	tableName: string = 'Painter Inclusion Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	// renameKeys: any = [
 	// 	{'appInstalledStatus': 'Shamparka APP Installed Status'},
 	// 	{'appNotInstalledReason': 'Shamparka App Not Installed "Reason"'},
 	// ];
 	renameKeys: any = {
-						'appInstalledStatus': 'Shamparka APP Installed Status', 
+						'appInstalledStatus': 'Shamparka APP Installed Status',
 						'appNotInstalledReason': 'Shamparka App Not Installed "Reason"',
 						'averageMonthlyUse' : 'Average Monthly Use (Value)',
 						'bergerLoyalty' : 'Berger Loyalty %',
@@ -81,7 +78,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadPainterRegistration(query);
 	getData = (query) => this.reportService.getPainterRegistration(query);
-	
+
 	searchConfiguration() {
 		this.query = new PainterRegisterQuery({
 			page: 1,
@@ -119,7 +116,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
-		console.log('Search option query callback: ', queryObj);
+		//console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
@@ -142,14 +139,14 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
-					console.log("res.data", res.data);
+					//console.log("res.data", res.data);
 					this.data = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
 					this.ptableColDefGenerate();
 				},
 				(error) => {
-					console.log(error);
+					//console.log(error);
 				});
 		this.subscriptions.push(reportsSubscription);
 	}
@@ -157,9 +154,9 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 	ptableColDefGenerate() {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
-		console.log(obj);
+		//console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
@@ -168,7 +165,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 			columName[0].type = 'image';
 		}
 
-		console.log(this.ptableSettings.tableColDef);
+		//console.log(this.ptableSettings.tableColDef);
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -184,6 +181,7 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,
@@ -193,9 +191,9 @@ export class PainterRegistrationReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
-		console.log('server site : ', queryObj);
+		//console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;
 		this.query.pageSize = queryObj.pageSize;
 		this.query.sortBy = queryObj.orderBy || this.query.sortBy;
