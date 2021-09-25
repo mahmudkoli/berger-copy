@@ -10,6 +10,6 @@ namespace Berger.Data.MsfaEntity.Scheme
         public string Condition { get; set; }
         [StringLength(100)]
         public string BusinessArea { get; set; }
-        public IList<SchemeDetail> SchemeDetails { get; set; }
+        //public IList<SchemeDetail> SchemeDetails { get; set; }
     }
 }
