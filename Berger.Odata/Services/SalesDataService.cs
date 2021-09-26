@@ -1421,8 +1421,8 @@ namespace Berger.Odata.Services
 
             Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> selectFunc;
 
-            var dealerSelect = new SelectQueryOptionBuilder()
-                .AddProperty(nameof(CustomerDataModel.CustomerNo));
+            //var dealerSelect = new SelectQueryOptionBuilder()
+            //    .AddProperty(nameof(CustomerDataModel.CustomerNo));
 
 
 
@@ -1431,9 +1431,9 @@ namespace Berger.Odata.Services
 
             if (reportType == ClubSupremeReportType.Summary)
             {
-                selectQueryBuilder
-                    .AddProperty(DataColumnDef.CustomerNo)
-                    .AddProperty(DataColumnDef.NetAmount);
+                //selectQueryBuilder
+                //    .AddProperty(DataColumnDef.CustomerNo)
+                //    .AddProperty(DataColumnDef.NetAmount);
 
                 selectFunc = x => new CategoryWisePerformanceReport
                 {
@@ -1460,13 +1460,13 @@ namespace Berger.Odata.Services
             }
             else
             {
-                selectQueryBuilder
-                    .AddProperty(DataColumnDef.PlantOrBusinessArea)
-                    .AddProperty(DataColumnDef.Territory)
-                    .AddProperty(DataColumnDef.Zone)
-                    .AddProperty(DataColumnDef.CustomerNo)
-                    .AddProperty(DataColumnDef.NetAmount)
-                    .AddProperty(DataColumnDef.CustomerName);
+                //selectQueryBuilder
+                //    .AddProperty(DataColumnDef.PlantOrBusinessArea)
+                //    .AddProperty(DataColumnDef.Territory)
+                //    .AddProperty(DataColumnDef.Zone)
+                //    .AddProperty(DataColumnDef.CustomerNo)
+                //    .AddProperty(DataColumnDef.NetAmount)
+                //    .AddProperty(DataColumnDef.CustomerName);
 
                 selectFunc = x => new CategoryWisePerformanceReport
                 {
