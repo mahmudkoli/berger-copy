@@ -11,6 +11,7 @@ using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Sync;
+using Berger.Odata.Common;
 using Berger.Odata.Extensions;
 using Berger.Odata.Repositories;
 using Berger.Odata.Services;
@@ -99,7 +100,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
                                                             CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales)));
 
                 var targetAchv = $"Target Achv: {targetVal}%";
-                var premiumSalesPercentage = $"Premium Brand Value Sales: {premVal}%";
+                var premiumSalesPercentage = $"Premium Brand Sales Value Contribution: {premVal}%";
                 var leadFollowupString = $"Lead Created: {leadCreatedCount} \n Lead Followup: {leadFollowUpCount}";
                 var numberOfBillingDealerString = $"Number of Billing Dealer: {numberOfBillingDealer}";
 
@@ -226,7 +227,8 @@ namespace BergerMsfaApi.Services.AppsFontBox
                      && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                      && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                      && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
-                     && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
+                     && (!area.Zones.Any() || area.Zones.Contains(x.Zone))))
+                     && x.Division == ConstantsValue.DivisionDecorative;
         }
 
         private Tuple<DateTime, DateTime> GetComparableDates()
