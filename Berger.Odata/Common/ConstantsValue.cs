@@ -24,7 +24,8 @@ namespace Berger.Odata.Common
         public const string BergerCompanyCode = "1000";
         public const string BergerSourceClient = "REP";
         public const string ChequeBounceStatus = "Z1";
-        public const string ChequeDocType = "DA";
+        public const string ChequeDocTypeDA = "DA";
+        public const string ChequeDocTypeDZ = "DZ";
         public const int FyYearFirstMonth = 4;
         public const int FyYearLastMonth = 3;
 

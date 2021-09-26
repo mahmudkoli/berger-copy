@@ -51,17 +51,28 @@ namespace Berger.Odata.Services
 
             var data = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(selectQueryBuilder, model.CustomerNo, 
                 startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea,
-                collectionType: ConstantsValue.CollectionMoneyReceipt, isOnlyNotEmptyCheque: true)).ToList();
+                collectionType: ConstantsValue.CollectionMoneyReceipt, docType: ConstantsValue.ChequeDocTypeDZ, isOnlyNotEmptyCheque: true)).ToList();
 
-            var result = data.Select(x =>
+            var groupData = data.GroupBy(x => new { x.DocNumber, x.ChequeNo, x.BankName, x.CreditControlArea, x.PostingDate })
+                                        .Select(x => new
+                                        {
+                                            PostingDate = CustomConvertExtension.ObjectToDateTime(x.Key.PostingDate),
+                                            CreditControlArea = x.Key.CreditControlArea,
+                                            ChequeNo = x.Key.ChequeNo,
+                                            DocNumber = x.Key.DocNumber,
+                                            BankName = x.Key.BankName,
+                                            Amount = x.Sum(y => CustomConvertExtension.ObjectToDecimal(y.Amount))
+                                        }).ToList();
+
+            var result = groupData.Select(x =>
                                 new CollectionHistoryResultModel()
                                 {
                                     MrNo = x.DocNumber,
                                     ChequeNo = x.ChequeNo,
                                     BankName = x.BankName,
                                     Division = x.CreditControlArea,
-                                    Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd MMM yyyy"),
-                                    MrAmount = CustomConvertExtension.ObjectToDecimal(x.Amount)
+                                    Date = x.PostingDate.DateFormat("dd MMM yyyy"),
+                                    MrAmount = x.Amount
                                 }).ToList();
 
             #region Credit Control Area 
@@ -150,21 +161,23 @@ namespace Berger.Odata.Services
 
             var chequeBounce = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(bounceSelectQueryBuilder, model.CustomerNo, 
                 startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea,
-                bounceStatus: ConstantsValue.ChequeBounceStatus, docType: ConstantsValue.ChequeDocType)).ToList();
+                bounceStatus: ConstantsValue.ChequeBounceStatus, docType: ConstantsValue.ChequeDocTypeDA)).ToList();
 
             var chequeReceived = (await _odataService.GetCollectionDataByCustomerAndCreditControlArea(receiveSelectQueryBuilder, model.CustomerNo, 
                 startPostingDate: fromDate, endPostingDate: toDate, creditControlArea: model.CreditControlArea,
-                collectionType: ConstantsValue.CollectionMoneyReceipt, isOnlyNotEmptyCheque: true)).ToList();
+                collectionType: ConstantsValue.CollectionMoneyReceipt, docType: ConstantsValue.ChequeDocTypeDZ, isOnlyNotEmptyCheque: true)).ToList();
+
+            chequeReceived = chequeReceived.Where(x => (long.TryParse(x.ChequeNo, out long val))).ToList();
 
             var result = new ChecqueBounceResultModel();
 
             var totalChqRec = new ChequeBounceSummaryResultModel
             {
                 Category = "Total Cheque Receive",
-                MTDNoOfCheque = chequeReceived.Where(x => (long.TryParse(x.ChequeNo, out long val)) && CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
+                MTDNoOfCheque = chequeReceived.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                                           CustomConvertExtension.ObjectToDateTime(x.PostingDate) <= currentDate.GetMonthLastDate())
                                                             .Select(x => x.ChequeNo).Distinct().Count(),
-                YTDNoOfCheque = chequeReceived.Where(x => (long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count(),
+                YTDNoOfCheque = chequeReceived.Select(x => x.ChequeNo).Distinct().Count(),
                 MTDChequeValue = chequeReceived.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                                         CustomConvertExtension.ObjectToDateTime(x.PostingDate) <= currentDate.GetMonthLastDate())
                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)),
@@ -197,18 +210,29 @@ namespace Berger.Odata.Services
             result.ChequeBounceSummaryResultModels.Add(totalChqBncd);
             result.ChequeBounceSummaryResultModels.Add(bncdPercent);
 
-            result.ChequeBounceDetailResultModels = chequeBounce.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
+            var groupMonthlyChequeBounce = chequeBounce.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                                         CustomConvertExtension.ObjectToDateTime(x.PostingDate) <= currentDate.GetMonthLastDate())
-                                                    .Select(x =>
-                                                    new ChequeBounceDetailResultModel()
-                                                    {
-                                                        Date = CustomConvertExtension.ObjectToDateTime(x.PostingDate).DateFormat("dd.MM.yyyy"),
-                                                        CreditControlArea = x.CreditControlArea,
-                                                        Amount = CustomConvertExtension.ObjectToDecimal(x.Amount),
-                                                        ChequeNo = x.ChequeNo,
-                                                        MrNumber = x.DocNumber,
-                                                        BankName = x.BankName
-                                                    }).ToList();
+                                        .GroupBy(x => new { x.DocNumber, x.ChequeNo, x.BankName, x.CreditControlArea, x.PostingDate })
+                                        .Select(x => new
+                                        {
+                                            PostingDate = CustomConvertExtension.ObjectToDateTime(x.Key.PostingDate),
+                                            CreditControlArea = x.Key.CreditControlArea,
+                                            ChequeNo = x.Key.ChequeNo,
+                                            DocNumber = x.Key.DocNumber,
+                                            BankName = x.Key.BankName,
+                                            Amount = x.Sum(y => CustomConvertExtension.ObjectToDecimal(y.Amount))
+                                        }).ToList();
+
+            result.ChequeBounceDetailResultModels = groupMonthlyChequeBounce.Select(x =>
+                                                                                new ChequeBounceDetailResultModel()
+                                                                                {
+                                                                                    Date = x.PostingDate.DateFormat("dd.MM.yyyy"),
+                                                                                    CreditControlArea = x.CreditControlArea,
+                                                                                    Amount = x.Amount,
+                                                                                    ChequeNo = x.ChequeNo,
+                                                                                    MrNumber = x.DocNumber,
+                                                                                    BankName = x.BankName
+                                                                                }).ToList();
 
             #region Credit Control Area 
             var creditControlAreas = await _odataCommonService.GetAllCreditControlAreasAsync();
@@ -373,24 +397,27 @@ namespace Berger.Odata.Services
             dataCm = (await _odataService.GetCollectionData(selectQueryBuilder,
                                 customerNos: customerNos,
                                 startPostingDate: cyfd, endPostingDate: cyld,
-                                collectionType: ConstantsValue.CollectionMoneyReceipt, isOnlyNotEmptyCheque: true)).ToList();
+                                collectionType: ConstantsValue.CollectionMoneyReceipt, docType: ConstantsValue.ChequeDocTypeDZ, isOnlyNotEmptyCheque: true)).ToList();
 
             dataCy = (await _odataService.GetCollectionData(selectQueryBuilder,
                                 customerNos: customerNos,
                                 startPostingDate: cfyfd, endPostingDate: cyld,
-                                collectionType: ConstantsValue.CollectionMoneyReceipt, isOnlyNotEmptyCheque: true)).ToList();
+                                collectionType: ConstantsValue.CollectionMoneyReceipt, docType: ConstantsValue.ChequeDocTypeDZ, isOnlyNotEmptyCheque: true)).ToList();
 
             dataBounceCm = (await _odataService.GetCollectionData(selectQueryBuilder,
                                     customerNos: customerNos,
                                     startPostingDate: cyfd, endPostingDate: cyld,
                                     bounceStatus: ConstantsValue.ChequeBounceStatus,
-                                    docType: ConstantsValue.ChequeDocType)).ToList();
+                                    docType: ConstantsValue.ChequeDocTypeDA)).ToList();
 
             dataBounceCy = (await _odataService.GetCollectionData(selectQueryBuilder,
                                     customerNos: customerNos,
                                     startPostingDate: cfyfd, endPostingDate: cyld,
                                     bounceStatus: ConstantsValue.ChequeBounceStatus,
-                                    docType: ConstantsValue.ChequeDocType)).ToList();
+                                    docType: ConstantsValue.ChequeDocTypeDA)).ToList();
+
+            dataCm = dataCm.Where(x => (long.TryParse(x.ChequeNo, out long val))).ToList();
+            dataCy = dataCy.Where(x => (long.TryParse(x.ChequeNo, out long val))).ToList();
             #endregion
 
             var result = new ChequeSummaryReportResultModel();
@@ -403,8 +430,8 @@ namespace Berger.Odata.Services
 
             var totalChqRec = new ChequeSummaryChequeDetailsReportModel();
             totalChqRec.ChequeDetailsName = "Total Chq Rec";
-            totalChqRec.MTDNoOfCheque = dataCm.Where(x => (long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
-            totalChqRec.YTDNoOfCheque = dataCy.Where(x => (long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count();
+            totalChqRec.MTDNoOfCheque = dataCm.Select(x => x.ChequeNo).Distinct().Count();
+            totalChqRec.YTDNoOfCheque = dataCy.Select(x => x.ChequeNo).Distinct().Count();
             totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
 
@@ -428,13 +455,23 @@ namespace Berger.Odata.Services
             #endregion
 
             #region Cheque Bounce Details
-            result.ChequeBounceDetails = dataBounceCm.Select(s => new ChequeSummaryChequeBounceDetailsReportModel()
+            var groupMonthlyChequeBounce = dataBounceCm.GroupBy(x => new { x.CustomerNo, x.CustomerName, x.ChequeNo, x.PostingDate })
+                                                        .Select(x => new
+                                                        {
+                                                            PostingDate = CustomConvertExtension.ObjectToDateTime(x.Key.PostingDate),
+                                                            ChequeNo = x.Key.ChequeNo,
+                                                            CustomerNo = x.Key.CustomerNo,
+                                                            CustomerName = x.Key.CustomerName,
+                                                            Amount = x.Sum(y => CustomConvertExtension.ObjectToDecimal(y.Amount))
+                                                        }).ToList();
+
+            result.ChequeBounceDetails = groupMonthlyChequeBounce.Select(s => new ChequeSummaryChequeBounceDetailsReportModel()
             {
                 CustomerNo = s.CustomerNo,
                 CustomerName = s.CustomerName,
-                Date = CustomConvertExtension.ObjectToDateTime(s.PostingDate).DateFormat("dd MMM yyyy"),
+                Date = s.PostingDate.DateFormat("dd MMM yyyy"),
                 ChequeNo = s.ChequeNo,
-                Amount = CustomConvertExtension.ObjectToDecimal(s.Amount)
+                Amount = s.Amount
             }).ToList();
             #endregion
 

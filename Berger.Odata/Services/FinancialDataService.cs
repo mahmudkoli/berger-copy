@@ -184,7 +184,8 @@ namespace Berger.Odata.Services
                                                                 .Sum(s => s.Where(f => f.CreditControlArea == osModel.CreditControlArea)
                                                                             .GroupBy(g => g.CreditLimit).Sum(c => c.Key));
                                         osModel.NetDue = x.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-                                        osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) < CustomConvertExtension.ObjectToInt(w.Age))
+                                        osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) < CustomConvertExtension.ObjectToInt(w.Age)
+                                                                    && CustomConvertExtension.ObjectToDecimal(w.Amount) > 0)
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         osModel.OSOver90Days = x.Where(m => CustomConvertExtension.ObjectToInt(m.Age) > 90)
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
