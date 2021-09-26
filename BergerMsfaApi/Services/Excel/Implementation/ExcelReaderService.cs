@@ -300,7 +300,6 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         public async Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName, IList<T> data, Dictionary<string, string> colNames, Dictionary<string, string> imageColNames)
         {
             var rootFolder = _hostEnvironment.WebRootPath;
-            var sFileName = fileName;
 
             using (var exportData = new MemoryStream())
             {
@@ -348,7 +347,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                         {
                             if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, rowValue));
+                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();
@@ -389,9 +388,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             var rootFolder = _hostEnvironment.WebRootPath;
             var sFileName = @"DealerOpeningReport.xlsx";
-            var memory = new MemoryStream();
 
-            using (var fs = new FileStream(sFileName, FileMode.Create, FileAccess.Write))
+            using (var exportData = new MemoryStream())
             {
                 IWorkbook workbook = new XSSFWorkbook();
 
@@ -404,7 +402,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 var colNames = new Dictionary<string, string>()
                 {
                     { nameof(DealerOpeningReportResultModel.UserId),"User Id" },
-                    { nameof(DealerOpeningReportResultModel.DealrerOpeningCode),"Dealrer Opening Code" },
+                    { nameof(DealerOpeningReportResultModel.DealrerOpeningCode),"Dealer Opening Code" },
                     { nameof(DealerOpeningReportResultModel.BusinessArea),"Business Area" },
                     { nameof(DealerOpeningReportResultModel.BusinessAreaName),"Business Area Name" },
                     { nameof(DealerOpeningReportResultModel.SalesOffice),"Sales Office" },
@@ -484,16 +482,10 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     row = excelSheet.CreateRow(rowcount);
                 }
 
-                workbook.Write(fs);
+                workbook.Write(exportData);
+                exportData.Position = 0;
+                return exportData;
             }
-
-            using (var stream = new FileStream(sFileName, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-
-            memory.Position = 0;
-            return memory;
         }
     }
 }
