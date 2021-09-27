@@ -96,7 +96,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
                 var targetVal = string.Format("{0:0.00}", _oDataService.GetAchivement(CustomConvertExtension.ObjectToDecimal(sumOfTotalTarget),
                                                             CustomConvertExtension.ObjectToDecimal(sumOfTotalSales)));
-                var premVal = string.Format("{0:0.00}", _oDataService.GetPercentage(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales),
+                var premVal = string.Format("{0:0.00}", _oDataService.GetContribution(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales),
                                                             CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales)));
 
                 var targetAchv = $"Target Achv: {targetVal}%";
