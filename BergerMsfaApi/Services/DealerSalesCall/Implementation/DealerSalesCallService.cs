@@ -97,9 +97,43 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             return result.Id;
         }
 
+        public async Task DeleteImage(DealerImageModel dealerImageModel)
+        {
+            var item = await _dealerSalesCallRepository.FirstOrDefaultAsync(x => x.Id == dealerImageModel.Id);
+
+            string fileDirectory = Path.Combine(
+                Directory.GetCurrentDirectory(), @"wwwroot\");
+            var fullPath = fileDirectory + dealerImageModel.URL;
+
+            if (item != null)
+            {
+                switch (dealerImageModel.Type)
+                {
+                    case "competitionProductDisplayImageUrl":
+                        item.CompetitionProductDisplayImageUrl = null;
+                        break;
+                    case "competitionSchemeModalityImageUrl":
+                        item.CompetitionSchemeModalityImageUrl = null;
+                        break;
+                }
+
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                    await _dealerSalesCallRepository.UpdateAsync(item);
+
+                }
+
+                //File.Delete();
+
+
+            }
+        }
+
+
         public async Task<int> UpdateAsync(AppDealerSalesCallModel model)
         {
-            
+
 
 
             var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
@@ -116,7 +150,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageBase64))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                model.CompetitionProductDisplayImageUrl=model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
+                model.CompetitionProductDisplayImageUrl = model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
                 dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
             }
 
@@ -131,7 +165,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
 
 
-            var issue = await _dealerSalesIssueRepository.DeleteAsync(p=>p.DealerSalesCallId==dealerSalesCall.Id);
+            var issue = await _dealerSalesIssueRepository.DeleteAsync(p => p.DealerSalesCallId == dealerSalesCall.Id);
 
 
             var issuecategoryAdd = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesIssues);
@@ -248,7 +282,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerId = id;
 
             var dealer = await dealerInfo.FindAsync(x => x.Id == id);
-            var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
+            var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo ?? string.Empty);
             modelResult.HasOS = odata.HasOS;
             modelResult.HasSlippage = odata.HasSlippage;
 
@@ -330,7 +364,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.DealerId = id;
 
                 var dealer = await dealerInfo.FindAsync(x => x.Id == id);
-                var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
+                var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo ?? string.Empty);
                 modelResult.HasOS = odata.HasOS;
                 modelResult.HasSlippage = odata.HasSlippage;
 
@@ -408,6 +442,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             );
 
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
+
+
 
             return modelResult;
         }
@@ -515,6 +551,6 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             }
         }
 
-       
+
     }
 }

@@ -19,5 +19,6 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Interfaces
         Task<SaveDealerSalesCallModel> GetDealerSalesCallByDealerIdAsync(int id);
         Task<IList<SaveDealerSalesCallModel>> GetDealerSalesCallListByDealerIdsAsync(IList<int> ids);
         Task<IList<AppDealerSalesCallModel>> GetAllByUserIdAsync(int userId);
+        Task DeleteImage(DealerImageModel dealerImageModel);
     }
 }
