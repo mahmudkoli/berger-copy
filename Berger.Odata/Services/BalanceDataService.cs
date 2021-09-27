@@ -117,7 +117,7 @@ namespace Berger.Odata.Services
                 res.OpeningBalance = x.LineText == ConstantsValue.BalanceLineTextOpening ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
                 res.ClosingBalance = x.LineText == ConstantsValue.BalanceLineTextClosing ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
                 res.InvoiceBalance = x.DocType == ConstantsValue.BalanceDocTypeInvoice ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
-                res.PaymentBalance = x.DocType == ConstantsValue.BalanceDocTypeMoneyReceipt ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
+                res.PaymentBalance = x.DocType == ConstantsValue.BalanceDocTypeMoneyReceipt || x.DocType == ConstantsValue.BalanceDocTypeCreditNote ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
                 res.TransactionDescription = x.TransactionDescription;
 
                 return res;
