@@ -61,7 +61,7 @@ namespace Berger.Odata.Services
                                             ChequeNo = x.Key.ChequeNo,
                                             DocNumber = x.Key.DocNumber,
                                             BankName = x.Key.BankName,
-                                            Amount = x.Sum(y => CustomConvertExtension.ObjectToDecimal(y.Amount))
+                                            Amount = x.Sum(y => (CustomConvertExtension.ObjectToDecimal(y.Amount) * -1))
                                         }).ToList();
 
             var result = groupData.Select(x =>
@@ -180,8 +180,8 @@ namespace Berger.Odata.Services
                 YTDNoOfCheque = chequeReceived.Select(x => x.ChequeNo).Distinct().Count(),
                 MTDChequeValue = chequeReceived.Where(x => CustomConvertExtension.ObjectToDateTime(x.PostingDate) >= currentDate &&
                                                         CustomConvertExtension.ObjectToDateTime(x.PostingDate) <= currentDate.GetMonthLastDate())
-                                                .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount)),
-                YTDChequeValue = chequeReceived.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount))
+                                                .Sum(s => (CustomConvertExtension.ObjectToDecimal(s.Amount) * -1)),
+                YTDChequeValue = chequeReceived.Sum(s => (CustomConvertExtension.ObjectToDecimal(s.Amount) * -1))
             };
 
             var totalChqBncd = new ChequeBounceSummaryResultModel
@@ -432,8 +432,8 @@ namespace Berger.Odata.Services
             totalChqRec.ChequeDetailsName = "Total Chq Rec";
             totalChqRec.MTDNoOfCheque = dataCm.Select(x => x.ChequeNo).Distinct().Count();
             totalChqRec.YTDNoOfCheque = dataCy.Select(x => x.ChequeNo).Distinct().Count();
-            totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-            totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            totalChqRec.MTDTotalChequeValue = dataCm.Sum(s => (CustomConvertExtension.ObjectToDecimal(s.Amount) * -1));
+            totalChqRec.YTDTotalChequeValue = dataCy.Sum(s => (CustomConvertExtension.ObjectToDecimal(s.Amount) * -1));
 
             var totalChqBncd = new ChequeSummaryChequeDetailsReportModel();
             totalChqBncd.ChequeDetailsName = "Total Chq Bncd";

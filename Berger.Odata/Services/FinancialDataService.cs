@@ -187,7 +187,8 @@ namespace Berger.Odata.Services
                                         osModel.Slippage = x.Where(w => CustomConvertExtension.ObjectToInt(w.DayLimit) < CustomConvertExtension.ObjectToInt(w.Age)
                                                                     && CustomConvertExtension.ObjectToDecimal(w.Amount) > 0)
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
-                                        osModel.OSOver90Days = x.Where(m => CustomConvertExtension.ObjectToInt(m.Age) > 90)
+                                        osModel.OSOver90Days = x.Where(m => CustomConvertExtension.ObjectToInt(m.Age) > 90
+                                                                    && CustomConvertExtension.ObjectToDecimal(m.Amount) > 0)
                                                                 .Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
                                         return osModel;
                                     }).ToList();
@@ -312,7 +313,8 @@ namespace Berger.Odata.Services
 
             var resFM = new OSOver90DaysTrendReportResultModel();
             resFM.Month = fmDate.ToString("MMMM");
-            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resFM.Difference = 0;
             resFM.Sales = salesData.Where(x => x.Month == fmDate.Month)
                                     .Sum(s => s.Value);
@@ -322,7 +324,8 @@ namespace Berger.Odata.Services
 
             var resSM = new OSOver90DaysTrendReportResultModel();
             resSM.Month = smDate.ToString("MMMM");
-            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
             resSM.Sales = salesData.Where(x => x.Month == smDate.Month)
                                     .Sum(s => s.Value);
@@ -332,7 +335,8 @@ namespace Berger.Odata.Services
 
             var resTM = new OSOver90DaysTrendReportResultModel();
             resTM.Month = tmDate.ToString("MMMM");
-            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
             resTM.Sales = salesData.Where(x => x.Month == tmDate.Month)
                                     .Sum(s => s.Value);
@@ -449,7 +453,8 @@ namespace Berger.Odata.Services
 
             var resFM = new PortalOSOver90DaysTrendResultModel();
             resFM.Month = fmDate.ToString("MMMM");
-            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resFM.OSOver90Days = financialDataFM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resFM.Difference = 0;
             resFM.Sales = salesData.Where(x => fmDate.Month==x.Month)
                                     .Sum(s => s.Value);
@@ -459,7 +464,8 @@ namespace Berger.Odata.Services
 
             var resSM = new PortalOSOver90DaysTrendResultModel();
             resSM.Month = smDate.ToString("MMMM");
-            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resSM.OSOver90Days = financialDataSM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resSM.Difference = resFM.OSOver90Days - resSM.OSOver90Days;
             resSM.Sales = salesData.Where(x => smDate.Month == x.Month)
                                     .Sum(s => s.Value);
@@ -469,7 +475,8 @@ namespace Berger.Odata.Services
 
             var resTM = new PortalOSOver90DaysTrendResultModel();
             resTM.Month = tmDate.ToString("MMMM");
-            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
+            resTM.OSOver90Days = financialDataTM.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > 90
+                                                        && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).Sum(s => CustomConvertExtension.ObjectToDecimal(s.Amount));
             resTM.Difference = resSM.OSOver90Days - resTM.OSOver90Days;
             resTM.Sales = salesData.Where(x => tmDate.Month == x.Month)
                                     .Sum(s => s.Value);
