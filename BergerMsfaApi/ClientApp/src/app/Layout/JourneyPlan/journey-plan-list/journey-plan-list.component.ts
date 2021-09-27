@@ -326,7 +326,7 @@ export class JourneyPlanListComponent implements OnInit {
             }
 
             if (jPlan.planStatus==PlanStatus.Pending || jPlan.planStatus==PlanStatus.Edited) {
-                this.alertService.alert("Already waiting for approval. So can not modify before reject the plan.");
+                this.alertService.alert("Waiting for approval.");
                 return;
             }
 

@@ -298,8 +298,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model)
         {
-            if (model.DealerOpeningAttachments.Any() && _fileUploadSvc.IsMaxSizeExceded(model.DealerOpeningAttachments.Select(s => s.Path).ToList(), 20))
-                throw new Exception("Maximum file size 20 MB allowed.");
+            if (model.DealerOpeningAttachments.Any() && _fileUploadSvc.IsMaxSizeExceded(model.DealerOpeningAttachments.Select(s => s.Path).ToList(), 10))
+                throw new Exception("Maximum file size 10 MB allowed.");
 
             //var mapper = new MapperConfiguration(cfg =>
             //{
