@@ -1095,7 +1095,8 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<CollectionDataModel>> GetCollectionDataByCustomerAndCreditControlArea(SelectQueryOptionBuilder selectQueryBuilder,
-            string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", string creditControlArea = "", string bounceStatus = "")
+            string customerNo, string startPostingDate = "", string endPostingDate = "", string startClearDate = "", string endClearDate = "", 
+            string creditControlArea = "", string bounceStatus = "", string docType = "", string collectionType = "", bool isOnlyNotEmptyCheque = false)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode)
@@ -1110,6 +1111,21 @@ namespace Berger.Odata.Services
             if (!string.IsNullOrEmpty(bounceStatus))
             {
                 filterQueryBuilder.And().Equal(CollectionColDef.BounceStatus, bounceStatus);
+            }
+
+            if (!string.IsNullOrEmpty(docType))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.DocType, docType);
+            }
+
+            if (!string.IsNullOrEmpty(collectionType))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.CollectionType, collectionType);
+            }
+
+            if (isOnlyNotEmptyCheque)
+            {
+                filterQueryBuilder.And().NotEqual(CollectionColDef.ChequeNo, string.Empty);
             }
 
             if (!string.IsNullOrEmpty(startPostingDate) && !string.IsNullOrEmpty(endPostingDate))
@@ -1939,7 +1955,8 @@ namespace Berger.Odata.Services
             IList<string> customerNos = null,
             string startPostingDate = "", string endPostingDate = "",
             string startClearDate = "", string endClearDate = "",
-            string creditControlArea = "", string bounceStatus = "")
+            string creditControlArea = "", string bounceStatus = "", 
+            string docType = "", string collectionType = "", bool isOnlyNotEmptyCheque = false)
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode);
@@ -1952,6 +1969,21 @@ namespace Berger.Odata.Services
             if (bounceStatus != "-1" && !string.IsNullOrEmpty(bounceStatus))
             {
                 filterQueryBuilder.And().Equal(CollectionColDef.BounceStatus, bounceStatus);
+            }
+
+            if (docType != "-1" && !string.IsNullOrEmpty(docType))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.DocType, docType);
+            }
+
+            if (collectionType != "-1" && !string.IsNullOrEmpty(collectionType))
+            {
+                filterQueryBuilder.And().Equal(CollectionColDef.CollectionType, collectionType);
+            }
+
+            if (isOnlyNotEmptyCheque)
+            {
+                filterQueryBuilder.And().NotEqual(CollectionColDef.ChequeNo, string.Empty);
             }
 
             if (depots != null && depots.Any())

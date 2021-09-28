@@ -1107,16 +1107,16 @@ namespace Berger.Odata.Services
 
 
 
-            var dealerSelect = new SelectQueryOptionBuilder()
-                .AddProperty(nameof(CustomerDataModel.CustomerNo))
-                .AddProperty(nameof(CustomerDataModel.CreditControlArea))
-                .AddProperty(nameof(CustomerDataModel.BusinessArea));
+            //var dealerSelect = new SelectQueryOptionBuilder()
+            //    .AddProperty(nameof(CustomerDataModel.CustomerNo))
+            //    .AddProperty(nameof(CustomerDataModel.CreditControlArea))
+            //    .AddProperty(nameof(CustomerDataModel.BusinessArea));
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder
-                .AddProperty(DataColumnDef.NetAmount)
-                .AddProperty(DataColumnDef.PlantOrBusinessArea)
-                .AddProperty(DataColumnDef.CustomerNo);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder
+            //    .AddProperty(DataColumnDef.NetAmount)
+            //    .AddProperty(DataColumnDef.PlantOrBusinessArea)
+            //    .AddProperty(DataColumnDef.CustomerNo);
 
 
             //  var dataCyMtd = (await _odataService.GetSalesData(selectQueryBuilder, cyfd, cyld, depots: model.Depots, territories: model.Territories, zones: model.Zones)).ToList();
@@ -1208,6 +1208,7 @@ namespace Berger.Odata.Services
                 (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
                 (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
                 x.Channel == ConstantsValue.DistrbutionChannelDealer
+                && x.IsLastYearAppointed
             ).Select(x => new
             {
                 x.BusinessArea,
@@ -1273,14 +1274,14 @@ namespace Berger.Odata.Services
 
             var cfyfd = currentDate.GetCFYFD().DateFormat();//.SalesSearchDateFormat();
 
-            var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder
-                .AddProperty(DataColumnDef.PlantOrBusinessArea)
-                .AddProperty(DataColumnDef.Territory)
-                .AddProperty(DataColumnDef.Zone)
-                .AddProperty(DataColumnDef.CustomerNo)
-                .AddProperty(DataColumnDef.NetAmount)
-                .AddProperty(DataColumnDef.CustomerName);
+            //var selectQueryBuilder = new SelectQueryOptionBuilder();
+            //selectQueryBuilder
+            //    .AddProperty(DataColumnDef.PlantOrBusinessArea)
+            //    .AddProperty(DataColumnDef.Territory)
+            //    .AddProperty(DataColumnDef.Zone)
+            //    .AddProperty(DataColumnDef.CustomerNo)
+            //    .AddProperty(DataColumnDef.NetAmount)
+            //    .AddProperty(DataColumnDef.CustomerName);
 
 
 
@@ -1346,6 +1347,8 @@ namespace Berger.Odata.Services
 
             var concatAllList = dataLyMtd.Select(selectFunc)
                 .Concat(dataCyMtd.Select(selectFunc))
+                .Concat(dataLyYtd.Select(selectFunc))
+                .Concat(dataCyYtd.Select(selectFunc))
                 .GroupBy(p => new { p.Depot, p.Territory, p.Zone, p.CustomerName, p.CustomerNo })
                 .Select(g => g.First());
 
@@ -1394,6 +1397,8 @@ namespace Berger.Odata.Services
 
                 res.GrowthMTD = _odataService.GetGrowth(res.LYMTD, res.CYMTD);
                 res.GrowthYTD = _odataService.GetGrowth(res.LYYTD, res.CYYTD);
+
+                result.Add(res);
             }
 
             return result;
@@ -1416,8 +1421,8 @@ namespace Berger.Odata.Services
 
             Func<CategoryWisePerformanceReport, CategoryWisePerformanceReport> selectFunc;
 
-            var dealerSelect = new SelectQueryOptionBuilder()
-                .AddProperty(nameof(CustomerDataModel.CustomerNo));
+            //var dealerSelect = new SelectQueryOptionBuilder()
+            //    .AddProperty(nameof(CustomerDataModel.CustomerNo));
 
 
 
@@ -1426,9 +1431,9 @@ namespace Berger.Odata.Services
 
             if (reportType == ClubSupremeReportType.Summary)
             {
-                selectQueryBuilder
-                    .AddProperty(DataColumnDef.CustomerNo)
-                    .AddProperty(DataColumnDef.NetAmount);
+                //selectQueryBuilder
+                //    .AddProperty(DataColumnDef.CustomerNo)
+                //    .AddProperty(DataColumnDef.NetAmount);
 
                 selectFunc = x => new CategoryWisePerformanceReport
                 {
@@ -1455,13 +1460,13 @@ namespace Berger.Odata.Services
             }
             else
             {
-                selectQueryBuilder
-                    .AddProperty(DataColumnDef.PlantOrBusinessArea)
-                    .AddProperty(DataColumnDef.Territory)
-                    .AddProperty(DataColumnDef.Zone)
-                    .AddProperty(DataColumnDef.CustomerNo)
-                    .AddProperty(DataColumnDef.NetAmount)
-                    .AddProperty(DataColumnDef.CustomerName);
+                //selectQueryBuilder
+                //    .AddProperty(DataColumnDef.PlantOrBusinessArea)
+                //    .AddProperty(DataColumnDef.Territory)
+                //    .AddProperty(DataColumnDef.Zone)
+                //    .AddProperty(DataColumnDef.CustomerNo)
+                //    .AddProperty(DataColumnDef.NetAmount)
+                //    .AddProperty(DataColumnDef.CustomerName);
 
                 selectFunc = x => new CategoryWisePerformanceReport
                 {

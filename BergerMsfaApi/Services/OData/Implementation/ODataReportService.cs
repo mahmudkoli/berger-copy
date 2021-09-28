@@ -247,48 +247,61 @@ namespace BergerMsfaApi.Services.OData.Implementation
             }).ToListAsync();
 
             List<string> lastYearAppointedDealer = _dealerInfoRepository
-                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Where(x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                            (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                            (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                            x.IsLastYearAppointed)
                 .Select(x => x.CustomerNo).Distinct()
                 .ToList();
 
 
-            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
+            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
 
-            var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
-            {
-                CYMTD = 0,
-                DepotCode = x.Werks,
-                LYMTD = 0,
-                Depot = x.Name1,
-                GrowthMTD = 0,
-                NumberOfDealer = 0,
-            }).ToList();
+            //var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
+            //{
+            //    CYMTD = 0,
+            //    DepotCode = x.Werks,
+            //    LYMTD = 0,
+            //    Depot = x.Name1,
+            //    GrowthMTD = 0,
+            //    NumberOfDealer = 0,
+            //}).ToList();
 
+
+            //foreach (var item in result)
+            //{
+            //    var summaryResultModel = summaryResultModels.FirstOrDefault(x => x.DepotCode == item.DepotCode);
+            //    if (summaryResultModel != null)
+            //    {
+            //        item.CYMTD = summaryResultModel.CYMTD;
+            //        item.LYMTD = summaryResultModel.LYMTD;
+            //        item.GrowthMTD = summaryResultModel.GrowthMTD;
+            //        item.NumberOfDealer = summaryResultModel.NumberOfDealer;
+            //        item.LYMTD = summaryResultModel.LYMTD;
+            //        item.LYYTD = summaryResultModel.LYYTD;
+            //        item.GrowthYTD = summaryResultModel.GrowthYTD;
+            //    }
+            //}
 
             foreach (var item in result)
             {
-                var summaryResultModel = summaryResultModels.FirstOrDefault(x => x.DepotCode == item.DepotCode);
-                if (summaryResultModel != null)
+                var depot = depotList.FirstOrDefault(x => x.Werks == item.DepotCode);
+                if (depot != null)
                 {
-                    item.CYMTD = summaryResultModel.CYMTD;
-                    item.LYMTD = summaryResultModel.LYMTD;
-                    item.GrowthMTD = summaryResultModel.GrowthMTD;
-                    item.NumberOfDealer = summaryResultModel.NumberOfDealer;
-                    item.LYMTD = summaryResultModel.LYMTD;
-                    item.LYYTD = summaryResultModel.LYYTD;
-                    item.GrowthYTD = summaryResultModel.GrowthYTD;
+                    item.DepotCode = depot.Werks;
+                    item.Depot = depot.Name1;
                 }
             }
 
-            if (depotList.Count == 1)
-            {
-                result.ForEach(x =>
-                {
-                    x.DepotCode = null;
-                    x.Depot = null;
+            //if (depotList.Count == 1)
+            //{
+            //    result.ForEach(x =>
+            //    {
+            //        x.DepotCode = null;
+            //        x.Depot = null;
 
-                });
-            }
+            //    });
+            //}
 
             return result;
         }
@@ -303,7 +316,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
             }).ToListAsync();
 
             List<string> lastYearAppointedDealer = _dealerInfoRepository
-                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Where(x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                            (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                            (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                            x.IsLastYearAppointed)
                 .Select(x => x.CustomerNo).Distinct()
                 .ToList();
 
@@ -319,15 +335,15 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 }
             }
 
-            if (depotList.Count == 1)
-            {
-                result.ToList().ForEach(x =>
-                {
-                    x.DepotCode = null;
-                    x.Depot = null;
+            //if (depotList.Count == 1)
+            //{
+            //    result.ToList().ForEach(x =>
+            //    {
+            //        x.DepotCode = null;
+            //        x.Depot = null;
 
-                });
-            }
+            //    });
+            //}
 
             return result;
         }
@@ -335,7 +351,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
         public async Task<IList<ReportClubSupremePerformance>> ReportClubSupremePerformanceSummaryReport(ClubSupremePerformanceSearchModel model, ClubSupremeReportType reportType)
         {
             var clubSupremeDealers = _dealerInfoRepository
-                .Where(x => x.ClubSupremeType > 0 && model.Depots.Contains(x.BusinessArea) && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None))
+                .Where(x => x.ClubSupremeType > 0 && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None)
+                            && (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) 
+                            && (!model.Territories.Any() || model.Territories.Contains(x.Territory)) 
+                            && (!model.Zones.Any() || model.Zones.Contains(x.CustZone)))
                 .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType, DepotCode = x.BusinessArea, Territory = x.Territory, Zone = x.CustZone, CustomerName = x.CustomerName }).Distinct()
                 .ToList();
 
