@@ -83,7 +83,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         }
 
-        public async Task<IList<OccasionToCelebrate>> GetOccassionToCelebrste()
+        public async Task<IList<OccasionToCelebrateNotification>> GetOccassionToCelebrste()
         {
             var appUser = AppIdentity.AppUser;
             var customer = await _authService.GetDealerByUserId(appUser.UserId);
@@ -319,7 +319,7 @@ namespace BergerMsfaApi.Services.AlertNotification
     public interface INotificationWorkerService
     {
         //public Task<bool> SaveOccassionToCelebrste();
-        public Task<IList<OccasionToCelebrate>> GetOccassionToCelebrste();
+        public Task<IList<OccasionToCelebrateNotification>> GetOccassionToCelebrste();
         //public Task<bool> SaveCheckBounceNotification();
         public Task<IList<ChequeBounceNotification>> GetCheckBounceNotification();
         //public Task<bool> SaveCreaditLimitNotification();

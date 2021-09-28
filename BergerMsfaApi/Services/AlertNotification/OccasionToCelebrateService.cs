@@ -11,13 +11,13 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
    public class OccasionToCelebrateService: IOccasionToCelebrateService
     {
-        private readonly IRepository<OccasionToCelebrate> _repository;
-        public OccasionToCelebrateService(IRepository<OccasionToCelebrate> repository)
+        private readonly IRepository<OccasionToCelebrateNotification> _repository;
+        public OccasionToCelebrateService(IRepository<OccasionToCelebrateNotification> repository)
         {
             _repository = repository;
         }
 
-        public async Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer)
+        public async Task<IEnumerable<OccasionToCelebrateNotification>> GetOccasionToCelebrate(IList<string> customer)
         {
             var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate.Date==DateTime.Now.Date).ToList();
             return result;
@@ -34,14 +34,14 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         //}
 
-        public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
+        public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions)
         {
             var res = await _repository.CreateListAsync(occasions.ToList());
             return res !=null;
 
         }
 
-        public async Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions)
+        public async Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions)
         {
             var res=await _repository.UpdateListAsync(occasions.ToList());
             return res!=null;

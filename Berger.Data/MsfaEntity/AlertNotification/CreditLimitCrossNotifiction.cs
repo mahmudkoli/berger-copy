@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Berger.Data.MsfaEntity.AlertNotification
 {
-   public class CreditLimitCrossNotifiction
+   public class CreditLimitCrossNotification
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Depot { get; set; }
         public string SalesOffice { get; set; }
         public string SalesGroup { get; set; }

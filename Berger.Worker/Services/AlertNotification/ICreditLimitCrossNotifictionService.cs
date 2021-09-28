@@ -8,6 +8,6 @@ namespace Berger.Worker.Services.AlertNotification
 {
     public interface ICreditLimitCrossNotifictionService
     {
-        Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotifiction> creditLimits);
+        Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotification> creditLimits);
     }
 }

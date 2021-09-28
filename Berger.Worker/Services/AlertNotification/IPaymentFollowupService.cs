@@ -8,6 +8,6 @@ namespace Berger.Worker.Services.AlertNotification
 {
     public interface IPaymentFollowupService
     {
-        Task<bool> SavePaymentFollowup(IList<PaymentFollowup> paymentFollowups);
+        Task<bool> SavePaymentFollowup(IList<PaymentFollowupNotification> paymentFollowups);
     }
 }

@@ -13,11 +13,15 @@ namespace Berger.Odata.Services
    public class AlertNotificationDataService: IAlertNotificationDataService
     {
         private readonly IAlertNotificationODataService _alertNotificationOData;
+        private readonly IODataService _oODataService;
+
         public AlertNotificationDataService(
-            IAlertNotificationODataService alertNotificationOData
+            IAlertNotificationODataService alertNotificationOData,
+            IODataService oODataService
             )
         {
             _alertNotificationOData = alertNotificationOData;
+            _oODataService = oODataService;
         }
 
         public async Task<IList<CollectionDataModel>> GetAllTodayCheckBounces()
@@ -27,21 +31,18 @@ namespace Berger.Odata.Services
             var toDate = today.DateTimeFormat();
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
-            selectQueryBuilder.AddProperty(CollectionColDef.CustomerNo)
-
-                                .AddProperty(CollectionColDef.Depot)
-                                .AddProperty(CollectionColDef.BusinessArea)
-                                .AddProperty(CollectionColDef.BounceStatus)
-                                .AddProperty(CollectionColDef.PostingDate)
+            selectQueryBuilder
+                                .AddProperty(CollectionColDef.CustomerNo)
                                 .AddProperty(CollectionColDef.CustomerName)
-                                .AddProperty(CollectionColDef.DocNumber)
+                                .AddProperty(CollectionColDef.BusinessArea)
+                                .AddProperty(CollectionColDef.Territory)
                                 .AddProperty(CollectionColDef.ChequeNo)
-                                .AddProperty(CollectionColDef.BankName)
-                                .AddProperty(CollectionColDef.ClearDate)
-                                .AddProperty(CollectionColDef.Amount)
-                                .AddProperty(CollectionColDef.CreditControlArea);
+                                .AddProperty(CollectionColDef.Amount);
 
-            var data = (await _alertNotificationOData.GetCustomerAndCreditControlArea(selectQueryBuilder,startClearDate: fromDate, endClearDate: toDate)).ToList();
+            var data = (await _oODataService.GetCollectionData(selectQueryBuilder, 
+                                                startPostingDate: fromDate, endPostingDate: toDate,
+                                                bounceStatus: ConstantsValue.ChequeBounceStatus,
+                                                docType: ConstantsValue.ChequeDocTypeDA)).ToList();
 
             return data;
         }
