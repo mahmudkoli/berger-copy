@@ -12,6 +12,7 @@ using System.Globalization;
 using Berger.Worker.Repositories;
 using Berger.Data.MsfaEntity.SAPTables;
 using Microsoft.Extensions.Logging;
+using X.PagedList;
 
 namespace Berger.Worker.Services.AlertNotification
 {
@@ -26,7 +27,11 @@ namespace Berger.Worker.Services.AlertNotification
 
         private readonly IApplicationRepository<ChequeBounceNotification> _chequeBounceNotificationRepo;
         private readonly IApplicationRepository<DealerInfo> _dealerInfoRepo;
+        private readonly IApplicationRepository<OccasionToCelebrateNotification> _occasionToCelebrateRepository;
         private readonly ILogger<NotificationWorkerService> _logger;
+        private readonly IApplicationRepository<CreditLimitCrossNotification> _creditLimitCrossNotificationRepository;
+        private readonly IApplicationRepository<PaymentFollowupNotification> _paymentFollowupNotificationRepository;
+        private readonly IApplicationRepository<RPRSPolicy> _rprsPolicyRepository;
 
         public NotificationWorkerService(IOccasionToCelebrateService occasionToCelebrate,
             IAlertNotificationDataService alertNotificationDataService,
@@ -34,9 +39,10 @@ namespace Berger.Worker.Services.AlertNotification
             IChequeBounceNotificationService chequeBounceNotificationService,
             IPaymentFollowupService paymentFollowupService,
             IApplicationRepository<ChequeBounceNotification> chequeBounceNotificationRepo,
-            IApplicationRepository<DealerInfo> dealerInfoRepo, 
-            ILogger<NotificationWorkerService> logger
-            )
+            IApplicationRepository<DealerInfo> dealerInfoRepo,
+            IApplicationRepository<OccasionToCelebrateNotification> occasionToCelebrateRepository,
+            ILogger<NotificationWorkerService> logger,
+            IApplicationRepository<CreditLimitCrossNotification> creditLimitCrossNotificationRepository, IApplicationRepository<PaymentFollowupNotification> paymentFollowupNotificationRepository, IApplicationRepository<RPRSPolicy> rprsPolicyRepository)
         {
             _occasionToCelebrate = occasionToCelebrate;
             _alertNotificationDataService = alertNotificationDataService;
@@ -45,7 +51,11 @@ namespace Berger.Worker.Services.AlertNotification
             _paymentFollowupService = paymentFollowupService;
             _chequeBounceNotificationRepo = chequeBounceNotificationRepo;
             _dealerInfoRepo = dealerInfoRepo;
+            _occasionToCelebrateRepository = occasionToCelebrateRepository;
             _logger = logger;
+            _creditLimitCrossNotificationRepository = creditLimitCrossNotificationRepository;
+            _paymentFollowupNotificationRepository = paymentFollowupNotificationRepository;
+            _rprsPolicyRepository = rprsPolicyRepository;
         }
 
 
@@ -56,15 +66,32 @@ namespace Berger.Worker.Services.AlertNotification
                 var today = DateTime.Now;
                 var chequeBounceODataNotifications = await _alertNotificationDataService.GetAllTodayCheckBounces();
 
+
+
+                var distinctPlan = chequeBounceODataNotifications.Select(x => x.BusinessArea).Distinct().ToList();
+                var distinctCustomer = chequeBounceODataNotifications.Select(x => x.CustomerNo).Distinct().ToList();
+                var distinctTerritory = chequeBounceODataNotifications.Select(x => x.Territory).Distinct().ToList();
+
+                var dbRecord = await _dealerInfoRepo.Where(x => distinctPlan
+                    .Contains(x.BusinessArea) && distinctCustomer.Contains(x.CustomerNo) &&
+                                                                distinctTerritory.Contains(x.Territory)).Select(x => new
+                                                                {
+                                                                    x.CustomerNo,
+                                                                    x.CustZone,
+                                                                    x.Territory,
+                                                                    x.BusinessArea,
+                                                                    x.CustomerName
+                                                                }).Distinct().ToListAsync();
+
+
                 var chequeBounceNotifications = (from cbn in chequeBounceODataNotifications
-                                                 join di in _dealerInfoRepo.GetAll()
+                                                 join di in dbRecord
                                                  on new { BusinessArea = cbn.BusinessArea, Territory = cbn.Territory, CustomerNo = cbn.CustomerNo }
                                                  equals new { BusinessArea = di.BusinessArea, Territory = di.Territory, CustomerNo = di.CustomerNo }
                                                  into cbninfoleftjoin
                                                  from cbninfo in cbninfoleftjoin.DefaultIfEmpty()
                                                  select new ChequeBounceNotification
                                                  {
-                                                     Id = Guid.NewGuid(),
                                                      Depot = cbninfo.BusinessArea,
                                                      Territory = cbninfo.Territory,
                                                      Zone = cbninfo.CustZone,
@@ -73,17 +100,27 @@ namespace Berger.Worker.Services.AlertNotification
                                                      ChequeNo = cbn.ChequeNo,
                                                      Amount = CustomConvertExtension.ObjectToDecimal(cbn.Amount),
                                                      NotificationDate = today
-                                                 }).ToList();
+                                                 }).Distinct().ToList();
+
+                chequeBounceNotifications.ForEach(x => x.Id = Guid.NewGuid());
 
                 if (!chequeBounceNotifications.Any())
+                {
                     await _chequeBounceNotificationRepo.DeleteAsync(x => x.NotificationDate.Date < today.Date);
+                    _logger.LogInformation("chequeBounce  deleting ....");
+                }
 
-                if (chequeBounceNotifications.Any()) 
+                if (chequeBounceNotifications.Any())
+                {
                     await _chequeBounceNotificationRepo.CreateListAsync(chequeBounceNotifications);
-                
+                    _logger.LogInformation("chequeBounce  insert ....");
+
+                }
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError("occasion error", ex);
                 return false;
             }
 
@@ -96,122 +133,228 @@ namespace Berger.Worker.Services.AlertNotification
 
             try
             {
-                IList<CreditLimitCrossNotification> lstcreditLimitCrossNotifiction = new List<CreditLimitCrossNotification>();
+                var lstcreditLimitCrossNotifiction = new List<CreditLimitCrossNotification>();
+
+                _logger.LogInformation("creditLimitCrossNotification  fetching data from odata ....");
+
                 var creditLimitCrossNotifiction = await _alertNotificationDataService.GetAllTodayCreditLimitCross();
 
+                DateTime today = DateTime.Now;
                 if (creditLimitCrossNotifiction.Count > 0)
                 {
                     foreach (var item in creditLimitCrossNotifiction)
                     {
+
                         CreditLimitCrossNotification creditLimit = new CreditLimitCrossNotification()
                         {
-                            CreditControlArea = item.CreditControlArea,
-                            CreditLimit = item.CreditLimit.ToString(),
-                            CustomarNo = item.CustomerNo,
                             Zone = item.CustZone,
+                            CreditControlArea = item.CreditControlArea,
+                            Depot = item.BusinessArea,
+                            CreditLimit = CustomConvertExtension.ObjectToDecimal(item.CreditLimit),
+                            CustomerNo = item.CustomerNo,
                             CustomerName = item.CustomerName,
-                            Division = item.Division,
-                            TotalDue = item.TotalDue.ToString(),
-                            NotificationDate = DateTime.Now,
+                            TotalDue = CustomConvertExtension.ObjectToDecimal(item.TotalDue),
+                            NotificationDate = today,
+                            Id = Guid.NewGuid(),
+                            Territory = item.Territory,
                             PriceGroup = item.PriceGroup
                         };
 
                         lstcreditLimitCrossNotifiction.Add(creditLimit);
                     }
-                    result = await _crossNotifictionService.SaveMultipleCreditLimitCrossNotifiction(lstcreditLimitCrossNotifiction);
-                }
-
-            }
-            catch (Exception)
-            {
 
 
-            }
-            return result;
-
-        }
-
-        public async Task<bool> SaveOccassionToCelebrste()
-        {
-            bool result = false;
-
-            try
-            {
-                IList<OccasionToCelebrateNotification> lstoccasionToCelebrates = new List<OccasionToCelebrateNotification>();
-                var occassiontocelebrate = await _alertNotificationDataService.GetAllTodayCustomerOccasions();
-
-                if (occassiontocelebrate.Count > 0)
-                {
-                    foreach (var item in occassiontocelebrate)
+                    if (!lstcreditLimitCrossNotifiction.Any())
                     {
-                        OccasionToCelebrateNotification occasion = new OccasionToCelebrateNotification()
-                        {
-                            CustomarNo = item.Customer,
-                            CustomerName = item.Name,
-                            DissChannel = item.DistrChannel,
-                            Division = item.Division,
-                            //DOB= string.IsNullOrEmpty(item.DOB)?null : item.DOB.DateFormatDate(),
-                            DOB = convertDate(item.DOB),
-                            NotificationDate = DateTime.Now,
-                            FirsChildDOB = convertDate(item.FirstChildDOB),
-                            SecondChildDOB = convertDate(item.SecondChildDOB),
-                            ThirdChildDOB = convertDate(item.ThirdChildDOB),
-                            SpouseDOB = convertDate(item.SpouseDOB)
-
-                        };
-
-                        lstoccasionToCelebrates.Add(occasion);
+                        await _creditLimitCrossNotificationRepository.DeleteAsync(x => x.NotificationDate.Date < today.Date);
+                        _logger.LogInformation("creditLimitCrossNotification  deleting ....");
                     }
-                    result = await _occasionToCelebrate.SaveOccasionToCelebrate(lstoccasionToCelebrates);
-                }
 
-            }
-            catch (Exception)
-            {
-
-
-            }
-            return result;
-
-        }
-
-        public async Task<bool> SavePaymnetFollowup()
-        {
-            bool result = false;
-
-            try
-            {
-                IList<PaymentFollowupNotification> lstpaymentFollowup = new List<PaymentFollowupNotification>();
-                var paymentFollowup = await _alertNotificationDataService.GetAllTodayPaymentFollowUp();
-
-                if (paymentFollowup.Count > 0)
-                {
-                    foreach (var item in paymentFollowup)
+                    if (lstcreditLimitCrossNotifiction.Any())
                     {
-                        PaymentFollowupNotification payment = new PaymentFollowupNotification()
-                        {
-                            InvoiceAge = item.Age,
-                            InvoiceDate = Convert.ToDateTime(item.Date),
-                            PostingDate = Convert.ToDateTime(item.PostingDate),
-                            CustomarNo = item.CustomerNo,
-                            CustomerName = item.CustomerName,
-                            DayLimit = item.DayLimit,
-                            InvoiceNo = item.InvoiceNo,
-                            NotificationDate = DateTime.Now,
-                        };
+                        await _creditLimitCrossNotificationRepository.CreateListAsync(lstcreditLimitCrossNotifiction);
+                        _logger.LogInformation("creditLimitCrossNotification  insert ....");
 
-                        lstpaymentFollowup.Add(payment);
                     }
-                    result = await _paymentFollowupService.SavePaymentFollowup(lstpaymentFollowup);
                 }
 
             }
             catch (Exception ex)
             {
+                _logger.LogError("creditLimitCrossNotification error", ex);
+                return false;
+
+            }
+
+            _logger.LogInformation("creditLimitCrossNotification done");
+            return true;
+
+        }
+
+        public async Task<bool> SaveOccasionToCelebrate()
+        {
+
+            try
+            {
+
+                _logger.LogInformation("Fetching occasion from odata...");
+
+                var occassiontocelebrate = await _alertNotificationDataService.GetAllTodayCustomerOccasions();
+
+                var notificationDate = DateTime.Now;
+
+                var distinctPlan = occassiontocelebrate.Select(x => x.Plant).Distinct().ToList();
+                var distinctCustomer = occassiontocelebrate.Select(x => x.Customer).Distinct().ToList();
+
+                var dbRecord = await _dealerInfoRepo.Where(x => distinctPlan
+                    .Contains(x.BusinessArea) && distinctCustomer.Contains(x.CustomerNo)).Select(x => new
+                    {
+                        x.CustomerNo,
+                        x.CustZone,
+                        x.Territory,
+                        x.BusinessArea
+                    }).Distinct().ToListAsync();
+
+                var data = (from cbn in occassiontocelebrate
+                            join di in dbRecord
+                               on new { BusinessArea = cbn.Plant, CustomerNo = cbn.Customer }
+                               equals new { BusinessArea = di.BusinessArea, CustomerNo = di.CustomerNo }
+                               into cbninfoleftjoin
+                            from cbninfo in cbninfoleftjoin.DefaultIfEmpty()
+                            select new OccasionToCelebrateNotification
+                            {
+
+                                CustomarNo = cbn.Customer,
+                                CustomerName = cbn.Name,
+                                Depot = cbn.Plant,
+                                DOB = convertDate(cbn.DOB),
+                                NotificationDate = notificationDate,
+                                FirsChildDOB = convertDate(cbn.FirstChildDOB),
+                                SecondChildDOB = convertDate(cbn.SecondChildDOB),
+                                ThirdChildDOB = convertDate(cbn.ThirdChildDOB),
+                                SpouseDOB = convertDate(cbn.SpouseDOB),
+                                Territory = cbninfo?.Territory,
+                                Zone = cbninfo?.CustZone
+                            }).Distinct().ToList();
+
+
+
+                data.ForEach(x => x.Id = Guid.NewGuid());
+
+                if (!data.Any())
+                {
+                    _logger.LogInformation("Delete existing occasion data...");
+                    await _occasionToCelebrateRepository.DeleteAsync(x => x.NotificationDate <= notificationDate);
+
+                }
+
+                if (data.Any())
+                {
+                    _logger.LogInformation("Inserting occasion data...");
+                    await _occasionToCelebrateRepository.CreateListAsync(data);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("occasion error", ex);
+
+                return false;
 
 
             }
-            return result;
+            _logger.LogInformation("occasion scheduler work done..");
+
+            return true;
+
+        }
+
+        public async Task<bool> SavePaymentFollowup()
+        {
+
+            try
+            {
+                IList<PaymentFollowupNotification> lstpaymentFollowup = new List<PaymentFollowupNotification>();
+
+                var dbDealerRecord = await _dealerInfoRepo.Where(x => x.CustomerName != "").Select(x => new
+                {
+                    x.CustZone,
+                    x.BusinessArea,
+                    x.Territory,
+                    x.CustomerNo,
+                    x.CustomerName,
+                    x.PriceGroup
+                }).Distinct().ToListAsync();
+
+                var rprsDayPolicy = (await _rprsPolicyRepository.GetAllAsync()).ToList();
+
+                foreach (string customerNo in dbDealerRecord.Select(x => x.CustomerNo).Distinct().ToList())
+                {
+                    var paymentFollowup = await _alertNotificationDataService.GetAllTodayPaymentFollowUp(customerNo);
+
+
+                    var data = (from cbn in paymentFollowup
+                                join di in dbDealerRecord
+                            on new { CustomerNo = cbn.CustomerNo }
+                            equals new { CustomerNo = di.CustomerNo }
+                            into cbninfoleftjoin
+                                from cbninfo in cbninfoleftjoin.DefaultIfEmpty()
+                                select new PaymentFollowupNotification
+                                {
+                                    InvoiceAge = CustomConvertExtension.ObjectToInt(cbn.Age),
+                                    PostingDate = Convert.ToDateTime(cbn.PostingDate),
+                                    CustomarNo = cbn.CustomerNo,
+                                    CustomerName = cbninfo.CustomerName,
+                                    DayLimit = CustomConvertExtension.ObjectToInt(cbn.DayLimit),
+                                    InvoiceNo = cbn.InvoiceNo,
+                                    Depot = cbninfo.BusinessArea,
+                                    Territory = cbninfo.Territory,
+                                    Zone = cbninfo.CustZone,
+                                    PriceGroup = cbninfo.PriceGroup,
+                                    IsRprsPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCreditBuyer,
+                                    IsFastPayCarryPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
+                                                            cbninfo.PriceGroup == ConstantsValue.PriceGroupFastPayCarry
+                                }).Distinct().ToList();
+
+                    foreach (var item in data)
+                    {
+                        int dayCount = 0;
+                        item.Id = Guid.NewGuid();
+                        if (item.IsRprsPayment)
+                        {
+                            dayCount = rprsDayPolicy
+                               .FirstOrDefault(x => item.DayLimit >= x.FromDaysLimit && item.DayLimit <= x.ToDaysLimit)
+                               ?.NotificationDays ?? 0;
+                        }
+                        else if (item.IsFastPayCarryPayment)
+                        {
+                            dayCount = 3;
+                        }
+
+                        item.NotificationDate = item.PostingDate.Value.AddDays(dayCount - 1);
+                    }
+
+
+                    _logger.LogInformation("Delete existing PaymentFollowup data...");
+                    await _paymentFollowupNotificationRepository.DeleteAsync(x => x.CustomarNo == customerNo);
+
+
+                    if (data.Any())
+                    {
+                        _logger.LogInformation("Inserting PaymentFollowup data...");
+                        await _paymentFollowupNotificationRepository.CreateListAsync(data);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PaymentFollowup error.", ex);
+                return false;
+
+            }
+            return true;
 
         }
 
@@ -241,10 +384,10 @@ namespace Berger.Worker.Services.AlertNotification
 
     public interface INotificationWorkerService
     {
-        public Task<bool> SaveOccassionToCelebrste();
+        public Task<bool> SaveOccasionToCelebrate();
         public Task<bool> SaveCheckBounceNotification();
         public Task<bool> SaveCreaditLimitNotification();
-        public Task<bool> SavePaymnetFollowup();
+        public Task<bool> SavePaymentFollowup();
 
 
     }

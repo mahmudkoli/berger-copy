@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Berger.Odata.Services
 {
-   public class AlertNotificationDataService: IAlertNotificationDataService
+    public class AlertNotificationDataService : IAlertNotificationDataService
     {
         private readonly IAlertNotificationODataService _alertNotificationOData;
         private readonly IODataService _oODataService;
@@ -39,7 +39,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(CollectionColDef.ChequeNo)
                                 .AddProperty(CollectionColDef.Amount);
 
-            var data = (await _oODataService.GetCollectionData(selectQueryBuilder, 
+            var data = (await _oODataService.GetCollectionData(selectQueryBuilder,
                                                 startPostingDate: fromDate, endPostingDate: toDate,
                                                 bounceStatus: ConstantsValue.ChequeBounceStatus,
                                                 docType: ConstantsValue.ChequeDocTypeDA)).ToList();
@@ -51,19 +51,15 @@ namespace Berger.Odata.Services
         {
             var selectQueryBuilder = new SelectQueryOptionBuilder();
 
-            selectQueryBuilder.AddProperty(nameof(CustomerDataModel.SalesOffice))
-                                .AddProperty(nameof(CustomerDataModel.SalesGroup))
-                                .AddProperty(nameof(CustomerDataModel.CustZone))
-                                .AddProperty(nameof(CustomerDataModel.PriceGroup))
-                                .AddProperty(nameof(CustomerDataModel.Division))
-                                .AddProperty(nameof(CustomerDataModel.Channel))
+            selectQueryBuilder.AddProperty(nameof(CustomerDataModel.CustZone))
                                 .AddProperty(nameof(CustomerDataModel.BusinessArea))
+                                .AddProperty(nameof(CustomerDataModel.PriceGroup))
                                 .AddProperty(nameof(CustomerDataModel.CustomerName))
                                 .AddProperty(nameof(CustomerDataModel.CustomerNo))
-                                .AddProperty(nameof(CustomerDataModel.Channel))
                                 .AddProperty(nameof(CustomerDataModel.CreditControlArea))
                                 .AddProperty(nameof(CustomerDataModel.CreditLimit))
-                                .AddProperty(nameof(CustomerDataModel.TotalDue));
+                                .AddProperty(nameof(CustomerDataModel.TotalDue))
+                                .AddProperty(nameof(CustomerDataModel.Territory));
 
             var data = (await _alertNotificationOData.GetCustomerDataByMultipleCustomerNo(selectQueryBuilder)).ToList();
 
@@ -86,7 +82,7 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp()
+        public async Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp(string customerNo)
         {
             var today = DateTime.Now;
             var fromDate = today.DateTimeFormat();
@@ -94,9 +90,8 @@ namespace Berger.Odata.Services
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
-
-                                .AddProperty(FinancialColDef.CreditControlArea)
-                                .AddProperty(FinancialColDef.CustomerName)
+                .AddProperty(FinancialColDef.CreditControlArea)
+                                //.AddProperty(FinancialColDef.CustomerName)
                                 .AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Age)
@@ -104,7 +99,7 @@ namespace Berger.Odata.Services
                                 .AddProperty(FinancialColDef.Date);
 
 
-            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder,startDate: fromDate, endDate: toDate)).ToList();
+            var data = (await _alertNotificationOData.GetFinancialDataByCustomer(selectQueryBuilder, endDate: toDate,customerNo: customerNo)).ToList();
 
             return data;
         }
@@ -113,20 +108,16 @@ namespace Berger.Odata.Services
         {
             var today = DateTime.Now;
             var oldDate = new DateTime(1000, 01, 01);
-            var dateFormat = "yyyyMMdd";
-            var resultDateFormat = "dd MMM yyyy";
 
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(CustomerOccasionColDef.Customer)
                                 .AddProperty(CustomerOccasionColDef.Name)
-                                .AddProperty(CustomerOccasionColDef.SalesOffice)
-                                .AddProperty(CustomerOccasionColDef.DistrChannel)
-                                .AddProperty(CustomerOccasionColDef.Division)
                                 .AddProperty(CustomerOccasionColDef.DOB)
                                 .AddProperty(CustomerOccasionColDef.SpouseDOB)
                                 .AddProperty(CustomerOccasionColDef.FirstChildDOB)
                                 .AddProperty(CustomerOccasionColDef.SecondChildDOB)
-                                .AddProperty(CustomerOccasionColDef.ThirdChildDOB);
+                                .AddProperty(CustomerOccasionColDef.ThirdChildDOB)
+                                .AddProperty(CustomerOccasionColDef.Plant);
 
             var data = (await _alertNotificationOData.GetCustomerOccasionData(selectQueryBuilder)).ToList();
 

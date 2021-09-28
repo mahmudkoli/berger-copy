@@ -106,8 +106,8 @@ namespace Berger.Worker
                     services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
                     services.AddHostedService<Worker>();
                     services.AddHostedService<DailySalesNTargetDataWorker>();
-                    services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
                     services.AddHostedService<DailySalesDataSummaryUpdateWorker>();
+                    services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
                 });
     }
 }

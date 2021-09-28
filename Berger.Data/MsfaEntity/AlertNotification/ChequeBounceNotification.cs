@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Berger.Data.MsfaEntity.AlertNotification
 {
@@ -8,7 +6,6 @@ namespace Berger.Data.MsfaEntity.AlertNotification
     {
         public Guid Id { get; set; }
         public string Depot { get; set; }
-        public string SalesOffice { get; set; }
         public string Territory { get; set; }
         public string Zone { get; set; }
         public string CustomarNo { get; set; }

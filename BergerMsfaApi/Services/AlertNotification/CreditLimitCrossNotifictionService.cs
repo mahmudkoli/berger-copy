@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.AlertNotification
 {
-   public class CreditLimitCrossNotifictionService: ICreditLimitCrossNotifictionService
+    public class CreditLimitCrossNotifictionService : ICreditLimitCrossNotifictionService
     {
         private readonly IRepository<CreditLimitCrossNotification> _repository;
         public CreditLimitCrossNotifictionService(IRepository<CreditLimitCrossNotification> repository)
@@ -18,7 +18,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IEnumerable<CreditLimitCrossNotification>> GetTodayCreditLimitCrossNotifiction(IList<string> customer)
         {
-            var result = _repository.Where(p => p.NotificationDate.Date == DateTime.Now.Date && customer.Contains(p.CustomarNo)).ToList();
+            var result = _repository.Where(p => p.NotificationDate.Date == DateTime.Now.Date && customer.Contains(p.CustomerNo)).ToList();
             return result;
         }
 
