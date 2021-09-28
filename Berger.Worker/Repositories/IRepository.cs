@@ -67,6 +67,8 @@ namespace Berger.Worker.Repositories
         Task<List<TEntity>> CreateListAsync(List<TEntity> items);
         Task<List<TEntity>> UpdateListAsync(List<TEntity> items, params string[] ignoreProperties);
         Task<int> UpdateListiAsync(List<TEntity> items, params string[] ignoreProperties);
+        Task<List<TEntity>> UpdateListLargeReturnAsync(List<TEntity> items, params string[] ignoreProperties);
+        Task<int> UpdateListLargeAsync(List<TEntity> items, params string[] ignoreProperties);
         Task<int> DeleteListAsync(List<TEntity> item);
         Task<TEntity> UpdateAsync(TEntity item);
         Task<TEntity> CreateOrUpdateAsync(TEntity item);
