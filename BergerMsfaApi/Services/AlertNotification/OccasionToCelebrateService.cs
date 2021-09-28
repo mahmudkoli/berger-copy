@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Services.AlertNotification
 {
-   public class OccasionToCelebrateService: IOccasionToCelebrateService
+    public class OccasionToCelebrateService : IOccasionToCelebrateService
     {
         private readonly IRepository<OccasionToCelebrateNotification> _repository;
         public OccasionToCelebrateService(IRepository<OccasionToCelebrateNotification> repository)
@@ -19,7 +19,15 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IEnumerable<OccasionToCelebrateNotification>> GetOccasionToCelebrate(IList<string> customer)
         {
-            var result = _repository.Where(p => customer.Contains(p.CustomarNo) && p.NotificationDate.Date==DateTime.Now.Date).ToList();
+            var tpDate = DateTime.Now;
+
+            var result = _repository.Where(p => customer.Contains(p.CustomarNo) &&
+                ((p.DOB.HasValue && (p.DOB.Value.Date.Month == tpDate.Month && p.DOB.Value.Day == tpDate.Day)) ||
+                (p.FirsChildDOB.HasValue && (p.FirsChildDOB.Value.Date.Month == tpDate.Month && p.FirsChildDOB.Value.Day == tpDate.Day)) ||
+                (p.SecondChildDOB.HasValue && (p.SecondChildDOB.Value.Date.Month == tpDate.Month && p.SecondChildDOB.Value.Day == tpDate.Day)) ||
+                (p.ThirdChildDOB.HasValue && (p.ThirdChildDOB.Value.Date.Month == tpDate.Month && p.ThirdChildDOB.Value.Day == tpDate.Day)) ||
+                (p.SpouseDOB.HasValue && (p.SpouseDOB.Value.Date.Month == tpDate.Month && p.SpouseDOB.Value.Day == tpDate.Day)))
+            ).ToList();
             return result;
         }
 
@@ -37,14 +45,14 @@ namespace BergerMsfaApi.Services.AlertNotification
         public async Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions)
         {
             var res = await _repository.CreateListAsync(occasions.ToList());
-            return res !=null;
+            return res != null;
 
         }
 
         public async Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions)
         {
-            var res=await _repository.UpdateListAsync(occasions.ToList());
-            return res!=null;
+            var res = await _repository.UpdateListAsync(occasions.ToList());
+            return res != null;
         }
     }
 }

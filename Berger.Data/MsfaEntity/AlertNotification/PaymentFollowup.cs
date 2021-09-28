@@ -16,7 +16,7 @@ namespace Berger.Data.MsfaEntity.AlertNotification
         public int DayLimit { get; set; }
         public string PriceGroup { get; set; }
         public DateTime NotificationDate { get; set; }
-
+        public decimal InvoiceValue { get; set; }
         public bool IsRprsPayment { get; set; }
         public bool IsFastPayCarryPayment { get; set; }
 

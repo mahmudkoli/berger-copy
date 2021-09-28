@@ -18,7 +18,10 @@ namespace BergerMsfaApi.Services.AlertNotification
 
         public async Task<IEnumerable<PaymentFollowupNotification>> GetToayPaymentFollowup(IList<string> customer)
         {
-            var res = _repository.Where(p=>p.NotificationDate.Date==DateTime.Now.Date && customer.Contains(p.CustomarNo)).ToList();
+            var res = _repository.Where(p => p.NotificationDate.Date == DateTime.Now.Date
+                                           && customer.Contains(p.CustomarNo)
+                                           && (p.IsRprsPayment || p.IsFastPayCarryPayment)
+                                           ).ToList();
             return res;
         }
 

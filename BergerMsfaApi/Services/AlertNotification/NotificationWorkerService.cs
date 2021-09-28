@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Berger.Odata.Extensions;
 using BergerMsfaApi.Models.Notification;
+using BergerMsfaApi.Repositories;
+using X.PagedList;
 
 namespace BergerMsfaApi.Services.AlertNotification
 {
@@ -24,7 +26,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         private readonly IODataCommonService _odataCommonService;
         private readonly IAuthService _authService;
         private readonly ILeadService _leadService;
-
+        private readonly IRepository<PaymentFollowupNotification> _paymentFollowupNotificationRepository;
 
         public NotificationWorkerService(IOccasionToCelebrateService occasionToCelebrate,
             IAlertNotificationDataService alertNotificationData,
@@ -33,8 +35,7 @@ namespace BergerMsfaApi.Services.AlertNotification
             IPaymentFollowupService paymentFollowupService,
             IAuthService authService,
             ILeadService leadService,
-            IODataCommonService odataCommonService
-            )
+            IODataCommonService odataCommonService, IRepository<PaymentFollowupNotification> paymentFollowupNotificationRepository)
         {
             _occasionToCelebrate = occasionToCelebrate;
             _alertNotificationData = alertNotificationData;
@@ -44,6 +45,7 @@ namespace BergerMsfaApi.Services.AlertNotification
             _authService = authService;
             _leadService = leadService;
             _odataCommonService = odataCommonService;
+            this._paymentFollowupNotificationRepository = paymentFollowupNotificationRepository;
         }
 
         public async Task<IList<ChequeBounceNotification>> GetCheckBounceNotification()
@@ -220,7 +222,7 @@ namespace BergerMsfaApi.Services.AlertNotification
         //    return result;
         //}
 
-        public async Task<IList<PaymentFollowUpNotificationModel>> GetRPRSPaymnetFollowup()
+        public async Task<IList<PaymentFollowUpNotificationModel>> GetRPRSPaymnetFollowupBk()
         {
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -256,6 +258,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                                                 CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.RPRSDays ?? 0;
                 var dayNotifyCount = rprsDayPolicy.FirstOrDefault(x => CustomConvertExtension.ObjectToInt(item.DayLimit) >= x.FromDaysLimit &&
                                                 CustomConvertExtension.ObjectToInt(item.DayLimit) <= x.ToDaysLimit)?.NotificationDays ?? 0;
+
                 item.RPRSDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayCount).DateFormat(resultDateFormat);
                 item.NotificationDate = item.InvoiceDate.DateFormatDate(resultDateFormat).AddDays(dayNotifyCount).DateFormat(resultDateFormat);
 
@@ -266,7 +269,58 @@ namespace BergerMsfaApi.Services.AlertNotification
             return resultRPRS;
         }
 
+
         public async Task<IEnumerable<PaymentFollowUpNotificationModel>> GetFastPayAndCarryPaymnetFollowup()
+        {
+
+            var appUser = AppIdentity.AppUser;
+
+            return await _paymentFollowupNotificationRepository.Where(x =>
+                    x.IsFastPayCarryPayment && x.NotificationDate.Date == DateTime.Now.Date &&
+                    (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(x.Depot)) &&
+                    (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(x.Territory)) &&
+                    (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(x.Zone)))
+                .Select(x => new PaymentFollowUpNotificationModel
+                {
+                    CustomerNo = x.CustomarNo,
+                    CustomerName = x.CustomerName,
+                    InvoiceNo = x.InvoiceNo,
+                    InvoiceDate = x.PostingDate.ToString(),
+                    InvoiceAge = x.InvoiceAge.ToString(),
+                    DayLimit = x.DayLimit.ToString(),
+                    InvoiceValue=x.InvoiceValue.ToString(),
+                    PaymentFollowUpType = EnumPaymentFollowUpType.FastPayCarry
+                }).ToListAsync();
+
+        }
+        
+        public async Task<IList<PaymentFollowUpNotificationModel>> GetRPRSPaymnetFollowup()
+        {
+
+            var appUser = AppIdentity.AppUser;
+
+            return await _paymentFollowupNotificationRepository.Where(x =>
+                    x.IsRprsPayment && x.NotificationDate.Date == DateTime.Now.Date &&
+                    (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(x.Depot)) &&
+                    (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(x.Territory)) &&
+                    (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(x.Zone)))
+                .Select(x => new PaymentFollowUpNotificationModel
+                {
+                    CustomerNo = x.CustomarNo,
+                    CustomerName = x.CustomerName,
+                    InvoiceNo = x.InvoiceNo,
+                    InvoiceDate = x.PostingDate.ToString(),
+                    InvoiceAge = x.InvoiceAge.ToString(),
+                    DayLimit = x.DayLimit.ToString(),
+                    InvoiceValue=x.InvoiceValue.ToString(),
+                    PaymentFollowUpType = EnumPaymentFollowUpType.RPRS
+                }).ToListAsync();
+
+        }
+
+
+
+        public async Task<IEnumerable<PaymentFollowUpNotificationModel>> GetFastPayAndCarryPaymnetFollowupBk()
         {
             var today = DateTime.Now;
             var dateFormat = "yyyy-MM-ddTHH:mm:ssZ";

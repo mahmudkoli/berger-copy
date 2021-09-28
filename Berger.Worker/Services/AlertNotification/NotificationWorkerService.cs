@@ -104,9 +104,9 @@ namespace Berger.Worker.Services.AlertNotification
 
                 chequeBounceNotifications.ForEach(x => x.Id = Guid.NewGuid());
 
-                if (!chequeBounceNotifications.Any())
+                if (chequeBounceNotifications.Any())
                 {
-                    await _chequeBounceNotificationRepo.DeleteAsync(x => x.NotificationDate.Date < today.Date);
+                    await _chequeBounceNotificationRepo.DeleteAsync(x => x.NotificationDate < today);
                     _logger.LogInformation("chequeBounce  deleting ....");
                 }
 
@@ -164,9 +164,9 @@ namespace Berger.Worker.Services.AlertNotification
                     }
 
 
-                    if (!lstcreditLimitCrossNotifiction.Any())
+                    if (lstcreditLimitCrossNotifiction.Any())
                     {
-                        await _creditLimitCrossNotificationRepository.DeleteAsync(x => x.NotificationDate.Date < today.Date);
+                        await _creditLimitCrossNotificationRepository.DeleteAsync(x => x.NotificationDate < today);
                         _logger.LogInformation("creditLimitCrossNotification  deleting ....");
                     }
 
@@ -223,7 +223,6 @@ namespace Berger.Worker.Services.AlertNotification
                             from cbninfo in cbninfoleftjoin.DefaultIfEmpty()
                             select new OccasionToCelebrateNotification
                             {
-
                                 CustomarNo = cbn.Customer,
                                 CustomerName = cbn.Name,
                                 Depot = cbn.Plant,
@@ -241,7 +240,7 @@ namespace Berger.Worker.Services.AlertNotification
 
                 data.ForEach(x => x.Id = Guid.NewGuid());
 
-                if (!data.Any())
+                if (data.Any())
                 {
                     _logger.LogInformation("Delete existing occasion data...");
                     await _occasionToCelebrateRepository.DeleteAsync(x => x.NotificationDate <= notificationDate);
@@ -314,7 +313,8 @@ namespace Berger.Worker.Services.AlertNotification
                                     PriceGroup = cbninfo.PriceGroup,
                                     IsRprsPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCreditBuyer,
                                     IsFastPayCarryPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
-                                                            cbninfo.PriceGroup == ConstantsValue.PriceGroupFastPayCarry
+                                                            cbninfo.PriceGroup == ConstantsValue.PriceGroupFastPayCarry,
+                                    InvoiceValue = CustomConvertExtension.ObjectToInt(cbn.Amount),
                                 }).Distinct().ToList();
 
                     foreach (var item in data)

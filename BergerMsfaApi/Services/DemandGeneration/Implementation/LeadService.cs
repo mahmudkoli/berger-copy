@@ -406,10 +406,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 (!(result.Zones != null && result.Zones.Any()) || result.Zones.Contains(x.Zone)) &&
                 (!(result.Territories != null && result.Territories.Any()) || result.Territories.Contains(x.Territory)) &&
                 (!(result.Depots != null && result.Depots.Any()) || result.Depots.Contains(x.Depot)) &&
-
-
-
-            (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
+                (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
                                    null,
                                    x => x.Include(i => i.LeadFollowUps),
                                    true

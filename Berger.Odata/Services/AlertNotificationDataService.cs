@@ -91,7 +91,7 @@ namespace Berger.Odata.Services
             var selectQueryBuilder = new SelectQueryOptionBuilder();
             selectQueryBuilder.AddProperty(FinancialColDef.CustomerNo)
                 .AddProperty(FinancialColDef.CreditControlArea)
-                                //.AddProperty(FinancialColDef.CustomerName)
+                                .AddProperty(FinancialColDef.Amount)
                                 .AddProperty(FinancialColDef.InvoiceNo)
                                 .AddProperty(FinancialColDef.PostingDate)
                                 .AddProperty(FinancialColDef.Age)
