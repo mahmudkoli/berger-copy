@@ -1043,7 +1043,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                      && (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
                                      && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
                                    )
-                                   orderby p.CollectionDate descending
+                                   //orderby p.CollectionDate descending
                                    select new
                                    {
                                        uinfo.Email,
@@ -1065,7 +1065,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                        depotName = depinfo.Name1,
                                        territory = p.Territory,
                                        zone = p.Zone
-                                   }).Distinct().ToListAsync();
+                                   }).Distinct().OrderByDescending(o => o.CollectionDate).ToListAsync();
 
             reportResult = customers.Select(x => new CustomerCollectionReportResultModel
             {
@@ -2988,7 +2988,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     Target="N/A",
                     Actual =lead.Select(p=>p.LeadFollowUp.Id).Distinct().Count(x=>x>0).ToString(),
                     Variance="N/A",
-                    BusinessGeneration=lead.Sum(x=>x.LeadFollowUp.BusinessAchievement.BergerValueSales).ToString(),
+                    BusinessGeneration=lead.Sum(x=>x.LeadFollowUp?.BusinessAchievement?.BergerValueSales??0).ToString(),
                     //UserID=data.Select(x=>x.UserEmail).FirstOrDefault()
                     UserID=query.UserId.HasValue?userinfo.Email:string.Empty,
                     DepotID=query.Depot,
