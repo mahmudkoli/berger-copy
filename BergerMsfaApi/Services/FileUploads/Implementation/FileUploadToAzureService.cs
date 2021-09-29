@@ -29,19 +29,21 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         {
 
             string filePath = GetFileFolderPath(type);
-            filePath = Path.Combine(filePath, fileName).MakeBackToForwardSlash();
+            filePath = Path.Combine(filePath, fileName);
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath=filePath.MakeBackToForwardSlash();
             return await _blobService.UploadContentBlobAsync(await file.GetBytes(), filePath);
-
-            // fileName += Path.GetExtension(file.FileName);
-            // filePath = Path.Combine(filePath, fileName);
-
-            return filePath;
+            
         }
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
         {
             string filePath = GetImageFolderPath(type);
-            filePath = Path.Combine(filePath, fileName).MakeBackToForwardSlash();
+            filePath = Path.Combine(filePath, fileName);
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
             return await _blobService.UploadContentBlobAsync(await file.GetBytes(), filePath);
         }
 
@@ -59,7 +61,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type, int width, int height)
         {
             string filePath = GetImageFolderPath(type);
-            filePath = Path.Combine(filePath, fileName).MakeBackToForwardSlash();
+            filePath = Path.Combine(filePath, fileName);
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             using (Image image = Image.FromStream(file.OpenReadStream()))
             {
@@ -82,7 +87,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type)
         {
             string filePath = this.GetImageFolderPath(type);
-            filePath = Path.Combine(filePath, fileName).MakeBackToForwardSlash();
+            filePath = Path.Combine(filePath, fileName);
+            string extension = ".jpg";
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             byte[] bytes = Convert.FromBase64String(base64String);
             using (MemoryStream ms = new MemoryStream(bytes))
@@ -98,7 +106,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type, int width, int height)
         {
             string filePath = GetImageFolderPath(type);
-            filePath = Path.Combine(filePath, fileName).MakeBackToForwardSlash();
+            filePath = Path.Combine(filePath, fileName);
+            string extension = ".jpg";
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             byte[] bytes = Convert.FromBase64String(base64String);
             using (MemoryStream ms = new MemoryStream(bytes))
