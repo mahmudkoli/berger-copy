@@ -25,6 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.AutoRegisterDi;
 using AutoMapper;
+using Azure.Storage.Blobs;
 using Berger.Common.HttpClient;
 using Berger.Odata.Services;
 using Berger.Odata.Repositories;
@@ -33,6 +34,9 @@ using BergerMsfaApi.Models.EmailVm;
 using BergerMsfaApi.Services.Excel.Implementation;
 using BergerMsfaApi.Services.Excel.Interface;
 using BergerMsfaApi.Services.AlertNotification;
+using BergerMsfaApi.Services.Blob;
+using BergerMsfaApi.Services.FileUploads.Implementation;
+using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.KPI.Implementation;
 using Microsoft.AspNetCore.Http.Features;
@@ -142,7 +146,7 @@ namespace BergerMsfaApi
                     .AsPublicImplementedInterfaces();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
-                    .Where(c => c.Name.EndsWith("Service"))
+                    .Where(c => c.Name.EndsWith("Service") && c.Name!= "FileUploadService")
                     .AsPublicImplementedInterfaces();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -233,6 +237,14 @@ namespace BergerMsfaApi
                     }
                 });
             });
+
+            string connectionString = Configuration.GetValue<string>("AzureStorageConnectionString:ConnectionString");
+
+            services.AddSingleton(x => new BlobServiceClient(connectionString));
+
+            services.AddSingleton<IBlobService, BlobService>();
+
+            services.AddScoped<IFileUploadService,FileUploadToAzureService> ();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
