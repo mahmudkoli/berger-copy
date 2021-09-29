@@ -635,7 +635,7 @@ namespace BergerMsfaApi.Controllers.Report
         }
 
         [HttpGet("DownloadAddhocDealerSalesCall")]
-        public IActionResult DownloadAddhocDealerSalesCall([FromQuery] DealerSalesCallReportSearchModel query)
+        public async Task<IActionResult> DownloadAddhocDealerSalesCallAsync([FromQuery] DealerSalesCallReportSearchModel query)
         {
             try
             {
@@ -643,7 +643,49 @@ namespace BergerMsfaApi.Controllers.Report
                 query.PageSize = int.MaxValue;
                 var result = _portalReportService.GetAddhocDealerSalesCallReportBySp(query);
 
-                return Ok(result);
+                var columnNames = new Dictionary<string, string>();
+                var imageColumns = new List<string>();
+                var competitionSalesGroup = new List<string>();
+                var preDefine = new Dictionary<string, string>() 
+                {
+                    {"ssStatus", "Status"},
+                    {"ssReasonForPourOrAverage", "Reason for poor or Average"},
+                    {"sdInfluecePercent", "Influence %"},
+                    {"painterInfluecePercent", "Influenc %"},
+                    {"csRemarks", "Remarks"},
+                    {"pdmRemarks", "Remark"},
+                    {"dealerSatisfactionStatus", "dStatus" }
+                };
+                foreach (var item in result)
+                {
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        if(preDefine.TryGetValue(kvp.Key, out string val)) columnNames.Add(kvp.Key, val);
+                        else columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                        if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
+                        if (kvp.Key.EndsWith("AvgMonthlySales") || kvp.Key.EndsWith("ActualMTDSales")) competitionSalesGroup.Add(kvp.Key);
+                    }
+                    break;
+                }
+                var parentChildHeaders = new Dictionary<string, List<string>>() 
+                { 
+                    { "Secondary Sales", new List<string>()  { "Status", "ReasonForPourOrAverage" } },
+                    { "Premium Product Activity", new List<string>() { "UspCommunication", "ProductLiftingStatus", "ReasonForNotLifting" } },
+                    { "Color Bank", new List<string>() { "CbMachineStatus", "CbProductivity" } },
+                    { "Sub-Dealer Management", new List<string>() { "SubDealerInfluence", "SdInfluecePercent" } },
+                    { "Painter", new List<string>() { "PainterInfluence", "PainterInfluecePercent" } },
+                    { "Shop Manage/Shop Boy", new List<string>() { "ProductKnoledge", "SalesTechniques", "MerchendisingImprovement" } },
+                    { "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
+                                                                        "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
+                    { "Competition Sales", competitionSalesGroup },
+                    { "Dealer Satisfaction", new List<string>() { "DealerSatisfactionStatus", "DealerDissatisfactionReason" } }
+                };
+
+                var data = await _excelReaderService.GetExcelWithImage("AdHocDealerSalesCallReport.xlsx", "data", result, 
+                                    colNames: columnNames, imageColNames: imageColumns, parentChildHeaders: parentChildHeaders);
+                return data;
+
+                //return Ok(result);
             }
             catch (Exception ex)
             {
