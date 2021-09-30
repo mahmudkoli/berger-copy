@@ -5,76 +5,80 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
+using Berger.Common.Extensions;
+using BergerMsfaApi.Extensions;
+using BergerMsfaApi.Services.Blob;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace BergerMsfaApi.Services.FileUploads.Implementation
 {
-    public class FileUploadService : IFileUploadService
+    public class FileUploadToAzureService : IFileUploadService
     {
         private readonly IWebHostEnvironment _host;
+        private readonly IBlobService _blobService;
 
-        public FileUploadService(
-            IWebHostEnvironment host)
+        public FileUploadToAzureService(IWebHostEnvironment host, IBlobService blobService)
         {
             _host = host;
+            _blobService = blobService;
         }
 
         public async Task<string> SaveFileAsync(IFormFile file, string fileName, FileUploadCode type)
         {
-            string filePath = this.GetFileFolderPath(type);
 
-            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
-
-            fileName += Path.GetExtension(file.FileName);
+            string filePath = GetFileFolderPath(type);
             filePath = Path.Combine(filePath, fileName);
-
-            using (var stream = new FileStream(Path.Combine(_host.WebRootPath, filePath), FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return filePath;
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath=filePath.MakeBackToForwardSlash();
+            return await _blobService.UploadContentBlobAsync(await file.GetBytes(), filePath);
+            
         }
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type)
         {
-            string filePath = this.GetImageFolderPath(type);
-
-            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
-
-            fileName += Path.GetExtension(file.FileName); 
+            string filePath = GetImageFolderPath(type);
             filePath = Path.Combine(filePath, fileName);
-
-            using (var stream = new FileStream(Path.Combine(_host.WebRootPath, filePath), FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return filePath;
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
+            return await _blobService.UploadContentBlobAsync(await file.GetBytes(), filePath);
         }
+
+        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
+        {
+            using (var ms = new MemoryStream())
+            {
+                imageIn.Save(ms, imageIn.RawFormat);
+                return ms.ToArray();
+            }
+        }
+
+
 
         public async Task<string> SaveImageAsync(IFormFile file, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetImageFolderPath(type);
-
-            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
-
-            fileName += Path.GetExtension(file.FileName); 
+            string filePath = GetImageFolderPath(type);
             filePath = Path.Combine(filePath, fileName);
+            string extension = Path.GetExtension(file.FileName);
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             using (Image image = Image.FromStream(file.OpenReadStream()))
             {
                 Image newImage = image;
-                if(image.Width > width || image.Height > height)
+                if (image.Width > width || image.Height > height)
                 {
                     newImage = await ResizeImageAsync(image, width, height);
                 }
-                newImage.Save(Path.Combine(_host.WebRootPath, filePath));
+
+                byte[] imageToByteArray = ImageToByteArray(image);
+
+                filePath = await _blobService.UploadContentBlobAsync(imageToByteArray, filePath);
+
+                //newImage.Save(Path.Combine(_host.WebRootPath, filePath));
             }
 
             return filePath;
@@ -83,33 +87,29 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type)
         {
             string filePath = this.GetImageFolderPath(type);
-
-            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
-
-            fileName += ".jpg";
             filePath = Path.Combine(filePath, fileName);
+            string extension = ".jpg";
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             byte[] bytes = Convert.FromBase64String(base64String);
             using (MemoryStream ms = new MemoryStream(bytes))
             {
                 Image image = Image.FromStream(ms);
-                Image newImage = image;
-                newImage.Save(Path.Combine(_host.WebRootPath, filePath));
-            }
+                //Image newImage = image;
 
+                filePath = await _blobService.UploadContentBlobAsync(ImageToByteArray(image), filePath);
+            }
             return filePath;
         }
 
         public async Task<string> SaveImageAsync(string base64String, string fileName, FileUploadCode type, int width, int height)
         {
-            string filePath = this.GetImageFolderPath(type);
-
-            if (!Directory.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                Directory.CreateDirectory(Path.Combine(_host.WebRootPath, filePath));
-
-            fileName += ".jpg";
+            string filePath = GetImageFolderPath(type);
             filePath = Path.Combine(filePath, fileName);
+            string extension = ".jpg";
+            filePath += extension;
+            filePath = filePath.MakeBackToForwardSlash();
 
             byte[] bytes = Convert.FromBase64String(base64String);
             using (MemoryStream ms = new MemoryStream(bytes))
@@ -120,9 +120,8 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 {
                     newImage = await ResizeImageAsync(image, width, height);
                 }
-                newImage.Save(Path.Combine(_host.WebRootPath, filePath));
+                filePath = await _blobService.UploadContentBlobAsync(ImageToByteArray(newImage), filePath);
             }
-
             return filePath;
         }
 
@@ -138,14 +137,17 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
 
         public async Task DeleteImageAsync(string filePath)
         {
-            if (!string.IsNullOrWhiteSpace(filePath) && File.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                File.Delete(Path.Combine(_host.WebRootPath, filePath));
+            if (!string.IsNullOrWhiteSpace(filePath))
+            {
+                await _blobService.DeleteBlobAsync(filePath);
+            }
         }
 
         public async Task DeleteFileAsync(string filePath)
         {
-            if (!string.IsNullOrWhiteSpace(filePath) && File.Exists(Path.Combine(_host.WebRootPath, filePath)))
-                File.Delete(Path.Combine(_host.WebRootPath, filePath));
+            if (!string.IsNullOrWhiteSpace(filePath))
+                await _blobService.DeleteBlobAsync(filePath);
+
         }
 
         private string GetImageFolderPath(FileUploadCode type)
