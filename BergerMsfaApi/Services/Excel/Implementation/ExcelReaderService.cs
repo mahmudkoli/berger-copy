@@ -24,7 +24,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         public ExcelReaderService(IWebHostEnvironment hostEnvironment)
         {
             this._hostEnvironment = hostEnvironment;
-            this._rootFolder = hostEnvironment.WebRootPath;
+            //this._rootFolder = hostEnvironment.WebRootPath;
+            this._rootFolder = "";
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {

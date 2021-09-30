@@ -133,7 +133,7 @@ export class QuestionSetListComponent implements OnInit, OnDestroy {
 		enabledSerialNo: true,
 		// pageSize: 10,
 		enabledPagination: true,
-		enabledDeleteBtn: true,
+		// enabledDeleteBtn: true,
 		enabledEditBtn: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,

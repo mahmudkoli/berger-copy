@@ -101,9 +101,11 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var item = await _dealerSalesCallRepository.FirstOrDefaultAsync(x => x.Id == dealerImageModel.Id);
 
-            string fileDirectory = Path.Combine(
-                Directory.GetCurrentDirectory(), @"wwwroot\");
-            var fullPath = fileDirectory + dealerImageModel.URL;
+            //string fileDirectory = Path.Combine(
+            //    Directory.GetCurrentDirectory(), @"wwwroot\");
+            //var fullPath = fileDirectory + dealerImageModel.URL;
+
+            var fullPath = dealerImageModel.URL;
 
             if (item != null)
             {
@@ -150,7 +152,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageBase64))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                model.CompetitionProductDisplayImageUrl = model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
+                model.CompetitionProductDisplayImageUrl = model.CompetitionProductDisplayImageBase64.Substring(model.CompetitionProductDisplayImageBase64.LastIndexOf(',') + 1);
                 dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
