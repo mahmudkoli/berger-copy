@@ -81,13 +81,13 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
@@ -151,7 +151,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
                 model.CompetitionProductDisplayImageUrl = model.CompetitionProductDisplayImageUrl.Substring(model.CompetitionProductDisplayImageUrl.LastIndexOf(',') + 1);
-                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageBase64))
@@ -159,7 +159,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
                 model.CompetitionSchemeModalityImageUrl = model.CompetitionSchemeModalityImageBase64.Substring(model.CompetitionSchemeModalityImageBase64.LastIndexOf(',') + 1);
 
-                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
@@ -192,13 +192,13 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
                 {
                     var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                    dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                    dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
                 }
 
                 if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
                 {
                     var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                    dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                    dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
                 }
 
                 dealerSalesCalls.Add(dealerSalesCall);

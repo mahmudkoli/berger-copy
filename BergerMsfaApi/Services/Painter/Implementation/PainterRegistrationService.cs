@@ -394,14 +394,14 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
                 _painter.PainterImageUrl =
                                   await _fileUploadSvc
-                                  .SaveImageAsync(_painter.PainterImageUrl, _painterImageFileName, FileUploadCode.PainterRegistration, 300, 300);
+                                  .SaveImageAsync(_painter.PainterImageUrl, _painterImageFileName, FileUploadCode.PainterRegistration);
 
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
                 var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration);
             }
 
             _painter.PainterNo = GeneratePainterNo(userId).Result;
@@ -423,7 +423,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             if (!string.IsNullOrEmpty(_findPainter.PainterImageUrl)) await _fileUploadSvc.DeleteImageAsync(_findPainter.PainterImageUrl);
 
-            if (!string.IsNullOrEmpty(_painter.PainterImageUrl)) _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.PainterRegistration, 300, 300);
+            if (!string.IsNullOrEmpty(_painter.PainterImageUrl)) _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.PainterRegistration);
 
             if (await _attachedDealerSvc.AnyAsync(f => f.PainterId == model.Id)) await _attachedDealerSvc.DeleteAsync(f => f.PainterId == model.Id);
 
@@ -440,7 +440,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 attach.Name = attach.Name.Replace(" ", "_");
                 var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration);
 
             }
 
