@@ -10,6 +10,7 @@ namespace BergerMsfaApi.Models.Users
     public class AuthenticateUserModel
     {
         public int UserId { get; set; }
+        public string UserName { get; set; }
         public string FullName { get; set; }
         public IList<KeyValuePairModel> DealerOpeningsHierarchyList { get; set; }
         public IList<MobileAppMenuPermissionModel> AppMenuPermission { get; set; }

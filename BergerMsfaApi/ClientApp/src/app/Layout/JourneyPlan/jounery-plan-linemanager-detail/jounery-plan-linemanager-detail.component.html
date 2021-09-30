@@ -6,7 +6,7 @@
                     <div class="col-md-6">
                         <p>Plan Date : {{journeyPlan?.planDate|date}}</p>
                         <p>Edit Count: {{journeyPlan.editCount}} times edited. Employee can edit maximum 2 times.</p>
-                        <p>Current Status :  <span class="badge badge-pill badge-primary">{{PlanStatusEnum[journeyPlan?.planStatus]}}</span></p>
+                        <p>Current Status :  <span class="badge badge-pill badge-primary">{{journeyPlan?.planStatusInText}}</span></p>
                         <p>Comment : {{journeyPlan.comment}}</p>
                         <!--<button *ngIf="showStatusBtn" (click)="onStatusChange(1,journeyPlan)" class="btn btn-sm btn-primary">Approved</button>
                         <button *ngIf="!showStatusBtn" (click)="onStatusChange(3,journeyPlan)" class="btn btn-sm btn-primary">Rejected</button>-->

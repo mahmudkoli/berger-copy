@@ -4,14 +4,16 @@ using Berger.Data.MsfaEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Berger.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210928132458_OccasionToCelebrateNotification-and-checkbounce-modified")]
+    partial class OccasionToCelebrateNotificationandcheckbouncemodified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +45,9 @@ namespace Berger.Data.Migrations
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SalesOffice")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Territory")
                         .HasColumnType("nvarchar(max)");
 
@@ -52,47 +57,6 @@ namespace Berger.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ChequeBounceNotifications");
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.CreditLimitCrossNotification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreditControlArea")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("CreditLimit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Depot")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PriceGroup")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Territory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalDue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Zone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CreditLimitCrossNotifications");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.OccasionToCelebrateNotification", b =>
@@ -137,59 +101,6 @@ namespace Berger.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OccasionToCelebrateNotifications");
-                });
-
-            modelBuilder.Entity("Berger.Data.MsfaEntity.AlertNotification.PaymentFollowupNotification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CustomarNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DayLimit")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Depot")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InvoiceAge")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InvoiceNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("InvoiceValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsFastPayCarryPayment")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRprsPayment")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PostingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PriceGroup")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Territory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentFollowupNotifications");
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.CollectionEntry.Payment", b =>

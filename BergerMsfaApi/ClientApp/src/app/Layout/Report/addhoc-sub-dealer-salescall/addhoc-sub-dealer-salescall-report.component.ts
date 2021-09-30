@@ -249,6 +249,7 @@ export class AddhocSubDealerSalescallReportComponent implements OnInit, OnDestro
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,

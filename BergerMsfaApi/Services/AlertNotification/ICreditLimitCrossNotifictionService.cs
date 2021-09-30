@@ -8,7 +8,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
     public interface ICreditLimitCrossNotifictionService
     {
-        Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotifiction> creditLimits);
-        Task<IEnumerable<CreditLimitCrossNotifiction>> GetTodayCreditLimitCrossNotifiction(IList<string> customer);
+        Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotification> creditLimits);
+        Task<IEnumerable<CreditLimitCrossNotification>> GetTodayCreditLimitCrossNotifiction(IList<string> customer);
     }
 }

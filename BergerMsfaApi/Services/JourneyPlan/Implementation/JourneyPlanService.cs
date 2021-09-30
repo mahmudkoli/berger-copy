@@ -148,7 +148,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.plan.Status,
                 PlanStatus = s.plan.PlanStatus,
-                PlanStatusInText = s.plan.PlanStatus.ToString(),
+                PlanStatusInText = s.plan.PlanStatus.ToString().AddSpacesToSentence(true),
                 EmployeeName = $"{s.emp.FullName}"
             }).ToList();
 
@@ -179,7 +179,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 PlanDate = s.plan.PlanDate.ToString("yyyy-MM-dd"),
                 Status = s.plan.Status,
                 PlanStatus = s.plan.PlanStatus,
-                PlanStatusInText = s.plan.PlanStatus.ToString(),
+                PlanStatusInText = s.plan.PlanStatus.ToString().AddSpacesToSentence(true),
                 EmployeeName = $"{s.emp.FullName}"
             }).ToList();
 
@@ -226,6 +226,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 PlanDate = plan.PlanDate.ToShortDateString(),
                 Status = plan.Status,
                 PlanStatus = plan.PlanStatus,
+                PlanStatusInText = plan.PlanStatus.ToString().AddSpacesToSentence(true),
                 Comment = plan.Comment,
                 EditCount = plan.EditCount,
 
@@ -446,7 +447,7 @@ namespace BergerMsfaApi.Services.Setup.Implementation
                 Status = s.Status,
                 PlanStatus = s.PlanStatus,
                 EditCount = s.EditCount,
-                PlanStatusInText = s.PlanStatus.ToString(),
+                PlanStatusInText = s.PlanStatus.ToString().AddSpacesToSentence(true),
                 EmployeeName = _userInfoSvc.Where(f => f.EmployeeId == s.EmployeeId).Select(s => $"{s.FullName}").FirstOrDefault()
 
             }).ToList();

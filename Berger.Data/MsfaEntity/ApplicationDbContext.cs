@@ -222,10 +222,11 @@ namespace Berger.Data.MsfaEntity
 
 
         #region Alert Notification
-        public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }
-        public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
-        public DbSet<OccasionToCelebrate> OccasionToCelebrate { get; set; }
-        public DbSet<PaymentFollowup> PaymentFollowup { get; set; }
+        public DbSet<ChequeBounceNotification> ChequeBounceNotifications { get; set; }
+        //public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
+        public DbSet<OccasionToCelebrateNotification> OccasionToCelebrateNotifications { get; set; }
+        public DbSet<CreditLimitCrossNotification> CreditLimitCrossNotifications { get; set; }
+        public DbSet<PaymentFollowupNotification> PaymentFollowupNotifications { get; set; }
         #endregion
 
         #region Sync

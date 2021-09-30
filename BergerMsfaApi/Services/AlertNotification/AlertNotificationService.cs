@@ -103,7 +103,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     var title = $"Cheque Bounce Notification.";
                     var body = $"Dealer ID: {item.Key.CustomarNo}, Dealer Name: {item.Key.CustomerName}, " +
-                        $"Number of Cheque: {item.Count()}, Total Amount of Cheque: {item.Sum(p=>p.Amount)}";
+                        $"Number of Cheque: {item.Count()}, Total Amount of Cheque: {item.Sum(p => p.Amount)}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
@@ -131,8 +131,8 @@ namespace BergerMsfaApi.Services.AlertNotification
                     var title = $"Credit Limit Cross Notifiction .";
                     var body = $"Dealer ID: {creditLimitCross.CustomerNo}, Dealer Name: {creditLimitCross.CustomerName}, " +
                         $"Value Limit: {creditLimitCross.CreditLimit}" +
-                        $"Total Due: {creditLimitCross.TotalDue}"+
-                        $"Excess Value: {creditLimitCross.TotalDue- creditLimitCross.CreditLimit}";
+                        $"Total Due: {creditLimitCross.TotalDue}" +
+                        $"Excess Value: {creditLimitCross.TotalDue - creditLimitCross.CreditLimit}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
@@ -159,7 +159,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     var title = $"RPRS Payment Followup.";
                     var body = $"Dealer ID: {paymentFollowUp.CustomerNo}, Dealer Name: {paymentFollowUp.CustomerName}, " +
-                        $"Invoice Value: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
+                        $"Invoice Value: {paymentFollowUp.InvoiceValue}, " +
                         $"Invoice Age: {paymentFollowUp.InvoiceAge}, RPRS Date: {paymentFollowUp.RPRSDate}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
@@ -188,7 +188,7 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     var title = $"Fast Pay & Carry Payment Followup.";
                     var body = $"Dealer ID: {paymentFollowUp.CustomerNo}, Dealer Name: {paymentFollowUp.CustomerName}, " +
-                        $"Invoice Value: {paymentFollowUp.InvoiceNo}, Invoice Date: {paymentFollowUp.InvoiceDate}, " +
+                        $"Invoice Value: {paymentFollowUp.InvoiceValue}, " +
                         $"Invoice Age: {paymentFollowUp.InvoiceAge}, Payment Date: {paymentFollowUp.RPRSDate}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
@@ -224,7 +224,6 @@ namespace BergerMsfaApi.Services.AlertNotification
                     {
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name: Birthdays.";
 
-
                     }
                     else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.SpouseDOB).Month)
                     {
@@ -241,13 +240,17 @@ namespace BergerMsfaApi.Services.AlertNotification
                         body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Second Child Birthdays.";
 
                     }
-                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Day && today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Month)
+                    else if (today.Day == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB).Day &&
+                             today.Month == CustomConvertExtension.ObjectToDateTime(customerOccasion.ThirdChildDOB)
+                                 .Month)
                     {
-                        body = $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Third Child Birthdays.";
-
+                        body =
+                            $"Dealer ID: {customerOccasion.CustomarNo}', Name: ({customerOccasion.CustomerName}) ,Occasion Name:Third Child Birthdays.";
                     }
 
-                    notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
+
+                    if (!string.IsNullOrWhiteSpace(body))
+                        notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
             }
             catch (Exception ex)
@@ -276,55 +279,51 @@ namespace BergerMsfaApi.Services.AlertNotification
                 switch (item.Name)
                 {
                     case ConstantAlertNotificationValue.OccasiontoCelebrate:
-                        var OccasiontoCelebrate = await GetCustomerOccasionNotification();
-                        app.cateegoryName = "Occasionto Celebrate Notification";
-                        app.notifications= OccasiontoCelebrate;
+                        var occasiontoCelebrate = await GetCustomerOccasionNotification();
+                        app.cateegoryName = "Occasion to Celebrate Notification";
+                        app.notifications = occasiontoCelebrate;
                         appAlerts.Add(app);
                         break;
 
                     case ConstantAlertNotificationValue.LeadFollowupReminder:
-                        var LeadFollowupReminder = await GetLeadFollowUpNotification();
-
+                        var leadFollowupReminder = await GetLeadFollowUpNotification();
                         app.cateegoryName = "Lead Followup Reminder Notification";
-                        app.notifications= LeadFollowupReminder;
+                        app.notifications = leadFollowupReminder;
                         appAlerts.Add(app);
                         break;
 
                     case ConstantAlertNotificationValue.ChequeBounceNotification:
-                        var ChequeBounceNotification = await GetCheckBounceNotification();
+                        var chequeBounceNotification = await GetCheckBounceNotification();
                         app.cateegoryName = "Cheque Bounce Notification";
-                        app.notifications= ChequeBounceNotification;
+                        app.notifications = chequeBounceNotification;
                         appAlerts.Add(app);
                         break;
 
                     case ConstantAlertNotificationValue.RPRSNotification:
-                        var RPRSNotification = await GetRPRSPaymentFollowUpNotification();
+                        var rprsNotification = await GetRPRSPaymentFollowUpNotification();
 
                         app.cateegoryName = "RPRS Notification";
-                        app.notifications= RPRSNotification;
+                        app.notifications = rprsNotification;
                         appAlerts.Add(app);
                         break;
 
                     case ConstantAlertNotificationValue.FastPayCarryNotification:
                         var FastPayCarryNotification = await GetFastPayCarryFollowUpNotification();
                         app.cateegoryName = "Fast Pay & Carry Notification";
-                        app.notifications= FastPayCarryNotification;
+                        app.notifications = FastPayCarryNotification;
                         appAlerts.Add(app);
                         break;
 
                     case ConstantAlertNotificationValue.CreditLimitCrossNotifiction:
                         var CreditLimitCrossNotifiction = await GetCreditLimitCrossNotification();
                         app.cateegoryName = "Credit Limit Cross Notifiction";
-                        app.notifications= CreditLimitCrossNotifiction;
+                        app.notifications = CreditLimitCrossNotifiction;
                         appAlerts.Add(app);
                         break;
                 }
 
             }
-
-
-
-                return appAlerts;
+            return appAlerts;
 
         }
     }

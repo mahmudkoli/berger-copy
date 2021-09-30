@@ -10,19 +10,22 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
     public class PaymentFollowupService : IPaymentFollowupService
     {
-        private readonly IRepository<PaymentFollowup> _repository;
-        public PaymentFollowupService(IRepository<PaymentFollowup> repository)
+        private readonly IRepository<PaymentFollowupNotification> _repository;
+        public PaymentFollowupService(IRepository<PaymentFollowupNotification> repository)
         {
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PaymentFollowup>> GetToayPaymentFollowup(IList<string> customer)
+        public async Task<IEnumerable<PaymentFollowupNotification>> GetToayPaymentFollowup(IList<string> customer)
         {
-            var res = _repository.Where(p=>p.NotificationDate.Date==DateTime.Now.Date && customer.Contains(p.CustomarNo)).ToList();
+            var res = _repository.Where(p => p.NotificationDate.Date == DateTime.Now.Date
+                                           && customer.Contains(p.CustomarNo)
+                                           && (p.IsRprsPayment || p.IsFastPayCarryPayment)
+                                           ).ToList();
             return res;
         }
 
-        public async Task<bool> SavePaymentFollowup(IList<PaymentFollowup> paymentFollowups)
+        public async Task<bool> SavePaymentFollowup(IList<PaymentFollowupNotification> paymentFollowups)
         {
             await _repository.CreateListAsync(paymentFollowups.ToList());
             var res = await _repository.SaveChangesAsync();

@@ -115,6 +115,7 @@ namespace BergerMsfaApi.Services.Implementation
                     //userId=AppIdentity.AppUser.UserId,
                     //fullName=AppIdentity.AppUser.FullName,
                     UserId = userInfo.Id,
+                    UserName = userInfo.UserName,
                     FullName = userInfo.FullName ?? string.Empty,
                     DealerOpeningsHierarchyList = dealerOpeningsHierarchyList, // only for app end
                     PainterRegistrationsHierarchyList = painterRegistrationsHierarchyList, // only for app end

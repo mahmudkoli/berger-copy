@@ -10,13 +10,13 @@ namespace Berger.Worker.Services.AlertNotification
 {
    public class CreditLimitCrossNotifictionService: ICreditLimitCrossNotifictionService
     {
-        private readonly IApplicationRepository<CreditLimitCrossNotifiction> _repository;
-        public CreditLimitCrossNotifictionService(IApplicationRepository<CreditLimitCrossNotifiction> repository)
+        private readonly IApplicationRepository<CreditLimitCrossNotification> _repository;
+        public CreditLimitCrossNotifictionService(IApplicationRepository<CreditLimitCrossNotification> repository)
         {
             _repository = repository;
         }
 
-        public async Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotifiction> creditLimits)
+        public async Task<bool> SaveMultipleCreditLimitCrossNotifiction(IList<CreditLimitCrossNotification> creditLimits)
         {
           var res=  await _repository.CreateListAsync(creditLimits.ToList());
             return res.Count > 0;

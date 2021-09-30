@@ -8,9 +8,9 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
    public interface IOccasionToCelebrateService
     {
-        Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
+        Task<bool> SaveOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions);
         //Task<bool> GetById(OccasionToCelebrate occasions);
-        Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrate> occasions);
-        Task<IEnumerable<OccasionToCelebrate>> GetOccasionToCelebrate(IList<string> customer);
+        Task<bool> UpdateOccasionToCelebrate(IList<OccasionToCelebrateNotification> occasions);
+        Task<IEnumerable<OccasionToCelebrateNotification>> GetOccasionToCelebrate(IList<string> customer);
     }
 }

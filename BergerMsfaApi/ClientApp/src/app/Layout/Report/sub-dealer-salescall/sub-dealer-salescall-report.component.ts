@@ -249,6 +249,7 @@ export class SubDealerSalescallReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,

@@ -160,6 +160,6 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
 }
 export enum PlanStatusNotEdited {
     Approved = 1,
-    Rejected=3
+    ChangeRequested=3
    
 }

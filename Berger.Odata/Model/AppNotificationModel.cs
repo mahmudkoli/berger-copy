@@ -79,6 +79,7 @@ namespace Berger.Odata.Model
         public string CustomerNo { get; set; }
         public string CustomerName { get; set; }
         public string InvoiceNo { get; set; }
+        public string InvoiceValue { get; set; }
         public string InvoiceDate { get; set; }
         public string InvoiceAge { get; set; }
         public string DayLimit { get;  set; }

@@ -10,7 +10,7 @@ namespace Berger.Odata.Services
     {
         Task<IList<CollectionDataModel>> GetAllTodayCheckBounces();
         Task<IList<CustomerDataModel>> GetAllTodayCreditLimitCross();
-        Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp();
+        Task<IList<FinancialDataModel>> GetAllTodayPaymentFollowUp(string customerNo);
         Task<IList<CustomerOccasionDataModel>> GetAllTodayCustomerOccasions();
 
     }

@@ -80,8 +80,8 @@ namespace Berger.Worker
                     services.Configure<WorkerSettingsModel>(options => hostContext.Configuration.GetSection("WorkerSettings").Bind(options));
                     services.Configure<WorkerConfig>(options => hostContext.Configuration.GetSection("WorkerConfig").Bind(options));
                     services.Configure<ODataSettingsModel>(options => hostContext.Configuration.GetSection("ODataSettings").Bind(options));
-                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(appConnectionString));
-                    services.AddDbContext<SAPDbContext>(options => options.UseSqlServer(sapConnectionString, op => op.CommandTimeout(1800)));
+                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(appConnectionString, opt => opt.CommandTimeout(3600)));
+                    services.AddDbContext<SAPDbContext>(options => options.UseSqlServer(sapConnectionString, op => op.CommandTimeout(3600)));
                     //services.AddScoped<DbContext, ApplicationDbContext>();
                     services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
                     services.AddScoped<SAPDbContext, SAPDbContext>();
@@ -106,8 +106,8 @@ namespace Berger.Worker
                     services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
                     services.AddHostedService<Worker>();
                     services.AddHostedService<DailySalesNTargetDataWorker>();
-                    services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
                     services.AddHostedService<DailySalesDataSummaryUpdateWorker>();
+                    services.AddHostedService<DailyAlertNotificationBulkUploadWorker>();
                 });
     }
 }
