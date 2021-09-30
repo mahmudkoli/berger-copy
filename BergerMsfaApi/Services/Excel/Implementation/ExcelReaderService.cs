@@ -19,10 +19,12 @@ namespace BergerMsfaApi.Services.Excel.Implementation
     public class ExcelReaderService : IExcelReaderService
     {
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly string _rootFolder;
 
         public ExcelReaderService(IWebHostEnvironment hostEnvironment)
         {
             this._hostEnvironment = hostEnvironment;
+            this._rootFolder = hostEnvironment.WebRootPath;
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {
@@ -127,7 +129,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             //List<string> property = new List<string>();
 
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
 
             string sFileName = @"SnapShotResult.xlsx";
@@ -227,9 +229,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (kvp.Key.Contains("_Image"))
                         {
-                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, kvp.Value.ToString())))
+                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(_rootFolder, kvp.Value.ToString())))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, kvp.Value.ToString()));
 
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
@@ -299,7 +301,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
         public async Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName, IList<T> data, Dictionary<string, string> colNames, Dictionary<string, string> imageColNames)
         {
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
             using (var exportData = new MemoryStream())
             {
@@ -345,9 +347,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
                             {
-                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(rootFolder, rowValue));
+                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(_rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();
@@ -418,7 +420,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
             if (parentChildHeaders != null & parentChildHeaders.Any())
                 allChildHeaders = parentChildHeaders.SelectMany(x => x.Value).ToList();
 
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
             using (var exportData = new MemoryStream())
             {
@@ -504,12 +506,12 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                         //ignore column set
                         if (!colNames.ContainsKey(kvp.Key) || ignoreColNames.Contains(kvp.Key)) continue;
 
-                        var rowValue = kvp.Value.ToString();
+                        var rowValue = kvp.Value?.ToString();
                         if (imageColNames.Contains(kvp.Key))
                         {
-                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();
@@ -547,7 +549,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
         public async Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas)
         {
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
             var sFileName = @"DealerOpeningReport.xlsx";
 
             using (var exportData = new MemoryStream())
@@ -615,9 +617,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, rowValue));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();
