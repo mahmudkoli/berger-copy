@@ -19,10 +19,12 @@ namespace BergerMsfaApi.Services.Excel.Implementation
     public class ExcelReaderService : IExcelReaderService
     {
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly string _rootFolder;
 
         public ExcelReaderService(IWebHostEnvironment hostEnvironment)
         {
             this._hostEnvironment = hostEnvironment;
+            this._rootFolder = hostEnvironment.WebRootPath;
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {
@@ -127,7 +129,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             //List<string> property = new List<string>();
 
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
 
             string sFileName = @"SnapShotResult.xlsx";
@@ -227,9 +229,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (kvp.Key.Contains("_Image"))
                         {
-                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, kvp.Value.ToString())))
+                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(_rootFolder, kvp.Value.ToString())))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, kvp.Value.ToString()));
 
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
@@ -299,7 +301,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
         public async Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName, IList<T> data, Dictionary<string, string> colNames, Dictionary<string, string> imageColNames)
         {
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
             using (var exportData = new MemoryStream())
             {
@@ -345,9 +347,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
                             {
-                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(rootFolder, rowValue));
+                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(_rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();
@@ -384,9 +386,170 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
         }
 
+        public async Task<FileContentResult> GetExcelWithImage(string fileName, string sheetName, dynamic data,
+            Dictionary<string, string> colNames = null,
+            List<string> ignoreColNames = null, 
+            List<string> imageColNames = null, 
+            Dictionary<string, List<string>> parentChildHeaders = null,
+            Dictionary<string, string> parentHeaderNames = null)
+        {
+            if (colNames == null)
+            {
+                colNames = new Dictionary<string, string>();
+                foreach (var item in data)
+                {
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        colNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                    }
+                    break;
+                }
+            }
+            if (imageColNames == null) imageColNames = new List<string>();
+            if (ignoreColNames == null) ignoreColNames = new List<string>();
+            if (parentHeaderNames == null)
+            {
+                parentHeaderNames = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, List<string>> kvp in parentChildHeaders)
+                {
+                    parentHeaderNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                }
+            }
+
+            var allChildHeaders = new List<string>();
+            if (parentChildHeaders != null & parentChildHeaders.Any())
+                allChildHeaders = parentChildHeaders.SelectMany(x => x.Value).ToList();
+
+            //var rootFolder = _hostEnvironment.WebRootPath;
+
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet(sheetName);
+                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowIndex = 0;
+                int colIndex = 0;
+
+                #region Header set......................................
+                IRow row1 = excelSheet.CreateRow(rowIndex);
+                IRow row2 = null;
+
+                if (allChildHeaders.Any())
+                {
+                    rowIndex = rowIndex + 1;
+                    row2 = excelSheet.CreateRow(rowIndex);
+                }
+
+                // Header row set
+                foreach (var item in data)
+                {
+                    colIndex = 0;
+                    var groupColValue = string.Empty;
+
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        //ignore column set
+                        if (!colNames.ContainsKey(kvp.Key) || ignoreColNames.Contains(kvp.Key)) continue;
+
+                        var colValue = colNames.TryGetValue(kvp.Key, out string val) ? val : kvp.Key;
+
+                        // check if has group column
+                        if(allChildHeaders.Any())
+                        {
+                            // without group and row span
+                            if (!allChildHeaders.Contains(kvp.Key))
+                            {
+                                row1.CreateCell(colIndex).SetCellValue(colValue);
+                                var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, colIndex, colIndex);
+                                excelSheet.AddMergedRegion(cra);
+                            }
+                            else
+                            {
+                                var grpVal = parentChildHeaders.FirstOrDefault(x => x.Value.Contains(kvp.Key));
+                                // first time col span for same group
+                                if (groupColValue!=grpVal.Key)
+                                {
+                                    groupColValue = grpVal.Key;
+                                    var grpColVal = parentHeaderNames.TryGetValue(grpVal.Key, out string valt) ? valt : grpVal.Key;
+                                    row1.CreateCell(colIndex).SetCellValue(grpColVal);
+                                    var craP = new NPOI.SS.Util.CellRangeAddress(0, 0, colIndex, colIndex+grpVal.Value.Count()-1);
+                                    excelSheet.AddMergedRegion(craP);
+                                }
+                                row2.CreateCell(colIndex).SetCellValue(colValue);
+                                //var cra = new NPOI.SS.Util.CellRangeAddress(1, 1, colIndex, colIndex);
+                                //excelSheet.AddMergedRegion(cra);
+                            }
+                        }
+                        else
+                        {
+                            row1.CreateCell(colIndex).SetCellValue(colValue);
+                            //var cra = new NPOI.SS.Util.CellRangeAddress(0, 0, colIndex, colIndex);
+                            //excelSheet.AddMergedRegion(cra);
+                        }
+
+                        colIndex++;
+                    }
+
+                    break;
+                }
+                #endregion
+
+                rowIndex++;
+                row1 = excelSheet.CreateRow(rowIndex);
+
+                foreach (var item in data)
+                {
+                    colIndex = 0;
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        //ignore column set
+                        if (!colNames.ContainsKey(kvp.Key) || ignoreColNames.Contains(kvp.Key)) continue;
+
+                        var rowValue = kvp.Value?.ToString();
+                        if (imageColNames.Contains(kvp.Key))
+                        {
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
+                            {
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
+                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+
+                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                anchor.Col1 = colIndex;
+                                anchor.Row1 = rowIndex;
+
+                                IPicture picture = drawing.CreatePicture(anchor, pic);
+                                picture.Resize(1);
+                            }
+                        }
+                        else
+                        {
+                            row1.CreateCell(colIndex).SetCellValue(rowValue);
+                        }
+
+                        colIndex++;
+                    }
+
+                    rowIndex++;
+                    row1 = excelSheet.CreateRow(rowIndex);
+                }
+
+                workbook.Write(exportData);
+                var fileContentResult = new FileContentResult(exportData.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = fileName
+                };
+
+                return fileContentResult;
+            }
+
+        }
+
         public async Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas)
         {
-            var rootFolder = _hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
             var sFileName = @"DealerOpeningReport.xlsx";
 
             using (var exportData = new MemoryStream())
@@ -454,9 +617,9 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(rootFolder, rowValue)))
+                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, rowValue));
+                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
                                 int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
                                 IDrawing drawing = excelSheet.CreateDrawingPatriarch();

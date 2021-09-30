@@ -19,5 +19,11 @@ namespace BergerMsfaApi.Services.Excel.Interface
         Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName,
             IList<T>data, Dictionary<string, string> colNames,
             Dictionary<string, string> imageColNames);
+        Task<FileContentResult> GetExcelWithImage(string fileName, string sheetName, dynamic data,
+            Dictionary<string, string> colNames = null,
+            List<string> ignoreColNames = null,
+            List<string> imageColNames = null,
+            Dictionary<string, List<string>> parentChildHeaders = null,
+            Dictionary<string, string> parentHeaderNames = null);
     }
 }

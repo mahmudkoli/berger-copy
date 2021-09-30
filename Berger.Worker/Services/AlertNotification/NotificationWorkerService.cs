@@ -120,7 +120,7 @@ namespace Berger.Worker.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                _logger.LogError("occasion error", ex);
+                _logger.LogError(ex, "occasion error");
                 return false;
             }
 
@@ -181,7 +181,7 @@ namespace Berger.Worker.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                _logger.LogError("creditLimitCrossNotification error", ex);
+                _logger.LogError(ex, "creditLimitCrossNotification error");
                 return false;
 
             }
@@ -257,7 +257,7 @@ namespace Berger.Worker.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                _logger.LogError("occasion error", ex);
+                _logger.LogError(ex, "occasion error");
 
                 return false;
 
@@ -276,7 +276,7 @@ namespace Berger.Worker.Services.AlertNotification
             {
                 IList<PaymentFollowupNotification> lstpaymentFollowup = new List<PaymentFollowupNotification>();
 
-                var dbDealerRecord = await _dealerInfoRepo.Where(x => x.CustomerName != "").Select(x => new
+                var dbDealerRecord = await _dealerInfoRepo.Where(x => x.CustomerNo != "").Select(x => new
                 {
                     x.CustZone,
                     x.BusinessArea,
@@ -288,7 +288,7 @@ namespace Berger.Worker.Services.AlertNotification
 
                 var rprsDayPolicy = (await _rprsPolicyRepository.GetAllAsync()).ToList();
 
-                foreach (string customerNo in dbDealerRecord.Select(x => x.CustomerNo).Distinct().ToList())
+                foreach (string customerNo in dbDealerRecord.Select(x => x.CustomerNo).Distinct().OrderBy(o => o).ToList())
                 {
                     var paymentFollowup = await _alertNotificationDataService.GetAllTodayPaymentFollowUp(customerNo);
 
@@ -336,8 +336,11 @@ namespace Berger.Worker.Services.AlertNotification
                     }
 
 
-                    _logger.LogInformation("Delete existing PaymentFollowup data...");
-                    await _paymentFollowupNotificationRepository.DeleteAsync(x => x.CustomarNo == customerNo);
+                    if (data.Any())
+                    {
+                        _logger.LogInformation("Delete existing PaymentFollowup data...");
+                        await _paymentFollowupNotificationRepository.DeleteAsync(x => x.CustomarNo == customerNo);
+                    }
 
 
                     if (data.Any())
@@ -350,7 +353,7 @@ namespace Berger.Worker.Services.AlertNotification
             }
             catch (Exception ex)
             {
-                _logger.LogError("PaymentFollowup error.", ex);
+                _logger.LogError(ex, "PaymentFollowup error.");
                 return false;
 
             }
