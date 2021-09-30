@@ -30,7 +30,7 @@ namespace BergerMsfaApi.Controllers.FileUpload
         {
             var result = await file.GetBytes();
 
-            var uploadContentBlobAsync = await _uploadService.SaveFileAsync(file, file.FileName, FileUploadCode.RegisterPainter);
+            var uploadContentBlobAsync = await _uploadService.SaveFileAsync(file, file.FileName, FileUploadCode.PainterRegistration);
 
             return Ok(uploadContentBlobAsync);
         }

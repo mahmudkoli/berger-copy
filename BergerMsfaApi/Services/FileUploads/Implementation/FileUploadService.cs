@@ -162,9 +162,9 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 case FileUploadCode.DealerSalesCall:
                     filePath = Path.Combine(filePath, "DealerSalesCall");
                     break;
-                case FileUploadCode.RegisterPainter:
-                    filePath = Path.Combine(filePath, "RegisterPainter");
-                    break;
+                //case FileUploadCode.RegisterPainter:
+                //    filePath = Path.Combine(filePath, "RegisterPainter");
+                //    break;
                 case FileUploadCode.LeadGeneration:
                     filePath = Path.Combine(filePath, "LeadGeneration");
                     break;
