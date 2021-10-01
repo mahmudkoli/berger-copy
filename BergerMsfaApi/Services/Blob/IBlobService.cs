@@ -13,5 +13,6 @@ namespace BergerMsfaApi.Services.Blob
        public Task<string> UploadContentBlobAsync(string content,string fileName);
        public Task DeleteBlobAsync(string blobName);
        public Task<string> UploadContentBlobAsync(byte[] bytes, string fileName);
+        Task<byte[]> GetFileBlobAsync(string blobName);
    }
 }

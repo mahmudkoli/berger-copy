@@ -216,5 +216,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             var size = files.Sum(s => s.Length);
             return size > (sizeMaxMB * 1024 * 1024);
         }
+
+        public Task<byte[]> GetFileAsync(string fullPath)
+        {
+            return File.ReadAllBytesAsync(fullPath);
+        }
     }
 }

@@ -95,5 +95,22 @@ namespace BergerMsfaApi.Services.Blob
         {
             return _blobServiceClient.GetBlobContainerClient(_containerName);
         }
+
+        public async Task<byte[]> GetFileBlobAsync(string blobName)
+        {
+            blobName = blobName.Replace(_basePath, "");
+
+            var blobClient = GetBlobClient(blobName);
+
+            if (blobClient.ExistsAsync().Result)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    blobClient.DownloadTo(ms);
+                    return ms.ToArray();
+                }
+            }
+            return new byte[] { };  // returns empty array
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using BergerMsfaApi.Extensions;
@@ -217,6 +218,11 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
             var files = this.Base64ToImage(base64Images);
             var size = files.Sum(s => s.Length);
             return size > (sizeMaxMB * 1024 * 1024);
+        }
+
+        public async Task<byte[]> GetFileAsync(string fullPath)
+        {
+            return await _blobService.GetFileBlobAsync(fullPath);
         }
     }
 }
