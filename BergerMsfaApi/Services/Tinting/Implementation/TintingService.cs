@@ -151,6 +151,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
         public async Task<bool> UpdateAsync(List<SaveTintingMachineModel> model)
         {
             string plantId = AppIdentity.AppUser.PlantIdList?.FirstOrDefault() ?? string.Empty;
+            int userId = AppIdentity.AppUser.UserId;
 
             foreach (var tinMac in model)
             {
@@ -165,7 +166,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                         Depot = plantId,
                         Territory = tinMac.Territory,
                         CompanyId = tinMac.CompanyId,
-                        UserInfoId = tinMac.UserInfoId,
+                        UserInfoId = userId,
                         NoOfActiveMachine = tinMac.NoOfActiveMachine,
                         NoOfInactiveMachine = tinMac.NoOfInactiveMachine,
                         No = tinMac.No,
@@ -178,6 +179,7 @@ namespace BergerMsfaApi.Services.Tinting.Implementation
                 }
                 else
                 {
+                    existTinMac.UserInfoId = userId;
                     if (existTinMac.NoOfActiveMachine > tinMac.NoOfActiveMachine ||
                         existTinMac.NoOfInactiveMachine > tinMac.NoOfInactiveMachine)
                     {

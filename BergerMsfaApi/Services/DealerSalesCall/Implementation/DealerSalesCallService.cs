@@ -119,9 +119,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                         break;
                 }
 
-                if (File.Exists(fullPath))
+                if (!string.IsNullOrWhiteSpace(fullPath))
                 {
-                    File.Delete(fullPath);
+                    await _fileUploadService.DeleteImageAsync(fullPath);
                     await _dealerSalesCallRepository.UpdateAsync(item);
 
                 }
