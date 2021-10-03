@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.Excel.Interface;
+using BergerMsfaApi.Services.FileUploads.Interfaces;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +20,15 @@ namespace BergerMsfaApi.Services.Excel.Implementation
     public class ExcelReaderService : IExcelReaderService
     {
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IFileUploadService _fileUploadService;
         private readonly string _rootFolder;
 
-        public ExcelReaderService(IWebHostEnvironment hostEnvironment)
+        public ExcelReaderService(IWebHostEnvironment hostEnvironment, IFileUploadService fileUploadService)
         {
             this._hostEnvironment = hostEnvironment;
-            this._rootFolder = hostEnvironment.WebRootPath;
+            this._fileUploadService = fileUploadService;
+            //this._rootFolder = hostEnvironment.WebRootPath;
+            this._rootFolder = "";
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {
@@ -229,35 +233,41 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (kvp.Key.Contains("_Image"))
                         {
-                            if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(_rootFolder, kvp.Value.ToString())))
+                            if (!string.IsNullOrWhiteSpace(kvp.Value.ToString()))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, kvp.Value.ToString()));
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, kvp.Value.ToString()));
 
-                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
-
-
-
-
-                                //Add a picture shape and set its position
-
-                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
-
-                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
-
-                                //anchor.Dx1 = 0;
-
-                                //anchor.Dy1 = 0;
-
-                                anchor.Col1 = i;
-
-                                anchor.Row1 = rowcount;
-
-                                IPicture picture = drawing.CreatePicture(anchor, pic);
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
 
-                                //Automatically adjust the image size
 
-                                picture.Resize(1);
+
+                                    //Add a picture shape and set its position
+
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+
+                                    //anchor.Dx1 = 0;
+
+                                    //anchor.Dy1 = 0;
+
+                                    anchor.Col1 = i;
+
+                                    anchor.Row1 = rowcount;
+
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
+
+
+                                    //Automatically adjust the image size
+
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
                             }
                             else
                             {
@@ -347,20 +357,26 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
+                            if (!string.IsNullOrWhiteSpace(rowValue))
                             {
-                                byte[] bytes = await File.ReadAllBytesAsync(Path.Combine(_rootFolder, rowValue));
-                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
-                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
-                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
 
-                                anchor.Col1 = i;
-                                anchor.Row1 = rowcount;
+                                    anchor.Col1 = i;
+                                    anchor.Row1 = rowcount;
 
-                                IPicture picture = drawing.CreatePicture(anchor, pic);
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
 
-                                picture.Resize(1);
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
                             }
                         }
                         else
@@ -509,19 +525,25 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                         var rowValue = kvp.Value?.ToString();
                         if (imageColNames.Contains(kvp.Key))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
+                            if (!string.IsNullOrWhiteSpace(rowValue))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
-                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
-                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
 
-                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
-                                anchor.Col1 = colIndex;
-                                anchor.Row1 = rowIndex;
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                    anchor.Col1 = colIndex;
+                                    anchor.Row1 = rowIndex;
 
-                                IPicture picture = drawing.CreatePicture(anchor, pic);
-                                picture.Resize(1);
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
                             }
                         }
                         else
@@ -617,20 +639,26 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                         if (imageColNames.ContainsKey(prop.Name))
                         {
-                            if (!string.IsNullOrEmpty(rowValue) && File.Exists(Path.Combine(_rootFolder, rowValue)))
+                            if (!string.IsNullOrWhiteSpace(rowValue))
                             {
-                                byte[] bytes = File.ReadAllBytes(Path.Combine(_rootFolder, rowValue));
-                                int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
-                                IDrawing drawing = excelSheet.CreateDrawingPatriarch();
-                                IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
 
-                                anchor.Col1 = i;
-                                anchor.Row1 = rowcount;
+                                    anchor.Col1 = i;
+                                    anchor.Row1 = rowcount;
 
-                                IPicture picture = drawing.CreatePicture(anchor, pic);
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
 
-                                picture.Resize(1);
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
                             }
                         }
                         else

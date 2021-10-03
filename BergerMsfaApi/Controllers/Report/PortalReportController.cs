@@ -579,7 +579,7 @@ namespace BergerMsfaApi.Controllers.Report
             {
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
-                var result = await _portalReportService.GetDealerSalesCallReportBySp(query);
+                var result = _portalReportService.GetDealerSalesCallReportBySp(query);
 
                 var columnNames = new Dictionary<string, string>();
                 var imageColumns = new List<string>();

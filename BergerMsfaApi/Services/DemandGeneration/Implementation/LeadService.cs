@@ -185,7 +185,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (!string.IsNullOrWhiteSpace(model.PhotoCaptureUrl))
             {
                 var fileName = leadGeneration.Code + "_" + Guid.NewGuid().ToString();
-                leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration);
             }
 
             var result = await _leadGenerationRepository.CreateAsync(leadGeneration);
@@ -305,7 +305,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (leadFollowUp.BusinessAchievement != null && !string.IsNullOrWhiteSpace(leadFollowUp.BusinessAchievement.PhotoCaptureUrl))
             {
                 var fileName = leadFollowUp.LeadGenerationId + "_" + Guid.NewGuid().ToString();
-                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(leadFollowUp.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(leadFollowUp.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration);
             }
 
             var leadFoll = (await _leadFollowUpRepository.GetFirstOrDefaultIncludeAsync(

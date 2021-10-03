@@ -373,8 +373,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 if (!string.IsNullOrEmpty(attach.Path))
                     attach.Path = await _fileUploadSvc.SaveImageAsync(
                         attach.Path,
-                        fileName, FileUploadCode.DealerOpening,
-                        300, 300);
+                        fileName, FileUploadCode.DealerOpening);
             }
             var result = await _dealerOpeningSvc.UpdateAsync(dealerOpening);
 

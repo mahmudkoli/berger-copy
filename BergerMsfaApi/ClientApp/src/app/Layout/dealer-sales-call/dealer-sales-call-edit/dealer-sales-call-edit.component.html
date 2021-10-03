@@ -731,7 +731,7 @@
                             [checked]="item.hasCBMachineMantainance"></td>
                     <td>
                         <div class="position-relative form-group">
-                            <ng-select [(ngModel)]="item.cBMachineMantainanceId">
+                            <ng-select [(ngModel)]="item.cbMachineMantainanceId">
                                 <!-- <ng-option>--Select--</ng-option> -->
                                 <ng-option *ngFor="let cBMachineMantainance of cBMachineMantainancelst;"
                                     [value]="cBMachineMantainance.id">{{cBMachineMantainance.dropdownName}}</ng-option>
@@ -741,7 +741,7 @@
                     </td>
                     <td>
                         <div class="input-group">
-                            <input class="form-control" type="text" [(ngModel)]="item.cBMachineMantainanceRegularReason"
+                            <input class="form-control" type="text" [(ngModel)]="item.cbMachineMantainanceRegularReason"
                                 name="cBMachineMantainanceRegularReason">
                         </div>
                     </td>
