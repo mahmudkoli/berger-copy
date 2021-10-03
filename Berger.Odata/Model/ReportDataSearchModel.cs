@@ -99,7 +99,8 @@ namespace Berger.Odata.Model
     {
         public IList<string> CustomerNos { get; set; }
         public string CreditControlArea { get; set; }
-        public string Age { get; set; }
+        public int MinAge { get; set; }
+        public int MaxAge { get; set; }
 
         public PaymentFollowUpSearchModel()
         {
