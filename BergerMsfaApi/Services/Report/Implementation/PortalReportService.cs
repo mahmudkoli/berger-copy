@@ -2733,7 +2733,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
             return queryResult;
         }
 
-        public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)
+        public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportIssueAsync(ActiveSummeryReportSearchModel query)
         {
             UserInfo userinfo = new UserInfo();
 
@@ -3028,6 +3028,285 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 Total = reportResult.Count()
             };
 
+
+            return queryResult;
+        }
+
+        public async Task<QueryResultModel<ActiveSummaryReportResultModel>> GetActiveSummeryReportAsync(ActiveSummeryReportSearchModel query)
+        {
+            UserInfo userinfo = new UserInfo();
+
+            string territory = string.Join(",", query.Territories);
+            string zone = string.Join(",", query.Zones);
+
+            query.ActivitySummary = string.IsNullOrWhiteSpace(query.ActivitySummary) ? "" : query.ActivitySummary;
+
+            if (query.UserId.HasValue)
+            {
+                userinfo = _context.UserInfos.FirstOrDefault(p => p.Id == query.UserId);
+            }
+
+            var dealerVisit = await (from jpd in _context.JourneyPlanDetails
+                                     join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
+                                     from jpminfo in jpmleftjoin.DefaultIfEmpty()
+                                     join dsc in _context.DealerSalesCalls on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     from dscinfo in dscleftjoin.DefaultIfEmpty()
+                                     join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
+                                     from diInfo in dileftjoin.DefaultIfEmpty()
+                                     join cg in _context.CustomerGroups on diInfo.AccountGroup equals cg.CustomerAccountGroup into cgleftjoin
+                                     from cgInfo in cgleftjoin.DefaultIfEmpty()
+                                     where (
+                                         (!query.FromDate.HasValue || jpminfo.PlanDate.Date >= query.FromDate.Value.Date)
+                                         && (!query.ToDate.HasValue || jpminfo.PlanDate.Date <= query.ToDate.Value.Date)
+                                         && (jpminfo.PlanStatus == PlanStatus.Approved)
+                                         && (string.IsNullOrEmpty(query.Depot) || query.Depot == diInfo.BusinessArea)
+                                         && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                         && (!query.UserId.HasValue || userinfo.EmployeeId == jpminfo.EmployeeId)
+                                     )
+                                     select new
+                                     {
+                                         JourneyPlanDetailId = jpd.Id,
+                                         IsSubDealer = cgInfo.Description.StartsWith("Subdealer"),
+                                         DealerId = jpd.DealerId,
+                                         IsVisited = dscinfo.Id > 0
+                                     }).Distinct().ToListAsync();
+
+            var adHocDealerVisit = await (from dsc in _context.DealerSalesCalls
+                                          join di in _context.DealerInfos on dsc.DealerId equals di.Id into dileftjoin
+                                          from diInfo in dileftjoin.DefaultIfEmpty()
+                                          where (
+                                              (!query.FromDate.HasValue || dsc.CreatedTime.Date >= query.FromDate.Value.Date)
+                                              && (!query.ToDate.HasValue || dsc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                              && (dsc.JourneyPlanId == null)
+                                                && (string.IsNullOrEmpty(query.Depot) || query.Depot == diInfo.BusinessArea)
+                                              && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
+                                              && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                                && (!query.UserId.HasValue || query.UserId.Value == dsc.UserId)
+                                          )
+                                          select new
+                                          {
+                                              DealerSalerCallId = dsc.Id,
+                                              IsSubDealer = dsc.IsSubDealerCall,
+                                              DealerId = dsc.DealerId
+                                          }).Distinct().ToListAsync();
+
+            var painterReg = await (from p in _context.Painters
+                                     where (
+                                        (!query.FromDate.HasValue || p.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || p.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (string.IsNullOrEmpty(query.Depot) || query.Depot == p.Depot)
+                                        && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                        && (!query.UserId.HasValue || userinfo.EmployeeId == p.EmployeeId)
+                                    )
+                                     select new
+                                     {
+                                         PainterRegId = p.Id
+                                     }).Distinct().ToListAsync();
+
+            var painterCall = await (from pc in _context.PainterCalls
+                                     join p in _context.Painters on pc.PainterId equals p.Id into pleftjoin
+                                     from pInfo in pleftjoin.DefaultIfEmpty()
+                                     where (
+                                        (!query.FromDate.HasValue || pc.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || pc.CreatedTime.Date <= query.ToDate.Value.Date)
+                                        && (string.IsNullOrEmpty(query.Depot) || query.Depot == pInfo.Depot)
+                                        && (!query.Territories.Any() || query.Territories.Contains(pc.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(pc.Zone))
+                                        && (!query.UserId.HasValue || userinfo.EmployeeId == pInfo.EmployeeId)
+                                    )
+                                     select new
+                                     {
+                                         PainterCallId = pc.Id
+                                     }).Distinct().ToListAsync();
+
+            var collection = await (from p in _context.Payments
+                                    where (
+                                        (!query.FromDate.HasValue || p.CollectionDate.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || p.CollectionDate.Date <= query.ToDate.Value.Date)
+                                        && (string.IsNullOrEmpty(query.Depot) || query.Depot == p.Depot)
+                                        && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                        && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
+                                        && (!query.UserId.HasValue || userinfo.EmployeeId == p.EmployeeId)
+                                    )
+                                    select new
+                                    {
+                                        CollectionId = p.Id,
+                                        Amount = p.Amount
+                                    }).Distinct().ToListAsync();
+
+            var leadGen = await (from lg in _context.LeadGenerations
+                              where (
+                                  (!query.FromDate.HasValue || lg.CreatedTime.Date >= query.FromDate.Value.Date)
+                                  && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date)
+                                    && (string.IsNullOrEmpty(query.Depot) || query.Depot == lg.Depot)
+                                  && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
+                                  && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
+                                    && (!query.UserId.HasValue || query.UserId.Value == lg.UserId)
+                              )
+                              select new
+                              {
+                                  LeadGenerationId = lg.Id
+                              }).Distinct().ToListAsync();
+
+            var leadFollowup = await (from lf in _context.LeadFollowUps
+                              join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id into lgleftjoin
+                              from lgInfo in lgleftjoin.DefaultIfEmpty()
+                              join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id into lbaleftjoin
+                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
+                              where (
+                                  (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
+                                  && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)
+                                    && (string.IsNullOrEmpty(query.Depot) || query.Depot == lgInfo.Depot)
+                                  && (!query.Territories.Any() || query.Territories.Contains(lgInfo.Territory))
+                                  && (!query.Zones.Any() || query.Zones.Contains(lgInfo.Zone))
+                                    && (!query.UserId.HasValue || query.UserId.Value == lgInfo.UserId)
+                              )
+                              select new
+                              {
+                                  LeadFollowUpId = lf.Id,
+                                  DGABusinessValue = lbaInfo.BergerValueSales
+                              }).Distinct().ToListAsync();
+
+            var target = 0;
+            var actual = 0;
+
+            var reportResult = new List<ActiveSummaryReportResultModel>()
+            {
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "JOURNEY PLAN",
+                    Target = (target = dealerVisit.Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Actual = (actual = dealerVisit.Where(x => x.IsVisited).Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Variance = (target - actual).ToString(),
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "SALES CALL- DIRECT DEALER",
+                    Target = (target = dealerVisit.Where(x => !x.IsSubDealer).Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Actual = (actual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Variance = (target - actual).ToString(),
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "AD HOC VISIT IN DEALERS POINT",
+                    Target = "N/A",
+                    Actual = (adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => new {x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Variance = "N/A",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "SALES CALL- SUB DEALER",
+                    Target = (target = dealerVisit.Where(x => x.IsSubDealer).Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Actual = (actual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => new {x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Variance = (target - actual).ToString(),
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "AD HOC VISIT IN SUB-DEALERS POINT",
+                    Target = "N/A",
+                    Actual = (adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => new {x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0)).ToString(),
+                    Variance = "N/A",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "PAINTER REGISTRATION",
+                    Target = "N/A",
+                    Actual = (painterReg.Select(x => x.PainterRegId).Distinct().Count(x => x > 0)).ToString(),
+                    Variance = "0",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "PAINTER CALL",
+                    Target = "N/A",
+                    Actual = (painterCall.Select(x => x.PainterCallId).Distinct().Count(x => x > 0)).ToString(),
+                    Variance = "N/A",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "LEAD GENERATION",
+                    Target = "N/A",
+                    Actual = (leadGen.Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0)).ToString(),
+                    Variance = "N/A",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "LEAD FOLLOWUP",
+                    Target = "N/A",
+                    Actual = (leadFollowup.Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0)).ToString(),
+                    Variance = "N/A",
+                    BusinessGeneration = (leadFollowup.Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue)).ToString(),
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                },
+                new ActiveSummaryReportResultModel
+                {
+                    Activity = "TOTAL COLLECTION VALUE",
+                    Target = "N/A",
+                    Actual = collection.Select(x => new {x.CollectionId, x.Amount}).Distinct().Sum(x => x.Amount).ToString("0.00"),
+                    Variance = "N/A",
+                    BusinessGeneration = "N/A",
+                    UserID = query.UserId.HasValue?userinfo.Email:string.Empty,
+                    DepotID = query.Depot,
+                    Territory = territory,
+                    Zone = zone
+                }
+            };
+
+            reportResult = reportResult
+                .Where(x => x.Activity.ToLower().Contains(query.ActivitySummary.ToLower()))
+                .Skip(this.SkipCount(query)).Take(query.PageSize).ToList();
+
+            var queryResult = new QueryResultModel<ActiveSummaryReportResultModel>
+            {
+                Items = reportResult,
+                TotalFilter = reportResult.Count(),
+                Total = reportResult.Count()
+            };
 
             return queryResult;
         }

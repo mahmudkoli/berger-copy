@@ -74,8 +74,8 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                          (jpminfo.PlanDate.Date == currentDate.Date)
                                          && (jpminfo.PlanStatus == PlanStatus.Approved)
                                          && (!area.Depots.Any() || area.Depots.Contains(diInfo.BusinessArea))
-                                         && (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
-                                         && (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
+                                         //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
+                                         //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                          && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                          && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
                                      )
@@ -92,9 +92,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                           from diInfo in dileftjoin.DefaultIfEmpty()
                                           where (
                                               (dsc.CreatedTime.Date == currentDate.Date)
+                                              && (dsc.JourneyPlanId == null)
                                               && (!area.Depots.Any() || area.Depots.Contains(diInfo.BusinessArea))
-                                              && (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
-                                              && (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
+                                              //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
+                                              //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                               && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                               && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
                                           )
@@ -111,7 +112,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                      where (
                                         (pc.CreatedTime.Date == currentDate.Date)
                                         && (!area.Depots.Any() || area.Depots.Contains(pInfo.Depot))
-                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
+                                        //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
                                         && (!area.Territories.Any() || area.Territories.Contains(pc.Territory))
                                         && (!area.Zones.Any() || area.Zones.Contains(pc.Zone))
                                     )
@@ -123,17 +124,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
             var collection = await (from p in _context.Payments
                                     join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
                                     from dctinfo in dctleftjoin.DefaultIfEmpty()
-                                    join ui in _context.UserInfos on p.EmployeeId equals ui.EmployeeId into uileftjoin
-                                    from uiInfo in uileftjoin.DefaultIfEmpty()
-                                    join uarea in _context.UserZoneAreaMappings on uiInfo.Id equals uarea.UserInfoId into uarealeftjoin
-                                    from uareaInfo in uarealeftjoin.DefaultIfEmpty()
                                     where (
                                         (p.CollectionDate.Date == currentDate.Date)
-                                        && (!area.Depots.Any() || area.Depots.Contains(uareaInfo.PlantId))
-                                        && (!area.SalesOffices.Any() || area.SalesOffices.Contains(uareaInfo.SalesOfficeId))
-                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(uareaInfo.AreaId))
-                                        && (!area.Territories.Any() || area.Territories.Contains(uareaInfo.TerritoryId))
-                                        && (!area.Zones.Any() || area.Zones.Contains(uareaInfo.ZoneId))
+                                        && (!area.Depots.Any() || area.Depots.Contains(p.Depot))
+                                        //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(uareaInfo.SalesOfficeId))
+                                        //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(uareaInfo.AreaId))
+                                        && (!area.Territories.Any() || area.Territories.Contains(p.Territory))
+                                        && (!area.Zones.Any() || area.Zones.Contains(p.Zone))
                                     )
                                     select new
                                     {
@@ -143,23 +140,32 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                         Amount = p.Amount
                                     }).Distinct().ToListAsync();
 
-            var lead = await (from lg in _context.LeadGenerations
-                              join lf in _context.LeadFollowUps on lg.Id equals lf.LeadGenerationId into lfleftjoin
-                              from lfInfo in lfleftjoin.DefaultIfEmpty()
-                              join lba in _context.LeadBusinessAchievements on lfInfo.BusinessAchievementId equals lba.Id into lbaleftjoin
-                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
+            var leadGen = await (from lg in _context.LeadGenerations
                               where (
-                                  (lg.CreatedTime.Date == currentDate.Date || lfInfo.CreatedTime.Date == currentDate.Date)
+                                  (lg.CreatedTime.Date == currentDate.Date)
                                   && (!area.Depots.Any() || area.Depots.Contains(lg.Depot))
                                   && (!area.Territories.Any() || area.Territories.Contains(lg.Territory))
                                   && (!area.Zones.Any() || area.Zones.Contains(lg.Zone))
                               )
                               select new
                               {
-                                  LeadGenerationId = lg.Id,
-                                  LeadFollowUpId = lfInfo.Id,
-                                  LeadGenerationDate = lg.CreatedTime,
-                                  LeadFollowUpDate = lfInfo.CreatedTime,
+                                  LeadGenerationId = lg.Id
+                              }).Distinct().ToListAsync();
+
+            var leadFollowup = await (from lf in _context.LeadFollowUps
+                              join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id into lgleftjoin
+                              from lgInfo in lgleftjoin.DefaultIfEmpty()
+                              join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id into lbaleftjoin
+                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
+                              where (
+                                  (lf.CreatedTime.Date == currentDate.Date)
+                                  && (!area.Depots.Any() || area.Depots.Contains(lgInfo.Depot))
+                                  && (!area.Territories.Any() || area.Territories.Contains(lgInfo.Territory))
+                                  && (!area.Zones.Any() || area.Zones.Contains(lgInfo.Zone))
+                              )
+                              select new
+                              {
+                                  LeadFollowUpId = lf.Id,
                                   DGABusinessValue = lbaInfo.BergerValueSales
                               }).Distinct().ToListAsync();
 
@@ -167,21 +173,21 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             var result = new TodaysActivitySummaryReportResultModel
             {
-                DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                SubDealerVisitTarget = dealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                SubDealerVisitActual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                AdHocDealerVisit = adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
+                DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                SubDealerVisitTarget = dealerVisit.Where(x => x.IsSubDealer).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                SubDealerVisitActual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                AdHocDealerVisit = adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => new { x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => new { x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
                 NoOfBillingDealer = noOfBillingDealer,
                 PainterCall = painterCall.Select(x => x.PainterCallId).Distinct().Count(x => x > 0),
                 CollectionFromDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromSubDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.SubDealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromDirectProject = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DirectProjectDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromCustomer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.CustomerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
-                LeadGenerationNo = lead.Where(x => x.LeadGenerationDate.Date == currentDate.Date).Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0),
-                LeadFollowupNo = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0),
-                DGABusinessValue = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue),
+                LeadGenerationNo = leadGen.Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0),
+                LeadFollowupNo = leadFollowup.Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0),
+                DGABusinessValue = leadFollowup.Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue),
             };
 
             return result;
