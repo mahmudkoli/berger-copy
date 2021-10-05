@@ -81,7 +81,12 @@ namespace Berger.Odata.Extensions
         public static DateTime GetMonthLastDate(this DateTime date) => date.GetMonthFirstDate().AddMonths(1).AddDays(-1);
 
 
-        public static int RemainingDays(this DateTime date) => (DateTime.DaysInMonth(date.Year, date.Month) - date.Day);
+        public static int RemainingDays(this DateTime date) 
+        {
+            var days = (DateTime.DaysInMonth(date.Year, date.Month) - date.Day);
+            return days == 0 ? 1 : days;
+        }
+
         public static int TillDays(this DateTime date) => date.Day;
 
         public static (DateTime, DateTime) GetCurrentFinacialYearDateRange(this DateTime date, int startMonth = 4)
