@@ -178,7 +178,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
 
 
-            await SendIssueEmail(result.Id);
+            //await SendIssueEmail(result.Id);
 
             return result.Id;
         }
@@ -462,7 +462,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                         .Include(y => y.DealerSalesIssues).ThenInclude(y => y.Priority),
                                 true);
 
-                var plantName = (await _plantSvc.FindAsync(x => x.Werks == salesCall.Dealer.BusinessArea)).Name1 ?? string.Empty;
+                var plant = salesCall.Dealer.BusinessArea;
+                var plantName = (await _plantSvc.FindAsync(x => x.Werks == plant)).Name1 ?? string.Empty;
 
                 foreach (var issue in salesCall.DealerSalesIssues)
                 {
@@ -523,7 +524,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                     body += $"Thank You,{Environment.NewLine}";
                     body += $"Berger Paints Bangladesh Limited";
 
-                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == issue.DealerSalesIssueCategoryId)?.FirstOrDefault()?.Email;
+                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == issue.DealerSalesIssueCategoryId && p.BusinessArea == plant)?.FirstOrDefault()?.Email;
                     if (!string.IsNullOrEmpty(email))
                     {
                         await SendEmail(email, subject, body);
