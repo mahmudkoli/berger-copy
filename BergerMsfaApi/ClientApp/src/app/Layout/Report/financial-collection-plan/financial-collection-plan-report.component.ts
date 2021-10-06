@@ -29,7 +29,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 
 	// ptable settings
 	enabledTotal: boolean = false;
-	tableName: string = 'Slippage Vs Collection';
+	tableName: string = 'Collection Plan Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
