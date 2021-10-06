@@ -139,6 +139,8 @@ namespace Berger.Odata.Services
             string startClearDate = "", string endClearDate = "",
             string creditControlArea = "", string bounceStatus = "", 
             string docType = "", string collectionType = "", bool isOnlyNotEmptyCheque = false);
+
+        Task<IList<CollectionDataModel>> GetFinancialCollectionPlanData(SelectQueryOptionBuilder selectQueryBuilder, IList<string> dealerIds, string fromDate, string endDate);
         #endregion
 
         #region calculate data

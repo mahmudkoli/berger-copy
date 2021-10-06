@@ -605,7 +605,7 @@ namespace Berger.Odata.Services
 
             foreach (var dealerId in dealerIds)
             {
-                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId, endDate: endDateStr)).ToList();
+                var dataSingle = (await _odataService.GetFinancialDataByCustomerAndCreditControlArea(selectQueryBuilder, dealerId, endDate: endDateStr, creditControlArea: ConstantsValue.CreditControlAreaDecorative)).ToList();
                 if (dataSingle.Any())
                 {
                     data.AddRange(dataSingle);
@@ -613,7 +613,9 @@ namespace Berger.Odata.Services
             }
             #endregion
 
-            return data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
+            var result = data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
+
+            return result;
         }
 
         public async Task<(bool HasOS, bool HasSlippage)> CheckCustomerOSSlippage(string dealerId)

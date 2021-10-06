@@ -50,18 +50,26 @@ namespace Berger.Odata.Services
             return result;
         }
 
-        public async Task<IList<CollectionDataModel>> GetCustomerCollectionAmount(IList<string> dealerIds, DateTime startDate, DateTime endDate)
+        public async Task<decimal> GetCustomerCollectionAmount(IList<string> dealerIds, DateTime startDate, DateTime endDate)
         {
             string startDateStr = startDate.DateTimeFormat();
             string endDateStr = endDate.DateTimeFormat();
 
             var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
             selectQueryOptionBuilder.AddProperty(DataColumnDef.Collection_Customer)
-                                    .AddProperty(DataColumnDef.Collection_Amount);
+                                    .AddProperty(DataColumnDef.Collection_Amount)
+                                    .AddProperty(CollectionColDef.DocType);
 
-            var data = await _oDataService.GetCollectionData(selectQueryOptionBuilder, dealerIds, startDateStr, endDateStr);
+            var data = await _oDataService.GetFinancialCollectionPlanData(selectQueryOptionBuilder, dealerIds, startDateStr, endDateStr);
 
-            return data;
+            var dzData = data.Where(x => x.DocType == ConstantsValue.ChequeDocTypeDZ)
+                            .Select(x => new { x.CustomerNo, Amount = CustomConvertExtension.ObjectToDecimal(x.Amount) * -1 }).ToList();
+            var daData = data.Where(x => x.DocType == ConstantsValue.ChequeDocTypeDA)
+                            .Select(x => new { x.CustomerNo, Amount = CustomConvertExtension.ObjectToDecimal(x.Amount) * -1 }).ToList();
+
+            var result = dzData.Sum(x => x.Amount) - daData.Sum(x => x.Amount);
+
+            return result;
         }
     }
 }
