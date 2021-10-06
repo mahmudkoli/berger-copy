@@ -25,13 +25,15 @@ namespace Berger.Odata.Services
         private readonly IODataApplicationRepository<Division> _oDataDivisionRepository;
         private readonly IODataSAPRepository<QuarterlyPerformanceReport> _oDataQuartPerformRepository;
         private readonly IODataSAPRepository<CategoryWisePerformanceReport> _oDataCategoryPerformRepository;
+        private readonly IODataSAPRepository<CustomerInvoiceReport> _oDataCustomerInvoiceRepository;
 
         public QuarterlyPerformanceDataService(
             IODataService odataService,
             IODataBrandService odataBrandService,
             IODataApplicationRepository<Division> oDataDivisionRepository,
             IODataSAPRepository<QuarterlyPerformanceReport> oDataQuartPerformRepository,
-            IODataSAPRepository<CategoryWisePerformanceReport> oDataCategoryPerformRepository
+            IODataSAPRepository<CategoryWisePerformanceReport> oDataCategoryPerformRepository,
+            IODataSAPRepository<CustomerInvoiceReport> oDataCustomerInvoiceRepository
             )
         {
             _odataService = odataService;
@@ -39,6 +41,7 @@ namespace Berger.Odata.Services
             _oDataDivisionRepository = oDataDivisionRepository;
             _oDataQuartPerformRepository = oDataQuartPerformRepository;
             _oDataCategoryPerformRepository = oDataCategoryPerformRepository;
+            _oDataCustomerInvoiceRepository = oDataCustomerInvoiceRepository;
         }
 
         #region App Report
@@ -46,7 +49,7 @@ namespace Berger.Odata.Services
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             var monthCount = 3;
-            var mtsBrands = new List<string>();
+            //var mtsBrands = new List<string>();
             var monthlyDictTarget = new Dictionary<string, IList<MTSDataModel>>();
             //var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictActual = new Dictionary<string, IList<QuarterlyPerformanceReport>>();
@@ -61,11 +64,11 @@ namespace Berger.Odata.Services
             //                    .AddProperty(DataColumnDef.Date)
             //                    .AddProperty(DataColumnDef.NetAmount);
 
-            mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            //mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
             monthlyDictTarget = (await this.GetQuarterlyTargetData(selectTargetQueryBuilder, model.FromYear, model.FromMonth,
                 depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
-                brands: mtsBrands));
+                division: ConstantsValue.DivisionDecorative));
 
             //monthlyDictActual = (await this.GetQuarterlyActualData(selectActualQueryBuilder, model.FromYear, model.FromMonth,
             //    depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
@@ -440,7 +443,7 @@ namespace Berger.Odata.Services
         {
             var fromDate = (new DateTime(model.FromYear, model.FromMonth, 1));
             var monthCount = 3;
-            var mtsBrands = new List<string>();
+            //var mtsBrands = new List<string>();
             var monthlyDictTarget = new Dictionary<string, IList<MTSDataModel>>();
             //var monthlyDictActual = new Dictionary<string, IList<SalesDataModel>>();
             var monthlyDictActual = new Dictionary<string, IList<QuarterlyPerformanceReport>>();
@@ -457,11 +460,11 @@ namespace Berger.Odata.Services
             //                    .AddProperty(DataColumnDef.Date)
             //                    .AddProperty(DataColumnDef.NetAmount);
 
-            mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
+            //mtsBrands = (await _odataBrandService.GetMTSBrandCodesAsync()).ToList();
 
             monthlyDictTarget = (await this.GetQuarterlyTargetData(selectTargetQueryBuilder, model.FromYear, model.FromMonth,
                 depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
-                brands: mtsBrands));
+                division: ConstantsValue.DivisionDecorative));
 
             //monthlyDictActual = (await this.GetQuarterlyActualData(selectActualQueryBuilder, model.FromYear, model.FromMonth,
             //    depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
@@ -877,7 +880,7 @@ namespace Berger.Odata.Services
         }
 
         public async Task<Dictionary<string, IList<MTSDataModel>>> GetQuarterlyTargetData(SelectQueryOptionBuilder selectQueryBuilder, int fromYear, int fromMonth,
-            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false)
+            List<string> depots = null, List<string> salesGroups = null, List<string> territories = null, List<string> brands = null, bool isLastYear = false, string division = "")
         {
             var fromDate = (new DateTime(fromYear, fromMonth, 1));
             var monthCount = 3;
@@ -889,7 +892,7 @@ namespace Berger.Odata.Services
 
             var targetData = (await _odataService.GetMTSData(selectQueryBuilder, fromDateStr, toDateStr,
                 depots: depots, salesGroups: salesGroups, territories: territories,
-                brands: brands)).ToList();
+                brands: brands, division: division)).ToList();
 
             for (var i = 0; i < monthCount; i++)
             {
@@ -1009,11 +1012,12 @@ namespace Berger.Odata.Services
 
             if (isTerritoryWise)
             {
-                actualData = (await _oDataCategoryPerformRepository.GetAllIncludeAsync(x => new { x.Year, x.Month, x.Territory, x.CustomerNo },
-                    x => dateTime.Contains((x.Year.ToString() + x.Month.ToString())) &&
+                actualData = (await _oDataCustomerInvoiceRepository.GetAllIncludeAsync(x => new { Year = x.Date.Year, Month = x.Date.Month, x.Territory, x.CustomerNo },
+                    x => dateTime.Contains((x.Date.Year.ToString() + x.Date.Month.ToString())) &&
                     (!territories.Any() || territories.Contains(x.Territory)) &&
                     (!depots.Any() || depots.Contains(x.Depot)) &&
-                    (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)),
+                    (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)) &&
+                    (x.Division == ConstantsValue.DivisionDecorative && x.DistributionChannel == ConstantsValue.DistrbutionChannelDealer),
                     null, null, true))
                     .GroupBy(g => new { g.Year, g.Month, g.Territory })
                     .Select(s => new BillingDealerCount() { Year = s.Key.Year, Month = s.Key.Month, Territory = s.Key.Territory, NoOfBillingDealer = s.Select(ss => ss.CustomerNo).Distinct().Count() })
@@ -1021,11 +1025,12 @@ namespace Berger.Odata.Services
             }
             else
             {
-                actualData = (await _oDataCategoryPerformRepository.GetAllIncludeAsync(x => new { x.Year, x.Month, x.CustomerNo },
-                    x => dateTime.Contains((x.Year.ToString() + x.Month.ToString())) &&
+                actualData = (await _oDataCustomerInvoiceRepository.GetAllIncludeAsync(x => new { Year = x.Date.Year, Month = x.Date.Month, x.CustomerNo },
+                    x => dateTime.Contains((x.Date.Year.ToString() + x.Date.Month.ToString())) &&
                     (!territories.Any() || territories.Contains(x.Territory)) &&
                     (!depots.Any() || depots.Contains(x.Depot)) &&
-                    (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)),
+                    (!salesGroups.Any() || salesGroups.Contains(x.SalesGroup)) &&
+                    (x.Division == ConstantsValue.DivisionDecorative && x.DistributionChannel == ConstantsValue.DistrbutionChannelDealer),
                     null, null, true))
                     .GroupBy(g => new { g.Year, g.Month })
                     .Select(s => new BillingDealerCount() { Year = s.Key.Year, Month = s.Key.Month, Territory = string.Empty, NoOfBillingDealer = s.Select(ss => ss.CustomerNo).Distinct().Count() })

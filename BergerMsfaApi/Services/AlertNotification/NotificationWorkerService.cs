@@ -24,6 +24,9 @@ namespace BergerMsfaApi.Services.AlertNotification
         private readonly IPaymentFollowupService _paymentFollowupService;
         private readonly IAlertNotificationDataService _alertNotificationData;
         private readonly IODataCommonService _odataCommonService;
+        private readonly IRepository<CreditLimitCrossNotification> _creditLimitCrossNotificationRepository;
+        private readonly IRepository<ChequeBounceNotification> _chequeBounceNotificationRepository;
+        private readonly IRepository<OccasionToCelebrateNotification> _occasionToCelebrateNotificationRepository;
         private readonly IAuthService _authService;
         private readonly ILeadService _leadService;
         private readonly IRepository<PaymentFollowupNotification> _paymentFollowupNotificationRepository;
@@ -35,7 +38,11 @@ namespace BergerMsfaApi.Services.AlertNotification
             IPaymentFollowupService paymentFollowupService,
             IAuthService authService,
             ILeadService leadService,
-            IODataCommonService odataCommonService, IRepository<PaymentFollowupNotification> paymentFollowupNotificationRepository)
+            IODataCommonService odataCommonService, 
+            IRepository<PaymentFollowupNotification> paymentFollowupNotificationRepository, 
+            IRepository<CreditLimitCrossNotification> creditLimitCrossNotificationRepository, 
+            IRepository<ChequeBounceNotification> chequeBounceNotificationRepository, 
+            IRepository<OccasionToCelebrateNotification> occasionToCelebrateNotificationRepository)
         {
             _occasionToCelebrate = occasionToCelebrate;
             _alertNotificationData = alertNotificationData;
@@ -45,15 +52,24 @@ namespace BergerMsfaApi.Services.AlertNotification
             _authService = authService;
             _leadService = leadService;
             _odataCommonService = odataCommonService;
+            this._creditLimitCrossNotificationRepository = creditLimitCrossNotificationRepository;
+            this._chequeBounceNotificationRepository = chequeBounceNotificationRepository;
+            this._occasionToCelebrateNotificationRepository = occasionToCelebrateNotificationRepository;
             this._paymentFollowupNotificationRepository = paymentFollowupNotificationRepository;
         }
 
         public async Task<IList<ChequeBounceNotification>> GetCheckBounceNotification()
         {
             var appUser = AppIdentity.AppUser;
-            var customer = await _authService.GetDealerByUserId(appUser.UserId);
-            var checkBounce = await _chequeBounceNotificationService.GetChequeBounceNotification(customer);
+            //var customer = await _authService.GetDealerByUserId(appUser.UserId);
+            //var checkBounce = await _chequeBounceNotificationService.GetChequeBounceNotification(customer);
+            var tpDate = DateTime.Now;
 
+            var checkBounce = _chequeBounceNotificationRepository.Where(p =>
+                p.NotificationDate.Date == tpDate.Date &&
+                (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(p.Depot)) &&
+                (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(p.Territory)) &&
+                (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(p.Zone))).ToList();
 
             return checkBounce.ToList();
 
@@ -62,8 +78,15 @@ namespace BergerMsfaApi.Services.AlertNotification
         public async Task<IList<AppCreditLimitCrossNotificationModel>> GetCreaditLimitNotification()
         {
             var appUser = AppIdentity.AppUser;
-            var customer = await _authService.GetDealerByUserId(appUser.UserId);
-            var crossNotification = await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction(customer);
+            //var customer = await _authService.GetDealerByUserId(appUser.UserId);
+            //var crossNotification = await _crossNotifictionService.GetTodayCreditLimitCrossNotifiction(customer);
+            var tpDate = DateTime.Now;
+
+            var crossNotification = _creditLimitCrossNotificationRepository.Where(p =>
+                p.NotificationDate.Date == tpDate.Date && 
+                (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(p.Depot)) &&
+                (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(p.Territory)) &&
+                (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(p.Zone))).ToList();
 
             var groupData = crossNotification.GroupBy(x => new { x.CustomerNo }).ToList();
 
@@ -72,9 +95,9 @@ namespace BergerMsfaApi.Services.AlertNotification
                 var notifyModel = new AppCreditLimitCrossNotificationModel();
                 notifyModel.CustomerNo = x.Key.CustomerNo.ToString();
                 notifyModel.CustomerName = x.FirstOrDefault()?.CustomerName ?? string.Empty;
-                //notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
-                //  notifyModel.CreditLimit = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.CreditLimit)).Sum(c => c.Key);
-                //   notifyModel.TotalDue = x.Where(f => f.Channel == ConstantsValue.DistrbutionChannelDealer).GroupBy(g => Convert.ToDecimal(g.TotalDue)).Sum(c => c.Key);
+                notifyModel.CreditControlArea = x.FirstOrDefault()?.CreditControlArea ?? string.Empty;
+                notifyModel.CreditLimit = x.GroupBy(g => new { g.CreditControlArea, CreditLimit = Convert.ToDecimal(g.CreditLimit) }).Sum(c => c.Key.CreditLimit);
+                notifyModel.TotalDue = x.GroupBy(g => new { g.CreditControlArea, TotalDue = Convert.ToDecimal(g.TotalDue) }).Sum(c => c.Key.TotalDue);
                 return notifyModel;
             }).ToList();
 
@@ -88,9 +111,22 @@ namespace BergerMsfaApi.Services.AlertNotification
         public async Task<IList<OccasionToCelebrateNotification>> GetOccassionToCelebrste()
         {
             var appUser = AppIdentity.AppUser;
-            var customer = await _authService.GetDealerByUserId(appUser.UserId);
+            //var customer = await _authService.GetDealerByUserId(appUser.UserId);
 
-            var checkBounce = await _occasionToCelebrate.GetOccasionToCelebrate(customer);
+            //var checkBounce = await _occasionToCelebrate.GetOccasionToCelebrate(customer);
+            var tpDate = DateTime.Now;
+
+            var checkBounce = _occasionToCelebrateNotificationRepository.Where(p =>
+                p.NotificationDate.Date == tpDate.Date &&
+                (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(p.Depot)) &&
+                (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(p.Territory)) &&
+                (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(p.Zone)) &&
+                ((p.DOB.HasValue && (p.DOB.Value.Date.Month == tpDate.Month && p.DOB.Value.Day == tpDate.Day)) ||
+                (p.FirsChildDOB.HasValue && (p.FirsChildDOB.Value.Date.Month == tpDate.Month && p.FirsChildDOB.Value.Day == tpDate.Day)) ||
+                (p.SecondChildDOB.HasValue && (p.SecondChildDOB.Value.Date.Month == tpDate.Month && p.SecondChildDOB.Value.Day == tpDate.Day)) ||
+                (p.ThirdChildDOB.HasValue && (p.ThirdChildDOB.Value.Date.Month == tpDate.Month && p.ThirdChildDOB.Value.Day == tpDate.Day)) ||
+                (p.SpouseDOB.HasValue && (p.SpouseDOB.Value.Date.Month == tpDate.Month && p.SpouseDOB.Value.Day == tpDate.Day)))
+            ).ToList();
 
             return checkBounce.ToList();
         }
@@ -274,9 +310,10 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
 
             var appUser = AppIdentity.AppUser;
+            var tpDate = DateTime.Now;
 
             return await _paymentFollowupNotificationRepository.Where(x =>
-                    x.IsFastPayCarryPayment && x.NotificationDate.Date == DateTime.Now.Date &&
+                    x.IsFastPayCarryPayment && x.NotificationDate.Date == tpDate.Date &&
                     (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(x.Depot)) &&
                     (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(x.Territory)) &&
                     (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(x.Zone)))
@@ -289,7 +326,8 @@ namespace BergerMsfaApi.Services.AlertNotification
                     InvoiceAge = x.InvoiceAge.ToString(),
                     DayLimit = x.DayLimit.ToString(),
                     InvoiceValue=x.InvoiceValue.ToString(),
-                    PaymentFollowUpType = EnumPaymentFollowUpType.FastPayCarry
+                    PaymentFollowUpType = EnumPaymentFollowUpType.FastPayCarry,
+                    RPRSDate = x.NotificationDate.AddDays(2).ToString("dd-MM-yyyy")
                 }).ToListAsync();
 
         }
@@ -298,9 +336,10 @@ namespace BergerMsfaApi.Services.AlertNotification
         {
 
             var appUser = AppIdentity.AppUser;
+            var tpDate = DateTime.Now;
 
             return await _paymentFollowupNotificationRepository.Where(x =>
-                    x.IsRprsPayment && x.NotificationDate.Date == DateTime.Now.Date &&
+                    x.IsRprsPayment && x.NotificationDate.Date == tpDate.Date &&
                     (!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(x.Depot)) &&
                     (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(x.Territory)) &&
                     (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(x.Zone)))
@@ -313,7 +352,8 @@ namespace BergerMsfaApi.Services.AlertNotification
                     InvoiceAge = x.InvoiceAge.ToString(),
                     DayLimit = x.DayLimit.ToString(),
                     InvoiceValue=x.InvoiceValue.ToString(),
-                    PaymentFollowUpType = EnumPaymentFollowUpType.RPRS
+                    PaymentFollowUpType = EnumPaymentFollowUpType.RPRS,
+                    RPRSDate = x.NotificationDate.AddDays(3).ToString("dd-MM-yyyy")
                 }).ToListAsync();
 
         }
