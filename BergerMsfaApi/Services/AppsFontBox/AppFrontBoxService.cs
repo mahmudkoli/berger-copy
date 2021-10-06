@@ -202,7 +202,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
         private async Task<int> GetNoOfBillingDealer()
         {
             return await _customerInvoiceReportRepository
-                .FindByCondition(GetSalesGeneralWhereExpression())
+                .FindByCondition(GetSalesGeneralWhereExpression(ConstantsValue.DistrbutionChannelDealer))
                 .Select(x => x.CustomerNo).Distinct().CountAsync();
         }
 
@@ -213,7 +213,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
                 .SumAsync(x => x.Value));
         }
 
-        private Expression<Func<CustomerInvoiceReport, bool>> GetSalesGeneralWhereExpression()
+        private Expression<Func<CustomerInvoiceReport, bool>> GetSalesGeneralWhereExpression(string channel = "")
         {
             var area = _authService.GetLoggedInUserArea();
             var dates = GetComparableDates();
@@ -228,7 +228,8 @@ namespace BergerMsfaApi.Services.AppsFontBox
                      && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                      && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
                      && (!area.Zones.Any() || area.Zones.Contains(x.Zone))))
-                     && x.Division == ConstantsValue.DivisionDecorative;
+                     && x.Division == ConstantsValue.DivisionDecorative
+                     && (string.IsNullOrEmpty(channel) || x.DistributionChannel == channel);
         }
 
         private Tuple<DateTime, DateTime> GetComparableDates()
