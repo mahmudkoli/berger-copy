@@ -133,9 +133,9 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
        if (info.event.title == "Delete") {
         let find = this.journeyPlanList.find(f => f.id==info.event.id && f.planDate == info.event.startStr);
         // console.log(find.planDate,new Date().toISOString('y'));
-        let planDate=new Date(find.planDate);
-        let currentDate=new Date();
-        if(planDate>=currentDate){
+        // let planDate=new Date(find.planDate);
+        // let currentDate=new Date();
+        if(this.compareDate(find.planDate)) {
             console.log(find);
             this.delete(find.id);
 
@@ -213,13 +213,13 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
                     this.pagingConfig = res.data;
                     this.journeyPlanList = this.pagingConfig.model as [] || []
                     let events = [];
-                    let currentDate=new Date();
+                    // let currentDate=new Date();
                     this.journeyPlanList.forEach(plan => {
-                        let planDate=new Date(plan.planDate);
+                        // let planDate=new Date(plan.planDate);
                         events.push({ id: plan.id, title: `${plan.employeeName}`, date: plan.planDate, employeeId: plan.employeeId, backgroundColor: '#f58442' });
                         events.push({ id: plan.id, title: `${plan.planStatusInText}`, date: plan.planDate, employeeId: plan.employeeId });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#ce42f5' });
-                        if(planDate>=currentDate){
+                        if(this.compareDate(plan.planDate)) {
                             events.push({ id: plan.id, title: 'Delete', date: plan.planDate,employeeId:plan.employeeId, backgroundColor: '#f54272' });
                         } 
 
@@ -293,5 +293,15 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
         }
     }
 
+    compareDate(pDate) {
+        let pd = new Date(Date.parse(pDate));
+        var planDate = pd.getFullYear() + "-" + (pd.getMonth() + 1) + "-" + pd.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var d = new Date();
+        var currentDate = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + 0 + ":" + 0 + ":" + 0;
+        var planDateInMileSeconds = Date.parse(planDate);
+        var currentDateInMileScondes = Date.parse(currentDate);
+        if (planDateInMileSeconds >= currentDateInMileScondes) return true;
+        else return false
+    }
 
 }

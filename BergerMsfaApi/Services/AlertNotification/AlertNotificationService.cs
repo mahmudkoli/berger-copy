@@ -103,7 +103,8 @@ namespace BergerMsfaApi.Services.AlertNotification
                 {
                     var title = $"Cheque Bounce Notification.";
                     var body = $"Dealer ID: {item.Key.CustomarNo}, Dealer Name: {item.Key.CustomerName}, " +
-                        $"Number of Cheque: {item.Count()}, Total Amount of Cheque: {item.Sum(p => p.Amount)}";
+                        $"Number of Cheque: {item.Where(x => (long.TryParse(x.ChequeNo, out long val))).Select(x => x.ChequeNo).Distinct().Count()}, " +
+                        $"Total Amount of Cheque: {item.Sum(p => p.Amount)}";
 
                     notifications.Add(new AppAlertNotificationModel() { Title = title, Body = body });
                 }
@@ -128,7 +129,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 
                 foreach (var creditLimitCross in creditLimitCrosses)
                 {
-                    var title = $"Credit Limit Cross Notifiction .";
+                    var title = $"Credit Limit Cross Notification .";
                     var body = $"Dealer ID: {creditLimitCross.CustomerNo}, Dealer Name: {creditLimitCross.CustomerName}, " +
                         $"Value Limit: {creditLimitCross.CreditLimit}" +
                         $"Total Due: {creditLimitCross.TotalDue}" +
