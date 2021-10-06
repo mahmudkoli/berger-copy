@@ -72,6 +72,8 @@ export class SaveCollectionPlan {
 }
 
 export class CollectionPlanQuery extends QueryObject {
+    businessArea: string;
+    territories: string[];
 
     constructor(init?: Partial<CollectionPlanQuery>) {
         super();

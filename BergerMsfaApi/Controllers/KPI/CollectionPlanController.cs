@@ -25,7 +25,7 @@ namespace BergerMsfaApi.Controllers.KPI
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] QueryObjectModel query)
+        public async Task<IActionResult> GetAllAsync([FromQuery] CollectionPlanQueryObjectModel query)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace BergerMsfaApi.Controllers.KPI
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (await _collectionPlanService.IsExitsCollectionPlansAsync(model.Id, AppIdentity.AppUser.UserId, model.BusinessArea, model.Territory, DateTime.Now.Year, DateTime.Now.Month))
+                if (await _collectionPlanService.IsExitsCollectionPlansAsync(model.Id, model.BusinessArea, model.Territory, DateTime.Now.Year, DateTime.Now.Month))
                     throw new Exception("Already exists collection plan of this area and this month.");
                 var result = await _collectionPlanService.AddCollectionPlansAsync(model);
                 return OkResult(result);
@@ -75,7 +75,7 @@ namespace BergerMsfaApi.Controllers.KPI
             try
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
-                if (await _collectionPlanService.IsExitsCollectionPlansAsync(model.Id, AppIdentity.AppUser.UserId, model.BusinessArea, model.Territory, 0, 0))
+                if (await _collectionPlanService.IsExitsCollectionPlansAsync(model.Id, model.BusinessArea, model.Territory, 0, 0))
                     throw new Exception("Already exists collection plan of this area and this month.");
                 var result = await _collectionPlanService.UpdateCollectionPlansAsync(model);
                 return OkResult(result);
@@ -87,7 +87,7 @@ namespace BergerMsfaApi.Controllers.KPI
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSchemeDetail(int id)
+        public async Task<IActionResult> DeleteCollectionPlan(int id)
         {
             try
             {

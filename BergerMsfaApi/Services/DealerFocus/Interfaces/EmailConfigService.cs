@@ -3,6 +3,7 @@ using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +99,17 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<IEnumerable<EmailConfigForDealerSalesCall>> GetEmailConfigDealerSalesCall()
         {
-            var result = _emailConfigDealerSalesCall.FindAllInclude(x => true, x => x.DealerSalesIssueCategory);
+            var result = await _emailConfigDealerSalesCall.FindAllInclude(x => true, x => x.DealerSalesIssueCategory).ToListAsync();
+            var depotIds = result.Select(x => x.BusinessArea).Distinct();
+            var depots = await _depot.FindAllAsync(x => depotIds.Contains(x.Werks));
+            foreach (var item in result)
+            {
+                var dep = depots.FirstOrDefault(x => x.Werks == item.BusinessArea);
+                if (dep != null)
+                {
+                    item.BusinessArea = $"{dep.Name1} ({dep.Werks})";
+                }
+            }
             return result;
         }
 

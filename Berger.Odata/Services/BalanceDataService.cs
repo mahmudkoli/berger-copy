@@ -113,6 +113,7 @@ namespace Berger.Odata.Services
             {
                 var res = new BalanceConfirmationSummaryResultModel();
 
+                res.DateTime = CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc);
                 res.Date = CustomConvertExtension.ObjectToDateTime(x.PostingDateDoc).DateFormat("dd-MM-yyyy");
                 res.OpeningBalance = x.LineText == ConstantsValue.BalanceLineTextOpening ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
                 res.ClosingBalance = x.LineText == ConstantsValue.BalanceLineTextClosing ? CustomConvertExtension.ObjectToDecimal(x.Amount) : 0;
@@ -123,9 +124,56 @@ namespace Berger.Odata.Services
                 return res;
             }).ToList();
 
-            result = result.OrderBy(x => x.Date.DateFormatDate("dd-MM-yyyy")).ToList();
+            result = result.OrderBy(x => x.DateTime).ToList();
 
-            return result;
+            #region for sub-total date wise
+            var returnResult = new List<BalanceConfirmationSummaryResultModel>(); ;
+            var lastDate = result.FirstOrDefault()?.DateTime??default(DateTime);
+
+            foreach (var item in result)
+            {
+                if (lastDate.Date != item.DateTime.Date)
+                {
+                    var res = new BalanceConfirmationSummaryResultModel();
+                    res.DateTime = default(DateTime);
+                    res.Date ="Sub-Total";
+                    res.OpeningBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.OpeningBalance);
+                    res.ClosingBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.ClosingBalance);
+                    res.InvoiceBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.InvoiceBalance);
+                    res.PaymentBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.PaymentBalance);
+                    res.TransactionDescription = string.Empty;
+                    returnResult.Add(res);
+                    lastDate = item.DateTime;
+                }
+
+                returnResult.Add(item);
+            }
+
+            if(result.Any(x => x.DateTime == lastDate))
+            {
+                var res = new BalanceConfirmationSummaryResultModel();
+                res.DateTime = default(DateTime);
+                res.Date = "Sub-Total";
+                res.OpeningBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.OpeningBalance);
+                res.ClosingBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.ClosingBalance);
+                res.InvoiceBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.InvoiceBalance);
+                res.PaymentBalance = result.Where(x => x.DateTime == lastDate).Sum(x => x.PaymentBalance);
+                res.TransactionDescription = string.Empty;
+                returnResult.Add(res);
+            }
+
+            var resG = new BalanceConfirmationSummaryResultModel();
+            resG.DateTime = default(DateTime);
+            resG.Date = "Grand-Total";
+            resG.OpeningBalance = result.Sum(x => x.OpeningBalance);
+            resG.ClosingBalance = result.Sum(x => x.ClosingBalance);
+            resG.InvoiceBalance = result.Sum(x => x.InvoiceBalance);
+            resG.PaymentBalance = result.Sum(x => x.PaymentBalance);
+            resG.TransactionDescription = string.Empty;
+            returnResult.Add(resG);
+            #endregion
+
+            return returnResult;
         }
 
         public async Task<ChecqueBounceResultModel> GetChequeBounce(ChequeBounceSearchModel model)

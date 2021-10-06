@@ -83,7 +83,7 @@ export class EmailConfigListComponent implements OnInit {
       this.alertService.confirm("Are you sure you want to delete this item?", () => {
           this.focusDealerService.DeleteDealerOppeningEmailById(id).subscribe(
               (res: any) => {
-                  this.alertService.tosterSuccess("Email Configuration has been created successfully.");
+                  this.alertService.tosterSuccess("Email Configuration has been deleted successfully.");
                   //this.fnFocusDealerList();
                   this.OnLoadEmailConfig();
               },

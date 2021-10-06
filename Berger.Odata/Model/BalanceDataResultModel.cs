@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Berger.Common.Extensions;
 using Microsoft.OData.Edm;
+using Newtonsoft.Json;
 
 namespace Berger.Odata.Model
 {
@@ -26,6 +27,8 @@ namespace Berger.Odata.Model
 
     public class BalanceConfirmationSummaryResultModel
     {
+        [JsonIgnore]
+        public DateTime DateTime { get; set; }
         public string Date { get; set; }
         public decimal OpeningBalance { get; set; }
         public decimal InvoiceBalance { get; set; }

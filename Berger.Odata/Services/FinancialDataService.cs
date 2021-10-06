@@ -529,7 +529,8 @@ namespace Berger.Odata.Services
             #endregion
 
             var result = data
-                            .Where(x => CustomConvertExtension.ObjectToInt(x.Age) == CustomConvertExtension.ObjectToInt(model.Age))
+                            .Where(x => CustomConvertExtension.ObjectToInt(x.Age) >= model.MinAge
+                                        && CustomConvertExtension.ObjectToInt(x.Age) <= model.MaxAge)
                             .Select(x =>
                                 new PaymentFollowUpResultModel()
                                 {

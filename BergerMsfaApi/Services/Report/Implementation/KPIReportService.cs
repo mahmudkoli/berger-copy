@@ -755,8 +755,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
                 var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
-                var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
-                                    && x.BusinessArea == query.Depot && item == x.Territory
+                var targetAmount = (await _context.CollectionPlans.Where(x => x.BusinessArea == query.Depot && item == x.Territory
                                     && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
 
                 var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
@@ -813,8 +812,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
                 var collectionData = await _collectionDataService.GetCustomerCollectionAmount(dealerIds, fromDate, toDate);
-                var targetAmount = (await _context.CollectionPlans.Where(x => x.UserId == AppIdentity.AppUser.UserId
-                                    && x.BusinessArea == query.Depot && item == x.Territory
+                var targetAmount = (await _context.CollectionPlans.Where(x => x.BusinessArea == query.Depot && item == x.Territory
                                     && x.Year == currentDate.Year && x.Month == currentDate.Month).FirstOrDefaultAsync())?.CollectionTargetAmount ?? 0;
 
                 var actualCollection = collectionData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
@@ -823,10 +821,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportResult.ImmediateLMSlippageAmount = reportResult.ImmediateLMSlippageAmount + slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
                 reportResult.MTDCollectionPlan = reportResult.MTDCollectionPlan + targetAmount;
                 reportResult.MTDActualCollection = reportResult.MTDActualCollection + actualCollection;
-                reportResult.TargetAch = reportResult.TargetAch + GetAchivement(targetAmount, actualCollection);
 
             }
 
+            reportResult.TargetAch = GetAchivement(reportResult.MTDCollectionPlan, reportResult.MTDActualCollection);
 
 
 
