@@ -490,8 +490,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     {
                         if (!string.IsNullOrEmpty(item.Path))
                         {
-                            string path = Path.Combine(_env.WebRootPath, item.Path);
-                            if (File.Exists(path))
+                            //string path = Path.Combine(_env.WebRootPath, item.Path);
+                            string path = item.Path;
+                            if (!string.IsNullOrWhiteSpace(path))
                             {
                                 var url = new System.Net.Mail.Attachment(path);
                                 lstAttachment.Add(url);

@@ -94,6 +94,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                               p.Territory == query.Territory &&
                                               p.FiscalYear == query.Year).ToListAsync();
 
+            if (currentYear == null || !currentYear.Any()) throw new Exception("Dealer Conversion of this area and this fiscal year is not set yet.");
 
             newDealerDevelopementList.AddRange(currentYear);
 
@@ -141,7 +142,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         }
 
 
-        public async Task<IList<NewDealerDevelopmentModel>> GetNewDealerDevelopment(SearchNewDealerDevelopment query)
+        public async Task<IList<NewDealerDevelopmentModel>> GetNewDealerDevelopmentReport(SearchNewDealerDevelopment query)
         {
             var newDealerDevelopementList = new List<NewDealerDevelopmentModel>();
 
@@ -150,6 +151,16 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                                              p.Territory == query.Territory &&
                                              p.FiscalYear == query.Year).ToListAsync();
+
+            if (!currentYear.Any())
+            {
+                currentYear = new List<NewDealerDevelopment>();
+                var monthCount = 12;
+                for (int i = 1; i <= monthCount; i++)
+                {
+                    currentYear.Add(new NewDealerDevelopment { Month=i,Year=i>9?query.Year+1:query.Year });
+                }
+            }
 
 
             currentYear.OrderBy(p => p.Month);
@@ -169,7 +180,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     }
 
-                    var actual = GetActualDealer(monthNumber, item.Year);
+                    var actual = await GetActualDealerAsync(monthNumber, item.Year,query.Depot, query.Territory);
 
                     var result = new NewDealerDevelopmentModel()
                     {
@@ -195,7 +206,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         }
 
 
-        public async Task<IList<DealerConversionModel>> GetDealerConversion(SearchNewDealerDevelopment query)
+        public async Task<IList<DealerConversionModel>> GetDealerConversionReport(SearchNewDealerDevelopment query)
         {
             var newDealerDevelopementList = new List<DealerConversionModel>();
 
@@ -204,6 +215,16 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                                              p.Territory == query.Territory &&
                                              p.FiscalYear == query.Year).ToListAsync();
+
+            if (!currentYear.Any())
+            {
+                currentYear = new List<NewDealerDevelopment>();
+                var monthCount = 12;
+                for (int i = 1; i <= monthCount; i++)
+                {
+                    currentYear.Add(new NewDealerDevelopment { Month = i, Year = i > 9 ? query.Year + 1 : query.Year });
+                }
+            }
 
 
             currentYear.OrderBy(p => p.Month);
@@ -248,7 +269,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
 
 
-        private int GetActualDealer(int monthnumber, int year)
+        private async Task<int> GetActualDealerAsync(int monthnumber, int year, string depot, string territory)
         {
 
 
@@ -258,9 +279,33 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             DateTimeFormat.GetMonthName
             (monthnumber);
 
-            var count = _dealerInfo.Where(p => p.CreatedTime.Month == monthnumber && p.CreatedTime.Year == year &&
-                                               p.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
-               p.Division == ConstantsODataValue.DivisionDecorative).Count();
+            //var count = _dealerInfo.Where(p => CustomConvertExtension.ObjectToDateTime(p.CreatedOn).Month == monthnumber && CustomConvertExtension.ObjectToDateTime(p.CreatedOn).Year == year &&
+            //                                   p.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+            //   p.Division == ConstantsODataValue.DivisionDecorative).Select(x => x.CustomerNo).Distinct().Count();
+
+            var result = (from dealer in (await _dealerInfo.FindAllAsync(x => 
+                                                (x.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                                     && x.Division == ConstantsODataValue.DivisionDecorative) 
+                                                && (x.BusinessArea == depot && x.Territory == territory)))
+                         //join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
+                         //on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                         //into cust
+                         //from cu in cust.DefaultIfEmpty()
+                         where (
+                             (
+                                 CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Month == monthnumber
+                                 && CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Year == year
+                             )
+                         )
+                         select new
+                         {
+                             Id = dealer.Id,
+                             CustomerNo = dealer.CustomerNo,
+                             //Territory = dealer.Territory,
+                             //IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
+                         }).ToList();
+
+            var count = result.Select(x => x.CustomerNo).Distinct().Count();
 
             return count;
 
@@ -307,7 +352,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                     }
 
-                    var actual = GetActualDealer(monthNumber, item.Year);
+                    var actual = await GetActualDealerAsync (monthNumber, item.Year, query.Depot, query.Territory);
 
                     var result = new NewDealerDevelopmentSaveModel()
                     {

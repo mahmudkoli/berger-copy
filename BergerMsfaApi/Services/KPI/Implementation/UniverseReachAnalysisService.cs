@@ -212,7 +212,7 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var fiscalYear = this.GetCurrentFiscalYear();
             var existingUniverseReachAnalysis = await _UniverseReachAnalysisSvc.FindAsync(x => x.BusinessArea == query.BusinessArea 
                                                         && x.Territory == query.Territory && x.FiscalYear == fiscalYear);
-            if(existingUniverseReachAnalysis == null) throw new Exception("Universe/Reach Plan of this area and this fiscal year is not found.");
+            if(existingUniverseReachAnalysis == null) throw new Exception("Universe/Reach Plan of this area and this fiscal year is not set yet.");
             var result = _mapper.Map<SaveAppUniverseReachAnalysisModel>(existingUniverseReachAnalysis);
 
             var CFYFD = Berger.Odata.Extensions.DateTimeExtension.GetCFYFD(DateTime.Now);
@@ -257,17 +257,17 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var result = (await _UniverseReachAnalysisSvc.FindAllAsync(x => x.FiscalYear == fiscalYear && x.BusinessArea == query.Depot
                                                                             && (!query.Territories.Any() || query.Territories.Contains(x.Territory)))).ToList();
 
-            var resultDealer = (from dealer in (await _dealerInfoSvc.FindAllAsync(x => true))
+            var resultDealer = (from dealer in (await _dealerInfoSvc.FindAllAsync(x => 
+                                                    (x.Channel == ConstantsODataValue.DistrbutionChannelDealer
+                                                        && x.Division == ConstantsODataValue.DivisionDecorative) &&
+                                                    (x.BusinessArea == query.Depot
+                                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup))
+                                                        && (!query.Territories.Any() || query.Territories.Contains(x.Territory)))))
                                 join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
                                 on dealer.AccountGroup equals custGrp.CustomerAccountGroup
                                 into cust
                                 from cu in cust.DefaultIfEmpty()
                                 where (
-                                    (dealer.Channel == ConstantsODataValue.DistrbutionChannelDealer
-                                        && dealer.Division == ConstantsODataValue.DivisionDecorative) &&
-                                    (dealer.BusinessArea == query.Depot
-                                        && (!query.SalesGroups.Any() || query.SalesGroups.Contains(dealer.SalesGroup))
-                                        && (!query.Territories.Any() || query.Territories.Contains(dealer.Territory))) &&
                                     (
                                         CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date >= CFYFD.Date
                                         && CustomConvertExtension.ObjectToDateTime(dealer.CreatedOn).Date <= CFYLD.Date
@@ -281,15 +281,31 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                     IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                                 }).ToList();
 
-            var returnResult = _mapper.Map<IList<UniverseReachAnalysisReportResultModel>>(result);
+            var returnResult = new List<UniverseReachAnalysisReportResultModel>();
 
-            foreach (var res in returnResult)
+            var territories = result.Select(x => x.Territory)
+                                        .Concat(resultDealer.Select(x => x.Territory))
+                                            .Distinct().ToList();
+
+            foreach (var territory in territories)
             {
+                var res = new UniverseReachAnalysisReportResultModel();
+
+                res.Territory = territory;
+                res.OutletNumber = result.Where(x => x.Territory == res.Territory).Sum(x => x.OutletNumber);
+                res.DirectCovered = result.Where(x => x.Territory == res.Territory).Sum(x => x.DirectCovered);
+                res.IndirectCovered = result.Where(x => x.Territory == res.Territory).Sum(x => x.IndirectCovered);
+                res.DirectTarget = result.Where(x => x.Territory == res.Territory).Sum(x => x.DirectTarget);
+                res.IndirectTarget = result.Where(x => x.Territory == res.Territory).Sum(x => x.IndirectTarget);
+                res.IndirectManual = result.Where(x => x.Territory == res.Territory).Sum(x => x.IndirectManual);
+
                 res.DirectActual = resultDealer.Where(x => x.Territory == res.Territory && !x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
                 res.IndirectActual = resultDealer.Where(x => x.Territory == res.Territory && x.IsSubdealer).Select(x => x.CustomerNo).Distinct().Count();
 
                 res.UnCovered = res.OutletNumber - (res.DirectCovered + res.IndirectCovered);
                 res.Covered = res.UnCovered - (res.DirectActual + res.IndirectActual + res.IndirectManual);
+
+                returnResult.Add(res);
             }
 
             if (query.ForApp)
