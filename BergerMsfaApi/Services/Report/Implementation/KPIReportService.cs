@@ -282,16 +282,16 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
                                      from jpmInfo in jpmleftjoin.DefaultIfEmpty()
-                                     join dsc in _context.DealerSalesCalls.Select(x => new { x.JourneyPlanId }).Distinct() on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
+                                     join dsc in _context.DealerSalesCalls on jpd.PlanId equals dsc.JourneyPlanId into dscleftjoin
                                      from descInfo in dscleftjoin.DefaultIfEmpty()
                                      join di in _context.DealerInfos on jpd.DealerId equals di.Id into dileftjoin
                                      from diInfo in dileftjoin.DefaultIfEmpty()
                                      where (
                                          (jpmInfo.PlanDate.Month == query.Month && jpmInfo.PlanDate.Year == query.Year)
-                                         && (diInfo.BusinessArea == query.Depot)
-                                         && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                         && (string.IsNullOrEmpty(query.Depot) || diInfo.BusinessArea == query.Depot)
+                                         //&& (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                          && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                         && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                         //&& (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                          && (jpmInfo.PlanStatus == PlanStatus.Approved)
                                          && (diInfo.CustomerClasification.Contains(customerType))
                                      )
@@ -300,7 +300,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                          jpd.DealerId,
                                          DealerClasification = diInfo.CustomerClasification,
                                          JourneyPlanDate = jpmInfo.PlanDate,
-                                         JourneyPlanId = (int?)jpd.PlanId,
+                                         JourneyPlanId = (int?)descInfo.JourneyPlanId,
                                      }).ToListAsync();
 
 
@@ -309,10 +309,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           from diInfo in dileftjoin.DefaultIfEmpty()
                                           where (
                                               (dsc.CreatedTime.Month == query.Month && dsc.CreatedTime.Year == query.Year)
-                                              && (!query.Depot.Any() || query.Depot.Contains(diInfo.BusinessArea))
-                                              && (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
+                                              && (string.IsNullOrEmpty(query.Depot) || diInfo.BusinessArea == query.Depot)
+                                              //&& (!query.SalesGroups.Any() || query.SalesGroups.Contains(diInfo.SalesGroup))
                                               && (!query.Territories.Any() || query.Territories.Contains(diInfo.Territory))
-                                              && (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
+                                              //&& (!query.Zones.Any() || query.Zones.Contains(diInfo.CustZone))
                                               && dsc.JourneyPlanId == null
                                               && (diInfo.CustomerClasification.Contains(customerType))
                                           )
@@ -587,6 +587,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             targetList.AddRange(targetList2);
 
+            var customerList = await _dealerInfoRepository.FindByCondition(x => 
+                                                                x.Division == ConstantsValue.DivisionDecorative
+                                                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
+                                                                && string.IsNullOrEmpty(query.Depot) || x.BusinessArea == query.Depot
+                                                                && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                                                                //&& (!query.SalesGroups.Any() || query.Territories.Contains(x.SalesGroup))
+                                                                //&& (!query.Zones.Any() || query.Territories.Contains(x.CustZone))
+                                                            )
+                                        .Select(x => x.CustomerNo).Distinct().ToListAsync();
 
             var colorBankMachineDataModels = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, startDate, endDate);
             int actual = 0, target = 0;
@@ -595,7 +604,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             {
                 var addItem = new ColorBankInstallationPlanVsActualKPIReportResultModel()
                 {
-                    Actual = actual = colorBankMachineDataModels.Count(x => CustomConvertExtension.ObjectToDateTime(x.InstallDate).Month == item.Key),
+                    Actual = actual = colorBankMachineDataModels.Where(x => customerList.Contains(x.CustomerNo) 
+                                        && CustomConvertExtension.ObjectToDateTime(x.InstallDate).Month == item.Key).Distinct().Count(),
                     Month = item.Value,
                     Target = target = targetList.FirstOrDefault(x => x.Month == item.Key)?.ColorBankInstallTarget ?? 0,
                     TargetAchievement = GetAchivement(target, actual)
@@ -625,10 +635,12 @@ namespace BergerMsfaApi.Services.Report.Implementation
             DateTime lastYearStartDate = compareDate.GetLFYFD();
             DateTime lastYearEndDate = compareDate.GetLFYLD();
 
-            if (year == today.Year)
+            if ((year == today.Year && today.Month >= ConstantsValue.FyYearFirstMonth) || (year == today.Year-1 && today.Month <= ConstantsValue.FyYearLastMonth))
             {
-                currentYearEndDate = today.AddMonths(-1).GetCYLD();
-                lastYearEndDate = today.AddMonths(-1).GetLYLD();
+                //currentYearEndDate = today.AddMonths(-1).GetCYLD();
+                //lastYearEndDate = today.AddMonths(-1).GetLYLD();
+                currentYearEndDate = today.GetCYLD();
+                lastYearEndDate = today.GetLYLD();
             }
 
             var productivityTarget =
@@ -639,7 +651,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                         .Select(x => new
                         {
                             x.Month,
-                            x.ColorBankProductivityTarget
+                            x.ColorBankProductivityTarget,
+                            x.Territory
                         }).ToListAsync();
 
             var productivityTarget2 =
@@ -650,14 +663,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
                         .Select(x => new
                         {
                             x.Month,
-                            x.ColorBankProductivityTarget
+                            x.ColorBankProductivityTarget,
+                            x.Territory
                         }).ToListAsync();
 
 
 
-            var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
+            //var selectCustomerQueryBuilder = new SelectQueryOptionBuilder();
 
-            selectCustomerQueryBuilder.AddProperty(DataColumnDef.MatrialCode).AddProperty(DataColumnDef.Volume).AddProperty(DataColumnDef.Territory);
+            //selectCustomerQueryBuilder.AddProperty(DataColumnDef.MatrialCode).AddProperty(DataColumnDef.Volume).AddProperty(DataColumnDef.Territory);
 
             var depotList = new List<string>
             {
@@ -700,14 +714,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var currentYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, currentYearStartDate.DateTimeFormat(), currentYearEndDate.DateTimeFormat());
             var lastYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, lastYearStartDate.DateTimeFormat(), lastYearEndDate.DateTimeFormat());
 
-            var customerList = await _dealerInfoRepository.FindByCondition(x => x.BusinessArea == query.Depot &&
-                                                                                      (!query.Territories.Any() ||
-                                                                                       query.Territories.Contains(x.Territory)) &&
-                                                                                      (!query.SalesGroups.Any() ||
-                                                                                       query.Territories.Contains(x.SalesGroup)) &&
-                                                                                      (!query.Zones.Any() ||
-                                                                                       query.Territories.Contains(x.CustZone)))
-                .Select(x => new { x.CustomerNo, x.Territory }).Distinct().ToListAsync();
+            var customerList = await _dealerInfoRepository.FindByCondition(x =>
+                                                                x.Division == ConstantsValue.DivisionDecorative
+                                                                && x.Channel == ConstantsValue.DistrbutionChannelDealer
+                                                                && x.BusinessArea == query.Depot 
+                                                                && (!query.Territories.Any() || query.Territories.Contains(x.Territory)) 
+                                                                //&& (!query.SalesGroups.Any() || query.Territories.Contains(x.SalesGroup)) 
+                                                                //&& (!query.Zones.Any() || query.Territories.Contains(x.CustZone))
+                                                            )
+                                        .Select(x => new { x.CustomerNo, x.Territory }).Distinct().ToListAsync();
 
             int totalMonth = (currentYearEndDate.Year - currentYearStartDate.Year) * 12 + (currentYearEndDate.Month - currentYearStartDate.Month) + 1;
             var result = new List<ColorBankProductivityBase>();
@@ -719,8 +734,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 decimal currentYearTotalSales = currentYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
                 decimal lastYearTotalSales = lastYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
 
-                int lastYearInstall = lastYearInstallList.Count(x => customerList.Where(z => z.Territory == territory).Select(y => y.CustomerNo).Contains(x.CustomerNo));
-                int currentYearInstall = currentYearInstallList.Count(x => customerList.Where(z => z.Territory == territory).Select(y => y.CustomerNo).Contains(x.CustomerNo));
+                int lastYearInstall = lastYearInstallList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
+                int currentYearInstall = currentYearInstallList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
 
                 bankProductivityBase.CYActualProductivity = 0;
                 bankProductivityBase.LYProductivity = 0;
@@ -743,8 +758,15 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     // ignored
                 }
 
-                bankProductivityBase.ProductivityTarget = productivityTarget.Sum(x => x.ColorBankProductivityTarget) +
-                                                          productivityTarget2.Sum(x => x.ColorBankProductivityTarget);
+                var productivityTargetSum = productivityTarget.Where(x => x.Territory == territory).Sum(x => x.ColorBankProductivityTarget)
+                                            + productivityTarget2.Where(x => x.Territory == territory).Sum(x => x.ColorBankProductivityTarget);
+                var productivityTargetMonthCount = productivityTarget.Where(x => x.Territory == territory && x.ColorBankProductivityTarget > 0)
+                                                    .Select(x => x.Month).Distinct().Count()
+                                                + productivityTarget2.Where(x => x.Territory == territory && x.ColorBankProductivityTarget > 0)
+                                                    .Select(x => x.Month).Distinct().Count();
+                productivityTargetMonthCount = productivityTargetMonthCount == 0 ? 1 : productivityTargetMonthCount;
+
+                bankProductivityBase.ProductivityTarget = productivityTargetSum / productivityTargetMonthCount;
 
                 bankProductivityBase.ProductivityGrowth = _oDataService.GetGrowth(bankProductivityBase.LYProductivity, bankProductivityBase.CYActualProductivity);
 
