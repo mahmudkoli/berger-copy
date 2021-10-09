@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
 using Microsoft.AspNetCore.Http;
@@ -19,5 +20,6 @@ namespace BergerMsfaApi.Services.FileUploads.Interfaces
         public List<IFormFile> Base64ToImage(List<string> base64Images);
         public bool IsMaxSizeExceded(List<string> base64Images, int sizeMaxMB = 20);
         Task<byte[]> GetFileAsync(string fullPath);
+        Task<Stream> GetFileStreamAsync(string fullPath);
     }
 }

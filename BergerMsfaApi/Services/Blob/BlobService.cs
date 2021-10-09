@@ -29,6 +29,8 @@ namespace BergerMsfaApi.Services.Blob
 
         public async Task<BlobInfo> GetBlobAsync(string name)
         {
+            name = name.Replace(_basePath, "");
+
             var containerClient = GetBlobContainerClient();
 
             var blobClient = containerClient.GetBlobClient(name);
