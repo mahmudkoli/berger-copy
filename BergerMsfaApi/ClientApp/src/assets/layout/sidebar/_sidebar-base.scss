@@ -95,7 +95,10 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   }
 }
 .closed-sidebar .logo-src img{
-  display: none;
+  // display: none;
+  width: auto;
+  height: auto;
+  max-width: 100%;
 }
 
 // Sidebar Menu
@@ -111,8 +114,9 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
 
   & .vsm-link {
     display: block;
-    line-height: 2.4rem;
-    height: 2.4rem;
+    line-height: 1.5rem;
+    height: auto;
+    min-height: 1.5rem;
     padding: 0 1.5rem 0 45px;
     position: relative;
     border-radius: .25rem;
@@ -126,6 +130,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     text-align: left;
     cursor: pointer;
     font-weight: 600;
+    margin-bottom: 15px;
 
 
     &:hover {
@@ -153,7 +158,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   }
 
   & .vsm-title {
-    white-space: nowrap;
+    white-space: normal;
     position: relative;
   }
 
@@ -164,7 +169,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     line-height: 34px;
     position: absolute;
     left: 5px;
-    top: 50%;
+    top: 13px;
     margin-top: -17px;
     font-size: 1.5rem;
     opacity: .7;
