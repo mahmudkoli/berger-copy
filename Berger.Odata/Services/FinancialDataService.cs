@@ -613,7 +613,7 @@ namespace Berger.Odata.Services
             }
             #endregion
 
-            var result = data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit)).ToList();
+            var result = data.Where(x => CustomConvertExtension.ObjectToInt(x.Age) > CustomConvertExtension.ObjectToInt(x.DayLimit) && CustomConvertExtension.ObjectToDecimal(x.Amount) > 0).ToList();
 
             return result;
         }
