@@ -1471,6 +1471,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             foreach (var x in allVisitDataGroup)
             {
+                dayNumber = 1;
                 var res = new DealerVisitReportResultModel();
 
                 res.UserId = x.FirstOrDefault()?.Email;
