@@ -198,7 +198,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                     x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
                                                         .Select(x => new { x.CustomerNo, x.VisitDate }).Distinct();
 
-                    var actualVisitCountWeekly = actualVisit.Count();
+                    var actualVisitCountWeekly = actualVisitWeekly.Count();
 
                     var billingWeekly = billingOData.Where(x => (x.Date.Day >= dateRange.Start && x.Date.Day <= dateRange.End)
                                                         && ((query.ReportType == EnumStrikeRateReportType.All) ||
