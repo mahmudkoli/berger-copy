@@ -42,6 +42,7 @@ namespace Berger.Worker.Services
 
             var syncDailyTargetLogs = monthlyTarget.ToList().Select(x => new SyncDailyTargetLog
             {
+                Id = Guid.NewGuid(),
                 Year = date.Year,
                 Month = date.Month,
                 Zone = x.Zone,

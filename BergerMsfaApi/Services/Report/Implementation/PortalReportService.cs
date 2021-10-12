@@ -481,7 +481,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.KeyContactPersonMobile = x.keyContactPersonMobile;
                 reportModel.PaintContractorName = x.paintContractorName;
                 reportModel.PaintContractorMobile = x.paintContractorMobile;
-                reportModel.NumberOfStoriedBuilding = x?.numberOfStoriedBuilding ?? (int)0;
+                reportModel.NumberOfStoriedBuilding = x?.numberOfStoriedBuilding ?? (double)0;
                 reportModel.ExpectedValue = x?.expectedValue ?? (decimal)0;
                 reportModel.ExpectedMonthlyBusinessValue = x?.expectedMonthlyBusinessValue ?? (decimal)0;
                 reportModel.SwappingCompetition = x.swappingCompetition;

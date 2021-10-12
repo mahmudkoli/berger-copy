@@ -5,9 +5,11 @@ using Berger.Data.MsfaEntity.Sync;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Sync
 {
+    [AuthorizeFilter]
     [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1")]

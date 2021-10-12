@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
-    //[AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

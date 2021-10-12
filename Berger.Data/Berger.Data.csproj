@@ -20,6 +20,8 @@
     <Compile Remove="Migrations\20210928132259_OccasionToCelebrateNotification-modified.Designer.cs" />
     <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.cs" />
     <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.Designer.cs" />
+    <Compile Remove="Migrations\SAPDb\20211012141615_SAPReportCommonTableUpdate.cs" />
+    <Compile Remove="Migrations\SAPDb\20211012141615_SAPReportCommonTableUpdate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -289,8 +289,12 @@ namespace BergerMsfaApi.Repositories
 
         public async Task<List<TEntity>> CreateListAsync(List<TEntity> items)
         {
-            DbSet.AddRange(items);
-            await SaveChangesAsync();
+            //DbSet.AddRange(items);
+            //await SaveChangesAsync();
+            //return items;
+
+            var bulkConfig = UpdateCreatedUpdateBy(items);
+            await _context.BulkInsertAsync(items, bulkConfig);
             return items;
         }
 
@@ -299,14 +303,18 @@ namespace BergerMsfaApi.Repositories
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
-                foreach (var item in items)
-                {
-                    var entry = _context.Entry(item);
-                    DbSet.Attach(item);
-                    entry.State = EntityState.Modified;
-                }
-                var result = await SaveChangesAsync();
-                return result > 0 ? items : null;
+                //foreach (var item in items)
+                //{
+                //    var entry = _context.Entry(item);
+                //    DbSet.Attach(item);
+                //    entry.State = EntityState.Modified;
+                //}
+                //var result = await SaveChangesAsync();
+                //return result > 0 ? items : null;
+                
+                var bulkConfig = UpdateCreatedUpdateBy(items, true);
+                await _context.BulkUpdateAsync<TEntity>(items, bulkConfig);
+                return items;
             }
             catch (Exception ex)
             {
@@ -319,13 +327,16 @@ namespace BergerMsfaApi.Repositories
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
-                foreach (var record in items)
-                {
-                    DbSet.Attach(record);
-                }
-                DbSet.RemoveRange(items);
-                var result = await SaveChangesAsync();
-                return result;
+                //foreach (var record in items)
+                //{
+                //    DbSet.Attach(record);
+                //}
+                //DbSet.RemoveRange(items);
+                //var result = await SaveChangesAsync();
+                //return result;
+
+                await _context.BulkDeleteAsync(items);
+                return 1;
             }
             catch (Exception ex)
             {
@@ -374,13 +385,16 @@ namespace BergerMsfaApi.Repositories
                 return 0; //throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
             }
 
-            DbSet.RemoveRange(records);
+            //DbSet.RemoveRange(records);
 
             //foreach (var record in records)
             //{
             //    DbSet.Remove(record);
             //}
-            return await SaveChangesAsync();
+            //return await SaveChangesAsync();
+
+            await _context.BulkDeleteAsync(records);
+            return 1;
         }
 
         public async Task<int> CountAsync()
@@ -629,6 +643,36 @@ namespace BergerMsfaApi.Repositories
             {
                 throw ex;
             }
+        }
+
+        private BulkConfig UpdateCreatedUpdateBy<T>(IList<T> items, bool isUpdate = false)
+        {
+            var time = DateTime.Now;
+            var userId = AppIdentity.AppUser.UserId;
+            var ignoreList = new List<string>();
+
+            foreach (var entry in items)
+            {
+                if (!(entry is IAuditableEntity addAudit)) continue;
+
+                if(!isUpdate)
+                {
+                    addAudit.CreatedBy = userId;
+                    addAudit.CreatedTime = time;
+                }
+                else
+                {
+                    ignoreList = new List<string> { nameof(addAudit.CreatedBy), nameof(addAudit.CreatedTime) };
+                }
+
+                addAudit.ModifiedBy = userId;
+                addAudit.ModifiedTime = time;
+            }
+
+            BulkConfig bulkConfig = new BulkConfig();
+            bulkConfig.PropertiesToExclude = ignoreList;
+
+            return bulkConfig;
         }
 
         private int CreateLog()

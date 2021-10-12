@@ -38,7 +38,7 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales'];
 	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue','actualPaintJobCompletedInterior','actualPaintJobCompletedExterior',
 						'actualVolumeSoldInteriorLitre','actualVolumeSoldInteriorKg','actualVolumeSoldExteriorLitre','actualVolumeSoldExteriorKg',
-						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales'];
+						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales', 'numberOfStoriedBuilding'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
