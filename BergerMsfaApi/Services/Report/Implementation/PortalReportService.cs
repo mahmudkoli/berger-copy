@@ -3115,7 +3115,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrEmpty(query.Depot) || query.Depot == pInfo.Depot)
                                         && (!query.Territories.Any() || query.Territories.Contains(pc.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(pc.Zone))
-                                        && (!query.UserId.HasValue || userinfo.EmployeeId == pInfo.EmployeeId)
+                                        && (!query.UserId.HasValue || userinfo.EmployeeId == pc.EmployeeId)
                                     )
                                      select new
                                      {

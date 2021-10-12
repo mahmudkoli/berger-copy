@@ -60,6 +60,8 @@ namespace BergerMsfaApi.Services.OData.Implementation
         public async Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
+            var userId = AppIdentity.AppUser.UserId;
+            var employeeId = AppIdentity.AppUser.EmployeeId;
 
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
@@ -78,6 +80,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                          //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                          && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                          && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
+                                         && (jpminfo.EmployeeId == employeeId)
                                      )
                                      select new
                                      {
@@ -98,6 +101,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                               //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                               && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                               && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
+                                              && (dsc.UserId == userId)
                                           )
                                           select new
                                           {
@@ -115,6 +119,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                         //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
                                         && (!area.Territories.Any() || area.Territories.Contains(pc.Territory))
                                         && (!area.Zones.Any() || area.Zones.Contains(pc.Zone))
+                                         && (pc.EmployeeId == employeeId)
                                     )
                                      select new
                                      {
@@ -131,6 +136,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                         //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(uareaInfo.AreaId))
                                         && (!area.Territories.Any() || area.Territories.Contains(p.Territory))
                                         && (!area.Zones.Any() || area.Zones.Contains(p.Zone))
+                                        && (p.EmployeeId == employeeId)
                                     )
                                     select new
                                     {
@@ -146,6 +152,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                   && (!area.Depots.Any() || area.Depots.Contains(lg.Depot))
                                   && (!area.Territories.Any() || area.Territories.Contains(lg.Territory))
                                   && (!area.Zones.Any() || area.Zones.Contains(lg.Zone))
+                                  && (lg.UserId == userId)
                               )
                               select new
                               {
@@ -162,6 +169,7 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                   && (!area.Depots.Any() || area.Depots.Contains(lgInfo.Depot))
                                   && (!area.Territories.Any() || area.Territories.Contains(lgInfo.Territory))
                                   && (!area.Zones.Any() || area.Zones.Contains(lgInfo.Zone))
+                                  && (lgInfo.UserId == userId)
                               )
                               select new
                               {
