@@ -711,9 +711,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
             //  currentYearSales = currentYearSales.Where(x => dbCbBrandList.Contains(x.Brand)).ToList();
             // lastYearSales = lastYearSales.Where(x => dbCbBrandList.Contains(x.Brand)).ToList();
 
-            var currentYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, currentYearStartDate.DateTimeFormat(), currentYearEndDate.DateTimeFormat());
-            var lastYearInstallList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, lastYearStartDate.DateTimeFormat(), lastYearEndDate.DateTimeFormat());
-
             var customerList = await _dealerInfoRepository.FindByCondition(x =>
                                                                 x.Division == ConstantsValue.DivisionDecorative
                                                                 && x.Channel == ConstantsValue.DistrbutionChannelDealer
@@ -723,6 +720,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                 //&& (!query.Zones.Any() || query.Territories.Contains(x.CustZone))
                                                             )
                                         .Select(x => new { x.CustomerNo, x.Territory }).Distinct().ToListAsync();
+
+            var currentYearTotalMachineList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, "", currentYearEndDate.DateTimeFormat());
+            var lastYearTotalMachineList = await _colorBankInstallMachine.GetColorBankInstallMachine(query.Depot, "", lastYearEndDate.DateTimeFormat());
 
             int totalMonth = (currentYearEndDate.Year - currentYearStartDate.Year) * 12 + (currentYearEndDate.Month - currentYearStartDate.Month) + 1;
             var result = new List<ColorBankProductivityBase>();
@@ -734,14 +734,14 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 decimal currentYearTotalSales = currentYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
                 decimal lastYearTotalSales = lastYearSales.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume));
 
-                int lastYearInstall = lastYearInstallList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
-                int currentYearInstall = currentYearInstallList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
+                int lastYearTotalMachine = lastYearTotalMachineList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
+                int currentYearTotalMachine = currentYearTotalMachineList.Where(x => customerList.Any(y => y.Territory == territory && y.CustomerNo == x.CustomerNo)).Distinct().Count();
 
                 bankProductivityBase.CYActualProductivity = 0;
                 bankProductivityBase.LYProductivity = 0;
                 try
                 {
-                    bankProductivityBase.CYActualProductivity = (currentYearTotalSales / currentYearInstall) / totalMonth;
+                    bankProductivityBase.CYActualProductivity = (currentYearTotalSales / currentYearTotalMachine) / totalMonth;
 
                 }
                 catch
@@ -751,7 +751,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
                 try
                 {
-                    bankProductivityBase.LYProductivity = (lastYearTotalSales / lastYearInstall) / totalMonth;
+                    bankProductivityBase.LYProductivity = (lastYearTotalSales / lastYearTotalMachine) / totalMonth;
                 }
                 catch
                 {

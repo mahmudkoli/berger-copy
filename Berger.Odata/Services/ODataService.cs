@@ -2127,9 +2127,11 @@ namespace Berger.Odata.Services
         public async Task<IList<ColorBankMachineDataModel>> GetColorBankInstallData(SelectQueryOptionBuilder selectQueryBuilder, string depot = "", string startDate = "", string endDate = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.NotEqual(ColorBankInstalColumnDef.CustomerNo, "");
+
             if (!string.IsNullOrWhiteSpace(depot))
             {
-                filterQueryBuilder.Equal(ColorBankInstalColumnDef.Depot, depot);
+                filterQueryBuilder.And().Equal(ColorBankInstalColumnDef.Depot, depot);
             }
 
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
@@ -2140,6 +2142,10 @@ namespace Berger.Odata.Services
                     .And()
                     .LessThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, endDate)
                     .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, endDate);
             }
 
 
