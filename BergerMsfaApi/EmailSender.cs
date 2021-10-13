@@ -56,6 +56,8 @@ namespace Berger.Common
                 message.To.Add(email);
                 message.From = message.From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName);
                 message.Subject = subject;
+                message.IsBodyHtml = true;
+                message.Body = body;
                 if (lstattachment.Count > 0)
                 {
                     foreach (var item in lstattachment)
@@ -64,7 +66,6 @@ namespace Berger.Common
                     }
                 }
                 
-                message.Body = body;
                 using (var smtpClient = new SmtpClient())
                 {
                     try

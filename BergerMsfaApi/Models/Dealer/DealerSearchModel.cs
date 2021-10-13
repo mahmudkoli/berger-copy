@@ -12,6 +12,12 @@ namespace BergerMsfaApi.Models.Dealer
         public EnumDealerCategory? DealerCategory { get; set; }
         public int? PageNo { get; set; }
         public int? PageSize { get; set; }
+        public bool isDealerSubDealer { get; set; } = false;
+
+        public AppDealerSearchModel()
+        {
+            this.isDealerSubDealer = false;
+        }
     }
 
     public class AppAreaDealerSearchModel
@@ -25,6 +31,7 @@ namespace BergerMsfaApi.Models.Dealer
         public EnumDealerCategory? DealerCategory { get; set; }
         public int? PageNo { get; set; }
         public int? PageSize { get; set; }
+        public bool isDealerSubDealer { get; set; } = false;
 
         public AppAreaDealerSearchModel()
         {
@@ -33,6 +40,7 @@ namespace BergerMsfaApi.Models.Dealer
             this.SalesGroups = new List<string>();
             this.Territories = new List<string>();
             this.Zones = new List<string>();
+            this.isDealerSubDealer = false;
         }
     }
 
@@ -45,6 +53,7 @@ namespace BergerMsfaApi.Models.Dealer
         public IList<string> Territories { get; set; }
         public IList<string> Zones { get; set; }
         public EnumDealerCategory? DealerCategory { get; set; }
+        public bool isDealerSubDealer { get; set; } = false;
 
         public AreaDealerSearchModel()
         {
@@ -53,6 +62,7 @@ namespace BergerMsfaApi.Models.Dealer
             this.SalesGroups = new List<string>();
             this.Territories = new List<string>();
             this.Zones = new List<string>();
+            this.isDealerSubDealer = false;
         }
 
 

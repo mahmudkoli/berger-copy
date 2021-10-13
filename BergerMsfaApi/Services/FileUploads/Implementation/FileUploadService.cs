@@ -221,5 +221,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         {
             return File.ReadAllBytesAsync(fullPath);
         }
+
+        public Task<Stream> GetFileStreamAsync(string fullPath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

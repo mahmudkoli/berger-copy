@@ -2072,6 +2072,50 @@ namespace Berger.Odata.Services
 
 
 
+        public async Task<IList<CollectionDataModel>> GetFinancialCollectionPlanData(SelectQueryOptionBuilder selectQueryBuilder, IList<string> dealerIds, string fromDate, string endDate)
+        {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(CollectionColDef.Company, ConstantsValue.BergerCompanyCode)
+                            .And().Equal(CollectionColDef.CreditControlArea, ConstantsValue.CreditControlAreaDecorative);
+
+            if (dealerIds.Any())
+            {
+                filterQueryBuilder.And().StartGroup();
+                for (int i = 0; i < dealerIds.Count; i++)
+                {
+                    filterQueryBuilder.Equal(DataColumnDef.Collection_Customer, dealerIds[i]);
+
+                    if (i + 1 != dealerIds.Count)
+                    {
+                        filterQueryBuilder.Or();
+                    }
+                }
+                filterQueryBuilder.EndGroup();
+            }
+
+            filterQueryBuilder.And()
+                                .StartGroup()
+                                .GreaterThanOrEqualDateTime(CollectionColDef.PostingDate, fromDate)
+                                .And().LessThanOrEqualDateTime(CollectionColDef.PostingDate, endDate)
+                                .EndGroup()
+                                .And().Equal(CollectionColDef.CollectionType, ConstantsValue.CollectionMoneyReceipt)
+                                .And()
+                                .StartGroup()
+                                .Equal(CollectionColDef.DocType, ConstantsValue.ChequeDocTypeDZ)
+                                .Or()
+                                .Equal(CollectionColDef.DocType, ConstantsValue.ChequeDocTypeDA)
+                                .EndGroup()
+                                .And().NotEqual(CollectionColDef.ChequeNo, string.Empty);
+
+            var queryBuilder = new QueryOptionBuilder();
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                //.AppendQuery(topQuery)
+                .AppendQuery(selectQueryBuilder.Select);
+
+            var data = (await this.GetCollectionData(queryBuilder.Query)).ToList();
+
+            return data;
+        }
 
 
 
@@ -2083,9 +2127,11 @@ namespace Berger.Odata.Services
         public async Task<IList<ColorBankMachineDataModel>> GetColorBankInstallData(SelectQueryOptionBuilder selectQueryBuilder, string depot = "", string startDate = "", string endDate = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.NotEqual(ColorBankInstalColumnDef.CustomerNo, "");
+
             if (!string.IsNullOrWhiteSpace(depot))
             {
-                filterQueryBuilder.Equal(ColorBankInstalColumnDef.Depot, depot);
+                filterQueryBuilder.And().Equal(ColorBankInstalColumnDef.Depot, depot);
             }
 
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
@@ -2096,6 +2142,10 @@ namespace Berger.Odata.Services
                     .And()
                     .LessThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, endDate)
                     .EndGroup();
+            }
+            else if (!string.IsNullOrEmpty(endDate))
+            {
+                filterQueryBuilder.And().LessThanOrEqualDateTime(ColorBankInstalColumnDef.InstallDate, endDate);
             }
 
 

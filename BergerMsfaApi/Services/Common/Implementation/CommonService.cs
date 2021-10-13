@@ -299,7 +299,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result;
         }
 
-        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId, IList<string> territoryIds = null)
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId, IList<string> territoryIds = null, bool isDealerSubDealer = false)
         {
             //var userId = AppIdentity.AppUser.UserId;
             var employeeRole = AppIdentity.AppUser.EmployeeRole;
@@ -329,7 +329,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                          from cu in cust.DefaultIfEmpty()
                          where
                          (
-                            ((int)EnumEmployeeRole.ZO != employeeRole ||
+                            (isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
                             (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
                          )
                          select new AppDealerInfoModel
@@ -435,7 +435,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
-                          && ((int)EnumEmployeeRole.ZO != employeeRole ||
+                          && (model.isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
                              (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
 
 
@@ -489,7 +489,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
-                          && ((int)EnumEmployeeRole.ZO != employeeRole ||
+                          && (model.isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
                              (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
 
                           select new AppDealerInfoModel

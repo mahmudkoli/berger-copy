@@ -242,7 +242,7 @@ namespace BergerMsfaApi
 
             services.AddSingleton(x => new BlobServiceClient(connectionString));
 
-            services.AddSingleton<IBlobService, BlobService>();
+            services.AddScoped<IBlobService, BlobService>();
 
             services.AddScoped<IFileUploadService,FileUploadToAzureService> ();
         }

@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Services.AppsFontBox;
 using BergerMsfaApi.Services.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.AppsFrontBox
 {
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

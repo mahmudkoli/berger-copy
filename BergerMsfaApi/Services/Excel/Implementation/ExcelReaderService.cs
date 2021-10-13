@@ -149,7 +149,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet("SnapShot");
-                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
@@ -165,6 +165,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     int i = 0;
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
+                        if (kvp.Key.Contains("_Image")) continue;
+
                         if (kvp.Key.Contains("_Image") || kvp.Key.Contains("_Remarks"))
                         {
                             row2.CreateCell(i).SetCellValue(kvp.Key.Replace('_', ' '));
@@ -230,6 +232,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     int i = 0;
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
+
+                        if (kvp.Key.Contains("_Image")) continue;
 
                         if (kvp.Key.Contains("_Image"))
                         {
@@ -318,7 +322,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 IWorkbook workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet(sheetName);
-                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
@@ -331,6 +335,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                     foreach (string property in properties)
                     {
+                        if (property.EndsWith("Image") || property.EndsWith("ImageUrl")) continue;
                         colNames.Add(property, property);
                     }
                 }
@@ -339,6 +344,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 int i = 0;
                 foreach (var prop in typeof(T).GetProperties())
                 {
+                    if (prop.Name.EndsWith("Image") || prop.Name.EndsWith("ImageUrl")) continue;
                     row.CreateCell(i)
                         .SetCellValue(colNames.TryGetValue(prop.Name, out string colName) ? colName : prop.Name);
 
@@ -353,6 +359,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     i = 0;
                     foreach (var prop in typeof(T).GetProperties())
                     {
+                        if (prop.Name.EndsWith("Image") || prop.Name.EndsWith("ImageUrl")) continue;
                         var rowValue = prop.GetValue(item, null)?.ToString();
 
                         if (imageColNames.ContainsKey(prop.Name))
@@ -443,7 +450,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 IWorkbook workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet(sheetName);
-                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowIndex = 0;
                 int colIndex = 0;
 
@@ -573,13 +580,14 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             //var rootFolder = _hostEnvironment.WebRootPath;
             var sFileName = @"DealerOpeningReport.xlsx";
+            var memory = new MemoryStream();
 
-            using (var exportData = new MemoryStream())
+            using (var fs = new FileStream(sFileName, FileMode.Create, FileAccess.Write))
             {
                 IWorkbook workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet("DealerOpening");
-                excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
@@ -595,13 +603,13 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     { nameof(DealerOpeningReportResultModel.Territory),"Territory" },
                     { nameof(DealerOpeningReportResultModel.Zone),"Zone" },
                     { nameof(DealerOpeningReportResultModel.EmployeeId),"Employee Id" },
-                    { nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
-                    { nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
-                    { nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
-                    { nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
-                    { nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
-                    { nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
-                    { nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
+                    //{ nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
+                    //{ nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
+                    //{ nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
+                    //{ nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
+                    //{ nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
+                    //{ nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
+                    //{ nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
                     { nameof(DealerOpeningReportResultModel.CurrentStatusOfThisApplication),"Current Status Of This Application" },
                 };
 
@@ -619,6 +627,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 int i = 0;
                 foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
                 {
+                    if (imageColNames.ContainsKey(prop.Name)) continue;
                     if (colNames.TryGetValue(prop.Name, out string colName))
                         row.CreateCell(i).SetCellValue(colName);
                     else
@@ -635,6 +644,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     i = 0;
                     foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
                     {
+                        if (imageColNames.ContainsKey(prop.Name)) continue;
                         var rowValue = (string)prop.GetValue(item, null);
 
                         if (imageColNames.ContainsKey(prop.Name))
@@ -673,10 +683,16 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     row = excelSheet.CreateRow(rowcount);
                 }
 
-                workbook.Write(exportData);
-                exportData.Position = 0;
-                return exportData;
+                workbook.Write(fs);
             }
+
+            using (var stream = new FileStream(sFileName, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            memory.Position = 0;
+            return memory;
         }
     }
 }

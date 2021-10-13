@@ -224,5 +224,10 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
         {
             return await _blobService.GetFileBlobAsync(fullPath);
         }
+
+        public async Task<Stream> GetFileStreamAsync(string fullPath)
+        {
+            return (await _blobService.GetBlobAsync(fullPath)).Content;
+        }
     }
 }

@@ -13,7 +13,7 @@
     </div>
     <div class="app-sidebar-content">
         <div class="app-sidebar-scroll">
-            <perfect-scrollbar style="max-width: 600px; max-height: 100vh;" [autoPropagation]="true" [config]="config$">
+            <perfect-scrollbar style="max-width: 600px; max-height: calc(100vh - 40px);" [autoPropagation]="true" [config]="config$">
                 <div class="v-sidebar-menu vsm-default">
                     <div class="vsm-list">
                         <ngb-accordion [destroyOnHide]="false" [closeOthers]="true" [activeIds]="extraParameter">

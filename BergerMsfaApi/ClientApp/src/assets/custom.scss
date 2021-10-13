@@ -8,6 +8,7 @@
     .logo-src{
       position: relative;
       &::after {
+        display: none;
         content: "B";
         white-space: nowrap;
         position: absolute;

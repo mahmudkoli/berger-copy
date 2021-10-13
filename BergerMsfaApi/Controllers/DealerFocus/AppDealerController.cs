@@ -58,12 +58,12 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         //}
 
         [HttpGet("GetDealerList")]
-        public async Task<IActionResult> GetDealerList()
+        public async Task<IActionResult> GetDealerList([FromQuery] bool isDealerSubDealer = false)
         {
             try
             {
                 var userId = AppIdentity.AppUser.UserId;
-                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId);
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId, isDealerSubDealer: isDealerSubDealer);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -78,7 +78,7 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             try
             {
                 var userId = AppIdentity.AppUser.UserId;
-                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId, model.Territories);
+                var result = await _commonSvc.AppGetDealerInfoListByCurrentUser(userId, model.Territories, isDealerSubDealer: model.isDealerSubDealer);
                 return OkResult(result);
             }
             catch (Exception ex)

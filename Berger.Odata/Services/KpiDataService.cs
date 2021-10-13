@@ -50,19 +50,20 @@ namespace Berger.Odata.Services
             var selectTargetQueryBuilder = new SelectQueryOptionBuilder();
             selectTargetQueryBuilder.AddProperty(DataColumnDef.MTS_Territory)
                                     .AddProperty(DataColumnDef.MTS_TargetValue)
+                                    .AddProperty(DataColumnDef.MTS_TargetVolume)
                                     .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand);
 
-            var selectActualQueryBuilder = new SelectQueryOptionBuilder();
-            selectActualQueryBuilder.AddProperty(DataColumnDef.Territory)
-                                    .AddProperty(DataColumnDef.NetAmount)
-                                    .AddProperty(DataColumnDef.MatarialGroupOrBrand);
+            //var selectActualQueryBuilder = new SelectQueryOptionBuilder();
+            //selectActualQueryBuilder.AddProperty(DataColumnDef.Territory)
+            //                        .AddProperty(DataColumnDef.NetAmount)
+            //                        .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
             liquidBrands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
             powderBrands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
 
             valueTarget = (await _odataService.GetMTSData(selectTargetQueryBuilder,
                             model.FromDate.MTSSearchDateFormat(), model.ToDate.MTSSearchDateFormat(),
-                            depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories)).ToList();
+                            depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories, division: ConstantsValue.DivisionDecorative)).ToList();
 
             liquidTarget = valueTarget.Where(x => liquidBrands.Contains(x.MatarialGroupOrBrand)).ToList();
             powderTarget = valueTarget.Where(x => powderBrands.Contains(x.MatarialGroupOrBrand)).ToList();
@@ -72,19 +73,21 @@ namespace Berger.Odata.Services
 
             liquidActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
-                Value = x.Value,
-                Territory = x.Territory
+                //Value = x.Value,
+                Territory = x.Territory,
+                Volume = x.Volume
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
-                depotList, model.SalesGroups, model.Territories, brands: liquidBrands);
+                depotList, model.SalesGroups, model.Territories, brands: liquidBrands, division: ConstantsValue.DivisionDecorative);
 
             powderActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
-                Value = x.Value,
-                Territory = x.Territory
+                //Value = x.Value,
+                Territory = x.Territory,
+                Volume = x.Volume
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
-                depotList, model.SalesGroups, model.Territories, brands: powderBrands);
+                depotList, model.SalesGroups, model.Territories, brands: powderBrands, division: ConstantsValue.DivisionDecorative);
 
             valueActual = await GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
@@ -92,7 +95,7 @@ namespace Berger.Odata.Services
                 Territory = x.Territory
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
-                depotList, model.SalesGroups, model.Territories);
+                depotList, model.SalesGroups, model.Territories, division: ConstantsValue.DivisionDecorative);
 
             // liquidActual = valueActual.Where(x => liquidBrands.Contains(x.Brand)).ToList();
             // powderActual = valueActual.Where(x => powderBrands.Contains(x.Brand)).ToList();
@@ -110,12 +113,12 @@ namespace Berger.Odata.Services
                 {
                     Territory = territory,
 
-                    LiquidTarget = target = liquidTarget.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
-                    LiquidActual = actual = liquidActual.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value)),
+                    LiquidTarget = target = liquidTarget.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume)),
+                    LiquidActual = actual = liquidActual.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume)),
                     LiquidAcv = _odataService.GetAchivement(target, actual),
 
-                    PowderTarget = target = powderTarget.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
-                    PowderActual = actual = powderActual.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value)),
+                    PowderTarget = target = powderTarget.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume)),
+                    PowderActual = actual = powderActual.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume)),
                     PowderAcv = _odataService.GetAchivement(target, actual),
 
                     ValueTarget = target = valueTarget.Where(x => x.Territory == territory).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
@@ -207,14 +210,15 @@ namespace Berger.Odata.Services
                                     .AddProperty(DataColumnDef.MTS_CustomerNo)
                                     .AddProperty(DataColumnDef.MTS_CustomerName)
                                     .AddProperty(DataColumnDef.MTS_TargetValue)
+                                    .AddProperty(DataColumnDef.MTS_TargetVolume)
                                     .AddProperty(DataColumnDef.MTS_MatarialGroupOrBrand);
 
-            var selectActualQueryBuilder = new SelectQueryOptionBuilder();
-            selectActualQueryBuilder.AddProperty(DataColumnDef.Territory)
-                                    .AddProperty(DataColumnDef.CustomerNo)
-                                    .AddProperty(DataColumnDef.CustomerName)
-                                    .AddProperty(DataColumnDef.NetAmount)
-                                    .AddProperty(DataColumnDef.MatarialGroupOrBrand);
+            //var selectActualQueryBuilder = new SelectQueryOptionBuilder();
+            //selectActualQueryBuilder.AddProperty(DataColumnDef.Territory)
+            //                        .AddProperty(DataColumnDef.CustomerNo)
+            //                        .AddProperty(DataColumnDef.CustomerName)
+            //                        .AddProperty(DataColumnDef.NetAmount)
+            //                        .AddProperty(DataColumnDef.MatarialGroupOrBrand);
 
             liquidBrands = (await _odataBrandService.GetLiquidBrandCodesAsync()).ToList();
             powderBrands = (await _odataBrandService.GetPowderBrandCodesAsync()).ToList();
@@ -222,7 +226,7 @@ namespace Berger.Odata.Services
             valueTarget = (await _odataService.GetMTSData(selectTargetQueryBuilder,
                 model.FromDate.MTSSearchDateFormat(), model.ToDate.MTSSearchDateFormat(),
                 depots: new List<string> { model.Depot }, salesGroups: model.SalesGroups, territories: model.Territories,
-                customerNo: model.CustomerNo)).ToList();
+                customerNo: model.CustomerNo, division: ConstantsValue.DivisionDecorative)).ToList();
 
             liquidTarget = valueTarget.Where(x => liquidBrands.Contains(x.MatarialGroupOrBrand)).ToList();
             powderTarget = valueTarget.Where(x => powderBrands.Contains(x.MatarialGroupOrBrand)).ToList();
@@ -236,10 +240,11 @@ namespace Berger.Odata.Services
             {
                 Brand = x.Brand,
                 Value = x.Value,
-                Territory = x.Territory
+                Territory = x.Territory,
+                Volume = x.Volume
             }, model.FromDate.DateFormat(),
                 model.ToDate.DateFormat(),
-                depotList, model.SalesGroups, model.Territories, customerNo: model.CustomerNo);
+                depotList, model.SalesGroups, model.Territories, customerNo: model.CustomerNo, division: ConstantsValue.DivisionDecorative);
 
 
 
@@ -269,12 +274,12 @@ namespace Berger.Odata.Services
                     CustomerName = valTar.FirstOrDefault()?.CustomerName ?? valAct.FirstOrDefault()?.CustomerName,
                     Territory = valTar.FirstOrDefault()?.Territory ?? valAct.FirstOrDefault()?.Territory,
 
-                    LiquidTarget = target = liquidTarget.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
-                    LiquidActual = actual = liquidActual.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value)),
+                    LiquidTarget = target = liquidTarget.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume)),
+                    LiquidActual = actual = liquidActual.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume)),
                     LiquidAcv = _odataService.GetAchivement(target, actual),
 
-                    PowderTarget = target = powderTarget.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),
-                    PowderActual = actual = powderActual.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Value)),
+                    PowderTarget = target = powderTarget.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetVolume)),
+                    PowderActual = actual = powderActual.Where(x => x.CustomerNo == customerNo).Sum(x => CustomConvertExtension.ObjectToDecimal(x.Volume)),
                     PowderAcv = _odataService.GetAchivement(target, actual),
 
                     ValueTarget = target = valTar.Sum(x => CustomConvertExtension.ObjectToDecimal(x.TargetValue)),

@@ -18,6 +18,7 @@ namespace Berger.Odata.Common
         public const string CustomerClassificationNonExclusive = "02";
         public const string DistrbutionChannelDealer = "10";
         public const string DivisionDecorative = "10";
+        public const string CreditControlAreaDecorative = "1000";
         public const string PriceGroupCreditBuyer = "01";
         public const string PriceGroupCashBuyer = "02";
         public const string PriceGroupFastPayCarry = "04";

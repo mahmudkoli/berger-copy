@@ -7,6 +7,7 @@ using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.OData.Interfaces;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    // [AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]

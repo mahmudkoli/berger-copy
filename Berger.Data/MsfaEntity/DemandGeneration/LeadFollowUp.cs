@@ -29,7 +29,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public string PaintContractorNameChangeReason { get; set; }
         public string PaintContractorMobile { get; set; }
         public string PaintContractorMobileChangeReason { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public string NumberOfStoriedBuildingChangeReason { get; set; }
         public decimal ExpectedValue { get; set; }
         public string ExpectedValueChangeReason { get; set; }

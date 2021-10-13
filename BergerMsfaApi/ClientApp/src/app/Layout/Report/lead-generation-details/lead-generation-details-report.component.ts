@@ -35,7 +35,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 	allTotalKeysOfNumberType: boolean = false;
 	// totalKeys: any[] = ['totalCall'];
 	totalKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue'];
-	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue'];
+	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue', 'numberOfStoriedBuilding'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];

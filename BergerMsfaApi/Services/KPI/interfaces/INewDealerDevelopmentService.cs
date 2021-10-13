@@ -12,9 +12,9 @@ namespace BergerMsfaApi.Services.KPI.interfaces
     {
         Task<IList<NewDealerDevelopment>> GetNewDealerDevelopmentByIdAsync(SearchNewDealerDevelopment query);
         Task<IList<NewDealerDevelopmentSaveModel>> GetDealerConversionByYearAsync(SearchNewDealerDevelopment query);
-        Task<IList<NewDealerDevelopmentModel>> GetNewDealerDevelopment(SearchNewDealerDevelopment query);
+        Task<IList<NewDealerDevelopmentModel>> GetNewDealerDevelopmentReport(SearchNewDealerDevelopment query);
         Task<int> AddNewDealerDevelopmentAsync(IList<NewDealerDevelopment> model);
         Task<bool> AddDealerConversionAsync(IList<NewDealerDevelopmentSaveModel> model);
-        Task<IList<DealerConversionModel>> GetDealerConversion(SearchNewDealerDevelopment query);
+        Task<IList<DealerConversionModel>> GetDealerConversionReport(SearchNewDealerDevelopment query);
     }
 }

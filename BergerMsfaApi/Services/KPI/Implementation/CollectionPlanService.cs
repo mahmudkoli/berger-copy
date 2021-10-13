@@ -274,16 +274,16 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         public async Task<decimal> GetCustomerSlippageAmountToLastMonth(CustomerSlippageQueryModel query)
         {
             var currentDate = DateTime.Now;
-            var dealerIds = (await _dealerInfoSvc.FindAllAsync(x => x.BusinessArea == query.BusinessArea && x.Territory == query.Territory))
+            var dealerIds = (await _dealerInfoSvc.FindAllAsync(x => x.BusinessArea == query.BusinessArea && x.Territory == query.Territory && 
+                                                                       x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                                                                        x.Division == ConstantsODataValue.DivisionDecorative))
                                                     .Select(x => x.CustomerNo).Distinct().ToList();
 
             var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
 
-            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+            var result = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
 
-            var result = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
-
-            return result;
+            return result.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
         }
         #endregion
     }

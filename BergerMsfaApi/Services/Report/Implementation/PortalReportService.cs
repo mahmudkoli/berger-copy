@@ -481,7 +481,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.KeyContactPersonMobile = x.keyContactPersonMobile;
                 reportModel.PaintContractorName = x.paintContractorName;
                 reportModel.PaintContractorMobile = x.paintContractorMobile;
-                reportModel.NumberOfStoriedBuilding = x?.numberOfStoriedBuilding ?? (int)0;
+                reportModel.NumberOfStoriedBuilding = x?.numberOfStoriedBuilding ?? (double)0;
                 reportModel.ExpectedValue = x?.expectedValue ?? (decimal)0;
                 reportModel.ExpectedMonthlyBusinessValue = x?.expectedMonthlyBusinessValue ?? (decimal)0;
                 reportModel.SwappingCompetition = x.swappingCompetition;
@@ -1471,6 +1471,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             foreach (var x in allVisitDataGroup)
             {
+                dayNumber = 1;
                 var res = new DealerVisitReportResultModel();
 
                 res.UserId = x.FirstOrDefault()?.Email;
@@ -3114,7 +3115,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                         && (string.IsNullOrEmpty(query.Depot) || query.Depot == pInfo.Depot)
                                         && (!query.Territories.Any() || query.Territories.Contains(pc.Territory))
                                         && (!query.Zones.Any() || query.Zones.Contains(pc.Zone))
-                                        && (!query.UserId.HasValue || userinfo.EmployeeId == pInfo.EmployeeId)
+                                        && (!query.UserId.HasValue || userinfo.EmployeeId == pc.EmployeeId)
                                     )
                                      select new
                                      {

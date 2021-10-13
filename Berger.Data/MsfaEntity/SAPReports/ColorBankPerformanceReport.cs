@@ -6,7 +6,7 @@ namespace Berger.Data.MsfaEntity.SAPReports
 {
     public class ColorBankPerformanceReport
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Column(TypeName = "datetime")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime SyncTime { get; set; }

@@ -87,7 +87,7 @@ namespace BergerMsfaApi.Controllers.Report
                 var result = await _portalReportService.GetLeadGenerationDetailsReportAsync(query);
                 IList<LeadGenerationDetailsReportResultModel> leadGenerationDetailsReportResultModels = result.Items;
 
-                var imageUrl = new Dictionary<string, string>() { { nameof(LeadGenerationDetailsReportResultModel.ImageUrl), "Image Url" } };
+                var imageUrl = new Dictionary<string, string>(); // { { nameof(LeadGenerationDetailsReportResultModel.ImageUrl), "Image Url" } };
                 var columns = new Dictionary<string, string>()
                 {
                     {nameof(LeadGenerationDetailsReportResultModel.UserId), "User Id"},
@@ -114,7 +114,7 @@ namespace BergerMsfaApi.Controllers.Report
                     {nameof(LeadGenerationDetailsReportResultModel.ProductSamplingRequired), "Product Sampling Required"},
                     {nameof(LeadGenerationDetailsReportResultModel.NextFollowUpDate), "Next Follow Up Date"},
                     {nameof(LeadGenerationDetailsReportResultModel.Remarks), "Remarks"},
-                    {nameof(LeadGenerationDetailsReportResultModel.ImageUrl), "Image Url"},
+                    //{nameof(LeadGenerationDetailsReportResultModel.ImageUrl), "Image Url"},
                     {nameof(LeadGenerationDetailsReportResultModel.OtherClientName), "Other Client Name"},
                 };
 
@@ -152,7 +152,7 @@ namespace BergerMsfaApi.Controllers.Report
                 var result = await _portalReportService.GetLeadFollowUpDetailsReportAsync(query);
 
 
-                var imageUrl = new Dictionary<string, string>() { { nameof(LeadFollowUpDetailsReportResultModel.ImageUrl), "Image Url" } };
+                var imageUrl = new Dictionary<string, string>(); // { { nameof(LeadFollowUpDetailsReportResultModel.ImageUrl), "Image Url" } };
                 var columns = new Dictionary<string, string>()
                 {
                     {nameof(LeadFollowUpDetailsReportResultModel.UserId), "User Id"},
@@ -198,7 +198,7 @@ namespace BergerMsfaApi.Controllers.Report
                     {nameof(LeadFollowUpDetailsReportResultModel.IsProductSampling), "Is Product Sampling"},
                     {nameof(LeadFollowUpDetailsReportResultModel.NextVisitDate), "Next Visit Date"},
                     {nameof(LeadFollowUpDetailsReportResultModel.Comments), "Comments"},
-                    {nameof(LeadFollowUpDetailsReportResultModel.ImageUrl), "Image Url"},
+                    //{nameof(LeadFollowUpDetailsReportResultModel.ImageUrl), "Image Url"},
                 };
 
 
@@ -268,8 +268,8 @@ namespace BergerMsfaApi.Controllers.Report
                 query.Page = 1;
                 query.PageSize = int.MaxValue;
                 var result = await _portalReportService.GetPainterRegistrationReportAsync(query);
-                
-                var imageUrl = new Dictionary<string, string>() { { nameof(PainterRegistrationReportResultModel.PainterImageUrl), "Painter Image" } };
+
+                var imageUrl = new Dictionary<string, string>(); // { { nameof(PainterRegistrationReportResultModel.PainterImageUrl), "Painter Image" } };
                 var columns = new Dictionary<string, string>()
                 {
                     {nameof(PainterRegistrationReportResultModel.UserId), nameof(PainterRegistrationReportResultModel.UserId).AddSpacesToSentence(true)},
@@ -294,7 +294,7 @@ namespace BergerMsfaApi.Controllers.Report
                     {nameof(PainterRegistrationReportResultModel.APPNotInstalledReason), "Shamparka App Not Installed \"Reason\""},
                     {nameof(PainterRegistrationReportResultModel.AverageMonthlyUse), "Average Monthly Use (Value)"},
                     {nameof(PainterRegistrationReportResultModel.BergerLoyalty), "Berger Loyalty %"},
-                    {nameof(PainterRegistrationReportResultModel.PainterImageUrl), "Painter Image"},
+                    //{nameof(PainterRegistrationReportResultModel.PainterImageUrl), "Painter Image"},
                 };
 
 
@@ -599,8 +599,8 @@ namespace BergerMsfaApi.Controllers.Report
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
                         if (preDefine.TryGetValue(kvp.Key, out string val)) columnNames.Add(kvp.Key, val);
-                        else columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
-                        if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
+                        else if(!kvp.Key.EndsWith("Image")) columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                        //if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
                         if (kvp.Key.EndsWith("AvgMonthlySales") || kvp.Key.EndsWith("ActualMTDSales")) competitionSalesGroup.Add(kvp.Key);
                     }
                     break;
@@ -613,8 +613,10 @@ namespace BergerMsfaApi.Controllers.Report
                     { "Sub-Dealer Management", new List<string>() { "SubDealerInfluence", "SdInfluecePercent" } },
                     { "Painter", new List<string>() { "PainterInfluence", "PainterInfluecePercent" } },
                     { "Shop Manage/Shop Boy", new List<string>() { "ProductKnoledge", "SalesTechniques", "MerchendisingImprovement" } },
+                    //{ "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
+                    //                                                    "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
                     { "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
-                                                                        "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
+                                                                        "SchemeModality", "ShopBoy" } },
                     { "Competition Sales", competitionSalesGroup },
                     { "Dealer Satisfaction", new List<string>() { "DealerSatisfactionStatus", "DealerDissatisfactionReason" } }
                 };
@@ -672,8 +674,8 @@ namespace BergerMsfaApi.Controllers.Report
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
                         if (preDefine.TryGetValue(kvp.Key, out string val)) columnNames.Add(kvp.Key, val);
-                        else columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
-                        if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
+                        else if (!kvp.Key.EndsWith("Image")) columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                        //if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
                         if (kvp.Key.EndsWith("AvgMonthlySales") || kvp.Key.EndsWith("ActualMTDSales")) competitionSalesGroup.Add(kvp.Key);
                     }
                     break;
@@ -686,8 +688,10 @@ namespace BergerMsfaApi.Controllers.Report
                     { "Sub-Dealer Management", new List<string>() { "SubDealerInfluence", "SdInfluecePercent" } },
                     { "Painter", new List<string>() { "PainterInfluence", "PainterInfluecePercent" } },
                     { "Shop Manage/Shop Boy", new List<string>() { "ProductKnoledge", "SalesTechniques", "MerchendisingImprovement" } },
+                    //{ "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
+                    //                                                    "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
                     { "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
-                                                                        "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
+                                                                        "SchemeModality", "ShopBoy" } },
                     { "Competition Sales", competitionSalesGroup },
                     { "Dealer Satisfaction", new List<string>() { "DealerSatisfactionStatus", "DealerDissatisfactionReason" } }
                 };
@@ -745,8 +749,8 @@ namespace BergerMsfaApi.Controllers.Report
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
                         if(preDefine.TryGetValue(kvp.Key, out string val)) columnNames.Add(kvp.Key, val);
-                        else columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
-                        if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
+                        else if (!kvp.Key.EndsWith("Image")) columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                        //if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
                         if (kvp.Key.EndsWith("AvgMonthlySales") || kvp.Key.EndsWith("ActualMTDSales")) competitionSalesGroup.Add(kvp.Key);
                     }
                     break;
@@ -759,8 +763,10 @@ namespace BergerMsfaApi.Controllers.Report
                     { "Sub-Dealer Management", new List<string>() { "SubDealerInfluence", "SdInfluecePercent" } },
                     { "Painter", new List<string>() { "PainterInfluence", "PainterInfluecePercent" } },
                     { "Shop Manage/Shop Boy", new List<string>() { "ProductKnoledge", "SalesTechniques", "MerchendisingImprovement" } },
+                    //{ "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
+                    //                                                    "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
                     { "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
-                                                                        "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
+                                                                        "SchemeModality", "ShopBoy" } },
                     { "Competition Sales", competitionSalesGroup },
                     { "Dealer Satisfaction", new List<string>() { "DealerSatisfactionStatus", "DealerDissatisfactionReason" } }
                 };
@@ -818,8 +824,8 @@ namespace BergerMsfaApi.Controllers.Report
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
                         if (preDefine.TryGetValue(kvp.Key, out string val)) columnNames.Add(kvp.Key, val);
-                        else columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
-                        if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
+                        else if (!kvp.Key.EndsWith("Image")) columnNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                        //if (kvp.Key.EndsWith("Image")) imageColumns.Add(kvp.Key);
                         if (kvp.Key.EndsWith("AvgMonthlySales") || kvp.Key.EndsWith("ActualMTDSales")) competitionSalesGroup.Add(kvp.Key);
                     }
                     break;
@@ -832,8 +838,10 @@ namespace BergerMsfaApi.Controllers.Report
                     { "Sub-Dealer Management", new List<string>() { "SubDealerInfluence", "SdInfluecePercent" } },
                     { "Painter", new List<string>() { "PainterInfluence", "PainterInfluecePercent" } },
                     { "Shop Manage/Shop Boy", new List<string>() { "ProductKnoledge", "SalesTechniques", "MerchendisingImprovement" } },
+                    //{ "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
+                    //                                                    "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
                     { "Competition Information", new List<string>() { "CompetitionService", "CsRemarks", "ProductDisplayAndMerchendizingStatus", "PdmRemarks",
-                                                                        "ProductDisplayAndMerchendizingImage", "SchemeModality", "SchemeModalityImage", "ShopBoy" } },
+                                                                        "SchemeModality", "ShopBoy" } },
                     { "Competition Sales", competitionSalesGroup },
                     { "Dealer Satisfaction", new List<string>() { "DealerSatisfactionStatus", "DealerDissatisfactionReason" } }
                 };

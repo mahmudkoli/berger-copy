@@ -23,7 +23,7 @@
         public static string SubDealer = "subdealer";
         public static string UpStat = "upstat";
         public static string sdname = "sdname";
-        public static string anln1 = "anln1";
+        public static string MachineNumber = "anln1";
         public static string anln2 = "anln2";
         public static string MachineStatus = "machinestatus";
         public static string Txt50 = "txt50";

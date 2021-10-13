@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string VisitDateText { get; set; }
         public DateTime ExpectedDateOfPainting { get; set; }
         public string ExpectedDateOfPaintingText { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
@@ -140,7 +140,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public DropdownDetail PaintingStage { get; set; }
         public string VisitDate { get; set; }
         public string ExpectedDateOfPainting { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
