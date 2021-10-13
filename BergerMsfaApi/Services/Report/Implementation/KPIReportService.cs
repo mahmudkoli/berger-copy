@@ -143,6 +143,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var billingOData = await _kpiDataService.GetKpiPerformanceReport(x => new KPIPerformanceReport()
             {
+                CustomerNo = x.CustomerNo,
                 Date = x.Date,
                 CustomerClassification = x.CustomerClassification
             }, fromDate.DateFormat(),
