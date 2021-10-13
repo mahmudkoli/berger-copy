@@ -94,8 +94,6 @@ namespace BergerMsfaApi.Services.KPI.Implementation
                                               p.Territory == query.Territory &&
                                               p.FiscalYear == query.Year).ToListAsync();
 
-            if (currentYear == null || !currentYear.Any()) throw new Exception("Dealer Conversion of this area and this fiscal year is not set yet.");
-
             newDealerDevelopementList.AddRange(currentYear);
 
             if (newDealerDevelopementList.Count == 0)
@@ -335,6 +333,9 @@ namespace BergerMsfaApi.Services.KPI.Implementation
 
                                             p.Territory == query.Territory &&
                                             p.FiscalYear == query.Year).ToListAsync();
+
+            if (currentYear == null || !currentYear.Any()) throw new Exception("Dealer Conversion of this area and this fiscal year is not set yet.");
+
             currentYear.OrderBy(p => p.Month);
 
             if (currentYear.Count == 12)
