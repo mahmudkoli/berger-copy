@@ -311,9 +311,13 @@ namespace BergerMsfaApi.Repositories
                 //}
                 //var result = await SaveChangesAsync();
                 //return result > 0 ? items : null;
-                
-                var bulkConfig = UpdateCreatedUpdateBy(items, true);
-                await _context.BulkUpdateAsync<TEntity>(items, bulkConfig);
+
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    var bulkConfig = UpdateCreatedUpdateBy(items, true);
+                    await _context.BulkUpdateAsync(items, bulkConfig);
+                    await transaction.CommitAsync();
+                }
                 return items;
             }
             catch (Exception ex)
@@ -335,7 +339,11 @@ namespace BergerMsfaApi.Repositories
                 //var result = await SaveChangesAsync();
                 //return result;
 
-                await _context.BulkDeleteAsync(items);
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    await _context.BulkDeleteAsync(items, new BulkConfig() { UseTempDB = true });
+                    await transaction.CommitAsync();
+                }
                 return 1;
             }
             catch (Exception ex)
@@ -393,7 +401,11 @@ namespace BergerMsfaApi.Repositories
             //}
             //return await SaveChangesAsync();
 
-            await _context.BulkDeleteAsync(records);
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                await _context.BulkDeleteAsync(records, new BulkConfig() { UseTempDB = true });
+                await transaction.CommitAsync();
+            }
             return 1;
         }
 
@@ -671,6 +683,8 @@ namespace BergerMsfaApi.Repositories
 
             BulkConfig bulkConfig = new BulkConfig();
             bulkConfig.PropertiesToExclude = ignoreList;
+            if (isUpdate)
+                bulkConfig.UseTempDB = true;
 
             return bulkConfig;
         }

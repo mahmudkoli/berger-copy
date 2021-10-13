@@ -41,7 +41,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   height: 100vh;
   box-shadow: $sidebar-box-shadow;
   flex-direction: column;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 
   .app-header__logo {
     padding: 0 $layout-spacer-x;
@@ -49,7 +49,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     width: $app-sidebar-width;
     display: flex;
     align-items: center;
-    transition: width .2s;
+    transition: width 0.2s;
     flex-shrink: 0;
   }
 
@@ -88,13 +88,13 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
 }
 
 .logo-src {
-  img{
+  img {
     width: 135px;
     height: 45px;
     filter: brightness(0) invert(1);
   }
 }
-.closed-sidebar .logo-src img{
+.closed-sidebar .logo-src img {
   // display: none;
   width: auto;
   height: auto;
@@ -108,7 +108,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   padding: 0 $layout-spacer-x $layout-spacer-x;
 
   %side-link-hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     color: $white;
   }
 
@@ -119,10 +119,10 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     min-height: 1.5rem;
     padding: 0 1.5rem 0 45px;
     position: relative;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
     color: $white;
     white-space: nowrap;
-    transition: all .2s;
+    transition: all 0.2s;
     text-decoration: none;
     border: 0;
     background: transparent;
@@ -131,7 +131,6 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     font-weight: 600;
     margin-bottom: 15px;
-
 
     &:hover {
       @extend %side-link-hover;
@@ -172,7 +171,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     top: 13px;
     margin-top: -17px;
     font-size: 1.5rem;
-    opacity: .7;
+    opacity: 0.7;
     transition: color 300ms;
   }
 
@@ -182,18 +181,18 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     height: 34px;
     line-height: 34px;
     position: absolute;
-    right: 5px;
-    top: 50%;
-    margin-top: -17px;
+    right: 0;
+    top: 0px;
+    margin-top: -4px;
     font-size: 1.5rem;
     font-style: normal;
-    opacity: .3;
+    opacity: 0.3;
     transition: all 300ms;
     transform: rotate(180deg);
 
     &:after {
-      content: '\e688';
-      font-family: 'Pe-icon-7-stroke';
+      content: "\e688";
+      font-family: "Pe-icon-7-stroke";
     }
   }
 
@@ -201,7 +200,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     position: relative;
 
     &::before {
-      content: '';
+      content: "";
       height: 100%;
       opacity: 1;
       width: 3px;
@@ -213,14 +212,15 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
     }
 
     .vsm-list {
-      padding: ($layout-spacer-x / 2) 0 ($layout-spacer-x / 2) $layout-spacer-x * 1.5;
+      padding: ($layout-spacer-x / 2) 0 ($layout-spacer-x / 2) $layout-spacer-x *
+        1.5;
     }
 
     .vsm-item {
       .vsm-link {
         padding: 0 ($layout-spacer-x / 1.5);
-        height: 1.9rem;
-        line-height: 1.9rem;
+        height: auto;
+        line-height: 1.3rem;
         font-weight: normal;
 
         &.active-item {
@@ -245,7 +245,7 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   }
 
   .collapse {
-    transition: all .26s ease;
+    transition: all 0.26s ease;
     transform: scaleY(0);
     transform-origin: top;
     height: auto;
@@ -276,12 +276,12 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
   z-index: 12;
   background: rgba(0, 0, 0, 0.3);
   display: block;
-  content: '';
+  content: "";
   left: 0;
   top: 0;
   visibility: hidden;
   opacity: 0;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 
 .closed-sidebar-md.closed-sidebar-open {
@@ -296,7 +296,6 @@ $sidebar-box-shadow: 7px 0 60px rgba(0, 0, 0, 0.05);
 // Modifiers
 
 @import "modifiers/closed-sidebar";
-
 
 // Sidebar Themes
 
