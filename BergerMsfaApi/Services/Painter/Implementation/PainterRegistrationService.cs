@@ -386,7 +386,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
-            var userId = AppIdentity.AppUser.UserId;
+            //var userId = AppIdentity.AppUser.UserId;
 
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
@@ -404,7 +404,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration);
             }
 
-            _painter.PainterNo = GeneratePainterNo(userId).Result;
+            _painter.PainterNo = GeneratePainterNo(model.EmployeeId).Result;
             _painter.Status = Status.Active;
             //TODO: need to generate code
             _painter.PainterCode = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
@@ -495,20 +495,14 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
-        public async Task<string> GeneratePainterNo(int userId)
+        public async Task<string> GeneratePainterNo(string employeeId)
         {
-            var lastPainterNo = await _painterSvc.AnyAsync(p => p.CreatedBy == userId) ?
-                                _painterSvc.Where(p => p.CreatedBy == userId).OrderByDescending(p => p.PainterNo).FirstOrDefault()?.PainterNo : "";
+            var lastPainterNo = (await _painterSvc.AnyAsync(p => p.EmployeeId == employeeId)) ? 
+                                    (await _painterSvc.FindAllAsync(p => p.EmployeeId == employeeId))
+                                        .Max(p => CustomConvertExtension.ObjectToInt(p.PainterNo))
+                                    : 0;
 
-            if (lastPainterNo == null)
-            { 
-                return "1"; 
-            }
-            else
-            {
-                Int32.TryParse(lastPainterNo, out int x);
-                return (x + 1).ToString();
-            }
+            return (lastPainterNo + 1).ToString();
         }
 
         #endregion
