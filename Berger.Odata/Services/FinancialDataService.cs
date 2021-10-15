@@ -569,6 +569,8 @@ namespace Berger.Odata.Services
                 item.DayLimitRPRS = dayCount;
                 item.RPRSDate = item.InvoiceDateTime.AddDays(dayCount-1).DateFormat("dd.MM.yyyy");
             }
+
+            result = result.OrderBy(o => o.CustomerName).ToList();
             
             return result;
         }
