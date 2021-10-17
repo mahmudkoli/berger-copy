@@ -20,15 +20,18 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IAuthService authService;
         private readonly IUserInfoService _userService;
         private readonly IActiveDirectoryServices _adservice;
+        private readonly ITempUserLoginHistoryService _tempUserLoginHistoryService;
 
         public AuthController(
             IAuthService service, 
             IUserInfoService user, 
-            IActiveDirectoryServices adservice)
+            IActiveDirectoryServices adservice,
+            ITempUserLoginHistoryService tempUserLoginHistoryService)
         {
             authService = service;
             _userService = user;
             _adservice = adservice;
+            _tempUserLoginHistoryService = tempUserLoginHistoryService;
         }
 
         [AllowAnonymous]
@@ -62,6 +65,8 @@ namespace BergerMsfaApi.Controllers.Users
                 }
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+
+                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, false);
 
                 return OkResult(authUser);
             }

@@ -124,6 +124,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
+        public DbSet<TempUserLoginHistory> TempUserLoginHistory { get; set; }
         #endregion
 
         #region Setup
