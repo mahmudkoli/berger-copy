@@ -18,6 +18,8 @@
     <Compile Remove="Migrations\20210921134106_ApplicationLogAdded.Designer.cs" />
     <Compile Remove="Migrations\20210928132259_OccasionToCelebrateNotification-modified.cs" />
     <Compile Remove="Migrations\20210928132259_OccasionToCelebrateNotification-modified.Designer.cs" />
+    <Compile Remove="Migrations\20211017082134_SAPCategoryWisePerformanceReportUpdate.cs" />
+    <Compile Remove="Migrations\20211017082134_SAPCategoryWisePerformanceReportUpdate.Designer.cs" />
     <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.cs" />
     <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.Designer.cs" />
     <Compile Remove="Migrations\SAPDb\20211012141615_SAPReportCommonTableUpdate.cs" />
