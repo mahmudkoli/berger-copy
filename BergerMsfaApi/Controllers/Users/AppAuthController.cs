@@ -26,7 +26,7 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IActiveDirectoryServices _adservice;
         private readonly IAlertNotificationDataService _alertNotification;
         private readonly INotificationWorkerService _alertNotificationData;
-
+        private readonly ITempUserLoginHistoryService _tempUserLoginHistoryService;
 
         public AppAuthController(
             IAuthService service, 
@@ -34,7 +34,8 @@ namespace BergerMsfaApi.Controllers.Users
             ILoginLogService loginLogService, 
             IActiveDirectoryServices adservice,
             IAlertNotificationDataService alertNotification,
-            INotificationWorkerService alertNotificationData)
+            INotificationWorkerService alertNotificationData,
+            ITempUserLoginHistoryService tempUserLoginHistoryService)
         {
             authService = service;
             _userService = user;
@@ -42,6 +43,7 @@ namespace BergerMsfaApi.Controllers.Users
             _adservice = adservice;
             _alertNotification = alertNotification;
             _alertNotificationData = alertNotificationData;
+            _tempUserLoginHistoryService = tempUserLoginHistoryService;
         }
 
         [AllowAnonymous]
@@ -77,6 +79,8 @@ namespace BergerMsfaApi.Controllers.Users
                 }
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+
+                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, true);
 
                 return OkResult(authUser);
             }
