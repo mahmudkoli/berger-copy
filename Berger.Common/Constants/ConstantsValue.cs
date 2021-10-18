@@ -98,6 +98,7 @@ namespace Berger.Common.Constants
     {
         public const string PlatformHeaderName = "Platform";
         public const string AppPlatformHeader = "Mobile";
+        public const string AppVersionHeaderName = "AppVersion";
     }
 
 
