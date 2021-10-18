@@ -13,5 +13,6 @@ namespace Berger.Data.MsfaEntity.Users
         public string JwtToken { get; set; }
         public bool FromAppLogin { get; set; }
         public DateTime LoggedInTime { get; set; }
+        public string AppVersion { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace BergerMsfaApi.Controllers.Users
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
 
-                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, false);
+                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, false, string.Empty);
 
                 return OkResult(authUser);
             }

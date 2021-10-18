@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Berger.Common.Constants;
 using Berger.Odata.Services;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
@@ -80,7 +81,9 @@ namespace BergerMsfaApi.Controllers.Users
 
                 var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
 
-                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, true);
+                var appVersion = HttpContext.Request?.Headers[ConstantPlatformValue.AppVersionHeaderName];
+
+                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, true, appVersion);
 
                 return OkResult(authUser);
             }

@@ -8,6 +8,6 @@ namespace BergerMsfaApi.Services.Users.Interfaces
 {
     public interface ITempUserLoginHistoryService
     {
-        Task<int> UserLoggedInLogEntryAsync(int userId, string jwtToken, bool fromAppLogin);
+        Task<int> UserLoggedInLogEntryAsync(int userId, string jwtToken, bool fromAppLogin, string appVersion);
     }
 }

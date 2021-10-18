@@ -20,14 +20,15 @@ namespace BergerMsfaApi.Services.Users.Implementation
             _loginRepo = loginRepo;
         }
 
-        public async Task<int> UserLoggedInLogEntryAsync(int userId, string jwtToken, bool fromAppLogin)
+        public async Task<int> UserLoggedInLogEntryAsync(int userId, string jwtToken, bool fromAppLogin, string appVersion)
         {
             var entity = new TempUserLoginHistory()
             {
                 UserId = userId,
                 JwtToken = jwtToken,
                 FromAppLogin = fromAppLogin,
-                LoggedInTime = DateTime.Now
+                LoggedInTime = DateTime.Now,
+                AppVersion = appVersion
             };
 
             var result = await _loginRepo.CreateAsync(entity);
