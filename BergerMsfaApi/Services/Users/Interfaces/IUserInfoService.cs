@@ -22,7 +22,8 @@ namespace BergerMsfaApi.Services.Users.Interfaces
         Task<int> DeleteAsync(int id);
         Task<bool> IsUserExistAsync(string code, int id);
         Task<bool> IsUserNameExistAsync(string username, int id = 0);
-        Task<bool> IsActiveUserAsync(string username, int id = 0);
+        Task<bool> IsActiveUserAsync(string username, int id = 0); 
+        Task<bool> IsGlobalActiveUserAsync(string username, int id = 0);
         Task<bool> IsRoleLinkWithUserExistAsync(int roleId, int userInfoId);
         Task<bool> IsRoleMappingExistAsync(int userInfoId);
         Task<bool> IsUserExistAsync(string adguid);

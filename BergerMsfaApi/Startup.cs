@@ -61,6 +61,7 @@ namespace BergerMsfaApi
             services.Configure<FCMSettingsModel>(options => Configuration.GetSection("FCMSettings").Bind(options));
             //services.Configure<AuthMessageSenderOptions>(options =>
             //           Configuration.GetSection("SendGridEmailSettings").Bind(options));
+            services.Configure<AppSettingsModel>(options => Configuration.GetSection("AppSettings").Bind(options));
 
             services.Configure<SmtpSettings>(options =>
                        Configuration.GetSection("SmtpSettings").Bind(options));
@@ -197,7 +198,10 @@ namespace BergerMsfaApi
                 o.MultipartHeadersLengthLimit = int.MaxValue;
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
+            services.AddControllers(options => 
+            {
+                options.Filters.Add(typeof(AuthorizeFilterAttribute));
+            }).AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
