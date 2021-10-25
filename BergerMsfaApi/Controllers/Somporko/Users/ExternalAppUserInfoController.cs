@@ -8,11 +8,11 @@ namespace BergerMsfaApi.Controllers.Somporko.Users
 {
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class SomporkoAppUserInfoController : BaseController
+    public class ExternalAppUserInfoController : BaseController
     {
         private readonly ISomporkoUserInfoService _userService;
 
-        public SomporkoAppUserInfoController(
+        public ExternalAppUserInfoController(
             ISomporkoUserInfoService userService)
         {
             _userService = userService;

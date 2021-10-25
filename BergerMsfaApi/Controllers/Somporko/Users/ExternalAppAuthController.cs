@@ -11,11 +11,11 @@ namespace BergerMsfaApi.Controllers.Somporko.Users
 {
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
-    public class SomporkoAppAuthController : BaseController
+    public class ExternalAppAuthController : BaseController
     {
         private readonly ISomporkoAuthService _authService;
 
-        public SomporkoAppAuthController(
+        public ExternalAppAuthController(
             ISomporkoAuthService authService)
         {
             _authService = authService;

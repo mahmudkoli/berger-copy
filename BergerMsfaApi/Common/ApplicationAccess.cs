@@ -16,8 +16,8 @@ namespace BergerMsfaApi.Common
                 nameof(EnumApplicationCategory.SomporkoApp),
                 new List<string>()
                 {
-                    nameof(SomporkoAppAuthController).RemoveControllerEndName(),
-                    nameof(SomporkoAppUserInfoController).RemoveControllerEndName()
+                    nameof(ExternalAppAuthController).RemoveControllerEndName(),
+                    nameof(ExternalAppUserInfoController).RemoveControllerEndName()
                 }
             }
         };
