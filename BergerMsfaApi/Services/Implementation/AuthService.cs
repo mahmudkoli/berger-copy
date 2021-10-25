@@ -74,7 +74,7 @@ namespace BergerMsfaApi.Services.Implementation
                     new Claim(JwtRegisteredClaimNames.UniqueName,userPrincipal.UserName),
                     new Claim(JwtRegisteredClaimNames.Sub,userPrincipal.UserId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim(ConstantsApplicationCategory.ApplicationCategory, ConstantsApplicationCategory.MSFAApp),
+                    new Claim(ConstantsApplication.ApplicationCategory, nameof(EnumApplicationCategory.MSFAApp)),
                 };
                 claims.AddRange(appClaimes);
                 foreach (var role in userPrincipal.RoleIdList)

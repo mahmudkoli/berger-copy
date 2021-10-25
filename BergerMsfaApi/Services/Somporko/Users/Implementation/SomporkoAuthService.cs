@@ -72,7 +72,7 @@ namespace BergerMsfaApi.Services.Somporko.Users.Implementation
                     new Claim(JwtRegisteredClaimNames.UniqueName,userPrincipal.UserName),
                     new Claim(JwtRegisteredClaimNames.Sub,userPrincipal.UserId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim(ConstantsApplicationCategory.ApplicationCategory, ConstantsApplicationCategory.SomporkoApp),
+                    new Claim(ConstantsApplication.ApplicationCategory, nameof(EnumApplicationCategory.SomporkoApp)),
                 };
                 claims.AddRange(appClaimes);
 
@@ -89,9 +89,7 @@ namespace BergerMsfaApi.Services.Somporko.Users.Implementation
 
                 var results = new SomporkoAuthenticateUserModel()
                 {
-                    UserId = userInfo.Id,
                     UserName = userInfo.UserName,
-                    FullName = userInfo.FullName ?? string.Empty,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo
                 };

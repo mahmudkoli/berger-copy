@@ -2,7 +2,6 @@
 using System.Net;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Somporko.Users;
 using BergerMsfaApi.Services.Somporko.Users.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Somporko.Users
 {
-    [Somporko]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class SomporkoAppAuthController : BaseController

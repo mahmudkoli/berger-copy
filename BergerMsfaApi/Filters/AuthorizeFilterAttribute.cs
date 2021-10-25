@@ -1,4 +1,6 @@
 ﻿using Berger.Common.Constants;
+using Berger.Common.Enumerations;
+using BergerMsfaApi.Common;
 using BergerMsfaApi.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,28 +40,7 @@ namespace BergerMsfaApi.Filters
             }
             else
             {
-                var appType = context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantsApplicationCategory.ApplicationCategory);
-                
-                //var actionName = string.Empty;
-                //var controllerName = string.Empty;
-
-                //var descriptor = context?.ActionDescriptor as ControllerActionDescriptor;
-                //if (descriptor != null)
-                //{
-                //    actionName = descriptor.ActionName;
-                //    controllerName = descriptor.ControllerName;
-                //}
-
-                if (appType == null)
-                    return;
-                else if (appType.Value == ConstantsApplicationCategory.MSFAApp)
-                {
-                    UnAuthObjectResultForMSFA(context);
-                }
-                else if (appType.Value == ConstantsApplicationCategory.SomporkoApp)
-                {
-                    UnAuthObjectResultForSomporko(context);
-                }
+                UnAuthObjectResultForSpecific(context);
             }
         }
 
@@ -91,44 +73,35 @@ namespace BergerMsfaApi.Filters
             context.Result = result;
         }
 
-        private void UnAuthObjectResultForMSFA(AuthorizationFilterContext context)
+        private void UnAuthObjectResultForSpecific(AuthorizationFilterContext context)
         {
-            // TODO: Add another new controller attribute if another specific api come and need to unauthorized for msfa app
-            var isUnAuthForSpecificApi = context.ActionDescriptor.EndpointMetadata.Any(em => em.GetType() == typeof(SomporkoAttribute));
-            if (!isUnAuthForSpecificApi) return;
+            #region check app wise access for specific controller authorization 
+            var accessibleControllerDicts = ApplicationAccess.AccessControllers;
+            var accessibleControllers = ApplicationAccess.AccessControllers.Values.SelectMany(x => x).ToList();
+            var appType = context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantsApplication.ApplicationCategory);
+            var appTypeValue = appType?.Value ?? string.Empty;
 
-            var apiResult = new ApiResponse
-            {
-                StatusCode = (int)HttpStatusCode.Unauthorized,
-                Status = "AuthorizationError",
-                Msg = "Unauthorized For MSFA",
-                Data = null
-            };
+            var actionName = string.Empty;
+            var controllerName = string.Empty;
 
-            var result = new ObjectResult(apiResult)
+            var descriptor = context?.ActionDescriptor as ControllerActionDescriptor;
+            if (descriptor != null)
             {
-                StatusCode = (int)HttpStatusCode.Unauthorized
-            };
-
-            var header = context.HttpContext.Request?.Headers[ConstantPlatformValue.PlatformHeaderName];
-            if (header.HasValue && header.Equals(ConstantPlatformValue.AppPlatformHeader))
-            {
-                result.StatusCode = (int)HttpStatusCode.OK;
+                actionName = descriptor.ActionName;
+                controllerName = descriptor.ControllerName;
             }
 
-            context.Result = result;
-        }
-
-        private void UnAuthObjectResultForSomporko(AuthorizationFilterContext context)
-        {
-            var isUnAuthForSpecificApi = context.ActionDescriptor.EndpointMetadata.Any(em => em.GetType() == typeof(SomporkoAttribute));
-            if (isUnAuthForSpecificApi) return;
+            if ((appType == null || appTypeValue == nameof(EnumApplicationCategory.MSFAApp)) && !accessibleControllers.Contains(controllerName))
+                return;
+            else if (accessibleControllerDicts.ContainsKey(appTypeValue) && accessibleControllerDicts[appTypeValue].Contains(controllerName))
+                return;
+            #endregion
 
             var apiResult = new ApiResponse
             {
                 StatusCode = (int)HttpStatusCode.Unauthorized,
                 Status = "AuthorizationError",
-                Msg = "Unauthorized For Somporko",
+                Msg = "Unauthorized",
                 Data = null
             };
 
