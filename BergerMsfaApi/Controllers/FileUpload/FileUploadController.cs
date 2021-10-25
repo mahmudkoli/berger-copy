@@ -1,20 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Berger.Common.Enumerations;
-using Berger.Common.Model;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Models.Blob;
 using BergerMsfaApi.Services.Blob;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using Microsoft.AspNetCore.Http;
-using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.FileUpload
 {
-    [AuthorizeFilter]
     [Route("api/[controller]")]
-    [ApiController]
     public class FileUploadController : BaseController
     {
         private readonly IBlobService _blobService;

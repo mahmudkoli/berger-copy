@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerSalesCall
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class DealerSalesCallController : BaseController
