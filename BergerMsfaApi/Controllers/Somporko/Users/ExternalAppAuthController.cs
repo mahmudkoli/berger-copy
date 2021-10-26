@@ -31,7 +31,7 @@ namespace BergerMsfaApi.Controllers.Somporko.Users
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
-                //var pass = Berger.Common.Extensions.SecurityExtension.ToEncryptString("msfa@$omp0rko@pp@2021", "Auf2eZehjfg6tfgttlgs3hfuRrf8fday");
+                //var pass = Berger.Common.Extensions.SecurityExtension.ToEncryptString("afEgta2fg4h6k@gwq", "Auf2eZehjfg6tfgttlgs3hfuRrf8fday");
 
                 bool loginSuccess = await _authService.IsUserExistAsync(model.UserName, model.Password);
                 if (!loginSuccess)
