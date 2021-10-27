@@ -110,6 +110,18 @@ export class CommonService {
       .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
   }
 
+  insertSpacesWithRenameKeys(value, keysMap) {
+    if(keysMap[value]) value = keysMap[value];
+    return value
+      .replace(/(_|-)/g, ' ')
+      .trim()
+      .replace(/\w\S*/g, function (str) {
+        return str.charAt(0).toUpperCase() + str.substr(1);
+      })
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+  }
+
   renameKeys(obj, keysMap) {
     return Object.keys(obj).reduce(
       (acc, key) => ({
