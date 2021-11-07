@@ -238,7 +238,7 @@ export class SchemedetailAddComponent implements OnInit, OnDestroy {
 			return result;
 		}
 
-		result = `Edit Scheme - ${this.schemeDetail.schemeMasterName}`;
+		result = `Edit Scheme - ${this.schemeDetail.schemeName}`;
 		return result;
 	}
 

@@ -33,7 +33,7 @@ export class MtsValueTargetAchivementReportComponent
 
   // ptable settings
   enabledTotal: boolean = false;
-  tableName: string = 'MTS Value Target Achivement';
+  tableName: string = 'MTS Value Target Achievement';
   // renameKeys: any = {'userId':'// User Id //'};
   renameKeys: any = {};
   allTotalKeysOfNumberType: boolean = true;
