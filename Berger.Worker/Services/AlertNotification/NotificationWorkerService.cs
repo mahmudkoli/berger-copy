@@ -93,11 +93,11 @@ namespace Berger.Worker.Services.AlertNotification
                                                 from cbninfo in cbninfoleftjoin.DefaultIfEmpty()
                                                 select new ChequeBounceNotification
                                                 {
-                                                    Depot = cbninfo.BusinessArea,
-                                                    Territory = cbninfo.Territory,
-                                                    Zone = cbninfo.CustZone,
-                                                    CustomarNo = cbninfo.CustomerNo,
-                                                    CustomerName = cbninfo.CustomerName,
+                                                    Depot = cbninfo?.BusinessArea,
+                                                    Territory = cbninfo?.Territory,
+                                                    Zone = cbninfo?.CustZone,
+                                                    CustomarNo = cbninfo?.CustomerNo,
+                                                    CustomerName = cbninfo?.CustomerName,
                                                     ChequeNo = cbn.ChequeNo,
                                                     Amount = CustomConvertExtension.ObjectToDecimal(cbn.Amount),
                                                     NotificationDate = today
@@ -291,16 +291,16 @@ namespace Berger.Worker.Services.AlertNotification
                                     InvoiceAge = CustomConvertExtension.ObjectToInt(cbn.Age),
                                     PostingDate = CustomConvertExtension.ObjectToDateTime(cbn.PostingDate),
                                     CustomarNo = cbn.CustomerNo,
-                                    CustomerName = cbninfo.CustomerName,
+                                    CustomerName = cbninfo?.CustomerName,
                                     DayLimit = CustomConvertExtension.ObjectToInt(cbn.DayLimit),
                                     InvoiceNo = cbn.InvoiceNo,
-                                    Depot = cbninfo.BusinessArea,
-                                    Territory = cbninfo.Territory,
-                                    Zone = cbninfo.CustZone,
-                                    PriceGroup = cbninfo.PriceGroup,
-                                    IsRprsPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCreditBuyer,
-                                    IsFastPayCarryPayment = cbninfo.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
-                                                            cbninfo.PriceGroup == ConstantsValue.PriceGroupFastPayCarry,
+                                    Depot = cbninfo?.BusinessArea,
+                                    Territory = cbninfo?.Territory,
+                                    Zone = cbninfo?.CustZone,
+                                    PriceGroup = cbninfo?.PriceGroup,
+                                    IsRprsPayment = cbninfo?.PriceGroup == ConstantsValue.PriceGroupCreditBuyer,
+                                    IsFastPayCarryPayment = cbninfo?.PriceGroup == ConstantsValue.PriceGroupCashBuyer ||
+                                                            cbninfo?.PriceGroup == ConstantsValue.PriceGroupFastPayCarry,
                                     InvoiceValue = CustomConvertExtension.ObjectToDecimal(cbn.Amount),
                                 }).Distinct().ToList();
 

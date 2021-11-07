@@ -162,16 +162,16 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 	}
 
 	ptableColDefGenerate() {
-		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
+		// this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key,
+			return { headerName: this.commonService.insertSpacesWithRenameKeys(key, this.renameKeys), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Material' || x.internalName == 'Material Group' || x.internalName == 'Quantity' || x.internalName == 'Batch Number' || x.internalName == 'Comments' || x.internalName == 'Priority'
+			(x) => x.internalName == 'pcMaterial' || x.internalName == 'pcMaterialGroup' || x.internalName == 'pcQuantity' || x.internalName == 'pcBatchNumber' || x.internalName == 'pcComments' || x.internalName == 'pcPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Product Complaint';
@@ -179,7 +179,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'pcomment' || x.internalName == 'ppriority'
+			(x) => x.internalName == 'posComments' || x.internalName == 'posPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'POS Material Short';
@@ -187,7 +187,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'scomments' || x.internalName == 'spriority'
+			(x) => x.internalName == 'shadeComments' || x.internalName == 'shadePriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shade Card';
@@ -195,7 +195,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'sscomments' || x.internalName == 'sspriority'
+			(x) => x.internalName == 'shopSignComments' || x.internalName == 'shopSignPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shop Sign Complain';
@@ -203,7 +203,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Status' || x.internalName == 'Maintatinance Frequency' || x.internalName == 'Remarks for Irregular' || x.internalName == 'cbmPriority'
+			(x) => x.internalName == 'cbmStatus' || x.internalName == 'cbmMaintatinanceFrequency' || x.internalName == 'cbmRemarks' || x.internalName == 'cbmPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Color Bank Maintainance';
@@ -211,7 +211,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Materials' || x.internalName == 'Materials Group' || x.internalName == 'dquantity' || x.internalName == 'damComments' || x.internalName == 'damPriority'
+			(x) => x.internalName == 'damageMaterial' || x.internalName == 'damageMaterialGroup' || x.internalName == 'damageQuantity' || x.internalName == 'damageComments' || x.internalName == 'damagecPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Damage Product';
@@ -219,7 +219,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'ocomment' || x.internalName == 'opriority'
+			(x) => x.internalName == 'othersComment' || x.internalName == 'othersriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Others';
@@ -227,7 +227,7 @@ export class DealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'dcomments' || x.internalName == 'dpriority'
+			(x) => x.internalName == 'deliveryComments' || x.internalName == 'deliveryPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Delivery Issue';

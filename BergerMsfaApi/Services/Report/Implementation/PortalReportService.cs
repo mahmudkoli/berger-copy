@@ -3815,7 +3815,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 { "@RowspPage", query.PageSize }
             };
 
-            return _leadGenerationRepository.DynamicListFromSql("GetDynamicDealerSalesCallReport", parameters, true);
+            return _leadGenerationRepository.DynamicListFromSql("GetDynamicAdhocDealerSalesCallReport", parameters, true);
         }
 
         public async Task<QueryResultModel<InactivePainterReportResultModel>> GetInactivePainterReportAsync(InactivePainterReportSearchModel query)

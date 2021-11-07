@@ -155,9 +155,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             // var billingOData = await _salesDataService.GetKPIStrikeRateKPIReport(query.Year, query.Month, query.Depot, query.SalesGroups, query.Territories, query.Zones, premiumBrands);
 
-            var monthlyBillingCount = 0;
-            var monthlyActualVisitCount = 0;
-
             for (DateTime date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 var reportModel = new StrikeRateKPIReportResultModel();
@@ -170,7 +167,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                     .Select(x => x.CustomerNo).Distinct();
 
                 var actualVisitCount = actualVisit.Count();
-                monthlyActualVisitCount += actualVisit.Count();
 
                 var billing = billingOData.Where(x => x.Date.Date == date.Date
                                                     && ((query.ReportType == EnumStrikeRateReportType.All) ||
@@ -180,7 +176,6 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                 .Select(x => x.CustomerNo).Distinct();
 
                 var billingCount = actualVisit.Where(x => billing.Contains(x)).Count();
-                monthlyBillingCount += billing.Count();
 
                 reportModel.Date = date.ToString("dd-MM-yyyy");
                 reportModel.DateTime = date;
@@ -197,7 +192,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                 (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                                     x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                     x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                        .Select(x => new { x.CustomerNo, x.VisitDate }).Distinct();
+                                                        .Select(x => new { x.CustomerNo, VisitDate = x.VisitDate.Date }).Distinct();
 
                     var actualVisitCountWeekly = actualVisitWeekly.Count();
 
@@ -206,9 +201,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                             (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                                 x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                 x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                    .Select(x => new { x.CustomerNo, x.Date }).Distinct();
+                                                    .Select(x => x.CustomerNo).Distinct();
 
-                    var billingCountWeekly = actualVisitWeekly.Where(x => billingWeekly.Any(y => y.CustomerNo == x.CustomerNo)).Count();
+                    var billingCountWeekly = actualVisitWeekly.Where(x => billingWeekly.Any(y => y == x.CustomerNo)).Select(x => x.CustomerNo).Distinct().Count();
 
                     reportModel = new StrikeRateKPIReportResultModel
                     {
@@ -227,7 +222,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                                 (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                                     x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                     x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                        .Select(x => new { x.CustomerNo, x.VisitDate }).Distinct();
+                                                        .Select(x => new { x.CustomerNo, VisitDate = x.VisitDate.Date }).Distinct();
 
                     var actualVisitCountWeekly = actualVisit.Count();
 
@@ -236,9 +231,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                                             (query.ReportType == EnumStrikeRateReportType.Exclusive ?
                                                                 x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
                                                                 x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
-                                                    .Select(x => new { x.CustomerNo, x.Date }).Distinct();
+                                                    .Select(x => x.CustomerNo).Distinct();
 
-                    var billingCountWeekly = actualVisitWeekly.Where(x => billingWeekly.Any(y => y.CustomerNo == x.CustomerNo)).Count();
+                    var billingCountWeekly = actualVisitWeekly.Where(x => billingWeekly.Any(y => y == x.CustomerNo)).Select(x => x.CustomerNo).Distinct().Count();
 
                     reportModel = new StrikeRateKPIReportResultModel
                     {
@@ -252,14 +247,29 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 }
             }
 
-
             var weekResults = reportResult.Where(x => x.Date.StartsWith("Week")).ToList();
+
+            var actualVisitMonthly = dealerVisit.Where(x => ((query.ReportType == EnumStrikeRateReportType.All) ||
+                                                        (query.ReportType == EnumStrikeRateReportType.Exclusive ?
+                                                            x.DealerClasification == ConstantsODataValue.CustomerClassificationExclusive :
+                                                            x.DealerClasification == ConstantsODataValue.CustomerClassificationNonExclusive)))
+                                                .Select(x => new { x.CustomerNo, VisitDate = x.VisitDate.Date }).Distinct();
+
+            var actualVisitCountMonthly = actualVisitMonthly.Count();
+
+            var billingMonthly = billingOData.Where(x => ((query.ReportType == EnumStrikeRateReportType.All) ||
+                                                    (query.ReportType == EnumStrikeRateReportType.Exclusive ?
+                                                        x.CustomerClassification == ConstantsODataValue.CustomerClassificationExclusive :
+                                                        x.CustomerClassification == ConstantsODataValue.CustomerClassificationNonExclusive)))
+                                            .Select(x => x.CustomerNo).Distinct();
+
+            var billingCountMonthly = actualVisitMonthly.Where(x => billingMonthly.Any(y => y == x.CustomerNo)).Select(x => x.CustomerNo).Distinct().Count();
 
             var businessCallWebKpiReportResultModel = new StrikeRateKPIReportResultModel
             {
-                NoOfCallActual = monthlyActualVisitCount,
-                NoOfPremiumBrandBilling = monthlyBillingCount,
-                BillingPercentage = this.GetAchivement(monthlyActualVisitCount, monthlyBillingCount),
+                NoOfCallActual = actualVisitCountMonthly,
+                NoOfPremiumBrandBilling = billingCountMonthly,
+                BillingPercentage = this.GetAchivement(actualVisitCountMonthly, billingCountMonthly),
                 Date = "Total",
             };
 
