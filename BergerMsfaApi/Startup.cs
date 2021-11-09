@@ -86,7 +86,7 @@ namespace BergerMsfaApi
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                     };
                 });
 
