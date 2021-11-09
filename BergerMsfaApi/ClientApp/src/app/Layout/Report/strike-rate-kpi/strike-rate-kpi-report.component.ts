@@ -37,7 +37,7 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 
   // ptable settings
   enabledTotal: boolean = false;
-  tableName: string = 'Strike rate on business call Report';
+  tableName: string = 'Strike Rate on Business Call Report';
   // renameKeys: any = {'userId':'User Id'};
   renameKeys: any = {};
   allTotalKeysOfNumberType: boolean = true;

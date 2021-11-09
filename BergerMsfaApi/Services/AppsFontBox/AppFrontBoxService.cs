@@ -196,7 +196,8 @@ namespace BergerMsfaApi.Services.AppsFontBox
                                                         && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                                                         && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                                                         && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
-                                                        && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
+                                                        && (!area.Zones.Any() || area.Zones.Contains(x.Zone))))
+                                                        && x.Division == ConstantsValue.DivisionDecorative;
         }
 
         private async Task<int> GetNoOfBillingDealer()

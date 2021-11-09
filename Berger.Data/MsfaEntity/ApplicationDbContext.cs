@@ -248,5 +248,6 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         public DbSet<ApplicationLog> ApplicationLogs { get; set; }
+        public DbSet<MobileAppLog> MobileAppLogs { get; set; }
     }
 }
