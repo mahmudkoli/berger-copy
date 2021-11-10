@@ -96,7 +96,7 @@ namespace BergerMsfaApi.Services.Implementation
                                     _settings.Issuer,
                                     _settings.Audience,
                                     claims,
-                                    expires: DateTime.UtcNow.AddHours(_settings.ExpiresHours), //TODO: time to hour
+                                    expires: DateTime.Now.AddMinutes(1), //TODO: time to hour
                                     signingCredentials: cred
                                 );
 
@@ -256,8 +256,8 @@ namespace BergerMsfaApi.Services.Implementation
                 {
                     UserId = userId,
                     Token = Convert.ToBase64String(randomBytes),
-                    Expires = DateTime.UtcNow.AddDays(_cookieExpireDays),
-                    Created = DateTime.UtcNow,
+                    Expires = DateTime.Now.AddDays(_cookieExpireDays),
+                    Created = DateTime.Now,
                     CreatedByIp = ipAddress
                 };
             }
@@ -268,7 +268,7 @@ namespace BergerMsfaApi.Services.Implementation
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(_cookieExpireDays)
+                Expires = DateTime.Now.AddDays(_cookieExpireDays)
             };
             Response.Cookies.Append(_refreshTokenHeader, token, cookieOptions);
         }
