@@ -12,7 +12,7 @@ namespace BergerMsfaApi.Services.Interfaces
         Task<AuthenticateUserModel> GetJWTTokenByUserNameWithRefreshTokenAsync(string userName, HttpContext context, HttpRequest request, HttpResponse response);
         Task<IList<string>> GetDealerByUserId(int userId);
         AreaSearchCommonModel GetLoggedInUserArea();
-        Task<AuthenticateUserModel> RefreshTokenAsync(HttpContext context, HttpRequest request, HttpResponse response);
+        Task<AuthenticateUserModel> RefreshTokenAsync(string token, HttpContext context, HttpRequest request, HttpResponse response);
         Task<bool> RevokeTokenAsync(string token, HttpContext context, HttpRequest request);
     }
 }

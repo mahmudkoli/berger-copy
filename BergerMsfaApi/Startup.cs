@@ -40,6 +40,7 @@ using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.KPI.Implementation;
 using Microsoft.AspNetCore.Http.Features;
+using System;
 
 namespace BergerMsfaApi
 {
@@ -87,6 +88,7 @@ namespace BergerMsfaApi
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 

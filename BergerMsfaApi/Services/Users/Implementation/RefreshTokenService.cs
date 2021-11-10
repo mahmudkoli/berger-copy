@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
         {
             var singleValue = await _refreshTokenRepo.FindAsync(x => x.Id == id);
 
-            _ = singleValue ?? throw new Exception("Not found refresh token.");
+            //_ = singleValue ?? throw new Exception("Not found refresh token.");
 
             return singleValue;
         }
@@ -31,7 +31,7 @@ namespace BergerMsfaApi.Services.Users.Implementation
         {
             var singleValue = await _refreshTokenRepo.FindAsync(x => x.Token == token);
 
-            _ = singleValue ?? throw new Exception("Not found refresh token.");
+            //_ = singleValue ?? throw new Exception("Not found refresh token.");
 
             return singleValue;
         }

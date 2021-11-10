@@ -31,6 +31,7 @@ namespace BergerMsfaApi.Services.Implementation
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly ICommonService _commonService;
         private readonly int _cookieExpireDays = 3;
+        private readonly string _refreshTokenHeader = "refreshToken";
 
         public AuthService(
             IOptions<TokensSettingsModel> settings,
@@ -95,7 +96,7 @@ namespace BergerMsfaApi.Services.Implementation
                                     _settings.Issuer,
                                     _settings.Audience,
                                     claims,
-                                    expires: DateTime.UtcNow.AddMinutes(_settings.ExpiresHours),
+                                    expires: DateTime.UtcNow.AddHours(_settings.ExpiresHours), //TODO: time to hour
                                     signingCredentials: cred
                                 );
 
@@ -173,6 +174,7 @@ namespace BergerMsfaApi.Services.Implementation
             await _refreshTokenService.AddAsync(refreshToken);
 
             SetTokenCookie(response, refreshToken.Token);
+            authRespone.RefreshToken = refreshToken.Token;
 
             return authRespone;
         }
@@ -198,9 +200,9 @@ namespace BergerMsfaApi.Services.Implementation
         }
 
         #region Refresh Token
-        public async Task<AuthenticateUserModel> RefreshTokenAsync(HttpContext context, HttpRequest request, HttpResponse response)
+        public async Task<AuthenticateUserModel> RefreshTokenAsync(string token, HttpContext context, HttpRequest request, HttpResponse response)
         {
-            var token = GetTokenCookie(request);
+            token ??= GetTokenCookie(request);
             var ipAddress = IpAddress(context, request);
             var refreshToken = await _refreshTokenService.GetByTokenAsync(token);
             if (refreshToken == null || !refreshToken.IsActive) throw new Exception("Invalid token.");
@@ -217,6 +219,9 @@ namespace BergerMsfaApi.Services.Implementation
 
             var authRespone = await GetJWTTokenByUserNameAsync(user.UserName);
 
+            SetTokenCookie(response, newRefreshToken.Token);
+            authRespone.RefreshToken = newRefreshToken.Token;
+
             return authRespone;
         }
 
@@ -226,10 +231,10 @@ namespace BergerMsfaApi.Services.Implementation
             var ipAddress = IpAddress(context, request);
 
             if (string.IsNullOrEmpty(token))
-                throw new Exception("Token is required.");
+                throw new Exception("Invalid token.");
 
             var refreshToken = await _refreshTokenService.GetByTokenAsync(token);
-            if (refreshToken == null || !refreshToken.IsActive) throw new Exception("Token not found.");
+            if (refreshToken == null || !refreshToken.IsActive) throw new Exception("Invalid token.");
 
             //var user = await _userManager.FindByIdAsync(refreshToken.UserId.ToString());
             //if (user == null) throw new Exception("Token not found.");
@@ -265,12 +270,12 @@ namespace BergerMsfaApi.Services.Implementation
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(_cookieExpireDays)
             };
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
+            Response.Cookies.Append(_refreshTokenHeader, token, cookieOptions);
         }
 
         private string GetTokenCookie(HttpRequest Request)
         {
-            return Request.Cookies["refreshToken"];
+            return Request.Cookies[_refreshTokenHeader];
         }
 
         private string IpAddress(HttpContext HttpContext, HttpRequest Request)

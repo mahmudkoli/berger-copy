@@ -111,17 +111,31 @@ namespace BergerMsfaApi.Controllers.Users
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync()
+        public async Task<IActionResult> RefreshTokenAsync([FromQuery] string token)
         {
-            var response = await authService.RefreshTokenAsync(HttpContext, Request, Response);
-            return OkResult(response);
+            try
+            {
+                var response = await authService.RefreshTokenAsync(token, HttpContext, Request, Response);
+                return OkResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
 
         [HttpPost("revoke-token")]
         public async Task<IActionResult> RevokeTokenAsync([FromQuery] string token)
         {
-            var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
-            return OkResult(response);
+            try
+            {
+                var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
+                return OkResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }
     }
 }
