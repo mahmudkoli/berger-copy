@@ -45,7 +45,7 @@ namespace BergerMsfaApi.Models.Report
         public string PaintContractorMobile { get; set; }
         public string PaintingStage { get; set; }
         public string ExpectedDateOfPainting { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
         public decimal ExpectedValue { get; set; }
@@ -75,7 +75,7 @@ namespace BergerMsfaApi.Models.Report
         public string KeyContactPersonMobile { get; set; }
         public string PaintContractorName { get; set; }
         public string PaintContractorMobile { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public decimal ExpectedValue { get; set; }
         public decimal ExpectedMonthlyBusinessValue { get; set; }
         public string SwappingCompetition { get; set; }

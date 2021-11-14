@@ -23,7 +23,8 @@ namespace Berger.Odata.Services
 
             var selectQueryOptionBuilder = new SelectQueryOptionBuilder();
             selectQueryOptionBuilder.AddProperty(ColorBankInstalColumnDef.CustomerNo)
-                .AddProperty(ColorBankInstalColumnDef.InstallDate);
+                .AddProperty(ColorBankInstalColumnDef.InstallDate)
+                .AddProperty(ColorBankInstalColumnDef.MachineNumber);
 
             var today = DateTime.Now;
 

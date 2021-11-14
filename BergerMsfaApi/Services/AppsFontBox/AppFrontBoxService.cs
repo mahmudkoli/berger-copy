@@ -8,9 +8,12 @@ using Berger.Common.Extensions;
 using Berger.Common.Model;
 using Berger.Data.MsfaEntity.DemandGeneration;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPReports;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Sync;
+using Berger.Odata.Common;
 using Berger.Odata.Extensions;
+using Berger.Odata.Repositories;
 using Berger.Odata.Services;
 using BergerMsfaApi.Models.AppFontBox;
 using BergerMsfaApi.Repositories;
@@ -31,6 +34,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
         private readonly IRepository<SyncSetup> _syncSetupRepository;
         private readonly IRepository<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> _dealerSalesCallRepository;
         private readonly IRepository<PainterCall> _painterCallsRepository;
+        private readonly IODataSAPRepository<CustomerInvoiceReport> _customerInvoiceReportRepository;
 
         public AppFrontBoxService(IRepository<SyncDailySalesLog> syncDailySalesLogRepository,
             IRepository<SyncDailyTargetLog> syncDailyTargetLogRepository,
@@ -39,7 +43,8 @@ namespace BergerMsfaApi.Services.AppsFontBox
             IAuthService authService,
             IRepository<SyncSetup> syncSetupRepository,
             IRepository<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> dealerSalesCallRepository,
-            IRepository<PainterCall> painterCallsRepository
+            IRepository<PainterCall> painterCallsRepository,
+            IODataSAPRepository<CustomerInvoiceReport> customerInvoiceReportRepository
 
             )
         {
@@ -53,6 +58,7 @@ namespace BergerMsfaApi.Services.AppsFontBox
             _syncSetupRepository = syncSetupRepository;
             _dealerSalesCallRepository = dealerSalesCallRepository;
             _painterCallsRepository = painterCallsRepository;
+            _customerInvoiceReportRepository = customerInvoiceReportRepository;
         }
 
         public async Task<AppFrontBoxModel> GetAppFontBoxValue(AreaSearchCommonModel area)
@@ -88,9 +94,13 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
                 var sumOfPremiumBrandSales = await GetPremiumBrandSalesAmount();
 
+                var targetVal = string.Format("{0:0.00}", _oDataService.GetAchivement(CustomConvertExtension.ObjectToDecimal(sumOfTotalTarget),
+                                                            CustomConvertExtension.ObjectToDecimal(sumOfTotalSales)));
+                var premVal = string.Format("{0:0.00}", _oDataService.GetContribution(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales),
+                                                            CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales)));
 
-                var targetAchv = $"Target Achv: {_oDataService.GetAchivement(CustomConvertExtension.ObjectToDecimal(sumOfTotalTarget), CustomConvertExtension.ObjectToDecimal(sumOfTotalSales)):0.00}%";
-                var premiumSalesPercentage = $"Premium Brand Value Sales: {_oDataService.GetPercentage(CustomConvertExtension.ObjectToDecimal(sumOfTotalSales), CustomConvertExtension.ObjectToDecimal(sumOfPremiumBrandSales))}%";
+                var targetAchv = $"Target Achv: {targetVal}%";
+                var premiumSalesPercentage = $"Premium Brand Sales Value Contribution: {premVal}%";
                 var leadFollowupString = $"Lead Created: {leadCreatedCount} \n Lead Followup: {leadFollowUpCount}";
                 var numberOfBillingDealerString = $"Number of Billing Dealer: {numberOfBillingDealer}";
 
@@ -151,17 +161,17 @@ namespace BergerMsfaApi.Services.AppsFontBox
 
         private async Task<double> GetPremiumBrandSalesAmount()
         {
-            List<string> premiumBrandList = await _brandInfoRepository.FindByCondition(x => x.IsPremium)
-                .Select(x => x.MaterialGroupOrBrand).Distinct().ToListAsync();
+            //List<string> premiumBrandList = await _brandInfoRepository.FindByCondition(x => x.IsPremium)
+            //    .Select(x => x.MaterialGroupOrBrand).Distinct().ToListAsync();
 
-            Expression<Func<SyncDailySalesLog, bool>> premiumBranCheckExpression =
-                x => premiumBrandList.Contains(x.BrandCode);
+            //Expression<Func<SyncDailySalesLog, bool>> premiumBranCheckExpression =
+            //    x => premiumBrandList.Contains(x.BrandCode);
 
-            var premiumBranCheckFullExpression = GetSalesGeneralWhereExpression().AndAlso(premiumBranCheckExpression);
+            //var premiumBranCheckFullExpression = GetSalesGeneralWhereExpression().AndAlso(premiumBranCheckExpression);
 
-            return await _syncDailySalesLogRepository
-                .FindByCondition(premiumBranCheckFullExpression)
-                .SumAsync(x => x.NetAmount);
+            return (double)(await _customerInvoiceReportRepository
+                .FindByCondition(GetSalesGeneralWhereExpression())
+                .SumAsync(x => x.PremiumValue));
         }
 
         private async Task<double> GetTotalTarget()
@@ -186,24 +196,25 @@ namespace BergerMsfaApi.Services.AppsFontBox
                                                         && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                                                         && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
                                                         && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
-                                                        && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
+                                                        && (!area.Zones.Any() || area.Zones.Contains(x.Zone))))
+                                                        && x.Division == ConstantsValue.DivisionDecorative;
         }
 
         private async Task<int> GetNoOfBillingDealer()
         {
-            return await _syncDailySalesLogRepository
-                .FindByCondition(GetSalesGeneralWhereExpression())
-                .Select(x => x.CustNo).Distinct().CountAsync();
+            return await _customerInvoiceReportRepository
+                .FindByCondition(GetSalesGeneralWhereExpression(ConstantsValue.DistrbutionChannelDealer))
+                .Select(x => x.CustomerNo).Distinct().CountAsync();
         }
 
         private async Task<double> GetMonthlySalesAmount()
         {
-            return await _syncDailySalesLogRepository
+            return (double)(await _customerInvoiceReportRepository
                 .FindByCondition(GetSalesGeneralWhereExpression())
-                .SumAsync(x => x.NetAmount);
+                .SumAsync(x => x.Value));
         }
 
-        private Expression<Func<SyncDailySalesLog, bool>> GetSalesGeneralWhereExpression()
+        private Expression<Func<CustomerInvoiceReport, bool>> GetSalesGeneralWhereExpression(string channel = "")
         {
             var area = _authService.GetLoggedInUserArea();
             var dates = GetComparableDates();
@@ -213,11 +224,13 @@ namespace BergerMsfaApi.Services.AppsFontBox
             EnumEmployeeRole employeeRole = (EnumEmployeeRole)AppIdentity.AppUser.EmployeeRole;
 
             return x => x.Date >= firstDateOfMonth.Date && x.Date <= lastDateOfMonth.Date && (employeeRole == EnumEmployeeRole.GM ||
-                    ((!area.Depots.Any() || area.Depots.Contains(x.BusinessArea))
+                    ((!area.Depots.Any() || area.Depots.Contains(x.Depot))
                      && (!area.SalesOffices.Any() || area.SalesOffices.Contains(x.SalesOffice))
                      && (!area.SalesGroups.Any() || area.SalesGroups.Contains(x.SalesGroup))
-                     && (!area.Territories.Any() || area.Territories.Contains(x.TerritoryCode))
-                     && (!area.Zones.Any() || area.Zones.Contains(x.Zone))));
+                     && (!area.Territories.Any() || area.Territories.Contains(x.Territory))
+                     && (!area.Zones.Any() || area.Zones.Contains(x.Zone))))
+                     && x.Division == ConstantsValue.DivisionDecorative
+                     && (string.IsNullOrEmpty(channel) || x.DistributionChannel == channel);
         }
 
         private Tuple<DateTime, DateTime> GetComparableDates()

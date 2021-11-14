@@ -70,5 +70,20 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
                 return ExceptionResult(ex);
             }
         }
+
+        [HttpPost("DeleteImage")]
+        public async Task<IActionResult> DeleteImage([FromBody] DealerImageModel models)
+        {
+
+            try
+            {
+                await _dealerSalesCallService.DeleteImage(models);
+                return OkResult(1);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

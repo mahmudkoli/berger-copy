@@ -9,6 +9,6 @@ namespace Berger.Odata.Services
     {
         Task<decimal> GetTotalCollectionValue(IList<string> dealerIds);
         Task<decimal> GetTotalCollectionValue(IList<string> dealerIds, DateTime? startDate, DateTime? endDate);
-        Task<IList<CollectionDataModel>> GetCustomerCollectionAmount(IList<string> dealerIds, DateTime startDate, DateTime endDate);
+        Task<decimal> GetCustomerCollectionAmount(IList<string> dealerIds, DateTime startDate, DateTime endDate);
     }
 }

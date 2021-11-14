@@ -24,7 +24,7 @@ namespace BergerMsfaApi.Controllers.KPI
             _newDealerDevelopmentService = newDealerDevelopmentService;
         }
 
-
+        // for portal get to update data
         [HttpGet("GetNewDealerDevelopment")]
         public async Task<IActionResult> GetNewDealerDevelopment([FromQuery] SearchNewDealerDevelopment query)
         {
@@ -39,13 +39,13 @@ namespace BergerMsfaApi.Controllers.KPI
             }
         }
 
-
+        // for portal report
         [HttpGet("GetDealerOpeningStatus")]
         public async Task<IActionResult> GetDealerOpeningStatus([FromQuery] SearchNewDealerDevelopment query)
         {
             try
             {
-                var result = await _newDealerDevelopmentService.GetNewDealerDevelopment(query);
+                var result = await _newDealerDevelopmentService.GetNewDealerDevelopmentReport(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -54,12 +54,13 @@ namespace BergerMsfaApi.Controllers.KPI
             }
         }
 
+        // for portal report
         [HttpGet("GetDealerConversion")]
         public async Task<IActionResult> GetDealerConversion([FromQuery] SearchNewDealerDevelopment query)
         {
             try
             {
-                var result = await _newDealerDevelopmentService.GetDealerConversion(query);
+                var result = await _newDealerDevelopmentService.GetDealerConversionReport(query);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -68,6 +69,7 @@ namespace BergerMsfaApi.Controllers.KPI
             }
         }
 
+        // for portal save data
         [HttpPost("SaveNewDealerDevelopment")]
         public async Task<IActionResult> SaveNewDealerDevelopment(IList<NewDealerDevelopment> data)
         {

@@ -59,7 +59,7 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Implementation
             if (!string.IsNullOrWhiteSpace(model.ImageUrl))
             {
                 var fileName = merchandisingSnapShot.DealerId + "_" + Guid.NewGuid().ToString();
-                merchandisingSnapShot.ImageUrl = await _fileUploadService.SaveImageAsync(model.ImageUrl, fileName, FileUploadCode.MerchandisingSnapShot, 1200, 800);
+                merchandisingSnapShot.ImageUrl = await _fileUploadService.SaveImageAsync(model.ImageUrl, fileName, FileUploadCode.MerchandisingSnapShot);
             }
 
             #region check existing data and update
@@ -98,7 +98,7 @@ namespace BergerMsfaApi.Services.MerchandisingSnapShot.Implementation
                 if (!string.IsNullOrWhiteSpace(model.ImageUrl))
                 {
                     var fileName = merchandisingSnapShot.DealerId + "_" + Guid.NewGuid().ToString();
-                    merchandisingSnapShot.ImageUrl = await _fileUploadService.SaveImageAsync(model.ImageUrl, fileName, FileUploadCode.MerchandisingSnapShot, 1200, 800);
+                    merchandisingSnapShot.ImageUrl = await _fileUploadService.SaveImageAsync(model.ImageUrl, fileName, FileUploadCode.MerchandisingSnapShot);
                 }
 
                 merchandisingSnapShot.CreatedTime = DateTime.Now;

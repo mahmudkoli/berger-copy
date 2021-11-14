@@ -42,7 +42,7 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 			this.PAGE_SIZE = commonService.PAGE_SIZE;
 			this.ptableSettings.pageSize = this.PAGE_SIZE;
 			this.ptableSettings.enabledServerSitePaggination = true;
-            this.initPermissionGroup();
+            // this.initPermissionGroup();
     }
 
 	ngOnInit() {
@@ -61,9 +61,9 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
         //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
         //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
 
-        this.ptableSettings.enabledRecordCreateBtn = true;
-        this.ptableSettings.enabledEditBtn = true;
-        this.ptableSettings.enabledDeleteBtn = true;
+        // this.ptableSettings.enabledRecordCreateBtn = true;
+        // this.ptableSettings.enabledEditBtn = true;
+        // this.ptableSettings.enabledDeleteBtn = true;
     }
 
 	loadUserInfosPage() {
@@ -151,7 +151,7 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 		enabledSerialNo: true,
 		// pageSize: 10,
 		enabledPagination: true,
-		enabledDeleteBtn: true,
+		// enabledDeleteBtn: true,
 		enabledEditBtn: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,

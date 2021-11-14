@@ -1,6 +1,6 @@
 ﻿namespace Berger.Common.Enumerations
 {
-    public enum EnumUserCategory
+    public enum EnumAreaCategory
     {
         Plant = 1, // BusinessArea, Depot
         SalesOffice = 2,

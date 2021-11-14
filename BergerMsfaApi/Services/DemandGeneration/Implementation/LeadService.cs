@@ -57,6 +57,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
             {
                 ["userFullName"] = v => v.User.FullName,
+                ["createdTime"] = v => v.CreatedTime,
             };
 
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
@@ -184,7 +185,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (!string.IsNullOrWhiteSpace(model.PhotoCaptureUrl))
             {
                 var fileName = leadGeneration.Code + "_" + Guid.NewGuid().ToString();
-                leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadGeneration.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration);
             }
 
             var result = await _leadGenerationRepository.CreateAsync(leadGeneration);
@@ -263,6 +264,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelResult.ExpectedMonthlyBusinessValue = leadFollowUp.ExpectedMonthlyBusinessValue;
                 modelResult.TotalPaintingAreaSqftInterior = leadFollowUp.TotalPaintingAreaSqftInterior;
                 modelResult.TotalPaintingAreaSqftExterior = leadFollowUp.TotalPaintingAreaSqftExterior;
+                modelResult.ActualPaintJobCompletedInteriorPercentage = leadFollowUp.ActualPaintJobCompletedInteriorPercentage;
+                modelResult.ActualPaintJobCompletedExteriorPercentage = leadFollowUp.ActualPaintJobCompletedExteriorPercentage;
 
                 modelResult.ProjectStatusPartialBusinessPercentage = leadFollowUp.ProjectStatusPartialBusinessPercentage;
                 modelResult.UpTradingFromBrandName = leadFollowUp.UpTradingFromBrandName;
@@ -302,7 +305,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             if (leadFollowUp.BusinessAchievement != null && !string.IsNullOrWhiteSpace(leadFollowUp.BusinessAchievement.PhotoCaptureUrl))
             {
                 var fileName = leadFollowUp.LeadGenerationId + "_" + Guid.NewGuid().ToString();
-                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(leadFollowUp.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration, 1200, 800);
+                leadFollowUp.BusinessAchievement.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(leadFollowUp.BusinessAchievement.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration);
             }
 
             var leadFoll = (await _leadFollowUpRepository.GetFirstOrDefaultIncludeAsync(
@@ -403,10 +406,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 (!(result.Zones != null && result.Zones.Any()) || result.Zones.Contains(x.Zone)) &&
                 (!(result.Territories != null && result.Territories.Any()) || result.Territories.Contains(x.Territory)) &&
                 (!(result.Depots != null && result.Depots.Any()) || result.Depots.Contains(x.Depot)) &&
-
-
-
-            (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
+                (x.NextFollowUpDate.Date == today.Date || x.LeadFollowUps.Any(y => y.NextVisitDatePlan.Date == today.Date)),
                                    null,
                                    x => x.Include(i => i.LeadFollowUps),
                                    true

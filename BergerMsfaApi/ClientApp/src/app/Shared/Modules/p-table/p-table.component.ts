@@ -1118,60 +1118,94 @@ export class PTableComponent implements OnInit, DoCheck {
     }
   }
 
+  // public fnExeclDownload() {
+  //   if (
+  //     this.pTableSetting.enabledServerSitePaggination &&
+  //     this.pTableSetting.downloadDataApiUrl
+  //   ) {
+  //     this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`).subscribe(
+  //       (res) => {
+  //         if(this.pTableSetting.downloadFileFromServer) {
+  //           console.log(res);
+  //         }
+  //         else{
+  //           let data = res as any[];
+
+  //         this.excelService.exportAsExcelFile(data, this.pTableSetting);
+  //         }
+          
+  //       },
+  //       (err) => {
+  //         console.error(err);
+  //       }
+  //     );
+  //   } else {
+
+  //     if(this.pTableSetting.downloadFileFromServer) {
+  //       this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`,
+  //       { responseType: 'blob' as 'json' }
+           
+  //     )
+  //     .subscribe(
+  //         (res) => {
+  //           // console.log(res);
+  //           // downloadFile(res,'SnapShotResult.xlsx')
+  //           const blob = new Blob([res], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  //           const url = window.URL.createObjectURL(blob);
+  //           // window.open(url);
+  //           var link=document.createElement('a');
+  //               link.href=window.URL.createObjectURL(blob);
+  //               link.download="SnapShotResult.xlsx";
+  //               link.click();
+            
+  //         },
+  //         (err) => {
+  //           console.error(err);
+  //         }
+  //       );
+  //     }
+      
+  //     else{
+  //       this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
+  //     }
+  //   }
+  // }
+
   public fnExeclDownload() {
     if (
+      this.pTableSetting.downloadFileFromServer &&
+      this.pTableSetting.downloadDataApiUrl
+    ) {
+      this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`, { responseType: 'blob' as 'json' }).subscribe(
+        (res) => {
+          const blob = new Blob([res], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+          const url = window.URL.createObjectURL(blob);
+          var link=document.createElement('a');
+          link.href=window.URL.createObjectURL(blob);
+          link.download="Report.xlsx";
+          link.click();
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+    } else if (
       this.pTableSetting.enabledServerSitePaggination &&
       this.pTableSetting.downloadDataApiUrl
     ) {
       this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`).subscribe(
         (res) => {
-          if(this.pTableSetting.downloadFileFromServer) {
-            console.log(res);
-          }
-          else{
-            let data = res as any[];
-
+          let data = res as any[];
           this.excelService.exportAsExcelFile(data, this.pTableSetting);
-          }
-          
         },
         (err) => {
           console.error(err);
         }
       );
     } else {
-
-      if(this.pTableSetting.downloadFileFromServer) {
-        this.http.get<any>(`${this.pTableSetting.downloadDataApiUrl}`,
-        { responseType: 'blob' as 'json' }
-           
-      )
-      .subscribe(
-          (res) => {
-            // console.log(res);
-            // downloadFile(res,'SnapShotResult.xlsx')
-            const blob = new Blob([res], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-            const url = window.URL.createObjectURL(blob);
-            // window.open(url);
-            var link=document.createElement('a');
-                link.href=window.URL.createObjectURL(blob);
-                link.download="SnapShotResult.xlsx";
-                link.click();
-            
-          },
-          (err) => {
-            console.error(err);
-          }
-        );
-      }
-      
-      else{
-        this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
-      }
+      this.excelService.exportAsExcelFile(this.pTableData, this.pTableSetting);
     }
   }
-
-
 
   onScroll(event, doc) {
     if (this.pTableSetting.enabledAutoScrolled) {

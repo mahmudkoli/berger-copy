@@ -8,13 +8,13 @@ import { StrikeRateKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQue
 import {
   colDef,
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
@@ -37,7 +37,7 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
 
   // ptable settings
   enabledTotal: boolean = false;
-  tableName: string = 'Strike rate on business call Report';
+  tableName: string = 'Strike Rate on Business Call Report';
   // renameKeys: any = {'userId':'User Id'};
   renameKeys: any = {};
   allTotalKeysOfNumberType: boolean = true;
@@ -87,7 +87,7 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
       isSortAscending: false,
       globalSearchValue: '',
       depot: '',
-      salesGroups: [],
+     // salesGroups: [],
       territories: [],
       zones: [],
       month: null,
@@ -104,10 +104,10 @@ export class StrikeRateKpiReportComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.Depot,
         isRequiredBasedOnEmployeeRole: true,
       }),
-      new SearchOptionDef({
-        searchOption: EnumSearchOption.SalesGroup,
-        isRequiredBasedOnEmployeeRole: true,
-      }),
+      // new SearchOptionDef({
+      //   searchOption: EnumSearchOption.SalesGroup,
+      //   isRequiredBasedOnEmployeeRole: true,
+      // }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.Territory,
         isRequired: true,

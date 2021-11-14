@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { finalize, take, delay, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Subscription, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { of, Subscription } from 'rxjs';
+import { delay, finalize, take } from 'rxjs/operators';
 import { LeadGeneration, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.service';
 
 @Component({
@@ -80,8 +80,8 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		this.query = new LeadQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'userFullName',
-			isSortAscending: true,
+			sortBy: 'createdTime',
+			isSortAscending: false,
 			globalSearchValue: ''
 		});
 	}
@@ -120,7 +120,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new LeadQuery({

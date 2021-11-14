@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.Excel.Interface;
+using BergerMsfaApi.Services.FileUploads.Interfaces;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -16,11 +19,16 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 {
     public class ExcelReaderService : IExcelReaderService
     {
-        private readonly IWebHostEnvironment hostEnvironment;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IFileUploadService _fileUploadService;
+        private readonly string _rootFolder;
 
-        public ExcelReaderService(IWebHostEnvironment hostEnvironment)
+        public ExcelReaderService(IWebHostEnvironment hostEnvironment, IFileUploadService fileUploadService)
         {
-            this.hostEnvironment = hostEnvironment;
+            this._hostEnvironment = hostEnvironment;
+            this._fileUploadService = fileUploadService;
+            //this._rootFolder = hostEnvironment.WebRootPath;
+            this._rootFolder = "";
         }
         public async Task<List<T>> LoadDataAsync<T>(IFormFile file) where T : class, new()
         {
@@ -125,7 +133,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
         {
             //List<string> property = new List<string>();
 
-            var rootFolder = hostEnvironment.WebRootPath;
+            //var rootFolder = _hostEnvironment.WebRootPath;
 
 
             string sFileName = @"SnapShotResult.xlsx";
@@ -141,7 +149,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 workbook = new XSSFWorkbook();
 
                 ISheet excelSheet = workbook.CreateSheet("SnapShot");
-                excelSheet.DefaultRowHeight =(short)((int)excelSheet.DefaultRowHeight * 2);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
                 int rowcount = 0;
 
                 IRow row = excelSheet.CreateRow(rowcount);
@@ -157,15 +165,17 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     int i = 0;
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
+                        if (kvp.Key.Contains("_Image")) continue;
+
                         if (kvp.Key.Contains("_Image") || kvp.Key.Contains("_Remarks"))
                         {
                             row2.CreateCell(i).SetCellValue(kvp.Key.Replace('_', ' '));
                             lastcellspan++;
                         }
-                        else 
+                        else
                         {
                             row.CreateCell(i).SetCellValue(kvp.Key);
-                            
+
 
                             firstcellspan++;
                         }
@@ -175,8 +185,8 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                     }
 
-                    
-                        //var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, j, j);
+
+                    //var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, j, j);
 
 
                     var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, 0, 0);
@@ -222,12 +232,16 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                     int i = 0;
                     foreach (KeyValuePair<string, object> kvp in item)
                     {
-                        
-                            if (kvp.Key.Contains("_Image"))
+
+                        if (kvp.Key.Contains("_Image")) continue;
+
+                        if (kvp.Key.Contains("_Image"))
+                        {
+                            if (!string.IsNullOrWhiteSpace(kvp.Value.ToString()))
                             {
-                                if (!string.IsNullOrEmpty(kvp.Value.ToString()) && File.Exists(Path.Combine(rootFolder, kvp.Value.ToString())))
+                                try
                                 {
-                                    byte[] bytes = File.ReadAllBytes(Path.Combine(rootFolder, kvp.Value.ToString()));
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, kvp.Value.ToString()));
 
                                     int pic = workbook.AddPicture(bytes, PictureType.JPEG);
 
@@ -255,20 +269,24 @@ namespace BergerMsfaApi.Services.Excel.Implementation
 
                                     picture.Resize(1);
                                 }
-                                else
+                                catch (Exception)
                                 {
-                                    row.CreateCell(i).SetCellValue(kvp.Value.ToString());
-
                                 }
-
-
                             }
-                            else 
+                            else
                             {
                                 row.CreateCell(i).SetCellValue(kvp.Value.ToString());
 
                             }
-                        
+
+
+                        }
+                        else
+                        {
+                            row.CreateCell(i).SetCellValue(kvp.Value.ToString());
+
+                        }
+
                         i++;
                     }
                     rowcount++;
@@ -276,7 +294,7 @@ namespace BergerMsfaApi.Services.Excel.Implementation
                 }
 
 
-               
+
                 workbook.Write(fs);
 
             }
@@ -293,5 +311,388 @@ namespace BergerMsfaApi.Services.Excel.Implementation
             return memory;
         }
 
+
+
+        public async Task<FileContentResult> GetExcelWithImage<T>(string fileName, string sheetName, IList<T> data, Dictionary<string, string> colNames, Dictionary<string, string> imageColNames)
+        {
+            //var rootFolder = _hostEnvironment.WebRootPath;
+
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet(sheetName);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowcount = 0;
+
+                IRow row = excelSheet.CreateRow(rowcount);
+
+                if (!colNames.Any())
+                {
+
+                    var properties = typeof(T).GetProperties()
+                        .Select(x => x.Name).ToList();
+
+                    foreach (string property in properties)
+                    {
+                        if (property.EndsWith("Image") || property.EndsWith("ImageUrl")) continue;
+                        colNames.Add(property, property);
+                    }
+                }
+
+
+                int i = 0;
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    if (prop.Name.EndsWith("Image") || prop.Name.EndsWith("ImageUrl")) continue;
+                    row.CreateCell(i)
+                        .SetCellValue(colNames.TryGetValue(prop.Name, out string colName) ? colName : prop.Name);
+
+                    i++;
+                }
+
+                rowcount++;
+                row = excelSheet.CreateRow(rowcount);
+
+                foreach (var item in data)
+                {
+                    i = 0;
+                    foreach (var prop in typeof(T).GetProperties())
+                    {
+                        if (prop.Name.EndsWith("Image") || prop.Name.EndsWith("ImageUrl")) continue;
+                        var rowValue = prop.GetValue(item, null)?.ToString();
+
+                        if (imageColNames.ContainsKey(prop.Name))
+                        {
+                            if (!string.IsNullOrWhiteSpace(rowValue))
+                            {
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+
+                                    anchor.Col1 = i;
+                                    anchor.Row1 = rowcount;
+
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
+
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            row.CreateCell(i).SetCellValue(rowValue?.ToString());
+                        }
+
+                        i++;
+                    }
+
+                    rowcount++;
+                    row = excelSheet.CreateRow(rowcount);
+                }
+
+                workbook.Write(exportData);
+                var fileContentResult = new FileContentResult(exportData.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = fileName
+                };
+
+                return fileContentResult;
+            }
+
+        }
+
+        public async Task<FileContentResult> GetExcelWithImage(string fileName, string sheetName, dynamic data,
+            Dictionary<string, string> colNames = null,
+            List<string> ignoreColNames = null, 
+            List<string> imageColNames = null, 
+            Dictionary<string, List<string>> parentChildHeaders = null,
+            Dictionary<string, string> parentHeaderNames = null)
+        {
+            if (colNames == null)
+            {
+                colNames = new Dictionary<string, string>();
+                foreach (var item in data)
+                {
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        colNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                    }
+                    break;
+                }
+            }
+            if (imageColNames == null) imageColNames = new List<string>();
+            if (ignoreColNames == null) ignoreColNames = new List<string>();
+            if (parentHeaderNames == null)
+            {
+                parentHeaderNames = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, List<string>> kvp in parentChildHeaders)
+                {
+                    parentHeaderNames.Add(kvp.Key, kvp.Key.AddSpacesToSentence(true));
+                }
+            }
+
+            var allChildHeaders = new List<string>();
+            if (parentChildHeaders != null & parentChildHeaders.Any())
+                allChildHeaders = parentChildHeaders.SelectMany(x => x.Value).ToList();
+
+            //var rootFolder = _hostEnvironment.WebRootPath;
+
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet(sheetName);
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowIndex = 0;
+                int colIndex = 0;
+
+                #region Header set......................................
+                IRow row1 = excelSheet.CreateRow(rowIndex);
+                IRow row2 = null;
+
+                if (allChildHeaders.Any())
+                {
+                    rowIndex = rowIndex + 1;
+                    row2 = excelSheet.CreateRow(rowIndex);
+                }
+
+                // Header row set
+                foreach (var item in data)
+                {
+                    colIndex = 0;
+                    var groupColValue = string.Empty;
+
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        //ignore column set
+                        if (!colNames.ContainsKey(kvp.Key) || ignoreColNames.Contains(kvp.Key)) continue;
+
+                        var colValue = colNames.TryGetValue(kvp.Key, out string val) ? val : kvp.Key;
+
+                        // check if has group column
+                        if(allChildHeaders.Any())
+                        {
+                            // without group and row span
+                            if (!allChildHeaders.Contains(kvp.Key))
+                            {
+                                row1.CreateCell(colIndex).SetCellValue(colValue);
+                                var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, colIndex, colIndex);
+                                excelSheet.AddMergedRegion(cra);
+                            }
+                            else
+                            {
+                                var grpVal = parentChildHeaders.FirstOrDefault(x => x.Value.Contains(kvp.Key));
+                                // first time col span for same group
+                                if (groupColValue!=grpVal.Key)
+                                {
+                                    groupColValue = grpVal.Key;
+                                    var grpColVal = parentHeaderNames.TryGetValue(grpVal.Key, out string valt) ? valt : grpVal.Key;
+                                    row1.CreateCell(colIndex).SetCellValue(grpColVal);
+                                    var craP = new NPOI.SS.Util.CellRangeAddress(0, 0, colIndex, colIndex+grpVal.Value.Count()-1);
+                                    excelSheet.AddMergedRegion(craP);
+                                }
+                                row2.CreateCell(colIndex).SetCellValue(colValue);
+                                //var cra = new NPOI.SS.Util.CellRangeAddress(1, 1, colIndex, colIndex);
+                                //excelSheet.AddMergedRegion(cra);
+                            }
+                        }
+                        else
+                        {
+                            row1.CreateCell(colIndex).SetCellValue(colValue);
+                            //var cra = new NPOI.SS.Util.CellRangeAddress(0, 0, colIndex, colIndex);
+                            //excelSheet.AddMergedRegion(cra);
+                        }
+
+                        colIndex++;
+                    }
+
+                    break;
+                }
+                #endregion
+
+                rowIndex++;
+                row1 = excelSheet.CreateRow(rowIndex);
+
+                foreach (var item in data)
+                {
+                    colIndex = 0;
+                    foreach (KeyValuePair<string, object> kvp in item)
+                    {
+                        //ignore column set
+                        if (!colNames.ContainsKey(kvp.Key) || ignoreColNames.Contains(kvp.Key)) continue;
+
+                        var rowValue = kvp.Value?.ToString();
+                        if (imageColNames.Contains(kvp.Key))
+                        {
+                            if (!string.IsNullOrWhiteSpace(rowValue))
+                            {
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+                                    anchor.Col1 = colIndex;
+                                    anchor.Row1 = rowIndex;
+
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            row1.CreateCell(colIndex).SetCellValue(rowValue);
+                        }
+
+                        colIndex++;
+                    }
+
+                    rowIndex++;
+                    row1 = excelSheet.CreateRow(rowIndex);
+                }
+
+                workbook.Write(exportData);
+                var fileContentResult = new FileContentResult(exportData.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = fileName
+                };
+
+                return fileContentResult;
+            }
+
+        }
+
+        public async Task<MemoryStream> DealerOpeningWriteToFileWithImage(IList<DealerOpeningReportResultModel> datas)
+        {
+            //var rootFolder = _hostEnvironment.WebRootPath;
+            var sFileName = @"DealerOpeningReport.xlsx";
+            var memory = new MemoryStream();
+
+            using (var fs = new FileStream(sFileName, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+
+                ISheet excelSheet = workbook.CreateSheet("DealerOpening");
+                //excelSheet.DefaultRowHeight = (short)((int)excelSheet.DefaultRowHeight * 2);
+                int rowcount = 0;
+
+                IRow row = excelSheet.CreateRow(rowcount);
+
+                var colNames = new Dictionary<string, string>()
+                {
+                    { nameof(DealerOpeningReportResultModel.UserId),"User Id" },
+                    { nameof(DealerOpeningReportResultModel.DealrerOpeningCode),"Dealer Opening Code" },
+                    { nameof(DealerOpeningReportResultModel.BusinessArea),"Business Area" },
+                    { nameof(DealerOpeningReportResultModel.BusinessAreaName),"Business Area Name" },
+                    { nameof(DealerOpeningReportResultModel.SalesOffice),"Sales Office" },
+                    { nameof(DealerOpeningReportResultModel.SalesGroup),"Sales Group" },
+                    { nameof(DealerOpeningReportResultModel.Territory),"Territory" },
+                    { nameof(DealerOpeningReportResultModel.Zone),"Zone" },
+                    { nameof(DealerOpeningReportResultModel.EmployeeId),"Employee Id" },
+                    //{ nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
+                    //{ nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
+                    //{ nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
+                    //{ nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
+                    //{ nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
+                    //{ nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
+                    //{ nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
+                    { nameof(DealerOpeningReportResultModel.CurrentStatusOfThisApplication),"Current Status Of This Application" },
+                };
+
+                var imageColNames = new Dictionary<string, string>()
+                {
+                    { nameof(DealerOpeningReportResultModel.DealershipOpeningApplicationForm),"Dealership Opening Application Form" },
+                    { nameof(DealerOpeningReportResultModel.TradeLicensee),"Trade Licensee" },
+                    { nameof(DealerOpeningReportResultModel.IdentificationNo),"NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.PhotographOfproprietor),"Photograph Of Proprietor" },
+                    { nameof(DealerOpeningReportResultModel.NomineeIdentificationNo),"Nominee NID/Passport/Birth Certificate" },
+                    { nameof(DealerOpeningReportResultModel.NomineePhotograph),"Nominee Photograph" },
+                    { nameof(DealerOpeningReportResultModel.Cheque),"Cheque" },
+                };
+
+                int i = 0;
+                foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
+                {
+                    if (imageColNames.ContainsKey(prop.Name)) continue;
+                    if (colNames.TryGetValue(prop.Name, out string colName))
+                        row.CreateCell(i).SetCellValue(colName);
+                    else
+                        row.CreateCell(i).SetCellValue(prop.Name);
+
+                    i++;
+                }
+
+                rowcount++;
+                row = excelSheet.CreateRow(rowcount);
+
+                foreach (var item in datas)
+                {
+                    i = 0;
+                    foreach (var prop in typeof(DealerOpeningReportResultModel).GetProperties())
+                    {
+                        if (imageColNames.ContainsKey(prop.Name)) continue;
+                        var rowValue = (string)prop.GetValue(item, null);
+
+                        if (imageColNames.ContainsKey(prop.Name))
+                        {
+                            if (!string.IsNullOrWhiteSpace(rowValue))
+                            {
+                                try
+                                {
+                                    byte[] bytes = await _fileUploadService.GetFileAsync(Path.Combine(_rootFolder, rowValue));
+                                    int pic = workbook.AddPicture(bytes, PictureType.JPEG);
+
+                                    IDrawing drawing = excelSheet.CreateDrawingPatriarch();
+                                    IClientAnchor anchor = workbook.GetCreationHelper().CreateClientAnchor();
+
+                                    anchor.Col1 = i;
+                                    anchor.Row1 = rowcount;
+
+                                    IPicture picture = drawing.CreatePicture(anchor, pic);
+
+                                    picture.Resize(1);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            row.CreateCell(i).SetCellValue(rowValue);
+                        }
+
+                        i++;
+                    }
+
+                    rowcount++;
+                    row = excelSheet.CreateRow(rowcount);
+                }
+
+                workbook.Write(fs);
+            }
+
+            using (var stream = new FileStream(sFileName, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            memory.Position = 0;
+            return memory;
+        }
     }
 }

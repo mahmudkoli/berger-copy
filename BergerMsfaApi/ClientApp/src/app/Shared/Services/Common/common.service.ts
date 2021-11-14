@@ -110,6 +110,18 @@ export class CommonService {
       .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
   }
 
+  insertSpacesWithRenameKeys(value, keysMap) {
+    if(keysMap[value]) value = keysMap[value];
+    return value
+      .replace(/(_|-)/g, ' ')
+      .trim()
+      .replace(/\w\S*/g, function (str) {
+        return str.charAt(0).toUpperCase() + str.substr(1);
+      })
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+  }
+
   renameKeys(obj, keysMap) {
     return Object.keys(obj).reduce(
       (acc, key) => ({
@@ -274,6 +286,13 @@ export class CommonService {
     return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, {
       params,
     });
+  }
+
+  public GetDealerListWithTerritory(territories) {
+
+    return this.http.get<APIResponse>(
+      `${this.baseUrl}/v1/AppDealer/GetDealerListWithTerritory?${this.toQueryString(territories)}`
+    );
   }
 
   getDealerByArea(filter) {

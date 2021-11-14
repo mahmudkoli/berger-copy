@@ -22,7 +22,7 @@ namespace BergerMsfaApi.Controllers.ELearning
         }
 
         //TODO: need to change the endpoint
-        [HttpGet("GetAllELearningByCategoryId")]
+        [HttpGet("GetAllELearning")]
         public async Task<IActionResult> GetAllELearning()
         {
             try

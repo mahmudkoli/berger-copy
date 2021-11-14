@@ -232,10 +232,10 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                   from userInfo in uleftjoin.DefaultIfEmpty()
                                   join d in _context.DropdownDetails on p.PainterCatId equals d.Id into dleftjoin
                                   from dropDownInfo in dleftjoin.DefaultIfEmpty()
-                                  join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
-                                  from adpInfo in adpleftjoin.DefaultIfEmpty()
-                                  join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
-                                  from diInfo in dileftjoin.DefaultIfEmpty()
+                                  //join adp in _context.AttachedDealerPainters on p.AttachedDealerCd equals adp.Id.ToString() into adpleftjoin
+                                  //from adpInfo in adpleftjoin.DefaultIfEmpty()
+                                  //join di in _context.DealerInfos on adpInfo.DealerId equals di.Id into dileftjoin
+                                  //from diInfo in dileftjoin.DefaultIfEmpty()
                                   join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
                                   from depinfo in depleftjoin.DefaultIfEmpty()
                                   join sg in _context.SaleGroup on p.SaleGroup equals sg.Code into sgleftjoin
@@ -255,6 +255,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                      && (!query.PainterType.HasValue || p.PainterCatId == query.PainterType.Value)
                                      && (string.IsNullOrWhiteSpace(query.PainterMobileNo) || p.Phone == query.PainterMobileNo)
                                   )
+                                  orderby p.CreatedTime descending
                                   select new PainterModel
                                   {
                                       Id=p.Id,
@@ -273,10 +274,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
 
 
-            var queryResult = new QueryResultModel<PainterModel>();
-            queryResult.Items = painters;
-            queryResult.TotalFilter = painters.Count();
-            queryResult.Total = painters.Count();
+            var queryResult = new QueryResultModel<PainterModel>
+            {
+                Items = painters,
+                TotalFilter = painters.Count(),
+                Total = painters.Count()
+            };
 
             return queryResult;
 
@@ -383,7 +386,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         public async Task<PainterModel> AppCreatePainterAsync(PainterModel model)
         {
-            var userId = AppIdentity.AppUser.UserId;
+            //var userId = AppIdentity.AppUser.UserId;
 
             var _painter = _mapper.Map<Painter>(model);
             var _painterImageFileName = $"{_painter.PainterName}_{_painter.Phone}";
@@ -391,17 +394,17 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             if (!string.IsNullOrEmpty(_painter.PainterImageUrl))
                 _painter.PainterImageUrl =
                                   await _fileUploadSvc
-                                  .SaveImageAsync(_painter.PainterImageUrl, _painterImageFileName, FileUploadCode.RegisterPainter, 300, 300);
+                                  .SaveImageAsync(_painter.PainterImageUrl, _painterImageFileName, FileUploadCode.PainterRegistration);
 
             foreach (var attach in _painter.Attachments)
             {
                 attach.Name = attach.Name.Replace(" ", "_");
                 var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration);
             }
 
-            _painter.PainterNo = GeneratePainterNo(userId).Result;
+            _painter.PainterNo = GeneratePainterNo(model.EmployeeId).Result;
             _painter.Status = Status.Active;
             //TODO: need to generate code
             _painter.PainterCode = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
@@ -420,7 +423,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             if (!string.IsNullOrEmpty(_findPainter.PainterImageUrl)) await _fileUploadSvc.DeleteImageAsync(_findPainter.PainterImageUrl);
 
-            if (!string.IsNullOrEmpty(_painter.PainterImageUrl)) _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.RegisterPainter, 300, 300);
+            if (!string.IsNullOrEmpty(_painter.PainterImageUrl)) _painter.PainterImageUrl = await _fileUploadSvc.SaveImageAsync(_painter.PainterImageUrl, _fileName, FileUploadCode.PainterRegistration);
 
             if (await _attachedDealerSvc.AnyAsync(f => f.PainterId == model.Id)) await _attachedDealerSvc.DeleteAsync(f => f.PainterId == model.Id);
 
@@ -437,7 +440,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 attach.Name = attach.Name.Replace(" ", "_");
                 var fileName = attach.Name + "_" + Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(attach.Path))
-                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.RegisterPainter, 300, 300);
+                    attach.Path = await _fileUploadSvc.SaveImageAsync(attach.Path, fileName, FileUploadCode.PainterRegistration);
 
             }
 
@@ -492,20 +495,14 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
         }
 
-        public async Task<string> GeneratePainterNo(int userId)
+        public async Task<string> GeneratePainterNo(string employeeId)
         {
-            var lastPainterNo = await _painterSvc.AnyAsync(p => p.CreatedBy == userId) ?
-                                _painterSvc.Where(p => p.CreatedBy == userId).OrderByDescending(p => p.PainterNo).FirstOrDefault()?.PainterNo : "";
+            var lastPainterNo = (await _painterSvc.AnyAsync(p => p.EmployeeId == employeeId)) ? 
+                                    (await _painterSvc.FindAllAsync(p => p.EmployeeId == employeeId))
+                                        .Max(p => CustomConvertExtension.ObjectToInt(p.PainterNo))
+                                    : 0;
 
-            if (lastPainterNo == null)
-            { 
-                return "1"; 
-            }
-            else
-            {
-                Int32.TryParse(lastPainterNo, out int x);
-                return (x + 1).ToString();
-            }
+            return (lastPainterNo + 1).ToString();
         }
 
         #endregion

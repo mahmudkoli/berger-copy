@@ -7,8 +7,11 @@ export class ELearningDocument {
     title: string;
     categoryId: number;
     category: Dropdown;
+    uploadDate: string;
     status: number;
     eLearningAttachments: ELearningAttachment[];
+    attachedFileName: string;
+    attachedLinkAddress: string;
 
     statusText: string;
     categoryText: string;
@@ -25,6 +28,9 @@ export class ELearningDocument {
         this.eLearningAttachments = [];
         this.statusText = '';
         this.categoryText = '';
+        this.uploadDate = '';
+        this.attachedFileName = '';
+        this.attachedLinkAddress = '';
     }
 }
 

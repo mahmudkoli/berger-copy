@@ -5,7 +5,7 @@ using Berger.Data.Common;
 
 namespace Berger.Data.MsfaEntity.Sync
 {
-    public class SyncDailyTargetLog:AuditableEntity<int>
+    public class SyncDailyTargetLog:AuditableEntity<Guid>
     {
         public int Year { get; set; }
         public int Month { get; set; }

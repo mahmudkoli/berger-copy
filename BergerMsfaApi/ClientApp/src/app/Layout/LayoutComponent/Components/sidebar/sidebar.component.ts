@@ -1,11 +1,11 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { ThemeOptions } from '../../../../theme-options';
 import { select } from '@angular-redux/store';
-import { Observable } from 'rxjs';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
+import { Observable } from 'rxjs';
 import { Menu } from 'src/app/Shared/Entity/Menu/menu.model';
+import { MenuService } from 'src/app/Shared/Services/Menu-Details/menu.service';
 import { environment } from 'src/environments/environment';
+import { ThemeOptions } from '../../../../theme-options';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,10 +15,11 @@ export class SidebarComponent implements OnInit {
   public extraParameter: any;
   menuList: Menu[] = [];
 
-  constructor(public globals: ThemeOptions, private activatedRoute: ActivatedRoute,
-    private menuService: MenuService ) {
-
-  }
+  constructor(
+    public globals: ThemeOptions,
+    private activatedRoute: ActivatedRoute,
+    private menuService: MenuService
+  ) {}
 
   @select('config') public config$: Observable<any>;
 
@@ -37,29 +38,27 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
     this.prod = environment.production;
     setTimeout(() => {
-
       this.innerWidth = window.innerWidth;
       if (this.innerWidth < 1200) {
         this.globals.toggleSidebar = true;
       }
     });
 
-    this.extraParameter = this.activatedRoute.snapshot.firstChild.data.extraParameter || "";
-    
-    this.getMenus();
+    this.extraParameter =
+      this.activatedRoute.snapshot.firstChild.data.extraParameter || '';
 
+    this.getMenus();
   }
 
-  getMenus() { 
+  getMenus() {
     let roleId = 1;
-    if(localStorage.getItem('currentUser')) {
-        const userInfo = JSON.parse(localStorage.getItem('currentUser'));
-        roleId = userInfo.roleId;
+    if (localStorage.getItem('currentUser')) {
+      const userInfo = JSON.parse(localStorage.getItem('currentUser'));
+      roleId = userInfo.roleId;
     }
     this.menuService.getPermissionMenus(roleId).subscribe(
       (res: any) => {
-        console.log("Menus:................",res.data);
-        this.menuList = res.data;        
+        this.menuList = res.data;
       },
       (err: any) => {
         console.log(err);
@@ -76,6 +75,5 @@ export class SidebarComponent implements OnInit {
     } else {
       this.globals.toggleSidebar = false;
     }
-
   }
 }

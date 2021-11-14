@@ -72,4 +72,11 @@ namespace Berger.Odata.Model
             CustomConvertExtension.NullToEmptyString(this);
         }
     }
+    public class AppQuarterlyPerformanceDataResultModel
+    {
+        public string MonthName { get; internal set; }
+        public decimal TargetOrLyOrDeco { get; set; }
+        public decimal ActualOrCyOrPrem { get; set; }
+        public decimal AchivementOrGrowthOrCont { get; set; }
+    }
 }

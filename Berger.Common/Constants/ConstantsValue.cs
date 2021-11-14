@@ -73,14 +73,14 @@ namespace Berger.Common.Constants
 
     public static class ConstantIssuesValue
     {
-        public const string POSMaterialShort = "POS Material Short";
-        public const string ShadeCard = "Shade Card";
-        public const string ShopSignComplain = "Shop Sign Complain";
-        public const string DeliveryIssue = "Delivery Issue";
-        public const string Others = "Others";
-        public const string DamageProduct = "Damage Product";
-        public const string CBMachineMantainance = "CB Machine Mantainance";
-        public const string ProductComplaint = "Product Complain";
+        public const string POSMaterialShortDropdownCode = "ISSUES01_02";
+        public const string ShadeCardDropdownCode = "ISSUES01_03";
+        public const string ShopSignComplainDropdownCode = "ISSUES01_06";
+        public const string DeliveryIssueDropdownCode = "ISSUES01_07";
+        public const string OthersDropdownCode = "ISSUES01_08";
+        public const string DamageProductDropdownCode = "ISSUES01_04";
+        public const string CBMachineMantainanceDropdownCode = "ISSUES01_05";
+        public const string ProductComplaintDropdownCode = "ISSUES01_01";
     }
 
     public static class ConstantSnapShotValue
@@ -98,6 +98,7 @@ namespace Berger.Common.Constants
     {
         public const string PlatformHeaderName = "Platform";
         public const string AppPlatformHeader = "Mobile";
+        public const string AppVersionHeaderName = "AppVersion";
     }
 
 
@@ -111,4 +112,20 @@ namespace Berger.Common.Constants
         public const string CreditLimitCrossNotifiction  = "Credit Limit Cross Notifiction ";
     }
 
+    public static class ConstantDealerOpeningValue
+    {
+        public const string Application_Form = "Application_Form";
+        public const string Trade_Licensee = "Trade_Licensee";
+        public const string NID_Passport_Birth = "NID_Passport_Birth";
+        public const string Photograph_of_proprietor = "Photograph_of_proprietor";
+        public const string Nominee_NID_PASSPORT_BIRTH = "Nominee_NID_PASSPORT_BIRTH";
+        public const string Nominee_Photograph = "Nominee_Photograph";
+        public const string Cheque = "Cheque";
+    }
+
+    public static class ConstantsApplication
+    {
+        public const string SerilogMSSqlServerTableName = "ApplicationLogs";
+        public const string SpaceString = " ";
+    }
 }

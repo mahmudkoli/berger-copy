@@ -30,7 +30,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DropdownDetail PaintingStage { get; set; }
         public DateTime VisitDate { get; set; }
         public DateTime ExpectedDateOfPainting { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }

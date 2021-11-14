@@ -289,8 +289,12 @@ namespace BergerMsfaApi.Repositories
 
         public async Task<List<TEntity>> CreateListAsync(List<TEntity> items)
         {
-            DbSet.AddRange(items);
-            await SaveChangesAsync();
+            //DbSet.AddRange(items);
+            //await SaveChangesAsync();
+            //return items;
+
+            var bulkConfig = UpdateCreatedUpdateBy(items);
+            await _context.BulkInsertAsync(items, bulkConfig);
             return items;
         }
 
@@ -299,14 +303,22 @@ namespace BergerMsfaApi.Repositories
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
-                foreach (var item in items)
+                //foreach (var item in items)
+                //{
+                //    var entry = _context.Entry(item);
+                //    DbSet.Attach(item);
+                //    entry.State = EntityState.Modified;
+                //}
+                //var result = await SaveChangesAsync();
+                //return result > 0 ? items : null;
+
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    var entry = _context.Entry(item);
-                    DbSet.Attach(item);
-                    entry.State = EntityState.Modified;
+                    var bulkConfig = UpdateCreatedUpdateBy(items, true);
+                    await _context.BulkUpdateAsync(items, bulkConfig);
+                    await transaction.CommitAsync();
                 }
-                var result = await SaveChangesAsync();
-                return result > 0 ? items : null;
+                return items;
             }
             catch (Exception ex)
             {
@@ -319,13 +331,20 @@ namespace BergerMsfaApi.Repositories
             if (items == null) throw new ArgumentNullException(nameof(items));
             try
             {
-                foreach (var record in items)
+                //foreach (var record in items)
+                //{
+                //    DbSet.Attach(record);
+                //}
+                //DbSet.RemoveRange(items);
+                //var result = await SaveChangesAsync();
+                //return result;
+
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    DbSet.Attach(record);
+                    await _context.BulkDeleteAsync(items, new BulkConfig() { UseTempDB = true });
+                    await transaction.CommitAsync();
                 }
-                DbSet.RemoveRange(items);
-                var result = await SaveChangesAsync();
-                return result;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -374,13 +393,20 @@ namespace BergerMsfaApi.Repositories
                 return 0; //throw new Exception(".NET ObjectNotFoundException"); //new ObjectNotFoundException();
             }
 
-            DbSet.RemoveRange(records);
+            //DbSet.RemoveRange(records);
 
             //foreach (var record in records)
             //{
             //    DbSet.Remove(record);
             //}
-            return await SaveChangesAsync();
+            //return await SaveChangesAsync();
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                await _context.BulkDeleteAsync(records, new BulkConfig() { UseTempDB = true });
+                await transaction.CommitAsync();
+            }
+            return 1;
         }
 
         public async Task<int> CountAsync()
@@ -629,6 +655,38 @@ namespace BergerMsfaApi.Repositories
             {
                 throw ex;
             }
+        }
+
+        private BulkConfig UpdateCreatedUpdateBy<T>(IList<T> items, bool isUpdate = false)
+        {
+            var time = DateTime.Now;
+            var userId = AppIdentity.AppUser.UserId;
+            var ignoreList = new List<string>();
+
+            foreach (var entry in items)
+            {
+                if (!(entry is IAuditableEntity addAudit)) continue;
+
+                if(!isUpdate)
+                {
+                    addAudit.CreatedBy = userId;
+                    addAudit.CreatedTime = time;
+                }
+                else
+                {
+                    ignoreList = new List<string> { nameof(addAudit.CreatedBy), nameof(addAudit.CreatedTime) };
+                }
+
+                addAudit.ModifiedBy = userId;
+                addAudit.ModifiedTime = time;
+            }
+
+            BulkConfig bulkConfig = new BulkConfig();
+            bulkConfig.PropertiesToExclude = ignoreList;
+            if (isUpdate)
+                bulkConfig.UseTempDB = true;
+
+            return bulkConfig;
         }
 
         private int CreateLog()

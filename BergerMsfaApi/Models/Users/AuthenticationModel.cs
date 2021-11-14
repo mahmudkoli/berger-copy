@@ -10,11 +10,14 @@ namespace BergerMsfaApi.Models.Users
     public class AuthenticateUserModel
     {
         public int UserId { get; set; }
+        public string UserName { get; set; }
         public string FullName { get; set; }
         public IList<KeyValuePairModel> DealerOpeningsHierarchyList { get; set; }
         public IList<MobileAppMenuPermissionModel> AppMenuPermission { get; set; }
         public IList<KeyValuePairModel> PainterRegistrationsHierarchyList { get; set; }
         public IList<KeyValuePairModel> LeadGenerationsHierarchyList { get; set; }
+        public IList<KeyValuePairModel> CollectionEntriesHierarchyList { get; set; }
+        public IList<KeyValuePairModel> AreaHierarchyList { get; set; }
         public IList<KeyValuePairAreaModel> Plants { get; set; }
         public IList<KeyValuePairAreaModel> SalesOffices { get; set; }
         public IList<KeyValuePairAreaModel> Areas { get; set; }
@@ -36,13 +39,16 @@ namespace BergerMsfaApi.Models.Users
         public int EmployeeRole { get; set; }
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
-
+        public string Designation { get; set; }
+        public string RefreshToken { get; set; }
         public AuthenticateUserModel()
         {
             this.DealerOpeningsHierarchyList = new List<KeyValuePairModel>();
             this.AppMenuPermission = new List<MobileAppMenuPermissionModel>();
             this.PainterRegistrationsHierarchyList = new List<KeyValuePairModel>();
             this.LeadGenerationsHierarchyList = new List<KeyValuePairModel>();
+            this.CollectionEntriesHierarchyList = new List<KeyValuePairModel>();
+            this.AreaHierarchyList = new List<KeyValuePairModel>();
             this.Plants = new List<KeyValuePairAreaModel>();
             this.SalesOffices = new List<KeyValuePairAreaModel>();
             this.Areas = new List<KeyValuePairAreaModel>();

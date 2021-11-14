@@ -28,6 +28,7 @@ using Microsoft.EntityFrameworkCore;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Models.Common;
 using System.Linq.Expressions;
+using System.Net.Mime;
 
 namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 {
@@ -257,7 +258,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             }
             await _dealerOpeningSvc.UpdateAsync(dealer);
             await DealerStatusLog(dealer, "DealerStatus", model.Status.ToString());
-            if (emailConfig != null)
+            if (emailConfig != null && isApproved)
             {
                 await sendEmail(emailConfig.Email, dealer.Id);
             }
@@ -298,6 +299,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         public async Task<DealerOpeningModel> AppCreateDealerOpeningAsync(DealerOpeningModel model)
         {
+            if (model.DealerOpeningAttachments.Any() && _fileUploadSvc.IsMaxSizeExceded(model.DealerOpeningAttachments.Select(s => s.Path).ToList(), 10))
+                throw new Exception("Maximum file size 10 MB allowed.");
+
             //var mapper = new MapperConfiguration(cfg =>
             //{
             //    cfg.CreateMap<DealerOpeningAttachmentModel, DealerOpeningAttachment>().ReverseMap();
@@ -330,8 +334,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     {
                         attach.Path = await _fileUploadSvc.SaveImageAsync(
                             attach.Path,
-                            fileName, FileUploadCode.DealerOpening,
-                            300, 300);
+                            fileName, FileUploadCode.DealerOpening);
                     }
                     catch (System.Exception e)
                     {
@@ -371,8 +374,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                 if (!string.IsNullOrEmpty(attach.Path))
                     attach.Path = await _fileUploadSvc.SaveImageAsync(
                         attach.Path,
-                        fileName, FileUploadCode.DealerOpening,
-                        300, 300);
+                        fileName, FileUploadCode.DealerOpening);
             }
             var result = await _dealerOpeningSvc.UpdateAsync(dealerOpening);
 
@@ -489,11 +491,19 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     {
                         if (!string.IsNullOrEmpty(item.Path))
                         {
-                            string path = Path.Combine(_env.WebRootPath, item.Path);
-                            if (File.Exists(path))
+                            //string path = Path.Combine(_env.WebRootPath, item.Path);
+                            string path = item.Path;
+                            if (!string.IsNullOrWhiteSpace(path))
                             {
-                                var url = new System.Net.Mail.Attachment(path);
-                                lstAttachment.Add(url);
+                                var bytes = await _fileUploadSvc.GetFileAsync(path);
+                                if (bytes != null && bytes.Length > 0)
+                                {
+                                    MemoryStream stream = new MemoryStream(bytes);
+                                    //var stream = await _fileUploadSvc.GetFileStreamAsync(path);
+                                    var url = new System.Net.Mail.Attachment(stream, item.Name + ".jpg");
+                                    url.ContentDisposition.DispositionType = DispositionTypeNames.Attachment;
+                                    lstAttachment.Add(url);
+                                }
                             }
 
                         }
@@ -516,19 +526,21 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
                     subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
 
-                    body += $"Dear Concern,{Environment.NewLine}";
+                    body += $"Dear Concern,<br/>";
 
                     body += string.Format("A new dealer open request has been generated from " +
-                        "“{0} & {1}” and got approved by “{2} & {3}”. " +
+                        "“{0} - {1}” and got approved by “{2} - {3}”. " +
                         "You are requested to open the new dealer in SAP by using the attached information.",
                         createdBy.UserName,
                         createdBy.Designation,
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
-                    body += $"{Environment.NewLine}{Environment.NewLine}";
-                    body += $"Thank You,{Environment.NewLine}";
+                    body += $"<br/><br/>";
+                    body += $"Thank You,<br/>";
                     body += $"Berger Paints Bangladesh Limited";
+
+                    body = "<p>" + body + "</p>";
 
                     await _emailSender.SendEmailWithAttachmentAsync(item, subject, body, lstAttachment);
                 }

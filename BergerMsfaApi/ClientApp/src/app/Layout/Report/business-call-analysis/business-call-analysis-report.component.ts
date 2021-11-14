@@ -6,13 +6,13 @@ import { BusinessCallAnalysisReportQuery } from 'src/app/Shared/Entity/Report/Re
 import {
   colDef,
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
@@ -96,7 +96,7 @@ export class BusinessCallAnalysisReportComponent implements OnInit, OnDestroy {
       isSortAscending: false,
       globalSearchValue: '',
       depot: '',
-      salesGroups: [],
+      //salesGroups: [],
       territories: [],
       zones: [],
       month: null,
@@ -112,10 +112,10 @@ export class BusinessCallAnalysisReportComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.Depot,
         isRequiredBasedOnEmployeeRole: true,
       }),
-      new SearchOptionDef({
-        searchOption: EnumSearchOption.SalesGroup,
-        isRequiredBasedOnEmployeeRole: true,
-      }),
+      // new SearchOptionDef({
+      //   searchOption: EnumSearchOption.SalesGroup,
+      //   isRequiredBasedOnEmployeeRole: true,
+      // }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.Territory,
         isRequired: true,

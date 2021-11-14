@@ -14,13 +14,13 @@ namespace Berger.Odata.Services
 {
     public class ODataBrandService : IODataBrandService
     {
-        private readonly IODataRepository<BrandInfo> _brandInfoRepository;
-        private readonly IODataRepository<BrandFamilyInfo> _brandFamilyInfoRepository;
+        private readonly IODataApplicationRepository<BrandInfo> _brandInfoRepository;
+        private readonly IODataApplicationRepository<BrandFamilyInfo> _brandFamilyInfoRepository;
         private readonly IMapper _mapper;
 
         public ODataBrandService(
-            IODataRepository<BrandInfo> brandInfoRepository,
-            IODataRepository<BrandFamilyInfo> brandFamilyInfoRepository,
+            IODataApplicationRepository<BrandInfo> brandInfoRepository,
+            IODataApplicationRepository<BrandFamilyInfo> brandFamilyInfoRepository,
             IMapper mapper
             )
         {

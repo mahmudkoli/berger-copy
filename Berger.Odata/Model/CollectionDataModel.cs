@@ -22,7 +22,7 @@ namespace Berger.Odata.Model
         public string BounceStatus { get; set; }
         public string stblg { get; set; }
         public string stjah { get; set; }
-        public string blart { get; set; }
+        public string CollectionType { get; set; }
         public string Amount { get; set; }
         public string AccountGroupName { get; set; }
         public string CustomerNo { get; set; }

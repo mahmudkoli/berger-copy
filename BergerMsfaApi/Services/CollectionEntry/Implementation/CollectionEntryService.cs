@@ -47,72 +47,58 @@ namespace BergerMsfaApi.Services.CollectionEntry.Implementation
 
         public async Task<QueryResultModel<PaymentModel>> GetCollectionByType(CollectionReportSearchModel query)
         {
-            var dealers = await (from dep in _context.Depots
-
-                                 join uzam in _context.UserZoneAreaMappings on dep.Werks equals uzam.PlantId into uzamleftjoin
-                                 from uzamaping in uzamleftjoin.DefaultIfEmpty()
-
-                                 join u in _context.UserInfos on uzamaping.UserInfoId equals u.Id into uleftjoin
+            var dealers = await (from p in _context.Payments
+                                 join u in _context.UserInfos on p.EmployeeId equals u.EmployeeId into uleftjoin
                                  from uinfo in uleftjoin.DefaultIfEmpty()
-
-                                 join p in _context.Payments on uinfo.EmployeeId equals p.EmployeeId into pleftjoin
-                                 from paym in pleftjoin.DefaultIfEmpty()
-
-                                 join dct in _context.DropdownDetails on paym.CustomerTypeId equals dct.Id into dctleftjoin
+                                 join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
                                  from dctinfo in dctleftjoin.DefaultIfEmpty()
-
-                                 join dpm in _context.DropdownDetails on paym.PaymentMethodId equals dpm.Id into dpmleftjoin
+                                 join dpm in _context.DropdownDetails on p.PaymentMethodId equals dpm.Id into dpmleftjoin
                                  from dpminfo in dpmleftjoin.DefaultIfEmpty()
-
-                                 join ca in _context.CreditControlAreas on paym.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
+                                 join ca in _context.CreditControlAreas on p.CreditControlAreaId equals ca.CreditControlAreaId into caleftjoin
                                  from cainfo in caleftjoin.DefaultIfEmpty()
-                                 join d in _context.DealerInfos on paym.DealerId equals d.Id.ToString() into dleftjoin
+                                 join d in _context.DealerInfos on p.DealerId equals d.Id.ToString() into dleftjoin
                                  from dinfo in dleftjoin.DefaultIfEmpty()
-
-                                 join ter in _context.Territory on uzamaping.TerritoryId equals ter.Code into terleftjoin
-                                 from terinfo in terleftjoin.DefaultIfEmpty()
-                                 join zon in _context.Zone on uzamaping.ZoneId equals zon.Code into zonleftjoin
-                                 from zonfo in zonleftjoin.DefaultIfEmpty()
-
-
+                                 join dep in _context.Depots on p.Depot equals dep.Werks into depleftjoin
+                                 from depinfo in depleftjoin.DefaultIfEmpty()
                                  where (
                                    
                                    (!query.UserId.HasValue || uinfo.Id == query.UserId.Value)
-                                   && (!query.Territories.Any() || query.Territories.Contains(uzamaping.TerritoryId))
-                                   && (!query.Zones.Any() || query.Zones.Contains(uzamaping.ZoneId))
+                                   && (!query.Territories.Any() || query.Territories.Contains(p.Territory))
+                                   && (!query.Zones.Any() || query.Zones.Contains(p.Zone))
                                    && (!query.PaymentMethodId.HasValue || dpminfo.Id == query.PaymentMethodId.Value)
                                    && (!query.DealerId.HasValue || dinfo.Id == query.DealerId.Value)
-                                   && (!query.Date.HasValue || paym.CollectionDate.Date == query.Date.Value.Date)
+                                   && (!query.Date.HasValue || p.CollectionDate.Date == query.Date.Value.Date)
                                    && (!query.PaymentFromId.HasValue || dctinfo.Id == query.PaymentFromId)
-                                   && (!string.IsNullOrEmpty(query.Depot) || uzamaping.PlantId == query.Depot)
+                                   && (!string.IsNullOrEmpty(query.Depot) || p.Depot == query.Depot)
                                  )
+                                 orderby p.CreatedTime descending
                                  select new
                                  {
-                                     paym.CreditControlArea,
-                                     paym.PaymentMethod,
-                                     paym.CustomerType,
-                                     paym.EmployeeId,
-                                     paym.Id,
+                                     p.CreditControlArea,
+                                     p.PaymentMethod,
+                                     p.CustomerType,
+                                     p.EmployeeId,
+                                     p.Id,
                                      uinfo.Email,
-                                     paym.CollectionDate,
+                                     p.CollectionDate,
                                      customerType = dctinfo.DropdownName,
-                                     paym.SapId,
-                                     projectName = paym.Name,
-                                     paym.Address,
+                                     p.SapId,
+                                     projectName = p.Name,
+                                     p.Address,
                                      paymentMethod = dpminfo.DropdownName,
                                      creditControlArea = cainfo.Description,
-                                     paym.BankName,
-                                     paym.Number,
-                                     paym.Amount,
-                                     paym.ManualNumber,
-                                     paym.Remarks,
-                                     paym.Name,
-                                     paym.MobileNumber,
-                                     depotId = dep.Werks,
-                                     depotName = dep.Name1,
-                                     territoryName = terinfo.Name,
-                                     zoneName = zonfo.Name,
-                                     paym.DealerId,
+                                     p.BankName,
+                                     p.Number,
+                                     p.Amount,
+                                     p.ManualNumber,
+                                     p.Remarks,
+                                     p.Name,
+                                     p.MobileNumber,
+                                     depotId = depinfo.Werks,
+                                     depotName = depinfo.Name1,
+                                     territoryName = p.Territory,
+                                     zoneName = p.Zone,
+                                     p.DealerId,
                                      dinfo.CustomerNo
                                  }).ToListAsync();
 

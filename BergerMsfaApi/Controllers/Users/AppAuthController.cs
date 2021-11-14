@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Berger.Common.Constants;
 using Berger.Odata.Services;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.AlertNotification;
 using BergerMsfaApi.Services.Interfaces;
@@ -13,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Users
 {
-    [Authorize]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -25,7 +27,7 @@ namespace BergerMsfaApi.Controllers.Users
         private readonly IActiveDirectoryServices _adservice;
         private readonly IAlertNotificationDataService _alertNotification;
         private readonly INotificationWorkerService _alertNotificationData;
-
+        private readonly ITempUserLoginHistoryService _tempUserLoginHistoryService;
 
         public AppAuthController(
             IAuthService service, 
@@ -33,7 +35,8 @@ namespace BergerMsfaApi.Controllers.Users
             ILoginLogService loginLogService, 
             IActiveDirectoryServices adservice,
             IAlertNotificationDataService alertNotification,
-            INotificationWorkerService alertNotificationData)
+            INotificationWorkerService alertNotificationData,
+            ITempUserLoginHistoryService tempUserLoginHistoryService)
         {
             authService = service;
             _userService = user;
@@ -41,6 +44,7 @@ namespace BergerMsfaApi.Controllers.Users
             _adservice = adservice;
             _alertNotification = alertNotification;
             _alertNotificationData = alertNotificationData;
+            _tempUserLoginHistoryService = tempUserLoginHistoryService;
         }
 
         [AllowAnonymous]
@@ -75,7 +79,12 @@ namespace BergerMsfaApi.Controllers.Users
                     return ValidationResult(ModelState);
                 }
 
-                var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                //var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                var authUser = await authService.GetJWTTokenByUserNameWithRefreshTokenAsync(model.UserName, HttpContext, Request, Response);
+
+                var appVersion = HttpContext.Request?.Headers[ConstantPlatformValue.AppVersionHeaderName];
+
+                await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, true, appVersion);
 
                 return OkResult(authUser);
             }
@@ -93,6 +102,35 @@ namespace BergerMsfaApi.Controllers.Users
                 var loginLog = await _loginLogService.UserActivityAsync();
 
                 return OkResult(loginLog);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RefreshTokenAsync(token, HttpContext, Request, Response);
+                return OkResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("revoke-token")]
+        public async Task<IActionResult> RevokeTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
+                return OkResult(response);
             }
             catch (Exception ex)
             {

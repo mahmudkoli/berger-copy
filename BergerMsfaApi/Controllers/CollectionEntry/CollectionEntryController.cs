@@ -49,7 +49,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             {
                 if (!await _paymentService.IsExistAsync(id))
                 {
-                    ModelState.AddModelError(nameof(id), "Collection Not Found");
+                    ModelState.AddModelError(nameof(id), "Collection is Not Found.");
                     return ValidationResult(ModelState);
                 }
                 var result = await _paymentService.DeleteAsync(id);

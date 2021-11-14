@@ -3,8 +3,10 @@ using Berger.Common.Enumerations;
 using Berger.Data.MsfaEntity.KPI;
 using Berger.Data.MsfaEntity.Scheme;
 using BergerMsfaApi.Mappings;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
 using System;
+using System.Collections.Generic;
 
 namespace BergerMsfaApi.Models.KPI
 {
@@ -60,5 +62,15 @@ namespace BergerMsfaApi.Models.KPI
     {
         public string BusinessArea { get; set; }
         public string Territory { get; set; }
+    }
+
+    public class CollectionPlanQueryObjectModel : QueryObjectModel
+    {
+        public string BusinessArea { get; set; }
+        public IList<string> Territories { get; set; }
+        public CollectionPlanQueryObjectModel()
+        {
+            this.Territories = new List<string>();
+        }
     }
 }

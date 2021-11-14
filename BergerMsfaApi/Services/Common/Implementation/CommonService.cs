@@ -65,7 +65,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             _territorySvc = territorySvc;
             _saleGroupSvc = saleGroupSvc;
             _saleOfficeSvc = saleOfficeSvc;
-            _roleSvc = roleSvc; 
+            _roleSvc = roleSvc;
             _journeyPlanDetailSvc = journeyPlanDetailSvc;
             _depotSvc = depotSvc;
             _userInfosvc = userInfosvc;
@@ -95,10 +95,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<UserInfoModel>> GetUserInfoList()
         {
-           // var result1 = new List<UserInfoModel>();
-           // var u = _userInfosvc.GetAll().ToList();
-           //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
-         
+            // var result1 = new List<UserInfoModel>();
+            // var u = _userInfosvc.GetAll().ToList();
+            //var v= Getuser(result1, AppIdentity.AppUser.EmployeeId);
+
             var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -113,7 +113,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var userInfo = await _userService.GetUserAsync(userId);
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) ||
                                 (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -122,8 +122,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
 
-            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && (((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
-                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId)) 
+            var result = await _userInfosvc.FindAllAsync(f => f.Status == Status.Active && (((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) ||
+                                (f.ManagerId == appUser.EmployeeId || f.EmployeeId == appUser.EmployeeId))
                                 && (f.EmployeeRole != EnumEmployeeRole.ZO)));
             return result.ToMap<UserInfo, UserInfoModel>();
         }
@@ -159,7 +159,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IEnumerable<SaleGroup>> GetSaleGroupList()
         {
             var appUser = AppIdentity.AppUser;
-            var result =  await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
+            var result = await _saleGroupSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesAreaIdList.Contains(x.Code)));
             return result.Select(s => new SaleGroup { Code = s.Code, Name = $"{s.Name} ({s.Code})" }).OrderBy(x => x.Name).ToList();
         }
 
@@ -167,10 +167,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var appUser = AppIdentity.AppUser;
             var result = await _depotSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.PlantIdList.Contains(x.Werks)));
-            return result.Select(s => new DepotModel  { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
+            return result.Select(s => new DepotModel { Code = s.Werks, Name = $"{s.Name1} ({s.Werks})" }).OrderBy(x => x.Name).ToList();
         }
 
-        public  async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
+        public async Task<IEnumerable<SaleOffice>> GetSaleOfficeList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _saleOfficeSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.SalesOfficeIdList.Contains(x.Code)));
@@ -227,7 +227,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IEnumerable<RoleModel>> GetRoleList()
         {
-            var result= await _roleSvc.FindAllAsync(f => f.Status == Status.Active);
+            var result = await _roleSvc.FindAllAsync(f => f.Status == Status.Active);
             return result.ToMap<Role, RoleModel>();
         }
 
@@ -246,7 +246,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             var months = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
 
             List<MonthModel> monthModels = new List<MonthModel>();
-            
+
             for (int i = 0; i < months.Length; i++)
             {
                 monthModels.Add(new MonthModel { Id = i + 1, Name = months[i] });
@@ -272,18 +272,19 @@ namespace BergerMsfaApi.Services.Common.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
             {
-                [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
-                [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
-                [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup),
-                [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),
-                [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone)
+                [EnumAreaCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
+                [EnumAreaCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice),
+                [EnumAreaCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup),
+                [EnumAreaCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory),
+                [EnumAreaCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone)
             };
 
             //var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).ToList();
             var result = from dealer in (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory]))
                          join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
-                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup 
-                         into cust from cu in cust.DefaultIfEmpty()
+                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                         into cust
+                         from cu in cust.DefaultIfEmpty()
                          select new AppDealerInfoModel
                          { // result selector 
                              Id = dealer.Id,
@@ -297,35 +298,49 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
             return result;
         }
-        
-        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId)
+
+        public async Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId, IList<string> territoryIds = null, bool isDealerSubDealer = false)
         {
             //var userId = AppIdentity.AppUser.UserId;
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             var userInfo = await _userService.GetUserAsync(userId);
+            territoryIds ??= new List<string>();
+            var searchTerritoryIds = userInfo.TerritoryIds;
 
-            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
-                x.Channel == ConstantsODataValue.DistrbutionChannelDealer && 
-                x.Division == ConstantsODataValue.DivisionDecorative && 
+            if (territoryIds.Any())
+            {
+                searchTerritoryIds = territoryIds.ToList();
+            }
+
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
+                x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                x.Division == ConstantsODataValue.DivisionDecorative &&
                 ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
                 ((!(userInfo.PlantIds != null && userInfo.PlantIds.Any()) || userInfo.PlantIds.Contains(x.BusinessArea)) &&
                 (!(userInfo.SaleOfficeIds != null && userInfo.SaleOfficeIds.Any()) || userInfo.SaleOfficeIds.Contains(x.SalesOffice)) &&
                 (!(userInfo.AreaIds != null && userInfo.AreaIds.Any()) || userInfo.AreaIds.Contains(x.SalesGroup)) &&
-                (!(userInfo.TerritoryIds != null && userInfo.TerritoryIds.Any()) || userInfo.TerritoryIds.Contains(x.Territory)) &&
+                (!(userInfo.TerritoryIds != null && userInfo.TerritoryIds.Any()) || searchTerritoryIds.Contains(x.Territory)) &&
                 (!(userInfo.ZoneIds != null && userInfo.ZoneIds.Any()) || userInfo.ZoneIds.Contains(x.CustZone))));
 
             var result = from dealer in (await _dealerInfoSvc.FindAllAsync(dealerPredicate))
                          join custGrp in (await _customerGroupSvc.FindAllAsync(x => true))
-                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup 
-                         into cust from cu in cust.DefaultIfEmpty()
+                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                         into cust
+                         from cu in cust.DefaultIfEmpty()
+                         where
+                         (
+                            (isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
+                            (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
+                         )
                          select new AppDealerInfoModel
-                         { 
-                            Id = dealer.Id,
-                            CustomerNo = dealer.CustomerNo,
-                            CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
-                            Address = dealer.Address,
-                            ContactNo = dealer.ContactNo,
-                            Territory = dealer.Territory,
-                            IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
+                         {
+                             Id = dealer.Id,
+                             CustomerNo = dealer.CustomerNo,
+                             CustomerName = $"{dealer.CustomerName} ({dealer.CustomerNo})",
+                             Address = dealer.Address,
+                             ContactNo = dealer.ContactNo,
+                             Territory = dealer.Territory,
+                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")
                          };
 
             return result;
@@ -350,35 +365,35 @@ namespace BergerMsfaApi.Services.Common.Implementation
             //var result = (from dealer in _dealerInfoSvc.GetAll()
             //var result = (from dealer in _dealerInfoSvc.FindAll(columnsMap[model.UserCategory])
             var result = (from dealer in _dealerInfoSvc.GetAll()
-                         join custGrp in _customerGroupSvc.GetAll()
-                         on dealer.AccountGroup equals custGrp.CustomerAccountGroup
-                         into cust
-                         from cu in cust.DefaultIfEmpty()
+                          join custGrp in _customerGroupSvc.GetAll()
+                          on dealer.AccountGroup equals custGrp.CustomerAccountGroup
+                          into cust
+                          from cu in cust.DefaultIfEmpty()
 
-                         join focusDealer in _focusDealerSvc.GetAll()
-                         on dealer.Id equals focusDealer.DealerId
-                         into focus
-                         from fd in focus.DefaultIfEmpty()
+                          join focusDealer in _focusDealerSvc.GetAll()
+                          on dealer.Id equals focusDealer.DealerId
+                          into focus
+                          from fd in focus.DefaultIfEmpty()
 
-                         where ((EnumDealerCategory.All == model.DealerCategory) ||
-                         //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
-                         (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
-                             fd.ValidFrom.Date <= DateTime.Now.Date))
-                         && (dealer.CustomerName.Contains(model.DealerName))
+                          where ((EnumDealerCategory.All == model.DealerCategory) ||
+                          //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
+                          (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                              fd.ValidFrom.Date <= DateTime.Now.Date))
+                          && (dealer.CustomerName.Contains(model.DealerName))
 
-                         select new AppDealerInfoModel
-                         { // result selector 
-                             Id = dealer.Id,
-                             CustomerNo = dealer.CustomerNo,
-                             CustomerName = dealer.CustomerName,
-                             Address = dealer.Address,
-                             ContactNo = dealer.ContactNo,
-                             Territory = dealer.Territory,
-                             IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
-                             //IsFocused = fd.IsFocused(),
-                             IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
-                             fd.ValidFrom.Date <= DateTime.Now.Date,
-                         }).Skip((model.PageNo.Value-1)* model.PageSize.Value).Take(model.PageSize.Value).ToList();
+                          select new AppDealerInfoModel
+                          { // result selector 
+                              Id = dealer.Id,
+                              CustomerNo = dealer.CustomerNo,
+                              CustomerName = dealer.CustomerName,
+                              Address = dealer.Address,
+                              ContactNo = dealer.ContactNo,
+                              Territory = dealer.Territory,
+                              IsSubdealer = cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer"),
+                              //IsFocused = fd.IsFocused(),
+                              IsFocused = fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
+                              fd.ValidFrom.Date <= DateTime.Now.Date,
+                          }).Skip((model.PageNo.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value).ToList();
 
             return result;
         }
@@ -391,9 +406,10 @@ namespace BergerMsfaApi.Services.Common.Implementation
             model.DealerName = model.DealerName ?? string.Empty;
 
             var userId = AppIdentity.AppUser.UserId;
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             var userInfo = await _userService.GetUserAsync(userId);
 
-            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted && 
+            Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
                 ((userInfo.EmployeeRole == EnumEmployeeRole.Admin || userInfo.EmployeeRole == EnumEmployeeRole.GM) ||
@@ -419,6 +435,9 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
+                          && (model.isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
+                             (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
+
 
                           select new AppDealerInfoModel
                           {
@@ -439,6 +458,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IList<AppDealerInfoModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model)
         {
+            var employeeRole = AppIdentity.AppUser.EmployeeRole;
             model.PageNo = model.PageNo ?? 1;
             model.PageSize = model.PageSize ?? int.MaxValue;
             model.DealerCategory = model.DealerCategory ?? EnumDealerCategory.All;
@@ -469,6 +489,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
                           && (dealer.CustomerName.Contains(model.DealerName))
+                          && (model.isDealerSubDealer || (int)EnumEmployeeRole.ZO != employeeRole ||
+                             (cu != null && !string.IsNullOrEmpty(cu.Description) && cu.Description.StartsWith("Subdealer")))
 
                           select new AppDealerInfoModel
                           {
@@ -494,7 +516,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             Expression<Func<DealerInfo, bool>> dealerPredicate = (x) => !x.IsDeleted &&
                 x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                 x.Division == ConstantsODataValue.DivisionDecorative &&
-                (((!(model.Depots != null && model.Depots.Any()) || model.Depots==x.BusinessArea) &&
+                (((string.IsNullOrEmpty(model.Depots) || model.Depots == x.BusinessArea) &&
                 (!(model.SalesOffices != null && model.SalesOffices.Any()) || model.SalesOffices.Contains(x.SalesOffice)) &&
                 (!(model.SalesGroups != null && model.SalesGroups.Any()) || model.SalesGroups.Contains(x.SalesGroup)) &&
                 (!(model.Territories != null && model.Territories.Any()) || model.Territories.Contains(x.Territory)) &&
@@ -515,7 +537,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                           //(EnumDealerCategory.Focus == model.DealerCategory && fd.IsFocused()))
                           (EnumDealerCategory.Focus == model.DealerCategory && fd != null && fd.DealerId > 0 && fd.ValidTo.Date >= DateTime.Now.Date &&
                              fd.ValidFrom.Date <= DateTime.Now.Date))
-                         
+
 
                           select new AppDealerInfoModel
                           {
@@ -536,15 +558,15 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
-            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))
+            var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))
                                     .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
-            var salesOffices = (await GetPSATZMappingsAsync(EnumUserCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+            var salesOffices = (await GetPSATZMappingsAsync(EnumAreaCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).ToList();
-            var areas = (await GetPSATZMappingsAsync(EnumUserCategory.Area.ToString(), areaIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+            var areas = (await GetPSATZMappingsAsync(EnumAreaCategory.Area.ToString(), areaIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.SalesOfficeId }).ToList();
-            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+            var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PSATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId }).ToList();
-            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSATZ))
+            var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
 
             foreach (var plant in plants)
@@ -566,16 +588,43 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
             return plants;
         }
-        
+
+        public async Task<IList<KeyValuePairModel>> GetPSTZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> territoryIds, List<string> zoneIds)
+        {
+            var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSTZ))
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
+            var salesOffices = (await GetPSATZMappingsAsync(EnumAreaCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSTZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).ToList();
+            var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSTZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.SalesOfficeId }).ToList();
+            var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSTZ))
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
+
+            foreach (var plant in plants)
+            {
+                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).ToList();
+                foreach (var salesOffice in plant.Children)
+                {
+                    salesOffice.Children = territories.Where(x => x.ParentId == salesOffice.Id).ToList();
+                    foreach (var territory in salesOffice.Children)
+                    {
+                        territory.Children = zones.Where(x => x.ParentId == territory.Id).ToList();
+                    }
+                }
+            }
+
+            return plants;
+        }
+
         public async Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
-            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PATZ))
+            var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PATZ))
                                     .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
-            var areas = (await GetPSATZMappingsAsync(EnumUserCategory.Area.ToString(), areaIds, plantIds, EnumTypeOfEmployeeHierarchy.PATZ))
+            var areas = (await GetPSATZMappingsAsync(EnumAreaCategory.Area.ToString(), areaIds, plantIds, EnumTypeOfEmployeeHierarchy.PATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.PlantId }).ToList();
-            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PATZ))
+            var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId }).ToList();
-            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PATZ))
+            var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PATZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
 
             foreach (var plant in plants)
@@ -596,11 +645,11 @@ namespace BergerMsfaApi.Services.Common.Implementation
 
         public async Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds)
         {
-            var plants = (await GetPSATZMappingsAsync(EnumUserCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PTZ))
+            var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PTZ))
                                     .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).ToList();
-            var territories = (await GetPSATZMappingsAsync(EnumUserCategory.Territory.ToString(), territoryIds, plantIds, EnumTypeOfEmployeeHierarchy.PTZ))
+            var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, plantIds, EnumTypeOfEmployeeHierarchy.PTZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).ToList();
-            var zones = (await GetPSATZMappingsAsync(EnumUserCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PTZ))
+            var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PTZ))
                                 .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId }).ToList();
 
             foreach (var plant in plants)
@@ -615,7 +664,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return plants;
         }
 
-        private async Task<IList<PSATZMappingModel>> GetPSATZMappingsAsync(string userCategory, List<string> userCategoryIds, List<string> userParentCategoryIds, EnumTypeOfEmployeeHierarchy typeOfEmployeeHierarchy)
+        private async Task<IList<PSATZMappingModel>> GetPSATZMappingsAsync(string areaCategory, List<string> areaCategoryIds, List<string> areaParentCategoryIds, EnumTypeOfEmployeeHierarchy typeOfEmployeeHierarchy)
         {
             var columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>();
 
@@ -623,34 +672,44 @@ namespace BergerMsfaApi.Services.Common.Implementation
             {
                 columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
                 {
-                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
-                    [EnumUserCategory.SalesOffice.ToString()] = f => userCategoryIds.Contains(f.SalesOffice) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
-                    [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesOffice)),
-                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesGroup)),
-                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                    [EnumAreaCategory.Plant.ToString()] = f => areaCategoryIds.Contains(f.BusinessArea),
+                    [EnumAreaCategory.SalesOffice.ToString()] = f => areaCategoryIds.Contains(f.SalesOffice) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumAreaCategory.Area.ToString()] = f => areaCategoryIds.Contains(f.SalesGroup) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.SalesOffice)),
+                    [EnumAreaCategory.Territory.ToString()] = f => areaCategoryIds.Contains(f.Territory) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.SalesGroup)),
+                    [EnumAreaCategory.Zone.ToString()] = f => areaCategoryIds.Contains(f.CustZone) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.Territory))
                 };
             }
             else if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PATZ)
             {
                 columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
                 {
-                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
-                    [EnumUserCategory.Area.ToString()] = f => userCategoryIds.Contains(f.SalesGroup) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
-                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.SalesGroup)),
-                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                    [EnumAreaCategory.Plant.ToString()] = f => areaCategoryIds.Contains(f.BusinessArea),
+                    [EnumAreaCategory.Area.ToString()] = f => areaCategoryIds.Contains(f.SalesGroup) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumAreaCategory.Territory.ToString()] = f => areaCategoryIds.Contains(f.Territory) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.SalesGroup)),
+                    [EnumAreaCategory.Zone.ToString()] = f => areaCategoryIds.Contains(f.CustZone) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.Territory))
                 };
             }
             else if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PTZ)
             {
                 columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
                 {
-                    [EnumUserCategory.Plant.ToString()] = f => userCategoryIds.Contains(f.BusinessArea),
-                    [EnumUserCategory.Territory.ToString()] = f => userCategoryIds.Contains(f.Territory) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.BusinessArea)),
-                    [EnumUserCategory.Zone.ToString()] = f => userCategoryIds.Contains(f.CustZone) && (!userParentCategoryIds.Any() || userParentCategoryIds.Contains(f.Territory))
+                    [EnumAreaCategory.Plant.ToString()] = f => areaCategoryIds.Contains(f.BusinessArea),
+                    [EnumAreaCategory.Territory.ToString()] = f => areaCategoryIds.Contains(f.Territory) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumAreaCategory.Zone.ToString()] = f => areaCategoryIds.Contains(f.CustZone) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.Territory))
+                };
+            }
+            else if (typeOfEmployeeHierarchy == EnumTypeOfEmployeeHierarchy.PSTZ)
+            {
+                columnsMap = new Dictionary<string, Expression<Func<DealerInfo, bool>>>()
+                {
+                    [EnumAreaCategory.Plant.ToString()] = f => areaCategoryIds.Contains(f.BusinessArea),
+                    [EnumAreaCategory.SalesOffice.ToString()] = f => areaCategoryIds.Contains(f.SalesOffice) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.BusinessArea)),
+                    [EnumAreaCategory.Territory.ToString()] = f => areaCategoryIds.Contains(f.Territory) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.SalesOffice)),
+                    [EnumAreaCategory.Zone.ToString()] = f => areaCategoryIds.Contains(f.CustZone) && (!areaParentCategoryIds.Any() || areaParentCategoryIds.Contains(f.Territory))
                 };
             }
 
-            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[userCategory])).Select(x => new PSATZMappingModel()
+            var result = (await _dealerInfoSvc.FindAllAsync(columnsMap[areaCategory])).Select(x => new PSATZMappingModel()
             {
                 PlantId = x.BusinessArea,
                 SalesOfficeId = x.SalesOffice,
@@ -659,7 +718,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 ZoneId = x.CustZone,
             }).ToList();
 
-            if (EnumUserCategory.Plant.ToString() == userCategory)
+            if (EnumAreaCategory.Plant.ToString() == areaCategory)
             {
                 result = result.GroupBy(x => x.PlantId).Select(x =>
                 {
@@ -678,7 +737,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 foreach (var item in result)
                     SetName<Depot>(item, data, x => x.Werks == item.PlantId, x => $"{x.Name1 } ({x.Werks})");
             }
-            else if (EnumUserCategory.SalesOffice.ToString() == userCategory)
+            else if (EnumAreaCategory.SalesOffice.ToString() == areaCategory)
             {
                 result = result.GroupBy(x => x.SalesOfficeId).Select(x =>
                 {
@@ -697,7 +756,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 foreach (var item in result)
                     SetName<SaleOffice>(item, data, x => x.Code == item.SalesOfficeId, x => $"{x.Name} ({x.Code})");
             }
-            else if (EnumUserCategory.Area.ToString() == userCategory)
+            else if (EnumAreaCategory.Area.ToString() == areaCategory)
             {
                 result = result.GroupBy(x => x.AreaId).Select(x =>
                 {
@@ -716,7 +775,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 foreach (var item in result)
                     SetName<SaleGroup>(item, data, x => x.Code == item.AreaId, x => $"{x.Name} ({x.Code})");
             }
-            else if (EnumUserCategory.Territory.ToString() == userCategory)
+            else if (EnumAreaCategory.Territory.ToString() == areaCategory)
             {
                 result = result.GroupBy(x => x.TerritoryId).Select(x =>
                 {
@@ -735,7 +794,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
                 foreach (var item in result)
                     SetName<Territory>(item, data, x => x.Code == item.TerritoryId, x => x.Code);
             }
-            else if (EnumUserCategory.Zone.ToString() == userCategory)
+            else if (EnumAreaCategory.Zone.ToString() == areaCategory)
             {
                 result = result.GroupBy(x => x.ZoneId).Select(x =>
                 {
@@ -759,7 +818,7 @@ namespace BergerMsfaApi.Services.Common.Implementation
         }
 
         private void SetName<T>(PSATZMappingModel item,
-            List<T> data, 
+            List<T> data,
             Func<T, bool> predicate,
             Func<T, string> selector)
         {
@@ -807,7 +866,8 @@ namespace BergerMsfaApi.Services.Common.Implementation
     {
         PSATZ = 1, //Plant > SalesOffice > Area > Territory > Zone
         PATZ = 2, //Plant > Area > Territory > Zone
-        PTZ = 3 //Plant > Territory > Zone
+        PTZ = 3, //Plant > Territory > Zone
+        PSTZ = 4, //Plant > SalesOffice > Territory > Zone
     }
 
     public class MonthModel
@@ -822,5 +882,5 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public string Name { get; set; }
     }
 
-    
+
 }

@@ -5,7 +5,7 @@ using Berger.Data.Common;
 
 namespace Berger.Data.MsfaEntity.Sync
 {
-    public class SyncDailySalesLog : AuditableEntity<int>
+    public class SyncDailySalesLog : AuditableEntity<Guid>
     {
         [Column(TypeName = "date")]
         public DateTime Date { get; set; }

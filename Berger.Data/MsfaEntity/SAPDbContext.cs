@@ -1,6 +1,6 @@
 using System;
 using Berger.Data.Common;
-using Berger.Data.MsfaEntity.SAPTables;
+using Berger.Data.MsfaEntity.SAPReports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -78,5 +78,12 @@ namespace Berger.Data.MsfaEntity
         #endregion
 
         public DbSet<SAPSalesInfo> SAPSalesInfos { get; set; }
+        public DbSet<QuarterlyPerformanceReport> QuarterlyPerformanceReports { get; set; }
+        public DbSet<SummaryPerformanceReport> SummaryPerformanceReports { get; set; }
+        public DbSet<CustomerPerformanceReport> CustomerPerformanceReports { get; set; }
+        public DbSet<ColorBankPerformanceReport> ColorBankPerformanceReports { get; set; }
+        public DbSet<KPIPerformanceReport> KpiPerformanceReports { get; set; }
+        public DbSet<CategoryWisePerformanceReport> CategoryWisePerformanceReports { get; set; }
+        public DbSet<CustomerInvoiceReport> CustomerInvoiceReports { get; set; }
     }
 }

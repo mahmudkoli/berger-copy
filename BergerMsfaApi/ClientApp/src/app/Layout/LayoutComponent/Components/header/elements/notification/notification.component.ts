@@ -1,17 +1,16 @@
+import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { WorkflowLog } from 'src/app/Shared/Entity/WorkFlows/workflow-log';
 import { Router } from '@angular/router';
-import { WorkflowLogService } from 'src/app/Shared/Services/Workflow/workflow-log.service';
-import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { trigger, state, animate, transition, keyframes, style } from '@angular/animations';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { WorkflowLog } from 'src/app/Shared/Entity/WorkFlows/workflow-log';
 import { WorkflowLogHistory } from 'src/app/Shared/Entity/WorkFlows/workflow-log-history';
-import { NgbModalOptions, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalNotificationComponent } from '../../modal-notification/modal-notification.component';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { Enums } from 'src/app/Shared/Enums/enums';
-import { WorkflowLogHistoryService } from 'src/app/Shared/Services/Workflow/workflow-log-history.service';
-import { WorkflowStatusEnumLabel, WorkflowStatusEnum } from 'src/app/Shared/Enums/workflowStatusEnum';
+import { WorkflowStatusEnum, WorkflowStatusEnumLabel } from 'src/app/Shared/Enums/workflowStatusEnum';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { NotificationService } from 'src/app/Shared/Services/Notification/Notification.service';
+import { WorkflowLogHistoryService } from 'src/app/Shared/Services/Workflow/workflow-log-history.service';
+import { WorkflowLogService } from 'src/app/Shared/Services/Workflow/workflow-log.service';
+import { ModalNotificationComponent } from '../../modal-notification/modal-notification.component';
 
 
 
@@ -20,20 +19,20 @@ import { NotificationService } from 'src/app/Shared/Services/Notification/Notifi
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.css'],
   animations: [
-    trigger('slideInOutAnimation', [ 
+    trigger('slideInOutAnimation', [
       transition(':enter', [
           animate(".6s", keyframes([
-            style({  
+            style({
                opacity: '0',
                transform: 'translateX(-30px)'
            }),
             style({
                 opacity: '0.5',
-                transform: 'translateX(15px)' 
+                transform: 'translateX(15px)'
               }),
             style({
                opacity: '1',
-               transform:' translateX(0)' 
+               transform:' translateX(0)'
               })
           ]))
       ]),
@@ -48,7 +47,7 @@ import { NotificationService } from 'src/app/Shared/Services/Notification/Notifi
 })
 export class NotificationComponent implements OnInit {
 
-  
+
    tosterMsgDltSuccess: string = "Record Has been deleted successfully.";
    tosterMsgError: string = "Something went wrong!";
 
@@ -68,7 +67,7 @@ export class NotificationComponent implements OnInit {
     private alertService: AlertService,
     private modalService: NgbModal,
     private notificationService: NotificationService
-  
+
   ) { }
 
   ngOnInit() {
@@ -78,7 +77,6 @@ export class NotificationComponent implements OnInit {
       this.lstDealerOpening=res.notificationForDealerOpningModel
       this.lstJourneyPlan=res.notificationForJourneyPlan
       this.pendingWorkflowCount=res.totalNoification
-      console.log(res,"Res")
     })
   }
 
@@ -93,10 +91,8 @@ export class NotificationComponent implements OnInit {
       (res: any) => {
         this.workflowLogList = res.data;
         this.pendingWorkflowCount = res.data.length > 0 ? res.data[0].pendingWorkflowCount : 0;
-        console.log(this.workflowLogList);
       },
       (error) => {
-        console.log(error);
         this.alertService.fnLoading(false);
         this.alertService.tosterDanger(this.tosterMsgError);
       },
@@ -109,10 +105,8 @@ export class NotificationComponent implements OnInit {
     this.workflowLogHistoryService.getWorkflowLogHistoryForCurrentUser(1, 10).subscribe(
       (res: any) => {
         this.workflowLogHistoryList = res.data;
-        console.log(this.workflowLogHistoryList);
       },
       (error) => {
-        console.log(error);
         this.alertService.fnLoading(false);
         this.alertService.tosterDanger(this.tosterMsgError);
       },
@@ -123,7 +117,7 @@ export class NotificationComponent implements OnInit {
     this.router.navigate(['/notification/notification-details']);
   }
 
-  
+
 
   openWorkflowLogModal(workflowLog, status) {
     let ngbModalOptions: NgbModalOptions = {
@@ -137,7 +131,6 @@ export class NotificationComponent implements OnInit {
     modalRef.componentInstance.workflowStatus = status;
 
     modalRef.result.then((result) => {
-      console.log(result);
       this.closeResult = `Closed with: ${result}`;
      // this.getMenus();
       this.getWorkflowLogForCurrentUser();

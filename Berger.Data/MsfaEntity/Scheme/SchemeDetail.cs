@@ -22,8 +22,21 @@ namespace Berger.Data.MsfaEntity.Scheme
         //Common
         public DateTime BenefitStartDate { get; set; }
         public DateTime? BenefitEndDate { get; set; }
-        public int SchemeMasterId { get; set; }
-        [ForeignKey("SchemeMasterId")]
-        public SchemeMaster SchemeMaster { get; set; }
+
+        public string BusinessArea { get; set; }
+        public SchemeType SchemeType { get; set; }
+        public string SchemeName { get; set; }
+
+
+        //public int SchemeMasterId { get; set; }
+        //[ForeignKey("SchemeMasterId")]
+        //  public SchemeMaster SchemeMaster { get; set; }
     }
+
+    public enum SchemeType
+    {
+        National = 1,
+        Regional = 2
+    }
+
 }

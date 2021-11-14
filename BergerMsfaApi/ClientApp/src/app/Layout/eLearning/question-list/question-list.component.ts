@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { finalize, take, delay } from 'rxjs/operators';
-import { Subscription, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { of, Subscription } from 'rxjs';
+import { delay, finalize, take } from 'rxjs/operators';
 import { Question, QuestionQuery } from 'src/app/Shared/Entity/ELearning/question';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { QuestionService } from 'src/app/Shared/Services/ELearning/question.service';
 
 @Component({
@@ -125,7 +125,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 		tableName: 'Question List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Title', width: '40%', internalName: 'title', sort: true, type: "" },
+			{ headerName: 'Question', width: '40%', internalName: 'title', sort: true, type: "" },
 			{ headerName: 'ELearning Document', width: '25%', internalName: 'eLearningDocumentText', sort: true, type: "" },
 			{ headerName: 'Type', width: '15%', internalName: 'typeText', sort: true, type: "" },
 			{ headerName: 'Mark', width: '10%', internalName: 'mark', sort: true, type: "" },
@@ -135,7 +135,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 		enabledSerialNo: true,
 		// pageSize: 10,
 		enabledPagination: true,
-		enabledDeleteBtn: true,
+		enabledDeleteBtn: false,
 		enabledEditBtn: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
@@ -156,7 +156,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 			this.deleteQuestion(event.record.id);
 		}
 	}
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new QuestionQuery({

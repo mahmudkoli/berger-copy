@@ -6,19 +6,15 @@ using System.Threading.Tasks;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Models.KPI;
-using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using BergerMsfaApi.Filters;
-using BergerMsfaApi.Services.KPI.interfaces;
-using BergerMsfaApi.Models.KPI;
 using Berger.Odata.Model;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    //[AuthorizeFilter]
-    //[AuthorizeFilter]
+    [AuthorizeFilter]
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
@@ -187,7 +183,7 @@ namespace BergerMsfaApi.Controllers.Odata
         }
 
 
-
+        // for app get to update data
         [HttpGet("GetDealerConversionData")]
         public async Task<IActionResult> GetDealerConversionData([FromQuery] SearchNewDealerDevelopment model)
         {
@@ -203,6 +199,7 @@ namespace BergerMsfaApi.Controllers.Odata
             }
         }
 
+        // for app save data
         [HttpPost("SaveDealerConversion")]
         public async Task<IActionResult> SaveDealerConversion(IList<NewDealerDevelopmentSaveModel> model)
         {
@@ -222,7 +219,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _newDealerDevelopmentService.GetNewDealerDevelopment(model);
+                var result = await _newDealerDevelopmentService.GetNewDealerDevelopmentReport(model);
                 return OkResult(result);
             }
             catch (Exception ex)
@@ -237,7 +234,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = await _newDealerDevelopmentService.GetDealerConversion(model);
+                var result = await _newDealerDevelopmentService.GetDealerConversionReport(model);
                 return OkResult(result);
             }
             catch (Exception ex)

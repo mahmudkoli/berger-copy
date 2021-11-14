@@ -10,7 +10,7 @@ namespace Berger.Odata.Common
         public const string BalanceLineTextClosing = "C Closing";
         public const string BalanceDocTypeMoneyReceipt = "MR";
         public const string BalanceDocTypeInvoice = "IN";
-        //public const string BalanceDocTypeCreditNote = "CN";
+        public const string BalanceDocTypeCreditNote = "CN";
         public const string CollectionMoneyReceipt = "MR";
         public const string CollectionInvoice = "IN";
         //public const string CollectionCreditNote = "CN";
@@ -18,12 +18,15 @@ namespace Berger.Odata.Common
         public const string CustomerClassificationNonExclusive = "02";
         public const string DistrbutionChannelDealer = "10";
         public const string DivisionDecorative = "10";
+        public const string CreditControlAreaDecorative = "1000";
         public const string PriceGroupCreditBuyer = "01";
         public const string PriceGroupCashBuyer = "02";
         public const string PriceGroupFastPayCarry = "04";
         public const string BergerCompanyCode = "1000";
         public const string BergerSourceClient = "REP";
         public const string ChequeBounceStatus = "Z1";
+        public const string ChequeDocTypeDA = "DA";
+        public const string ChequeDocTypeDZ = "DZ";
         public const int FyYearFirstMonth = 4;
         public const int FyYearLastMonth = 3;
 

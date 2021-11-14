@@ -68,12 +68,15 @@ namespace Berger.Odata.Services
             return data;
         }
 
-        public async Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder
-            )
+        public async Task<IList<CustomerDataModel>> GetCustomerDataByMultipleCustomerNo(SelectQueryOptionBuilder selectQueryBuilder)
         {
+            var filterQueryBuilder = new FilterQueryOptionBuilder();
+            filterQueryBuilder.Equal(nameof(CustomerDataModel.Channel), ConstantsValue.DistrbutionChannelDealer).And();
+            filterQueryBuilder.Equal(nameof(CustomerDataModel.Division), ConstantsValue.DivisionDecorative);
 
             var queryBuilder = new QueryOptionBuilder();
-            queryBuilder.AppendQuery(selectQueryBuilder.Select);
+            queryBuilder.AppendQuery(filterQueryBuilder.Filter)
+                .AppendQuery(selectQueryBuilder.Select);
 
             var data = (await _odataService.GetCustomerData(queryBuilder.Query)).ToList();
 
@@ -81,12 +84,16 @@ namespace Berger.Odata.Services
         }
 
         public async Task<IList<FinancialDataModel>> GetFinancialDataByCustomer(SelectQueryOptionBuilder selectQueryBuilder,
-           string startDate = "", string endDate = "", string creditControlArea = "")
+           string startDate = "", string endDate = "", string creditControlArea = "", string customerNo = "")
         {
             var filterQueryBuilder = new FilterQueryOptionBuilder();
             filterQueryBuilder.Equal(FinancialColDef.CompanyCode, ConstantsValue.BergerCompanyCode);
-            //filterQueryBuilder.And().Equal(FinancialColDef.CustomerLow, "24");
 
+            if (!string.IsNullOrWhiteSpace(customerNo))
+            {
+                filterQueryBuilder.And().Equal(FinancialColDef.CustomerLow, customerNo);
+
+            }
 
 
             if (!string.IsNullOrEmpty(creditControlArea))
@@ -148,7 +155,7 @@ namespace Berger.Odata.Services
             );
 
         Task<IList<FinancialDataModel>> GetFinancialDataByCustomer(SelectQueryOptionBuilder selectQueryBuilder,
-           string startDate = "", string endDate = "", string creditControlArea = "");
+           string startDate = "", string endDate = "", string creditControlArea = "", string customerNo = "");
 
         Task<IList<CustomerOccasionDataModel>> GetCustomerOccasionData(SelectQueryOptionBuilder selectQueryBuilder);
 

@@ -29,6 +29,9 @@ namespace BergerMsfaApi.Models.CollectionEntry
         public int CreditControlAreaId { get; set; }
         public string CreditControlAreaName { get; set; }
         public string EmployeeId { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
     }
 
     public class AppCollectionEntryModel

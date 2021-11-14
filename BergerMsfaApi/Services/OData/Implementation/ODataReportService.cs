@@ -60,6 +60,8 @@ namespace BergerMsfaApi.Services.OData.Implementation
         public async Task<TodaysActivitySummaryReportResultModel> TodaysActivitySummaryReport(AreaSearchCommonModel area)
         {
             var currentDate = DateTime.Now;
+            var userId = AppIdentity.AppUser.UserId;
+            var employeeId = AppIdentity.AppUser.EmployeeId;
 
             var dealerVisit = await (from jpd in _context.JourneyPlanDetails
                                      join jpm in _context.JourneyPlanMasters on jpd.PlanId equals jpm.Id into jpmleftjoin
@@ -74,10 +76,11 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                          (jpminfo.PlanDate.Date == currentDate.Date)
                                          && (jpminfo.PlanStatus == PlanStatus.Approved)
                                          && (!area.Depots.Any() || area.Depots.Contains(diInfo.BusinessArea))
-                                         && (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
-                                         && (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
+                                         //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
+                                         //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                          && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                          && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
+                                         && (jpminfo.EmployeeId == employeeId)
                                      )
                                      select new
                                      {
@@ -92,11 +95,13 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                           from diInfo in dileftjoin.DefaultIfEmpty()
                                           where (
                                               (dsc.CreatedTime.Date == currentDate.Date)
+                                              && (dsc.JourneyPlanId == null)
                                               && (!area.Depots.Any() || area.Depots.Contains(diInfo.BusinessArea))
-                                              && (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
-                                              && (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
+                                              //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(diInfo.SalesOffice))
+                                              //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(diInfo.SalesGroup))
                                               && (!area.Territories.Any() || area.Territories.Contains(diInfo.Territory))
                                               && (!area.Zones.Any() || area.Zones.Contains(diInfo.CustZone))
+                                              && (dsc.UserId == userId)
                                           )
                                           select new
                                           {
@@ -111,9 +116,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                      where (
                                         (pc.CreatedTime.Date == currentDate.Date)
                                         && (!area.Depots.Any() || area.Depots.Contains(pInfo.Depot))
-                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
+                                        //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(pc.SaleGroup))
                                         && (!area.Territories.Any() || area.Territories.Contains(pc.Territory))
                                         && (!area.Zones.Any() || area.Zones.Contains(pc.Zone))
+                                         && (pc.EmployeeId == employeeId)
                                     )
                                      select new
                                      {
@@ -123,17 +129,14 @@ namespace BergerMsfaApi.Services.OData.Implementation
             var collection = await (from p in _context.Payments
                                     join dct in _context.DropdownDetails on p.CustomerTypeId equals dct.Id into dctleftjoin
                                     from dctinfo in dctleftjoin.DefaultIfEmpty()
-                                    join ui in _context.UserInfos on p.EmployeeId equals ui.EmployeeId into uileftjoin
-                                    from uiInfo in uileftjoin.DefaultIfEmpty()
-                                    join uarea in _context.UserZoneAreaMappings on uiInfo.Id equals uarea.UserInfoId into uarealeftjoin
-                                    from uareaInfo in uarealeftjoin.DefaultIfEmpty()
                                     where (
                                         (p.CollectionDate.Date == currentDate.Date)
-                                        && (!area.Depots.Any() || area.Depots.Contains(uareaInfo.PlantId))
-                                        && (!area.SalesOffices.Any() || area.SalesOffices.Contains(uareaInfo.SalesOfficeId))
-                                        && (!area.SalesGroups.Any() || area.SalesGroups.Contains(uareaInfo.AreaId))
-                                        && (!area.Territories.Any() || area.Territories.Contains(uareaInfo.TerritoryId))
-                                        && (!area.Zones.Any() || area.Zones.Contains(uareaInfo.ZoneId))
+                                        && (!area.Depots.Any() || area.Depots.Contains(p.Depot))
+                                        //&& (!area.SalesOffices.Any() || area.SalesOffices.Contains(uareaInfo.SalesOfficeId))
+                                        //&& (!area.SalesGroups.Any() || area.SalesGroups.Contains(uareaInfo.AreaId))
+                                        && (!area.Territories.Any() || area.Territories.Contains(p.Territory))
+                                        && (!area.Zones.Any() || area.Zones.Contains(p.Zone))
+                                        && (p.EmployeeId == employeeId)
                                     )
                                     select new
                                     {
@@ -143,23 +146,34 @@ namespace BergerMsfaApi.Services.OData.Implementation
                                         Amount = p.Amount
                                     }).Distinct().ToListAsync();
 
-            var lead = await (from lg in _context.LeadGenerations
-                              join lf in _context.LeadFollowUps on lg.Id equals lf.LeadGenerationId into lfleftjoin
-                              from lfInfo in lfleftjoin.DefaultIfEmpty()
-                              join lba in _context.LeadBusinessAchievements on lfInfo.BusinessAchievementId equals lba.Id into lbaleftjoin
-                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
+            var leadGen = await (from lg in _context.LeadGenerations
                               where (
-                                  (lg.CreatedTime.Date == currentDate.Date || lfInfo.CreatedTime.Date == currentDate.Date)
+                                  (lg.CreatedTime.Date == currentDate.Date)
                                   && (!area.Depots.Any() || area.Depots.Contains(lg.Depot))
                                   && (!area.Territories.Any() || area.Territories.Contains(lg.Territory))
                                   && (!area.Zones.Any() || area.Zones.Contains(lg.Zone))
+                                  && (lg.UserId == userId)
                               )
                               select new
                               {
-                                  LeadGenerationId = lg.Id,
-                                  LeadFollowUpId = lfInfo.Id,
-                                  LeadGenerationDate = lg.CreatedTime,
-                                  LeadFollowUpDate = lfInfo.CreatedTime,
+                                  LeadGenerationId = lg.Id
+                              }).Distinct().ToListAsync();
+
+            var leadFollowup = await (from lf in _context.LeadFollowUps
+                              join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id into lgleftjoin
+                              from lgInfo in lgleftjoin.DefaultIfEmpty()
+                              join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id into lbaleftjoin
+                              from lbaInfo in lbaleftjoin.DefaultIfEmpty()
+                              where (
+                                  (lf.CreatedTime.Date == currentDate.Date)
+                                  && (!area.Depots.Any() || area.Depots.Contains(lgInfo.Depot))
+                                  && (!area.Territories.Any() || area.Territories.Contains(lgInfo.Territory))
+                                  && (!area.Zones.Any() || area.Zones.Contains(lgInfo.Zone))
+                                  && (lgInfo.UserId == userId)
+                              )
+                              select new
+                              {
+                                  LeadFollowUpId = lf.Id,
                                   DGABusinessValue = lbaInfo.BergerValueSales
                               }).Distinct().ToListAsync();
 
@@ -167,75 +181,75 @@ namespace BergerMsfaApi.Services.OData.Implementation
 
             var result = new TodaysActivitySummaryReportResultModel
             {
-                DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                SubDealerVisitTarget = dealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                SubDealerVisitActual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                AdHocDealerVisit = adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
-                AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => x.DealerId).Distinct().Count(x => x > 0),
+                DealerVisitTarget = dealerVisit.Where(x => !x.IsSubDealer).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                DealerVisitActual = dealerVisit.Where(x => !x.IsSubDealer && x.IsVisited).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                SubDealerVisitTarget = dealerVisit.Where(x => x.IsSubDealer).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                SubDealerVisitActual = dealerVisit.Where(x => x.IsSubDealer && x.IsVisited).Select(x => new { x.JourneyPlanDetailId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                AdHocDealerVisit = adHocDealerVisit.Where(x => !x.IsSubDealer).Select(x => new { x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
+                AdHocSubDealerVisit = adHocDealerVisit.Where(x => x.IsSubDealer).Select(x => new { x.DealerSalerCallId, x.DealerId }).Distinct().Count(x => x.DealerId > 0),
                 NoOfBillingDealer = noOfBillingDealer,
                 PainterCall = painterCall.Select(x => x.PainterCallId).Distinct().Count(x => x > 0),
                 CollectionFromDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromSubDealer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.SubDealerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromDirectProject = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.DirectProjectDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
                 CollectionFromCustomer = collection.Where(x => x.CustomerTypeCode == ConstantsCustomerTypeValue.CustomerDropdownCode).Select(x => x.CollectionId).Distinct().Count(x => x > 0),
-                LeadGenerationNo = lead.Where(x => x.LeadGenerationDate.Date == currentDate.Date).Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0),
-                LeadFollowupNo = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0),
-                DGABusinessValue = lead.Where(x => x.LeadFollowUpDate.Date == currentDate.Date).Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue),
+                LeadGenerationNo = leadGen.Select(x => x.LeadGenerationId).Distinct().Count(x => x > 0),
+                LeadFollowupNo = leadFollowup.Select(x => x.LeadFollowUpId).Distinct().Count(x => x > 0),
+                DGABusinessValue = leadFollowup.Select(x => new { x.LeadFollowUpId, x.DGABusinessValue }).Distinct().Sum(x => x.DGABusinessValue),
             };
 
             return result;
         }
 
-        public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds)
-        {
-            var customerNoList = new List<string>();
+        //public async Task<IList<ReportDealerPerformanceResultModel>> ReportDealerPerformance(DealerPerformanceResultSearchModel model, IList<string> dealerIds)
+        //{
+        //    var customerNoList = new List<string>();
 
-            if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
-            {
-                customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
-                    .Select(x => x.CustomerNo).ToListAsync();
-            }
-            else
-            {
-                customerNoList = await _dealerInfoRepository
-                    .FindByCondition(x => x.ClubSupremeType > 0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
-                    .Select(x => x.CustomerNo).ToListAsync();
-            }
-
-
-            if (!customerNoList.Any())
-                return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
+        //    if (model.ReportType == DealerPerformanceReportType.LastYearAppointed)
+        //    {
+        //        customerNoList = await _dealerInfoRepository
+        //            .FindByCondition(x => x.IsLastYearAppointed && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+        //            .Select(x => x.CustomerNo).ToListAsync();
+        //    }
+        //    else
+        //    {
+        //        customerNoList = await _dealerInfoRepository
+        //            .FindByCondition(x => x.ClubSupremeType > 0 && x.Territory == model.Territory && dealerIds.Contains(x.CustomerNo))
+        //            .Select(x => x.CustomerNo).ToListAsync();
+        //    }
 
 
-            var result = new List<ReportDealerPerformanceResultModel>
-            {
-                new ReportDealerPerformanceResultModel()
-                {
-                    Territory = model.Territory,
-                    NumberOfDealer = customerNoList.Count()
-                }
-            };
+        //    if (!customerNoList.Any())
+        //        return new List<ReportDealerPerformanceResultModel>(); // if no record found in db;
 
 
-            var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
-                await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+        //    var result = new List<ReportDealerPerformanceResultModel>
+        //    {
+        //        new ReportDealerPerformanceResultModel()
+        //        {
+        //            Territory = model.Territory,
+        //            NumberOfDealer = customerNoList.Count()
+        //        }
+        //    };
 
-            if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
-            {
-                reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
-               {
-                   x.NumberOfDealer = customerNoList.Count();
-                   x.Territory = model.Territory;
-               });
-                return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
-            }
-            else
-            {
-                return result;
-            }
-        }
+
+        //    var reportLastYearAppointedNewDealerPerformanceInCurrentYear =
+        //        await _salesDataService.GetReportDealerPerformance(customerNoList, model.ReportType);
+
+        //    if (reportLastYearAppointedNewDealerPerformanceInCurrentYear.Any())
+        //    {
+        //        reportLastYearAppointedNewDealerPerformanceInCurrentYear.ToList().ForEach(x =>
+        //       {
+        //           x.NumberOfDealer = customerNoList.Count();
+        //           x.Territory = model.Territory;
+        //       });
+        //        return reportLastYearAppointedNewDealerPerformanceInCurrentYear;
+        //    }
+        //    else
+        //    {
+        //        return result;
+        //    }
+        //}
 
 
         public async Task<IList<RptLastYearAppointDlerPerformanceSummaryResultModel>> ReportLastYearAppointedDealerPerformanceSummary(LastYearAppointedDealerPerformanceSearchModel model)
@@ -247,48 +261,61 @@ namespace BergerMsfaApi.Services.OData.Implementation
             }).ToListAsync();
 
             List<string> lastYearAppointedDealer = _dealerInfoRepository
-                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Where(x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                            (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                            (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                            x.IsLastYearAppointed)
                 .Select(x => x.CustomerNo).Distinct()
                 .ToList();
 
 
-            var summaryResultModels = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
+            var result = await _salesDataService.GetReportLastYearAppointedDealerPerformanceSummary(model, lastYearAppointedDealer);
 
-            var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
-            {
-                CYMTD = 0,
-                DepotCode = x.Werks,
-                LYMTD = 0,
-                Depot = x.Name1,
-                GrowthMTD = 0,
-                NumberOfDealer = 0,
-            }).ToList();
+            //var result = depotList.Select(x => new RptLastYearAppointDlerPerformanceSummaryResultModel()
+            //{
+            //    CYMTD = 0,
+            //    DepotCode = x.Werks,
+            //    LYMTD = 0,
+            //    Depot = x.Name1,
+            //    GrowthMTD = 0,
+            //    NumberOfDealer = 0,
+            //}).ToList();
 
+
+            //foreach (var item in result)
+            //{
+            //    var summaryResultModel = summaryResultModels.FirstOrDefault(x => x.DepotCode == item.DepotCode);
+            //    if (summaryResultModel != null)
+            //    {
+            //        item.CYMTD = summaryResultModel.CYMTD;
+            //        item.LYMTD = summaryResultModel.LYMTD;
+            //        item.GrowthMTD = summaryResultModel.GrowthMTD;
+            //        item.NumberOfDealer = summaryResultModel.NumberOfDealer;
+            //        item.LYMTD = summaryResultModel.LYMTD;
+            //        item.LYYTD = summaryResultModel.LYYTD;
+            //        item.GrowthYTD = summaryResultModel.GrowthYTD;
+            //    }
+            //}
 
             foreach (var item in result)
             {
-                var summaryResultModel = summaryResultModels.FirstOrDefault(x => x.DepotCode == item.DepotCode);
-                if (summaryResultModel != null)
+                var depot = depotList.FirstOrDefault(x => x.Werks == item.DepotCode);
+                if (depot != null)
                 {
-                    item.CYMTD = summaryResultModel.CYMTD;
-                    item.LYMTD = summaryResultModel.LYMTD;
-                    item.GrowthMTD = summaryResultModel.GrowthMTD;
-                    item.NumberOfDealer = summaryResultModel.NumberOfDealer;
-                    item.LYMTD = summaryResultModel.LYMTD;
-                    item.LYYTD = summaryResultModel.LYYTD;
-                    item.GrowthYTD = summaryResultModel.GrowthYTD;
+                    item.DepotCode = depot.Werks;
+                    item.Depot = depot.Name1;
                 }
             }
 
-            if (depotList.Count == 1)
-            {
-                result.ForEach(x =>
-                {
-                    x.DepotCode = null;
-                    x.Depot = null;
+            //if (depotList.Count == 1)
+            //{
+            //    result.ForEach(x =>
+            //    {
+            //        x.DepotCode = null;
+            //        x.Depot = null;
 
-                });
-            }
+            //    });
+            //}
 
             return result;
         }
@@ -303,7 +330,10 @@ namespace BergerMsfaApi.Services.OData.Implementation
             }).ToListAsync();
 
             List<string> lastYearAppointedDealer = _dealerInfoRepository
-                .Where(x => x.IsLastYearAppointed && model.Depots.Contains(x.BusinessArea))
+                .Where(x => (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) &&
+                            (!model.Territories.Any() || model.Territories.Contains(x.Territory)) &&
+                            (!model.Zones.Any() || model.Zones.Contains(x.CustZone)) &&
+                            x.IsLastYearAppointed)
                 .Select(x => x.CustomerNo).Distinct()
                 .ToList();
 
@@ -319,15 +349,15 @@ namespace BergerMsfaApi.Services.OData.Implementation
                 }
             }
 
-            if (depotList.Count == 1)
-            {
-                result.ToList().ForEach(x =>
-                {
-                    x.DepotCode = null;
-                    x.Depot = null;
+            //if (depotList.Count == 1)
+            //{
+            //    result.ToList().ForEach(x =>
+            //    {
+            //        x.DepotCode = null;
+            //        x.Depot = null;
 
-                });
-            }
+            //    });
+            //}
 
             return result;
         }
@@ -335,8 +365,11 @@ namespace BergerMsfaApi.Services.OData.Implementation
         public async Task<IList<ReportClubSupremePerformance>> ReportClubSupremePerformanceSummaryReport(ClubSupremePerformanceSearchModel model, ClubSupremeReportType reportType)
         {
             var clubSupremeDealers = _dealerInfoRepository
-                .Where(x => x.ClubSupremeType > 0 && model.Depots.Contains(x.BusinessArea) && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None))
-                .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType }).Distinct()
+                .Where(x => x.ClubSupremeType > 0 && (x.ClubSupremeType == model.ClubStatus || model.ClubStatus == EnumClubSupreme.None)
+                            && (!model.Depots.Any() || model.Depots.Contains(x.BusinessArea)) 
+                            && (!model.Territories.Any() || model.Territories.Contains(x.Territory)) 
+                            && (!model.Zones.Any() || model.Zones.Contains(x.CustZone)))
+                .Select(x => new CustNClubMappingVm { CustomerNo = x.CustomerNo, ClubSupreme = x.ClubSupremeType, DepotCode = x.BusinessArea, Territory = x.Territory, Zone = x.CustZone, CustomerName = x.CustomerName }).Distinct()
                 .ToList();
 
             var result = await _salesDataService.GetReportClubSupremePerformance(model, clubSupremeDealers, reportType);

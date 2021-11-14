@@ -64,20 +64,22 @@ export class SchemeDetail {
     benefitEndDateText: string;
 
 
-    schemeMasterId: number;
+    schemeName: string;
     schemeMasterName: string;
     schemeMasterCondition: string;
     status: number;
 
     statusText: string;
-
+    businessArea:string;
+    schemeType:number;
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
 
     clear() {
         this.id = null;
-        this.schemeMasterId = null;
+        this.schemeName = null;
+        this.businessArea=null;
     }
 }
 
@@ -94,18 +96,16 @@ export class SaveSchemeDetail {
     condition: string;
     benefitStartDate: Date;
     benefitEndDate?: Date;
-
-
-    schemeMasterId: number;
     status: number;
-
+    businessArea:string;
+    schemeName:string;
+    schemeType:number;
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
 
     clear() {
         this.id = null;
-        this.schemeMasterId = null;
     }
 }
 

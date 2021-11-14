@@ -18,6 +18,7 @@ import { IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ModalQuestionOptionFormComponent } from '../modal-question-option-form/modal-question-option-form.component';
 import { EnumQuestionTypeLabel } from 'src/app/Shared/Enums/question-type';
+import { Status } from 'src/app/Shared/Enums/status';
 
 @Component({
 	selector: 'app-question-form',
@@ -76,6 +77,7 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 			} else {
 				this.question = new Question();
 				this.question.clear();
+				this.question.status = Status.Active;
 				this.initQuestions();
 			}
 		});
@@ -220,6 +222,7 @@ export class QuestionFormComponent implements OnInit, OnDestroy {
 	newQuestionOption() {
 		let qo = new QuestionOption();
 		qo.clear();
+		qo.status = Status.Active;
 		this.openQuestionOptionModal(qo);
 	}
 

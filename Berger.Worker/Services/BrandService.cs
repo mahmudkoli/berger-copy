@@ -7,8 +7,8 @@ using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
 using Berger.Worker.Model;
+using Berger.Worker.Repositories;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,14 +18,14 @@ namespace Berger.Worker.Services
     {
         
         private readonly WorkerSettingsModel _appSettings;
-        private readonly IRepository<BrandInfo> _repo;
+        private readonly IApplicationRepository<BrandInfo> _repo;
         private readonly IHttpClientService _httpService;
         private readonly IDataEqualityComparer<BrandInfo> _dataComparer;
         private readonly ILogger<BrandInfo> _logger;
 
 
 
-        public BrandService(IRepository<BrandInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandInfo> comparer,ILogger<BrandInfo> logger, IOptions<WorkerSettingsModel> appSettings)
+        public BrandService(IApplicationRepository<BrandInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandInfo> comparer,ILogger<BrandInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
             _appSettings = appSettings.Value;
             _repo = repo;
@@ -86,7 +86,7 @@ namespace Berger.Worker.Services
                             dealerInfo.IsActive = false;
                         }
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
+                        var delres = await _repo.UpdateListLargeReturnAsync(deletedList.Item2, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
                         insertDeleteKeys.AddRange(deletedList.Item1);
@@ -99,7 +99,26 @@ namespace Berger.Worker.Services
                                 .ToList();
                             if(updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
+
+                                //     .ToList();
+                                dataFromDatabase = dataFromDatabase.Join(updatedData,
+                                    db => db.CompositeKey,
+                                    api => api.CompositeKey,
+                                    (db, api) => db).ToList();
+
+                                List<BrandInfo> list = new List<BrandInfo>();
+
+                                foreach (var dealerInfo in updatedData)
+                                {
+                                    var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
+                                    if (IsMatch != null)
+                                    {
+                                        dealerInfo.Id = IsMatch.Id;
+
+                                        list.Add(dealerInfo);
+                                    }
+                                }
+                                var updateres = await _repo.UpdateListLargeReturnAsync(list, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -107,18 +126,28 @@ namespace Berger.Worker.Services
                     else
                     {
                         _logger.LogInformation("No new or Delete data found!!!Updating Data....Wait");
-                       dataFromDatabase = dataFromDatabase
-                            .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
-                            .ToList();
+                       //dataFromDatabase = dataFromDatabase
+                       //     .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
+                       //     .ToList();
+                        dataFromDatabase = dataFromDatabase.Join(mappedDataFromApi,
+                                                                db => db.CompositeKey,
+                                                                api => api.CompositeKey,
+                                                                (db, api) => db).ToList();
+
+                        List<BrandInfo> list = new List<BrandInfo>();
+
                         foreach (var dealerInfo in mappedDataFromApi)
                         {
                             var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
                             if (IsMatch != null)
                             {
                                 dealerInfo.Id = IsMatch.Id;
+
+                                list.Add(dealerInfo);
                             }
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
+
+                        var upres = await _repo.UpdateListLargeAsync(list, nameof(BrandInfo.IsCBInstalled), nameof(BrandInfo.IsMTS), nameof(BrandInfo.IsEnamel), nameof(BrandInfo.IsPremium), nameof(BrandInfo.IsPowder), nameof(BrandInfo.IsLiquid));
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }

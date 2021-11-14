@@ -258,8 +258,10 @@ export class JourneyPlanListComponent implements OnInit {
                         //  this.eventPlans=[...this.eventPlans,{ title: plan.employeeName, date: plan.planDate }]
                         events.push({ id: plan.id, title: plan.planStatusInText, date: plan.planDate });
                         events.push({ id: plan.id, title: 'View', date: plan.planDate, backgroundColor: '#ce42f5' });
-                        events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
-                        events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
+                        if(this.compareDate(plan.planDate)) {
+                            events.push({ id: plan.id, title: 'Edit', date: plan.planDate, backgroundColor: '#f58442' });
+                            events.push({ id: plan.id, title: 'Delete', date: plan.planDate, backgroundColor: '#f54272' });
+                        }
                     });
                     events.sort()
                     this.calendarOptions.events = [...events];
@@ -324,7 +326,7 @@ export class JourneyPlanListComponent implements OnInit {
             }
 
             if (jPlan.planStatus==PlanStatus.Pending || jPlan.planStatus==PlanStatus.Edited) {
-                this.alertService.alert("Already waiting for approval. So can not modify before reject the plan.");
+                this.alertService.alert("Waiting for approval.");
                 return;
             }
 
@@ -348,7 +350,7 @@ export class JourneyPlanListComponent implements OnInit {
                 return;
             }
 
-            this.alertService.confirm("Are you sure you want to delete this item?", () => {
+            this.alertService.confirm("Are you sure you want to delete this journey plan?", () => {
                 this.alertService.fnLoading(true);
                 this.journeyPlanService.delete(jPlan.id).subscribe(
                     (res: any) => {

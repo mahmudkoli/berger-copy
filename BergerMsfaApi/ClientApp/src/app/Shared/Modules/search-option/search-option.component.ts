@@ -168,7 +168,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       case EnumEmployeeRole.AM:
         conditionalRequiredOptions = [
           EnumSearchOption.Depot,
-          EnumSearchOption.SalesGroup,
+          // EnumSearchOption.SalesGroup,
           EnumSearchOption.Territory,
         ];
         break;
@@ -492,7 +492,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       case EnumEmployeeRole.AM:
         isRequired =
           searchOptionDef.searchOption == EnumSearchOption.Depot ||
-          searchOptionDef.searchOption == EnumSearchOption.SalesGroup ||
+          // searchOptionDef.searchOption == EnumSearchOption.SalesGroup ||
           searchOptionDef.searchOption == EnumSearchOption.Territory;
         break;
       case EnumEmployeeRole.TM_TO:
@@ -641,7 +641,9 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       
   
       this.commonService.getDealerByArea(this.dealerFilter).subscribe(res=>{
-        this.dealers=res.data;
+        // this.dealers=res.data;
+        this._allDealers = res.data;
+        this.updateDealerSubDealerShow();
       })
     }
 		

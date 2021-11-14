@@ -17,13 +17,13 @@ namespace BergerMsfaApi.Services.KPI.interfaces
 
         #region Collection Plan
         Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansAsync(QueryObjectModel query);
-        Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(QueryObjectModel query);
+        Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(CollectionPlanQueryObjectModel query);
         Task<IList<CollectionPlanModel>> GetAllCollectionPlansAsync();
         Task<CollectionPlanModel> GetCollectionPlansByIdAsync(int id);
         Task<int> AddCollectionPlansAsync(SaveCollectionPlanModel model);
         Task<int> UpdateCollectionPlansAsync(SaveCollectionPlanModel model);
         Task<int> DeleteCollectionPlansAsync(int id);
-        Task<bool> IsExitsCollectionPlansAsync(int id, int userId, string businessArea, string territory, int year = 0, int month = 0);
+        Task<bool> IsExitsCollectionPlansAsync(int id, string businessArea, string territory, int year = 0, int month = 0);
         Task<decimal> GetCustomerSlippageAmountToLastMonth(CustomerSlippageQueryModel query);
         #endregion
     }

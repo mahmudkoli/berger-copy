@@ -8,7 +8,7 @@ namespace BergerMsfaApi.Services.AlertNotification
 {
     public interface IPaymentFollowupService
     {
-        Task<bool> SavePaymentFollowup(IList<PaymentFollowup> paymentFollowups);
-        Task<IEnumerable<PaymentFollowup>> GetToayPaymentFollowup(IList<string> customer);
+        Task<bool> SavePaymentFollowup(IList<PaymentFollowupNotification> paymentFollowups);
+        Task<IEnumerable<PaymentFollowupNotification>> GetToayPaymentFollowup(IList<string> customer);
     }
 }

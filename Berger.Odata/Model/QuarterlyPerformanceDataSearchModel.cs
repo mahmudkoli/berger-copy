@@ -54,5 +54,12 @@ namespace Berger.Odata.Model
         public string CreditControlArea { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+
+        public PortalOSOver90DaysTrendSearchModel()
+        {
+            this.SalesGroups = new List<string>();
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
     }
 }

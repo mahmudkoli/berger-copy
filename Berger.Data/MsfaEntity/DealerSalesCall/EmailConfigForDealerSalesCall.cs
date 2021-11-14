@@ -8,6 +8,7 @@ namespace Berger.Data.MsfaEntity.DealerSalesCall
 {
    public class EmailConfigForDealerSalesCall: AuditableEntity<int>
     {
+        public string BusinessArea { get; set; }
         public int DealerSalesIssueCategoryId { get; set; }
         public DropdownDetail DealerSalesIssueCategory { get; set; }
         public string Email { get; set; }

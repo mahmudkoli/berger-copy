@@ -9,6 +9,7 @@ using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.Logs;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.PainterRegistration;
@@ -123,6 +124,8 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
+        public DbSet<TempUserLoginHistory> TempUserLoginHistory { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         #endregion
 
         #region Setup
@@ -208,6 +211,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionOption> QuestionOptions { get; set; }
         public DbSet<QuestionSet> QuestionSets { get; set; }
+        public DbSet<QuestionSetDepot> QuestionSetDepots { get; set; }
         public DbSet<QuestionSetCollection> QuestionSetCollections { get; set; }
         public DbSet<UserQuestionAnswer> UserQuestionAnswers { get; set; }
         public DbSet<UserQuestionAnswerCollection> UserQuestionAnswerCollections { get; set; }
@@ -220,10 +224,11 @@ namespace Berger.Data.MsfaEntity
 
 
         #region Alert Notification
-        public DbSet<ChequeBounceNotification> ChequeBounceNotification { get; set; }
-        public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
-        public DbSet<OccasionToCelebrate> OccasionToCelebrate { get; set; }
-        public DbSet<PaymentFollowup> PaymentFollowup { get; set; }
+        public DbSet<ChequeBounceNotification> ChequeBounceNotifications { get; set; }
+        //public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
+        public DbSet<OccasionToCelebrateNotification> OccasionToCelebrateNotifications { get; set; }
+        public DbSet<CreditLimitCrossNotification> CreditLimitCrossNotifications { get; set; }
+        public DbSet<PaymentFollowupNotification> PaymentFollowupNotifications { get; set; }
         #endregion
 
         #region Sync
@@ -240,6 +245,7 @@ namespace Berger.Data.MsfaEntity
 
         #endregion
 
-
+        public DbSet<ApplicationLog> ApplicationLogs { get; set; }
+        public DbSet<MobileAppLog> MobileAppLogs { get; set; }
     }
 }

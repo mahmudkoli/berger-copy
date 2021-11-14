@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 
-namespace BergerMsfaApi.Repositories
+namespace Berger.Worker.Repositories
 {
     
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
@@ -342,6 +342,67 @@ namespace BergerMsfaApi.Repositories
                 throw;
             }
         }
+
+        public async Task<List<TEntity>> UpdateListLargeReturnAsync(List<TEntity> items, params string[] ignoreProperties)
+        {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            
+            try
+            {
+                foreach (var item in items)
+                {
+                    var entry = _context.Entry(item);
+                    DbSet.Attach(item);
+                    entry.State = EntityState.Modified;
+
+                    foreach (var property in ignoreProperties)
+                    {
+                        if (typeof(TEntity).GetProperty(property) != null)
+                            entry.Property(property).IsModified = false;
+                    }
+                }
+
+                var result = await _context.SaveChangesAsync();
+                return result > 0 ? items : null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<int> UpdateListLargeAsync(List<TEntity> items, params string[] ignoreProperties)
+        {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+
+            try
+            {
+                foreach (var item in items)
+                {
+                    var entry = _context.Entry(item);
+                    DbSet.Attach(item);
+                    entry.State = EntityState.Modified;
+
+                    foreach (var property in ignoreProperties)
+                    {
+                        if (typeof(TEntity).GetProperty(property) != null)
+                            entry.Property(property).IsModified = false;
+                    }
+                }
+
+
+                var result = await _context.SaveChangesAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+
+               // var result = await _context.SaveChangesAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<int> DeleteListAsync(List<TEntity> items)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));

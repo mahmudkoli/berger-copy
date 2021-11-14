@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Berger.Common.Enumerations;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
@@ -160,9 +162,9 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                 case FileUploadCode.DealerSalesCall:
                     filePath = Path.Combine(filePath, "DealerSalesCall");
                     break;
-                case FileUploadCode.RegisterPainter:
-                    filePath = Path.Combine(filePath, "RegisterPainter");
-                    break;
+                //case FileUploadCode.RegisterPainter:
+                //    filePath = Path.Combine(filePath, "RegisterPainter");
+                //    break;
                 case FileUploadCode.LeadGeneration:
                     filePath = Path.Combine(filePath, "LeadGeneration");
                     break;
@@ -190,6 +192,39 @@ namespace BergerMsfaApi.Services.FileUploads.Implementation
                     break;
             }
             return filePath;
+        }
+
+        public List<IFormFile> Base64ToImage(List<string> base64Images)
+        {
+            base64Images = base64Images.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+            List<IFormFile> formFiles = new List<IFormFile>();
+            int i = 0;
+            foreach (var eqp in base64Images)
+            {
+                byte[] bytes = Convert.FromBase64String(eqp);
+                MemoryStream stream = new MemoryStream(bytes);
+                IFormFile file = new FormFile(stream, 0, bytes.Length, "Test_" + i, "Test_" + i);
+                formFiles.Add(file);
+                i++;
+            }
+            return formFiles;
+        }
+
+        public bool IsMaxSizeExceded(List<string> base64Images, int sizeMaxMB = 20)
+        {
+            var files = this.Base64ToImage(base64Images);
+            var size = files.Sum(s => s.Length);
+            return size > (sizeMaxMB * 1024 * 1024);
+        }
+
+        public Task<byte[]> GetFileAsync(string fullPath)
+        {
+            return File.ReadAllBytesAsync(fullPath);
+        }
+
+        public Task<Stream> GetFileStreamAsync(string fullPath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

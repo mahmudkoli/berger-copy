@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Sync;
 using Berger.Worker.Model;
+using Berger.Worker.Repositories;
 using Berger.Worker.Services;
 using Berger.Worker.Services.AlertNotification;
-using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,7 +24,7 @@ namespace Berger.Worker
         private INotificationWorkerService _notificationWorker;
         private string workerName = "DailyAlertNotificationBulkUpload Worker";
 
-        private IRepository<SyncSetup> _repository;
+        private IApplicationRepository<SyncSetup> _repository;
         public DailyAlertNotificationBulkUploadWorker(ILogger<DailyAlertNotificationBulkUploadWorker> logger, IServiceProvider serviceProvider, IOptions<WorkerConfig> appSettings)
         {
             _logger = logger;
@@ -65,10 +65,10 @@ namespace Berger.Worker
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             _notificationWorker = scope.ServiceProvider.GetRequiredService<INotificationWorkerService>();
-                            await _notificationWorker.SavePaymnetFollowup();
-                            await _notificationWorker.SaveOccassionToCelebrste();
                             await _notificationWorker.SaveCheckBounceNotification();
+                            await _notificationWorker.SaveOccasionToCelebrate();
                             await _notificationWorker.SaveCreaditLimitNotification();
+                            await _notificationWorker.SavePaymentFollowup();
                         }
 
                     }
@@ -90,7 +90,7 @@ namespace Berger.Worker
 
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    _repository = scope.ServiceProvider.GetRequiredService<IRepository<SyncSetup>>();
+                    _repository = scope.ServiceProvider.GetRequiredService<IApplicationRepository<SyncSetup>>();
                     syncSetup = await _repository.FirstOrDefaultAsync(x => true);
                 }
 

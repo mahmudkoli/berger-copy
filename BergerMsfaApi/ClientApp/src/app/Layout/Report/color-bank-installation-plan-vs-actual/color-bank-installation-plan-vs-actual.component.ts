@@ -4,13 +4,13 @@ import { finalize } from 'rxjs/operators';
 import { ColorBankInstallationPlanVsActualKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import {
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from 'src/app/Shared/Modules/search-option';
 import { AlertService } from './../../../Shared/Modules/alert/alert.service';
 import { colDef } from './../../../Shared/Modules/p-table/p-table';
@@ -81,7 +81,7 @@ export class ColorBankInstallationPlanVsActualComponent
         searchOption: EnumSearchOption.Territory,
         isRequired: true,
       }),
-      new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup }),
+      //new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup }),
       new SearchOptionDef({
         searchOption: EnumSearchOption.FiscalYear,
         isRequired: true,
@@ -171,6 +171,7 @@ export class ColorBankInstallationPlanVsActualComponent
           showTotal: this.allTotalKeysOfNumberType
             ? typeof obj[key] === 'number'
             : this.totalKeys.includes(key),
+            type: typeof obj[key] === 'number' ? 'text' : null,
           displayType:
             typeof obj[key] === 'number'
               ? 'number-format-color-fraction'

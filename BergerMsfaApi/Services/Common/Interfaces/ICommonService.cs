@@ -40,11 +40,12 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoList(string territory);
         Task<IEnumerable<AppDealerInfoModel>> AppGetFocusDealerInfoList(string EmployeeId);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByUserCategory(string userCategory, List<string> userCategoryIds);
-        Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId);
+        Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(int userId, IList<string> territoryIds = null, bool isDealerSubDealer = false);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByDealerCategory(AppDealerSearchModel model);
         Task<IEnumerable<AppDealerInfoModel>> AppGetDealerInfoListByCurrentUser(AppDealerSearchModel model);
         Task<IList<AppDealerInfoModel>> AppGetDealerListByArea(AppAreaDealerSearchModel model);
         Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
+        Task<IList<KeyValuePairModel>> GetPSTZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> territoryIds, List<string> zoneIds);
         Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds);
         Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds);
         void SetEmptyString<T>(List<T> items, params string[] propNames);

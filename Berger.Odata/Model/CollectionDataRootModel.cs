@@ -52,7 +52,7 @@ namespace Berger.Odata.Model
             model.BounceStatus = this.stgrd;
             model.stblg = this.stblg;
             model.stjah = this.stjah;
-            model.blart = this.blart;
+            model.CollectionType = this.blart;
             model.Amount = this.Amount;
             model.AccountGroupName = this.AccountGroupName;
             model.CustomerNo = this.Customer;

@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { SubDealerIssueReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { SubDealerIssueReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'sub-dealer-issue-report',
@@ -82,7 +79,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
-	
+
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadSubDealerIssue(query);
 	getData = (query) => this.reportService.getSubDealerIssue(query);
@@ -95,7 +92,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			zones: [],
 			userId: null,
@@ -111,7 +108,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 		isSubDealerShow: true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+		//	new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
@@ -155,16 +152,16 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 	}
 
 	ptableColDefGenerate() {
-		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
+		// this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return { headerName: this.commonService.insertSpacesWithRenameKeys(key, this.renameKeys), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'pcomment' || x.internalName == 'ppriority'
+			(x) => x.internalName == 'posComments' || x.internalName == 'posPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'POS Material Short';
@@ -172,7 +169,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'scomments' || x.internalName == 'spriority'
+			(x) => x.internalName == 'shadeComments' || x.internalName == 'shadePriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shade Card';
@@ -180,7 +177,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'sscomments' || x.internalName == 'sspriority'
+			(x) => x.internalName == 'shopSignComments' || x.internalName == 'shopSignPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shop Sign Complain';
@@ -188,7 +185,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Status' || x.internalName == 'Maintatinance Frequency' || x.internalName == 'Remarks for Irregular' || x.internalName == 'cbmPriority'
+			(x) => x.internalName == 'cbmStatus' || x.internalName == 'cbmMaintatinanceFrequency' || x.internalName == 'cbmRemarks' || x.internalName == 'cbmPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Color Bank Maintainance';
@@ -196,7 +193,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'ocomment' || x.internalName == 'opriority'
+			(x) => x.internalName == 'othersComment' || x.internalName == 'othersriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Others';
@@ -204,7 +201,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'dcomments' || x.internalName == 'dpriority'
+			(x) => x.internalName == 'deliveryComments' || x.internalName == 'deliveryPriority'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Delivery Issue';
@@ -233,7 +230,7 @@ export class SubDealerIssueReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

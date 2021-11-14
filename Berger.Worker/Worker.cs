@@ -29,6 +29,7 @@ namespace Berger.Worker
             _logger = logger;
             _serviceProvider = serviceProvider;
             _appSettings = appSettings;
+            _timeOutHours = _appSettings.Value.DailyDailyCustomerBrandDataUpdateIntervalHours;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)

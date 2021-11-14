@@ -71,7 +71,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
                           join dep in _applicationDbContext.Depots on sm.BusinessArea equals dep.Werks into details
                           from m in details.DefaultIfEmpty()
                           where (
-                          isPermitted? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
+                          isPermitted ? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
                           )
                           select new SchemeMasterModel
                           {
@@ -175,20 +175,20 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             //var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
             var isPermitted = (user.EmployeeRole == (int)EnumEmployeeRole.Admin || user.EmployeeRole == (int)EnumEmployeeRole.GM);
             var result = await (from sm in _applicationDbContext.SchemeMasters
-                join d in _applicationDbContext.Depots on sm.BusinessArea equals d.Werks into depots
-                from dep in depots.DefaultIfEmpty()
-                where(
-                  isPermitted? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
+                                join d in _applicationDbContext.Depots on sm.BusinessArea equals d.Werks into depots
+                                from dep in depots.DefaultIfEmpty()
+                                where (
+                                  isPermitted ? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
 
-                )
+                                )
                                 select new
-                {
-                    sm.Id,
-                    Label = string.IsNullOrWhiteSpace(sm.BusinessArea)
+                                {
+                                    sm.Id,
+                                    Label = string.IsNullOrWhiteSpace(sm.BusinessArea)
                         ? sm.SchemeName
                         : sm.SchemeName + "-" + dep.Name1 + "(" + sm.BusinessArea + ")"
-                }).OrderBy(x => x.Label).AsNoTracking().ToListAsync();
-                    
+                                }).OrderBy(x => x.Label).AsNoTracking().ToListAsync();
+
 
 
             //var result = await _schemeMasterSvc.GetAllIncludeAsync(
@@ -207,9 +207,9 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         public async Task<IPagedList<SchemeDetailModel>> GetAllSchemeDetailsAsync(int index, int pageSize, string search)
         {
             var result = await _schemeDetailSvc.GetAllIncludeAsync(x => x,
-                            x => (string.IsNullOrEmpty(search) || x.SchemeMaster.SchemeName.Contains(search)),
+                            x => (string.IsNullOrEmpty(search) || x.SchemeName.Contains(search)),
                             null,
-                            x => x.Include(i => i.SchemeMaster),
+                            null,
                             index, pageSize, true);
 
             var modelResult = _mapper.Map<IList<SchemeDetailModel>>(result.Items);
@@ -225,35 +225,37 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<SchemeDetailModel, object>>>()
             {
-                ["schemeMasterName"] = v => v.SchemeMasterName,
+                ["schemeMasterName"] = v => v.SchemeName,
                 ["benefitStartDateText"] = v => v.BenefitStartDate,
                 ["benefitEndDateText"] = v => v.BenefitEndDate
             };
             var user = AppIdentity.AppUser;
             //var isPermitted = (user.ActiveRoleName == RoleEnum.Admin.ToString() || user.ActiveRoleName == RoleEnum.GM.ToString());
-            var isPermitted = (user.EmployeeRole == (int)EnumEmployeeRole.Admin || user.EmployeeRole == (int)EnumEmployeeRole.GM);
+            var isAdminUser = (user.EmployeeRole == (int)EnumEmployeeRole.Admin);
             var result = (
-                            from sm in _applicationDbContext.SchemeMasters
-                            join det in _applicationDbContext.SchemeDetails on sm.Id equals det.SchemeMasterId
-                            join dep in _applicationDbContext.Depots on sm.BusinessArea equals dep.Werks into details
+                            //from sm in _applicationDbContext.SchemeMasters
+                            from det in _applicationDbContext.SchemeDetails //on sm.Id equals det.SchemeMasterId
+                            join dep in _applicationDbContext.Depots on det.BusinessArea equals dep.Werks into details
                             from m in details.DefaultIfEmpty()
-                            where(
-                                isPermitted ? isPermitted : user.PlantIdList.Contains(sm.BusinessArea)
-
+                            where (
+                                isAdminUser ? isAdminUser : (user.PlantIdList.Contains(det.BusinessArea) || det.SchemeType == SchemeType.National)
                             )
+                            orderby det.CreatedTime descending
                             select new SchemeDetailModel
                             {
-                                SchemeMasterName = !string.IsNullOrWhiteSpace(sm.BusinessArea) ? sm.SchemeName + " - " + m.Name1 + " (" + sm.BusinessArea + ")" : sm.SchemeName,
-                                SchemeMasterCondition = sm.Condition,
+                                SchemeName = !string.IsNullOrWhiteSpace(det.BusinessArea) ? det.SchemeName + " - " + m.Name1 + " (" + det.BusinessArea + ")" : det.SchemeName,
+                                SchemeMasterCondition = det.Condition,
                                 Condition = det.Condition,
                                 Brand = det.Brand,
                                 Slab = det.Slab,
-                                Status = sm.Status,
+                                Status = det.Status,
                                 Id = det.Id,
                                 BenefitStartDate = det.BenefitStartDate,
                                 BenefitEndDate = det.BenefitEndDate,
                                 BenefitStartDateText = det.BenefitStartDate.ToString("yyyy-MM-dd"),
-                                BenefitEndDateText = det.BenefitEndDate.HasValue?det.BenefitEndDate.Value.ToString("yyyy-MM-dd"):""
+                                BenefitEndDateText = det.BenefitEndDate.HasValue ? det.BenefitEndDate.Value.ToString("yyyy-MM-dd") : "",
+                                SchemeType = det.SchemeType == SchemeType.National ? "National" : "Regional",
+                                IsEditable = (det.SchemeType == SchemeType.National && isAdminUser) || (det.SchemeType == SchemeType.Regional && !isAdminUser && user.PlantIdList.Contains(det.BusinessArea))
                             });
 
             Expression<Func<SchemeDetailModel, object>> keySelector = columnsMap[query.SortBy];
@@ -261,7 +263,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             var total = await result.CountAsync();
 
             result = result.Where(x =>
-                (string.IsNullOrEmpty(query.GlobalSearchValue) || x.SchemeMasterName.Contains(query.GlobalSearchValue)));
+                (string.IsNullOrEmpty(query.GlobalSearchValue) || x.SchemeName.Contains(query.GlobalSearchValue)));
 
             var filterCount = await result.CountAsync();
 
@@ -301,7 +303,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             var result = await _schemeDetailSvc.GetAllIncludeAsync(x => x,
                             null,
                             null,
-                            x => x.Include(i => i.SchemeMaster),
+                            null,
                             true);
 
             var modelResult = _mapper.Map<IList<SchemeDetailModel>>(result);
@@ -315,11 +317,11 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             var currentDate = DateTime.Now;
 
             var result = await _schemeDetailSvc.GetAllIncludeAsync(x => x,
-                            x => (string.IsNullOrEmpty(x.SchemeMaster.BusinessArea) || depots.Contains(x.SchemeMaster.BusinessArea))
+                            x => (string.IsNullOrEmpty(x.BusinessArea) || depots.Contains(x.BusinessArea) || x.SchemeType==SchemeType.National)
                                 && (x.BenefitStartDate.Date <= currentDate.Date && (!x.BenefitEndDate.HasValue || x.BenefitEndDate >= currentDate.Date))
                                 && x.Status == Status.Active,
                             null,
-                            x => x.Include(i => i.SchemeMaster),
+                            null,
                             true);
 
             var modelResult = _mapper.Map<IList<AppSchemeDetailModel>>(result);
@@ -332,7 +334,7 @@ namespace BergerMsfaApi.Services.Scheme.Implementation
             var result = await _schemeDetailSvc.GetFirstOrDefaultIncludeAsync(x => x,
                             x => x.Id == id,
                             null,
-                            x => x.Include(i => i.SchemeMaster),
+                           null,
                             true);
 
             var modelResult = _mapper.Map<SchemeDetailModel>(result);
