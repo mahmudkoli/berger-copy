@@ -17,6 +17,7 @@ namespace BergerMsfaApi.Models.Users
         public IList<KeyValuePairModel> PainterRegistrationsHierarchyList { get; set; }
         public IList<KeyValuePairModel> LeadGenerationsHierarchyList { get; set; }
         public IList<KeyValuePairModel> CollectionEntriesHierarchyList { get; set; }
+        public IList<KeyValuePairModel> AreaHierarchyList { get; set; }
         public IList<KeyValuePairAreaModel> Plants { get; set; }
         public IList<KeyValuePairAreaModel> SalesOffices { get; set; }
         public IList<KeyValuePairAreaModel> Areas { get; set; }
@@ -47,6 +48,7 @@ namespace BergerMsfaApi.Models.Users
             this.PainterRegistrationsHierarchyList = new List<KeyValuePairModel>();
             this.LeadGenerationsHierarchyList = new List<KeyValuePairModel>();
             this.CollectionEntriesHierarchyList = new List<KeyValuePairModel>();
+            this.AreaHierarchyList = new List<KeyValuePairModel>();
             this.Plants = new List<KeyValuePairAreaModel>();
             this.SalesOffices = new List<KeyValuePairAreaModel>();
             this.Areas = new List<KeyValuePairAreaModel>();
