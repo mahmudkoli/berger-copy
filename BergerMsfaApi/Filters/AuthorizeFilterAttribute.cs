@@ -46,7 +46,7 @@ namespace BergerMsfaApi.Filters
                 };
 
                 var header = context.HttpContext.Request?.Headers[ConstantPlatformValue.PlatformHeaderName];
-                if (header.HasValue && header.Equals(ConstantPlatformValue.AppPlatformHeader))
+                if (header.HasValue && header.Equals(ConstantPlatformValue.AppPlatformHeader) && result.StatusCode != (int)HttpStatusCode.Unauthorized)
                 {
                     result.StatusCode = (int)HttpStatusCode.OK;
                 }

@@ -64,11 +64,41 @@ namespace BergerMsfaApi.Controllers.Users
                     return ValidationResult(ModelState);
                 }
 
-                var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                //var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                var authUser = await authService.GetJWTTokenByUserNameWithRefreshTokenAsync(model.UserName, HttpContext, Request, Response);
 
                 await _tempUserLoginHistoryService.UserLoggedInLogEntryAsync(authUser.UserId, authUser.Token, false, string.Empty);
 
                 return OkResult(authUser);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RefreshTokenAsync(token, HttpContext, Request, Response);
+                return OkResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("revoke-token")]
+        public async Task<IActionResult> RevokeTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
+                return OkResult(response);
             }
             catch (Exception ex)
             {

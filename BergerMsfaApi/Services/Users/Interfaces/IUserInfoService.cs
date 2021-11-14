@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.Users;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
 using X.PagedList;
@@ -14,6 +15,7 @@ namespace BergerMsfaApi.Services.Users.Interfaces
         Task<IEnumerable<UserInfoModel>> GetQueryUsersAsync();
         Task<UserInfoModel> GetUserAsync(int id);
         Task<UserInfoModel> GetUserByUserNameAsync(string username);
+        Task<UserInfo> GetUserByUserIdAsync(int userId);
         Task<UserInfoModel> SaveAsync(UserInfoModel model);
         Task<UserRoleMappingModel> SaveRoleLinkWithUserAsync(UserRoleMappingModel model);
         Task<UserInfoModel> CreateAsync(SaveUserInfoModel model);
