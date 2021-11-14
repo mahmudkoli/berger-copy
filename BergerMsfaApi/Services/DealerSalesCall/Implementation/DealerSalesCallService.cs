@@ -519,6 +519,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
+                    else
+                    {
+                        body +=$"Comments: {issue.Comments}";
+                    }
 
                     body += $"{Environment.NewLine}{Environment.NewLine}";
                     body += $"Thank You,{Environment.NewLine}";

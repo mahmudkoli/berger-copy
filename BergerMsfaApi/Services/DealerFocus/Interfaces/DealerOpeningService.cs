@@ -536,6 +536,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
+                    body += $"Depot: {dealer.BusinessArea??string.Empty}<br/>";
+                    body += $"Sales Office :{dealer.SaleOffice??string.Empty}<br/>";
+                    body += $"Sales Group :{dealer.SaleGroup??string.Empty}<br/>";
+                    body += $"Teritorry :{dealer.Territory??string.Empty}<br/>";
+                    body += $"Zone :{dealer.Zone??string.Empty}<br/>";
                     body += $"<br/><br/>";
                     body += $"Thank You,<br/>";
                     body += $"Berger Paints Bangladesh Limited";
