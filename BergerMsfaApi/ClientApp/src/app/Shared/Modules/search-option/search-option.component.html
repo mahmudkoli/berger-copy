@@ -352,13 +352,13 @@
                     </small>
                 </div>
             </div>
-            <div class="col-md-3" *ngIf="hasSearchOption('type')">
+            <div class="col-md-3" *ngIf="hasSearchOption('dealerType')">
                 <div class="position-relative form-group">
-                    <label [ngClass]="{'required':isSearchOptionRequired('type')}">Type</label>
-                    <ng-select [items]="types" formControlName="type" bindValue="id" bindLabel="name" [multiple]="false" [virtualScroll]="true">
+                    <label [ngClass]="{'required':isSearchOptionRequired('dealerType')}">Dealer Type</label>
+                    <ng-select [items]="dealerTypes" formControlName="dealerType" bindValue="id" bindLabel="name" [multiple]="false" [virtualScroll]="true">
                     </ng-select>
-                    <small class="text-danger" *ngIf="formControls.type.touched && formControls.type.errors">
-                        <span *ngIf="formControls.type.errors.required">Type is <strong>required</strong></span>
+                    <small class="text-danger" *ngIf="formControls.dealerType.touched && formControls.dealerType.errors">
+                        <span *ngIf="formControls.dealerType.errors.required">Dealer Type is <strong>required</strong></span>
                     </small>
                 </div>
             </div>

@@ -57,8 +57,8 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
         isRequired: false,
       }),
       new SearchOptionDef({
-        searchOption: EnumSearchOption.Type,
-        isRequired: true,
+        searchOption: EnumSearchOption.DealerType,
+        isRequired: false,
       }),
     ],
   });
@@ -251,7 +251,10 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query.custZones = queryObj.zones;
     this.query.salesGroup = queryObj.salesGroups;
     this.query.dealerId = queryObj.dealerId;
-
+    this.query.dealerType = queryObj.dealerType;
+    if(queryObj.dealerType==null){
+      this.query.dealerType=1;
+    }
     this.loadDealerSalesCallsPage();
   }
 
