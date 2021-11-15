@@ -182,7 +182,7 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="">Plant</label>
-                        <ng-select formControlName="plantIds" multiple="multiple">
+                        <ng-select formControlName="plantIds" multiple="multiple" (change)="onChangeDepot()">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>
@@ -218,7 +218,7 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="">Territory</label>
-                        <ng-select formControlName="territoryIds" multiple="multiple">
+                        <ng-select formControlName="territoryIds" multiple="multiple" (change)="onChangeTerritory()">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>

@@ -5,7 +5,7 @@
                 <div class="col-md-3">
                     <div class="position-relative form-group">
                         <label>Depot</label>
-                        <ng-select [items]="depotList" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true" required>
+                        <ng-select [items]="depotList" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true" required (change)="onChangeDepot()">
                         </ng-select>
 
                         <small class="text-danger" *ngIf="formControls.depot.touched && formControls.depot.errors">

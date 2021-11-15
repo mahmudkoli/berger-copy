@@ -96,7 +96,7 @@ namespace BergerMsfaApi.Services.Implementation
                                     _settings.Issuer,
                                     _settings.Audience,
                                     claims,
-                                    expires: DateTime.Now.AddMinutes(1), //TODO: time to hour
+                                    expires: DateTime.Now.AddHours(_settings.ExpiresHours), //TODO: time to hour
                                     signingCredentials: cred
                                 );
 

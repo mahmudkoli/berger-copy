@@ -273,6 +273,39 @@ export class UserInfoFormComponent implements OnInit {
        this.subscriptions.push(updateSubscription);
    }
 
+   onChangeDepot() {
+     this.callTerritories();
+     this.callZones();
+     const controls = this.userForm.controls;
+    //  controls['territoryIds'].setValue(null);
+    //  controls['zoneIds'].setValue(null);
+   }
+ 
+   onChangeTerritory() {
+     this.callZones();
+     const controls = this.userForm.controls;
+    //  controls['zoneIds'].setValue(null);
+   }
+ 
+   callTerritories () {
+       const controls = this.userForm.controls;
+       const depot = controls['plantIds'].value;
+       
+         this.commonSvc.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+           this.territories = res.data;
+         });
+   }
+ 
+   callZones () {
+       const controls = this.userForm.controls;
+       const depot = controls['plantIds'].value;
+       const territories = controls['territoryIds'].value;
+       
+         this.commonSvc.getZoneListByDepotTerritory({'depots':[depot],'territories':territories}).subscribe(res => {
+           this.zones = res.data;
+         });
+   }
+
    getComponentTitle() {
        let result = 'Create user';
        if (!this.user || !this.user.id) {
