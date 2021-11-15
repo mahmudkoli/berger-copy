@@ -171,6 +171,21 @@ export class UniverseReachAnalysisAddComponent implements OnInit, OnDestroy {
 		this.subscriptions.push(updateSubscription);
 	}
 
+	onChangeDepot() {
+	  this.callTerritories();
+	  const controls = this.universeReachAnalysisForm.controls;
+	  controls['territory'].setValue(null);
+	}
+  
+	callTerritories () {
+		const controls = this.universeReachAnalysisForm.controls;
+		const depot = controls['businessArea'].value;
+		
+		  this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+			this.territories = res.data;
+		  });
+	}
+
 	getComponentTitle() {
 		let result = `Create Universe Reach Plan - (${this.universeReachAnalysis.fiscalYear})`;
 		if (!this.universeReachAnalysis || !this.universeReachAnalysis.id) {

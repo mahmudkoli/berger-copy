@@ -109,6 +109,21 @@ populateDropdown(): void {
 
 }
 
+onChangeDepot() {
+  this.callTerritories();
+  const controls = this.searchForm.controls;
+  controls['territory'].setValue(null);
+}
+
+callTerritories () {
+    const controls = this.searchForm.controls;
+    const depot = controls['depot'].value;
+    
+      this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+        this.territoryList = res.data;
+      });
+}
+
 
 
 }

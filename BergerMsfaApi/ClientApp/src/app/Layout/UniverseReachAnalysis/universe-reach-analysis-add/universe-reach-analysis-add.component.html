@@ -10,7 +10,7 @@
                 <div class="col-md-6">
                     <div class="position-relative form-group">
                         <label class="required">Business Area</label>
-                        <ng-select formControlName="businessArea">
+                        <ng-select formControlName="businessArea" (change)="onChangeDepot()">
                             <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
                         </ng-select>
                         <small class="text-danger" *ngIf="formControls.businessArea.touched && formControls.businessArea.errors">

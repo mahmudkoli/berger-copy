@@ -5,7 +5,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('depot')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('depot')}">Depot</label>
-                    <ng-select [items]="depots" (change)="changeDealerShow()" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true">
+                    <ng-select [items]="depots" (change)="changeDealerShow();onChangeDepot()" formControlName="depot" bindValue="code" bindLabel="name" [multiple]="false" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.depot.touched && formControls.depot.errors">
                         <span *ngIf="formControls.depot.errors.required">Depot is <strong>required</strong></span>
@@ -25,7 +25,7 @@
             <div class="col-md-3" *ngIf="hasSearchOption('territories')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('territories')}">Territories</label>
-                    <ng-select [items]="territories" (change)="changeDealerShow()" formControlName="territories" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
+                    <ng-select [items]="territories" (change)="changeDealerShow();onChangeTerritory()" formControlName="territories" bindValue="code" bindLabel="name" [multiple]="true" [virtualScroll]="true">
                     </ng-select>
                     <small class="text-danger" *ngIf="formControls.territories.touched && formControls.territories.errors">
                         <span *ngIf="formControls.territories.errors.required">Territory is <strong>required</strong></span>

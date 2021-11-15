@@ -194,8 +194,18 @@ export class CommonService {
     );
   }
 
+  getTerritoryListByDepot(area) {
+    if (area && area.depots && area.depots.length > 0) area.depots = area.depots.filter(x => x);
+    return this.http.get<APIResponse>(`${this.baseUrl}v1/Common/getTerritoryListByDepot?${this.toQueryString(area)}`);
+  }
+
   getZoneList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getZoneList');
+  }
+
+  getZoneListByDepotTerritory(area) {
+    if (area && area.depots && area.depots.length > 0) area.depots = area.depots.filter(x => x);
+    return this.http.get<APIResponse>(`${this.baseUrl}v1/Common/getZoneListByDepotTerritory?${this.toQueryString(area)}`);
   }
 
   getRoleList() {
