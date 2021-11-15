@@ -14,6 +14,7 @@ using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Common.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -184,10 +185,26 @@ namespace BergerMsfaApi.Services.Common.Implementation
             return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 
+        public async Task<IEnumerable<Territory>> GetTerritoryList(IList<string> depots)
+        {
+            var appUser = AppIdentity.AppUser;
+            var territoryByDepot = await _dealerInfoSvc.FindAll(x => depots.Any(d => x.BusinessArea == d)).Select(x => x.Territory).Distinct().ToListAsync();
+            var result = await _territorySvc.FindAllAsync(x => (((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.TerritoryIdList.Contains(x.Code))) && (!depots.Any() || territoryByDepot.Contains(x.Code)));
+            return result.Select(s => new Territory { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
+        }
+
         public async Task<IEnumerable<Zone>> GetZoneList()
         {
             var appUser = AppIdentity.AppUser;
             var result = await _zoneSvc.FindAllAsync(x => ((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code)));
+            return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
+        }
+
+        public async Task<IEnumerable<Zone>> GetZoneList(IList<string> depots, IList<string> territories)
+        {
+            var appUser = AppIdentity.AppUser;
+            var zoneByDepotTerritory = await _dealerInfoSvc.FindAll(x => depots.Any(d => x.BusinessArea == d) && (!territories.Any() || territories.Contains(x.Territory))).Distinct().Select(x => x.CustZone).ToListAsync();
+            var result = await _zoneSvc.FindAllAsync(x => (((int)EnumEmployeeRole.Admin == appUser.EmployeeRole || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || (appUser.ZoneIdList.Contains(x.Code))) && (!depots.Any() || zoneByDepotTerritory.Contains(x.Code)));
             return result.Select(s => new Zone { Code = s.Code, Name = s.Code }).OrderBy(x => x.Name).ToList();
         }
 

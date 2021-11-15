@@ -273,6 +273,45 @@ export class UserInfoFormComponent implements OnInit {
        this.subscriptions.push(updateSubscription);
    }
 
+   onChangeDepot() {
+     this.callTerritories();
+     this.callZones();
+    //  const controls = this.userForm.controls;
+    //  controls['territoryIds'].setValue(null);
+    //  controls['zoneIds'].setValue(null);
+   }
+ 
+   onChangeTerritory() {
+     this.callZones();
+    //  const controls = this.userForm.controls;
+    //  controls['zoneIds'].setValue(null);
+   }
+ 
+   callTerritories () {
+       const controls = this.userForm.controls;
+       const depots = controls['plantIds'].value;
+       let territories = controls['territoryIds'].value;
+       
+         this.commonSvc.getTerritoryListByDepot({'depots':depots}).subscribe(res => {
+           this.territories = res.data;
+           territories = territories.filter(x => this.territories.some(y => y.code == x));
+           controls['territoryIds'].setValue(territories);
+         });
+   }
+ 
+   callZones () {
+       const controls = this.userForm.controls;
+       const depots = controls['plantIds'].value;
+       const territories = controls['territoryIds'].value;
+       let zones = controls['zoneIds'].value;
+       
+         this.commonSvc.getZoneListByDepotTerritory({'depots':depots,'territories':territories}).subscribe(res => {
+           this.zones = res.data;
+           zones = zones.filter(x => this.zones.some(y => y.code == x));
+           controls['zoneIds'].setValue(zones);
+         });
+   }
+
    getComponentTitle() {
        let result = 'Create user';
        if (!this.user || !this.user.id) {
