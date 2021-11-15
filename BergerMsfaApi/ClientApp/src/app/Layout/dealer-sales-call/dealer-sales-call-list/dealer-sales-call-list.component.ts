@@ -56,6 +56,10 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.DealerId,
         isRequired: false,
       }),
+      new SearchOptionDef({
+        searchOption: EnumSearchOption.Type,
+        isRequired: true,
+      }),
     ],
   });
   // Subscriptions

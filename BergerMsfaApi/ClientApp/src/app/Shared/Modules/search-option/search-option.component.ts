@@ -57,6 +57,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     brands: any[] = [];
     materialCodes: any[] = [];
 	months: any[] = [];
+	types: any[] = [];
 	years: any[] = [];
 	fiscalYears: any[] = [];
 	activitySummaries: any[] = [];
@@ -91,6 +92,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			salesGroups: [this.searchOptionQuery.salesGroups],
 			territories: [this.searchOptionQuery.territories],
 			zones: [this.searchOptionQuery.zones],
+			type: [this.searchOptionQuery.type],
 			fromDate: [],
 			toDate: [],
 			date: [],
@@ -330,6 +332,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(forkJoinSubscription3);
 
 		this.months = this.getMonths();
+    this.types=this.getTypes();
 		this.years = this.getYears();
 		this.fiscalYears=this.getFiscalYears()
     }
@@ -356,6 +359,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.fromYear = controls['fromYear'].value;
 		this.searchOptionQuery.toYear = controls['toYear'].value;
 		this.searchOptionQuery.month = controls['month'].value;
+		this.searchOptionQuery.type = controls['type'].value;
 		this.searchOptionQuery.year = controls['year'].value;
 		this.searchOptionQuery.fiscalYear = controls['fiscalYear'].value;
 		this.searchOptionQuery.text1 = controls['text1'].value;
@@ -547,6 +551,16 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     return date && date.year && date.month && date.day
       ? new Date(date.year, date.month - 1, date.day)
       : null;
+  }
+
+  getTypes(): any[] {
+    const types = [
+      { id: 1, name: 'All' },
+      { id: 2, name: 'Dealer' },
+      { id: 3, name: 'Sub-Dealer' }
+      
+    ];
+    return types;
   }
 
   getMonths(): any[] {
