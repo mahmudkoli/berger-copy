@@ -524,11 +524,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     string subject = string.Empty;
                     string body = string.Empty;
 
-                    string salesOffice = _saleOfficeSvc.Where(p => p.Code == dealer.SaleOffice).FirstOrDefault().Name;
-                    string salesGroup = _saleGroupSvc.Where(p => p.Code == dealer.SaleGroup).FirstOrDefault().Name;
-                    string territory = _territorySvc.Where(p => p.Code == dealer.Territory).FirstOrDefault().Name;
-                    string depot = _depotSvc.Where(p => p.Werks == dealer.BusinessArea).FirstOrDefault().Name1;
-                    string zone = _zoneSvc.Where(p => p.Code == dealer.Zone).FirstOrDefault().Name;
+                    var salesOffice = _saleOfficeSvc.Where(p => p.Code == dealer.SaleOffice).FirstOrDefault();
+                    var salesGroup = _saleGroupSvc.Where(p => p.Code == dealer.SaleGroup).FirstOrDefault();
+                    var territory = _territorySvc.Where(p => p.Code == dealer.Territory).FirstOrDefault();
+                    var depot = _depotSvc.Where(p => p.Werks == dealer.BusinessArea).FirstOrDefault();
+                    var zone = _zoneSvc.Where(p => p.Code == dealer.Zone).FirstOrDefault();
 
                     subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
 
@@ -536,17 +536,18 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
                     body += string.Format("A new dealer open request has been generated from " +
                         "“{0} - {1}” and got approved by “{2} - {3}”. " +
-                        "You are requested to open the new dealer in SAP by using the attached information.",
+                        "You are requested to open the new dealer in SAP by using the attached information.<br/><br/>",
                         createdBy.UserName,
                         createdBy.Designation,
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
-                    body += $"Depot: {depot ?? string.Empty}<br/>";
-                    body += $"Sales Office :{salesOffice ?? string.Empty}<br/>";
-                    body += $"Sales Group :{salesGroup ?? string.Empty}<br/>";
-                    body += $"Teritorry :{territory ?? string.Empty}<br/>";
-                    body += $"Zone :{zone ?? string.Empty}<br/>";
+                    body += $"Depot: {depot ?.Name1: string.Empty}<br/>";
+                    body += $"Sales Office :{salesOffice?.Name: string.Empty}<br/>";
+                    body += $"Sales Group :{salesGroup?.Name: string.Empty}<br/>";
+                    body += $"Teritorry :{territory?.Name : string.Empty}<br/>";
+                    body += $"Zone :{zone ?.Name: string.Empty}<br/>";
+                   
                     body += $"<br/><br/>";
                     body += $"Thank You,<br/>";
                     body += $"Berger Paints Bangladesh Limited";
