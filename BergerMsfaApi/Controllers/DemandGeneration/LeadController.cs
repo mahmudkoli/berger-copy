@@ -57,7 +57,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             {
                 if (!await _leadService.IsExistAsync(id))
                 {
-                    ModelState.AddModelError(nameof(id), "Focus Dealer Not Found");
+                    ModelState.AddModelError(nameof(id), "Lead Follow Up Not Found");
                     return ValidationResult(ModelState);
                 }
                 var result = await _leadService.DeleteAsync(id);

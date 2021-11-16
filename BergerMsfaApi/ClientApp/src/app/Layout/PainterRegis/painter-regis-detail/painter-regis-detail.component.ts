@@ -9,6 +9,8 @@ import { IPTableSetting } from '../../../Shared/Modules/p-table';
 import { PainterCall } from '../../../Shared/Entity/Painter/PainterCall';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ModalPainterCallDetailsComponent } from '../modal-painter-call-details/modal-painter-call-details.component'
+import { AuthService } from 'src/app/Shared/Services/Users';
+import { finalize } from 'rxjs/operators';
 @Component({
     selector: 'app-painter-regis-detail',
     templateUrl: './painter-regis-detail.component.html',
@@ -44,6 +46,7 @@ export class PainterRegisDetailComponent implements OnInit {
         private painterRegisSvc: PainterRegisService,
         private router: Router,
         private modalService: NgbModal,
+        private authService: AuthService,
         @Inject('BASE_URL') baseUrl: string) { this.baseUrl = baseUrl; }
 
     ngOnInit() {
@@ -53,6 +56,7 @@ export class PainterRegisDetailComponent implements OnInit {
             this._getRegisterPainterById(id);
         }
         
+		this.ptableSettingsPainterCall.enabledDeleteBtn = this.authService.isAdmin;
     }
 
     private _getRegisterPainterById(id) {
@@ -72,6 +76,8 @@ export class PainterRegisDetailComponent implements OnInit {
                     obj.hasUsageEftToolsText = obj.hasUsageEftTools ? "Yes" : "No";
                     obj.hasPremiumProtBriefingText = obj.hasPremiumProtBriefing ? "Yes" : "No";
                     obj.hasSchemeComnunactionText = obj.hasSchemeComnunaction ? "Yes" : "No";
+                    obj.isAppInstalledText = obj.isAppInstalled ? "Yes" : "No";
+                    obj.hasDbblText = obj.hasDbbl ? "Yes" : "No";
 
                     obj.viewDetailsText = 'View Details';
                     obj.viewDetailsBtnclass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
@@ -97,14 +103,20 @@ export class PainterRegisDetailComponent implements OnInit {
         tableName: 'PainterCall List',
         tableRowIDInternalName: "id",
         tableColDef: [
-            { headerName: 'Comment', width: '12%', internalName: 'comment', sort: false, type: "" },
-            { headerName: 'Work In Hand Number', width: '12%', internalName: 'workInHandNumber', sort: false, type: "" },
-            { headerName: 'Has Scheme Comnunaction', width: '12%', internalName: 'hasSchemeComnunactionText', sort: false, type: "" },
-            { headerName: 'Has Premium Prot Briefing', width: '12%', internalName: 'hasPremiumProtBriefingText', sort: false, type: "" },
-            { headerName: 'Has New Pro Briefing', width: '12%', internalName: 'hasNewProBriefingText', sort: false, type: "" },
-            { headerName: 'Has Usage Eft Tools', width: '12%', internalName: 'hasUsageEftToolsText', sort: false, type: "" },
-            { headerName: 'Has App Usage', width: '12%', internalName: 'hasAppUsageText', sort: false, type: "" },
-            { headerName: 'Has Dbbl Issue', width: '12%', internalName: 'hasDbblIssueText', sort: false, type: "" },
+            { headerName: 'Territory', width: '10%', internalName: 'territory', sort: false, type: "" },
+            { headerName: 'Zone', width: '10%', internalName: 'zone', sort: false, type: "" },
+            { headerName: 'Create Time', width: '10%', internalName: 'createdTimeStr', sort: false, type: "" },
+            { headerName: 'Painter Category', width: '10%', internalName: 'painterCatName', sort: false, type: "" },
+            { headerName: 'Painter Name', width: '10%', internalName: 'painterName', sort: false, type: "" },
+            { headerName: 'Address', width: '10%', internalName: 'address', sort: false, type: "" },
+            { headerName: 'Phone', width: '10%', internalName: 'phone', sort: false, type: "" },
+            { headerName: 'Is App Installed', width: '10%', internalName: 'isAppInstalledText', sort: false, type: "" },
+            { headerName: 'Has Dbbl', width: '10%', internalName: 'hasDbblText', sort: false, type: "" },
+            { headerName: 'Acc Dbbl Number', width: '10%', internalName: 'accDbblNumber', sort: false, type: "" },
+            { headerName: 'Acc Dbbl Holder Name', width: '10%', internalName: 'accDbblHolderName', sort: false, type: "" },
+            { headerName: 'Acc Change Reason', width: '10%', internalName: 'accChangeReason', sort: false, type: "" },
+            { headerName: 'Has Dbbl Issue', width: '10%', internalName: 'hasDbblIssueText', sort: false, type: "" },
+            { headerName: 'Comment', width: '10%', internalName: 'comment', sort: false, type: "" },
             { headerName: 'Details', width: '5%', internalName: 'viewDetailsText', sort: false, type: "button", onClick: 'true', className:'viewDetailsBtnclass', innerBtnIcon:''}
 
 
@@ -180,5 +192,36 @@ export class PainterRegisDetailComponent implements OnInit {
             }
         );
     }
+
+	public fnCustomTrigger(event) {
+		console.log("custom  click: ", event);
+
+		
+		if (event.action == "delete-item") {
+			this.deletePainterCallUp(event.record.id);
+			
+		}
+	}
+
+	deletePainterCallUp(id) {
+		this.alertService.confirm("Are you sure to delete this painter call?",
+			() => {
+				this.alertService.fnLoading(true);
+				const deleteSubscription = this.painterRegisSvc.DeletePainterCall(id)
+					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
+					.subscribe((res: any) => {
+						console.log('res from del func', res);
+						this.alertService.tosterSuccess("Painter call has been deleted successfully.");
+							this.painterCalls.forEach((value, index) => {
+								if (value.id == id) this.painterCalls.splice(index, 1);
+							});
+						},
+						(error) => {
+							console.log(error);
+						});
+				// this.subscriptions.push(deleteSubscription);
+			},
+			() => { });
+	}
 
 }

@@ -47,6 +47,9 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public bool HasDbblIssue { get; set; }
         public string Comment { get; set; }
         public int PainterId { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public string CreatedTimeStr { get; set; }
+        public string PainterCatName { get; set; }
         public List<PainterCompanyMTDValueModel> PainterCompanyMTDValue { get; set; }
         public List<AttachedDealerPainterCallModel> AttachedDealers { get; set; }
     }
