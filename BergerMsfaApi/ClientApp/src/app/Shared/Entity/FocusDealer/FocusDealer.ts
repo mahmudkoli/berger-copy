@@ -54,6 +54,8 @@ export class FocusDealerQuery extends QueryObject {
     }
 }
 
+
+
 export class DealerOpeningQuery extends QueryObject {
     depot: string;
     territories: string[];

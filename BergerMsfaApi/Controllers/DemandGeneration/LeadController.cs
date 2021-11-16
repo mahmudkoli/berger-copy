@@ -2,7 +2,10 @@
 using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Models.DemandGeneration;
+using BergerMsfaApi.Models.FocusDealer;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,7 +28,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] QueryObjectModel query)
+        public async Task<IActionResult> Get([FromQuery] LeadGenerationDetailsReportSearchModel query)
         {
             try
             {
@@ -53,7 +56,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
         }
 
         [HttpPost("UpdateLeadGenerate")]
-        public async Task<IActionResult> UpdateLeadGenerate([FromBody] LeadGeneration model)
+        public async Task<IActionResult> UpdateLeadGenerate([FromBody] UpdateLeadGenerationModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -83,6 +86,21 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
                 }
                 var result = await _leadService.DeleteAsync(id);
                 return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("DeleteImage")]
+        public async Task<IActionResult> DeleteImage([FromBody] DealerImageModel models)
+        {
+
+            try
+            {
+                await _leadService.DeleteImage(models);
+                return OkResult(1);
             }
             catch (Exception ex)
             {

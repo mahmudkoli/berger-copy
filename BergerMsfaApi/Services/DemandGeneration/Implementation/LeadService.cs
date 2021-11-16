@@ -8,8 +8,11 @@ using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.Master;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Models.DemandGeneration;
+using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Models.Notification;
+using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
@@ -52,7 +55,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             this._mapper = mapper;
         }
 
-        public async Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(QueryObjectModel query)
+        public async Task<QueryResultModel<LeadGenerationModel>> GetAllAsync(LeadGenerationDetailsReportSearchModel query)
         {
             var columnsMap = new Dictionary<string, Expression<Func<LeadGeneration, object>>>()
             {
@@ -62,7 +65,17 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                 x => x,
-                                x => (string.IsNullOrEmpty(query.GlobalSearchValue) || x.User.FullName.Contains(query.GlobalSearchValue)),
+                                x =>
+                                (
+                                (!query.UserId.HasValue || x.UserId == query.UserId.Value)
+                                && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
+                                && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
+                                && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
+                                && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
+                                && (string.IsNullOrWhiteSpace(query.ProjectName) || x.ProjectName.Contains(query.ProjectName))
+                                && (!query.PaintingStageId.HasValue || x.PaintingStageId == query.PaintingStageId.Value)
+                               ),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User),
                                 query.Page,
@@ -108,11 +121,11 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             //var modelResult = _mapper.Map<IList<LeadGenerationModel>>(result);
 
             //return modelResult; 
-            
+
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                  x => x,
-                                 x => x.UserId == userId && (!x.LeadFollowUps.Any() || 
-                                        !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode 
+                                 x => x.UserId == userId && (!x.LeadFollowUps.Any() ||
+                                        !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode
                                                                 || l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadHandOverDropdownCode)),
                                  null,
                                  x => x.Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus),
@@ -238,7 +251,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             modelResult.TotalPaintingAreaSqftExteriorChangeCount = result.TotalPaintingAreaSqftExteriorChangeCount;
             modelResult.BusinessAchievement = new SaveLeadBusinessAchievementModel();
 
-            if(result.LeadFollowUps.Any())
+            if (result.LeadFollowUps.Any())
             {
                 var leadFollowUp = result.LeadFollowUps.OrderByDescending(x => x.CreatedTime).FirstOrDefault();
                 modelResult.TypeOfClientId = leadFollowUp.TypeOfClientId;
@@ -319,13 +332,13 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             #region Lead Generation update
             var leadGen = await _leadGenerationRepository.GetFirstOrDefaultIncludeAsync(
-                                                            x => x, 
-                                                            x => x.Id == leadFollowUp.LeadGenerationId, 
+                                                            x => x,
+                                                            x => x.Id == leadFollowUp.LeadGenerationId,
                                                             null,
                                                             null,
                                                             true);
-            
-            if(leadFoll != null)
+
+            if (leadFoll != null)
             {
                 if (leadFoll.ExpectedValue != leadFollowUp.ExpectedValue)
                     leadGen.ExpectedValueChangeCount++;
@@ -373,16 +386,16 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             {
                 //if (lead.NextFollowUpDate.Date == today.Date || lead.LeadFollowUps.Any(x => x.NextVisitDatePlan.Date == today.Date))
                 //{
-                    var modelRes = new AppLeadFollowUpNotificationModel();
-                    modelRes.UserId = userId;
-                    modelRes.Code = lead.Code;
-                    modelRes.Depot = lead.Depot;
-                    modelRes.Territory = lead.Territory;
-                    modelRes.Zone = lead.Zone;
-                    modelRes.ProjectName = lead.ProjectName;
-                    modelRes.ProjectAddress = lead.ProjectAddress;
+                var modelRes = new AppLeadFollowUpNotificationModel();
+                modelRes.UserId = userId;
+                modelRes.Code = lead.Code;
+                modelRes.Depot = lead.Depot;
+                modelRes.Territory = lead.Territory;
+                modelRes.Zone = lead.Zone;
+                modelRes.ProjectName = lead.ProjectName;
+                modelRes.ProjectAddress = lead.ProjectAddress;
 
-                    modelResult.Add(modelRes);
+                modelResult.Add(modelRes);
                 //}
             }
 
@@ -402,7 +415,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             var results = await _leadGenerationRepository.GetAllIncludeAsync(
                                    x => x,
-                                   x => 
+                                   x =>
                 (!(result.Zones != null && result.Zones.Any()) || result.Zones.Contains(x.Zone)) &&
                 (!(result.Territories != null && result.Territories.Any()) || result.Territories.Contains(x.Territory)) &&
                 (!(result.Depots != null && result.Depots.Any()) || result.Depots.Contains(x.Depot)) &&
@@ -437,9 +450,88 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
         public async Task<int> DeleteAsync(int id) => await _leadFollowUpRepository.DeleteAsync(s => s.Id == id);
         public async Task<bool> IsExistAsync(int id) => await _leadFollowUpRepository.IsExistAsync(f => f.Id == id);
 
-        public async Task<bool> UpdateLeadGenerateAsync(LeadGeneration model)
+        public async Task<bool> UpdateLeadGenerateAsync(UpdateLeadGenerationModel model)
         {
+            var item = await _leadGenerationRepository.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            if (item == null)
+            {
+                throw new Exception("Lead Not Found");
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.PhotoCaptureUrlBase64))
+            {
+                var fileName = model.Id + "_" + Guid.NewGuid().ToString();
+                model.PhotoCaptureUrl = model.PhotoCaptureUrlBase64.Substring(model.PhotoCaptureUrlBase64.LastIndexOf(',') + 1);
+                item.PhotoCaptureUrl = await _fileUploadService.SaveImageAsync(model.PhotoCaptureUrl, fileName, FileUploadCode.LeadGeneration);
+            }
+
+            item.Code = model.Code;
+            item.Depot = model.Depot;
+            item.ExpectedDateOfPainting = CustomConvertExtension.ObjectToDateTime(model.ExpectedDateOfPainting);
+            item.ExpectedMonthlyBusinessValue = model.ExpectedMonthlyBusinessValue;
+            item.ExpectedMonthlyBusinessValueChangeCount = model.ExpectedMonthlyBusinessValueChangeCount;
+            item.ExpectedValue = model.ExpectedValue;
+            item.ExpectedValueChangeCount = model.ExpectedValueChangeCount;
+            item.KeyContactPersonMobile = model.KeyContactPersonMobile;
+            item.KeyContactPersonName = model.KeyContactPersonName;
+            item.ModifiedBy= 0;
+            item.ModifiedTime = DateTime.Now;
+            item.NextFollowUpDate = CustomConvertExtension.ObjectToDateTime(model.NextFollowUpDate);
+            item.NumberOfStoriedBuilding = model.NumberOfStoriedBuilding;
+            item.OtherClientName = model.OtherClientName;
+            item.PaintContractorMobile = model.PaintContractorMobile;
+            item.PaintContractorName = model.PaintContractorName;
+            item.PaintingStageId = model.PaintingStageId;
+            item.ProductSamplingRequired = model.ProductSamplingRequired;
+            item.ProjectAddress = model.ProjectAddress;
+            item.ProjectName = model.ProjectName;
+            item.Remarks = model.Remarks;
+            item.RequirementOfColorScheme = model.RequirementOfColorScheme;
+            item.Territory = model.Territory;
+            item.TotalPaintingAreaSqftExterior = model.TotalPaintingAreaSqftExterior;
+            item.TotalPaintingAreaSqftExteriorChangeCount = model.TotalPaintingAreaSqftExteriorChangeCount;
+            item.TotalPaintingAreaSqftInterior = model.TotalPaintingAreaSqftInterior;
+            item.TotalPaintingAreaSqftInteriorChangeCount = model.TotalPaintingAreaSqftInteriorChangeCount;
+            item.TypeOfClientId = model.TypeOfClientId;
+            item.UserId = model.UserId;
+            item.Zone = model.Zone;
+            item.VisitDate = CustomConvertExtension.ObjectToDateTime(model.VisitDate);
+
+
+           await _leadGenerationRepository.UpdateAsync(item);
+
             return true;
+        }
+
+        public async Task DeleteImage(DealerImageModel dealerImageModel)
+        {
+            var item = await _leadGenerationRepository.FirstOrDefaultAsync(x => x.Id == dealerImageModel.Id);
+
+            //string fileDirectory = Path.Combine(
+            //    Directory.GetCurrentDirectory(), @"wwwroot\");
+            //var fullPath = fileDirectory + dealerImageModel.URL;
+
+            var fullPath = dealerImageModel.URL;
+
+            if (item != null)
+            {
+
+                item.PhotoCaptureUrl = null;
+
+            }
+
+            if (!string.IsNullOrWhiteSpace(fullPath))
+            {
+                await _fileUploadService.DeleteImageAsync(fullPath);
+                await _leadGenerationRepository.UpdateAsync(item);
+
+            }
+
+            //File.Delete();
+
+
         }
     }
 }
+

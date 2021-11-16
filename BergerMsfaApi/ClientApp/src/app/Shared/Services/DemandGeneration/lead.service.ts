@@ -35,6 +35,13 @@ export class LeadService {
     deleteLeadFollowUp(id) {
         return this.http.delete<APIResponse>(`${this.LeadsEndpoint}/DeleteLeadFollowUp/${id}`);
     }
+
+    DeleteLeadImage(obj) {
+      return this.http.post<any>(
+        this.baseUrl + `v1/Lead/DeleteImage/`,
+        obj
+      );
+    }
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.LeadsEndpoint}/activeInactive/${id}`, null);
     // }

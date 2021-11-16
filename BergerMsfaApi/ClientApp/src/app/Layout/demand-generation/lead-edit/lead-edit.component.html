@@ -1,6 +1,14 @@
-<div class="card-shadow-warning border mb-3 card card-body border-warning">
-    <h5 class="card-title"><strong>Lead Generation Details:</strong></h5>
 
+    <div class="main-card mb-3 card">
+        <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Lead Generation Edit:</div>
+            <!-- <div class="btn-actions-pane-right">
+                <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                    <fa class="mr-2" name="list"></fa>
+                    Back to list
+                </button>
+            </div> -->
+        </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
@@ -35,7 +43,7 @@
                     <ng-select [(ngModel)]="leadGeneration.depot" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
-                        <ng-option *ngFor="let dl of depotList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        <ng-option *ngFor="let dl of depotList;"  [value]="dl.code">{{dl.name}}</ng-option>
                     </ng-select>
 
                 </div>
@@ -46,7 +54,7 @@
                     <ng-select [(ngModel)]="leadGeneration.territory" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
-                        <ng-option *ngFor="let dl of territoryList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        <ng-option *ngFor="let dl of territoryList;" [value]="dl.code">{{dl.name}}</ng-option>
                     </ng-select>
 
                 </div>
@@ -60,7 +68,7 @@
                     <ng-select [(ngModel)]="leadGeneration.zone" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
-                        <ng-option *ngFor="let dl of zoneList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        <ng-option *ngFor="let dl of zoneList;" [value]="dl.code">{{dl.name}}</ng-option>
                     </ng-select>
 
                 </div>
@@ -72,7 +80,7 @@
                     <ng-select [(ngModel)]="leadGeneration.typeOfClientId" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
-                        <ng-option *ngFor="let dl of typeOfClientList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        <ng-option *ngFor="let dl of typeOfClientList;" [value]="dl.id">{{dl.dropdownName}}</ng-option>
                     </ng-select>
 
                 </div>
@@ -169,7 +177,7 @@
                     <ng-select [(ngModel)]="leadGeneration.paintingStageId" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
-                        <ng-option *ngFor="let dl of userList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                        <ng-option *ngFor="let dl of paintingStageList;" [value]="dl.id">{{dl.dropdownName}}</ng-option>
                     </ng-select>
 
                 </div>

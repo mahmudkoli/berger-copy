@@ -524,6 +524,12 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     string subject = string.Empty;
                     string body = string.Empty;
 
+                    string salesOffice = _saleOfficeSvc.Where(p => p.Code == dealer.SaleOffice).FirstOrDefault().Name;
+                    string salesGroup = _saleGroupSvc.Where(p => p.Code == dealer.SaleGroup).FirstOrDefault().Name;
+                    string territory = _territorySvc.Where(p => p.Code == dealer.Territory).FirstOrDefault().Name;
+                    string depot = _depotSvc.Where(p => p.Werks == dealer.BusinessArea).FirstOrDefault().Name1;
+                    string zone = _zoneSvc.Where(p => p.Code == dealer.Zone).FirstOrDefault().Name;
+
                     subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
 
                     body += $"Dear Concern,<br/>";
@@ -536,11 +542,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
-                    body += $"Depot: {dealer.BusinessArea??string.Empty}<br/>";
-                    body += $"Sales Office :{dealer.SaleOffice??string.Empty}<br/>";
-                    body += $"Sales Group :{dealer.SaleGroup??string.Empty}<br/>";
-                    body += $"Teritorry :{dealer.Territory??string.Empty}<br/>";
-                    body += $"Zone :{dealer.Zone??string.Empty}<br/>";
+                    body += $"Depot: {depot ?? string.Empty}<br/>";
+                    body += $"Sales Office :{salesOffice ?? string.Empty}<br/>";
+                    body += $"Sales Group :{salesGroup ?? string.Empty}<br/>";
+                    body += $"Teritorry :{territory ?? string.Empty}<br/>";
+                    body += $"Zone :{zone ?? string.Empty}<br/>";
                     body += $"<br/><br/>";
                     body += $"Thank You,<br/>";
                     body += $"Berger Paints Bangladesh Limited";

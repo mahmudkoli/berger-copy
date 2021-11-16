@@ -29,6 +29,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
   territoryList: any[] = [];
   zoneList: any[] = [];
   typeOfClientList: any[] = [];
+  paintingStageList:any[]=[];
 
 
 
@@ -50,7 +51,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.populateDropdown();
+    this.populateDropdown();
     // this.alertService.fnLoading(true);
     const routeSubscription = this.activatedRoute.params.subscribe((params) => {
       const id = params['id'];
@@ -63,6 +64,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res) {
               this.leadGeneration = res.data as LeadGeneration;
+              console.log("this.leadGeneration",this.leadGeneration)
             }
           });
       } else {
@@ -85,23 +87,39 @@ export class LeadEditComponent implements OnInit, OnDestroy {
     const forkJoinSubscription1 = forkJoin([
       this.commonService.getUserInfoListByCurrentUserWithoutZoUser(),
       this.commonService.getDepotList(),
-      this.commonService.getTerritoryListByDepot(''),
-      this.commonService.getZoneListByDepotTerritory(''),
+      this.commonService.getTerritoryList(),
+      this.commonService.getZoneList(),
       this.dynamicDropdownService.GetDropdownByTypeCd(
         EnumDynamicTypeCode.TypeOfClient
       ),
+      this.dynamicDropdownService.GetDropdownByTypeCd(
+        EnumDynamicTypeCode.PaintingStage
+      )
     ]).subscribe(
       ([
         users,
         depot,
         territory,
-        zone
+        zone,
+        typeOfClient,
+        paintingStage
         
       ]) => {
         this.userList = users.data;
         this.depotList = depot.data;
         this.territoryList = territory.data;
         this.zoneList = zone.data;
+        this.typeOfClientList = typeOfClient.data;
+        this.paintingStageList=paintingStage.data
+
+        // console.log("UserList",this.userList);
+        // console.log("DepotList",this.depotList);
+        // console.log("TerritoryList",this.territoryList);
+        // console.log("ZoneList",this.zoneList);
+        // console.log("TypeOfClientList",this.typeOfClientList);
+        // console.log("paintingStageList",this.paintingStageList);
+
+
 
 
       },
@@ -116,6 +134,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 
   save() {
+    // console.log("this.leadGeneration",this.leadGeneration);
     this.leadService
       .updateLead(this.leadGeneration)
       .pipe(finalize(() => this.alertService.fnLoading(false)))
@@ -131,5 +150,57 @@ export class LeadEditComponent implements OnInit, OnDestroy {
       });
   }
 
+  changeTerritoryByDepot() {
+    console.log(this.leadGeneration.depot);
 
+    this.commonService
+      .getTerritoryListByDepot(this.leadGeneration.depot)
+      .subscribe((res) => {
+        this.territoryList = res.data;
+        // console.log("TerritoryList",this.territoryList);
+      });
+  }
+
+  changeZoneByDepotTerritory() {
+    console.log(this.leadGeneration.depot);
+    this.commonService
+    .getZoneListByDepotTerritory({'depots':[this.leadGeneration.depot],'territories':this.leadGeneration.territory})
+    .subscribe((res) => {
+      this.zoneList = res.data;
+      // console.log("ZoneList",this.zoneList);
+    });
+  }
+
+  fileChangeEvents(fileInput: any) {
+    if (fileInput.target.files && fileInput.target.files[0]) {
+      // Size Filter Bytes
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const image = new Image();
+        image.src = e.target.result;
+        image.onload = (rs) => {
+          const imgBase64Path = e.target.result;
+          this.leadGeneration.photoCaptureUrlBase64 =
+            imgBase64Path;
+        };
+      };
+
+      reader.readAsDataURL(fileInput.target.files[0]);
+    }
+  }
+
+  imageDelete($event) {
+    this.leadService
+      .DeleteLeadImage($event)
+      .subscribe((res) => {
+        if (res.statusCode == 200) {
+          this.leadGeneration.photoCaptureUrl=null;
+        } else {
+          //this.alertService.tosterWarning('Dealer Sales Call Update failed.');
+        }
+      });
+
+    console.log($event);
+  }
 }
