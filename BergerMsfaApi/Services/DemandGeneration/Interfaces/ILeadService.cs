@@ -27,5 +27,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
         Task<bool> IsExistAsync(int id);
         Task<IList<AppLeadFollowUpNotificationModel>> GetAllTodayFollowUpByUserIdForNotificationAsync();
         Task DeleteImage(DealerImageModel dealerImageModel);
+        Task<LeadGenerationModel> GetLeadByIdAsync(int id);
     }
 }

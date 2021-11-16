@@ -189,6 +189,17 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             return modelResult;
         }
 
+        public async Task<LeadGenerationModel> GetLeadByIdAsync(int id)
+        {
+            var result = await _leadGenerationRepository.Where(p=>p.Id==id).FirstOrDefaultAsync();
+                                
+                            
+
+            var modelResult = _mapper.Map<LeadGenerationModel>(result);
+
+            return modelResult;
+        }
+
         public async Task<int> AddLeadGenerateAsync(AppSaveLeadGenerationModel model)
         {
             var leadGeneration = _mapper.Map<LeadGeneration>(model);
@@ -475,8 +486,6 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             item.ExpectedValueChangeCount = model.ExpectedValueChangeCount;
             item.KeyContactPersonMobile = model.KeyContactPersonMobile;
             item.KeyContactPersonName = model.KeyContactPersonName;
-            item.ModifiedBy= 0;
-            item.ModifiedTime = DateTime.Now;
             item.NextFollowUpDate = CustomConvertExtension.ObjectToDateTime(model.NextFollowUpDate);
             item.NumberOfStoriedBuilding = model.NumberOfStoriedBuilding;
             item.OtherClientName = model.OtherClientName;

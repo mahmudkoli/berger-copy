@@ -22,6 +22,10 @@ export class LeadService {
     getLead(id) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}/${id}`);
     }
+
+    getLeadById(id) {
+      return this.http.get<APIResponse>(`${this.LeadsEndpoint}/GetLeadById/${id}`);
+  }
     updateLead(lead:any) {
       return this.http.post<any>(
         this.baseUrl + `v1/Lead/UpdateLeadGenerate/`,

@@ -55,6 +55,20 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             }
         }
 
+        [HttpGet("GetLeadById/{id}")]
+        public async Task<IActionResult> GetLeadById(int id)
+        {
+            try
+            {
+                var result = await _leadService.GetLeadByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpPost("UpdateLeadGenerate")]
         public async Task<IActionResult> UpdateLeadGenerate([FromBody] UpdateLeadGenerationModel model)
         {

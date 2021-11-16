@@ -59,7 +59,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
       if (id) {
         this.alertService.fnLoading(true);
         this.leadService
-          .getLead(id)
+          .getLeadById(id)
           .pipe(finalize(() => this.alertService.fnLoading(false)))
           .subscribe((res) => {
             if (res) {
