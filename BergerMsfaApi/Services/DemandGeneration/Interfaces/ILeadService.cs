@@ -1,4 +1,5 @@
-﻿using BergerMsfaApi.Models.Common;
+﻿using Berger.Data.MsfaEntity.DemandGeneration;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Models.Notification;
 using System;
@@ -12,7 +13,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Interfaces
     public interface ILeadService
     {
         Task<int> AddLeadGenerateAsync(AppSaveLeadGenerationModel model);
-        Task<bool> UpdateLeadGenerateAsync(AppSaveLeadGenerationModel model);
+        Task<bool> UpdateLeadGenerateAsync(LeadGeneration model);
         Task<int> AddLeadFollowUpAsync(AppSaveLeadFollowUpModel model);
         Task<LeadGenerationModel> GetByIdAsync(int id);
         Task<AppSaveLeadFollowUpModel> GetLeadFollowUpByLeadGenerateIdAsync(int id);

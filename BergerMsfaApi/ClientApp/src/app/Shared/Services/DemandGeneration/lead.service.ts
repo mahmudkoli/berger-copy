@@ -22,7 +22,12 @@ export class LeadService {
     getLead(id) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}/${id}`);
     }
-  
+    updateLead(lead:any) {
+      return this.http.post<any>(
+        this.baseUrl + `v1/Lead/UpdateLeadGenerate/`,
+        lead
+      );
+    }
     getLeads(filter?) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }

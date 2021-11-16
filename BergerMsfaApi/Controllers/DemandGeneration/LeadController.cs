@@ -1,6 +1,8 @@
-﻿using BergerMsfaApi.Controllers.Common;
+﻿using Berger.Data.MsfaEntity.DemandGeneration;
+using BergerMsfaApi.Controllers.Common;
 using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
+using BergerMsfaApi.Models.DemandGeneration;
 using BergerMsfaApi.Services.DemandGeneration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,6 +44,25 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             try
             {
                 var result = await _leadService.GetByIdAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("UpdateLeadGenerate")]
+        public async Task<IActionResult> UpdateLeadGenerate([FromBody] LeadGeneration model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationResult(ModelState);
+            }
+
+            try
+            {
+                var result = await _leadService.UpdateLeadGenerateAsync(model);
                 return OkResult(result);
             }
             catch (Exception ex)
