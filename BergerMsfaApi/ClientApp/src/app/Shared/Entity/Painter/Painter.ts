@@ -30,3 +30,42 @@ export class Painter {
 
     }
 }
+
+export class PainterUpdate {
+    id: number;
+    depot: string;
+    // saleGroup: string;
+    territory: string;
+    zone: string;
+    painterCatId: number;
+    painterName: string;
+    address: string;
+    phone: string;
+    noOfPainterAttached: number;
+    hasDbbl: boolean;
+    accDbblNumber: string;
+    accDbblHolderName: string;
+    passportNo: string;
+    nationalIdNo: string;
+    brithCertificateNo: string;
+    painterImageUrl: string;
+    painterImageBase64: string;
+    // attachedDealerCd: string;
+    isAppInstalled: boolean;
+    remark: string;
+    avgMonthlyVal: number;
+    loyality: number;
+    employeeId: string;
+    painterNo: string;
+    painterCode: string;
+    attachedDealerIds: number[];
+
+    constructor(init?: Partial<PainterUpdate>) {
+        this.attachedDealerIds = [];
+        Object.assign(this, init);
+    }
+
+    clear() {
+        this.attachedDealerIds = [];
+    }
+}

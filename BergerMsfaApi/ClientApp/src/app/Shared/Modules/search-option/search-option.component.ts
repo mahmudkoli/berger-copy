@@ -667,4 +667,41 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  onChangeDepot() {
+    this.callTerritories();
+    this.callZones();
+    const controls = this.searchOptionForm.controls;
+    controls['territories'].setValue(null);
+    controls['zones'].setValue(null);
+  }
+
+  onChangeTerritory() {
+    this.callZones();
+    const controls = this.searchOptionForm.controls;
+    controls['zones'].setValue(null);
+  }
+
+  callTerritories () {
+    if (this.hasSearchOption('territories')) {
+      const controls = this.searchOptionForm.controls;
+      const depot = controls['depot'].value;
+      
+        this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+          this.territories = res.data;
+        });
+    }
+  }
+
+  callZones () {
+    if (this.hasSearchOption('zones')) {
+      const controls = this.searchOptionForm.controls;
+      const depot = controls['depot'].value;
+      const territories = controls['territories'].value;
+      
+        this.commonService.getZoneListByDepotTerritory({'depots':[depot],'territories':territories}).subscribe(res => {
+          this.zones = res.data;
+        });
+    }
+  }
 }

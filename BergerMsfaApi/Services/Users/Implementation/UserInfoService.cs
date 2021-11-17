@@ -280,6 +280,12 @@ namespace BergerMsfaApi.Services.Users.Implementation
 
             return finalResult;
         }
+        
+        public async Task<UserInfo> GetUserByUserIdAsync(int userId)
+        {
+            var  result = await _userInfoRepo.FindAsync(s => s.Id == userId);
+            return result;
+        }
 
         public async Task<QueryResultModel<UserInfoModel>> GetUsersAsync(QueryObjectModel query)
         {

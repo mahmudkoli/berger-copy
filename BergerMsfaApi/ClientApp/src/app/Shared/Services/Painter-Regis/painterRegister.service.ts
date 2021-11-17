@@ -34,5 +34,17 @@ export class PainterRegisService {
     public UpdatePainterStatus(model) {
         return this.http.put<APIResponse>(this.baseUrl + 'v1/PainterRegis/UpdatePainterStatus', model);
     }
-   
+
+    public GetPainterForEdit(id) {
+        return this.http.get<APIResponse>(`${this.baseUrl}v1/PainterRegis/GetPainterForEdit/${id}`);
+    }
+    public UpdatePainter(model) {
+        return this.http.put<APIResponse>(`${this.baseUrl}v1/PainterRegis/UpdatePainter`, model);
+    }
+    DeletePainterImage(obj) {
+        return this.http.post<any>(`${this.baseUrl}v1/PainterRegis/DeleteImage`, obj);
+    }
+    DeletePainterCall(id) {
+        return this.http.delete<any>(`${this.baseUrl}v1/PainterRegis/DeletePainterCall/${id}`);
+    }
 }

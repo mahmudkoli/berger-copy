@@ -73,5 +73,66 @@ namespace BergerMsfaApi.Controllers.PainterRegistration
             }
         }
 
+        [HttpGet("GetPainterForEdit/{id}")]
+        public async Task<IActionResult> UpdatePainter(int id)
+        {
+            try
+            {
+                var result = await _painterSvc.GetPainterForEditAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPut("UpdatePainter")]
+        public async Task<IActionResult> UpdatePainter([FromBody] PainterUpdateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return ValidationResult(ModelState);
+                var result = await _painterSvc.PainterUpdateAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("DeleteImage")]
+        public async Task<IActionResult> DeleteImage([FromBody] PainterImageModel models)
+        {
+            try
+            {
+                await _painterSvc.DeleteImage(models);
+                return OkResult(true);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpDelete("DeletePainterCall/{id}")]
+        public async Task<IActionResult> DeletePainterCall(int id)
+        {
+            try
+            {
+                if (!await _painterSvc.IsExistPainterCallAsync(id))
+                {
+                    ModelState.AddModelError(nameof(id), "Painter Call Not Found");
+                    return ValidationResult(ModelState);
+                }
+                var result = await _painterSvc.DeletePainterCallAsync(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
     }
 }

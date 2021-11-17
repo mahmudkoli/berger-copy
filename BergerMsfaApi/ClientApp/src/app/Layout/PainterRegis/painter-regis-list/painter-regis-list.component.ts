@@ -57,6 +57,9 @@ export class PainterRegisListComponent implements OnInit {
     detail(id) {
         this.router.navigate(['/painter/detail/' + id]);
     }
+    edit(id) {
+        this.router.navigate(['/painter/edit/' + id]);
+    }
     updateStatus(id) {
         this.router.navigate(['/painter/update/' + id]);
     }
@@ -178,6 +181,7 @@ export class PainterRegisListComponent implements OnInit {
 		// enabledSearch: true,
 		enabledSerialNo: true,
         enabledDetailsBtn: true,
+        enabledEditBtn: true,
 		// pageSize: 10,
 		enabledPagination: true,
 		enabledDataLength: true,
@@ -201,6 +205,8 @@ export class PainterRegisListComponent implements OnInit {
 
             if (event.action == "details-item") {
                 this.detail(event.record.id);
+            } else if (event.action == "edit-item") {
+                this.edit(event.record.id);
             }
 			
 
