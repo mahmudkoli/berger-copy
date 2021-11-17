@@ -204,6 +204,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int PaintingStageId { get; set; }
         //public DropdownDetail PaintingStage { get; set; }
         public string VisitDate { get; set; }
+        public string VisitDateText { get; set; }
         public string ExpectedDateOfPainting { get; set; }
         public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }

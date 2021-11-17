@@ -186,11 +186,20 @@
             <div class="position-relative form-group">
 
                 <label for="name">Visit Date</label>
-                <div class="input-group">
-                    <input class="form-control"  type="date"
+                <!-- <div class="input-group">
+                    <input class="form-control"  type="datetime"
                         [(ngModel)]="leadGeneration.visitDate"
                         name="visitDate">
 
+                </div> -->
+
+                <div class="input-group">
+                    <input class="form-control"  [(ngModel)]="visitDate"
+                     name="dp"  
+                        ngbDatepicker #d="ngbDatepicker" [placement]="'bottom'">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -202,11 +211,19 @@
                 <div class="position-relative form-group">
     
                     <label for="name">Expected Date Of Painting</label>
-                    <div class="input-group">
-                        <input  class="form-control" type="date"
+                    <!-- <div class="input-group">
+                        <input  class="form-control" type="datetime"
                             [(ngModel)]="leadGeneration.expectedDateOfPainting"
                             name="expectedDateOfPainting">
     
+                    </div> -->
+                    <div class="input-group">
+                        <input class="form-control"  [(ngModel)]="expectedDateOfPainting"
+                         name="dp"  
+                            ngbDatepicker #e="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="e.toggle()" type="button"></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -366,11 +383,19 @@
                 <div class="position-relative form-group">
     
                     <label for="name">Next FollowUp Date</label>
-                    <div class="input-group">
+                    <!-- <div class="input-group">
                         <input class="form-control" type="date"
                             [(ngModel)]="leadGeneration.nextFollowUpDate"
                             name="nextFollowUpDate">
     
+                    </div> -->
+                    <div class="input-group">
+                        <input class="form-control"  [(ngModel)]="nextFollowUpDate"
+                         name="dp"  
+                            ngbDatepicker #n="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="n.toggle()" type="button"></button>
+                        </div>
                     </div>
                 </div>
             </div>

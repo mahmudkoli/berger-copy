@@ -30,6 +30,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
   zoneList: any[] = [];
   typeOfClientList: any[] = [];
   paintingStageList:any[]=[];
+   visitDate:any;
+   nextFollowUpDate:any;
+   expectedDateOfPainting:any;
+
 
 
 
@@ -64,7 +68,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res) {
               this.leadGeneration = res.data as LeadGeneration;
-              console.log("this.leadGeneration",this.leadGeneration)
+              this.visitDate=this.leadGeneration.visitDate;
+              this.nextFollowUpDate=this.leadGeneration.nextFollowUpDate;
+              this.expectedDateOfPainting=this.leadGeneration.expectedDateOfPainting;
             }
           });
       } else {
@@ -87,8 +93,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
     const forkJoinSubscription1 = forkJoin([
       this.commonService.getUserInfoListByCurrentUserWithoutZoUser(),
       this.commonService.getDepotList(),
-      this.commonService.getTerritoryList(),
-      this.commonService.getZoneList(),
+      // this.commonService.getTerritoryList(),
+      // this.commonService.getZoneList(),
       this.dynamicDropdownService.GetDropdownByTypeCd(
         EnumDynamicTypeCode.TypeOfClient
       ),
@@ -99,29 +105,18 @@ export class LeadEditComponent implements OnInit, OnDestroy {
       ([
         users,
         depot,
-        territory,
-        zone,
+        // territory,
+        // zone,
         typeOfClient,
         paintingStage
         
       ]) => {
         this.userList = users.data;
         this.depotList = depot.data;
-        this.territoryList = territory.data;
-        this.zoneList = zone.data;
+        // this.territoryList = territory.data;
+        // this.zoneList = zone.data;
         this.typeOfClientList = typeOfClient.data;
         this.paintingStageList=paintingStage.data
-
-        // console.log("UserList",this.userList);
-        // console.log("DepotList",this.depotList);
-        // console.log("TerritoryList",this.territoryList);
-        // console.log("ZoneList",this.zoneList);
-        // console.log("TypeOfClientList",this.typeOfClientList);
-        // console.log("paintingStageList",this.paintingStageList);
-
-
-
-
       },
       (err) => {},
       () => {}
@@ -134,7 +129,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 
   save() {
-    // console.log("this.leadGeneration",this.leadGeneration);
+    this.setDateFromDatePicker()
     this.leadService
       .updateLead(this.leadGeneration)
       .pipe(finalize(() => this.alertService.fnLoading(false)))
@@ -154,7 +149,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
     console.log(this.leadGeneration.depot);
 
     this.commonService
-      .getTerritoryListByDepot(this.leadGeneration.depot)
+      .getTerritoryListByDepot({'depots':this.leadGeneration.depot})
       .subscribe((res) => {
         this.territoryList = res.data;
         // console.log("TerritoryList",this.territoryList);
@@ -202,5 +197,19 @@ export class LeadEditComponent implements OnInit, OnDestroy {
       });
 
     console.log($event);
+  }
+
+  setDateFromDatePicker() {
+    if(this.visitDate && this.visitDate.day && this.visitDate.month && this.visitDate.year){
+      this.leadGeneration.visitDate = new Date(this.visitDate.year,this.visitDate.month-1,this.visitDate.day);
+    }
+    if(this.nextFollowUpDate && this.nextFollowUpDate.day && this.nextFollowUpDate.month && this.nextFollowUpDate.year){
+      this.leadGeneration.nextFollowUpDate = new Date(this.nextFollowUpDate.year,this.nextFollowUpDate.month-1,this.nextFollowUpDate.day);
+
+    }
+    if(this.expectedDateOfPainting && this.expectedDateOfPainting.day && this.expectedDateOfPainting.month && this.expectedDateOfPainting.year){
+      this.leadGeneration.expectedDateOfPainting = new Date(this.expectedDateOfPainting.year,this.expectedDateOfPainting.month-1,this.expectedDateOfPainting.day);
+
+    }
   }
 }
