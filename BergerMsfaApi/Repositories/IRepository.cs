@@ -42,7 +42,7 @@ namespace BergerMsfaApi.Repositories
         Task<IPagedList<TEntity>> GetAllPagedAsync(int pageNumber, int pageSize);
         Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IPagedList<TEntity>> FindAllPagedAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber, int pageSize);
-        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, bool ignoreQueryFilters = false);
         Task<TEntity> FindIncludeAsync(
             Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties);
@@ -64,7 +64,7 @@ namespace BergerMsfaApi.Repositories
         Task<string> MaxFuncAsync(Expression<Func<TEntity, string>> predicate, Expression<Func<TEntity, bool>> where);
         Task<string> MinAsync(Expression<Func<TEntity, string>> predicate);
         Task<string> MinFuncAsync(Expression<Func<TEntity, string>> predicate, Expression<Func<TEntity, bool>> where);
-        Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate, bool ignoreQueryFilters = false);
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task<IList<TResult>> GetAllIncludeAsync<TResult>(Expression<Func<TEntity, TResult>> selector,

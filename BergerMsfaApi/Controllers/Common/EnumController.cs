@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using Berger.Common.Enumerations;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class EnumController : BaseController

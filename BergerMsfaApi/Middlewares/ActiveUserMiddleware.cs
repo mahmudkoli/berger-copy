@@ -29,7 +29,7 @@ namespace BergerMsfaApi.Middlewares
 
             if (context.User.Identity.IsAuthenticated)
             {
-                var isActive = await userService.IsActiveUserAsync(appUserName);
+                var isActive = await userService.IsGlobalActiveUserAsync(appUserName);
 
                 if (!isActive)
                     await HandleActiveUserAsync(context);
