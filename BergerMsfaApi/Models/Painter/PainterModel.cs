@@ -26,7 +26,9 @@ namespace BergerMsfaApi.Models.PainterRegistration
 
             profile.CreateMap<PNTR.PainterCall, PainterCallModel>()
                 .ForMember(dest => dest.CreatedTimeStr, opt => opt.MapFrom(src => src.CreatedTime.ToString("dd-MM-yyyy")))
-                .ForMember(dest => dest.PainterCatName, opt => opt.MapFrom(src => src != null ? $"{src.PainterCat.DropdownName}" : string.Empty));
+                .ForMember(dest => dest.PainterCatName, opt => opt.MapFrom(src => src != null ? $"{src.PainterCat.DropdownName}" : string.Empty))
+                .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => new AttachedDealerPainterCallModel() { Id = s.Id, DealerId = s.DealerId })));
+            
             profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src != null ? $"{src.Company.DropdownName}" : string.Empty));
                 //.ForMember(dest => dest.CumelativeInPercent, opt => opt.MapFrom(src => src.CountInPercent));

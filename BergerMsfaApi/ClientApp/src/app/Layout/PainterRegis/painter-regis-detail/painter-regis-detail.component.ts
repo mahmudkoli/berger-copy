@@ -162,16 +162,18 @@ export class PainterRegisDetailComponent implements OnInit {
     
     public cellClickCallbackFn(event: any) {
         let cellName = event.cellName;
-        let data = event.record.painterCompanyMTDValue;
+        let companyMTDData = event.record.painterCompanyMTDValue;
+        let dealerData = event.record.attachedDealers;
         if (cellName == 'viewDetailsText') {
-            this.detailsPainterCall(data);
+            this.detailsPainterCall(companyMTDData, dealerData);
         }
     }
-    detailsPainterCall(data) {
-        console.log(data);
-        this.openDetailsPainterCallModal(data);
+    detailsPainterCall(companyMTDData, dealerData) {
+        console.log(companyMTDData);
+        console.log(dealerData);
+        this.openDetailsPainterCallModal(companyMTDData, dealerData);
     }
-    openDetailsPainterCallModal(data: any) {
+    openDetailsPainterCallModal(companyMTDData: any, dealerData: any) {
         let ngbModalOptions: NgbModalOptions = {
             backdrop: "static",
             keyboard: false,
@@ -181,7 +183,8 @@ export class PainterRegisDetailComponent implements OnInit {
             ModalPainterCallDetailsComponent,
             ngbModalOptions
         );
-        modalRef.componentInstance.painterCompanyMTDValue = data;
+        modalRef.componentInstance.painterCompanyMTDValue = companyMTDData;
+        modalRef.componentInstance.attachedDealers = dealerData;
 
         modalRef.result.then(
             (result) => {

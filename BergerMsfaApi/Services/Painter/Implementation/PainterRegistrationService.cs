@@ -144,7 +144,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                       .Include(i => i.AttachedDealers)
                                       .Include(i => i.PainterCat)
                                       .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCompanyMTDValue).ThenInclude(i=>i.Company)
-                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCat),
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.PainterCat)
+                                      .Include(i => i.PainterCalls).ThenInclude(i => i.AttachedDealers),
 
                     true
                 );
@@ -203,12 +204,46 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "M. abc def", CustomerNo = 101 });
             //painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = "Mr. bds fsad", CustomerNo = 102 });
 
-            foreach (var id in painterModel.AttachedDealers)
+            var dealerIds = new List<int>();
+            if (painterModel.AttachedDealers.Any()) dealerIds.AddRange(painterModel.AttachedDealers);
+            if (painterModel.PainterCalls.Any() && painterModel.PainterCalls[0].AttachedDealers.Any()) dealerIds.AddRange(painterModel.PainterCalls.SelectMany(x => x.AttachedDealers.Select(y => y.DealerId)));
+
+            if (dealerIds.Any())
             {
-                var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
-                painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails?.CustomerName??string.Empty, CustomerNo = dealerDetails?.CustomerNo??string.Empty });
-                
+                var dealers = await _dealerInfoSvc.GetAllIncludeAsync(x => new { x.Id, x.CustomerNo, x.CustomerName },
+                                        x => dealerIds.Contains(x.Id),
+                                        null, null, true);
+
+                if (painterModel.AttachedDealers.Any())
+                {
+                    painterModel.DealerDetails = new List<AttachedDealerDetails>();
+                    foreach (var dId in painterModel.AttachedDealers)
+                    {
+                        var dealer = dealers.FirstOrDefault(d => d.Id == dId);
+                        painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealer?.CustomerName ?? string.Empty, CustomerNo = dealer?.CustomerNo ?? string.Empty });
+                    }
+                }
+
+                if (painterModel.PainterCalls.Any() && painterModel.PainterCalls[0].AttachedDealers.Any())
+                {
+                    foreach (var pc in painterModel.PainterCalls)
+                    {
+                        foreach (var pad in pc.AttachedDealers)
+                        {
+                            var dealer = dealers.FirstOrDefault(d => d.Id == pad.DealerId);
+                            pad.CustomerName = dealer?.CustomerName ?? string.Empty; 
+                            pad.CustomerNo = dealer?.CustomerNo ?? string.Empty;
+                        }
+                    }
+                }
             }
+
+            //foreach (var id in painterModel.AttachedDealers)
+            //{
+            //    var dealerDetails = await _dealerInfoSvc.FindAsync(dealerInfo => dealerInfo.Id == id);
+            //    painterModel.DealerDetails.Add(new AttachedDealerDetails { CustomerName = dealerDetails?.CustomerName??string.Empty, CustomerNo = dealerDetails?.CustomerNo??string.Empty });
+                
+            //}
 
             // var painterAttachments = await _attachmentSvc.FindAllAsync(f => f.ParentId == painterModel.Id && f.TableName == nameof(Painter));
             // foreach (var item in painterCallList)
