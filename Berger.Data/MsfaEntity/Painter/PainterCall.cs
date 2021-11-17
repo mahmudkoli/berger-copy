@@ -23,7 +23,8 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public bool IsAppInstalled { get; set; }
         public float Loyality { get; set; }
         public bool HasDbbl { get; set; }
-        public int PainterCatId { get; set; }
+        public int PainterCatId { get; set; } // type of client
+        public DropdownDetail PainterCat { get; set; } // type of client
         public string AccDbblNumber { get; set; }
         public string AccDbblHolderName { get; set; }
         public string AccChangeReason { get; set; }

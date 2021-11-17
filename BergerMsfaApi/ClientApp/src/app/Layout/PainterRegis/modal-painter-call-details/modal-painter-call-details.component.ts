@@ -14,6 +14,7 @@ import { CommonService } from '../../../Shared/Services/Common/common.service';
 export class ModalPainterCallDetailsComponent implements OnInit {
 
 	@Input() painterCompanyMTDValue;
+	@Input() attachedDealers;
 
 	private subscriptions: Subscription[] = [];
 
@@ -28,6 +29,7 @@ export class ModalPainterCallDetailsComponent implements OnInit {
 
 	ngOnInit() {
 		console.log(this.painterCompanyMTDValue);
+		console.log(this.attachedDealers);
 	 }
 	ngOnDestroy() {
 		this.subscriptions.forEach(sb => sb.unsubscribe());
@@ -59,6 +61,24 @@ export class ModalPainterCallDetailsComponent implements OnInit {
 		// enabledRecordCreateBtn: true,
 		enabledDataLength: true,
 		// newRecordButtonText: 'New ELearning'
+		pageSize: 50,
+		defaultPaggingSize: 50,
+	};
+
+	public attachedDealersPtableSettings: IPTableSetting = {
+		tableID: "attachedDealers-table",
+		tableClass: "table table-border ",
+		tableName: 'Attached Dealers',
+		tableRowIDInternalName: "id",
+		tableColDef: [
+            { headerName: 'Dealer Name', width: '50%', internalName: 'customerName', sort: false, type: "" },
+            { headerName: 'Dealer No', width: '50%', internalName: 'customerNo', sort: false, type: "" },
+		],
+		enabledSerialNo: true,
+		enabledPagination: true,
+		enabledDataLength: true,
+		pageSize: 50,
+		defaultPaggingSize: 50,
 	};
 		
 }

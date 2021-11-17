@@ -120,7 +120,7 @@
     <br /> -->
 
     <div class="col col-md-12">
-        <app-p-table [pTableSetting]="ptableSettingsAttachedDealers" [pTableMasterData]="attachedDealers" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength">
+        <app-p-table [pTableSetting]="ptableSettingsAttachedDealers" [pTableMasterData]="attachedDealers">
         </app-p-table>
     </div>
 
@@ -128,8 +128,8 @@
     <br /> -->
 
     <div class="col col-md-12">
-        <app-p-table [pTableSetting]="ptableSettingsPainterCall" [pTableMasterData]="painterCalls" [pTableTotalDataLength]="totalDataLength" [pTableTotalFilterDataLength]="totalFilterDataLength"
-                     (cellClickCallbackFn)="cellClickCallbackFn($event)" (serverSiteCallbackFn)="serverSiteCallbackFn($event)">
+        <app-p-table [pTableSetting]="ptableSettingsPainterCall" [pTableMasterData]="painterCalls"
+            (cellClickCallbackFn)="cellClickCallbackFn($event)" (customActivityOnRecord)="fnCustomTrigger($event)">
         </app-p-table>
     </div>
     <div class="d-flex justify-content-end">

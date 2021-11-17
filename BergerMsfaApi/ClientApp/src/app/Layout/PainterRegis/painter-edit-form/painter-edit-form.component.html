@@ -1,0 +1,248 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+        <div class="btn-actions-pane-right">
+        </div>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="painterForm" (ngSubmit)="onSubmit()" *ngIf="painterForm">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Depot</label>
+                        <ng-select [items]="depots" bindValue="code" bindLabel="name" 
+                            formControlName="depot" (change)="changeDealerShow();onChangeDepot()">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.depot.touched && formControls.depot.errors">
+                            <span *ngIf="formControls.depot.errors.required">Depot is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select [items]="territories" bindValue="code" bindLabel="name" 
+                            formControlName="territory" (change)="changeDealerShow();onChangeTerritory()">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.territory.touched && formControls.territory.errors">
+                            <span *ngIf="formControls.territory.errors.required">Territory is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Zone</label>
+                        <ng-select [items]="zones" bindValue="code" bindLabel="name" 
+                            formControlName="zone" (change)="changeDealerShow()">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.zone.touched && formControls.zone.errors">
+                            <span *ngIf="formControls.zone.errors.required">Zone is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Employee Id</label>
+                        <ng-select [items]="users" bindValue="employeeId" bindLabel="fullName" 
+                            formControlName="employeeId" [virtualScroll]="true">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.employeeId.touched && formControls.employeeId.errors">
+                            <span *ngIf="formControls.employeeId.errors.required">Employee Id is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Attached Dealers</label>
+                        <ng-select [items]="dealers" bindValue="id" bindLabel="customerName" 
+                            formControlName="attachedDealerIds" [multiple]="true" [virtualScroll]="true">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.attachedDealerIds.touched && formControls.attachedDealerIds.errors">
+                            <span *ngIf="formControls.attachedDealerIds.errors.required">Attached Dealers is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Painter Type</label>
+                        <ng-select [items]="painterTypes" bindValue="id" bindLabel="dropdownName" 
+                            formControlName="painterCatId">
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.painterCatId.touched && formControls.painterCatId.errors">
+                            <span *ngIf="formControls.painterCatId.errors.required">Painter Type is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="form-row"> -->
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Painter Name</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="painterName"
+                                [ngClass]="{'is-valid':formControls.painterName.touched && !formControls.painterName.errors,
+                                'is-invalid':formControls.painterName.touched && formControls.painterName.errors }" />
+                        <small class="text-danger" *ngIf="formControls.painterName.touched && formControls.painterName.errors">
+                            <span *ngIf="formControls.painterName.errors.required">Painter Name is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Address</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="address"
+                                [ngClass]="{'is-valid':formControls.address.touched && !formControls.address.errors,
+                                'is-invalid':formControls.address.touched && formControls.address.errors }" />
+                        <small class="text-danger" *ngIf="formControls.address.touched && formControls.address.errors">
+                            <span *ngIf="formControls.address.errors.required">Address is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="form-row"> -->
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Phone</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="phone"
+                                [ngClass]="{'is-valid':formControls.phone.touched && !formControls.phone.errors,
+                                'is-invalid':formControls.phone.touched && formControls.phone.errors }" />
+                        <small class="text-danger" *ngIf="formControls.phone.touched && formControls.phone.errors">
+                            <span *ngIf="formControls.phone.errors.required">Phone is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">No Of Painter Attached</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="noOfPainterAttached"
+                                [ngClass]="{'is-valid':formControls.noOfPainterAttached.touched && !formControls.noOfPainterAttached.errors,
+                                'is-invalid':formControls.noOfPainterAttached.touched && formControls.noOfPainterAttached.errors }" />
+                        <small class="text-danger" *ngIf="formControls.noOfPainterAttached.touched && formControls.noOfPainterAttached.errors">
+                            <span *ngIf="formControls.noOfPainterAttached.errors.required">No Of Painter Attached is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-check">
+                        <input type="checkbox" class="form-check-input" id="hasDbbl" formControlName="hasDbbl">
+                        <label class="form-check-label" for="hasDbbl">Has Dbbl</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Acc Dbbl Number</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="accDbblNumber"
+                                [ngClass]="{'is-valid':formControls.accDbblNumber.touched && !formControls.accDbblNumber.errors,
+                                'is-invalid':formControls.accDbblNumber.touched && formControls.accDbblNumber.errors }" />
+                        <small class="text-danger" *ngIf="formControls.accDbblNumber.touched && formControls.accDbblNumber.errors">
+                            <span *ngIf="formControls.accDbblNumber.errors.required">Acc Dbbl Number is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Acc Dbbl Holder Name</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="accDbblHolderName"
+                                [ngClass]="{'is-valid':formControls.accDbblHolderName.touched && !formControls.accDbblHolderName.errors,
+                                'is-invalid':formControls.accDbblHolderName.touched && formControls.accDbblHolderName.errors }" />
+                        <small class="text-danger" *ngIf="formControls.accDbblHolderName.touched && formControls.accDbblHolderName.errors">
+                            <span *ngIf="formControls.accDbblHolderName.errors.required">Acc Dbbl Holder Name is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Passport No</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="passportNo"
+                                [ngClass]="{'is-valid':formControls.passportNo.touched && !formControls.passportNo.errors,
+                                'is-invalid':formControls.passportNo.touched && formControls.passportNo.errors }" />
+                        <small class="text-danger" *ngIf="formControls.passportNo.touched && formControls.passportNo.errors">
+                            <span *ngIf="formControls.passportNo.errors.required">Passport No is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">National Id No</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="nationalIdNo"
+                                [ngClass]="{'is-valid':formControls.nationalIdNo.touched && !formControls.nationalIdNo.errors,
+                                'is-invalid':formControls.nationalIdNo.touched && formControls.nationalIdNo.errors }" />
+                        <small class="text-danger" *ngIf="formControls.nationalIdNo.touched && formControls.nationalIdNo.errors">
+                            <span *ngIf="formControls.nationalIdNo.errors.required">National Id No is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Birth Certificate No</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="brithCertificateNo"
+                                [ngClass]="{'is-valid':formControls.brithCertificateNo.touched && !formControls.brithCertificateNo.errors,
+                                'is-invalid':formControls.brithCertificateNo.touched && formControls.brithCertificateNo.errors }" />
+                        <small class="text-danger" *ngIf="formControls.brithCertificateNo.touched && formControls.brithCertificateNo.errors">
+                            <span *ngIf="formControls.brithCertificateNo.errors.required">Birth Certificate No is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-check">
+                        <input type="checkbox" class="form-check-input" id="isAppInstalled" formControlName="isAppInstalled">
+                        <label class="form-check-label" for="isAppInstalled">Is App Installed</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Remarks</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="remark"
+                                [ngClass]="{'is-valid':formControls.remark.touched && !formControls.remark.errors,
+                                'is-invalid':formControls.remark.touched && formControls.remark.errors }" />
+                        <small class="text-danger" *ngIf="formControls.remark.touched && formControls.remark.errors">
+                            <span *ngIf="formControls.remark.errors.required">Remarks is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Avg Monthly Val</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="avgMonthlyVal"
+                                [ngClass]="{'is-valid':formControls.avgMonthlyVal.touched && !formControls.avgMonthlyVal.errors,
+                                'is-invalid':formControls.avgMonthlyVal.touched && formControls.avgMonthlyVal.errors }" />
+                        <small class="text-danger" *ngIf="formControls.avgMonthlyVal.touched && formControls.avgMonthlyVal.errors">
+                            <span *ngIf="formControls.avgMonthlyVal.errors.required">Avg Monthly Val is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Loyalty (%)</label>
+                        <input type="text" autocomplete="off" class="form-control" formControlName="loyality"
+                                [ngClass]="{'is-valid':formControls.loyality.touched && !formControls.loyality.errors,
+                                'is-invalid':formControls.loyality.touched && formControls.loyality.errors }" />
+                        <small class="text-danger" *ngIf="formControls.loyality.touched && formControls.loyality.errors">
+                            <span *ngIf="formControls.loyality.errors.required">Loyalty (%) is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p><span><strong>Painter Image :</strong></span>
+                        <app-image-with-delete-button *ngIf='painter.painterImageUrl'
+                            [imageUrl]="painter.painterImageUrl"
+                            [refObject]="{id:id,type:'painterImageUrl',url:painter.painterImageUrl}"
+                            (deleteEvenet)="imageDelete($event)"></app-image-with-delete-button>
+                     </p>
+                    <input type='file' (change)="fileChangeEvents($event)">
+                </div>
+            <!-- </div>
+            <div class="form-row"> -->
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="painterForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>
