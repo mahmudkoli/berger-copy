@@ -68,9 +68,20 @@ export class LeadEditComponent implements OnInit, OnDestroy {
           .subscribe((res) => {
             if (res) {
               this.leadGeneration = res.data as LeadGeneration;
-              this.visitDate=this.leadGeneration.visitDate;
-              this.nextFollowUpDate=this.leadGeneration.nextFollowUpDate;
-              this.expectedDateOfPainting=this.leadGeneration.expectedDateOfPainting;
+              // this.visitDate=this.leadGeneration.visitDate;
+              if(this.leadGeneration.visitDate){
+                const dateStr = new Date(this.leadGeneration.visitDate);
+                this.visitDate={'year':dateStr.getFullYear(),'month':dateStr.getMonth()+1,'day':dateStr.getDate()};
+              }
+              if(this.leadGeneration.nextFollowUpDate){
+                const dateStr = new Date(this.leadGeneration.nextFollowUpDate);
+                this.nextFollowUpDate={'year':dateStr.getFullYear(),'month':dateStr.getMonth()+1,'day':dateStr.getDate()};
+              }
+              if(this.leadGeneration.expectedDateOfPainting){
+                const dateStr = new Date(this.leadGeneration.expectedDateOfPainting);
+                this.expectedDateOfPainting={'year':dateStr.getFullYear(),'month':dateStr.getMonth()+1,'day':dateStr.getDate()};
+              }
+              
             }
           });
       } else {
@@ -149,7 +160,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
     console.log(this.leadGeneration.depot);
 
     this.commonService
-      .getTerritoryListByDepot({'depots':this.leadGeneration.depot})
+      .getTerritoryListByDepot({'depots':[this.leadGeneration.depot]})
       .subscribe((res) => {
         this.territoryList = res.data;
         // console.log("TerritoryList",this.territoryList);
@@ -159,7 +170,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
   changeZoneByDepotTerritory() {
     console.log(this.leadGeneration.depot);
     this.commonService
-    .getZoneListByDepotTerritory({'depots':[this.leadGeneration.depot],'territories':this.leadGeneration.territory})
+    .getZoneListByDepotTerritory({'depots':[this.leadGeneration.depot],'territories':[this.leadGeneration.territory]})
     .subscribe((res) => {
       this.zoneList = res.data;
       // console.log("ZoneList",this.zoneList);

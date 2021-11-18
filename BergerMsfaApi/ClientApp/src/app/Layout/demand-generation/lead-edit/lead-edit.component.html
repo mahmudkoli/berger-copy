@@ -40,7 +40,7 @@
             <div class="col-md-6">
                 <div class="position-relative form-group">
                     <label>Depot</label>
-                    <ng-select [(ngModel)]="leadGeneration.depot" [multiple]="false" [virtualScroll]="true"
+                    <ng-select [(ngModel)]="leadGeneration.depot" (change)="changeTerritoryByDepot()" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
                         <ng-option *ngFor="let dl of depotList;"  [value]="dl.code">{{dl.name}}</ng-option>
@@ -51,7 +51,7 @@
             <div class="col-md-6">
                 <div class="position-relative form-group">
                     <label>Territory</label>
-                    <ng-select [(ngModel)]="leadGeneration.territory" [multiple]="false" [virtualScroll]="true"
+                    <ng-select [(ngModel)]="leadGeneration.territory" (change)="changeZoneByDepotTerritory()" [multiple]="false" [virtualScroll]="true"
                         >
                         <!-- <ng-option>--Select--</ng-option> -->
                         <ng-option *ngFor="let dl of territoryList;" [value]="dl.code">{{dl.name}}</ng-option>
