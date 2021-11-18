@@ -2,6 +2,7 @@
 
 export class SearchOptionQuery extends QueryObject {
     depot: string;
+    dealerType:number;
     salesGroups: string[];
     territories: string[];
     zones: string[];
@@ -86,6 +87,7 @@ export enum EnumSearchOption {
     Date='date',
     UserId='userId',
     DealerId='dealerId',
+    DealerType='dealerType',
     CreditControlArea='creditControlArea',
     Division='division',
     PaintingStageId='paintingStageId',

@@ -4,8 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
 import { LeadGeneration, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
+import { LeadGenerationDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.service';
 
@@ -16,7 +18,8 @@ import { LeadService } from 'src/app/Shared/Services/DemandGeneration/lead.servi
 })
 export class LeadListComponent implements OnInit, OnDestroy {
 
-	query: LeadQuery;
+	query: LeadGenerationDetailsQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	leads: LeadGeneration[];
 	totalDataLength: number = 0; // for server side paggination
@@ -42,9 +45,9 @@ export class LeadListComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.searchConfiguration();
-		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
-			this.loadLeadsPage();
-		});
+		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+		// 	this.loadLeadsPage();
+		// });
 	}
 
 	ngOnDestroy() {
@@ -77,13 +80,37 @@ export class LeadListComponent implements OnInit, OnDestroy {
 	}
 
 	searchConfiguration() {
-		this.query = new LeadQuery({
+		this.query = new LeadGenerationDetailsQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'createdTime',
 			isSortAscending: false,
 			globalSearchValue: ''
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
+	}
+
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.PaintingStageId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
+		]});
+
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		this.query.userId = queryObj.userId;
+		this.query.depot = queryObj.depot;
+		this.query.territories = queryObj.territories;
+		this.query.zones = queryObj.zones;
+		this.loadLeadsPage();
+		// this.loadFocusDealersPage();
 	}
 
 	// toggleActiveInactive(id) {
@@ -107,13 +134,14 @@ export class LeadListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Project Name', width: '10%', internalName: 'projectName', sort: false, type: "" },
 			{ headerName: 'Project Address', width: '10%', internalName: 'projectAddress', sort: false, type: "" },
 			{ headerName: 'Details', width: '10%', internalName: 'detailsBtnText', sort: false, type: "button", onClick: 'true', innerBtnIcon: "" }
+
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
 		// pageSize: 10,
 		enabledPagination: true,
 		// enabledDeleteBtn: true,
-		// enabledEditBtn: true,
+		enabledEditBtn:true, 
 		enabledCellClick: true,
 		enabledColumnFilter: false,
 		// enabledRecordCreateBtn: true,
@@ -123,7 +151,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
-		this.query = new LeadQuery({
+		this.query = new LeadGenerationDetailsQuery({
 			page: queryObj.pageNo,
 			pageSize: queryObj.pageSize,
 			sortBy: queryObj.orderBy,
@@ -141,9 +169,24 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		if (cellName == "detailsBtnText") {
 			this.detailsLead(id);
 		}
+		
+	}
+
+	public fnCustomTrigger(event) {
+
+		 if (event.action == "edit-item") {
+			this.editLead(event.record.id);
+		}
+		
 	}
 
 	public detailsLead(id) {
 		this.router.navigate([`/lead/details/${id}`]);
 	}
+
+	public editLead(id) {
+		this.router.navigate([`/lead/edit/${id}`]);
+	}
+
+	
 }

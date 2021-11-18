@@ -22,13 +22,29 @@ export class LeadService {
     getLead(id) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}/${id}`);
     }
-  
+
+    getLeadById(id) {
+      return this.http.get<APIResponse>(`${this.LeadsEndpoint}/GetLeadById/${id}`);
+  }
+    updateLead(lead:any) {
+      return this.http.post<any>(
+        this.baseUrl + `v1/Lead/UpdateLeadGenerate/`,
+        lead
+      );
+    }
     getLeads(filter?) {
       return this.http.get<APIResponse>(`${this.LeadsEndpoint}?${this.commonService.toQueryString(filter)}`);
     }
 
     deleteLeadFollowUp(id) {
         return this.http.delete<APIResponse>(`${this.LeadsEndpoint}/DeleteLeadFollowUp/${id}`);
+    }
+
+    DeleteLeadImage(obj) {
+      return this.http.post<any>(
+        this.baseUrl + `v1/Lead/DeleteImage/`,
+        obj
+      );
     }
     // activeInactive(id) {
     //   return this.http.post<APIResponse>(`${this.LeadsEndpoint}/activeInactive/${id}`, null);

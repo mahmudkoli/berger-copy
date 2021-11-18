@@ -202,6 +202,8 @@ export class DealerSalesCallQuery extends QueryObject {
   custZones: string[];
   salesGroup: string[];
   dealerId?: number;
+  dealerType?: number;
+
   constructor(init?: Partial<DealerSalesCallQuery>) {
     super();
     Object.assign(this, init);

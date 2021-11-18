@@ -45,6 +45,8 @@ export class LeadGeneration {
     nextFollowUpDateText: string;
     remarks: string;
     photoCaptureUrl: string;
+    photoCaptureUrlBase64: string;
+
 
     leadFollowUps: LeadFollowUp[];
 
@@ -201,14 +203,20 @@ export enum EnumLeadActualVolumeSoldType {
 }
 
 export class LeadQuery extends QueryObject {
-    title: string;
-    
+    userId: number;;
+    depot: string;
+    territories: string[];
+    zones: string[];
+
     constructor(init?: Partial<LeadQuery>) {
         super();
         Object.assign(this, init);
     }
 
     clear() {
-        this.title = '';
+        this.userId = 0;
+        this.depot = '';
+        this.territories = [];
+        this.zones = [];
     }
 }
