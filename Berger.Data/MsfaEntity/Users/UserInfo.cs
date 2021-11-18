@@ -26,9 +26,6 @@ namespace Berger.Data.MsfaEntity.Users
         public DateTime? DateOfBirth { get; set; }
         public string ImageUrl { get; set; }
 
-        public string Password { get; set; }
-        public EnumApplicationCategory ApplicationCategory { get; set; }
-
         public List<UserRoleMapping> Roles { get; set; }
         public List<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
 

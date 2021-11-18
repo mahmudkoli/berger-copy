@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.KPI;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Services.KPI.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.KPI
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class NewDealerDevelopmentController : BaseController

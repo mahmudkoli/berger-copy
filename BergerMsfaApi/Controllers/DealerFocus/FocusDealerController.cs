@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Berger.Data.MsfaEntity.SAPTables;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Models.FocusDealer;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
@@ -8,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class FocusDealerController : BaseController

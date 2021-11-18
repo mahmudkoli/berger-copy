@@ -1,5 +1,4 @@
-﻿using Berger.Common.Enumerations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -128,6 +127,5 @@ namespace Berger.Common.Constants
     {
         public const string SerilogMSSqlServerTableName = "ApplicationLogs";
         public const string SpaceString = " ";
-        public const string ApplicationCategory = "ApplicationCategory";
     }
 }

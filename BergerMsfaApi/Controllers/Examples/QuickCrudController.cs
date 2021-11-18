@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Examples
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class QuickCrudController : BaseController

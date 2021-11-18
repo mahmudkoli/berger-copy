@@ -1,5 +1,4 @@
 using System;
-using Berger.Common.Enumerations;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.AlertNotification;
 using Berger.Data.MsfaEntity.CollectionEntry;
@@ -42,8 +41,6 @@ namespace Berger.Data.MsfaEntity
             modelBuilder.Entity<Depot>(e => { e.HasNoKey(); });
             //modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
-
-            modelBuilder.Entity<UserInfo>(e => { e.HasQueryFilter(x => x.ApplicationCategory == EnumApplicationCategory.MSFAApp); });
         }
 
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)

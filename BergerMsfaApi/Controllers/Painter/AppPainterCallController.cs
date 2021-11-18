@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Painter
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppPainterCallController : BaseController

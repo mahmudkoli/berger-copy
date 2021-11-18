@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Dealer;
 using BergerMsfaApi.Services.Brand.Implementation;
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Common
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class CommonController : BaseController

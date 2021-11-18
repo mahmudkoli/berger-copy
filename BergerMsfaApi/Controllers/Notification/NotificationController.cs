@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Notification;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.Setup.Interfaces;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Notification
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class NotificationController : BaseController

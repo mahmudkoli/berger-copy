@@ -2,12 +2,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
+using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.KPI;
+using BergerMsfaApi.Models.Scheme;
 using BergerMsfaApi.Services.KPI.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.KPI
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class UniverseReachAnalysisController : BaseController

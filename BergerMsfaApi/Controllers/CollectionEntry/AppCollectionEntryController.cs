@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppCollectionEntryController : BaseController

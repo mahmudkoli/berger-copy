@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Common
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppDashboardController : BaseController

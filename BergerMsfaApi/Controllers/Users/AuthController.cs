@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Interfaces;
 using BergerMsfaApi.Services.Users.Interfaces;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AuthController : BaseController

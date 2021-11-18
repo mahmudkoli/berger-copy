@@ -3926,9 +3926,6 @@ namespace Berger.Data.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ApplicationCategory")
-                        .HasColumnType("int");
-
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
@@ -3976,9 +3973,6 @@ namespace Berger.Data.Migrations
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");

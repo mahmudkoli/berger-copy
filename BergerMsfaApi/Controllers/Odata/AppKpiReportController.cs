@@ -10,9 +10,12 @@ using BergerMsfaApi.Services.KPI.interfaces;
 using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Berger.Odata.Model;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppKpiReportController : BaseController

@@ -3,12 +3,16 @@ using System;
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Sync;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.Setup.Interfaces;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Sync
 {
-    [ApiVersion("1")]
+    [AuthorizeFilter]
     [Route("api/v{v:apiVersion}/[controller]")]
+    [ApiController]
+    [ApiVersion("1")]
     public class SyncSetupController : BaseController
     {
         private readonly ISyncSetupService _syncSetupService;

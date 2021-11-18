@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.PainterRegistration
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v1:apiVersion}/[controller]")]
     public class PainterRegisController : BaseController

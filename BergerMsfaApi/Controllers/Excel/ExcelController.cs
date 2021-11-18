@@ -5,9 +5,12 @@ using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Services.Excel.Interface;
 using BergerMsfaApi.Models.Dealer;
+using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Excel
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class ExcelController : BaseController

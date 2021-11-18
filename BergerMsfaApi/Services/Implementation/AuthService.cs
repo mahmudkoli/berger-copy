@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Berger.Common.Constants;
 using Berger.Common.Enumerations;
 using Berger.Common.Model;
 using Berger.Data.MsfaEntity.Users;
@@ -83,7 +82,6 @@ namespace BergerMsfaApi.Services.Implementation
                     new Claim(JwtRegisteredClaimNames.UniqueName,userPrincipal.UserName),
                     new Claim(JwtRegisteredClaimNames.Sub,userPrincipal.UserId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim(ConstantsApplication.ApplicationCategory, nameof(EnumApplicationCategory.MSFAApp)),
                 };
                 claims.AddRange(appClaimes);
                 foreach (var role in userPrincipal.RoleIdList)

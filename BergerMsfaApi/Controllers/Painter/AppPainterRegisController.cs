@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.FileUploads.Interfaces;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.PainterRegistration1
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppPainterRegisController : BaseController

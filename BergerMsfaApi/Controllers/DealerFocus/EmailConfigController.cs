@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class EmailConfigController : BaseController

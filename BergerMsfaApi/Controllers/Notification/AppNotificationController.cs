@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.AlertNotification;
 using BergerMsfaApi.Services.Notification.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Notification
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppNotificationController : BaseController

@@ -1,4 +1,5 @@
 ﻿using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class QuestionSetController : BaseController

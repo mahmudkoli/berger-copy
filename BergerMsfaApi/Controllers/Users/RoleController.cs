@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
+using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Users.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Users
 {
+    [AuthorizeFilter]
+    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class RoleController : BaseController
