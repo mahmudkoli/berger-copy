@@ -524,18 +524,28 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                     string subject = string.Empty;
                     string body = string.Empty;
 
+                    var salesOffice = _saleOfficeSvc.Where(p => p.Code == dealer.SaleOffice).FirstOrDefault();
+                    var salesGroup = _saleGroupSvc.Where(p => p.Code == dealer.SaleGroup).FirstOrDefault();
+                    var depot = _depotSvc.Where(p => p.Werks == dealer.BusinessArea).FirstOrDefault();
+
                     subject = string.Format("Berger MSFA - New Dealer Opening Request. REQUEST ID: {0}.", dealer.Code);
 
                     body += $"Dear Concern,<br/>";
 
                     body += string.Format("A new dealer open request has been generated from " +
                         "“{0} - {1}” and got approved by “{2} - {3}”. " +
-                        "You are requested to open the new dealer in SAP by using the attached information.",
+                        "You are requested to open the new dealer in SAP by using the attached information.<br/><br/>",
                         createdBy.UserName,
                         createdBy.Designation,
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
+                    body += $"Depot: {depot ?.Name1: string.Empty} ({depot.Werks})<br/>";
+                    body += $"Sales Office : {salesOffice?.Name: string.Empty} ({dealer.SaleOffice})<br/>";
+                    body += $"Sales Group : {salesGroup?.Name: string.Empty} ({dealer.SaleGroup})<br/>";
+                    body += $"Teritorry : {dealer.Territory ?? string.Empty}<br/>";
+                    body += $"Zone : {dealer.Zone?? string.Empty}<br/>";
+                   
                     body += $"<br/><br/>";
                     body += $"Thank You,<br/>";
                     body += $"Berger Paints Bangladesh Limited";

@@ -56,6 +56,10 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.DealerId,
         isRequired: false,
       }),
+      new SearchOptionDef({
+        searchOption: EnumSearchOption.DealerType,
+        isRequired: false,
+      }),
     ],
   });
   // Subscriptions
@@ -247,7 +251,10 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query.custZones = queryObj.zones;
     this.query.salesGroup = queryObj.salesGroups;
     this.query.dealerId = queryObj.dealerId;
-
+    this.query.dealerType = queryObj.dealerType;
+    if(queryObj.dealerType==null){
+      this.query.dealerType=1;
+    }
     this.loadDealerSalesCallsPage();
   }
 

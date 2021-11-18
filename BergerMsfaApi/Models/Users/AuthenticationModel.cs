@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SS = System.Text.Json.Serialization;
+using NS = Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Users
@@ -41,6 +43,8 @@ namespace BergerMsfaApi.Models.Users
         public DateTime Expiration { get; set; }
         public string Designation { get; set; }
         public string RefreshToken { get; set; }
+        public string ManagerName { get; set; }
+        public string ManagerId { get; set; }
         public AuthenticateUserModel()
         {
             this.DealerOpeningsHierarchyList = new List<KeyValuePairModel>();
@@ -63,6 +67,10 @@ namespace BergerMsfaApi.Models.Users
         public string Name { get; set; }
         public string ParentId { get; set; }
         public IList<KeyValuePairModel> Children { get; set; }
+
+        [NS.JsonIgnore]
+        [SS.JsonIgnore]
+        public string PlantId { get; set; }
 
         public KeyValuePairModel()
         {

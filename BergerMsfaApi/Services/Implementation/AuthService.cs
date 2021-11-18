@@ -156,7 +156,9 @@ namespace BergerMsfaApi.Services.Implementation
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
                     AppMenuPermission = empMenu.ToList(),
-                    Designation = userInfo.Designation
+                    Designation = userInfo.Designation,
+                    ManagerName= userInfo.ManagerName??string.Empty,
+                    ManagerId= userInfo.ManagerId??string.Empty
 
                 };
 
