@@ -57,6 +57,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     brands: any[] = [];
     materialCodes: any[] = [];
 	months: any[] = [];
+	dealerTypes: any[] = [];
 	years: any[] = [];
 	fiscalYears: any[] = [];
 	activitySummaries: any[] = [];
@@ -91,6 +92,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			salesGroups: [this.searchOptionQuery.salesGroups],
 			territories: [this.searchOptionQuery.territories],
 			zones: [this.searchOptionQuery.zones],
+			dealerType: [this.searchOptionQuery.dealerType],
 			fromDate: [],
 			toDate: [],
 			date: [],
@@ -330,6 +332,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(forkJoinSubscription3);
 
 		this.months = this.getMonths();
+    this.dealerTypes=this.getdealerTypes();
 		this.years = this.getYears();
 		this.fiscalYears=this.getFiscalYears()
     }
@@ -356,6 +359,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.fromYear = controls['fromYear'].value;
 		this.searchOptionQuery.toYear = controls['toYear'].value;
 		this.searchOptionQuery.month = controls['month'].value;
+		this.searchOptionQuery.dealerType = controls['dealerType'].value;
 		this.searchOptionQuery.year = controls['year'].value;
 		this.searchOptionQuery.fiscalYear = controls['fiscalYear'].value;
 		this.searchOptionQuery.text1 = controls['text1'].value;
@@ -549,6 +553,16 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       : null;
   }
 
+  getdealerTypes(): any[] {
+    const dealerTypes = [
+      { id: 1, name: 'All' },
+      { id: 2, name: 'Dealer' },
+      { id: 3, name: 'Sub-Dealer' }
+      
+    ];
+    return dealerTypes;
+  }
+
   getMonths(): any[] {
     const months = [
       { id: 1, name: 'January' },
@@ -665,6 +679,43 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
       } else {
         this.materialCodes=[];
       }
+    }
+  }
+
+  onChangeDepot() {
+    this.callTerritories();
+    this.callZones();
+    const controls = this.searchOptionForm.controls;
+    controls['territories'].setValue(null);
+    controls['zones'].setValue(null);
+  }
+
+  onChangeTerritory() {
+    this.callZones();
+    const controls = this.searchOptionForm.controls;
+    controls['zones'].setValue(null);
+  }
+
+  callTerritories () {
+    if (this.hasSearchOption('territories')) {
+      const controls = this.searchOptionForm.controls;
+      const depot = controls['depot'].value;
+      
+        this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+          this.territories = res.data;
+        });
+    }
+  }
+
+  callZones () {
+    if (this.hasSearchOption('zones')) {
+      const controls = this.searchOptionForm.controls;
+      const depot = controls['depot'].value;
+      const territories = controls['territories'].value;
+      
+        this.commonService.getZoneListByDepotTerritory({'depots':[depot],'territories':territories}).subscribe(res => {
+          this.zones = res.data;
+        });
     }
   }
 }

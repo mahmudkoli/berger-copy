@@ -79,7 +79,8 @@ namespace BergerMsfaApi.Controllers.Users
                     return ValidationResult(ModelState);
                 }
 
-                var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                //var authUser = await authService.GetJWTTokenByUserNameAsync(model.UserName);
+                var authUser = await authService.GetJWTTokenByUserNameWithRefreshTokenAsync(model.UserName, HttpContext, Request, Response);
 
                 var appVersion = HttpContext.Request?.Headers[ConstantPlatformValue.AppVersionHeaderName];
 
@@ -101,6 +102,35 @@ namespace BergerMsfaApi.Controllers.Users
                 var loginLog = await _loginLogService.UserActivityAsync();
 
                 return OkResult(loginLog);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RefreshTokenAsync(token, HttpContext, Request, Response);
+                return OkResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("revoke-token")]
+        public async Task<IActionResult> RevokeTokenAsync([FromQuery] string token)
+        {
+            try
+            {
+                var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
+                return OkResult(response);
             }
             catch (Exception ex)
             {

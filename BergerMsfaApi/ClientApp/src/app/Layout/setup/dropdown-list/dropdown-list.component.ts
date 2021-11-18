@@ -103,7 +103,7 @@ export class DropdownListComponent implements OnInit {
     public ptableSettings:IPTableSetting = {
         tableID: "Setup-table",
         tableClass: "table table-border ",
-        tableName: 'Dynamic Drowdown Setup List',
+        tableName: 'Dynamic Dropdown Setup List',
         tableRowIDInternalName: "Id",
         tableColDef: [
             { headerName: 'Dropdown Code ', width: '15%', internalName: 'typeCode', sort: true, type: "" },

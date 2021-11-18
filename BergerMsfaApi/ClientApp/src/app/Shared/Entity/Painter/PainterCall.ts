@@ -26,6 +26,22 @@
     viewDetailsText: string;
     viewDetailsBtnclass: string;
 
+    territory: string;
+    zone: string;
+    createdTimeStr: string;
+    painterCatName: string;
+    noOfPainterAttached: number;
+    isAppInstalled: boolean;
+    loyality: number;
+    hasDbbl: boolean;
+    accDbblNumber: string;
+    accDbblHolderName: string;
+    accChangeReason: string;
+    painterName: string;
+    address: string;
+    phone: string;
+    isAppInstalledText: string;
+    hasDbblText: string;
     
 }
 

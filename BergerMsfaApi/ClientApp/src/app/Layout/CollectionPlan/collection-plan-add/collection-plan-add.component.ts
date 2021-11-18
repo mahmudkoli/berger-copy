@@ -205,6 +205,21 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		this.subscriptions.push(slippageAmountSubscription);
 	}
 
+	onChangeDepot() {
+	  this.callTerritories();
+	  const controls = this.collectionPlanForm.controls;
+	  controls['territory'].setValue(null);
+	}
+  
+	callTerritories () {
+		const controls = this.collectionPlanForm.controls;
+		const depot = controls['businessArea'].value;
+		
+		  this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+			this.territories = res.data;
+		  });
+	}
+
 	getComponentTitle() {
 		let result = 'Create Collection Plan';
 		if (!this.collectionPlan || !this.collectionPlan.id) {

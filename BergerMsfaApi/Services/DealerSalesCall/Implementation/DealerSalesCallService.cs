@@ -233,7 +233,11 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                       (!query.SalesGroup.Any() || query.SalesGroup.Contains(x.Dealer.SalesGroup)) &&
                                       (!query.CustZones.Any() || query.SalesGroup.Contains(x.Dealer.CustZone)) &&
                                       (string.IsNullOrWhiteSpace(query.DepoId) || x.Dealer.BusinessArea == query.DepoId) &&
-                                      (!query.DealerId.HasValue || x.DealerId == query.DealerId)),
+                                      (!query.DealerId.HasValue || x.DealerId == query.DealerId) &&
+
+                                      (query.DealerType.Equals(DealerType.All)?true:(query.DealerType.Equals(DealerType.SubDealer)?x.IsSubDealerCall: !x.IsSubDealerCall)
+
+                                      )),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User).Include(i => i.Dealer),
                                 query.Page,
@@ -518,6 +522,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             $"Quantity: {issue.Quantity}{Environment.NewLine}" +
                             $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
+                    }
+                    else
+                    {
+                        body +=$"Comments: {issue.Comments}";
                     }
 
                     body += $"{Environment.NewLine}{Environment.NewLine}";

@@ -176,7 +176,9 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult = groupOfLeads.Select(x =>
             {
                 var reportModel = new LeadSummaryReportResultModel();
-                var leadFollowUps = x.SelectMany(x => x.LeadFollowUps);
+                var leadFollowUps = x.SelectMany(x => x.LeadFollowUps.Where(lf => 
+                                (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
+                                && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)));
                 reportModel.UserId = x.FirstOrDefault()?.User?.Email ?? string.Empty;
                 reportModel.Territory = x.Key.Territory;
                 reportModel.Zone = x.Key.Zone;
@@ -532,19 +534,22 @@ namespace BergerMsfaApi.Services.Report.Implementation
 
             var leadBusiness = await (from lf in _context.LeadFollowUps
                                       join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id
-                                      join ui in _context.UserInfos on lg.UserId equals ui.Id
-                                      join las in _context.LeadActualVolumeSold on lf.Id equals las.LeadFollowUpId
-                                      join bi in _context.BrandInfos on las.BrandInfoId equals bi.Id
-                                      join bfi in _context.BrandFamilyInfos on bi.MaterialGroupOrBrand equals bfi.MatarialGroupOrBrand
                                       join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id
                                       join dd in _context.DropdownDetails on lba.ProductSourcingId equals dd.Id
+                                      join ui in _context.UserInfos on lg.UserId equals ui.Id
+                                      join las in _context.LeadActualVolumeSold on lf.Id equals las.LeadFollowUpId into lasleft
+                                      from lasInfo in lasleft.DefaultIfEmpty()
+                                      join bi in _context.BrandInfos on lasInfo.BrandInfoId equals bi.Id into bileft
+                                      from biInfo in bileft.DefaultIfEmpty()
+                                      join bfi in _context.BrandFamilyInfos on biInfo.MaterialGroupOrBrand equals bfi.MatarialGroupOrBrand into bfileft
+                                      from bfiInfo in bfileft.DefaultIfEmpty()
                                       where (
                                            (!query.UserId.HasValue || lg.UserId == query.UserId.Value)
                                            && (string.IsNullOrWhiteSpace(query.Depot) || lg.Depot == query.Depot)
                                            && (!query.Territories.Any() || query.Territories.Contains(lg.Territory))
                                            && (!query.Zones.Any() || query.Zones.Contains(lg.Zone))
-                                           && (!query.FromDate.HasValue || lf.ActualVisitDate.Date >= query.FromDate.Value.Date)
-                                           && (!query.ToDate.HasValue || lf.ActualVisitDate.Date <= query.ToDate.Value.Date)
+                                           && (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
+                                           && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)
                                            && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
                                            && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
                                            && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
@@ -560,20 +565,21 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           lg.Territory,
                                           lg.Zone,
                                           lf.ActualVisitDate,
-                                          bi.MaterialGroupOrBrand,
-                                          bfi.MatarialGroupOrBrandName,
-                                          bi.MaterialDescription,
-                                          las.Quantity,
-                                          las.TotalAmount,
+                                          biInfo.MaterialGroupOrBrand,
+                                          bfiInfo.MatarialGroupOrBrandName,
+                                          biInfo.MaterialDescription,
+                                          lasInfo.Quantity,
+                                          lasInfo.TotalAmount,
                                           dd.DropdownName,
-                                          lba.ProductSourcingRemarks
+                                          lba.ProductSourcingRemarks,
+                                          lba.BergerValueSales
                                       }).OrderByDescending(x => x.ActualVisitDate).ToListAsync();
 
             var groupOfLeadBusiness = leadBusiness.GroupBy(x => new { x.leadfolowupId });
 
             foreach (var item in groupOfLeadBusiness)
             {
-                foreach (var i in item)
+                foreach (var i in item.Where(x => !string.IsNullOrEmpty(x.MaterialGroupOrBrand)))
                 {
                     reportResult.Add(new LeadBusinessReportResultModel { 
                         UserId = i.Email,
@@ -605,7 +611,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                     //BrandName = item.FirstOrDefault().MatarialGroupOrBrandName + '(' + item.FirstOrDefault().MaterialGroupOrBrand + ')',
                     //BrandDescription = item.FirstOrDefault().MaterialDescription,
                     //Quantity = item.Sum(x => x.Quantity),
-                    TotalAmount = item.Sum(x => x.TotalAmount),
+                    TotalAmount = item.Select(x => new { x.leadfolowupId, x.BergerValueSales }).Distinct().Sum(x => x.BergerValueSales),
                     //ProductSourcing = "",
                     //DealerIdAndName = ""
                 });

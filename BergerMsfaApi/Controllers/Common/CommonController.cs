@@ -85,12 +85,40 @@ namespace BergerMsfaApi.Controllers.Common
             }
         }
 
+        [HttpGet("GetTerritoryListByDepot")]
+        public async Task<IActionResult> GetTerritoryListByDepot([FromQuery] IList<string> depots)
+        {
+            try
+            {
+                var result = await _commonSvc.GetTerritoryList(depots);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
         [HttpGet("GetZoneList")]
         public async Task<IActionResult> GetZoneList()
         {
             try
             {
                 var result = await _commonSvc.GetZoneList();
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetZoneListByDepotTerritory")]
+        public async Task<IActionResult> GetZoneListByDepotTerritory([FromQuery] IList<string> depots, [FromQuery] IList<string> territories)
+        {
+            try
+            {
+                var result = await _commonSvc.GetZoneList(depots, territories);
                 return OkResult(result);
             }
             catch (Exception ex)

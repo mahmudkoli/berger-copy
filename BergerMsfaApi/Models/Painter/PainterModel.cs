@@ -24,7 +24,11 @@ namespace BergerMsfaApi.Models.PainterRegistration
                    .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.DealerId)))
                    .ForMember(src => src.PainterCatName, dest => dest.MapFrom(s => s.PainterCat != null ? s.PainterCat.DropdownName : string.Empty));
 
-            profile.CreateMap<PNTR.PainterCall, PainterCallModel>();
+            profile.CreateMap<PNTR.PainterCall, PainterCallModel>()
+                .ForMember(dest => dest.CreatedTimeStr, opt => opt.MapFrom(src => src.CreatedTime.ToString("dd-MM-yyyy")))
+                .ForMember(dest => dest.PainterCatName, opt => opt.MapFrom(src => src != null ? $"{src.PainterCat.DropdownName}" : string.Empty))
+                .ForMember(src => src.AttachedDealers, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => new AttachedDealerPainterCallModel() { Id = s.Id, DealerId = s.DealerId })));
+            
             profile.CreateMap<PainterCompanyMTDValue, PainterCompanyMTDValueModel>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src != null ? $"{src.Company.DropdownName}" : string.Empty));
                 //.ForMember(dest => dest.CumelativeInPercent, opt => opt.MapFrom(src => src.CountInPercent));
@@ -92,5 +96,55 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public string Reason { get; set; }
     }
 
-    
+    public class PainterUpdateModel : IMapFrom<PNTR.Painter>
+    {
+        public int Id { get; set; }
+        public string Depot { get; set; }
+        public string SaleGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public int PainterCatId { get; set; } // type of client
+        public string PainterName { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public int NoOfPainterAttached { get; set; }
+        public bool HasDbbl { get; set; }
+        public string AccDbblNumber { get; set; }
+        public string AccDbblHolderName { get; set; }
+        public string PassportNo { get; set; }
+        public string NationalIdNo { get; set; }
+        public string BrithCertificateNo { get; set; }
+        public string PainterImageUrl { get; set; }
+        public string PainterImageBase64 { get; set; }
+        public string AttachedDealerCd { get; set; }
+        public bool IsAppInstalled { get; set; }
+        public string Remark { get; set; } // app not install reason
+        public decimal AvgMonthlyVal { get; set; }
+        public float Loyality { get; set; }
+        public string EmployeeId { get; set; }
+        public string PainterNo { get; set; }
+        public string PainterCode { get; set; }
+
+        public List<int> AttachedDealerIds { get; set; }
+
+        public PainterUpdateModel()
+        {
+            AttachedDealerIds = new List<int>();
+        }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<PNTR.Painter, PainterUpdateModel>()
+                   .ForMember(src => src.AttachedDealerIds, dest => dest.MapFrom(s => s.AttachedDealers.Select(s => s.DealerId)));
+        }
+    }
+
+    public class PainterImageModel
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public string URL { get; set; }
+    }
+
+
 }

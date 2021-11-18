@@ -3818,6 +3818,43 @@ namespace Berger.Data.Migrations
                     b.ToTable("LoginLogs");
                 });
 
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Users.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Berger.Data.MsfaEntity.Users.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -4574,6 +4611,15 @@ namespace Berger.Data.Migrations
                 });
 
             modelBuilder.Entity("Berger.Data.MsfaEntity.Users.LoginLog", b =>
+                {
+                    b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Berger.Data.MsfaEntity.Users.RefreshToken", b =>
                 {
                     b.HasOne("Berger.Data.MsfaEntity.Users.UserInfo", "User")
                         .WithMany()

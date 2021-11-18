@@ -78,4 +78,18 @@ namespace BergerMsfaApi.Models.FocusDealer
             this.Territories = new List<string>();
         }
     }
+
+    public class LeadQueryObjectModel : QueryObjectModel
+    {
+        public int UserId { get; set; }
+        public string Depot { get; set; }
+        public IList<string> Territories { get; set; }
+        public IList<string> Zones { get; set; }
+
+        public LeadQueryObjectModel()
+        {
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
+    }
 }

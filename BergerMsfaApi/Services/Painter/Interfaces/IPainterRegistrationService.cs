@@ -36,12 +36,18 @@ namespace BergerMsfaApi.Services.PainterRegistration.Interfaces
 
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile file);
         Task<PainterModel> UpdatePainterAsync(int painterId, IFormFile profile, List<IFormFile> attachments);
+
+        Task<PainterUpdateModel> GetPainterForEditAsync(int id);
+        Task<bool> PainterUpdateAsync(PainterUpdateModel model);
+        Task DeleteImage(PainterImageModel models);
         #endregion
 
 
         #region Common
         Task<bool> IsExistAsync(int Id);
         Task<int> DeleteAsync(int Id);
+        Task<bool> IsExistPainterCallAsync(int id);
+        Task<int> DeletePainterCallAsync(int id);
         #endregion
     }
 }

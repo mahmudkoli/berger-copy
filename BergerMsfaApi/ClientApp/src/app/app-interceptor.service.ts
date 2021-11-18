@@ -7,20 +7,26 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AlertService } from './Shared/Modules/alert/alert.service';
 import { ActivityPermissionService } from './Shared/Services/Activity-Permission/activity-permission.service';
 import { AuthService } from './Shared/Services/Users';
 
 @Injectable({ providedIn: 'root' })
 export class AppInterceptorService implements HttpInterceptor {
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
+
   constructor(
     private alertService: AlertService,
     private activityPermissionService: ActivityPermissionService,
     private activatedRoute: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
   ) {}
 
   handleError = (error: HttpErrorResponse, request?, next?) => {
@@ -54,58 +60,62 @@ export class AppInterceptorService implements HttpInterceptor {
 
     return throwError(error);
   };
+  
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      return this.authService.refreshToken().pipe(
+        switchMap((authUser: any) => {
+          this.isRefreshing = false;
+          const jwt = authUser && authUser.token;
+          this.refreshTokenSubject.next(jwt);
+          return next.handle(this.addToken(request, jwt));
+        }),
+        catchError((error) => {
+          this.goLogin();
+          return throwError(error);
+        })
+      );
+    } else {
+      return this.refreshTokenSubject.pipe(
+        filter((token) => token != null),
+        take(1),
+        switchMap((jwt) => {
+          return next.handle(this.addToken(request, jwt));
+        }),
+        catchError((error) => {
+          this.goLogin();
+          return throwError(error);
+        })
+      );
+    }
+  }
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     this.alertService.fnLoading(true);
-    //  console.log('processing request', request);
-    // console.log('url', request.url);
 
     const token = this.authService.currentUserToken;
 
     if (request.method === 'POST' || request.method === 'PUT') {
       this.shiftDates(request.body);
     }
+    
+    return this.nextHandleCall(request, next, token);
+  }
 
-    // if (request.method == "DELETE") {
-    //     let activityPermission = this.activityPermissionService.getActivityPermissionFromSession();
-    //     let hasPermission = false;
-    //     const reqUrl = window.location.href; //request.url
-    //     console.log(activityPermission);
-    //     if (activityPermission && activityPermission.length > 0) {
-    //         const filterActPer = activityPermission.filter(x => reqUrl.indexOf(x.url) > -1);
-    //         console.log(filterActPer);
-    //         if (filterActPer && filterActPer.length > 0) {
-    //             if (request.method == "DELETE" && filterActPer[0].canDelete) {
-    //                 hasPermission = true;
-    //             }
-    //         }
-    //     }
-
-    //     if (!hasPermission) {
-    //         let errorMsg = "You don't have permission to delete.";
-    //         this.alertService.titleTosterDanger(errorMsg);
-    //         setTimeout(() => {
-    //             this.alertService.fnLoading(false);
-    //         }, 1000);
-    //         return; //next.handle(request);
-    //     }
-    // }
-
-    // console.log("token: ", token);
-    const headers = new HttpHeaders({
-      Authorization: 'Bearer ' + token,
-    });
-
-    const haderClone = request.clone({
-      headers,
-    });
-
-    return next.handle(haderClone).pipe(
+  nextHandleCall(request: HttpRequest<any>, next: HttpHandler, token: string) {
+    return next.handle(this.addToken(request, token)).pipe(
       catchError((error) => {
-        return this.handleError(error, request, next);
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          return this.handle401Error(request, next);
+        } else {
+          return this.handleError(error, request, next);
+        }
       }),
       finalize(() => {
         setTimeout(() => {
@@ -142,4 +152,17 @@ export class AppInterceptorService implements HttpInterceptor {
       }
     }
   }
+  
+  private addToken(request: HttpRequest<any>, token: string) {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+	
+	goLogin() {
+    this.alertService.fnLoading(false);
+		this.router.navigate([`/auth/login`], { relativeTo: this.activatedRoute });
+	}
 }

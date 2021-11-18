@@ -23,7 +23,9 @@ namespace BergerMsfaApi.Services.Common.Interfaces
         Task<IEnumerable<SaleOffice>> GetSaleOfficeList();
         Task<IEnumerable<SaleGroup>> GetSaleGroupList();
         Task<IEnumerable<Territory>> GetTerritoryList();
+        Task<IEnumerable<Territory>> GetTerritoryList(IList<string> depots);
         Task<IEnumerable<Zone>> GetZoneList();
+        Task<IEnumerable<Zone>> GetZoneList(IList<string> depots, IList<string> territories);
         Task<IEnumerable<DepotModel>> GetDepotList();
         Task<IList<KeyValuePairAreaModel>> GetSaleGroupList(Expression<Func<SaleGroup, bool>> predicate);
         Task<IList<KeyValuePairAreaModel>> GetDepotList(Expression<Func<Depot, bool>> predicate);

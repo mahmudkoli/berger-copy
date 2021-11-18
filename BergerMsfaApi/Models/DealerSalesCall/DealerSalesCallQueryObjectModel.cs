@@ -11,6 +11,7 @@ namespace BergerMsfaApi.Models.DealerSalesCall
             SalesGroup ??= new string[] { };
         }
         public string DepoId { get; set; }
+        public int DealerType { get; set; }
         public int? DealerId { get; set; }
         public string[] Territories { get; set; }
         public string[] CustZones { get; set; }

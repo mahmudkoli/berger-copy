@@ -11,12 +11,14 @@ import { LeadComponent } from './lead.component';
 import { LeadListComponent } from './lead-list/lead-list.component';
 import { LeadDetailsComponent } from './lead-details/lead-details.component';
 import { ModalLeadFollowUpDetailsComponent } from './modal-lead-followup-details/modal-lead-followup-details.component';
+import { LeadEditComponent } from './lead-edit/lead-edit.component';
 
 @NgModule({
   declarations: [
     LeadListComponent,
     LeadDetailsComponent,
     LeadComponent,
+    LeadEditComponent,
     ModalLeadFollowUpDetailsComponent
   ],
   imports: [
