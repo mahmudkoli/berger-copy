@@ -68,8 +68,8 @@ namespace BergerMsfaApi.Models.Users
         public string ParentId { get; set; }
         public IList<KeyValuePairModel> Children { get; set; }
 
-        [NS.JsonIgnore]
-        [SS.JsonIgnore]
+        [NS.JsonIgnore] 
+        [SS.JsonIgnore] 
         public string PlantId { get; set; }
 
         public KeyValuePairModel()
