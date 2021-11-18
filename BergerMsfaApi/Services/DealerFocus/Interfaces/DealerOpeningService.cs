@@ -540,11 +540,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                         LastApprovar.UserName,
                         LastApprovar.Designation);
 
-                    body += $"Depot: {depot ?.Name1: string.Empty}-{depot.Werks}<br/>";
-                    body += $"Sales Office :{salesOffice?.Name: string.Empty}<br/>";
-                    body += $"Sales Group :{salesGroup?.Name: string.Empty}<br/>";
-                    body += $"Teritorry :{dealer.Territory ?? string.Empty}<br/>";
-                    body += $"Zone :{dealer.Zone?? string.Empty}<br/>";
+                    body += $"Depot: {depot ?.Name1: string.Empty} ({depot.Werks})<br/>";
+                    body += $"Sales Office : {salesOffice?.Name: string.Empty} ({dealer.SaleOffice})<br/>";
+                    body += $"Sales Group : {salesGroup?.Name: string.Empty}<br/>";
+                    body += $"Teritorry : {dealer.Territory ?? string.Empty}<br/>";
+                    body += $"Zone : {dealer.Zone?? string.Empty}<br/>";
                    
                     body += $"<br/><br/>";
                     body += $"Thank You,<br/>";
