@@ -262,9 +262,13 @@ namespace BergerMsfaApi.Repositories
             return await DbSet.Where(predicate).AsNoTracking().AsQueryable().ToPagedListAsync(pageNumber, pageSize);
         }
 
-        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, bool ignoreQueryFilters = false)
         {
-            return await DbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
+            var query = DbSet.AsQueryable();
+            if (ignoreQueryFilters)
+                query = query.IgnoreQueryFilters();
+
+            return await query.AsNoTracking().FirstOrDefaultAsync(predicate);
         }
 
         public async Task<TEntity> FindIncludeAsync(
@@ -454,9 +458,13 @@ namespace BergerMsfaApi.Repositories
             return await DbSet.Where(where).AsNoTracking().MinAsync(predicate);
         }
 
-        public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate, bool ignoreQueryFilters = false)
         {
-            var count = await DbSet.CountAsync(predicate);
+            var query = DbSet.AsQueryable();
+            if(ignoreQueryFilters)
+                query = query.IgnoreQueryFilters();
+
+            var count = await query.CountAsync(predicate);
             return count > 0;
         }
 
