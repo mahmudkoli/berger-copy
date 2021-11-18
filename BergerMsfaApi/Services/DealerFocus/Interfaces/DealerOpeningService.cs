@@ -542,7 +542,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
                     body += $"Depot: {depot ?.Name1: string.Empty} ({depot.Werks})<br/>";
                     body += $"Sales Office : {salesOffice?.Name: string.Empty} ({dealer.SaleOffice})<br/>";
-                    body += $"Sales Group : {salesGroup?.Name: string.Empty}<br/>";
+                    body += $"Sales Group : {salesGroup?.Name: string.Empty} ({dealer.SaleGroup})<br/>";
                     body += $"Teritorry : {dealer.Territory ?? string.Empty}<br/>";
                     body += $"Zone : {dealer.Zone?? string.Empty}<br/>";
                    

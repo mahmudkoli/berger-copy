@@ -235,7 +235,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                       (string.IsNullOrWhiteSpace(query.DepoId) || x.Dealer.BusinessArea == query.DepoId) &&
                                       (!query.DealerId.HasValue || x.DealerId == query.DealerId) &&
 
-                                      (query.DealerType.Equals(DealerType.All)?true:(query.DealerType.Equals(DealerType.SubDealer)?x.IsSubDealerCall==true: x.IsSubDealerCall==false)
+                                      (query.DealerType.Equals(DealerType.All)?true:(query.DealerType.Equals(DealerType.SubDealer)?x.IsSubDealerCall: !x.IsSubDealerCall)
 
                                       )),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
