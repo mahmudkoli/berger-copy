@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SS = System.Text.Json.Serialization;
+using NS = Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Models.Users
@@ -63,6 +65,10 @@ namespace BergerMsfaApi.Models.Users
         public string Name { get; set; }
         public string ParentId { get; set; }
         public IList<KeyValuePairModel> Children { get; set; }
+
+        [NS.JsonIgnore]
+        [SS.JsonIgnore]
+        public string PlantId { get; set; }
 
         public KeyValuePairModel()
         {
