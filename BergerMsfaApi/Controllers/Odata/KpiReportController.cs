@@ -1,7 +1,6 @@
 ﻿using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.KPI.interfaces;
@@ -14,8 +13,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class KpiReportController : BaseController

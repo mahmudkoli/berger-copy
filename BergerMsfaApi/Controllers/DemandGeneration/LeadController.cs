@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.DemandGeneration
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class LeadController : BaseController
