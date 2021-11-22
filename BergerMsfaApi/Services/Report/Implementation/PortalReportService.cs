@@ -161,8 +161,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                 && (string.IsNullOrWhiteSpace(query.Depot) || x.Depot == query.Depot)
                                 && (!query.Territories.Any() || query.Territories.Contains(x.Territory))
                                 && (!query.Zones.Any() || query.Zones.Contains(x.Zone))
-                                && (!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
-                                && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date),
+                                && (((!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
+                                        && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date))
+                                    || ((!query.FromDate.HasValue || x.LeadFollowUps.Any(y => y.CreatedTime.Date >= query.FromDate.Value.Date))
+                                        && (!query.ToDate.HasValue || x.LeadFollowUps.Any(y => y.CreatedTime.Date <= query.ToDate.Value.Date)))),
                             x => x.OrderByDescending(o => o.CreatedTime),
                             x => x.Include(i => i.User)
                                 .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
@@ -176,17 +178,19 @@ namespace BergerMsfaApi.Services.Report.Implementation
             reportResult = groupOfLeads.Select(x =>
             {
                 var reportModel = new LeadSummaryReportResultModel();
-                var leadFollowUps = x.SelectMany(x => x.LeadFollowUps.Where(lf => 
-                                (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
-                                && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)));
+                var leadGens = x.Where(lg => (!query.FromDate.HasValue || lg.CreatedTime.Date >= query.FromDate.Value.Date)
+                                            && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date));
+                var leadFollowUps = x.SelectMany(y => y.LeadFollowUps.Where(lf => 
+                                                    (!query.FromDate.HasValue || lf.CreatedTime.Date >= query.FromDate.Value.Date)
+                                                    && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)));
                 reportModel.UserId = x.FirstOrDefault()?.User?.Email ?? string.Empty;
                 reportModel.Territory = x.Key.Territory;
                 reportModel.Zone = x.Key.Zone;
-                reportModel.NoOfLeadGenerate = x.Count();
+                reportModel.NoOfLeadGenerate = leadGens.Count();
                 reportModel.NoOfLeadFollowUp = leadFollowUps.Count();
                 reportModel.TotalCall = reportModel.NoOfLeadGenerate + reportModel.NoOfLeadFollowUp;
                 reportModel.NoOfUnderConstructionLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusUnderConstruction);
-                reportModel.NoOfGoingPaintLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusPaintingOngoing);
+                reportModel.NoOfOnGoingPaintLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusPaintingOngoing);
                 reportModel.NoOfTotalWinLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusLeadCompletedTotalWin);
                 reportModel.NoOfTotalLossLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusLeadCompletedTotalLoss);
                 reportModel.NoOfPartialBusinessLead = leadFollowUps.Count(p => (p.ProjectStatus?.DropdownName ?? string.Empty) == ConstantsLeadValue.ProjectStatusLeadCompletedPartialBusiness);
