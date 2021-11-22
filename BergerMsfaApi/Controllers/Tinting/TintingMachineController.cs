@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Services.Tinting.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Tinting
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class TintingMachineController : BaseController

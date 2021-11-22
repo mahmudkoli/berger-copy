@@ -4,15 +4,12 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.KPI;
 using BergerMsfaApi.Models.Report;
 using BergerMsfaApi.Services.KPI.interfaces;
 
 namespace BergerMsfaApi.Controllers.KPI
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class ColorBankInstallationTargetController : BaseController

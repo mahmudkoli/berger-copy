@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Sync;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Sync
 {
-    [AuthorizeFilter]
-    [Route("api/v{v:apiVersion}/[controller]")]
-    [ApiController]
     [ApiVersion("1")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     public class SyncController : BaseController
     {
         private readonly IApiSyncService _syncService;

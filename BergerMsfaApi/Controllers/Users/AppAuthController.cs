@@ -5,7 +5,6 @@ using Berger.Common.Constants;
 using Berger.Odata.Services;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.AlertNotification;
 using BergerMsfaApi.Services.Interfaces;
@@ -15,8 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.Users
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppAuthController : BaseController

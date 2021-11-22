@@ -191,6 +191,11 @@ namespace BergerMsfaApi.Services.Users.Implementation
             return await _userInfoRepo.IsExistAsync(s => s.Status == Status.Active && s.UserName.ToLower() == username.ToLower() && s.Id != id);
         }
 
+        public async Task<bool> IsGlobalActiveUserAsync(string username, int id = 0)
+        {
+            return await _userInfoRepo.IsExistAsync(s => s.Status == Status.Active && s.UserName.ToLower() == username.ToLower() && s.Id != id, true);
+        }
+
         public async Task<bool> IsRoleLinkWithUserExistAsync(int roleid, int userinfoId)
         {
             var result = true;

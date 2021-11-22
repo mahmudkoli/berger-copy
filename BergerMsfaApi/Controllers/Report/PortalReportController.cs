@@ -4,17 +4,13 @@ using BergerMsfaApi.Services.Report.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BergerMsfaApi.Extensions;
 using BergerMsfaApi.Services.Common.Interfaces;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.Excel.Interface;
 
 namespace BergerMsfaApi.Controllers.Report
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class PortalReportController : BaseController
