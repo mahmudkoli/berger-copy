@@ -10,4 +10,10 @@ namespace BergerMsfaApi.Models.Users
         public string Password { get; set; }
         public string FCMToken { get; set; }
     }
+
+    public class RefreshTokenModel
+    {
+        [Required]
+        public string Token { get; set; }
+    }
 }
