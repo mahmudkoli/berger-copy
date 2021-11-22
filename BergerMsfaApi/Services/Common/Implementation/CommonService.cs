@@ -576,28 +576,28 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IList<KeyValuePairModel>> GetPSATZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSATZ))
-                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().ToList();
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().OrderBy(o => o.Name).ToList();
             var salesOffices = (await GetPSATZMappingsAsync(EnumAreaCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var areas = (await GetPSATZMappingsAsync(EnumAreaCategory.Area.ToString(), areaIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.SalesOfficeId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.SalesOfficeId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PSATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
 
             foreach (var plant in plants)
             {
-                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                 foreach (var salesOffice in plant.Children)
                 {
-                    salesOffice.Children = areas.Where(x => x.ParentId == salesOffice.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                    salesOffice.Children = areas.Where(x => x.ParentId == salesOffice.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                     foreach (var area in salesOffice.Children)
                     {
-                        area.Children = territories.Where(x => x.ParentId == area.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                        area.Children = territories.Where(x => x.ParentId == area.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                         foreach (var territory in area.Children)
                         {
-                            territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                            territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                         }
                     }
                 }
@@ -609,23 +609,23 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IList<KeyValuePairModel>> GetPSTZHierarchy(List<string> plantIds, List<string> salesOfficeIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PSTZ))
-                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().ToList();
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().OrderBy(o => o.Name).ToList();
             var salesOffices = (await GetPSATZMappingsAsync(EnumAreaCategory.SalesOffice.ToString(), salesOfficeIds, plantIds, EnumTypeOfEmployeeHierarchy.PSTZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.SalesOfficeId, Name = x.Name, ParentId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, salesOfficeIds, EnumTypeOfEmployeeHierarchy.PSTZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.SalesOfficeId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.SalesOfficeId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PSTZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
 
             foreach (var plant in plants)
             {
-                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                plant.Children = salesOffices.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                 foreach (var salesOffice in plant.Children)
                 {
-                    salesOffice.Children = territories.Where(x => x.ParentId == salesOffice.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                    salesOffice.Children = territories.Where(x => x.ParentId == salesOffice.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                     foreach (var territory in salesOffice.Children)
                     {
-                        territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                        territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                     }
                 }
             }
@@ -636,23 +636,23 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IList<KeyValuePairModel>> GetPATZHierarchy(List<string> plantIds, List<string> areaIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PATZ))
-                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().ToList();
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().OrderBy(o => o.Name).ToList();
             var areas = (await GetPSATZMappingsAsync(EnumAreaCategory.Area.ToString(), areaIds, plantIds, EnumTypeOfEmployeeHierarchy.PATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.AreaId, Name = x.Name, ParentId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, areaIds, EnumTypeOfEmployeeHierarchy.PATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.AreaId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PATZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
 
             foreach (var plant in plants)
             {
-                plant.Children = areas.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                plant.Children = areas.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                 foreach (var area in plant.Children)
                 {
-                    area.Children = territories.Where(x => x.ParentId == area.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                    area.Children = territories.Where(x => x.ParentId == area.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                     foreach (var territory in area.Children)
                     {
-                        territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                        territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                     }
                 }
             }
@@ -663,18 +663,18 @@ namespace BergerMsfaApi.Services.Common.Implementation
         public async Task<IList<KeyValuePairModel>> GetPTZHierarchy(List<string> plantIds, List<string> territoryIds, List<string> zoneIds)
         {
             var plants = (await GetPSATZMappingsAsync(EnumAreaCategory.Plant.ToString(), plantIds, new List<string>(), EnumTypeOfEmployeeHierarchy.PTZ))
-                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().ToList();
+                                    .Select(x => new KeyValuePairModel() { Id = x.PlantId, Name = x.Name }).Distinct().OrderBy(o => o.Name).ToList();
             var territories = (await GetPSATZMappingsAsync(EnumAreaCategory.Territory.ToString(), territoryIds, plantIds, EnumTypeOfEmployeeHierarchy.PTZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.TerritoryId, Name = x.Name, ParentId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
             var zones = (await GetPSATZMappingsAsync(EnumAreaCategory.Zone.ToString(), zoneIds, territoryIds, EnumTypeOfEmployeeHierarchy.PTZ))
-                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().ToList();
+                                .Select(x => new KeyValuePairModel() { Id = x.ZoneId, Name = x.Name, ParentId = x.TerritoryId, PlantId = x.PlantId }).Distinct().OrderBy(o => o.Name).ToList();
 
             foreach (var plant in plants)
             {
-                plant.Children = territories.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                plant.Children = territories.Where(x => x.ParentId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                 foreach (var territory in plant.Children)
                 {
-                    territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToList();
+                    territory.Children = zones.Where(x => x.ParentId == territory.Id && x.PlantId == plant.Id).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).OrderBy(o => o.Name).ToList();
                 }
             }
 

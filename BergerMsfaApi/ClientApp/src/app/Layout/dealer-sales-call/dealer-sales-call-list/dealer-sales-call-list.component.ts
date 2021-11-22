@@ -83,7 +83,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.searchOptionQuery = new SearchOptionQuery();
     this.searchOptionQuery.clear();
-
+    this.searchOptionQuery.dealerType=1;
     this.searchConfiguration();
     // of(undefined)
     //   .pipe(take(1), delay(1000))
@@ -252,7 +252,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query.salesGroup = queryObj.salesGroups;
     this.query.dealerId = queryObj.dealerId;
     this.query.dealerType = queryObj.dealerType;
-    if(queryObj.dealerType==null){
+    if(!queryObj.dealerType){
       this.query.dealerType=1;
     }
     this.loadDealerSalesCallsPage();

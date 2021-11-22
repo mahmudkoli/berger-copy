@@ -15,7 +15,7 @@ namespace BergerMsfaApi.Models.Report
         public int NoOfLeadFollowUp { get; set; }
         public int TotalCall { get; set; }
         public int NoOfUnderConstructionLead { get; set; }
-        public int NoOfGoingPaintLead { get; set; }
+        public int NoOfOnGoingPaintLead { get; set; }
         public int NoOfTotalWinLead { get; set; }
         public int NoOfTotalLossLead { get; set; }
         public int NoOfPartialBusinessLead { get; set; }
