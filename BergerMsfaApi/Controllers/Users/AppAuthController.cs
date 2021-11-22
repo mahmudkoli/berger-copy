@@ -108,11 +108,11 @@ namespace BergerMsfaApi.Controllers.Users
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync([FromQuery] string token)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenModel token)
         {
             try
             {
-                var response = await authService.RefreshTokenAsync(token, HttpContext, Request, Response);
+                var response = await authService.RefreshTokenAsync(token.Token, HttpContext, Request, Response);
                 return OkResult(response);
             }
             catch (Exception ex)
@@ -122,11 +122,11 @@ namespace BergerMsfaApi.Controllers.Users
         }
 
         [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeTokenAsync([FromQuery] string token)
+        public async Task<IActionResult> RevokeTokenAsync([FromBody] RefreshTokenModel token)
         {
             try
             {
-                var response = await authService.RevokeTokenAsync(token, HttpContext, Request);
+                var response = await authService.RevokeTokenAsync(token.Token, HttpContext, Request);
                 return OkResult(response);
             }
             catch (Exception ex)
