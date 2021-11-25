@@ -41,8 +41,8 @@
                     
 
                 </div>
-                <div class="row" *ngIf="dealerOpen.dealerOpeningStatus!=1 && dealerOpen.dealerOpeningStatus!=3">
-                    <div class="col-md-3">
+                <div class="row mb-3" *ngIf="dealerOpen.dealerOpeningStatus!=1 && dealerOpen.dealerOpeningStatus!=3">
+                    <div class="col-md-3 mb-3">
                         <button *ngIf="dealerOpen" (click)="onStatusChange(1,dealerOpen)" class="btn btn-sm btn-primary">Approve</button>
                         <button *ngIf="dealerOpen" (click)="onStatusChange(3,dealerOpen)" class="btn btn-sm btn-danger ml-2">Reject</button>
                     </div>

@@ -116,6 +116,8 @@ export class JourneyPlanListLineManagerComponent implements OnInit {
 
 
         this.onLoadLinemanagerJourneyPlans(this.pagingConfig.pageNumber, this.pagingConfig.pageSize, this.search);
+		
+        document.querySelector('style').textContent += "@media screen and (max-width:767px) { .fc-toolbar.fc-header-toolbar {flex-direction:column;} .fc-toolbar-chunk { display: table-row; text-align:center; padding:5px 0; } }";
     }
 
     handleEventClick(info) {

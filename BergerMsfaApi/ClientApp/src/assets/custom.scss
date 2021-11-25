@@ -231,3 +231,21 @@
 .p-datatable .p-datatable-footer{
   padding:0;
 }
+@media screen and (max-width: 991px) {
+    .hamburger {
+        background-color: lightgray;
+
+        .hamburger-box {
+            height: 12px;
+        }
+    }
+}
+@media screen and (max-width: 767px) {
+    /*.fc .fc-toolbar.fc-header-toolbar {
+        display: block;
+        text-align: center;
+        .fc-toolbar-chunk {
+            margin-bottom: 10px;
+        }
+    }*/
+}
