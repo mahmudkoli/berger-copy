@@ -44,20 +44,20 @@ namespace BergerMsfaApi.Services.Somporko.Users.Implementation
 
         public async Task<bool> IsUserExistAsync(string username, string password)
         {
-            var encryptPassword = SecurityExtension.ToEncryptString(password, _appSettings.SomporkoAppSecurityKey);
-            return await _userRepo.IsExistAsync(s => s.ApplicationCategory == EnumApplicationCategory.SomporkoApp && s.UserName.ToLower() == username.ToLower() && s.Password == encryptPassword, true);
+            var encryptPassword = SecurityExtension.ToEncryptString(password, _appSettings.ExternalAppSecurityKey);
+            return await _userRepo.IsExistAsync(s => s.ApplicationCategory != EnumApplicationCategory.MSFAApp && s.UserName.ToLower() == username.ToLower() && s.Password == encryptPassword, true);
         }
 
         public async Task<bool> IsActiveUserAsync(string username)
         {
-            return await _userRepo.IsExistAsync(s => s.ApplicationCategory == EnumApplicationCategory.SomporkoApp && s.Status == Status.Active && s.UserName.ToLower() == username.ToLower(), true);
+            return await _userRepo.IsExistAsync(s => s.ApplicationCategory != EnumApplicationCategory.MSFAApp && s.Status == Status.Active && s.UserName.ToLower() == username.ToLower(), true);
         }
 
         public async Task<SomporkoAuthenticateUserModel> GetJWTTokenByUserNameAsync(string userName)
         {
             try
             {
-                var userInfo = await _userRepo.FindAsync(x => x.ApplicationCategory == EnumApplicationCategory.SomporkoApp && x.UserName.ToLower() == userName.ToLower(), true);
+                var userInfo = await _userRepo.FindAsync(x => x.ApplicationCategory != EnumApplicationCategory.MSFAApp && x.UserName.ToLower() == userName.ToLower(), true);
 
                 var userPrincipal = new AppUserPrincipal(userInfo.UserName)
                 {
@@ -72,7 +72,7 @@ namespace BergerMsfaApi.Services.Somporko.Users.Implementation
                     new Claim(JwtRegisteredClaimNames.UniqueName,userPrincipal.UserName),
                     new Claim(JwtRegisteredClaimNames.Sub,userPrincipal.UserId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim(ConstantsApplication.ApplicationCategory, nameof(EnumApplicationCategory.SomporkoApp)),
+                    new Claim(ConstantsApplication.ApplicationCategory, userInfo.ApplicationCategory.ToString()),
                 };
                 claims.AddRange(appClaimes);
 
@@ -83,7 +83,7 @@ namespace BergerMsfaApi.Services.Somporko.Users.Implementation
                                     _tokenSettings.Issuer,
                                     _tokenSettings.Audience,
                                     claims,
-                                    expires: DateTime.UtcNow.AddHours(_tokenSettings.SomporkoExpiresHours),
+                                    expires: DateTime.Now.AddHours(_tokenSettings.ExternalAppExpiresHours),
                                     signingCredentials: cred
                                 );
 

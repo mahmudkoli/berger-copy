@@ -19,7 +19,7 @@ namespace BergerMsfaApi.Models.Common
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public int ExpiresHours { get; set; }
-        public int SomporkoExpiresHours { get; set; }
+        public int ExternalAppExpiresHours { get; set; }
     }
 
     public class FCMSettingsModel
@@ -29,6 +29,6 @@ namespace BergerMsfaApi.Models.Common
 
     public class AppSettingsModel
     {
-        public string SomporkoAppSecurityKey { get; set; }
+        public string ExternalAppSecurityKey { get; set; }
     }
 }
