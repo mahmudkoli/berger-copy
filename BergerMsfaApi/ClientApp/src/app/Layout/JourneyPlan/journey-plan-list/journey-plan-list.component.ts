@@ -136,7 +136,7 @@ export class JourneyPlanListComponent implements OnInit {
         //     }
         // }
 
-
+		document.querySelector('style').textContent += "@media screen and (max-width:767px) { .fc-toolbar.fc-header-toolbar {flex-direction:column;} .fc-toolbar-chunk { display: table-row; text-align:center; padding:5px 0; } }";
     }
     handleEvents(arg) {
         // debugger;
