@@ -130,4 +130,20 @@ namespace Berger.Common.Constants
         public const string SpaceString = " ";
         public const string ApplicationCategory = "ApplicationCategory";
     }
+
+    public static class ConstantsLeadProjectStatus
+    {
+        public const string UnderConstructionDropdownCode = "PS02_01";
+        public const string PaintingOngoingDropdownCode = "PS02_02";
+        public const string LeadCompletedDropdownCode = "PS02_03";
+        public const string LeadHandoverDropdownCode = "PS02_04";
+
+        public static IDictionary<string, string> HappyWalletProjectStatusDict = new Dictionary<string, string>()
+        {
+            { ConstantsLeadProjectStatus.UnderConstructionDropdownCode, "UnderConstruction" },
+            { ConstantsLeadProjectStatus.PaintingOngoingDropdownCode, "PaintingOngoing" },
+            { ConstantsLeadProjectStatus.LeadCompletedDropdownCode, "LeadCompleted" },
+            { ConstantsLeadProjectStatus.LeadHandoverDropdownCode, "LeadHandover" }
+        };
+    }
 }

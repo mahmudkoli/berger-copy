@@ -9,6 +9,7 @@ namespace Berger.Common.Enumerations
     public enum EnumApplicationCategory
     {
         MSFAApp=0,
-        SomporkoApp=1
+        SomporkoApp=1,
+        HappyWalletApp=2
     }
 }

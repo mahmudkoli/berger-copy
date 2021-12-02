@@ -31,7 +31,8 @@ namespace BergerMsfaApi.Controllers.Somporko.Users
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
-                //var pass = Berger.Common.Extensions.SecurityExtension.ToEncryptString("afEgta2fg4h6k@gwq", "Auf2eZehjfg6tfgttlgs3hfuRrf8fday");
+                //var pass = Berger.Common.Extensions.SecurityExtension.ToEncryptString("afEgta2fg4h6k@gwq", "Auf2eZehjfg6tfgttlgs3hfuRrf8fday"); // SomporkoApp
+                //var pass = Berger.Common.Extensions.SecurityExtension.ToEncryptString("fwtka!w2h6k#w7ygu", "Auf2eZehjfg6tfgttlgs3hfuRrf8fday"); // HappyWalletApp
 
                 bool loginSuccess = await _authService.IsUserExistAsync(model.UserName, model.Password);
                 if (!loginSuccess)
