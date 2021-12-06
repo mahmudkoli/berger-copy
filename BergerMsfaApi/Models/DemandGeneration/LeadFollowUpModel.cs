@@ -253,6 +253,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public IList<string> BrandUsedTopCoatBrandNames { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
+        public string LeadGenerateFromText { get; set; }
         //public decimal ActualVolumeSoldInteriorGallon { get; set; }
         //public decimal ActualVolumeSoldInteriorKg { get; set; }
         //public decimal ActualVolumeSoldExteriorGallon { get; set; }

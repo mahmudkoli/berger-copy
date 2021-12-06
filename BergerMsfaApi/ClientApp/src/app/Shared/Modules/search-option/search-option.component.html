@@ -255,6 +255,16 @@
                     </small>
                 </div>
             </div>
+            <div class="col-md-3" *ngIf="hasSearchOption('leadGenerateFrom')">
+                <div class="position-relative form-group">
+                    <label [ngClass]="{'required':isSearchOptionRequired('leadGenerateFrom')}">Lead Generate From</label>
+                    <ng-select [items]="leadGenerateFroms" formControlName="leadGenerateFrom" bindValue="id" bindLabel="label" [multiple]="false" [virtualScroll]="true">
+                    </ng-select>
+                    <small class="text-danger" *ngIf="formControls.leadGenerateFrom.touched && formControls.leadGenerateFrom.errors">
+                        <span *ngIf="formControls.leadGenerateFrom.errors.required">Lead Generate From is <strong>required</strong></span>
+                    </small>
+                </div>
+            </div>
             <div class="col-md-3" *ngIf="hasSearchOption('fromMonth')">
                 <div class="position-relative form-group">
                     <label [ngClass]="{'required':isSearchOptionRequired('fromMonth')}">From Month</label>

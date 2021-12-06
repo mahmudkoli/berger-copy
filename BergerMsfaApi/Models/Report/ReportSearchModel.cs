@@ -29,13 +29,14 @@ namespace BergerMsfaApi.Models.Report
 
     public class LeadSummaryReportSearchModel : ReportBaseSearchModel
     {
-
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class LeadGenerationDetailsReportSearchModel : ReportBaseSearchModel
     {
         public string ProjectName { get; set; }
         public int? PaintingStageId { get; set; }
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class LeadFollowUpDetailsReportSearchModel : ReportBaseSearchModel
@@ -43,6 +44,7 @@ namespace BergerMsfaApi.Models.Report
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
         public int? ProjectStatusId { get; set; }
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class LeadBusinessReportSearchModel : ReportBaseSearchModel
@@ -50,6 +52,7 @@ namespace BergerMsfaApi.Models.Report
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
         public int? ProjectStatusId { get; set; }
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class PainterRegistrationReportSearchModel : ReportBaseSearchModel

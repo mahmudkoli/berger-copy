@@ -84,6 +84,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
@@ -95,6 +96,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -106,6 +108,7 @@ export class LeadSummaryReportComponent implements OnInit, OnDestroy {
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}

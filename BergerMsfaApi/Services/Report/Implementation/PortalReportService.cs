@@ -164,7 +164,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                 && (((!query.FromDate.HasValue || x.CreatedTime.Date >= query.FromDate.Value.Date)
                                         && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date))
                                     || ((!query.FromDate.HasValue || x.LeadFollowUps.Any(y => y.CreatedTime.Date >= query.FromDate.Value.Date))
-                                        && (!query.ToDate.HasValue || x.LeadFollowUps.Any(y => y.CreatedTime.Date <= query.ToDate.Value.Date)))),
+                                        && (!query.ToDate.HasValue || x.LeadFollowUps.Any(y => y.CreatedTime.Date <= query.ToDate.Value.Date))))
+                                && (query.LeadGenerateFrom == -1 || (x.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom)),
                             x => x.OrderByDescending(o => o.CreatedTime),
                             x => x.Include(i => i.User)
                                 .Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus)
@@ -238,6 +239,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                 && (!query.ToDate.HasValue || lg.CreatedTime.Date <= query.ToDate.Value.Date)
                                 && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
                                 && (!query.PaintingStageId.HasValue || lg.PaintingStageId == query.PaintingStageId.Value)
+                                    && (query.LeadGenerateFrom == -1 || (lg.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom))
                                )
                                select new
                                {
@@ -363,6 +365,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
                                   && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
                                   && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
+                                    && (query.LeadGenerateFrom == -1 || (lg.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom))
                               )
                               select new
                               {
@@ -557,6 +560,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
                                            && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
                                            && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
+                                            && (query.LeadGenerateFrom == -1 || (lg.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom))
                                       )
                                       select new
                                       {

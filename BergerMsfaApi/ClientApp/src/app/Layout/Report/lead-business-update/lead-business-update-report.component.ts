@@ -97,6 +97,7 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
@@ -109,6 +110,7 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ProjectStatusId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text2, isRequired:false, textLabel: 'Project Code'}),
 		]});
@@ -123,6 +125,7 @@ export class LeadBusinessUpdateReportComponent implements OnInit, OnDestroy {
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
 		this.query.projectStatusId = queryObj.projectStatusId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
 		this.query.projectName = queryObj.text1;
 		this.query.projectCode = queryObj.text2;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);

@@ -1,4 +1,5 @@
-﻿using Berger.Data.Common;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.Common;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using System;
@@ -44,6 +45,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DateTime NextFollowUpDate { get; set; }
         public string Remarks { get; set; }
         public string PhotoCaptureUrl { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
 
         public IList<LeadFollowUp> LeadFollowUps { get; set; }
     }
