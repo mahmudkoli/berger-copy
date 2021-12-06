@@ -353,6 +353,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
                               from dtInfo in dtleft.DefaultIfEmpty()
                               join dps in _context.DropdownDetails on lf.ProjectStatusId equals dps.Id into dpsleft
                               from dpsInfo in dpsleft.DefaultIfEmpty()
+                              join dpslc in _context.DropdownDetails on lf.ProjectStatusLeadCompletedId equals dpslc.Id into dpslcleft
+                              from dpslcInfo in dpslcleft.DefaultIfEmpty()
                               join d in _context.Depots on lg.Depot equals d.Werks into dleftjoin
                               from dinfo in dleftjoin.DefaultIfEmpty()
                               where (
@@ -405,6 +407,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                   bergerPremiumBrandSalesValue = lbaInfo.BergerPremiumBrandSalesValue,
                                   competitionValueSales = lbaInfo.CompetitionValueSales,
                                   projectStatus = dpsInfo.DropdownName,
+                                  projectStatusCode = dpsInfo.DropdownCode,
+                                  projectStatusLeadCompleted = dpslcInfo.DropdownName,
+                                  projectStatusLeadCompletedCode = dpslcInfo.DropdownCode,
+                                  projectStatusPartialBusinessPercentage = lf.ProjectStatusPartialBusinessPercentage,
                                   isColorSchemeGiven = lbaInfo.IsColorSchemeGiven,
                                   isProductSampling = lbaInfo.IsProductSampling,
                                   comments = lbaInfo.RemarksOrOutcome,
@@ -465,6 +471,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 bergerPremiumBrandSalesValue = x.FirstOrDefault().bergerPremiumBrandSalesValue,
                 competitionValueSales = x.FirstOrDefault().competitionValueSales,
                 projectStatus = x.FirstOrDefault().projectStatus,
+                projectStatusCode = x.FirstOrDefault().projectStatusCode,
+                projectStatusLeadCompleted = x.FirstOrDefault().projectStatusLeadCompleted,
+                projectStatusLeadCompletedCode = x.FirstOrDefault().projectStatusLeadCompletedCode,
+                projectStatusPartialBusinessPercentage = x.FirstOrDefault().projectStatusPartialBusinessPercentage,
                 isColorSchemeGiven = x.FirstOrDefault().isColorSchemeGiven,
                 isProductSampling = x.FirstOrDefault().isProductSampling,
                 comments = x.FirstOrDefault().comments,
@@ -517,7 +527,11 @@ namespace BergerMsfaApi.Services.Report.Implementation
                 reportModel.BergerValueSales = x?.bergerValueSales ?? (decimal)0;
                 reportModel.BergerPremiumBrandSalesValue = x?.bergerPremiumBrandSalesValue ?? (decimal)0; ;
                 reportModel.CompetitionValueSales = x?.competitionValueSales ?? (decimal)0;
-                reportModel.ProjectStatus = x.projectStatus;
+                reportModel.ProjectStatus = x.projectStatusLeadCompletedCode == ConstantsLeadValue.ProjectStatusLeadCompletedPartialBusinessDropdownCode
+                                            ? $"{x.projectStatus} - {x.projectStatusLeadCompleted} ({x.projectStatusPartialBusinessPercentage} %)"
+                                            : x.projectStatusCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode
+                                                ? $"{x.projectStatus} - {x.projectStatusLeadCompleted}"
+                                                : $"{x.projectStatus}";
                 reportModel.IsColorSchemeGiven = x?.isColorSchemeGiven ?? false ? "YES" : "NO";
                 reportModel.IsProductSampling = x?.isProductSampling ?? false ? "YES" : "NO";
                 reportModel.Comments = x.comments ?? string.Empty;
@@ -542,7 +556,8 @@ namespace BergerMsfaApi.Services.Report.Implementation
             var leadBusiness = await (from lf in _context.LeadFollowUps
                                       join lg in _context.LeadGenerations on lf.LeadGenerationId equals lg.Id
                                       join lba in _context.LeadBusinessAchievements on lf.BusinessAchievementId equals lba.Id
-                                      join dd in _context.DropdownDetails on lba.ProductSourcingId equals dd.Id
+                                      join dd in _context.DropdownDetails on lba.ProductSourcingId equals dd.Id into ddleft
+                                      from ddInfo in ddleft.DefaultIfEmpty()
                                       join ui in _context.UserInfos on lg.UserId equals ui.Id
                                       join las in _context.LeadActualVolumeSold on lf.Id equals las.LeadFollowUpId into lasleft
                                       from lasInfo in lasleft.DefaultIfEmpty()
@@ -559,7 +574,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                            && (!query.ToDate.HasValue || lf.CreatedTime.Date <= query.ToDate.Value.Date)
                                            && (string.IsNullOrWhiteSpace(query.ProjectName) || lg.ProjectName.Contains(query.ProjectName))
                                            && (string.IsNullOrWhiteSpace(query.ProjectCode) || lg.Code.Contains(query.ProjectCode))
-                                           && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
+                                            && (!query.ProjectStatusId.HasValue || lf.ProjectStatusId == query.ProjectStatusId.Value)
                                             && (query.LeadGenerateFrom == -1 || (lg.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom))
                                       )
                                       select new
@@ -578,9 +593,10 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           biInfo.MaterialDescription,
                                           lasInfo.Quantity,
                                           lasInfo.TotalAmount,
-                                          dd.DropdownName,
+                                          ddInfo.DropdownName,
                                           lba.ProductSourcingRemarks,
-                                          lba.BergerValueSales
+                                          lba.BergerValueSales,
+                                          lf.ProjectStatusId
                                       }).OrderByDescending(x => x.ActualVisitDate).ToListAsync();
 
             var groupOfLeadBusiness = leadBusiness.GroupBy(x => new { x.leadfolowupId });

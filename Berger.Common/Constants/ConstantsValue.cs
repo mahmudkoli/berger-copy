@@ -18,6 +18,7 @@ namespace Berger.Common.Constants
 
         public const string ProjectStatusLeadCompletedDropdownCode = "PS02_03";
         public const string ProjectStatusLeadHandOverDropdownCode = "PS02_04";
+        public const string ProjectStatusLeadCompletedPartialBusinessDropdownCode = "PSLC01_03";
 
 
 
