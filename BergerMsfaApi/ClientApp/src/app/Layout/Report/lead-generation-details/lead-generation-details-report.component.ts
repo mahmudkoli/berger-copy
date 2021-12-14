@@ -88,6 +88,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
@@ -100,6 +101,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.PaintingStageId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
 		]});
 
@@ -113,6 +115,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
 		this.query.paintingStageId = queryObj.paintingStageId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
 		this.query.projectName = queryObj.text1;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();

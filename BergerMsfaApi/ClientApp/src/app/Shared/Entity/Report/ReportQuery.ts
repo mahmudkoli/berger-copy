@@ -19,6 +19,8 @@ export class ReportBaseQuery extends QueryObject {
 }
 
 export class LeadSummaryQuery extends ReportBaseQuery {
+  leadGenerateFrom: number;
+  
   constructor(init?: Partial<LeadSummaryQuery>) {
     super();
     Object.assign(this, init);
@@ -30,6 +32,7 @@ export class LeadSummaryQuery extends ReportBaseQuery {
 export class LeadGenerationDetailsQuery extends ReportBaseQuery {
   projectName: string;
   paintingStageId: number;
+  leadGenerateFrom: number;
 
   constructor(init?: Partial<LeadGenerationDetailsQuery>) {
     super();
@@ -43,6 +46,7 @@ export class LeadFollowUpDetailsQuery extends ReportBaseQuery {
   projectName: string;
   projectCode: string;
   projectStatusId: number;
+  leadGenerateFrom: number;
 
   constructor(init?: Partial<LeadFollowUpDetailsQuery>) {
     super();
@@ -56,6 +60,7 @@ export class LeadBusinessUpdateQuery extends ReportBaseQuery {
   projectName: string;
   projectCode: string;
   projectStatusId: number;
+  leadGenerateFrom: number;
 
   constructor(init?: Partial<LeadBusinessUpdateQuery>) {
     super();

@@ -1,4 +1,5 @@
 ﻿using Berger.Common.Enumerations;
+using BergerMsfaApi.Controllers.HappyWallet.Lead;
 using BergerMsfaApi.Controllers.Somporko.Users;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,14 @@ namespace BergerMsfaApi.Common
                 nameof(EnumApplicationCategory.SomporkoApp),
                 new List<string>()
                 {
-                    nameof(ExternalAppAuthController).RemoveControllerEndName(),
                     nameof(ExternalAppUserInfoController).RemoveControllerEndName()
+                }
+            },
+            {
+                nameof(EnumApplicationCategory.HappyWalletApp),
+                new List<string>()
+                {
+                    nameof(ExternalAppLeadController).RemoveControllerEndName()
                 }
             }
         };

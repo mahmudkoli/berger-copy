@@ -15,6 +15,7 @@ import { EnumEmployeeRole } from 'src/app/Shared/Enums/employee-role';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
 import { Enums } from '../../Enums/enums';
+import { EnumLeadGenerateFromLabel } from '../../Enums/lead-generate-from';
 import { AlertService } from '../alert/alert.service';
 import {
   BrandFilter,
@@ -64,6 +65,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 
   valueVolumeResultTypes: any[] = Enums.valueVolumeResultType;
   customerClassificationTypes: any[] = Enums.customerClassificationType;
+  leadGenerateFroms: any[] = EnumLeadGenerateFromLabel.LeadGenerateFroms;
 
   private _allDealers: any[] = [];
 
@@ -121,6 +123,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 			activitySummary: [this.searchOptionQuery.activitySummary],
 			valueVolumeResultType: [this.searchOptionQuery.valueVolumeResultType],
 			customerClassificationType: [this.searchOptionQuery.customerClassificationType],
+			leadGenerateFrom: [this.searchOptionQuery.leadGenerateFrom],
 		});
 
     if (this.searchOptionQuery.fromDate) {
@@ -370,6 +373,7 @@ export class SearchOptionComponent implements OnInit, OnDestroy {
 		this.searchOptionQuery.activitySummary = controls['activitySummary'].value;
 		this.searchOptionQuery.valueVolumeResultType = controls['valueVolumeResultType'].value;
 		this.searchOptionQuery.customerClassificationType = controls['customerClassificationType'].value;
+		this.searchOptionQuery.leadGenerateFrom = controls['leadGenerateFrom'].value;
 		
 		if (this._allDealers && this.searchOptionQuery.dealerId)
 			this.searchOptionQuery.customerNo = this._allDealers.find(x => x.id == this.searchOptionQuery.dealerId).customerNo;

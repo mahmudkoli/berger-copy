@@ -35,6 +35,7 @@ export class SearchOptionQuery extends QueryObject {
     valueVolumeResultType: number;
     customerClassificationType: number;
     customerNo: string; // assign when dealer selected
+    leadGenerateFrom: number;
 
     constructor(init?: Partial<SearchOptionQuery>) {
         super();
@@ -111,6 +112,7 @@ export enum EnumSearchOption {
     Text3='text3',
     ValueVolumeResultType='valueVolumeResultType',
     CustomerClassificationType='customerClassificationType',
+    LeadGenerateFrom='leadGenerateFrom',
 }
 
 

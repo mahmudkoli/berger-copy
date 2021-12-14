@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.DemandGeneration;
@@ -101,6 +102,8 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string KeyContactPersonMobile { get; set; }
         public string LastVisitedDate { get; set; }
         public string NextVisitDatePlan { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
+        public string LeadGenerateFromText { get; set; }
 
         public AppLeadGenerationModel()
         {
@@ -114,7 +117,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
                 .ForMember(dest => dest.LastVisitedDate,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.VisitDate)))
                 .ForMember(dest => dest.NextVisitDatePlan,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextFollowUpDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextFollowUpDate)))
+                .ForMember(dest => dest.LeadGenerateFromText,
+                    opt => opt.MapFrom(src => LeadGenerateFrom.ToString()));
         }
     }
     
@@ -154,6 +159,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string NextFollowUpDate { get; set; }
         public string Remarks { get; set; }
         public string PhotoCaptureUrl { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
 
         //public IList<LeadFollowUpModel> LeadFollowUps { get; set; }
 

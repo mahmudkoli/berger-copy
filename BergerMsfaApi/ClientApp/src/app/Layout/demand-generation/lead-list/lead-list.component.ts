@@ -5,6 +5,7 @@ import { of, Subscription } from 'rxjs';
 import { delay, finalize, take } from 'rxjs/operators';
 import { LeadGeneration, LeadQuery } from 'src/app/Shared/Entity/DemandGeneration/lead';
 import { LeadGenerationDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { EnumLeadGenerateFrom } from 'src/app/Shared/Enums/lead-generate-from';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
@@ -89,6 +90,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
@@ -101,6 +103,7 @@ export class LeadListComponent implements OnInit, OnDestroy {
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.PaintingStageId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
 		]});
 
@@ -109,6 +112,11 @@ export class LeadListComponent implements OnInit, OnDestroy {
 		this.query.depot = queryObj.depot;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
+		this.query.fromDate = queryObj.fromDate;
+		this.query.toDate = queryObj.toDate;
+		this.query.paintingStageId = queryObj.paintingStageId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
+		this.query.projectName = queryObj.text1;
 		this.loadLeadsPage();
 		// this.loadFocusDealersPage();
 	}

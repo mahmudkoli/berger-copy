@@ -75,6 +75,7 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                                 && (!query.ToDate.HasValue || x.CreatedTime.Date <= query.ToDate.Value.Date)
                                 && (string.IsNullOrWhiteSpace(query.ProjectName) || x.ProjectName.Contains(query.ProjectName))
                                 && (!query.PaintingStageId.HasValue || x.PaintingStageId == query.PaintingStageId.Value)
+                                && (query.LeadGenerateFrom == -1 || (x.LeadGenerateFrom == (EnumLeadGenerationFrom)query.LeadGenerateFrom))
                                ),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User),
@@ -149,6 +150,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
                 modelRes.NextVisitDatePlan = CustomConvertExtension.ObjectToDateString(res.NextFollowUpDate);
                 modelRes.KeyContactPersonName = res.KeyContactPersonName;
                 modelRes.KeyContactPersonMobile = res.KeyContactPersonMobile;
+                modelRes.LeadGenerateFrom = res.LeadGenerateFrom;
+                modelRes.LeadGenerateFromText = res.LeadGenerateFrom.ToString();
 
                 if (res.LeadFollowUps.Any())
                 {
@@ -260,6 +263,8 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
             modelResult.TotalPaintingAreaSqftInteriorChangeCount = result.TotalPaintingAreaSqftInteriorChangeCount;
             modelResult.TotalPaintingAreaSqftExterior = result.TotalPaintingAreaSqftExterior;
             modelResult.TotalPaintingAreaSqftExteriorChangeCount = result.TotalPaintingAreaSqftExteriorChangeCount;
+            modelResult.LeadGenerateFrom = result.LeadGenerateFrom;
+            modelResult.LeadGenerateFromText = result.LeadGenerateFrom.ToString();
             modelResult.BusinessAchievement = new SaveLeadBusinessAchievementModel();
 
             if (result.LeadFollowUps.Any())

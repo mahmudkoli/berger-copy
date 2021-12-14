@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Berger.Common.Enumerations
 {
-    public enum EnumApplicationCategory
+    public enum EnumLeadGenerationFrom
     {
-        MSFAApp=0,
-        SomporkoApp=1,
-        HappyWalletApp=2
+        MSFA = 0,
+        HappyWallet = 1
     }
 }
