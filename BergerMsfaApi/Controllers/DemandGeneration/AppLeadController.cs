@@ -19,6 +19,7 @@ namespace BergerMsfaApi.Controllers.DemandGeneration
             _leadService = leadService;
         }
 
+        // updated - area wise data get, not user wise
         [HttpGet("GetAllByUserId/{id}")]
         public async Task<IActionResult> GetAllByUserId(int id)
         {
