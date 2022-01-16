@@ -23,4 +23,8 @@ export class ExamService {
     getAllExamReport(filter?) {
       return this.http.get<APIResponse>(`${this.ExamEndpoint}/GetAllExamReport?${this.commonService.toQueryString(filter)}`);
     }
+
+    downloadAllExamReport(filter?) {
+      return `${this.ExamEndpoint}/DownloadAllExamReport?${this.commonService.toQueryString(filter)}`;
+    }
 }

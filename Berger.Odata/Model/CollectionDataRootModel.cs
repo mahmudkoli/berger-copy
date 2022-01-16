@@ -27,6 +27,7 @@ namespace Berger.Odata.Model
         public string AccountGroupName { get; set; }
         public string Customer { get; set; }
         public string CustomerName { get; set; }
+        public string rpmkr { get; set; }
         public string Depot { get; set; }
         public string PostingDate { get; set; }
         public string augdt { get; set; }
@@ -51,11 +52,12 @@ namespace Berger.Odata.Model
             model.BounceStatus = this.stgrd;
             model.stblg = this.stblg;
             model.stjah = this.stjah;
-            model.blart = this.blart;
+            model.CollectionType = this.blart;
             model.Amount = this.Amount;
             model.AccountGroupName = this.AccountGroupName;
             model.CustomerNo = this.Customer;
             model.CustomerName = this.CustomerName;
+            model.Territory = this.rpmkr;
             model.Depot = this.Depot;
             model.PostingDate = this.PostingDate;
             model.ClearDate = this.augdt;

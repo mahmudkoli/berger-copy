@@ -109,8 +109,8 @@ export class DealerSalesCallDetailsComponent implements OnInit, OnDestroy {
 			{ headerName: 'Comments', width: '10%', internalName: 'comments', sort: false, type: "" },
 			{ headerName: 'Priority', width: '10%', internalName: 'priorityText', sort: false, type: "" },
 			{ headerName: 'Has CB Machine Mantainance', width: '10%', internalName: 'hasCBMachineMantainanceText', sort: false, type: "" },
-			{ headerName: 'CB Machine Mantainance', width: '10%', internalName: 'cBMachineMantainanceText', sort: false, type: "" },
-			{ headerName: 'CB Machine Mantainance Regular Reason', width: '10%', internalName: 'cBMachineMantainanceRegularReason', sort: false, type: "" }
+			{ headerName: 'CB Machine Mantainance', width: '10%', internalName: 'cbMachineMantainanceText', sort: false, type: "" },
+			{ headerName: 'CB Machine Mantainance Regular Reason', width: '10%', internalName: 'cbMachineMantainanceRegularReason', sort: false, type: "" }
 		],
 		// enabledSearch: true,
 		enabledSerialNo: true,

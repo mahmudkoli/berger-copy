@@ -88,9 +88,23 @@ export class AuthService {
   }
 
   logout() {
+    this.http.post<any>(`${this.authEndpoint}/revoke-token`, {}).subscribe();
     localStorage.removeItem(this.localStorageCurrentUserKey);
     this.currentUserSubject.next(null);
     // this.ngxPermissionsService.flushPermissions();
+  }
+
+  refreshToken() {
+      return this.http.post<any>(`${this.authEndpoint}/refresh-token`, {})
+          .pipe(map((res: APIResponse) => {
+              const authUser = res && res.data;
+              if (authUser && authUser.token) {
+                  localStorage.setItem(this.localStorageCurrentUserKey, JSON.stringify(authUser));
+                  this.currentUserSubject.next(authUser);
+                  // this.ngxPermissionsService.loadPermissions(this.getPermissions);
+              }
+              return authUser;
+          }));
   }
 }
 

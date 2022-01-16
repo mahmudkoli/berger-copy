@@ -53,7 +53,7 @@ export class SchemeDetail {
     code: string;
     brand: string;
     rateInLtrOrKg: string;
-    rateInDrum: string;
+    rateInSKU: string;
 
     //National Scheme (Value)
     slab: string;
@@ -63,28 +63,23 @@ export class SchemeDetail {
     benefitStartDateText: string;
     benefitEndDateText: string;
 
-    //Painter Scheme
-    schemeId: string;
-    material: string;
-    targetVolume: string;
 
-    //Common
-    benefit: string;
-
-    schemeMasterId: number;
+    schemeName: string;
     schemeMasterName: string;
     schemeMasterCondition: string;
     status: number;
 
     statusText: string;
-
+    businessArea:string;
+    schemeType:number;
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
 
     clear() {
         this.id = null;
-        this.schemeMasterId = null;
+        this.schemeName = null;
+        this.businessArea=null;
     }
 }
 
@@ -94,32 +89,23 @@ export class SaveSchemeDetail {
     code: string;
     brand: string;
     rateInLtrOrKg: string;
-    rateInDrum: string;
+    rateInSKU: string;
 
     //National Scheme (Value)
     slab: string;
     condition: string;
     benefitStartDate: Date;
     benefitEndDate?: Date;
-
-    //Painter Scheme
-    schemeId: string;
-    material: string;
-    targetVolume: string;
-
-    //Common
-    benefit: string;
-
-    schemeMasterId: number;
     status: number;
-
+    businessArea:string;
+    schemeName:string;
+    schemeType:number;
     constructor(init?: Partial<SchemeDetail>) {
         Object.assign(this, init);
     }
 
     clear() {
         this.id = null;
-        this.schemeMasterId = null;
     }
 }
 

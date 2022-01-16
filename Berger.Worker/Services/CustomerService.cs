@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Berger.Common.HttpClient;
 using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
 using Berger.Worker.Model;
+using Berger.Worker.Repositories;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,14 +19,14 @@ namespace Berger.Worker.Services
     {
 
         private readonly WorkerSettingsModel _appSettings;
-        private readonly IRepository<DealerInfo> _repo;
+        private readonly IApplicationRepository<DealerInfo> _repo;
         private readonly IHttpClientService _httpService;
         private readonly IDataEqualityComparer<DealerInfo> _dataComparer;
         private readonly ILogger<DealerInfo> _logger;
 
 
 
-        public CustomerService(IRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer,ILogger<DealerInfo> logger, IOptions<WorkerSettingsModel> appSettings)
+        public CustomerService(IApplicationRepository<DealerInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<DealerInfo> comparer,ILogger<DealerInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
             _appSettings = appSettings.Value;
             _repo = repo;
@@ -53,7 +54,7 @@ namespace Berger.Worker.Services
                 var mappedDataFromApi = parsedDataFromApi.Results.ToMap<CustomerModel, DealerInfo>();
 
                 _logger.LogInformation($"Fetching existing data from database....");
-                var dataFromDatabase = await _repo.FindAllAsync(x=>x.IsDeleted ==false);
+                var dataFromDatabase = await _repo.GetAllIncludeAsync(x=>x,x=>x.IsDeleted ==false,null,null,true);
                 if (dataFromDatabase != null)
                 {
                     IEnumerable<DealerInfo> dealerInfos = dataFromDatabase.ToList();
@@ -93,10 +94,14 @@ namespace Berger.Worker.Services
                             dealerInfo.IsDeleted = true;
                             dealerInfo.IsActive = false;
                         }
+
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+
+                        var delres = await _repo.UpdateListLargeReturnAsync(deletedList.Item2, nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.BussinesCategoryType));
+                       
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
+                      
                         insertDeleteKeys.AddRange(deletedList.Item1);
 
 
@@ -105,9 +110,36 @@ namespace Berger.Worker.Services
                         {
                             var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CompositeKey))
                                 .ToList();
+
                             if (updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+
+                                var dataFromDatabaseList = dataFromDatabase.Join(updatedData,
+                                    db => db.CompositeKey,
+                                    api => api.CompositeKey,
+                                    (db, api) => new {db,api}).ToList();
+
+
+                                var updateDealerLIst = new List<DealerInfo>();
+
+
+                                foreach (var item in dataFromDatabaseList)
+                                {
+                                    CopyProperties(item.api, item.db);
+                                    updateDealerLIst.Add(item.db);
+                                }
+
+                                //foreach (var dealerInfo in updatedData)
+                                //{
+                                //    var isMatch = dataFromDatabaseList.Find(a => a.CompositeKey == dealerInfo.CompositeKey);
+                                //    if (isMatch != null)
+                                //    {
+                                //        dealerInfo.Id = isMatch.Id;
+                                //        updateDealerLIst.Add(dealerInfo);
+                                //    }
+                                //}
+
+                                var updateres = await _repo.UpdateListLargeReturnAsync(updateDealerLIst, nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.BussinesCategoryType));
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -115,18 +147,35 @@ namespace Berger.Worker.Services
                     else
                     {
                         _logger.LogInformation("No new or Delete data found!!!Updating Data....Wait");
-                       dataFromDatabase = dataFromDatabase
-                            .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
-                            .ToList();
-                        foreach (var dealerInfo in mappedDataFromApi)
+                       //dataFromDatabase = dataFromDatabase
+                       //     .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
+                       //     .ToList();
+                        var dataFromDatabaseList = dataFromDatabase.Join(mappedDataFromApi,
+                                                                db => db.CompositeKey,
+                                                                api => api.CompositeKey,
+                                                                (db, api) => new { db, api }).ToList();
+
+                        var updateDealerLIst = new List<DealerInfo>();
+
+
+                        foreach (var item in dataFromDatabaseList)
                         {
-                            var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
-                            if (IsMatch != null)
-                            {
-                                dealerInfo.Id = IsMatch.Id;
-                            }
+                            CopyProperties(item.api, item.db);
+                            updateDealerLIst.Add(item.db);
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi, nameof(DealerInfo.IsExclusive), nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.IsAP));
+
+                        //foreach (var dealerInfo in mappedDataFromApi)
+                        //{
+                        //    var IsMatch = dataFromDatabaseList.Find(a => a.CompositeKey == dealerInfo.CompositeKey);
+                        //    if (IsMatch != null)
+                        //    {
+                        //        dealerInfo.Id = IsMatch.Id;
+                        //    }
+                        //}
+
+
+
+                        var upres = await _repo.UpdateListLargeAsync(updateDealerLIst, nameof(DealerInfo.IsLastYearAppointed), nameof(DealerInfo.ClubSupremeType), nameof(DealerInfo.BussinesCategoryType));
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }
@@ -140,6 +189,22 @@ namespace Berger.Worker.Services
 
             return 1;
         }
+
+
+        public static void CopyProperties( DealerInfo source, DealerInfo destination)
+        {
+            // Iterate the Properties of the destination instance and  
+            // populate them from their source counterparts  
+            PropertyInfo[] destinationProperties = destination.GetType().GetProperties();
+            foreach (PropertyInfo destinationPi in destinationProperties.Where(x=>x.Name!="Id"))
+            {
+                PropertyInfo sourcePi = source.GetType().GetProperty(destinationPi.Name);
+                destinationPi.SetValue(destination, sourcePi.GetValue(source, null), null);
+            }
+        }
+
+
+
 
         //private async Task<List<int>> InsertNewDataList(List<DealerInfo> mappedDataFromApi, DealerInfo[] fromDatabase, List<int> insertDeleteKeys)
         //{

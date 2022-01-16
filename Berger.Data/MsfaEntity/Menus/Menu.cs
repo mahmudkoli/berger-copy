@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Berger.Common.Enumerations;
 using Berger.Data.Common;
 
 namespace Berger.Data.MsfaEntity.Menus
@@ -26,6 +27,10 @@ namespace Berger.Data.MsfaEntity.Menus
         public bool IsParent { get; set; }
         public bool IsTitle { get; set; }
         public int Sequence { get; set; }
+        public TypeEnum Type { get; set; }
+        public string GroupCode { get; set; }
+        public string ActivityNavigationId { get; set; }
+        public string BackgroundColor { get; set; }
 
         public List<MenuPermission> MenuPermissions { get; set; }
         public List<MenuActivity> MenuActivities { get; set; }

@@ -1,35 +1,34 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Status } from '../../../Shared/Enums/status';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { CollectionPlan, CollectionPlanSlippageAmount, SaveCollectionPlan } from 'src/app/Shared/Entity/KPI/CollectionPlan';
 import { MapObject } from 'src/app/Shared/Enums/mapObject';
 import { StatusTypes } from 'src/app/Shared/Enums/statusTypes';
-import { forkJoin, pipe, Subscription } from 'rxjs';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { finalize } from 'rxjs/operators';
 import { CollectionPlanService } from 'src/app/Shared/Services/KPI/CollectionPlanService';
-import { CollectionPlan, CollectionPlanSlippageAmount, SaveCollectionPlan } from 'src/app/Shared/Entity/KPI/CollectionPlan';
-
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 @Component({
   selector: 'app-collection-plan-add',
   templateUrl: './collection-plan-add.component.html',
-  styleUrls: ['./collection-plan-add.component.css']
+  styleUrls: ['./collection-plan-add.component.css'],
+  providers:[DecimalPipe]
 })
 export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 
 	collectionPlan: CollectionPlan;
 	collectionPlanForm: FormGroup;
 	actInStatusTypes: MapObject[] = StatusTypes.actInStatusType;
-	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload; 
+	// @ViewChild('fileInput', {static:false}) fileInput: FileUpload;
 
     plants: any[] = [];
     // saleOffices: any[] = [];
     // areaGroups: any[] = [];
     // zones: any[] = [];
     territories:any[]=[]
-	
+
 	private subscriptions: Subscription[] = [];
 
 	constructor(private activatedRoute: ActivatedRoute,
@@ -37,14 +36,14 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		private formBuilder: FormBuilder,
 		private alertService: AlertService,
 		private commonService: CommonService,
-		private collectionPlanService: CollectionPlanService) { }
+		private collectionPlanService: CollectionPlanService,private _decimal: DecimalPipe) { }
 
 	ngOnInit() {
 		this.populateDropdwonDataList();
 		// this.alertService.fnLoading(true);
 		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params['id'];
-			console.log(id);
+			// console.log(id);
 			if (id) {
 				this.alertService.fnLoading(true);
 				this.collectionPlanService.getCollectionPlanById(id)
@@ -94,9 +93,25 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 			hiddenchunk: [],
 			businessArea: [this.collectionPlan.businessArea, [Validators.required]],
 			territory: [this.collectionPlan.territory, [Validators.required]],
-			collectionTargetAmount: [this.collectionPlan.collectionTargetAmount, [Validators.required]],
+			collectionTargetAmount: [this.collectionPlan.collectionTargetAmount, [Validators.required,Validators.pattern(/((\d){1,3})+([,][\d]{3})*([.](\d)*)?/)]],
 			slippageAmount: [this.collectionPlan.slippageAmount, [Validators.required]],
 		});
+		this.changeValue();
+	}
+
+	changeValue(){
+
+		const controls = this.collectionPlanForm.controls;
+		var value = controls['collectionTargetAmount'].value as string;
+		if(value){
+			value= value.toString().replace(",","")
+			var format = '1.0-2'
+			if(value.includes(".")){
+				format='1.2-2'
+			}
+			controls['collectionTargetAmount'].setValue(this._decimal.transform(value,format), { emitEvent: false, emitViewToModelChange: false });
+		}
+
 	}
 
 	get formControls() { return this.collectionPlanForm.controls; }
@@ -130,7 +145,7 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		_collectionPlan.territory = controls['territory'].value;
 		_collectionPlan.collectionTargetAmount = controls['collectionTargetAmount'].value;
 		_collectionPlan.slippageAmount = controls['slippageAmount'].value;
-		
+
 		return _collectionPlan;
 	}
 
@@ -166,7 +181,7 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 		const controls = this.collectionPlanForm.controls;
 		const businessArea: string = controls['businessArea'].value;
 		const territory: string = controls['territory'].value;
-		let amount = 0;
+		let amount = 342323423234234;
 
 		if (!businessArea || !territory) {
 			amount = 0;
@@ -181,12 +196,28 @@ export class CollectionPlanAddComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => this.alertService.fnLoading(false)))
 			.subscribe(res => {
 				amount = res.data as number;
+				console.log(amount)
 				controls['slippageAmount'].setValue(amount);
 			},
 				error => {
 					this.throwError(error);
 				});
 		this.subscriptions.push(slippageAmountSubscription);
+	}
+
+	onChangeDepot() {
+	  this.callTerritories();
+	  const controls = this.collectionPlanForm.controls;
+	  controls['territory'].setValue(null);
+	}
+  
+	callTerritories () {
+		const controls = this.collectionPlanForm.controls;
+		const depot = controls['businessArea'].value;
+		
+		  this.commonService.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
+			this.territories = res.data;
+		  });
 	}
 
 	getComponentTitle() {

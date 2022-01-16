@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 using Berger.Odata.Model;
 using Berger.Odata.Services;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 
 namespace BergerMsfaApi.Controllers.Odata
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class OdataQuartPerformDataController : BaseController
@@ -29,7 +26,7 @@ namespace BergerMsfaApi.Controllers.Odata
         {
             try
             {
-                var result = new List<QuarterlyPerformanceDataResultModel>();
+                var result = new List<AppQuarterlyPerformanceDataResultModel>();
 
                 if (model.QuarterlyPerformanceType == EnumQuarterlyPerformanceModel.MTSValueTargetAchivement)
                 {

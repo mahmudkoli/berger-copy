@@ -1,18 +1,15 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadGenerationDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
+import { LeadGenerationDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from '../../../Shared/Modules/search-option';
 
 @Component({
@@ -35,9 +32,10 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 	tableName: string = 'Lead Generation Details Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
-	allTotalKeysOfNumberType: boolean = true;
+	allTotalKeysOfNumberType: boolean = false;
 	// totalKeys: any[] = ['totalCall'];
-	totalKeys: any[] = [];
+	totalKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue'];
+	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue', 'numberOfStoriedBuilding'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -70,7 +68,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadGenerationDetailsApiUrl(query);
 	getData = (query) => this.reportService.getLeadGenerationDetails(query);
-	
+
 	searchConfiguration() {
 		this.query = new LeadGenerationDetailsQuery({
 			page: 1,
@@ -90,31 +88,34 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.PaintingStageId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.salesGroups = queryObj.salesGroups;
+		// this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
 		this.query.paintingStageId = queryObj.paintingStageId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
 		this.query.projectName = queryObj.text1;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
@@ -144,7 +145,9 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ?
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
@@ -155,7 +158,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 			// columName[0].visible = false;
 		}
 
-		// console.log(this.ptableSettings.tableColDef); 
+		// console.log(this.ptableSettings.tableColDef);
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -171,6 +174,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,
@@ -180,7 +184,7 @@ export class LeadGenerationDetailsReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

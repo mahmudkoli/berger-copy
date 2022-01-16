@@ -1,17 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { BillingAnalysisKpiReportQuery, BusinessCallAnalysisReportQuery, CollectionPlanKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { CollectionPlanKpiReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
-import { ModalBillingAnalysisDetailsComponent } from '../modal-billing-analysis-details/modal-billing-analysis-details.component';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-financial-collection-plan-report',
@@ -27,7 +26,7 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
+
 	// ptable settings
 	enabledTotal: boolean = false;
 	tableName: string = 'Collection Plan Report';
@@ -70,11 +69,12 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadFinancialCollectionPlan(query);
 	getData = (query) => this.reportService.getFinancialCollectionPlan(query);
-	
+
 	searchConfiguration() {
 		this.query = new CollectionPlanKpiReportQuery({
 			depot: '',
-			territory: '',
+			territories:[],
+			//salesGroups:[]
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
@@ -84,12 +84,15 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup}),
+
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.territory = queryObj.territories[0];
+		this.query.territories = queryObj.territories;
+		this.query.salesGroups =queryObj.salesGroups;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -119,8 +122,11 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).filter(f => !this.ignoreKeys.includes(f)).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) ,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+
+			} as colDef;
 		});
 	}
 
@@ -146,8 +152,12 @@ export class FinancialCollectionPlanReportComponent implements OnInit, OnDestroy
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+								enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.loadReportsPage();

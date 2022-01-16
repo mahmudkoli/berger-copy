@@ -6,8 +6,10 @@ import { delay, finalize, take } from 'rxjs/operators';
 import { APIModel } from 'src/app/Shared/Entity';
 import { CollectionPlan, CollectionPlanQuery } from 'src/app/Shared/Entity/KPI/CollectionPlan';
 import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { CollectionPlanService } from 'src/app/Shared/Services/KPI/CollectionPlanService';
+import { AuthService } from 'src/app/Shared/Services/Users';
 import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 
@@ -19,6 +21,7 @@ import { SchemeService } from '../../../Shared/Services/Scheme/SchemeService';
 export class CollectionPlanListComponent implements OnInit, OnDestroy {
 
 	query: CollectionPlanQuery;
+	searchOptionQuery: SearchOptionQuery;
 	PAGE_SIZE: number;
 	collectionPlans: CollectionPlan[];
 	totalDataLength: number = 0; // for server side paggination
@@ -32,21 +35,25 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		private alertService: AlertService,
 		private collectionPlanService: CollectionPlanService,
 		private modalService: NgbModal,
-		private commonService: CommonService) {
-			this.PAGE_SIZE = 5000;
-			this.ptableSettings.pageSize = 10;
-			this.ptableSettings.enabledServerSitePaggination = false;
+		private commonService: CommonService,
+		private authService: AuthService) {
+			// this.PAGE_SIZE = 5000;
+			// this.ptableSettings.pageSize = 10;
+			// this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			// this.PAGE_SIZE = commonService.PAGE_SIZE;
-			// this.ptableSettings.pageSize = this.PAGE_SIZE;
-			// this.ptableSettings.enabledServerSitePaggination = true;
+			this.PAGE_SIZE = commonService.PAGE_SIZE;
+			this.ptableSettings.pageSize = this.PAGE_SIZE;
+			this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
 		this.searchConfiguration();
-		of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
-			this.loadCollectionPlansPage();
-		});
+		// of(undefined).pipe(take(1), delay(1000)).subscribe(() => {
+		// 	this.loadCollectionPlansPage();
+		// });
+		
+		this.ptableSettings.enabledEditBtn = this.authService.isAdmin;
+		this.ptableSettings.enabledDeleteBtn = this.authService.isAdmin;
 	}
 
 	ngOnDestroy() {
@@ -80,8 +87,25 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 			pageSize: this.PAGE_SIZE,
 			sortBy: 'userFullName',
 			isSortAscending: true,
-			globalSearchValue: ''
+			globalSearchValue: '',
+			businessArea: '',
+			territories: []
 		});
+		this.searchOptionQuery = new SearchOptionQuery();
+		this.searchOptionQuery.clear();
+	}
+
+	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
+		searchOptionDef:[
+			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
+		]});
+
+	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
+		console.log('Search option query callback: ', queryObj);
+		this.query.businessArea = queryObj.depot;
+		this.query.territories = queryObj.territories;
+		this.loadCollectionPlansPage();
 	}
 
 	// toggleActiveInactive(id) {
@@ -92,12 +116,12 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 	// }
 
 	editCollectionPlan(obj:CollectionPlan) {
-		var dateNow = new Date();
-		var orgDate = new Date(obj.changeableMaxDate);
-		if (dateNow.getDay() > orgDate.getDay()){
-			this.alertService.tosterWarning(`Sorry! You can't edit after ${obj.changeableMaxDateText}.`);
-			return;
-		}
+		// var dateNow = new Date();
+		// var orgDate = new Date(obj.changeableMaxDate);
+		// if (dateNow.getDay() > orgDate.getDay()){
+		// 	this.alertService.tosterWarning(`Sorry! You can't edit after ${obj.changeableMaxDateText}.`);
+		// 	return;
+		// }
 		this.router.navigate(['/collection-plan/collection-plan-edit', obj.id]);
 	}
 
@@ -132,18 +156,19 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		tableRowIDInternalName: "id",
 		tableColDef: [
 			// { headerName: 'User Full Name', width: '30%', internalName: 'userFullName', sort: true, type: "" },
-			{ headerName: 'Business Area', width: '20%', internalName: 'businessArea', sort: false, type: "" },
-			{ headerName: 'Territory', width: '20%', internalName: 'territory', sort: false, type: "" },
+			{ headerName: 'Business Area', width: '20%', internalName: 'businessArea', sort: true, type: "" },
+			{ headerName: 'Territory', width: '20%', internalName: 'territory', sort: true, type: "" },
 			{ headerName: 'Year Month', width: '10%', internalName: 'yearMonthText', sort: true, type: "" },
-			{ headerName: 'Slippage Amount', width: '25%', internalName: 'slippageAmount', sort: true, type: "" },
-			{ headerName: 'Collection Target Amount', width: '25%', internalName: 'collectionTargetAmount', sort: true, type: "" },
+		  	{ headerName: 'Slippage Amount', width: '25%', internalName: 'slippageAmount', sort: false, type: "text", displayType: 'number-format-color-fraction', showTotal: true },
+			{ headerName: 'Collection Target Amount', width: '25%', internalName: 'collectionTargetAmount', sort: false, type: "text",displayType: 'number-format-color-fraction', showTotal: true  },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
+		enabledTotal:true,
 		// pageSize: 10,
 		enabledPagination: true,
-		enabledDeleteBtn: true,
-		enabledEditBtn: true,
+		// enabledDeleteBtn: true,
+		// enabledEditBtn: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,
 		enabledDataLength: true,

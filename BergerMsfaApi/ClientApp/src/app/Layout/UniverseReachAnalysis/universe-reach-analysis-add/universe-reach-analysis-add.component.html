@@ -1,0 +1,117 @@
+
+<div class="main-card mb-3 card">
+    <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">{{getComponentTitle()}}</div>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="universeReachAnalysisForm" (ngSubmit)="onSubmit()" *ngIf="universeReachAnalysisForm">
+            <div class="form-row">
+                        
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Business Area</label>
+                        <ng-select formControlName="businessArea" (change)="onChangeDepot()">
+                            <ng-option *ngFor="let ur of plants;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.businessArea.touched && formControls.businessArea.errors">
+                            <span *ngIf="formControls.businessArea.errors.required">Business Area is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select formControlName="territory">
+                            <ng-option *ngFor="let ur of territories;" [value]="ur.code">{{ur.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.territory.touched && formControls.territory.errors">
+                            <span *ngIf="formControls.territory.errors.required">Territory is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Outlet Number</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="outletNumber"
+                                [ngClass]="{'is-valid':formControls.outletNumber.touched && !formControls.outletNumber.errors,
+                                'is-invalid':formControls.outletNumber.touched && formControls.outletNumber.errors }" />
+                        <small class="text-danger" *ngIf="formControls.outletNumber.touched && formControls.outletNumber.errors">
+                            <span *ngIf="formControls.outletNumber.errors.required">Outlet Number is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Direct Covered</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="directCovered"
+                                [ngClass]="{'is-valid':formControls.directCovered.touched && !formControls.directCovered.errors,
+                                'is-invalid':formControls.directCovered.touched && formControls.directCovered.errors }" />
+                        <small class="text-danger" *ngIf="formControls.directCovered.touched && formControls.directCovered.errors">
+                            <span *ngIf="formControls.directCovered.errors.required">Direct Covered is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Indirect Covered</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="indirectCovered"
+                                [ngClass]="{'is-valid':formControls.indirectCovered.touched && !formControls.indirectCovered.errors,
+                                'is-invalid':formControls.indirectCovered.touched && formControls.indirectCovered.errors }" />
+                        <small class="text-danger" *ngIf="formControls.indirectCovered.touched && formControls.indirectCovered.errors">
+                            <span *ngIf="formControls.indirectCovered.errors.required">Indirect Covered is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Direct Target</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="directTarget"
+                                [ngClass]="{'is-valid':formControls.directTarget.touched && !formControls.directTarget.errors,
+                                'is-invalid':formControls.directTarget.touched && formControls.directTarget.errors }" />
+                        <small class="text-danger" *ngIf="formControls.directTarget.touched && formControls.directTarget.errors">
+                            <span *ngIf="formControls.directTarget.errors.required">Direct Target is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="">Indirect Target</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="indirectTarget"
+                                [ngClass]="{'is-valid':formControls.indirectTarget.touched && !formControls.indirectTarget.errors,
+                                'is-invalid':formControls.indirectTarget.touched && formControls.indirectTarget.errors }" />
+                        <small class="text-danger" *ngIf="formControls.indirectTarget.touched && formControls.indirectTarget.errors">
+                            <span *ngIf="formControls.indirectTarget.errors.required">Indirect Target is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6" *ngIf="this.universeReachAnalysis.id">
+                    <div class="position-relative form-group">
+                        <label class="">Indirect Manual</label>
+                        <input type="number" autocomplete="off" class="form-control" formControlName="indirectManual"
+                                [ngClass]="{'is-valid':formControls.indirectManual.touched && !formControls.indirectManual.errors,
+                                'is-invalid':formControls.indirectManual.touched && formControls.indirectManual.errors }" />
+                        <small class="text-danger" *ngIf="formControls.indirectManual.touched && formControls.indirectManual.errors">
+                            <span *ngIf="formControls.indirectManual.errors.required">Indirect Manual is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label class="required">Status</label>
+                        <ng-select formControlName="status">
+                            <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
+                            <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="goBack()"><i class="pe-7s-back pr-1"></i> Back </button>
+                <button type="submit" [disabled]="universeReachAnalysisForm.invalid" class="mb-2 btn btn-primary"><i class="fa fa-save pr-1"></i> Save </button>
+            </div>
+        </form>
+    </div>
+</div>

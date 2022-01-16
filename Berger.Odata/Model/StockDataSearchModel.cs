@@ -5,10 +5,10 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class StocksSearchModel
+    public class MaterialStockSearchModel
     {
         public string Plant { get; set; }
+        public string MaterialGroupOrBrand { get; set; }
         public string MaterialCode { get; set; }
-        public string MaterialGroup { get; set; }
     }
 }

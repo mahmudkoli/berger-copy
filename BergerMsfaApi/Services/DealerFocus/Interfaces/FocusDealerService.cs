@@ -66,12 +66,12 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var result = (
                             from fd in _focusDealerRepository.GetAll()
                             join ui in _userInfoRepository.GetAll() on fd.EmployeeId equals ui.EmployeeId
-                            join di in _dealerInfoRepository.GetAll() on fd.Code equals di.Id
+                            join di in _dealerInfoRepository.GetAll() on fd.DealerId equals di.Id
                             //where (ui.ManagerId == loggedInUser.EmployeeId || isAdminOrGMEmployeeRole)
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.Code,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -142,11 +142,11 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var result = (
                             from fd in _focusDealerRepository.GetAll()
                             join ui in _userInfoRepository.GetAll() on fd.EmployeeId equals ui.EmployeeId
-                            join di in _dealerInfoRepository.GetAll() on fd.Code equals di.Id
+                            join di in _dealerInfoRepository.GetAll() on fd.DealerId equals di.Id
                             select new FocusDealerModel
                             {
                                 Id = fd.Id,
-                                Code = fd.Code,
+                                DealerId = fd.DealerId,
                                 EmployeeId = fd.EmployeeId,
                                 ValidFrom = fd.ValidFrom,
                                 ValidTo = fd.ValidTo,
@@ -166,7 +166,7 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
         private async Task<bool> IsFocusDealerAlreadyAssigned(SaveFocusDealerModel model)
         {
-            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.Code == model.Code
+            var isExists = await _focusDealerRepository.AnyAsync(x => x.Id != model.Id && x.EmployeeId == model.EmployeeId && x.DealerId == model.DealerId
                    && (((Convert.ToDateTime(model.ValidFrom).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidFrom).Date <= x.ValidTo.Date)
                        || (Convert.ToDateTime(model.ValidTo).Date >= x.ValidFrom.Date && Convert.ToDateTime(model.ValidTo).Date <= x.ValidTo.Date))
                        || ((x.ValidFrom.Date >= Convert.ToDateTime(model.ValidFrom).Date && x.ValidFrom.Date <= Convert.ToDateTime(model.ValidTo).Date)
@@ -182,10 +182,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 ["customerName"] = v => v.CustomerName,
                 ["customerNo"] = v => v.CustomerNo,
-                ["isExclusiveText"] = v => v.IsExclusive,
-                ["isAPText"] = v => v.IsAP,
                 ["isLastYearAppointedText"] = v => v.IsLastYearAppointed,
                 ["clubSupremeTypeDropdown"] = v => v.ClubSupremeType,
+                ["bussinesCategoryTypeDrodown"] = v => v.BussinesCategoryType,
             };
 
             var result = await _dealerInfoRepository.GetAllIncludeAsync(
@@ -197,6 +196,8 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
                                         x.CustomerNo.Contains(query.GlobalSearchValue)) &&
                                     (string.IsNullOrEmpty(query.Depot) || x.BusinessArea == query.Depot) &&
                                     (!query.Territories.Any() || query.Territories.Contains(x.Territory)) &&
+                                    (query.DealerId==0 || query.DealerId==x.Id) &&
+                                    (!query.SalesGroups.Any() || query.SalesGroups.Contains(x.SalesGroup)) &&
                                     (!query.Zones.Any() || query.Zones.Contains(x.CustZone))),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 null,
@@ -228,10 +229,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             switch (dealer.PropertyName)
             {
-                case "IsExclusive": find.IsExclusive = !find.IsExclusive; break;
                 case "IsLastYearAppointed": find.IsLastYearAppointed = !find.IsLastYearAppointed; break;
-                case "IsAP": find.IsAP = !find.IsAP; break;
                 case "ClubSupremeType": find.ClubSupremeType = (EnumClubSupreme)Enum.Parse(typeof(EnumClubSupreme), dealer.PropertyValue.ToString()); break;
+                case "BussinesCategoryType": find.BussinesCategoryType = (EnumBussinesCategory)Enum.Parse(typeof(EnumBussinesCategory), dealer.PropertyValue.ToString()); break;
                 default: break;
             }
 
@@ -262,10 +262,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string value = "";
             switch (propertyName)
             {
-                case "IsExclusive": value = (dealerInfo.IsExclusive ? "Yes" : "No"); break;
                 case "IsLastYearAppointed": value = (dealerInfo.IsLastYearAppointed ? "Yes" : "No"); break;
-                case "IsAP": value = (dealerInfo.IsAP ? "Yes" : "No"); break;
                 case "ClubSupremeType": value = EnumExtension.GetEnumDescription(dealerInfo.ClubSupremeType); break;
+                case "BussinesCategoryType": value = EnumExtension.GetEnumDescription(dealerInfo.BussinesCategoryType); break;
                 default: break;
             }
             return value;
@@ -276,10 +275,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             string value = "";
             switch (propertyName)
             {
-                case "IsExclusive": value = "Exclusive"; break;
                 case "IsLastYearAppointed": value = "Last Year Appointed"; break;
-                case "IsAP": value = "AP"; break;
                 case "ClubSupremeType": value = "Club Supreme"; break;
+                case "BussinesCategoryType": value = "Bussines Category"; break;
                 default: break;
             }
             return value;
@@ -307,17 +305,15 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             switch (model.Type)
             {
-                case EnumDealerStatusExcelImportType.Exclusive:
-                    result = await this.DealerStatusExclusive(model.File);
-                    break;
+                
                 case EnumDealerStatusExcelImportType.LastYearAppointed:
                     result = await this.DealerStatusLastYearAppointed(model.File);
                     break;
                 case EnumDealerStatusExcelImportType.ClubSupreme:
                     result = await this.DealerStatusClubSupreme(model.File);
                     break;
-                case EnumDealerStatusExcelImportType.AP:
-                    result = await this.DealerStatusAP(model.File);
+                case EnumDealerStatusExcelImportType.BussinessCategory:
+                    result = await this.DealerStatusBussinessCategory(model.File);
                     break;
                 default:
                     break;
@@ -402,6 +398,85 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             };
         }
 
+        private async Task<DealerStatusExcelExportModel> DealerStatusBussinessCategory(IFormFile file)
+        {
+            var userId = AppIdentity.AppUser.UserId;
+            var excelModelList = await _excelReaderService.LoadDataAsync<DealerStatusBussinessCategoryExcelModel>(file);
+            excelModelList.ForEach(x =>
+            {
+                try { x.BussinesCategoryType = x.BussinesCategoryStatus.ToEnumFromDisplayName<EnumBussinesCategory>(); }
+                catch (Exception ex) { x.BussinesCategoryType = null; }
+            }
+            );
+
+            var dealerIdList = excelModelList.Select(x => x.DealerId).ToList();
+            var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
+                    x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                    x.Division == ConstantsODataValue.DivisionDecorative &&
+                    (dealerIdList.Contains(x.CustomerNo)
+                    || x.BussinesCategoryType != EnumBussinesCategory.None
+                    )
+                    )
+                .ToListAsync();
+
+            List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
+            List<DealerInfo> updatedDealerInfos = new List<DealerInfo>();
+            List<DealerStatusExcelExportDataModel> dealerStatusExportDataModels = new List<DealerStatusExcelExportDataModel>();
+
+            #region dealer status excel export
+            var dbDealerIdList = dbDealerInfoList.Select(x => x.CustomerNo);
+            var notFoundDealers = excelModelList.Where(x => !dbDealerIdList.Contains(x.DealerId));
+            foreach (var item in notFoundDealers)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.BussinesCategoryStatus, Result = "Not Found" });
+            }
+            var typeMismatchExcelModels = excelModelList.Where(x => x.BussinesCategoryType == null);
+            foreach (var item in typeMismatchExcelModels)
+            {
+                dealerStatusExportDataModels.Add(new DealerStatusExcelExportDataModel { DealerId = item.DealerId, Status = item.BussinesCategoryStatus, Result = "Type Mismatch" });
+            }
+            #endregion
+
+            foreach (var dealerInfo in dbDealerInfoList)
+            {
+                var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
+
+                if (excelModel != null && excelModel.BussinesCategoryType == null) continue; // check if type mismatch then no need to update;
+                if (excelModel != null && dealerInfo.BussinesCategoryType == excelModel.BussinesCategoryType) continue; // check if already same status then no need to update;
+
+                dealerInfo.BussinesCategoryType = excelModel?.BussinesCategoryType ?? EnumBussinesCategory.None;
+
+                var dealerInfoStatusLog = new DealerInfoStatusLog()
+                {
+                    DealerInfoId = dealerInfo.Id,
+                    UserId = userId,
+                    PropertyName = "Bussinee Category",
+                    PropertyValue = EnumExtension.GetEnumDescription((EnumBussinesCategory)dealerInfo.BussinesCategoryType)
+                };
+
+                updatedDealerInfos.Add(dealerInfo);
+                dealerInfoStatusLogs.Add(dealerInfoStatusLog);
+            }
+
+            await _dealerInfoRepository.UpdateListAsync(updatedDealerInfos);
+            await _dealerInfoStatusLogRepository.CreateListAsync(dealerInfoStatusLogs);
+
+            var list = dealerStatusExportDataModels.Select(x => new
+            {
+                x.DealerId,
+                x.Status,
+                x.Result
+            }).ToList();
+
+            byte[] writeToFile = _excelReaderService.WriteToFile(list);
+
+            return new DealerStatusExcelExportModel
+            {
+                File = Convert.ToBase64String(writeToFile),
+                FileName = "Dealer_Status_Error_BussinesCategory"
+            };
+        }
+
         private async Task<DealerStatusExcelExportModel> DealerStatusExclusive(IFormFile file)
         {
             var userId = AppIdentity.AppUser.UserId;
@@ -412,7 +487,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
                     x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                     x.Division == ConstantsODataValue.DivisionDecorative && 
-                    (dealerIdList.Contains(x.CustomerNo) || x.IsExclusive))
+                    (dealerIdList.Contains(x.CustomerNo) 
+                    //|| x.IsExclusive
+                    ))
                 .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
@@ -432,16 +509,16 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
 
-                if (dealerInfo.IsExclusive && excelModel != null) continue; // check if already same status then no need to update;
+                //if (dealerInfo.IsExclusive && excelModel != null) continue; // check if already same status then no need to update;
 
-                dealerInfo.IsExclusive = excelModel != null;
+                //dealerInfo.IsExclusive = excelModel != null;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
                     DealerInfoId = dealerInfo.Id,
                     UserId = userId,
                     PropertyName = "AP",
-                    PropertyValue = dealerInfo.IsExclusive ? "Yes" : "No"
+                    //PropertyValue = dealerInfo.IsExclusive ? "Yes" : "No"
                 };
 
                 updatedDealerInfos.Add(dealerInfo);
@@ -542,7 +619,9 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             var dbDealerInfoList = await _dealerInfoRepository.FindByCondition(x => !x.IsDeleted &&
                     x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
                     x.Division == ConstantsODataValue.DivisionDecorative && 
-                    (dealerIdList.Contains(x.CustomerNo) || x.IsAP))
+                    (dealerIdList.Contains(x.CustomerNo) 
+                    //|| x.IsAP
+                    ))
                 .ToListAsync();
 
             List<DealerInfoStatusLog> dealerInfoStatusLogs = new List<DealerInfoStatusLog>();
@@ -562,16 +641,16 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
             {
                 var excelModel = excelModelList.FirstOrDefault(x => x.DealerId == dealerInfo.CustomerNo);
 
-                if (dealerInfo.IsAP && excelModel != null) continue; // check if already same status then no need to update;
+                //if (dealerInfo.IsAP && excelModel != null) continue; // check if already same status then no need to update;
 
-                dealerInfo.IsAP = excelModel != null;
+                //dealerInfo.IsAP = excelModel != null;
 
                 var dealerInfoStatusLog = new DealerInfoStatusLog()
                 {
                     DealerInfoId = dealerInfo.Id,
                     UserId = userId,
                     PropertyName = "AP",
-                    PropertyValue = dealerInfo.IsAP ? "Yes" : "No"
+                    //PropertyValue = dealerInfo.IsAP ? "Yes" : "No"
                 };
 
                 updatedDealerInfos.Add(dealerInfo);

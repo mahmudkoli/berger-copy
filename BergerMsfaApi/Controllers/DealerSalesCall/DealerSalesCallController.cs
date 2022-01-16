@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.DealerSalesCall;
 using BergerMsfaApi.Services.DealerSalesCall.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BergerMsfaApi.Controllers.DealerSalesCall
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class DealerSalesCallController : BaseController
@@ -43,6 +40,41 @@ namespace BergerMsfaApi.Controllers.DealerSalesCall
             {
                 var result = await _dealerSalesCallService.GetByIdAsync(id);
                 return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+
+        [HttpPut("UpdateDealerSalesCallList")]
+        public async Task<IActionResult> UpdateDealerSalesCallList([FromBody] AppDealerSalesCallModel models)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationResult(ModelState);
+            }
+
+            try
+            {
+                var result = await _dealerSalesCallService.UpdateAsync(models);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpPost("DeleteImage")]
+        public async Task<IActionResult> DeleteImage([FromBody] DealerImageModel models)
+        {
+
+            try
+            {
+                await _dealerSalesCallService.DeleteImage(models);
+                return OkResult(1);
             }
             catch (Exception ex)
             {

@@ -11,7 +11,7 @@ namespace BergerMsfaApi.Models.CollectionEntry
 
         public string CollectionDate { get; set; }
         public int CustomerTypeId { get; set; }
-        public string Code { get; set; }
+        public string DealerId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string MobileNumber { get; set; }
@@ -29,6 +29,9 @@ namespace BergerMsfaApi.Models.CollectionEntry
         public int CreditControlAreaId { get; set; }
         public string CreditControlAreaName { get; set; }
         public string EmployeeId { get; set; }
+        public string Depot { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
     }
 
     public class AppCollectionEntryModel

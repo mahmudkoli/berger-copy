@@ -1,5 +1,4 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Notification;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using BergerMsfaApi.Services.Setup.Interfaces;
@@ -10,8 +9,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Notification
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class NotificationController : BaseController
@@ -62,11 +59,12 @@ namespace BergerMsfaApi.Controllers.Notification
                                 Id=item.Id,
                                 BusinessArea = item.BusinessArea,
                                 CurrentApprovar = item.CurrentApprovar?.UserName,
-                                NextApprovar = item.NextApprovar?.UserName,
+                                //NextApprovar = item.NextApprovar?.UserName,
                                 SaleGroup = item.SaleGroup,
                                 SaleOffice = item.SaleOffice,
                                 Territory = item.Territory,
-                                Zone = item.Zone
+                                Zone = item.Zone,
+                                Code=item.Code
                             });
                     }
                 }

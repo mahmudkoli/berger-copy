@@ -19,10 +19,16 @@ namespace BergerMsfaApi.Models.Common
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public int ExpiresHours { get; set; }
+        public int ExternalAppExpiresHours { get; set; }
     }
 
     public class FCMSettingsModel
     {
         public string FileName { get; set; }
+    }
+
+    public class AppSettingsModel
+    {
+        public string ExternalAppSecurityKey { get; set; }
     }
 }

@@ -94,6 +94,9 @@ namespace BergerMsfaApi.Extensions
 
         public static void ToTextFileLog(this Exception ex, string startupPath, string folderName = "Logs", string fileName = "ErrorLog", string extention = ".txt")
         {
+            if (!Directory.Exists(Path.Combine(startupPath, folderName)))
+                Directory.CreateDirectory(Path.Combine(startupPath, folderName));
+
             string message = string.Empty;
             var toDay = DateTime.Now.ToString("yyyy-MM-dd");
             var filePath = startupPath + "\\" + folderName + "\\" + fileName + "_" + toDay + extention;

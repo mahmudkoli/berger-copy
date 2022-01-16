@@ -16,7 +16,7 @@ namespace Berger.Odata.Model
         public string asp { get; set; }
         public string tarvol { get; set; }
         public string tarval { get; set; }
-        public string ktokd { get; set; }
+        public string ktokd { get; set; } // Account Group
         public string gsber { get; set; }
         public string vkbur { get; set; }
         public string vkgrp { get; set; }
@@ -49,4 +49,6 @@ namespace Berger.Odata.Model
             return model;
         }
     }
+
+
 }

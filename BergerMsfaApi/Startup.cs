@@ -25,6 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.AutoRegisterDi;
 using AutoMapper;
+using Azure.Storage.Blobs;
 using Berger.Common.HttpClient;
 using Berger.Odata.Services;
 using Berger.Odata.Repositories;
@@ -32,6 +33,14 @@ using Berger.Common;
 using BergerMsfaApi.Models.EmailVm;
 using BergerMsfaApi.Services.Excel.Implementation;
 using BergerMsfaApi.Services.Excel.Interface;
+using BergerMsfaApi.Services.AlertNotification;
+using BergerMsfaApi.Services.Blob;
+using BergerMsfaApi.Services.FileUploads.Implementation;
+using BergerMsfaApi.Services.FileUploads.Interfaces;
+using BergerMsfaApi.Services.KPI.interfaces;
+using BergerMsfaApi.Services.KPI.Implementation;
+using Microsoft.AspNetCore.Http.Features;
+using System;
 
 namespace BergerMsfaApi
 {
@@ -53,6 +62,7 @@ namespace BergerMsfaApi
             services.Configure<FCMSettingsModel>(options => Configuration.GetSection("FCMSettings").Bind(options));
             //services.Configure<AuthMessageSenderOptions>(options =>
             //           Configuration.GetSection("SendGridEmailSettings").Bind(options));
+            services.Configure<AppSettingsModel>(options => Configuration.GetSection("AppSettings").Bind(options));
 
             services.Configure<SmtpSettings>(options =>
                        Configuration.GetSection("SmtpSettings").Bind(options));
@@ -60,6 +70,7 @@ namespace BergerMsfaApi
             var appTokensSettings = Configuration.GetSection("TokensSettings").Get<TokensSettingsModel>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
+            services.AddDbContext<SAPDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SAPDbContext))));
 
             services.AddAuthentication(opt =>
                 {
@@ -77,7 +88,8 @@ namespace BergerMsfaApi
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 
@@ -86,13 +98,17 @@ namespace BergerMsfaApi
             services.AddScoped<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>().HttpContext.User);
             services.AddScoped<IUserRequest, UserRequest>();
 
-            services.AddScoped<DbContext, ApplicationDbContext>();
+            //services.AddScoped<DbContext, ApplicationDbContext>();
+            services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<SAPDbContext, SAPDbContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IActiveDirectoryServices, ActiveDirectoryServices>();
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddScoped<IODataService, ODataService>();
-            services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            //services.AddScoped(typeof(IODataRepository<>), typeof(ODataRepository<>));
+            services.AddScoped(typeof(IODataApplicationRepository<>), typeof(ODataApplicationRepository<>));
+            services.AddScoped(typeof(IODataSAPRepository<>), typeof(ODataSAPRepository<>));
             services.AddScoped<IODataCommonService, ODataCommonService>();
             services.AddScoped<IODataBrandService, ODataBrandService>();
             services.AddScoped<ISalesDataService, SalesDataService>();
@@ -106,6 +122,16 @@ namespace BergerMsfaApi
             services.AddScoped<IODataNotificationService, ODataNotificationService>();
             services.AddScoped<IKpiDataService, KpiDataService>();
             services.AddScoped<IExcelReaderService, ExcelReaderService>();
+            services.AddScoped<ISyncService, SyncService>();
+            services.AddScoped<IAlertNotificationDataService, AlertNotificationDataService>();
+            services.AddScoped<IAlertNotificationODataService, AlertNotificationODataService>();
+            services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
+            services.AddScoped<IChequeBounceNotificationService, ChequeBounceNotificationService>();
+            services.AddScoped<IOccasionToCelebrateService, OccasionToCelebrateService>();
+            services.AddScoped<IPaymentFollowupService, PaymentFollowupService>();
+            services.AddScoped<IAlertNotificationService, AlertNotificationService>();
+            services.AddScoped<IColorBankInstallMachine, ColorBankInstallMachine>();
+            services.AddScoped<INewDealerDevelopmentService, NewDealerDevelopmentService>();
 
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             //services.Configure<SmtpSettings>(Configuration);
@@ -123,7 +149,7 @@ namespace BergerMsfaApi
                     .AsPublicImplementedInterfaces();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Startup)))
-                    .Where(c => c.Name.EndsWith("Service"))
+                    .Where(c => c.Name.EndsWith("Service") && c.Name!= "FileUploadService")
                     .AsPublicImplementedInterfaces();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -160,7 +186,24 @@ namespace BergerMsfaApi
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = int.MaxValue;
+            });
+
+            services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = long.MaxValue; // <-- !!! long.MaxValue
+                o.MultipartBoundaryLengthLimit = int.MaxValue;
+                o.MultipartHeadersCountLimit = int.MaxValue;
+                o.MultipartHeadersLengthLimit = int.MaxValue;
+            });
+
+            services.AddControllers(options => 
+            {
+                options.Filters.Add(typeof(AuthorizeFilterAttribute));
+            }).AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
@@ -200,6 +243,14 @@ namespace BergerMsfaApi
                     }
                 });
             });
+
+            string connectionString = Configuration.GetValue<string>("AzureStorageConnectionString:ConnectionString");
+
+            services.AddSingleton(x => new BlobServiceClient(connectionString));
+
+            services.AddScoped<IBlobService, BlobService>();
+
+            services.AddScoped<IFileUploadService,FileUploadToAzureService> ();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -227,6 +278,12 @@ namespace BergerMsfaApi
                 }
             ));
 
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null; // unlimited I guess
+            //    await next.Invoke();
+            //});
+
             HttpHelper.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -252,6 +309,7 @@ namespace BergerMsfaApi
             app.UseAuthorization();
             app.UseRequestLocalization();
             app.UseMiddleware<ItemInHttpContextMiddleware>();
+            app.UseMiddleware<ActiveUserMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

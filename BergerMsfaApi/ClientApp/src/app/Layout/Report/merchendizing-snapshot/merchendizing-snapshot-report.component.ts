@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { DealerIssueReportQuery, SnapShotReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { DealerIssueReportQuery, SnapShotReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'merchendizing-snapshot-report',
@@ -30,8 +27,8 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	totalFilterDataLength: number = 0; // for server side paggination
 
 	// ptable settings
-	enabledTotal: boolean = true;
-	tableName: string = 'Merchendizing Snapshot Report';
+	enabledTotal: boolean = false;
+	tableName: string = 'Merchandising Snapshot Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	// renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -49,13 +46,13 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
 			// client side paggination
-			// this.PAGE_SIZE = 2147483647; // Int32 max value
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
+			this.PAGE_SIZE = 2147483647; // Int32 max value
+			this.ptableSettings.pageSize = 10;
+			this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+			// this.PAGE_SIZE = commonService.PAGE_SIZE;
+			// this.ptableSettings.pageSize = this.PAGE_SIZE;
+			// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -65,7 +62,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
-	
+
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadMerchendizingSnapShot(query);
 	getData = (query) => this.reportService.getMerchendizingSnapShot(query);
@@ -78,7 +75,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			zones: [],
 			userId: null,
@@ -93,7 +90,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
@@ -125,9 +122,9 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
-					this.data = res.data.items;
-					this.totalDataLength = res.data.total;
-					this.totalFilterDataLength = res.data.totalFilter;
+					this.data = res.data;
+					// this.totalDataLength = res.data.total;
+					// this.totalFilterDataLength = res.data.totalFilter;
 					this.ptableColDefGenerate();
 				},
 				(error) => {
@@ -140,33 +137,25 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
-		var columName = this.ptableSettings.tableColDef.filter(x => 
-			x.internalName == 'competitionDisplay' ||
-			x.internalName == 'glowSignBoard' ||
-			x.internalName == 'productDisplay' ||
-			x.internalName == 'scheme' ||
-			x.internalName == 'brochure' ||
-			x.internalName == 'others'
+		var columName = this.ptableSettings.tableColDef.filter(x =>
+			x.internalName.endsWith('_Image')
 		);
 
 		if(columName.length > 0){
-			columName[0].type = 'image';
-			columName[1].type = 'image';
-			columName[2].type = 'image'; 
-			columName[3].type = 'image';
-			columName[4].type = 'image';
-			columName[5].type = 'image';
+			columName.forEach(element => {
+				element.type = 'image';
+			});
 		}
 
 		// console.log(this.ptableSettings.tableColDef);
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionDisplay' || x.internalName == 'cRemarks'  || x.internalName == 'glowSignBoard' || x.internalName == 'gRemarks'   || x.internalName == 'productDisplay' || x.internalName == 'pRemarks'   || x.internalName == 'scheme' || x.internalName == 'sRemarks'   || x.internalName == 'brochure' || x.internalName == 'bRemarks'   || x.internalName == 'others' || x.internalName == 'oRemarks'   || x.internalName == 'otherSnapshotTypeName'
+			(x) => x.internalName.endsWith('_Remarks') || x.internalName.endsWith('_Image')
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Snapshot Type';
@@ -191,6 +180,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,
@@ -200,7 +190,7 @@ export class MerchendizingSnapshotReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

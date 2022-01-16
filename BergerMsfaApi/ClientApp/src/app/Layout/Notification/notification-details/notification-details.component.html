@@ -1,5 +1,5 @@
-<div class="notification-details">
-    <div class="noti-sidebar">
+<div class="row notification-details">
+    <div class="col-md-4 mb-3 mb-md-0 noti-sidebar">
         <h4 class="text-capitalize px-3 pt-3">Notification Details</h4>
         <ul class="sidebar-list p-3">
             <li class="list-item" [ngClass]="{'active':tabOpen==1}" (click)="tabOpen=1"><i class="fa fa-inbox mr-2" aria-hidden="true"></i> <span>Journey Plan</span> 
@@ -7,7 +7,7 @@
             <!-- <li class="list-item"><i class="fa fa-globe mr-2" aria-hidden="true"></i>All Message</li> -->
         </ul>
     </div>
-    <div class="noti-content p-3" *ngIf="tabOpen==1">
+    <div class="col-md-8 mb-3 mb-md-0 noti-content p-3 p-3" *ngIf="tabOpen==1">
         <div class="noti-content-header">
             <div>
                 <h4>Journey Plan</h4>
@@ -81,7 +81,7 @@
                     <tr>
                         <th pSortableColumn="businessArea">Business Area <p-sortIcon field="businessArea"></p-sortIcon></th>
                         <th pSortableColumn="zone">Zone</th>
-                        <th pSortableColumn="currentApprovar">Last Approvar</th>
+                        <th pSortableColumn="currentApprovar">Code</th>
                         <th></th>
                     </tr>
                 </ng-template>
@@ -89,7 +89,7 @@
                     <tr>
                         <td>{{jPlan.businessArea }}</td>
                         <td>{{jPlan.zone }}</td>
-                        <td>{{jPlan.currentApprovar }}</td>
+                        <td>{{jPlan.code }}</td>
                         <td><a href="/dealer/openingList/{{jPlan.id}}"> Approve</a> </td>
                     </tr>
                 </ng-template> 

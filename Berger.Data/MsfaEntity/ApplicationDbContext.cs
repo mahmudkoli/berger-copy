@@ -1,5 +1,7 @@
 using System;
+using Berger.Common.Enumerations;
 using Berger.Data.Common;
+using Berger.Data.MsfaEntity.AlertNotification;
 using Berger.Data.MsfaEntity.CollectionEntry;
 using Berger.Data.MsfaEntity.DealerFocus;
 using Berger.Data.MsfaEntity.DealerSalesCall;
@@ -8,12 +10,15 @@ using Berger.Data.MsfaEntity.ELearning;
 using Berger.Data.MsfaEntity.Examples;
 using Berger.Data.MsfaEntity.Hirearchy;
 using Berger.Data.MsfaEntity.KPI;
+using Berger.Data.MsfaEntity.Logs;
 using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Menus;
 using Berger.Data.MsfaEntity.PainterRegistration;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Scheme;
 using Berger.Data.MsfaEntity.Setup;
+using Berger.Data.MsfaEntity.Sync;
+using Berger.Data.MsfaEntity.Target;
 using Berger.Data.MsfaEntity.Tinting;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore;
@@ -30,13 +35,15 @@ namespace Berger.Data.MsfaEntity
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SaleOffice>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<SaleGroup>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Territory>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Zone>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<Depot>(e =>{e.HasNoKey();});
-            modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<SaleOffice>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<SaleGroup>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Territory>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Zone>(e => { e.HasNoKey(); });
+            modelBuilder.Entity<Depot>(e => { e.HasNoKey(); });
+            //modelBuilder.Entity<CustomerGroup>(e => { e.HasNoKey(); });
             modelBuilder.Entity<Division>(e => { e.HasNoKey(); });
+
+            modelBuilder.Entity<UserInfo>(e => { e.HasQueryFilter(x => x.ApplicationCategory == EnumApplicationCategory.MSFAApp); });
         }
 
         public static ApplicationDbContext Create(DbContextOptions<ApplicationDbContext> options)
@@ -120,6 +127,8 @@ namespace Berger.Data.MsfaEntity
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<UserZoneAreaMapping> UserZoneAreaMappings { get; set; }
         public DbSet<LoginLog> LoginLogs { get; set; }
+        public DbSet<TempUserLoginHistory> TempUserLoginHistory { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         #endregion
 
         #region Setup
@@ -135,7 +144,7 @@ namespace Berger.Data.MsfaEntity
         #region JourneyPlan&FocusDealer
         public DbSet<FocusDealer> FocusDealers { get; set; }
         public DbSet<DealerOpeningAttachment> DealerOpeningAttachments { get; set; }
-        public DbSet<JourneyPlan> JourneyPlans { get; set; }
+        //public DbSet<JourneyPlan> JourneyPlans { get; set; }
         public DbSet<JourneyPlanMaster> JourneyPlanMasters { get; set; }
         public DbSet<JourneyPlanDetail> JourneyPlanDetails { get; set; }
         #endregion
@@ -146,8 +155,10 @@ namespace Berger.Data.MsfaEntity
         public DbSet<PainterAttachment> PainterAttachments { get; set; }
         public DbSet<PainterCall> PainterCalls { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
+        public DbSet<PainterStatusLog> PainterStatusLogs { get; set; }
+        public DbSet<AttachedDealerPainterCall> AttachedDealerPainterCalls { get; set; }
         #endregion
-      
+
         #region SAP Tables
         public DbSet<DealerInfo> DealerInfos { get; set; }
         public DbSet<BrandInfo> BrandInfos { get; set; }
@@ -172,6 +183,8 @@ namespace Berger.Data.MsfaEntity
         public DbSet<EmailConfigForDealerSalesCall> EmailConfigForDealerSalesCalls { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<AttachedDealerPainter> AttachedDealerPainters { get; set; }
+        public DbSet<NewDealerDevelopment> NewDealerDevelopments { get; set; }
+        public DbSet<UniverseReachAnalysis> UniverseReachAnalysis { get; set; }
 
         #region Dealer Sales Call
         public DbSet<Berger.Data.MsfaEntity.DealerSalesCall.DealerSalesCall> DealerSalesCalls { get; set; }
@@ -185,6 +198,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<LeadGeneration> LeadGenerations { get; set; }
         public DbSet<LeadFollowUp> LeadFollowUps { get; set; }
         public DbSet<LeadBusinessAchievement> LeadBusinessAchievements { get; set; }
+        public DbSet<LeadActualVolumeSold> LeadActualVolumeSold { get; set; }
         #endregion
 
         #region Tinting
@@ -200,6 +214,7 @@ namespace Berger.Data.MsfaEntity
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionOption> QuestionOptions { get; set; }
         public DbSet<QuestionSet> QuestionSets { get; set; }
+        public DbSet<QuestionSetDepot> QuestionSetDepots { get; set; }
         public DbSet<QuestionSetCollection> QuestionSetCollections { get; set; }
         public DbSet<UserQuestionAnswer> UserQuestionAnswers { get; set; }
         public DbSet<UserQuestionAnswerCollection> UserQuestionAnswerCollections { get; set; }
@@ -209,5 +224,31 @@ namespace Berger.Data.MsfaEntity
         public DbSet<CollectionConfig> CollectionConfigs { get; set; }
         public DbSet<CollectionPlan> CollectionPlans { get; set; }
         #endregion
+
+
+        #region Alert Notification
+        public DbSet<ChequeBounceNotification> ChequeBounceNotifications { get; set; }
+        //public DbSet<CreditLimitCrossNotifiction> CreditLimitCrossNotifiction { get; set; }
+        public DbSet<OccasionToCelebrateNotification> OccasionToCelebrateNotifications { get; set; }
+        public DbSet<CreditLimitCrossNotification> CreditLimitCrossNotifications { get; set; }
+        public DbSet<PaymentFollowupNotification> PaymentFollowupNotifications { get; set; }
+        #endregion
+
+        #region Sync
+
+        public DbSet<SyncDailySalesLog> SyncDailySalesLogs { get; set; }
+        public DbSet<SyncDailyTargetLog> SyncDailyTargetLogs { get; set; }
+        public DbSet<SyncSetup> SyncSetups { get; set; }
+
+        #endregion
+
+        #region Target
+
+        public DbSet<ColorBankInstallationTarget> ColorBankInstallationTargets { get; set; }
+
+        #endregion
+
+        public DbSet<ApplicationLog> ApplicationLogs { get; set; }
+        public DbSet<MobileAppLog> MobileAppLogs { get; set; }
     }
 }

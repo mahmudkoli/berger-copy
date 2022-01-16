@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using BergerMsfaApi.ActiveDirectory;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.Common;
 using BergerMsfaApi.Models.Users;
 using BergerMsfaApi.Services.Users.Interfaces;
@@ -11,8 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.Users
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class UserInfoController : BaseController
@@ -95,6 +92,13 @@ namespace BergerMsfaApi.Controllers.Users
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
 
+                var isExists = await _userInfoService.IsUserNameExistAsync(model.UserName.Trim());
+                if (isExists)
+                {
+                    ModelState.AddModelError("", "Already exists this user.");
+                    return ValidationResult(ModelState);
+                }
+
                 var result = await _userInfoService.CreateAsync(model);
                 return OkResult(result);
             }
@@ -111,6 +115,13 @@ namespace BergerMsfaApi.Controllers.Users
             {
                 if (!ModelState.IsValid)
                     return ValidationResult(ModelState);
+
+                var isExists = await _userInfoService.IsUserNameExistAsync(model.UserName.Trim(), model.Id);
+                if (isExists)
+                {
+                    ModelState.AddModelError("", "Already exists this user.");
+                    return ValidationResult(ModelState);
+                }
 
                 var result = await _userInfoService.UpdateAsync(model);
                 return OkResult(result);

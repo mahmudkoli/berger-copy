@@ -59,8 +59,10 @@ export class DealerSalesCall {
   isCompetitionProductDisplayBetterThanBPBL: boolean;
   competitionProductDisplayBetterThanBPBLRemarks: string;
   competitionProductDisplayImageUrl: string;
+  competitionProductDisplayImageBase64: string;
   competitionSchemeModalityComments: string;
   competitionSchemeModalityImageUrl: string;
+  competitionSchemeModalityImageBase64: string;
   competitionShopBoysComments: string;
   dealerCompetitionSales: DealerCompetitionSales[];
 
@@ -147,6 +149,7 @@ export class DealerSalesCall {
 }
 
 export class DealerCompetitionSales {
+  id: number;
   dealerSalesCallId: number;
   //dealerSalesCall: DealerSalesCall;
   companyId: number;
@@ -163,6 +166,7 @@ export class DealerCompetitionSales {
 }
 
 export class DealerSalesIssue {
+  id: number;
   dealerSalesCallId: number;
   //dealerSalesCall: DealerSalesCall;
   dealerSalesIssueCategoryId: number;
@@ -187,7 +191,8 @@ export class DealerSalesIssue {
     Object.assign(this, init);
   }
 
-  clear() {}
+  clear() {
+  }
 }
 
 export class DealerSalesCallQuery extends QueryObject {
@@ -197,6 +202,8 @@ export class DealerSalesCallQuery extends QueryObject {
   custZones: string[];
   salesGroup: string[];
   dealerId?: number;
+  dealerType?: number;
+
   constructor(init?: Partial<DealerSalesCallQuery>) {
     super();
     Object.assign(this, init);

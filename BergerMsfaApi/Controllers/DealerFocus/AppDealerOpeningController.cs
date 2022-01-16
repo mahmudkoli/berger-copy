@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppDealerOpeningController : BaseController
@@ -40,6 +37,8 @@ namespace BergerMsfaApi.Controllers.DealerFocus
         }
 
         [HttpPost("CreateDealerOpening")]
+        //[RequestSizeLimit(31457280)] // 30MB
+        //[DisableRequestSizeLimit]
         public async Task<IActionResult> CreateDealerOpeningAsync([FromBody] DealerOpeningModel model)
         {
             try

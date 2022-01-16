@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { DealerSalesCallReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { DealerSalesCallReportQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'dealer-salescall-report',
@@ -58,13 +55,13 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 		private commonService: CommonService,
 		private dynamicDropdownService: DynamicDropdownService) {
 			// client side paggination
-			// this.PAGE_SIZE = 2147483647; // Int32 max value
-			// this.ptableSettings.pageSize = 10;
-			// this.ptableSettings.enabledServerSitePaggination = false;
+			this.PAGE_SIZE = 2147483647; // Int32 max value
+			this.ptableSettings.pageSize = 10;
+			this.ptableSettings.enabledServerSitePaggination = false;
 			// server side paggination
-			this.PAGE_SIZE = commonService.PAGE_SIZE;
-			this.ptableSettings.pageSize = this.PAGE_SIZE;
-			this.ptableSettings.enabledServerSitePaggination = true;
+			// this.PAGE_SIZE = commonService.PAGE_SIZE;
+			// this.ptableSettings.pageSize = this.PAGE_SIZE;
+			// this.ptableSettings.enabledServerSitePaggination = true;
 	}
 
 	ngOnInit() {
@@ -74,7 +71,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
-	
+
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadDealerSalesCall(query);
 	getData = (query) => this.reportService.getDealerSalesCall(query);
@@ -87,7 +84,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			zones: [],
 			userId: null,
@@ -103,7 +100,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 		isDealerShow: true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
@@ -135,9 +132,9 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(res) => {
 					console.log("res.data", res.data);
-					this.data = res.data.items;
-					this.totalDataLength = res.data.total;
-					this.totalFilterDataLength = res.data.totalFilter;
+					this.data = res.data;
+					// this.totalDataLength = res.data.length;
+					// this.totalFilterDataLength = res.data.length;
 					this.ptableColDefGenerate();
 				},
 				(error) => {
@@ -150,13 +147,13 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'Status' || x.internalName == 'Reason for poor or Average'
+			(x) => x.internalName == 'Status' || x.internalName == 'ReasonForPourOrAverage'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Secondary Sales';
@@ -164,7 +161,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'uspCommunication' || x.internalName == 'productLiftingStatus' || x.internalName == 'reasonForNotLifting'
+			(x) => x.internalName == 'UspCommunication' || x.internalName == 'ProductLiftingStatus' || x.internalName == 'ReasonForNotLifting'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Premium Product Activity';
@@ -172,7 +169,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'cbMachineStatus' || x.internalName == 'cbProductivity'
+			(x) => x.internalName == 'CbMachineStatus' || x.internalName == 'CbProductivity'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Color Bank';
@@ -180,7 +177,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'subDealerInfluence' || x.internalName == 'Influence %'
+			(x) => x.internalName == 'SubDealerInfluence' || x.internalName == 'SdInfluecePercent'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Sub-Dealer Management';
@@ -188,7 +185,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'painterInfluence' || x.internalName == 'Influenc %'
+			(x) => x.internalName == 'PainterInfluence' || x.internalName == 'PainterInfluecePercent'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Painter';
@@ -196,7 +193,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'productKnoledge' || x.internalName == 'salesTechniques' || x.internalName == 'merchendisingImprovement'
+			(x) => x.internalName == 'ProductKnoledge' || x.internalName == 'SalesTechniques' || x.internalName == 'MerchendisingImprovement'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Shop Manage/Shop Boy';
@@ -204,7 +201,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'competitionService' || x.internalName == 'Remarks' || x.internalName == 'productDisplayAndMerchendizingStatus' || x.internalName == 'Remark' || x.internalName == 'productDisplayAndMerchendizingImage' || x.internalName == 'schemeModality' || x.internalName == 'schemeModalityImage' || x.internalName == 'shopBoy'
+			(x) => x.internalName == 'CompetitionService' || x.internalName == 'CsRemarks' || x.internalName == 'ProductDisplayAndMerchendizingStatus' || x.internalName == 'PdmRemarks' || x.internalName == 'ProductDisplayAndMerchendizingImage' || x.internalName == 'SchemeModality' || x.internalName == 'SchemeModalityImage' || x.internalName == 'ShopBoy'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Competition Information';
@@ -212,28 +209,28 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'apAvrgMonthlySales' || x.internalName == 'apActualMtdSales' || x.internalName == 'nerolacAvrgMonthlySales' || x.internalName == 'nerolacActualMtdSales' || x.internalName == 'nipponAvrgMonthlySales' || x.internalName == 'nipponActualMtdSales' || x.internalName == 'duluxAvrgMonthlySales' || x.internalName == 'duluxActualMtdSales'  || x.internalName == 'jotunAvrgMonthlySales' || x.internalName == 'jotunActualMtdSales' || x.internalName == 'moonstarAvrgMonthlySales' || x.internalName == 'moonstarActualMtdSales' || x.internalName == 'eliteAvrgMonthlySales' || x.internalName == 'eliteActualMtdSales' || x.internalName == 'alkarimAvrgMonthlySales' || x.internalName == 'alkarimActualMtdSales' || x.internalName == 'othersAvrgMonthlySales' || x.internalName == 'othersActualMtdSales' || x.internalName == 'totalAvrgMonthlySales' || x.internalName == 'totalActualMtdSales'
+			(x) => x.internalName.endsWith('AvgMonthlySales') || x.internalName.endsWith('ActualMTDSales')
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Competition Sales';
-		});
+		})
 
 		this.ptableSettings.tableColDef
 		.filter(
-			(x) => x.internalName == 'dStatus' || x.internalName == 'dealerDissatisfactionReason'
+			(x) => x.internalName == 'DealerSatisfactionStatus' || x.internalName == 'DealerDissatisfactionReason'
 		)
 		.forEach((x) => {
 			x.parentHeaderName = 'Dealer Satisfaction';
 		});
 
 		// Show Image
-		var columName = this.ptableSettings.tableColDef.filter(x => 
-						x.internalName == 'productDisplayAndMerchendizingImage' ||
-						x.internalName == 'schemeModalityImage'
-			);
+		var columName = this.ptableSettings.tableColDef.filter(x =>
+			x.internalName.endsWith('Image')
+		);
 		if(columName.length > 0){
-			columName[0].type = 'image';
-			columName[1].type = 'image';
+			columName.forEach(element => {
+				element.type = 'image';
+			});
 		}
 
 		// console.log(this.ptableSettings.tableColDef);
@@ -252,6 +249,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,
@@ -261,7 +259,7 @@ export class DealerSalescallReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

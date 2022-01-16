@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Transactions;
 using Berger.Data.MsfaEntity.Users;
 using Microsoft.EntityFrameworkCore.Query;
 using X.PagedList;
 
-namespace BergerMsfaApi.Repositories
+namespace Berger.Worker.Repositories
 {
     public interface IRepository<TEntity> : IDisposable where TEntity : class
     {
@@ -66,6 +67,8 @@ namespace BergerMsfaApi.Repositories
         Task<List<TEntity>> CreateListAsync(List<TEntity> items);
         Task<List<TEntity>> UpdateListAsync(List<TEntity> items, params string[] ignoreProperties);
         Task<int> UpdateListiAsync(List<TEntity> items, params string[] ignoreProperties);
+        Task<List<TEntity>> UpdateListLargeReturnAsync(List<TEntity> items, params string[] ignoreProperties);
+        Task<int> UpdateListLargeAsync(List<TEntity> items, params string[] ignoreProperties);
         Task<int> DeleteListAsync(List<TEntity> item);
         Task<TEntity> UpdateAsync(TEntity item);
         Task<TEntity> CreateOrUpdateAsync(TEntity item);
@@ -118,6 +121,9 @@ namespace BergerMsfaApi.Repositories
                                                             int? take = null);
         
         IList<UserInfo> GetNodeWiseUsersByUserId(int userId, bool isOnlyLastNodeUser = false);
+
+        public  Task<List<TEntity>> BulkInsert(List<TEntity> items);
+
     }
 }
 

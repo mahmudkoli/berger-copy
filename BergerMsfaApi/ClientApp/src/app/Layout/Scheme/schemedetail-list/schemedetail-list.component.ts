@@ -58,7 +58,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 			.subscribe(
 				(res) => {
-					console.log("res.data", res.data);
+					//consolelog("res.data", res.data);
 					this.schemeDetails = res.data.items;
 					this.totalDataLength = res.data.total;
 					this.totalFilterDataLength = res.data.totalFilter;
@@ -67,7 +67,7 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 					});
 				},
 				(error) => {
-					console.log(error);
+					//consolelog(error);
 				});
 		this.subscriptions.push(schemeDetailsSubscription);
 	}
@@ -104,12 +104,12 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 				const deleteSubscription = this.schemeDetailService.deleteSchemeDetail(id)
 					.pipe(finalize(() => { this.alertService.fnLoading(false); }))
 					.subscribe((res: any) => {
-						console.log('res from del func', res);
+						//consolelog('res from del func', res);
 						this.alertService.tosterSuccess("Scheme Detail has been deleted successfully.");
 						this.loadSchemeDetailsPage();
 					},
 						(error) => {
-							console.log(error);
+							//consolelog(error);
 						});
 				this.subscriptions.push(deleteSubscription);
 			},
@@ -120,17 +120,18 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 	public ptableSettings: IPTableSetting = {
 		tableID: "schemeDetails-table",
 		tableClass: "table table-border ",
-		tableName: 'Scheme Detail List',
+		tableName: 'Scheme List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Scheme Name', width: '15%', internalName: 'schemeMasterName', sort: true, type: "" },
+			{ headerName: 'Scheme Name', width: '15%', internalName: 'schemeName', sort: true, type: "" },
 			{ headerName: 'SM Condition', width: '15%', internalName: 'schemeMasterCondition', sort: false, type: "" },
 			{ headerName: 'Brand', width: '10%', internalName: 'brand', sort: false, type: "" },
+			{ headerName: 'SLAB', width: '15%', internalName: 'slab', sort: false, type: "" },
 			{ headerName: 'Benefit Start', width: '10%', internalName: 'benefitStartDateText', sort: true, type: "" },
 			{ headerName: 'Benefit End', width: '10%', internalName: 'benefitEndDateText', sort: true, type: "" },
-			{ headerName: 'Condition', width: '15%', internalName: 'condition', sort: false, type: "" },
-			{ headerName: 'Benefit', width: '15%', internalName: 'benefit', sort: false, type: "" },
+			{ headerName: 'Condition & Benefit', width: '15%', internalName: 'condition', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'Scheme Type', width: '10%', internalName: 'schemeType', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -145,21 +146,27 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 	};
 
 	public fnCustomTrigger(event) {
-		console.log("custom  click: ", event);
-
 		if (event.action == "new-record") {
 			this.newSchemeDetail();
 		}
 		else if (event.action == "edit-item") {
-			this.editSchemeDetail(event.record.id);
+			if(event.record.isEditable){
+				this.editSchemeDetail(event.record.id);
+			}else{
+				this.alertService.tosterWarning("You cannot edit this item.");
+			}
 		}
 		else if (event.action == "delete-item") {
-			this.deleteSchemeDetail(event.record.id);
+			if(event.record.isEditable){
+				this.deleteSchemeDetail(event.record.id);
+			}else{
+				this.alertService.tosterWarning("You cannot delete this item.");
+			}
 		}
 	}
 
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
-		console.log('server site : ', queryObj);
+		//consolelog('server site : ', queryObj);
 		this.query = new SchemeDetailQuery({
 			page: queryObj.pageNo,
 			pageSize: queryObj.pageSize,

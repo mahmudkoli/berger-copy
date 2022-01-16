@@ -12,6 +12,7 @@ import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { FocusDealerService } from 'src/app/Shared/Services/FocusDealer/focus-dealer.service';
 import { ModalExcelImportDealerStatusComponent } from '../modal-excel-import-dealer-status/modal-excel-import-dealer-status.component';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from './../../../Shared/Modules/search-option/search-option';
+import { EnumBussinesCategoryLabel } from '../../../Shared/Enums/dealer-info';
 
 @Component({
 	selector: 'app-dealer-list',
@@ -27,6 +28,8 @@ export class DealerListComponent implements OnInit, OnDestroy {
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 	enumClubSupremeLabels: MapObject[] = EnumClubSupremeLabel.enumClubSupremeLabel;
+	enumbussinesscalegoryLabels: MapObject[] = EnumBussinesCategoryLabel.enumBussinesCategoryLabel;
+
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -63,6 +66,8 @@ export class DealerListComponent implements OnInit, OnDestroy {
         new SearchOptionDef({ searchOption: EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole: true }),
         new SearchOptionDef({ searchOption: EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole: true }),
         new SearchOptionDef({ searchOption: EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole: true }),
+        new SearchOptionDef({ searchOption: EnumSearchOption.DealerId }),
+
 		]});
 
 
@@ -71,6 +76,7 @@ export class DealerListComponent implements OnInit, OnDestroy {
     this.query.salesGroups = queryObj.salesGroups;
     this.query.territories = queryObj.territories;
     this.query.zones = queryObj.zones;
+    this.query.dealerId = queryObj.dealerId;
     this.loadDealersPage();
   }
 
@@ -103,6 +109,9 @@ export class DealerListComponent implements OnInit, OnDestroy {
 
 						obj.clubSupremeTypeDropdown = {value: +obj.clubSupremeType||0, data: this.enumClubSupremeLabels}
 						obj.clubSupremeTypeDropdownClass = 'ng-select-' + ((+obj.clubSupremeType||0) > 0 ? 'primary' : 'warning');
+
+						obj.bussinesCategoryTypeDrodown = {value: +obj.bussinesCategoryType||0, data: this.enumbussinesscalegoryLabels}
+						obj.bussinesCategoryTypeDrodownClass = 'ng-select-' + ((+obj.bussinesCategoryType||0) > 0 ? 'primary' : 'warning');
 
 						// obj.viewDetailsText = 'View Log Details';
 						// obj.viewDetailsBtnClass = 'btn-transition btn btn-sm btn-outline-primary d-flex align-items-center';
@@ -146,10 +155,10 @@ export class DealerListComponent implements OnInit, OnDestroy {
 			{ headerName: 'Customer Name', width: '15%', internalName: 'customerName', sort: true, type: "" },
 			{ headerName: 'Contact No', width: '10%', internalName: 'contactNo', sort: false, type: "" },
 			{ headerName: 'Address', width: '15%', internalName: 'address', sort: false, type: "" },
-			{ headerName: 'Exclusive', width: '10%', internalName: 'isExclusiveText', sort: true, type: "dynamic-button", onClick: 'true', className: 'isExclusiveBtnClass', innerBtnIcon: 'isExclusiveBtnIcon' },
 			{ headerName: 'Last Year Appointed', width: '10%', internalName: 'isLastYearAppointedText', sort: true, type: "dynamic-button", onClick: 'true', className: 'isLastYearAppointedBtnClass', innerBtnIcon: 'isLastYearAppointedBtnIcon' },
-			{ headerName: 'AP', width: '10%', internalName: 'isAPText', sort: true, type: "dynamic-button", onClick: 'true', className: 'isAPBtnClass', innerBtnIcon: 'isAPBtnIcon' },
 			{ headerName: 'Club Supreme', width: '10%', internalName: 'clubSupremeTypeDropdown', sort: true, type: "dynamic-dropdown", onClick: 'true', className: 'clubSupremeTypeDropdownClass', innerBtnIcon: '' },
+			{ headerName: 'Bussiness Category', width: '10%', internalName: 'bussinesCategoryTypeDrodown', sort: true, type: "dynamic-dropdown", onClick: 'true', className: 'bussinesCategoryTypeDrodownClass', innerBtnIcon: '' },
+
 			// { headerName: 'Details', width: '10%', internalName: 'viewDetailsText', sort: false, type: "dynamic-button", onClick: 'true', className: 'viewDetailsBtnClass', innerBtnIcon: '' }
 		],
 		enabledSearch: true,
@@ -179,25 +188,25 @@ export class DealerListComponent implements OnInit, OnDestroy {
 
 	public cellClickCallbackFn(event) {
 
-		if (event.cellName == "isExclusiveText" || event.cellName == "isLastYearAppointedText" || event.cellName == "isAPText" || event.cellName == "clubSupremeTypeDropdown") {
+		if (event.cellName == "isLastYearAppointedText" || event.cellName == "clubSupremeTypeDropdown"|| event.cellName == "bussinesCategoryTypeDrodown") {
 			let dealerStatus = new DealerInfoStatus();
 			dealerStatus.clear();
 
-			if (event.cellName == "isExclusiveText") {
-				dealerStatus.propertyName = 'IsExclusive';
-				dealerStatus.dealerId = event.record.id;
-			}
-			else if (event.cellName == "isLastYearAppointedText") {
+			
+			 if (event.cellName == "isLastYearAppointedText") {
 				dealerStatus.propertyName = 'IsLastYearAppointed';
 				dealerStatus.dealerId = event.record.id;
 			}
-			else if (event.cellName == "isAPText") {
-				dealerStatus.propertyName = 'IsAP';
-				dealerStatus.dealerId = event.record.id;
-			}
+			
 			else if (event.cellName == "clubSupremeTypeDropdown") {
 				dealerStatus.propertyName = 'ClubSupremeType';
 				dealerStatus.propertyValue = event.record.clubSupremeTypeDropdown.value;
+				dealerStatus.dealerId = event.record.id;
+			}
+
+			else if (event.cellName == "bussinesCategoryTypeDrodown") {
+				dealerStatus.propertyName = 'BussinesCategoryType';
+				dealerStatus.propertyValue = event.record.bussinesCategoryTypeDrodown.value;
 				dealerStatus.dealerId = event.record.id;
 			}
 

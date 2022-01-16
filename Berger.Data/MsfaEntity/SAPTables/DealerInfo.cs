@@ -31,10 +31,11 @@ namespace Berger.Data.MsfaEntity.SAPTables
 
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public bool IsExclusive { get; set; }
+        //public bool IsExclusive { get; set; }
         public bool IsLastYearAppointed { get; set; }
-        public bool IsAP { get; set; }
+        //public bool IsAP { get; set; }
         public EnumClubSupreme ClubSupremeType { get; set; }
+        public EnumBussinesCategory BussinesCategoryType { get; set; }
 
         private string compositeKey;
         [NotMapped] 

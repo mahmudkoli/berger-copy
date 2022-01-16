@@ -89,7 +89,7 @@ export class CustomerCollectionReportComponent implements OnInit, OnDestroy {
 			userId: null,
 			fromDate: null,
 			toDate: null,
-			dealerId: null,
+			// dealerId: null,
 			paymentMethodId: null,
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
@@ -99,26 +99,26 @@ export class CustomerCollectionReportComponent implements OnInit, OnDestroy {
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
-			new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:false}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.DealerId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.PaymentMethodId, isRequired:false}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.salesGroups = queryObj.salesGroups;
+		//this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
-		this.query.dealerId = queryObj.dealerId;
+		// this.query.dealerId = queryObj.dealerId;
 		this.query.paymentMethodId = queryObj.paymentMethodId;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
@@ -149,6 +149,7 @@ export class CustomerCollectionReportComponent implements OnInit, OnDestroy {
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
 			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null, 
 				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
 		});
 	}

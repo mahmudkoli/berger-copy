@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Berger.Common.Enumerations;
+using Berger.Data.MsfaEntity;
 using Berger.Data.MsfaEntity.PainterRegistration;
+using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Repositories;
@@ -17,18 +19,26 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         private readonly IRepository<PainterCall> _painterCallSvc;
         private readonly IRepository<PainterCompanyMTDValue> _painterCompanyMtvSvc;
         private readonly IRepository<DropdownDetail> _dropdownDetailSvc;
+        private readonly IRepository<AttachedDealerPainterCall> _attachedDealerPainterCallSvc;
+        private readonly IRepository<DealerInfo> _dealerInfoSvc;
+        private readonly ApplicationDbContext _context;
 
         public PaintCallService(
                IRepository<PainterCall> painterCallSvc,
                IRepository<PainterCompanyMTDValue> painterCompanyMtvSvc,
-               IRepository<DropdownDetail> dropdownDetailSvc
+               IRepository<DropdownDetail> dropdownDetailSvc,
+               IRepository<AttachedDealerPainterCall> attachedDealerPainterCallSvc,
+               IRepository<DealerInfo> dealerInfoSvc,
+               ApplicationDbContext context
             )
         {
             _painterCallSvc = painterCallSvc;
             _painterCompanyMtvSvc = painterCompanyMtvSvc;
-            _dropdownDetailSvc=dropdownDetailSvc;
-
-    }
+            _dropdownDetailSvc = dropdownDetailSvc;
+            _attachedDealerPainterCallSvc = attachedDealerPainterCallSvc;
+            _dealerInfoSvc = dealerInfoSvc;
+            _context = context;
+        }
 
         public async Task<PainterCallModel> CreatePainterCallAsync(PainterCallModel model)
         {
@@ -60,6 +70,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
 
             return _mapper.Map<PainterCallModel>(updatePainterCall);
         }
+        
         public async Task<int> DeletePainterCallByIdlAsync(int PainterId)
         {
 
@@ -103,6 +114,12 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         }
 
         public async Task<bool> IsExistAsync(int Id) => await _painterCallSvc.IsExistAsync(f => f.Id == Id);
+
+        public async Task<bool> IsExistCurrentDays(int painterId)
+        {
+            var painterCall = await _painterCallSvc.FirstOrDefaultAsync(x => x.PainterId == painterId && x.CreatedTime.Date == System.DateTime.Now.Date);
+            return (painterCall == null) ? true : false;
+        }
 
         public async Task<IEnumerable<PainterCallModel>> AppGetPainterCallListAsync(string emplyeeId)
         {
@@ -172,11 +189,13 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var result = await _painterCallSvc.FindIncludeAsync(f => f.Id == Id, f => f.PainterCompanyMTDValue);
             return _mapper.Map<PainterCallModel>(result);
         }
+        
         public async Task<PainterCallModel> AppCreatePainterCallAsync(string employeeId,PainterCallModel model)
         {
             var _mapper = new MapperConfiguration(config =>
             {
                 config.CreateMap<PainterCompanyMTDValueModel, PainterCompanyMTDValue>().ReverseMap();
+                config.CreateMap<AttachedDealerPainterCallModel, AttachedDealerPainterCall>().ReverseMap();
                 config.CreateMap<PainterCall, PainterCallModel>().ReverseMap();
 
             }).CreateMapper();
@@ -186,9 +205,11 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var result = await _painterCallSvc.CreateAsync(painterCall);
             return _mapper.Map<PainterCallModel>(result);
         }
+        
         public async Task<PainterCallModel> AppCreatePainterCallAsync(int PainterId)
         {
             var result = _dropdownDetailSvc.GetAllInclude(f => f.DropdownType).Where(f => f.DropdownType.TypeCode == DynamicTypeCode.PaintUsageCompany);
+
             if (await _painterCallSvc.AnyAsync(p => p.PainterId == PainterId))
             {
                 var _painterCall = _painterCallSvc
@@ -198,6 +219,21 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                 return new PainterCallModel
                 {
                     //Id = _painterCall.Id,
+                    PainterName = _painterCall.PainterName,
+                    Address = _painterCall.Address,
+                    Phone = _painterCall.Phone,
+                    SaleGroup = _painterCall.SaleGroup,
+                    Territory = _painterCall.Territory,
+                    Zone = _painterCall.Zone,
+                    NoOfPainterAttached = _painterCall.NoOfPainterAttached,
+                    IsAppInstalled = _painterCall.IsAppInstalled,
+                    Loyality = _painterCall.Loyality,
+                    HasDbbl = _painterCall.HasDbbl,
+                    AccDbblNumber = _painterCall.AccDbblNumber,
+                    AccDbblHolderName = _painterCall.AccDbblHolderName,
+                    AccChangeReason = _painterCall.AccChangeReason,
+                    PainterCatId = _painterCall.PainterCatId,
+
                     HasAppUsage = _painterCall.HasAppUsage,
                     Comment = _painterCall.Comment,
                     HasDbblIssue = _painterCall.HasDbblIssue,
@@ -209,7 +245,7 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                     WorkInHandNumber = _painterCall.WorkInHandNumber,
                     PainterCompanyMTDValue = (from c in result
                                               join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == _painterCall.PainterId)
-                                              on new { a = c.Id, b =_painterCall.Id  } equals new { a = m.CompanyId, b = m.PainterCallId } into comLeftJoin
+                                              on new { a = c.Id, b = _painterCall.Id } equals new { a = m.CompanyId, b = m.PainterCallId } into comLeftJoin
                                               from coms in comLeftJoin.DefaultIfEmpty()
                                               select new PainterCompanyMTDValueModel
                                               {
@@ -219,12 +255,64 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
                                                   CountInPercent = coms != null ? coms.CountInPercent : 0,
                                                   CumelativeInPercent = coms != null ? coms.CountInPercent : 0
 
-                                              }).ToList()
+                                              }).ToList(),
+                    AttachedDealers = (from p in _context.AttachedDealerPainters
+                                                 join d in _context.DealerInfos on p.DealerId equals d.Id
+                                                 where (p.PainterId == _painterCall.PainterId)
+                                                 select new AttachedDealerPainterCallModel
+                                                 {
+                                                     DealerId = d.Id,
+                                                     CustomerNo = d.CustomerNo,
+                                                     CustomerName = d.CustomerName
+                                                 }).ToList()
 
                 };
             }
+            else
+            {
+                var _painter = _context.Painters.FirstOrDefault(p => p.Id == PainterId);
 
+                return new PainterCallModel
+                {
+                    PainterId = _painter.Id,
+                    PainterName = _painter.PainterName,
+                    Address = _painter.Address,
+                    Phone = _painter.Phone,
+                    SaleGroup = _painter.SaleGroup,
+                    Territory = _painter.Territory,
+                    Zone = _painter.Zone,
+                    NoOfPainterAttached = _painter.NoOfPainterAttached,
+                    IsAppInstalled = _painter.IsAppInstalled,
+                    Loyality = _painter.Loyality,
+                    HasDbbl = _painter.HasDbbl,
+                    AccDbblNumber = _painter.AccDbblNumber,
+                    AccDbblHolderName = _painter.AccDbblHolderName,
+                    PainterCatId = _painter.PainterCatId,
+                    PainterCompanyMTDValue = (from c in result
+                                              join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == PainterId)
+                                              on new { a = c.Id } equals new { a = m.CompanyId } into comLeftJoin
+                                              from coms in comLeftJoin.DefaultIfEmpty()
+                                              select new PainterCompanyMTDValueModel
+                                              {
+                                                  CompanyId = c.Id,
+                                                  CompanyName = c.DropdownName,
+                                                  Value = coms.Value,
+                                                  CountInPercent = coms != null ? coms.CountInPercent : 0,
+                                                  CumelativeInPercent = coms != null ? coms.CountInPercent : 0
 
+                                              }).ToList(),
+                    AttachedDealers = (from p in _context.AttachedDealerPainters
+                                                 join d in _context.DealerInfos on p.DealerId equals d.Id
+                                                 where (p.PainterId == _painter.Id)
+                                                 select new AttachedDealerPainterCallModel
+                                                 {
+                                                     DealerId = d.Id,
+                                                     CustomerNo = d.CustomerNo,
+                                                     CustomerName = d.CustomerName
+                                                 }).ToList()
+
+                };
+            };
 
             //if (_painterCall != null)
             //    return new PainterCallModel
@@ -250,28 +338,8 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             //                                      Value = coms.Value,
             //                                      CountInPercent = coms != null ? coms.CountInPercent : 0,
             //                                      CumelativeInPercent = coms != null ? coms.CountInPercent : 0
-
             //                                  }).ToList()
             //    };
-            else return new PainterCallModel
-            {
-                PainterId = PainterId,
-                PainterCompanyMTDValue = (from c in result
-                                          join m in _painterCompanyMtvSvc.FindAll(p => p.PainterCall.PainterId == PainterId)
-                                          on new { a = c.Id } equals new { a = m.CompanyId } into comLeftJoin
-                                          from coms in comLeftJoin.DefaultIfEmpty()
-                                          select new PainterCompanyMTDValueModel
-                                          {
-                                              CompanyId = c.Id,
-                                              CompanyName = c.DropdownName,
-                                              Value = coms.Value,
-                                              CountInPercent = coms != null ? coms.CountInPercent : 0,
-                                              CumelativeInPercent = coms != null ? coms.CountInPercent : 0
-
-                                          }).ToList()
-            };
-            
-
         }
 
         public async Task<PainterCallModel> AppUpdatePainterCallAsync(string employeeId,PainterCallModel model)
@@ -289,7 +357,5 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
             var updatePainterCall = await _painterCallSvc.UpdateAsync(_painterCall);
             return _mapper.Map<PainterCallModel>(updatePainterCall);
         }
-
-        
     }
 }

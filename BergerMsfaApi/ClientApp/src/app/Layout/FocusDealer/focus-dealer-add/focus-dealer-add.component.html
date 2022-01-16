@@ -13,13 +13,30 @@
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="position-relative form-group">
+                        <label class="required">Territory</label>
+                        <ng-select formControlName="territoryId" [multiple]="false" [virtualScroll]="true"
+                            (change)="territoryChange()">
+                            <!-- <ng-option>--Select--</ng-option> -->
+                            <ng-option *ngFor="let tr of territories;" [value]="tr.code">{{tr.name}}</ng-option>
+                        </ng-select>
+                        <small class="text-danger"
+                            *ngIf="formControls.territoryId.touched && formControls.territoryId.errors">
+                            <span *ngIf="formControls.territoryId.errors.required">Territory is
+                                <strong>required</strong></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
                         <label class="required">Dealer</label>
-                        <ng-select formControlName="code" [multiple]="false" [virtualScroll]="true">
+                        <ng-select formControlName="dealerId" [multiple]="false" [virtualScroll]="true">
                             <!-- <ng-option>--Select--</ng-option> -->
                             <ng-option *ngFor="let dl of dealers;" [value]="dl.id">{{dl.customerName}}</ng-option>
                         </ng-select>
-                        <small class="text-danger" *ngIf="formControls.code.touched && formControls.code.errors">
-                            <span *ngIf="formControls.code.errors.required">Dealer is <strong>required</strong></span>
+                        <small class="text-danger"
+                            *ngIf="formControls.dealerId.touched && formControls.dealerId.errors">
+                            <span *ngIf="formControls.dealerId.errors.required">Dealer is
+                                <strong>required</strong></span>
                         </small>
                     </div>
                 </div>
@@ -74,8 +91,7 @@
                     <div class="position-relative form-group">
                         <label class="required">To Date</label>
                         <div class="input-group w-100">
-                            <input type="text" class="form-control" formControlName="validTo" name="dpToDate"
-                                [ngClass]="{
+                            <input type="text" class="form-control" formControlName="validTo" name="dpToDate" [ngClass]="{
                             'is-valid':
                                 formControls.validTo.touched &&
                                 !formControls.validTo.errors,
@@ -97,8 +113,7 @@
                         ">
                             <span *ngIf="formControls.validTo.errors.required">To Date is
                                 <strong>required</strong></span>
-                            <span
-                                *ngIf="!formControls.validTo.errors.required && formControls.validTo.invalid">Please,
+                            <span *ngIf="!formControls.validTo.errors.required && formControls.validTo.invalid">Please,
                                 Enter valid date (Ex: yyyy-mm-dd)</span>
                         </small>
                     </div>
@@ -108,8 +123,8 @@
                     <div class="position-relative form-group">
                         <label class="required">Status</label>
                         <ng-select formControlName="status"> -->
-                            <!-- <ng-option>--Select--</ng-option> -->
-                            <!-- <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
+                <!-- <ng-option>--Select--</ng-option> -->
+                <!-- <ng-option *ngFor="let st of actInStatusTypes;" [value]="st.id">{{st.label}}</ng-option>
                         </ng-select>
                         <small class="text-danger" *ngIf="formControls.status.touched && formControls.status.errors">
                             <span *ngIf="formControls.status.errors.required">Status is <strong>required</strong></span>

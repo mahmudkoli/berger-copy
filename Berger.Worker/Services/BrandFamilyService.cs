@@ -7,8 +7,8 @@ using Berger.Common.JSONParser;
 using Berger.Data.MsfaEntity.SAPTables;
 using Berger.Worker.Common;
 using Berger.Worker.Model;
+using Berger.Worker.Repositories;
 using BergerMsfaApi.Extensions;
-using BergerMsfaApi.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,14 +18,14 @@ namespace Berger.Worker.Services
     {
         
         private readonly WorkerSettingsModel _appSettings;
-        private readonly IRepository<BrandFamilyInfo> _repo;
+        private readonly IApplicationRepository<BrandFamilyInfo> _repo;
         private readonly IHttpClientService _httpService;
         private readonly IDataEqualityComparer<BrandFamilyInfo> _dataComparer;
         private readonly ILogger<BrandFamilyInfo> _logger;
 
 
 
-        public BrandFamilyService(IRepository<BrandFamilyInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandFamilyInfo> comparer,ILogger<BrandFamilyInfo> logger, IOptions<WorkerSettingsModel> appSettings)
+        public BrandFamilyService(IApplicationRepository<BrandFamilyInfo> repo, IHttpClientService httpClientService, IDataEqualityComparer<BrandFamilyInfo> comparer,ILogger<BrandFamilyInfo> logger, IOptions<WorkerSettingsModel> appSettings)
         {
             _appSettings = appSettings.Value;
             _repo = repo;
@@ -86,7 +86,9 @@ namespace Berger.Worker.Services
                             dealerInfo.IsActive = false;
                         }
                         _logger.LogInformation($"Total deletion record found: {deletedList.Item2.Count}");
-                        var delres = await _repo.UpdateListAsync(deletedList.Item2);
+
+                        var delres = await _repo.UpdateListLargeReturnAsync(deletedList.Item2);
+
                         if(delres != null)
                          _logger.LogInformation($"Total delete record updated: {delres.Count}");
                         insertDeleteKeys.AddRange(deletedList.Item1);
@@ -97,9 +99,30 @@ namespace Berger.Worker.Services
                         {
                             var updatedData = mappedDataFromApi.Where(a => !insertDeleteKeys.Contains(a.CompositeKey))
                                 .ToList();
+
+
                             if(updatedData.Any())
                             {
-                                var updateres = await _repo.UpdateListAsync(updatedData);
+                                dataFromDatabase = dataFromDatabase.Join(updatedData,
+                                    db => db.CompositeKey,
+                                    api => api.CompositeKey,
+                                    (db, api) => db).ToList();
+
+
+                                List<BrandFamilyInfo> brandFamilyInfos = new List<BrandFamilyInfo>();
+
+                                foreach (var dealerInfo in updatedData)
+                                {
+                                    var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
+                                    if (IsMatch != null)
+                                    {
+                                        dealerInfo.Id = IsMatch.Id;
+                                        brandFamilyInfos.Add(dealerInfo);
+                                    }
+                                }
+
+                                var updateres = await _repo.UpdateListLargeReturnAsync(brandFamilyInfos);
+
                                 _logger.LogInformation($"Total record updated form api: {updateres.Count}");
                             }
                         }
@@ -107,18 +130,27 @@ namespace Berger.Worker.Services
                     else
                     {
                         _logger.LogInformation("No new or Delete data found!!!Updating Data....Wait");
-                       dataFromDatabase = dataFromDatabase
-                            .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
-                            .ToList();
+                       //dataFromDatabase = dataFromDatabase
+                       //     .Where(a => mappedDataFromApi.Select(b => b.CompositeKey).Contains(a.CompositeKey))
+                       //     .ToList();
+                        dataFromDatabase = dataFromDatabase.Join(mappedDataFromApi,
+                                                                db => db.CompositeKey,
+                                                                api => api.CompositeKey,
+                                                                (db, api) => db).ToList();
+
+
+                        List<BrandFamilyInfo> brandFamilyInfos = new List<BrandFamilyInfo>();
+
                         foreach (var dealerInfo in mappedDataFromApi)
                         {
                             var IsMatch = dataFromDatabase.FirstOrDefault(a => a.CompositeKey == dealerInfo.CompositeKey);
                             if (IsMatch != null)
                             {
                                 dealerInfo.Id = IsMatch.Id;
+                                brandFamilyInfos.Add(dealerInfo);
                             }
                         }
-                        var upres = await _repo.UpdateListiAsync(mappedDataFromApi);
+                        var upres = await _repo.UpdateListLargeAsync(brandFamilyInfos);
                         _logger.LogInformation($"Total record updated: {upres}");
                     }
                 }

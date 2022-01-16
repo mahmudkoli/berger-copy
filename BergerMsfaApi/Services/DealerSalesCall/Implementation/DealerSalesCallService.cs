@@ -32,6 +32,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
     public class DealerSalesCallService : IDealerSalesCallService
     {
         private readonly IRepository<DSC.DealerSalesCall> _dealerSalesCallRepository;
+        private readonly IRepository<DSC.DealerCompetitionSales> _dealerCompetitionSalesRepository;
+        private readonly IRepository<DSC.DealerSalesIssue> _dealerSalesIssueRepository;
+
         private readonly IRepository<EmailConfigForDealerSalesCall> _repository;
         private readonly IDropdownService _dropdownService;
         private readonly IFileUploadService _fileUploadService;
@@ -52,7 +55,9 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 IRepository<DealerInfo> dealerInfo,
                 IRepository<Depot> plantSvc,
                 IEmailSender emailSender,
-                IFinancialDataService financialDataService
+                IFinancialDataService financialDataService,
+                IRepository<DSC.DealerCompetitionSales> dealerCompetitionSalesRepository,
+                IRepository<DSC.DealerSalesIssue> dealerSalesIssueRepository
             )
         {
             this._dealerSalesCallRepository = dealerSalesCallRepository;
@@ -65,6 +70,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             _userInfo = userInfo;
             this.dealerInfo = dealerInfo;
             this._plantSvc = plantSvc;
+            _dealerCompetitionSalesRepository = dealerCompetitionSalesRepository;
+            _dealerSalesIssueRepository = dealerSalesIssueRepository;
         }
 
         public async Task<int> AddAsync(SaveDealerSalesCallModel model)
@@ -74,18 +81,104 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
             {
                 var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
             }
 
             var result = await _dealerSalesCallRepository.CreateAsync(dealerSalesCall);
 
             await SendIssueEmail(result.Id);
+
+            return result.Id;
+        }
+
+        public async Task DeleteImage(DealerImageModel dealerImageModel)
+        {
+            var item = await _dealerSalesCallRepository.FirstOrDefaultAsync(x => x.Id == dealerImageModel.Id);
+
+            //string fileDirectory = Path.Combine(
+            //    Directory.GetCurrentDirectory(), @"wwwroot\");
+            //var fullPath = fileDirectory + dealerImageModel.URL;
+
+            var fullPath = dealerImageModel.URL;
+
+            if (item != null)
+            {
+                switch (dealerImageModel.Type)
+                {
+                    case "competitionProductDisplayImageUrl":
+                        item.CompetitionProductDisplayImageUrl = null;
+                        break;
+                    case "competitionSchemeModalityImageUrl":
+                        item.CompetitionSchemeModalityImageUrl = null;
+                        break;
+                }
+
+                if (!string.IsNullOrWhiteSpace(fullPath))
+                {
+                    await _fileUploadService.DeleteImageAsync(fullPath);
+                    await _dealerSalesCallRepository.UpdateAsync(item);
+
+                }
+
+                //File.Delete();
+
+
+            }
+        }
+
+
+        public async Task<int> UpdateAsync(AppDealerSalesCallModel model)
+        {
+
+
+
+            var dealerSalesCall = _mapper.Map<DSC.DealerSalesCall>(model);
+
+
+            var dealerSalesIssues = dealerSalesCall.DealerSalesIssues.ToList();
+            var dealerCompetitionSales = dealerSalesCall.DealerCompetitionSales.ToList();
+
+            dealerSalesCall.DealerSalesIssues = null;
+            dealerSalesCall.DealerCompetitionSales = null;
+
+
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageBase64))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                model.CompetitionProductDisplayImageUrl = model.CompetitionProductDisplayImageBase64.Substring(model.CompetitionProductDisplayImageBase64.LastIndexOf(',') + 1);
+                dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageBase64))
+            {
+                var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
+                model.CompetitionSchemeModalityImageUrl = model.CompetitionSchemeModalityImageBase64.Substring(model.CompetitionSchemeModalityImageBase64.LastIndexOf(',') + 1);
+
+                dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
+            }
+
+            var result = await _dealerSalesCallRepository.UpdateAsync(dealerSalesCall);
+
+
+            var issue = await _dealerSalesIssueRepository.DeleteAsync(p => p.DealerSalesCallId == dealerSalesCall.Id);
+
+
+            var issuecategoryAdd = await _dealerSalesIssueRepository.CreateListAsync(dealerSalesIssues);
+
+
+            var dealerCompetitionSalesEdit = await _dealerCompetitionSalesRepository.UpdateListAsync(dealerCompetitionSales);
+
+
+
+
+            //await SendIssueEmail(result.Id);
 
             return result.Id;
         }
@@ -101,13 +194,13 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 if (!string.IsNullOrWhiteSpace(model.CompetitionProductDisplayImageUrl))
                 {
                     var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                    dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                    dealerSalesCall.CompetitionProductDisplayImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionProductDisplayImageUrl, fileName, FileUploadCode.DealerSalesCall);
                 }
 
                 if (!string.IsNullOrWhiteSpace(model.CompetitionSchemeModalityImageUrl))
                 {
                     var fileName = dealerSalesCall.DealerId + "_" + Guid.NewGuid().ToString();
-                    dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall, 1200, 800);
+                    dealerSalesCall.CompetitionSchemeModalityImageUrl = await _fileUploadService.SaveImageAsync(model.CompetitionSchemeModalityImageUrl, fileName, FileUploadCode.DealerSalesCall);
                 }
 
                 dealerSalesCalls.Add(dealerSalesCall);
@@ -127,7 +220,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
         {
             var columnsMap = new Dictionary<string, Expression<Func<DSC.DealerSalesCall, object>>>()
             {
-                ["dealerName"] = v => v.Dealer.CustomerName,
+                ["createdTime"] = v => v.CreatedTime,
+                ["userFullName"] = v => v.User.FullName,
                 ["userFullName"] = v => v.User.FullName,
             };
 
@@ -139,7 +233,10 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                       (!query.SalesGroup.Any() || query.SalesGroup.Contains(x.Dealer.SalesGroup)) &&
                                       (!query.CustZones.Any() || query.SalesGroup.Contains(x.Dealer.CustZone)) &&
                                       (string.IsNullOrWhiteSpace(query.DepoId) || x.Dealer.BusinessArea == query.DepoId) &&
-                                      (!query.DealerId.HasValue || x.DealerId == query.DealerId)),
+                                      (!query.DealerId.HasValue || x.DealerId == query.DealerId) &&
+                                      (query.DealerType == (int)DealerType.All ? true : 
+                                        (query.DealerType == (int)DealerType.SubDealer ? x.IsSubDealerCall : !x.IsSubDealerCall))
+                                    ),
                                 x => x.ApplyOrdering(columnsMap, query.SortBy, query.IsSortAscending),
                                 x => x.Include(i => i.User).Include(i => i.Dealer),
                                 query.Page,
@@ -190,7 +287,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
             modelResult.DealerId = id;
 
             var dealer = await dealerInfo.FindAsync(x => x.Id == id);
-            var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
+            var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo ?? string.Empty);
             modelResult.HasOS = odata.HasOS;
             modelResult.HasSlippage = odata.HasSlippage;
 
@@ -272,7 +369,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 modelResult.DealerId = id;
 
                 var dealer = await dealerInfo.FindAsync(x => x.Id == id);
-                var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo??string.Empty);
+                var odata = await _financialDataService.CheckCustomerOSSlippage(dealer?.CustomerNo ?? string.Empty);
                 modelResult.HasOS = odata.HasOS;
                 modelResult.HasSlippage = odata.HasSlippage;
 
@@ -351,6 +448,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
             var modelResult = _mapper.Map<DealerSalesCallModel>(result);
 
+
+
             return modelResult;
         }
 
@@ -366,7 +465,8 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                                         .Include(y => y.DealerSalesIssues).ThenInclude(y => y.Priority),
                                 true);
 
-                var plantName = (await _plantSvc.FindAsync(x => x.Werks == salesCall.Dealer.BusinessArea)).Name1 ?? string.Empty;
+                var plant = salesCall.Dealer.BusinessArea;
+                var plantName = (await _plantSvc.FindAsync(x => x.Werks == plant)).Name1 ?? string.Empty;
 
                 foreach (var issue in salesCall.DealerSalesIssues)
                 {
@@ -379,7 +479,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                     body += $"Dear Concern,{Environment.NewLine}";
 
-                    body += string.Format("A {0} has been generated by “{1} & {2}” while visiting the {3} " +
+                    body += string.Format("A {0} has been generated by “{1} - {2}” while visiting the {3} " +
                         "“{4}, {5}, {6}, {7} & {8}”. " +
                         "Complain details are attached below. " +
                         "Please check the issue and give your feedback to the concern person.",
@@ -395,7 +495,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
 
                     body += $"{Environment.NewLine}{Environment.NewLine}";
 
-                    if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ProductComplaint)
+                    if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.ProductComplaintDropdownCode)
                     {
                         body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
                             $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +
@@ -404,17 +504,17 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.ShopSignComplain)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.ShopSignComplainDropdownCode)
                     {
                         body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DeliveryIssue)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.DeliveryIssueDropdownCode)
                     {
                         body += $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
-                    else if (issue.DealerSalesIssueCategory.DropdownName == ConstantIssuesValue.DamageProduct)
+                    else if (issue.DealerSalesIssueCategory.DropdownCode == ConstantIssuesValue.DamageProductDropdownCode)
                     {
                         body += $"Material: {issue.MaterialName}{Environment.NewLine}" +
                             $"Material Group: {issue.MaterialGroup}{Environment.NewLine}" +
@@ -422,12 +522,16 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                             $"Comments: {issue.Comments}{Environment.NewLine}" +
                             $"Priority: {issue.Priority.DropdownName}";
                     }
+                    else
+                    {
+                        body +=$"Comments: {issue.Comments}";
+                    }
 
                     body += $"{Environment.NewLine}{Environment.NewLine}";
                     body += $"Thank You,{Environment.NewLine}";
                     body += $"Berger Paints Bangladesh Limited";
 
-                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == issue.DealerSalesIssueCategoryId)?.FirstOrDefault()?.Email;
+                    var email = _repository.Where(p => p.DealerSalesIssueCategoryId == issue.DealerSalesIssueCategoryId && p.BusinessArea == plant)?.FirstOrDefault()?.Email;
                     if (!string.IsNullOrEmpty(email))
                     {
                         await SendEmail(email, subject, body);
@@ -456,5 +560,7 @@ namespace BergerMsfaApi.Services.DealerSalesCall.Implementation
                 throw ex;
             }
         }
+
+
     }
 }

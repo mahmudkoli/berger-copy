@@ -14,15 +14,18 @@ namespace Berger.Odata.Services
 {
     public class ODataBrandService : IODataBrandService
     {
-        private readonly IODataRepository<BrandInfo> _brandInfoRepository;
+        private readonly IODataApplicationRepository<BrandInfo> _brandInfoRepository;
+        private readonly IODataApplicationRepository<BrandFamilyInfo> _brandFamilyInfoRepository;
         private readonly IMapper _mapper;
 
         public ODataBrandService(
-            IODataRepository<BrandInfo> brandInfoRepository,
+            IODataApplicationRepository<BrandInfo> brandInfoRepository,
+            IODataApplicationRepository<BrandFamilyInfo> brandFamilyInfoRepository,
             IMapper mapper
             )
         {
             _brandInfoRepository = brandInfoRepository;
+            _brandFamilyInfoRepository = brandFamilyInfoRepository;
             _mapper = mapper;
         }
 
@@ -102,6 +105,19 @@ namespace Berger.Odata.Services
                             );
 
             return result.Distinct().ToList();
+        }
+
+        public async Task<IList<BrandFamilyInfo>> GetBrandFamilyInfosAsync(Expression<Func<BrandFamilyInfo, bool>> predicate = null)
+        {
+            var result = await _brandFamilyInfoRepository.GetAllIncludeAsync(
+                                x => x,
+                                predicate,
+                                null,
+                                null,
+                                true
+                            );
+
+            return result;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.PainterRegistration;
 using BergerMsfaApi.Services.PainterRegistration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +9,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.Painter
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppPainterCallController : BaseController
@@ -28,7 +25,7 @@ namespace BergerMsfaApi.Controllers.Painter
         }
 
         [HttpGet("GetPainterCallByPainterId/{PainterId}")]
-        public async Task<IActionResult> CreatePainterCallAysnc([BindRequired] int PainterId)
+        public async Task<IActionResult> GetPainterCallByPainterIdAysnc([BindRequired] int PainterId)
         {
             try
             {
@@ -46,6 +43,11 @@ namespace BergerMsfaApi.Controllers.Painter
         {
             try
             {
+                if (!await _paintCallSvc.IsExistCurrentDays(model.PainterId))
+                {
+                    ModelState.AddModelError(nameof(model.PainterId), "Today this painter already call");
+                    return ValidationResult(ModelState);
+                }
                 var result = await _paintCallSvc.AppCreatePainterCallAsync(employeeId, model);
                 return OkResult(result);
             }

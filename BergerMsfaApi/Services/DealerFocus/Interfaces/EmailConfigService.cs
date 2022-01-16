@@ -3,6 +3,7 @@ using Berger.Data.MsfaEntity.Master;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Repositories;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,30 +23,30 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
         /// <param name="emailConfig"></param>
         /// <param name="EmailConfigForDealerOppening"></param>
 
-        public EmailConfigService(IRepository<EmailConfigForDealerOppening> emailConfig, 
-            IRepository<EmailConfigForDealerSalesCall> emailConfigDealerSalesCall, 
+        public EmailConfigService(IRepository<EmailConfigForDealerOppening> emailConfig,
+            IRepository<EmailConfigForDealerSalesCall> emailConfigDealerSalesCall,
             IRepository<Depot> depot)
         {
             _emailConfig = emailConfig;
             _emailConfigDealerSalesCall = emailConfigDealerSalesCall;
             this._depot = depot;
-        } 
+        }
         public async Task<EmailConfigForDealerOppening> CreateAsync(EmailConfigForDealerOppening email)
         {
-          var result=await  _emailConfig.CreateAsync(email);
+            var result = await _emailConfig.CreateAsync(email);
             return email;
         }
 
         public async Task<EmailConfigForDealerOppening> GetById(int id)
         {
-            var result = await _emailConfig.FindAsync(p=>p.Id==id);
+            var result = await _emailConfig.FindAsync(p => p.Id == id);
 
             return result;
         }
 
         public async Task<IEnumerable<EmailConfigForDealerOppening>> GetEmailConfig()
         {
-            var result= await _emailConfig.GetAllAsync();
+            var result = await _emailConfig.GetAllAsync();
             var depotIds = result.Select(x => x.BusinessArea).Distinct();
             var depots = await _depot.FindAllAsync(x => depotIds.Contains(x.Werks));
             foreach (var item in result)
@@ -84,10 +85,31 @@ namespace BergerMsfaApi.Services.DealerFocus.Interfaces
 
             return result;
         }
+        public async Task<int> DeleteDealerSalesEmailById(int id)
+        {
+          return await _emailConfigDealerSalesCall.DeleteAsync(p => p.Id == id);
+        }
+
+        public async Task<int> DeleteDealerOppeningEmailById(int id)
+        {
+            var result = await _emailConfig.FindAsync(p => p.Id == id);
+
+            return await _emailConfig.DeleteAsync(x => x.Id == id);
+        }
 
         public async Task<IEnumerable<EmailConfigForDealerSalesCall>> GetEmailConfigDealerSalesCall()
         {
-            var result = _emailConfigDealerSalesCall.FindAllInclude(x => true, x => x.DealerSalesIssueCategory);
+            var result = await _emailConfigDealerSalesCall.FindAllInclude(x => true, x => x.DealerSalesIssueCategory).ToListAsync();
+            var depotIds = result.Select(x => x.BusinessArea).Distinct();
+            var depots = await _depot.FindAllAsync(x => depotIds.Contains(x.Werks));
+            foreach (var item in result)
+            {
+                var dep = depots.FirstOrDefault(x => x.Werks == item.BusinessArea);
+                if (dep != null)
+                {
+                    item.BusinessArea = $"{dep.Name1} ({dep.Werks})";
+                }
+            }
             return result;
         }
 

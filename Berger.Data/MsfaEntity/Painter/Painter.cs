@@ -14,7 +14,7 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
             Attachments = new List<PainterAttachment>();
             AttachedDealers = new List<AttachedDealerPainter>();
             PainterCalls = new List<PainterCall>();
-    }
+        }
         public string Depot { get; set; }
         public string SaleGroup { get; set; }
         public string Territory { get; set; }
@@ -38,6 +38,8 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
         public decimal AvgMonthlyVal { get; set; }
         public float Loyality { get; set; }
         public string EmployeeId { get; set; }
+        public string PainterNo { get; set; }
+        public string PainterCode { get; set; }
 
         public List<AttachedDealerPainter> AttachedDealers { get; set; } 
         public List<PainterAttachment> Attachments { get; set; }
@@ -51,14 +53,11 @@ namespace Berger.Data.MsfaEntity.PainterRegistration
 
     public class AttachedDealerPainter: AuditableEntity<int>
     {
-        public int Dealer { get; set; } // DealerInfo Id
+        public int DealerId { get; set; } // DealerInfo Id
         public int PainterId { get; set; }
 
         [ForeignKey("PainterId")]
         public Painter Painter { get; set; }
-
     }
-
-
 
 }

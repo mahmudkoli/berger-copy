@@ -9,6 +9,8 @@ namespace Berger.Odata.Model
     {
         public string CustomerNo { get; set; }
         public string CreditControlArea { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
     }
 
     public class BalanceConfirmationSummarySearchModel
@@ -21,6 +23,7 @@ namespace Berger.Odata.Model
 
     public class ChequeBounceSearchModel
     {
+        public string CreditControlArea { get; set; }
         public string CustomerNo { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
@@ -31,5 +34,12 @@ namespace Berger.Odata.Model
         public string CustomerNo { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+    }
+
+    public class ChequeSummaryReportSearchModel : AppAreaSearchCommonModel
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public IList<string> CustomerNos { get; set; }
     }
 }

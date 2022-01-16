@@ -25,6 +25,7 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
     dealerList: any[] = [];
     employeeList: any[] = [];
 	categories: Dropdown[] = [];
+    plants: any[] = [];
 
 
     constructor(
@@ -48,6 +49,12 @@ export class DealerSalesCallEmailConfigAddComponent implements OnInit {
             let id = this.route.snapshot.params.id;
             this.getEmailConfigById(id);
         }
+        
+        this.commonSvc.getDepotList().subscribe((p) => {
+            this.plants = p.data;
+            
+            
+        }), (err: any) => console.log(err);
     }
     private get _loggedUser() { return this.commonSvc.getUserInfoFromLocalStorage(); }
 

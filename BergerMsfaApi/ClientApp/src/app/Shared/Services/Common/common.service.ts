@@ -110,6 +110,18 @@ export class CommonService {
       .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
   }
 
+  insertSpacesWithRenameKeys(value, keysMap) {
+    if(keysMap[value]) value = keysMap[value];
+    return value
+      .replace(/(_|-)/g, ' ')
+      .trim()
+      .replace(/\w\S*/g, function (str) {
+        return str.charAt(0).toUpperCase() + str.substr(1);
+      })
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+  }
+
   renameKeys(obj, keysMap) {
     return Object.keys(obj).reduce(
       (acc, key) => ({
@@ -182,8 +194,19 @@ export class CommonService {
     );
   }
 
+  getTerritoryListByDepot(area) {
+    if (area && area.depots && area.depots.length > 0) area.depots = area.depots.filter(x => x);
+    return this.http.get<APIResponse>(`${this.baseUrl}v1/Common/getTerritoryListByDepot?${this.toQueryString(area)}`);
+  }
+
   getZoneList() {
     return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getZoneList');
+  }
+
+  getZoneListByDepotTerritory(area) {
+    if (area && area.depots && area.depots.length > 0) area.depots = area.depots.filter(x => x);
+    if (area && area.territories && area.territories.length > 0) area.territories = area.territories.filter(x => x);
+    return this.http.get<APIResponse>(`${this.baseUrl}v1/Common/getZoneListByDepotTerritory?${this.toQueryString(area)}`);
   }
 
   getRoleList() {
@@ -195,11 +218,15 @@ export class CommonService {
   }
 
   getUserInfoListByCurrentUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUser'
+    );
   }
 
   getUserInfoListByCurrentUserWithoutZoUser() {
-    return this.http.get<APIResponse>(this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser');
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/getUserInfoListByCurrentUserWithoutZoUser'
+    );
   }
 
   getUserInfoList() {
@@ -228,15 +255,21 @@ export class CommonService {
     );
   }
 
+  getDivisionList() {
+    return this.http.get<APIResponse>(
+      this.baseUrl + 'v1/Common/GetDivisionList'
+    );
+  }
+
   getBrandDropDown() {
     return this.http.get<APIResponse>(
       this.baseUrl + 'v1/Common/GetBrandDropDown'
     );
   }
 
-  getMaterialGroupOrBrand() {
+  getMaterialGroupOrBrand(filter?) {
     return this.http.get<APIResponse>(
-      this.baseUrl + 'v1/Common/GetMaterialGroupOrBrand'
+      this.baseUrl + `v1/Common/GetMaterialGroupOrBrand?${this.toQueryString(filter)}`
     );
   }
 
@@ -264,5 +297,28 @@ export class CommonService {
     return this.http.get<any>(this.baseUrl + `v1/AppDealer/getDealerList`, {
       params,
     });
+  }
+
+  public GetDealerListWithTerritory(territories) {
+
+    return this.http.get<APIResponse>(
+      `${this.baseUrl}/v1/AppDealer/GetDealerListWithTerritory?${this.toQueryString(territories)}`
+    );
+  }
+
+  getDealerByArea(filter) {
+    return this.http.post<APIResponse>(
+      this.baseUrl + `v1/Common/GetDealerByArea`,
+      filter
+    );
+  }
+
+  public getFiscalYear() {
+    let curentDate = new Date();
+    if (curentDate.getMonth() >= 3) {
+      return curentDate.getFullYear();
+    } else {
+      return curentDate.getFullYear() - 1;
+    }
   }
 }

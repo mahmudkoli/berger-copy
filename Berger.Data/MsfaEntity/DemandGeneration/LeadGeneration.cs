@@ -1,4 +1,5 @@
-﻿using Berger.Data.Common;
+﻿using Berger.Common.Enumerations;
+using Berger.Data.Common;
 using Berger.Data.MsfaEntity.Setup;
 using Berger.Data.MsfaEntity.Users;
 using System;
@@ -30,7 +31,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DropdownDetail PaintingStage { get; set; }
         public DateTime VisitDate { get; set; }
         public DateTime ExpectedDateOfPainting { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftInteriorChangeCount { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
@@ -44,6 +45,7 @@ namespace Berger.Data.MsfaEntity.DemandGeneration
         public DateTime NextFollowUpDate { get; set; }
         public string Remarks { get; set; }
         public string PhotoCaptureUrl { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
 
         public IList<LeadFollowUp> LeadFollowUps { get; set; }
     }

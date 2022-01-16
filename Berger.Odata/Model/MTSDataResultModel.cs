@@ -23,14 +23,15 @@ namespace Berger.Odata.Model
 
     public class PerformanceResultModel
     {
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
+        // public string CustomerNo { get; internal set; }
+        // public string CustomerName { get; internal set; }
         public string MatarialGroupOrBrand { get; set; }
-        public decimal LYSMVolume { get; internal set; }
-        public decimal TargetVolume { get; internal set; }
-        public decimal ActualVolume { get; internal set; }
-        public decimal TargetAchievement { get; internal set; }
+        public decimal LYMTD { get; internal set; }
+        public decimal CMTarget { get; internal set; }
+        public decimal CMActual { get; internal set; }
+        // public decimal TargetAchievement { get; internal set; }
         public decimal TillDateGrowth { get; internal set; }
+        public decimal RemainingTarget { get; set; }
 
         public PerformanceResultModel()
         {
@@ -40,8 +41,8 @@ namespace Berger.Odata.Model
 
     public class ValueTargetResultModel
     {
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
+        //  public string CustomerNo { get; internal set; }
+        //public string CustomerName { get; internal set; }
         //public string MatarialGroupOrBrand { get; set; }
         public decimal TargetValue { get; internal set; }
         public decimal ActualValue { get; internal set; }

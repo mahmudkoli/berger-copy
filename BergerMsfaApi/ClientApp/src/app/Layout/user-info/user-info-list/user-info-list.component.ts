@@ -42,7 +42,7 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 			this.PAGE_SIZE = commonService.PAGE_SIZE;
 			this.ptableSettings.pageSize = this.PAGE_SIZE;
 			this.ptableSettings.enabledServerSitePaggination = true;
-            this.initPermissionGroup();
+            // this.initPermissionGroup();
     }
 
 	ngOnInit() {
@@ -61,9 +61,9 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
         //this.ptableSettings.enabledRecordCreateBtn = this.permissionGroup.canCreate;
         //this.ptableSettings.enabledEditBtn = this.permissionGroup.canUpdate;
 
-        this.ptableSettings.enabledRecordCreateBtn = true;
-        this.ptableSettings.enabledEditBtn = true;
-        this.ptableSettings.enabledDeleteBtn = true;
+        // this.ptableSettings.enabledRecordCreateBtn = true;
+        // this.ptableSettings.enabledEditBtn = true;
+        // this.ptableSettings.enabledDeleteBtn = true;
     }
 
 	loadUserInfosPage() {
@@ -139,9 +139,10 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 		tableName: 'User List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Full Name', width: '20%', internalName: 'fullName', sort: true, type: "" },
-			{ headerName: 'Department', width: '20%', internalName: 'department', sort: true, type: "" },
-			{ headerName: 'Designation', width: '20%', internalName: 'designation', sort: true, type: "" },
+			{ headerName: 'User Name', width: '15%', internalName: 'userName', sort: true, type: "" },
+			{ headerName: 'Full Name', width: '15%', internalName: 'fullName', sort: true, type: "" },
+			{ headerName: 'Department', width: '15%', internalName: 'department', sort: true, type: "" },
+			{ headerName: 'Designation', width: '15%', internalName: 'designation', sort: true, type: "" },
 			{ headerName: 'Application Role', width: '15%', internalName: 'roleNames', sort: false, type: "" },
 			{ headerName: 'Employee Role', width: '15%', internalName: 'employeeRoleText', sort: false, type: "" },
 			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
@@ -150,7 +151,7 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
 		enabledSerialNo: true,
 		// pageSize: 10,
 		enabledPagination: true,
-		enabledDeleteBtn: true,
+		// enabledDeleteBtn: true,
 		enabledEditBtn: true,
 		enabledColumnFilter: false,
 		enabledRecordCreateBtn: true,

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Berger.Common.Enumerations;
 using Berger.Common.Extensions;
 using Berger.Data.Common;
 using Berger.Data.MsfaEntity.DemandGeneration;
@@ -39,7 +40,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string PaintContractorNameChangeReason { get; set; }
         public string PaintContractorMobile { get; set; }
         public string PaintContractorMobileChangeReason { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public string NumberOfStoriedBuildingChangeReason { get; set; }
         public decimal ExpectedValue { get; set; }
         //public int ExpectedValueChangeCount { get; set; }
@@ -54,6 +55,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         //public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusLeadCompletedText { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
+        public string ProjectStatusHandOverRemarks { get; set; }
         public decimal ProjectStatusPartialBusinessPercentage { get; set; }
         public bool HasSwappingCompetition { get; set; }
         public int? SwappingCompetitionId { get; set; }
@@ -74,18 +76,61 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string BrandUsedTopCoatBrandName { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
-        public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
-        public decimal ActualVolumeSoldExteriorKg { get; set; }
-        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
-        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorKg { get; set; }
+        //public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldExteriorKg { get; set; }
+        //public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         public int BusinessAchievementId { get; set; }
         public LeadBusinessAchievementModel BusinessAchievement { get; set; }
+        public IList<LeadActualVolumeSoldModel> ActualVolumeSoldInteriors { get; set; }
+        public IList<LeadActualVolumeSoldModel> ActualVolumeSoldExteriors { get; set; }
+        public IList<LeadActualVolumeSoldModel> ActualVolumeSoldUnderCoats { get; set; }
+        public IList<LeadActualVolumeSoldModel> ActualVolumeSoldTopCoats { get; set; }
 
         public LeadFollowUpModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
+            this.ActualVolumeSoldInteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldExteriors = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldUnderCoats = new List<LeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldTopCoats = new List<LeadActualVolumeSoldModel>();
+        }
+
+        public void StringToList(LeadFollowUp src, LeadFollowUpModel dest)
+        {
+            dest.ActualVolumeSoldInteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Interior)
+                                                .Select(x => new LeadActualVolumeSoldModel
+                                                {
+                                                    Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
+                                                    BrandInfoText = x.BrandInfo?.MaterialDescription ?? string.Empty,
+                                                    Quantity = x.Quantity, TotalAmount = x.TotalAmount,
+                                                    ActualVolumeSoldType = x.ActualVolumeSoldType
+                                                }).ToList();
+            dest.ActualVolumeSoldExteriors = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.Exterior)
+                                                .Select(x => new LeadActualVolumeSoldModel
+                                                {
+                                                    Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
+                                                    BrandInfoText = x.BrandInfo?.MaterialDescription ?? string.Empty,
+                                                    Quantity = x.Quantity, TotalAmount = x.TotalAmount,
+                                                    ActualVolumeSoldType = x.ActualVolumeSoldType
+                                                }).ToList();
+            dest.ActualVolumeSoldUnderCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.UnderCoat)
+                                                .Select(x => new LeadActualVolumeSoldModel
+                                                {
+                                                    Id = x.Id, LeadFollowUpId = x.LeadFollowUpId, BrandInfoId = x.BrandInfoId,
+                                                    BrandInfoText = x.BrandInfo?.MaterialDescription ?? string.Empty,
+                                                    Quantity = x.Quantity, TotalAmount = x.TotalAmount,
+                                                    ActualVolumeSoldType = x.ActualVolumeSoldType
+                                                }).ToList();
+            dest.ActualVolumeSoldTopCoats = src.ActualVolumeSolds.Where(x => x.ActualVolumeSoldType == EnumLeadActualVolumeSoldType.TopCoat)
+                                                .Select(x => new LeadActualVolumeSoldModel
+                                                {
+                                                    Id = x.Id, LeadFollowUpId = x.LeadFollowUpId,
+                                                    BrandInfoId = x.BrandInfoId, BrandInfoText = x.BrandInfo?.MaterialDescription ?? string.Empty,
+                                                    Quantity = x.Quantity, TotalAmount = x.TotalAmount, ActualVolumeSoldType = x.ActualVolumeSoldType
+                                                }).ToList();
         }
 
         public void Mapping(Profile profile)
@@ -105,13 +150,33 @@ namespace BergerMsfaApi.Models.DemandGeneration
                 .ForMember(dest => dest.NextVisitDatePlanText,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDatePlan)))
                 .ForMember(dest => dest.ActualVisitDateText,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.ActualVisitDate)))
+                .AfterMap((src, dest) => dest.StringToList(src, dest));
 
             //profile.CreateMap<LeadFollowUpModel, LeadFollowUp>();
             //profile.CreateMap<DropdownDetail, DropdownModel>();
             //profile.CreateMap<DropdownModel, DropdownDetail>();
             //profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>();
             //profile.CreateMap<LeadBusinessAchievementModel, LeadBusinessAchievement>();
+        }
+    }
+
+    public class LeadActualVolumeSoldModel : IMapFrom<LeadActualVolumeSold>
+    {
+        public int Id { get; set; }
+        public int LeadFollowUpId { get; set; }
+        public int BrandInfoId { get; set; }
+        public string BrandInfoText { get; set; }
+        public int Quantity { get; set; }
+        public decimal TotalAmount { get; set; }
+        public EnumLeadActualVolumeSoldType ActualVolumeSoldType { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<LeadActualVolumeSold, LeadActualVolumeSoldModel>()
+                .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
+                .ForMember(dest => dest.BrandInfoText,
+                    opt => opt.MapFrom(src => src.BrandInfo != null ? $"{src.BrandInfo.MaterialDescription}" : string.Empty));
         }
     }
 
@@ -135,6 +200,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int? TypeOfClientId { get; set; }
         //public DropdownDetail TypeOfClient { get; set; }
         public string TypeOfClientText { get; set; }
+        public string TypeOfClientDropdownCode { get; set; }
         public string OtherClientName { get; set; }
         public string KeyContactPersonName { get; set; }
         public string KeyContactPersonNameChangeReason { get; set; }
@@ -144,7 +210,7 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public string PaintContractorNameChangeReason { get; set; }
         public string PaintContractorMobile { get; set; }
         public string PaintContractorMobileChangeReason { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public string NumberOfStoriedBuildingChangeReason { get; set; }
         public decimal ExpectedValue { get; set; }
         public int ExpectedValueChangeCount { get; set; }
@@ -155,10 +221,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public int ProjectStatusId { get; set; }
         //public DropdownDetail ProjectStatus { get; set; }
         public string ProjectStatusText { get; set; }
+        public string ProjectStatusDropdownCode { get; set; }
         public int? ProjectStatusLeadCompletedId { get; set; }
         //public DropdownDetail ProjectStatusLeadCompleted { get; set; }
         public string ProjectStatusLeadCompletedText { get; set; }
         public string ProjectStatusTotalLossRemarks { get; set; }
+        public string ProjectStatusHandOverRemarks { get; set; }
         public decimal ProjectStatusPartialBusinessPercentage { get; set; }
         public bool HasSwappingCompetition { get; set; }
         public int? SwappingCompetitionId { get; set; }
@@ -185,14 +253,20 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public IList<string> BrandUsedTopCoatBrandNames { get; set; }
         public decimal ActualPaintJobCompletedInteriorPercentage { get; set; }
         public decimal ActualPaintJobCompletedExteriorPercentage { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
-        public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
-        public decimal ActualVolumeSoldExteriorKg { get; set; }
-        public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
-        public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        public EnumLeadGenerationFrom LeadGenerateFrom { get; set; }
+        public string LeadGenerateFromText { get; set; }
+        //public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldInteriorKg { get; set; }
+        //public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        //public decimal ActualVolumeSoldExteriorKg { get; set; }
+        //public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
+        //public decimal ActualVolumeSoldTopCoatGallon { get; set; }
         //public int BusinessAchievementId { get; set; }
         public SaveLeadBusinessAchievementModel BusinessAchievement { get; set; }
+        public IList<SaveLeadActualVolumeSoldModel> ActualVolumeSoldInteriors { get; set; }
+        public IList<SaveLeadActualVolumeSoldModel> ActualVolumeSoldExteriors { get; set; }
+        public IList<SaveLeadActualVolumeSoldModel> ActualVolumeSoldUnderCoats { get; set; }
+        public IList<SaveLeadActualVolumeSoldModel> ActualVolumeSoldTopCoats { get; set; }
 
         public AppSaveLeadFollowUpModel()
         {
@@ -203,6 +277,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
             this.BrandUsedExteriorBrandNames = new List<string>();
             this.BrandUsedTopCoatBrandNames = new List<string>();
             this.BrandUsedUnderCoatBrandNames = new List<string>();
+            this.ActualVolumeSoldInteriors = new List<SaveLeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldExteriors = new List<SaveLeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldUnderCoats = new List<SaveLeadActualVolumeSoldModel>();
+            this.ActualVolumeSoldTopCoats = new List<SaveLeadActualVolumeSoldModel>();
         }
 
         public void StringToList(LeadFollowUp src, AppSaveLeadFollowUpModel dest)
@@ -235,6 +313,20 @@ namespace BergerMsfaApi.Models.DemandGeneration
                                                 string.Join(',', src.BrandUsedTopCoatBrandNames);
             dest.BrandUsedUnderCoatBrandName = src.BrandUsedUnderCoatBrandNames == null || !src.BrandUsedUnderCoatBrandNames.Any() ? string.Empty :
                                                 string.Join(',', src.BrandUsedUnderCoatBrandNames);
+            var interiorSolds = src.ActualVolumeSoldInteriors.Select(x => new LeadActualVolumeSold { BrandInfoId = x.BrandInfoId, Quantity = x.Quantity,
+                                    TotalAmount = x.TotalAmount, ActualVolumeSoldType = EnumLeadActualVolumeSoldType.Interior});
+            var exteriorSolds = src.ActualVolumeSoldExteriors.Select(x => new LeadActualVolumeSold { BrandInfoId = x.BrandInfoId, Quantity = x.Quantity,
+                                    TotalAmount = x.TotalAmount, ActualVolumeSoldType = EnumLeadActualVolumeSoldType.Exterior});
+            var underCoatSolds = src.ActualVolumeSoldUnderCoats.Select(x => new LeadActualVolumeSold { BrandInfoId = x.BrandInfoId, Quantity = x.Quantity,
+                                    TotalAmount = x.TotalAmount, ActualVolumeSoldType = EnumLeadActualVolumeSoldType.UnderCoat});
+            var topCoatSolds = src.ActualVolumeSoldTopCoats.Select(x => new LeadActualVolumeSold { BrandInfoId = x.BrandInfoId, Quantity = x.Quantity,
+                                    TotalAmount = x.TotalAmount, ActualVolumeSoldType = EnumLeadActualVolumeSoldType.TopCoat});
+            var allSolds = new List<LeadActualVolumeSold>();
+            if (interiorSolds.Any()) allSolds.AddRange(interiorSolds);
+            if (exteriorSolds.Any()) allSolds.AddRange(exteriorSolds);
+            if (underCoatSolds.Any()) allSolds.AddRange(underCoatSolds);
+            if (topCoatSolds.Any()) allSolds.AddRange(topCoatSolds);
+            dest.ActualVolumeSolds = allSolds;
         }
 
         public void Mapping(Profile profile)
@@ -260,8 +352,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
             profile.CreateMap<AppSaveLeadFollowUpModel, LeadFollowUp>()
                 .ForMember(dest => dest.LastVisitedDate,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.LastVisitedDate)))
+                //.ForMember(dest => dest.NextVisitDatePlan,
+                //    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDatePlan)))
                 .ForMember(dest => dest.NextVisitDatePlan,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.NextVisitDatePlan)))
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.BusinessAchievement.NextVisitDate)))
                 .ForMember(dest => dest.ActualVisitDate,
                     opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateTime(src.ActualVisitDate)))
                 .AfterMap((src, dest) => src.ListToString(src, dest));
@@ -269,5 +363,12 @@ namespace BergerMsfaApi.Models.DemandGeneration
             //profile.CreateMap<LeadBusinessAchievement, SaveLeadBusinessAchievementModel>();
             //profile.CreateMap<SaveLeadBusinessAchievementModel, LeadBusinessAchievement>();
         }
+    }
+
+    public class SaveLeadActualVolumeSoldModel : IMapFrom<LeadActualVolumeSold>
+    {
+        public int BrandInfoId { get; set; }
+        public int Quantity { get; set; }
+        public decimal TotalAmount { get; set; }
     }
 }

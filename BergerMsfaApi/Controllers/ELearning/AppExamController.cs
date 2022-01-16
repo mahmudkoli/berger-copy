@@ -1,5 +1,4 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.ELearning;
 using BergerMsfaApi.Services.ELearning.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.ELearning
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppExamController : BaseController
@@ -61,6 +58,20 @@ namespace BergerMsfaApi.Controllers.ELearning
             try
             {
                 var result = await _examService.SaveQuestionAnswerAsync(model);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }
+
+        [HttpGet("GetUserExamReport")]
+        public async Task<IActionResult> GetUserExamReport()
+        {
+            try
+            {
+                var result = await _examService.GetAllExamReportByCurrentUserAsync();
                 return OkResult(result);
             }
             catch (Exception ex)

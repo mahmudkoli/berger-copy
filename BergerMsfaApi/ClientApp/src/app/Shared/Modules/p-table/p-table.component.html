@@ -5,18 +5,18 @@
   >
     <div class="panel panel-default">
       <div
-        class="p-table-header"
+        class="p-table-header p-0"
         *ngIf="
           pTableSetting.tableHeaderVisibility == true ||
           pTableSetting.tableHeaderVisibility == null
         "
       >
         <div class="row d-flex align-content-end">
-          <div class="col col-xs-8 pl-2">
+          <div class="col-sm-6">
             <h3 class="panel-title">{{ pTableSetting.tableName }}</h3>
           </div>
-          <div class="">
-            <div class="d-flex pr-2">
+          <div class="col-sm-6">
+            <div class="d-flex justify-content-sm-end pb-2">
               <div *ngIf="pTableSetting.enabledRecordCreateBtn == true">
                 <button
                   type="button"
@@ -24,7 +24,9 @@
                   [title]="pTableSetting.newRecordButtonText || 'New Record'"
                   (click)="fnCreateNewRecord()"
                 >
-                  <i [class]="pTableSetting.newRecordButtonIcon || 'fa fa-plus'"></i>
+                  <i
+                    [class]="pTableSetting.newRecordButtonIcon || 'fa fa-plus'"
+                  ></i>
                   {{ pTableSetting.newRecordButtonText || 'New Record' }}
                 </button>
               </div>
@@ -230,7 +232,7 @@
         class="row search-table"
         *ngIf="pTableSetting.enabledSearch || pTableSetting.enabledDataLength"
       >
-        <div class="col-sm-7 col-md-8 col-xs-9">
+        <div class="col-sm-7 col-md-8 col-xs-9 pb-2">
           <div class="pull-left">
             <div class="btn-group" *ngIf="pTableSetting.enabledDataLength">
               <div class="select">
@@ -242,6 +244,7 @@
                   <option
                     *ngFor="let rowlimit of rowLimitArray"
                     [value]="rowlimit"
+                    [selected]="rowlimit == pTableSetting.defaultPaggingSize"
                   >
                     {{ rowlimit }} records
                   </option>
@@ -293,7 +296,10 @@
         >
           <div class="panel-body p-table-body" style="position: relative">
             <table
-              class="p-table table table-hover table-striped table-bordered table-list"
+              class="
+                p-table
+                table table-hover table-striped table-bordered table-list
+              "
               [id]="pTableSetting.tableID"
             >
               <thead>
@@ -302,9 +308,7 @@
                     *ngIf="pTableSetting.enabledSerialNo"
                     class="p-table-serial"
                     width="2%"
-                    [attr.rowSpan]="
-                      isParentHeaderExists() ? 2 : 1
-                    "
+                    [attr.rowSpan]="isParentHeaderExists() ? 2 : 1"
                   >
                     <span
                       *ngIf="pTableSetting.enabledColumnResize"
@@ -416,14 +420,20 @@
                                   style="cursor: pointer"
                                 >
                                   <span
-                                    class="fa fa-filter p-table-custom-filter-icon"
+                                    class="
+                                      fa fa-filter
+                                      p-table-custom-filter-icon
+                                    "
                                     [id]="
                                       'filter-remove-' + filterCustomColumnName
                                     "
                                     [style.color]="popupFilterColor"
                                   ></span>
                                   <span
-                                    class="fa fa-remove filter-popup-remove-icon"
+                                    class="
+                                      fa fa-remove
+                                      filter-popup-remove-icon
+                                    "
                                   ></span>
                                 </span>
                               </div>
@@ -558,9 +568,7 @@
                       pTableSetting.enabledDetailsBtn
                     "
                     class="setting-update text-center"
-                    [attr.rowSpan]="
-                      isParentHeaderExists() ? 2 : 1
-                    "
+                    [attr.rowSpan]="isParentHeaderExists() ? 2 : 1"
                   >
                     <span
                       *ngIf="pTableSetting.enabledColumnResize"
@@ -577,7 +585,7 @@
                       {{ head2.parentHeaderName ? head2.headerName : '' }}
                     </th>
                   </ng-container>
-                  <!-- <th 
+                  <!-- <th
                     *ngIf="
                       pTableSetting.enabledEditDeleteBtn ||
                       pTableSetting.enabledEditBtn ||
@@ -598,6 +606,8 @@
                   class="individual-ptable-record-{{
                     body[pTableSetting.columnNameSetAsClass]
                   }}"
+
+                  [ngStyle]="conditionalRowStyles(body)"
                 >
                   <td *ngIf="pTableSetting.enabledSerialNo">
                     {{ startPageNo + counter }}
@@ -690,11 +700,11 @@
                     <div *ngIf="dispCol.type == 'image'">
                       <a [href]="body[dispCol.internalName]" target="_blank">
                         <img
-                        *ngIf="body[dispCol.internalName]"
-                        src="{{ body[dispCol.internalName] }}"
-                        width="50"
-                        height="50"
-                        alt="Image"
+                          *ngIf="body[dispCol.internalName]"
+                          src="{{ body[dispCol.internalName] }}"
+                          width="50"
+                          height="50"
+                          alt="Image"
                         />
                       </a>
                     </div>
@@ -726,7 +736,11 @@
                       style="text-align: center"
                     >
                       <button
-                        class="btn-transition btn btn-sm btn-outline-primary d-flex align-items-center"
+                        class="
+                          btn-transition btn btn-sm btn-outline-primary
+                          d-flex
+                          align-items-center
+                        "
                         (click)="
                           fnClickPTableCell(
                             $event,
@@ -803,18 +817,32 @@
                     <div
                       *ngIf="
                         dispCol.type == 'text' &&
-                        (dispCol.displayType == 'number-format-color' || 
-                        dispCol.displayType == 'number-format-color-bg' || 
-                        dispCol.displayType == 'number-format-color-fraction' || 
-                        dispCol.displayType == 'number-format-color-bg-fraction')
+                        (dispCol.displayType == 'number-format-color' ||
+                          dispCol.displayType == 'number-format-color-bg' ||
+                          dispCol.displayType ==
+                            'number-format-color-fraction' ||
+                          dispCol.displayType ==
+                            'number-format-color-bg-fraction')
                       "
                       style="text-align: center"
                     >
-                      <span [ngClass]="body[dispCol.internalName] < 0 ? 
-                                      (dispCol.displayType == 'number-format-color-bg' || 
-                                      dispCol.displayType == 'number-format-color-bg-fraction' ? 
-                                        'negative-number-format-color-bg' : 'negative-number-format-color') : ''">
-                        {{ numberFormatColor(body[dispCol.internalName],dispCol.displayType) }}
+                      <span
+                        [ngClass]="
+                          body[dispCol.internalName] < 0
+                            ? dispCol.displayType == 'number-format-color-bg' ||
+                              dispCol.displayType ==
+                                'number-format-color-bg-fraction'
+                              ? 'negative-number-format-color-bg'
+                              : 'negative-number-format-color'
+                            : ''
+                        "
+                      >
+                        {{
+                          numberFormatColor(
+                            body[dispCol.internalName],
+                            dispCol.displayType
+                          )
+                        }}
                       </span>
                     </div>
                     <div
@@ -872,11 +900,9 @@
                       *ngIf="dispCol.type == 'dynamic-dropdown'"
                       style="text-align: center"
                     >
-                      <ng-select 
-                        class="{{
-                          (body[dispCol.className] || '')
-                        }}"
-                        [(ngModel)]="body[dispCol.internalName].value" 
+                      <ng-select
+                        class="{{ body[dispCol.className] || '' }}"
+                        [(ngModel)]="body[dispCol.internalName].value"
                         (change)="
                           fnClickPTableCell(
                             $event,
@@ -885,12 +911,17 @@
                             dispCol.onClick,
                             body
                           )
-                        " 
+                        "
                         [multiple]="false"
                         [searchable]="false"
-                        [clearable]="false">
-                          <!-- <ng-option>--Select--</ng-option> -->
-                          <ng-option *ngFor="let em of body[dispCol.internalName].data;" [value]="em.id">{{em.label}}</ng-option>
+                        [clearable]="false"
+                      >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option
+                          *ngFor="let em of body[dispCol.internalName].data"
+                          [value]="em.id"
+                          >{{ em.label }}</ng-option
+                        >
                       </ng-select>
                     </div>
                     <div *ngIf="dispCol.type == 'hyperlink'">
@@ -991,10 +1022,20 @@
                       *ngIf="rowCounter != 0 && dispCol.showTotal"
                     >
                       <button
-                        class="btn p-table-custom-button" [ngClass]="fnSummationTotal(dispCol.internalName) < 0 ? 'btn-outline-danger': 'btn-outline-success'"
+                        class="btn p-table-custom-button"
+                        [ngClass]="
+                          fnSummationTotal(dispCol.internalName) < 0
+                            ? 'btn-outline-danger'
+                            : 'btn-outline-success'
+                        "
                       >
                         <!-- {{ fnSummationTotal(dispCol.internalName) | number : '1.0-2' }} -->
-                        {{ numberFormatColor(fnSummationTotal(dispCol.internalName),dispCol.displayType) }}
+                        {{
+                          numberFormatColor(
+                            fnSummationTotal(dispCol.internalName),
+                            dispCol.displayType
+                          )
+                        }}
                       </button>
                     </div>
                   </td>
@@ -1025,16 +1066,16 @@
           >
             <div class="p-table-footer" *ngIf="pTableDatalength > 0">
               <div class="row">
-                <div class="col col-xs-4">
-                  <div [innerHTML]="showingPageDetails"></div>
+                <div class="col-sm-6">
+                  <div class="py-2 py-sm-0" [innerHTML]="showingPageDetails"></div>
                 </div>
-                <div class="col col-xs-8">
+                <div class="col-sm-6">
                   <!-- pager -->
                   <ul
                     *ngIf="
                       pager.pages && pager.pages.length && enabledPagination
                     "
-                    class="pagination hidden-xs pull-right"
+                    class="pagination hidden-xs justify-content-sm-end"
                   >
                     <li
                       class="page-item"

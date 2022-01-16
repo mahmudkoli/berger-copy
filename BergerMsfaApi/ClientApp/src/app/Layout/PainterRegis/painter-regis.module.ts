@@ -8,12 +8,18 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PainterRegisRoutingModule } from './painterRegis-routing.module';
 import { PainterRegisDetailComponent } from './painter-regis-detail/painter-regis-detail.component';
 import { ModalPainterCallDetailsComponent } from './modal-painter-call-details/modal-painter-call-details.component';
-
-
-
+import { PainterUpdateStatusComponent } from './painter-update-status/painter-update-status.component';
+import { PainterEditFormComponent } from './painter-edit-form/painter-edit-form.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
-  declarations: [PainterRegisListComponent, PainterRegisDetailComponent, ModalPainterCallDetailsComponent],
+  declarations: [
+    PainterRegisListComponent, 
+    PainterRegisDetailComponent, 
+    ModalPainterCallDetailsComponent, 
+    PainterUpdateStatusComponent,
+    PainterEditFormComponent
+  ],
   imports: [
       CommonModule,
       SharedMasterModule,
@@ -22,7 +28,7 @@ import { ModalPainterCallDetailsComponent } from './modal-painter-call-details/m
       NgbModule,
       FormsModule,
       ReactiveFormsModule,
-      
+      NgSelectModule 
     ],
     entryComponents: [
         ModalPainterCallDetailsComponent

@@ -21,6 +21,7 @@ export interface IPTableSetting {
   disabledTableReset?: boolean | false;
   pageSize?: number | 10;
   displayPaggingSize?: number | 10;
+  defaultPaggingSize?: number | 10;
   checkboxColumnHeader?: boolean | string | 'Select';
   radioBtnColumnHeader?: string | 'Select';
   checkboxCallbackFn?: boolean | null;
@@ -42,8 +43,11 @@ export interface IPTableSetting {
   newRecordButtonText?: string | 'New Record';
   newRecordButtonIcon?: string | 'fa fa-plus';
   downloadDataApiUrl?: string | null;
+  downloadFileFromServer?: boolean | false;
   enabledDetailsEditDeleteBtn?: boolean | false;
   enabledDetailsBtn?: boolean | false;
+  enabledConditionalRowStyles?: boolean | false;
+  conditionalRowStyles?: IConditionalRowStyle[] | null; 
 }
 
 export interface colDef {
@@ -79,4 +83,10 @@ export interface IPTableServerQueryObj {
   pageSize: number;
   orderBy: string;
   isOrderAsc: boolean;
+}
+
+export interface IConditionalRowStyle {
+  columnName: string;
+  columnValues: string[];
+  rowStyles?: any | null;
 }

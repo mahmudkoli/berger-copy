@@ -19,10 +19,25 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PainterCall, PainterCallModel>();
-                 
         }
         
         public int Id { get; set; }
+
+        public string PainterName { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string SaleGroup { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public int NoOfPainterAttached { get; set; }
+        public bool IsAppInstalled { get; set; }
+        public float Loyality { get; set; }
+        public bool HasDbbl { get; set; }
+        public string AccDbblNumber { get; set; }
+        public string AccDbblHolderName { get; set; }
+        public string AccChangeReason { get; set; }
+        public int PainterCatId { get; set; }
+
         public bool HasSchemeComnunaction { get; set; }
         public bool HasPremiumProtBriefing { get; set; }
         public bool HasNewProBriefing { get; set; }
@@ -32,8 +47,10 @@ namespace BergerMsfaApi.Models.PainterRegistration
         public bool HasDbblIssue { get; set; }
         public string Comment { get; set; }
         public int PainterId { get; set; }
-        public List<PainterCompanyMTDValueModel> PainterCompanyMTDValue{ get; set; }
-
-
+        public DateTime CreatedTime { get; set; }
+        public string CreatedTimeStr { get; set; }
+        public string PainterCatName { get; set; }
+        public List<PainterCompanyMTDValueModel> PainterCompanyMTDValue { get; set; }
+        public List<AttachedDealerPainterCallModel> AttachedDealers { get; set; }
     }
 }

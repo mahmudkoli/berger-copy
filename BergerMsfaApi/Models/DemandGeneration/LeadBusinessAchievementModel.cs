@@ -16,7 +16,10 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public decimal BergerValueSales { get; set; }
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }
-        public string ProductSourcing { get; set; }
+        //public string ProductSourcing { get; set; }
+        public int? ProductSourcingId { get; set; }
+        public string ProductSourcingText { get; set; }
+        public string ProductSourcingRemarks { get; set; } // multiple dealer id and name separated by comma
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
         public string ProductSamplingBrandName { get; set; }
@@ -35,7 +38,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
             profile.CreateMap<LeadBusinessAchievement, LeadBusinessAchievementModel>()
                 .AddTransform<string>(s => string.IsNullOrEmpty(s) ? string.Empty : s)
                 .ForMember(dest => dest.NextVisitDateText,
-                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)));
+                    opt => opt.MapFrom(src => CustomConvertExtension.ObjectToDateString(src.NextVisitDate)))
+                .ForMember(dest => dest.ProductSourcingText,
+                    opt => opt.MapFrom(src => src.ProductSourcing != null ? $"{src.ProductSourcing.DropdownName}" : string.Empty));
         }
     }
 
@@ -44,7 +49,9 @@ namespace BergerMsfaApi.Models.DemandGeneration
         public decimal BergerValueSales { get; set; }
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }
-        public string ProductSourcing { get; set; }
+        //public string ProductSourcing { get; set; }
+        public int? ProductSourcingId { get; set; }
+        public string ProductSourcingRemarks { get; set; } // multiple dealer id and name separated by comma
         public bool IsColorSchemeGiven { get; set; }
         public bool IsProductSampling { get; set; }
         public string ProductSamplingBrandName { get; set; }

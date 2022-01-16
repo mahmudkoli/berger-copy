@@ -1,4 +1,4 @@
-import { EnumClubSupreme } from "../../Enums/dealer-info";
+import { EnumBussinesCategory, EnumClubSupreme } from "../../Enums/dealer-info";
 import { QueryObject } from "../Common/query-object";
 
 export class DealerInfo {
@@ -18,6 +18,9 @@ export class DealerInfo {
     isAP: boolean;
     clubSupremeType: EnumClubSupreme;
 
+    bussinesCategoryType: EnumBussinesCategory;
+
+
     isExclusiveText: string;
     isLastYearAppointedText: string;
     isAPText: string;
@@ -32,6 +35,9 @@ export class DealerInfo {
 
     clubSupremeTypeDropdown: any;
     clubSupremeTypeDropdownClass: string;
+
+    bussinesCategoryTypeDrodown: any;
+    bussinesCategoryTypeDrodownClass: string;
 
     // log details button
     // viewDetailsText: string;
@@ -63,6 +69,7 @@ export class DealerInfoQuery extends QueryObject {
     salesGroups: string[];
     territories: string[];
     zones: string[];
+    dealerId: number;
 
     constructor(init?: Partial<DealerInfoQuery>) {
         super();
@@ -74,5 +81,6 @@ export class DealerInfoQuery extends QueryObject {
         this.salesGroups = [];
         this.territories = [];
         this.zones = [];
+        this.dealerId = 0;
     }
 }

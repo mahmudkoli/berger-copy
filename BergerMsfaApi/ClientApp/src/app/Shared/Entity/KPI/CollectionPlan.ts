@@ -1,12 +1,11 @@
-﻿import { Status } from '../../Enums/status';
-import { QueryObject } from '../Common/query-object';
+﻿import { QueryObject } from '../Common/query-object';
 
 export class CollectionConfig {
     id: number;
     changeableMaxDateDay: number;
     changeableMaxDate: Date;
     changeableMaxDateText: string;
-    
+
     constructor(init?: Partial<CollectionConfig>) {
         Object.assign(this, init);
     }
@@ -19,7 +18,7 @@ export class CollectionConfig {
 export class SaveCollectionConfig {
     id: number;
     changeableMaxDateDay: number;
-    
+
     constructor(init?: Partial<CollectionConfig>) {
         Object.assign(this, init);
     }
@@ -38,11 +37,11 @@ export class CollectionPlan {
     year: number;
     month: number;
     yearMonthText: string;
-    slippageAmount: number;
+    slippageAmount: number=0;
     collectionTargetAmount: number;
     collectionActualAmount: number;
     slippageCollectionActualAmount: number;
-    
+
     changeableMaxDateDay: number;
     changeableMaxDate: Date;
     changeableMaxDateText: string;
@@ -62,7 +61,7 @@ export class SaveCollectionPlan {
     territory: string;
     slippageAmount: number;
     collectionTargetAmount: number;
-    
+
     constructor(init?: Partial<CollectionPlan>) {
         Object.assign(this, init);
     }
@@ -73,7 +72,9 @@ export class SaveCollectionPlan {
 }
 
 export class CollectionPlanQuery extends QueryObject {
-    
+    businessArea: string;
+    territories: string[];
+
     constructor(init?: Partial<CollectionPlanQuery>) {
         super();
         Object.assign(this, init);

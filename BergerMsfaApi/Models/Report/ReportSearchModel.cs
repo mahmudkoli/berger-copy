@@ -17,6 +17,7 @@ namespace BergerMsfaApi.Models.Report
         public int? UserId { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
+        public DateTime? Date { get; set; }
 
         public ReportBaseSearchModel()
         {
@@ -28,13 +29,14 @@ namespace BergerMsfaApi.Models.Report
 
     public class LeadSummaryReportSearchModel : ReportBaseSearchModel
     {
-
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class LeadGenerationDetailsReportSearchModel : ReportBaseSearchModel
     {
         public string ProjectName { get; set; }
         public int? PaintingStageId { get; set; }
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class LeadFollowUpDetailsReportSearchModel : ReportBaseSearchModel
@@ -42,6 +44,15 @@ namespace BergerMsfaApi.Models.Report
         public string ProjectName { get; set; }
         public string ProjectCode { get; set; }
         public int? ProjectStatusId { get; set; }
+        public int LeadGenerateFrom { get; set; }
+    }
+
+    public class LeadBusinessReportSearchModel : ReportBaseSearchModel
+    {
+        public string ProjectName { get; set; }
+        public string ProjectCode { get; set; }
+        public int? ProjectStatusId { get; set; }
+        public int LeadGenerateFrom { get; set; }
     }
 
     public class PainterRegistrationReportSearchModel : ReportBaseSearchModel
@@ -49,6 +60,12 @@ namespace BergerMsfaApi.Models.Report
         public int? PainterId { get; set; }
         public string PainterName { get; set; }
         public string PainterMobileNo { get; set; }
+        public int? PainterType { get; set; }
+    }
+
+    public class InactivePainterReportSearchModel : ReportBaseSearchModel
+    {
+        public int? PainterId { get; set; }
         public int? PainterType { get; set; }
     }
 
@@ -71,6 +88,7 @@ namespace BergerMsfaApi.Models.Report
     public class CollectionReportSearchModel : ReportBaseSearchModel
     {
         public int? PaymentMethodId { get; set; }
+        public int? PaymentFromId { get; set; }
         public int? DealerId { get; set; }
     }
 
@@ -127,4 +145,11 @@ namespace BergerMsfaApi.Models.Report
     {
         public int? Status { get; set; }
     }
+
+    public class ColorBankTargetSetupSearchModel : ReportBaseSearchModel
+    {
+        public string Territory { get; set; }
+        public int Year { get; set; }
+    }
+
 }

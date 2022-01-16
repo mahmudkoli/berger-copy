@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Text;
 using Berger.Common.Extensions;
 using Microsoft.OData.Edm;
+using Newtonsoft.Json;
 
 namespace Berger.Odata.Model
 {
     public class CollectionHistoryResultModel
     {
-        public string DocumentNo { get; internal set; }
-        public string CustomerNo { get; internal set; }
-        public string CustomerName { get; internal set; }
-        public string CreditControlArea { get; internal set; }
-        public string CreditControlAreaName { get; internal set; }
+        public string MrNo { get; internal set; }
+      //  public string CustomerNo { get; internal set; }
+       // public string CustomerName { get; internal set; }
+        public string Division { get; internal set; }
+       // public string CreditControlAreaName { get; internal set; }
         public string BankName { get; internal set; }
-        public string PostingDate { get; internal set; }
-        public decimal Amount { get; internal set; }
-        public string InstrumentNo { get; internal set; }
+        public string Date { get; internal set; }
+        public decimal MrAmount { get; internal set; }
+        public string ChequeNo { get; internal set; }
 
         public CollectionHistoryResultModel()
         {
@@ -26,6 +27,8 @@ namespace Berger.Odata.Model
 
     public class BalanceConfirmationSummaryResultModel
     {
+        [JsonIgnore]
+        public DateTime DateTime { get; set; }
         public string Date { get; set; }
         public decimal OpeningBalance { get; set; }
         public decimal InvoiceBalance { get; set; }
@@ -39,13 +42,46 @@ namespace Berger.Odata.Model
         }
     }
 
-    public class ChequeBounceResultModel
+
+    public class ChecqueBounceResultModel
     {
-        public string CustomerNo { get; set; }
-        public string CustomerName { get; set; }
-        public string DocumentNo { get; set; }
-        public string InstrumentNo { get; set; }
-        public string ReversalDate { get; set; }
+        public List<ChequeBounceSummaryResultModel> ChequeBounceSummaryResultModels { get; set; } 
+        public List<ChequeBounceDetailResultModel> ChequeBounceDetailResultModels { get; set; }
+
+        public ChecqueBounceResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.ChequeBounceSummaryResultModels = new List<ChequeBounceSummaryResultModel>();
+            this.ChequeBounceDetailResultModels = new List<ChequeBounceDetailResultModel>();
+        }
+
+
+
+    }
+
+
+    public class ChequeBounceSummaryResultModel
+    {
+        public string Category { get; set; }
+        public decimal MTDNoOfCheque { get; set; }
+        public decimal MTDChequeValue { get; set; }
+        public decimal YTDNoOfCheque { get; set; }
+        public decimal YTDChequeValue { get; set; }
+
+        public ChequeBounceSummaryResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+
+    public class ChequeBounceDetailResultModel
+    {
+      //  public string CustomerNo { get; set; }
+       // public string CustomerName { get; set; }
+        public string MrNumber { get; set; }
+        public string ChequeNo { get; set; }
+        public string Date { get; set; }
         public decimal Amount { get; set; }
         public string BankName { get; set; }
         public string CreditControlArea { get; set; }
@@ -53,7 +89,7 @@ namespace Berger.Odata.Model
         public string Reason { get; set; }
         //public string Remarks { get; set; }
 
-        public ChequeBounceResultModel()
+        public ChequeBounceDetailResultModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
@@ -74,9 +110,23 @@ namespace Berger.Odata.Model
         }
     }
 
+    public class ChequeSummaryReportResultModel
+    {
+        //public string CustomerNo { get; set; }
+        //public string CustomerName { get; set; }
+        public IList<ChequeSummaryChequeDetailsReportModel> ChequeDetails { get; set; }
+        public IList<ChequeSummaryChequeBounceDetailsReportModel> ChequeBounceDetails { get; set; }
+
+        public ChequeSummaryReportResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+            this.ChequeDetails = new List<ChequeSummaryChequeDetailsReportModel>();
+            this.ChequeBounceDetails = new List<ChequeSummaryChequeBounceDetailsReportModel>();
+        }
+    }
+
     public class ChequeSummaryChequeDetailsModel
     {
-        //TODO: no int type
         public string ChequeDetailsName { get; set; }
         public decimal MTDNoOfCheque { get; set; }
         public decimal MTDTotalChequeValue { get; set; }
@@ -98,6 +148,34 @@ namespace Berger.Odata.Model
         public decimal Amount { get; set; }
 
         public ChequeSummaryChequeBounceDetailsModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class ChequeSummaryChequeDetailsReportModel
+    {
+        public string ChequeDetailsName { get; set; }
+        public decimal MTDNoOfCheque { get; set; }
+        public decimal MTDTotalChequeValue { get; set; }
+        public decimal YTDNoOfCheque { get; set; }
+        public decimal YTDTotalChequeValue { get; set; }
+
+        public ChequeSummaryChequeDetailsReportModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+
+    public class ChequeSummaryChequeBounceDetailsReportModel
+    {
+        public string CustomerNo { get; set; }
+        public string CustomerName { get; set; }
+        public string Date { get; set; }
+        public string ChequeNo { get; set; }
+        public decimal Amount { get; set; }
+
+        public ChequeSummaryChequeBounceDetailsReportModel()
         {
             CustomConvertExtension.NullToEmptyString(this);
         }

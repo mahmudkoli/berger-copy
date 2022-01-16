@@ -1,17 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { ProductWiseTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
-import { Enums } from 'src/app/Shared/Enums/enums';
+import { ProductWiseTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-product-wise-kpi-target-achivement-report',
@@ -27,9 +26,9 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	data: any[];
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
-	
+
 	// ptable settings
-	enabledTotal: boolean = true;
+	enabledTotal: boolean = false;
 	tableName: string = 'Product Wise Target Achievement Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
@@ -68,7 +67,7 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.DownloadProductWiseTargetAchivement(query);
 	getData = (query) => this.reportService.getProductWiseTargetAchivement(query);
-	
+
 	searchConfiguration() {
 		this.query = new ProductWiseTargetAchivementQuery({
 			page: 1,
@@ -77,9 +76,8 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
-			zones: [],
 			fromDate: null,
 			toDate: null,
 			resultType: null,
@@ -91,12 +89,13 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ValueVolumeResultType, isRequired:true}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Brand, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.Division, isRequired:false}),
 		]});
 
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
@@ -104,10 +103,11 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
-		this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.resultType = queryObj.valueVolumeResultType;
+		this.query.brands = queryObj.brands;
+		this.query.division = queryObj.division;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
 		this.loadReportsPage();
 	}
@@ -137,10 +137,14 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			return {
+				headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+			} as colDef;
 		});
-		
+
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -164,8 +168,12 @@ export class ProductWiseKpiTargetAchivementReportComponent implements OnInit, On
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			{columnName:'brandId',columnValues:['Total']}
+		],
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

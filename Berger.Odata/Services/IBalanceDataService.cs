@@ -8,10 +8,11 @@ namespace Berger.Odata.Services
 {
     public interface IBalanceDataService
     {
-        Task<IList<CollectionHistoryResultModel>> GetCollectionHistory(CollectionHistorySearchModel model);
+        Task<IList<CollectionHistoryResultModel>> GetMRHistory(CollectionHistorySearchModel model);
         Task<IList<BalanceConfirmationSummaryResultModel>> GetBalanceConfirmationSummary(BalanceConfirmationSummarySearchModel model);
-        Task<IList<ChequeBounceResultModel>> GetChequeBounce(ChequeBounceSearchModel model);
+        Task<ChecqueBounceResultModel> GetChequeBounce(ChequeBounceSearchModel model);
         Task<ChequeSummaryResultModel> GetChequeSummary(ChequeSummarySearchModel model);
-        Task<CustomerCreditResultModel> GetCustomerCredit(CustomerCreditSearchModel model);
+        Task<ChequeSummaryReportResultModel> GetChequeSummaryReport(ChequeSummaryReportSearchModel model);
+        Task<CustomerCreditStatusResultModel> GetCustomerCreditStatus(CustomerCreditStatusSearchModel model);
     }
 }

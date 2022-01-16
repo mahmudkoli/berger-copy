@@ -73,6 +73,18 @@ namespace Berger.Common.Extensions
         {
             if (value == null) return (DateTime?)null;
             return DateTime.TryParse(value.ToString(), out DateTime result) ? result : (DateTime?)null;
+        } 
+        
+        
+        
+        public static string MakeBackToForwardSlash(this string value)
+        {
+            return value?.Replace("\\", "/");
+        }
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        {
+            TValue value;
+            return dictionary.TryGetValue(key, out value) ? value : defaultValue;
         }
 
         //public static EnumUserCategory EmployeeRoleToUserCategory(EnumEmployeeRole employeeRole)

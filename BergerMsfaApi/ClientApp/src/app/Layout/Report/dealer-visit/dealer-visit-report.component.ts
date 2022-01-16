@@ -70,7 +70,7 @@ export class DealerVisitReportComponent implements OnInit, OnDestroy {
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			zones: [],
 			userId: null,
@@ -86,7 +86,7 @@ export class DealerVisitReportComponent implements OnInit, OnDestroy {
 		isDealerSubDealerOptionShow:true,
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),

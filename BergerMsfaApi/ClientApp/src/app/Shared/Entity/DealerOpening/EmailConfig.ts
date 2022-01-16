@@ -1,6 +1,6 @@
 export class EmailConfigForDealerOpening{
     public id:number;
-    public designation:string;
+    // public designation:string;
     public email: string;
     public businessArea: string;
     constructor(){

@@ -15,7 +15,7 @@ namespace BergerMsfaApi.Models.Report
         public int NoOfLeadFollowUp { get; set; }
         public int TotalCall { get; set; }
         public int NoOfUnderConstructionLead { get; set; }
-        public int NoOfGoingPaintLead { get; set; }
+        public int NoOfOnGoingPaintLead { get; set; }
         public int NoOfTotalWinLead { get; set; }
         public int NoOfTotalLossLead { get; set; }
         public int NoOfPartialBusinessLead { get; set; }
@@ -45,7 +45,7 @@ namespace BergerMsfaApi.Models.Report
         public string PaintContractorMobile { get; set; }
         public string PaintingStage { get; set; }
         public string ExpectedDateOfPainting { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
         public decimal ExpectedValue { get; set; }
@@ -75,7 +75,7 @@ namespace BergerMsfaApi.Models.Report
         public string KeyContactPersonMobile { get; set; }
         public string PaintContractorName { get; set; }
         public string PaintContractorMobile { get; set; }
-        public int NumberOfStoriedBuilding { get; set; }
+        public double NumberOfStoriedBuilding { get; set; }
         public decimal ExpectedValue { get; set; }
         public decimal ExpectedMonthlyBusinessValue { get; set; }
         public string SwappingCompetition { get; set; }
@@ -86,16 +86,19 @@ namespace BergerMsfaApi.Models.Report
         public string BrandUsedExteriorBrandName { get; set; }
         public string BrandUsedUnderCoatBrandName { get; set; }
         public string BrandUsedTopCoatBrandName { get; set; }
+        
         public int TotalPaintingAreaSqftInterior { get; set; }
         public int TotalPaintingAreaSqftExterior { get; set; }
         public decimal ActualPaintJobCompletedInterior { get; set; }
         public decimal ActualPaintJobCompletedExterior { get; set; }
-        public decimal ActualVolumeSoldInteriorGallon { get; set; }
+        
+        public decimal ActualVolumeSoldInteriorLitre { get; set; }
         public decimal ActualVolumeSoldInteriorKg { get; set; }
-        public decimal ActualVolumeSoldExteriorGallon { get; set; }
+        public decimal ActualVolumeSoldExteriorLitre { get; set; }
         public decimal ActualVolumeSoldExteriorKg { get; set; }
         public decimal ActualVolumeSoldUnderCoatGallon { get; set; }
         public decimal ActualVolumeSoldTopCoatGallon { get; set; }
+        
         public decimal BergerValueSales { get; set; }
         public decimal BergerPremiumBrandSalesValue { get; set; }
         public decimal CompetitionValueSales { get; set; }
@@ -106,6 +109,24 @@ namespace BergerMsfaApi.Models.Report
         public string NextVisitDate { get; set; }
         public string Comments { get; set; }
         public string ImageUrl { get; set; }
+    }
+
+    public class LeadBusinessReportResultModel
+    {
+        public string UserId { get; set; }
+        public string Depot { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public string Address { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string VisitDate { get; set; }
+        public string BrandName { get; set; }
+        public string BrandDescription { get; set; }
+        public int? Quantity { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string ProductSourcing { get; set; }
+        public string DealerIdAndName { get; set; }
     }
 
     #region Nasir
@@ -186,7 +207,7 @@ namespace BergerMsfaApi.Models.Report
         public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
-        public string SubDealerCode { get; set; }
+        public string SubDealerId { get; set; }
         public string SubDealerName { get; set; }
         public string SubDealerMobileNumber { get; set; }
         public string SubDealerAddress { get; set; }
@@ -202,10 +223,10 @@ namespace BergerMsfaApi.Models.Report
     public class CustomerCollectionReportResultModel
     {
         public string UserId { get; set; }
-        //public string DepotId { get; set; }
-        //public string DepotName { get; set; }
-        //public string Territory { get; set; }
-        //public string Zone { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string CustomerName { get; set; }
@@ -223,10 +244,10 @@ namespace BergerMsfaApi.Models.Report
     public class DirectProjectCollectionReportResultModel
     {
         public string UserId { get; set; }
-        //public string DepotId { get; set; }
-        //public string DepotName { get; set; }
-        //public string Territory { get; set; }
-        //public string Zone { get; set; }
+        public string DepotId { get; set; }
+        public string DepotName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
         public string CollectionDate { get; set; }
         public string TypeOfCustomer { get; set; }
         public string ProjectSapId { get; set; }
@@ -584,6 +605,20 @@ namespace BergerMsfaApi.Models.Report
         public string ClosedDate { get; set; }
         public string ClosedTime { get; set; }
         public decimal TotalUseTime { get; set; }
+    }
+
+    public class InactivePainterReportResultModel
+    {
+        public string DepotIdAndName { get; set; }
+        public string Territory { get; set; }
+        public string Zone { get; set; }
+        public string PainterId { get; set; }
+        public string PainterName { get; set; }
+        public string PainterAddress { get; set; }
+        public string PainterMobileNumber { get; set; }
+        public string PainerType { get; set; }
+        public string RocketDataNumber { get; set; }
+        public string InactiveReason { get; set; }
     }
 
     #endregion

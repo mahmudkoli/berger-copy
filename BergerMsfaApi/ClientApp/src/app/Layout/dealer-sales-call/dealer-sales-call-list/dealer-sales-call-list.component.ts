@@ -4,12 +4,12 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import {
   DealerSalesCall,
-  DealerSalesCallQuery,
+  DealerSalesCallQuery
 } from 'src/app/Shared/Entity/DealerSalesCall/dealer-sales-call';
 import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
 import {
   IPTableServerQueryObj,
-  IPTableSetting,
+  IPTableSetting
 } from 'src/app/Shared/Modules/p-table';
 import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { DealerSalesCallService } from 'src/app/Shared/Services/DealerSalesCall/dealer-sales-call.service';
@@ -17,7 +17,7 @@ import {
   EnumSearchOption,
   SearchOptionDef,
   SearchOptionQuery,
-  SearchOptionSettings,
+  SearchOptionSettings
 } from './../../../Shared/Modules/search-option/search-option';
 
 @Component({
@@ -56,6 +56,10 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
         searchOption: EnumSearchOption.DealerId,
         isRequired: false,
       }),
+      new SearchOptionDef({
+        searchOption: EnumSearchOption.DealerType,
+        isRequired: false,
+      }),
     ],
   });
   // Subscriptions
@@ -79,7 +83,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.searchOptionQuery = new SearchOptionQuery();
     this.searchOptionQuery.clear();
-
+    this.searchOptionQuery.dealerType=1;
     this.searchConfiguration();
     // of(undefined)
     //   .pipe(take(1), delay(1000))
@@ -125,8 +129,8 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query = new DealerSalesCallQuery({
       page: 1,
       pageSize: this.PAGE_SIZE,
-      sortBy: 'userFullName',
-      isSortAscending: true,
+      sortBy: 'createdTime',
+      isSortAscending: false,
       globalSearchValue: '',
     });
   }
@@ -215,7 +219,7 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     // pageSize: 10,
     enabledPagination: true,
     // enabledDeleteBtn: true,
-    // enabledEditBtn: true,
+    enabledEditBtn: true,
     enabledCellClick: true,
     enabledColumnFilter: false,
     // enabledRecordCreateBtn: true,
@@ -235,7 +239,6 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
   public cellClickCallbackFn(event: any) {
     let id = event.record.id;
     let cellName = event.cellName;
-
     if (cellName == 'detailsBtnText') {
       this.detailsDealerSalesCall(id);
     }
@@ -248,11 +251,25 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
     this.query.custZones = queryObj.zones;
     this.query.salesGroup = queryObj.salesGroups;
     this.query.dealerId = queryObj.dealerId;
-
+    this.query.dealerType = queryObj.dealerType;
+    if(!queryObj.dealerType){
+      this.query.dealerType=1;
+    }
     this.loadDealerSalesCallsPage();
   }
 
   public detailsDealerSalesCall(id) {
     this.router.navigate([`/dealer-sales-call/details/${id}`]);
+  }
+
+  public editDealerSalesCall(id) {
+    this.router.navigate([`/dealer-sales-call/edit/${id}`]);
+  }
+
+  public fnCustomTrigger(event) {
+    if(event.action=="edit-item"){
+      this.editDealerSalesCall(event.record.id);
+    }
+
   }
 }

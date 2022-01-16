@@ -15,6 +15,7 @@ import { PageTitleComponent } from 'src/app/Layout/LayoutComponent/Components/pa
 import { ImageUploaderComponent } from 'src/app/Shared/Modules/image-uploader/image-upload.component';
 import { NumberFormatColorDirective } from '../../Directive/number-format-color.directive';
 import { AlertModule } from '../alert/alert.module';
+import { ImageViewerModule } from '../image-viewer/image-viewer.module';
 import { PTableModule } from '../p-table/p-table.module';
 import { SearchOptionModule } from '../search-option/search-option.module';
 
@@ -43,7 +44,8 @@ FullCalendarModule.registerPlugins([
         ToggleButtonModule,
         FullCalendarModule,
         SearchOptionModule,
-        FileUploaderModule
+        FileUploaderModule,
+        ImageViewerModule
     ],
     exports: [PageTitleComponent,
         ImageUploaderComponent,
@@ -56,7 +58,8 @@ FullCalendarModule.registerPlugins([
         FullCalendarModule,
         SearchOptionModule,
         FileUploaderModule,
-        NumberFormatColorDirective
+        NumberFormatColorDirective,
+        ImageViewerModule
     ],
 })
 export class SharedMasterModule { }

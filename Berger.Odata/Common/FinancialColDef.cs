@@ -22,7 +22,7 @@ namespace Berger.Odata.Common
         public static string Amount = "Dmbtr";
         public static string Age = "Age";
         public static string DayLimit = "Daylimit";
-        public static string DueDate = "BlineDate";
+        public static string DueDate = "BlineDate"; // Base line date
         public static string PostingDate = "Budat";
         public static string CreditControlArea = "Kkber";
     }

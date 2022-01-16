@@ -1,0 +1,441 @@
+
+    <div class="main-card mb-3 card">
+        <div class="card-header sticky-card d-flex justify-content-between align-items-center">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">Lead Generation Edit:</div>
+            <!-- <div class="btn-actions-pane-right">
+                <button type="button" class="mb-2 mr-2 btn-transition btn btn-outline-success" (click)="fnRouteProdList()">
+                    <fa class="mr-2" name="list"></fa>
+                    Back to list
+                </button>
+            </div> -->
+        </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Employee Name</label>
+                    <ng-select [(ngModel)]="leadGeneration.userId" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of userList;" [value]="dl.id">{{dl.fullName}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Code</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" [(ngModel)]="leadGeneration.code"
+                            name="code">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Depot</label>
+                    <ng-select [(ngModel)]="leadGeneration.depot" (change)="changeTerritoryByDepot()" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of depotList;"  [value]="dl.code">{{dl.name}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Territory</label>
+                    <ng-select [(ngModel)]="leadGeneration.territory" (change)="changeZoneByDepotTerritory()" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of territoryList;" [value]="dl.code">{{dl.name}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Zone</label>
+                    <ng-select [(ngModel)]="leadGeneration.zone" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of zoneList;" [value]="dl.code">{{dl.name}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Type Of Client</label>
+                    <ng-select [(ngModel)]="leadGeneration.typeOfClientId" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of typeOfClientList;" [value]="dl.id">{{dl.dropdownName}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">projectName</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.projectName"
+                            name="projectName">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Project Address</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.projectAddress"
+                            name="projectAddress">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Key Contact PersonName</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.keyContactPersonName"
+                            name="keyContactPersonName">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Key Contact Person Mobile</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.keyContactPersonMobile"
+                            name="keyContactPersonMobile">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Paint Contract or Name</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.paintContractorName"
+                            name="paintContractorName">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Paint Contract or Mobile</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.paintContractorMobile"
+                            name="paintContractorMobile">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label>Painting Stage </label>
+                    <ng-select [(ngModel)]="leadGeneration.paintingStageId" [multiple]="false" [virtualScroll]="true"
+                        >
+                        <!-- <ng-option>--Select--</ng-option> -->
+                        <ng-option *ngFor="let dl of paintingStageList;" [value]="dl.id">{{dl.dropdownName}}</ng-option>
+                    </ng-select>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+            <div class="position-relative form-group">
+
+                <label for="name">Visit Date</label>
+                <!-- <div class="input-group">
+                    <input class="form-control"  type="datetime"
+                        [(ngModel)]="leadGeneration.visitDate"
+                        name="visitDate">
+
+                </div> -->
+
+                <div class="input-group">
+                    <input class="form-control"  [(ngModel)]="visitDate"
+                     name="dp"  
+                        ngbDatepicker #d="ngbDatepicker" [placement]="'bottom'">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Expected Date Of Painting</label>
+                    <!-- <div class="input-group">
+                        <input  class="form-control" type="datetime"
+                            [(ngModel)]="leadGeneration.expectedDateOfPainting"
+                            name="expectedDateOfPainting">
+    
+                    </div> -->
+                    <div class="input-group">
+                        <input class="form-control"  [(ngModel)]="expectedDateOfPainting"
+                         name="dp"  
+                            ngbDatepicker #e="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="e.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Number Of Storied Building</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.numberOfStoriedBuilding"
+                            name="numberOfStoriedBuilding">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Total Painting Area Sqft Interior</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.totalPaintingAreaSqftInterior"
+                            name="totalPaintingAreaSqftInterior">
+    
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Total Painting Area Sqft Interior Change Count</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.totalPaintingAreaSqftInteriorChangeCount"
+                            name="totalPaintingAreaSqftInteriorChangeCount">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Total Painting Area Sqft Exterior</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.totalPaintingAreaSqftExterior"
+                            name="totalPaintingAreaSqftExterior">
+    
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Total Painting Area Sqft Exterior Change Count</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.totalPaintingAreaSqftExteriorChangeCount"
+                            name="totalPaintingAreaSqftExteriorChangeCount">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Expected Value</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.expectedValue"
+                            name="expectedValue">
+    
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="name">Expected Value Change Count</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.expectedValueChangeCount"
+                            name="expectedValueChangeCount">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="name">Expected Monthly Business Value</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.expectedMonthlyBusinessValue"
+                            name="expectedMonthlyBusinessValue">
+    
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <label for="name">Expected Monthly Business Value Change Count</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number"
+                            [(ngModel)]="leadGeneration.expectedMonthlyBusinessValueChangeCount"
+                            name="expectedMonthlyBusinessValueChangeCount">
+    
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            [(ngModel)]="leadGeneration.requirementOfColorScheme" name="requirementOfColorScheme"
+                            [checked]="leadGeneration.requirementOfColorScheme">
+
+                        <label class="form-check-label">Requirement Of Color Scheme</label>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            [(ngModel)]="leadGeneration.productSamplingRequired" name="productSamplingRequired"
+                            [checked]="leadGeneration.productSamplingRequired">
+
+                        <label class="form-check-label">Product Sampling Required</label>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+    
+                    <label for="name">Next FollowUp Date</label>
+                    <!-- <div class="input-group">
+                        <input class="form-control" type="date"
+                            [(ngModel)]="leadGeneration.nextFollowUpDate"
+                            name="nextFollowUpDate">
+    
+                    </div> -->
+                    <div class="input-group">
+                        <input class="form-control"  [(ngModel)]="nextFollowUpDate"
+                         name="dp"  
+                            ngbDatepicker #n="ngbDatepicker" [placement]="'bottom'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary calendar" (click)="n.toggle()" type="button"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative form-group">
+
+                    <label for="name">Remarks</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"
+                            [(ngModel)]="leadGeneration.remarks"
+                            name="Remarks">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        <div class="row">
+            <div class="col-md-6">
+                <p><span><strong>Photo:</strong></span>
+
+                    <app-image-with-delete-button *ngIf='leadGeneration.photoCaptureUrl'
+                        [imageUrl]="leadGeneration.photoCaptureUrl"
+                        [refObject]="{id:id,type:'photoCaptureUrl',url:leadGeneration.photoCaptureUrl}"
+                        (deleteEvenet)="imageDelete($event)"></app-image-with-delete-button>
+                    <!--
+
+                    <img *ngIf='dealerSalesCall.competitionProductDisplayImageUrl' [src]="dealerSalesCall.competitionProductDisplayImageUrl" alt="Photo" width="150px" height="180px"> -->
+                </p>
+                <input type='file' (change)="fileChangeEvents($event)">
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="d-flex justify-content-end">
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="save()">Save</button>
+        <button type="button" class="mb-2 mr-2 btn-hover-shine btn btn-dark" (click)="backToTheList()"><i
+                class="pe-7s-back pr-1"></i> Back </button>
+    </div>
+</div>

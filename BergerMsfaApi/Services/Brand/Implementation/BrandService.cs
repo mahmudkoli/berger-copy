@@ -148,17 +148,25 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             var findAll = (await _brandInfoRepository.FindAllAsync(columnsMap[brandStatus.PropertyName])).ToList();
             if (findAll == null || !findAll.Any()) return false;
 
+            var selectedItem = findAll.FirstOrDefault(x => x.MaterialGroupOrBrand == brandStatus.MaterialOrBrandCode);
+            var selectedItemValue = false;
+
+            if (selectedItem!=null)
+            {
+                 selectedItemValue = !(bool)selectedItem.GetType().GetProperty(brandStatus.PropertyName).GetValue(selectedItem, null);
+            }
+
             foreach (var find in findAll)
             {
 
                 switch (brandStatus.PropertyName)
                 {
                     case "IsCBInstalled": find.IsCBInstalled = !find.IsCBInstalled; break;
-                    case "IsMTS": find.IsMTS = !find.IsMTS; break;
-                    case "IsPremium": find.IsPremium = !find.IsPremium; break;
-                    case "IsEnamel": find.IsEnamel = !find.IsEnamel; break;
-                    case "IsLiquid": find.IsLiquid = !find.IsLiquid; break;
-                    case "IsPowder": find.IsPowder = !find.IsPowder; break;
+                    case "IsMTS": find.IsMTS = selectedItemValue; break;
+                    case "IsPremium": find.IsPremium = selectedItemValue; break;
+                    case "IsEnamel": find.IsEnamel = selectedItemValue; break;
+                    case "IsLiquid": find.IsLiquid = selectedItemValue; break;
+                    case "IsPowder": find.IsPowder = selectedItemValue; break;
                     default: break;
                 }
             }
@@ -231,13 +239,15 @@ namespace BergerMsfaApi.Services.Brand.Implementation
             }, null, x => x.OrderBy(y => y.MatarialGroupOrBrandName), null, true);
         }
 
-        public async Task<IList<KeyValuePairObjectModel>> GetBrandDropDownAsync()
+        public async Task<IList<KeyValuePairObjectModel>> GetBrandDropDownAsync(BrandFilterModel model)
         {
             return await _brandInfoRepository.GetAllIncludeAsync(x => new KeyValuePairObjectModel()
             {
                 Text = x.MaterialDescription + " (" + x.MaterialCode + ")",
                 Value = x.MaterialCode
-            }, null, x => x.OrderBy(y => y.MaterialDescription), null, true);
+            },
+            x => (!model.Brands.Any() || model.Brands.Contains(x.MaterialGroupOrBrand)), 
+            x => x.OrderBy(y => y.MaterialDescription), null, true);
         }
     }
 
@@ -248,6 +258,16 @@ namespace BergerMsfaApi.Services.Brand.Implementation
         public string MaterialDescription { get; set; }
         public string MaterialGroupOrBrand { get; set; }
         public string MaterialGroupOrBrandName { get; set; }
+    }
+
+    public class BrandFilterModel
+    {
+        public IList<string> Brands { get; set; }
+
+        public BrandFilterModel()
+        {
+            this.Brands = new List<string>();
+        }
     }
 }
 

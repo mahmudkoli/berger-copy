@@ -15,7 +15,7 @@ namespace Berger.Odata.Model
         public string Depot { get; set; }
         public List<string> SalesGroups { get; set; }
         public List<string> Territories { get; set; }
-        public List<string> Zones { get; set; } // no need for app end
+        //public List<string> Zones { get; set; } // no need for app end
         public EnumQuarterlyPerformanceModel QuarterlyPerformanceType { get; set; }
     }
 
@@ -42,6 +42,24 @@ namespace Berger.Odata.Model
 
         public List<string> SalesGroups { get; set; }
         public List<string> Territories { get; set; }
+        //public List<string> Zones { get; set; }
+    }
+
+    public class PortalOSOver90DaysTrendSearchModel
+    {
+        public string Depot { get; set; }
+        public List<string> SalesGroups { get; set; }
+        public List<string> Territories { get; set; }
         public List<string> Zones { get; set; }
+        public string CreditControlArea { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+
+        public PortalOSOver90DaysTrendSearchModel()
+        {
+            this.SalesGroups = new List<string>();
+            this.Territories = new List<string>();
+            this.Zones = new List<string>();
+        }
     }
 }

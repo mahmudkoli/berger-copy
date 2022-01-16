@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { TerritoryTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { TerritoryTargetAchivementQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-territory-wise-kpi-target-achivement-report',
@@ -27,8 +27,8 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 	totalDataLength: number = 0; // for server side paggination
 	totalFilterDataLength: number = 0; // for server side paggination
 	// ptable settings
-	enabledTotal: boolean = true;
-	tableName: string = 'Territory Wise Target Achievement Report';
+	enabledTotal: boolean = false;
+	tableName: string = 'Sales Target Achievement Report';
 	// renameKeys: any = {'userId':'User Id'};
 	renameKeys: any = {};
 	allTotalKeysOfNumberType: boolean = true;
@@ -66,7 +66,7 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.DownloadTerritoryTargetAchivement(query);
 	getData = (query) => this.reportService.getTerritoryTargetAchivement(query);
-	
+
 	searchConfiguration() {
 		this.query = new TerritoryTargetAchivementQuery({
 			page: 1,
@@ -75,7 +75,7 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 			isSortAscending: false,
 			globalSearchValue: '',
 			depot: '',
-			salesGroups: [],
+			//salesGroups: [],
 			territories: [],
 			zones: [],
 			fromDate: null,
@@ -88,9 +88,9 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			//new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequired:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:true}),
 		]});
@@ -100,7 +100,7 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 		this.query.depot = queryObj.depot;
 		this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
-		this.query.zones = queryObj.zones;
+		// this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
@@ -135,10 +135,14 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 		const obj = this.data[0] || {};
 		console.log(obj);
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			return {
+				headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null,
+				displayType: typeof obj[key] === 'number' ? 'number-format-color-fraction' : null,
+			} as colDef;
 		});
-		
+
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -162,8 +166,14 @@ export class TerritoryWiseKpiTargetAchivementReportComponent implements OnInit, 
 									isSortAscending: false,
 									globalSearchValue: ''
 								}))}`,
+		enabledConditionalRowStyles:true,
+		conditionalRowStyles: [
+			// {columnName:'territory',columnValues:['T002'],rowStyles:{'font-weight': 'bold','background-color': 'red'}},
+			// {columnName:'territory',columnValues:['T005'],rowStyles:{'font-weight': 'bold','color': 'red'}},
+			{columnName:'territory',columnValues:['Total']}
+		],
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

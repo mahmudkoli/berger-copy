@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Coravel" Version="4.0.2" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="3.0.0" />
     <PackageReference Include="Json.Net" Version="1.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
@@ -25,12 +26,14 @@
     <PackageReference Include="Serilog.AspNetCore" Version="3.1.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.1" />
     <PackageReference Include="X.PagedList" Version="8.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Berger.Common\Berger.Common.csproj" />
     <ProjectReference Include="..\Berger.Data\Berger.Data.csproj" />
+    <ProjectReference Include="..\Berger.Odata\Berger.Odata.csproj" />
   </ItemGroup>
 
   <ItemGroup>

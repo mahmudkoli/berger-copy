@@ -8,6 +8,22 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210502184955_CollectionPlanAdded.cs" />
     <Compile Remove="Migrations\20210502184955_CollectionPlanAdded.Designer.cs" />
+    <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.cs" />
+    <Compile Remove="Migrations\20210729092644_addPainterCatIdPainterscalls.Designer.cs" />
+    <Compile Remove="Migrations\20210811111202_UniverseReachAnalysis.cs" />
+    <Compile Remove="Migrations\20210811111202_UniverseReachAnalysis.Designer.cs" />
+    <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.cs" />
+    <Compile Remove="Migrations\20210812111822_JourneyPlanDetailsDealerInfoUpdated.Designer.cs" />
+    <Compile Remove="Migrations\20210921134106_ApplicationLogAdded.cs" />
+    <Compile Remove="Migrations\20210921134106_ApplicationLogAdded.Designer.cs" />
+    <Compile Remove="Migrations\20210928132259_OccasionToCelebrateNotification-modified.cs" />
+    <Compile Remove="Migrations\20210928132259_OccasionToCelebrateNotification-modified.Designer.cs" />
+    <Compile Remove="Migrations\20211017082134_SAPCategoryWisePerformanceReportUpdate.cs" />
+    <Compile Remove="Migrations\20211017082134_SAPCategoryWisePerformanceReportUpdate.Designer.cs" />
+    <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.cs" />
+    <Compile Remove="Migrations\SAPDb\20210908125522_CustomerInvoiceReportAdded.Designer.cs" />
+    <Compile Remove="Migrations\SAPDb\20211012141615_SAPReportCommonTableUpdate.cs" />
+    <Compile Remove="Migrations\SAPDb\20211012141615_SAPReportCommonTableUpdate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

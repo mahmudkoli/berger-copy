@@ -5,7 +5,7 @@ using Microsoft.OData.Edm;
 
 namespace Berger.Odata.Model
 {
-    public class CustomerCreditSearchModel
+    public class CustomerCreditStatusSearchModel
     {
         public string CustomerNo { get; set; }
         public string CreditControlArea { get; set; }

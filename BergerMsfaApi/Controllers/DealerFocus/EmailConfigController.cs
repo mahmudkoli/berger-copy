@@ -2,15 +2,12 @@
 using System.Threading.Tasks;
 using Berger.Data.MsfaEntity.Setup;
 using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Services.DealerFocus.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BergerMsfaApi.Controllers.DealerFocus
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class EmailConfigController : BaseController
@@ -77,6 +74,20 @@ namespace BergerMsfaApi.Controllers.DealerFocus
             {
                 if (!ModelState.IsValid) return ValidationResult(ModelState);
                 var result = await _emailConfigService.GetById(id);
+                return OkResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        } 
+        
+        [HttpDelete("DeleteById/{id}")]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            try
+            {
+                var result = await _emailConfigService.DeleteDealerOppeningEmailById(id);
                 return OkResult(result);
             }
             catch (Exception ex)

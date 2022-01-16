@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AlertService } from '../../../Shared/Modules/alert/alert.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { delay, finalize, take } from 'rxjs/operators';
-import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { LeadFollowUpDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
-import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
-import { MapObject } from 'src/app/Shared/Enums/mapObject';
-import { EnumEmployeeRole, EnumEmployeeRoleLabel } from 'src/app/Shared/Enums/employee-role';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { QueryObject } from 'src/app/Shared/Entity/Common/query-object';
-import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
-import { EnumDynamicTypeCode } from 'src/app/Shared/Enums/dynamic-type-code';
+import { LeadFollowUpDetailsQuery } from 'src/app/Shared/Entity/Report/ReportQuery';
+import { colDef, IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
 import { EnumSearchOption, SearchOptionDef, SearchOptionQuery, SearchOptionSettings } from 'src/app/Shared/Modules/search-option';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
+import { ReportService } from 'src/app/Shared/Services/Report/ReportService';
+import { DynamicDropdownService } from 'src/app/Shared/Services/Setup/dynamic-dropdown.service';
+import { AlertService } from '../../../Shared/Modules/alert/alert.service';
 
 @Component({
     selector: 'app-lead-followup-details-report',
@@ -35,9 +32,13 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	tableName: string = 'Lead FollowUp Details Report';
 	// renameKeys: any = {'userId':'// User Id //'};
 	renameKeys: any = {};
-	allTotalKeysOfNumberType: boolean = true;
+	allTotalKeysOfNumberType: boolean = false;
 	// totalKeys: any[] = ['totalCall'];
-	totalKeys: any[] = [];
+	totalKeys: any[] = ['actualVolumeSoldInteriorLitre','actualVolumeSoldInteriorKg','actualVolumeSoldExteriorLitre','actualVolumeSoldExteriorKg',
+						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales'];
+	fractionKeys: any[] = ['expectedValue','expectedMonthlyBusinessValue','actualPaintJobCompletedInterior','actualPaintJobCompletedExterior',
+						'actualVolumeSoldInteriorLitre','actualVolumeSoldInteriorKg','actualVolumeSoldExteriorLitre','actualVolumeSoldExteriorKg',
+						'actualVolumeSoldUnderCoatGallon','actualVolumeSoldTopCoatGallon','bergerValueSales','bergerPremiumBrandSalesValue','competitionValueSales', 'numberOfStoriedBuilding'];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
@@ -70,7 +71,7 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	//#region need to change for another report
 	getDownloadDataApiUrl = (query) => this.reportService.downloadLeadFollowUpDetailsApiUrl(query);
 	getData = (query) => this.reportService.getLeadFollowUpDetails(query);
-	
+
 	searchConfiguration() {
 		this.query = new LeadFollowUpDetailsQuery({
 			page: 1,
@@ -91,18 +92,20 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 		});
 		this.searchOptionQuery = new SearchOptionQuery();
 		this.searchOptionQuery.clear();
+		this.searchOptionQuery.leadGenerateFrom = -1;
 	}
 
 	searchOptionSettings: SearchOptionSettings = new SearchOptionSettings({
 		searchOptionDef:[
 			new SearchOptionDef({searchOption:EnumSearchOption.Depot, isRequiredBasedOnEmployeeRole:true}),
-			new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
+			// new SearchOptionDef({searchOption:EnumSearchOption.SalesGroup, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Territory, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Zone, isRequiredBasedOnEmployeeRole:true}),
 			new SearchOptionDef({searchOption:EnumSearchOption.FromDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ToDate, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.UserId, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.ProjectStatusId, isRequired:false}),
+			new SearchOptionDef({searchOption:EnumSearchOption.LeadGenerateFrom, isRequired:false}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text1, isRequired:false, textLabel: 'Project Name'}),
 			new SearchOptionDef({searchOption:EnumSearchOption.Text2, isRequired:false, textLabel: 'Project Code'}),
 		]});
@@ -110,13 +113,14 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 	searchOptionQueryCallbackFn(queryObj:SearchOptionQuery) {
 		console.log('Search option query callback: ', queryObj);
 		this.query.depot = queryObj.depot;
-		this.query.salesGroups = queryObj.salesGroups;
+		// this.query.salesGroups = queryObj.salesGroups;
 		this.query.territories = queryObj.territories;
 		this.query.zones = queryObj.zones;
 		this.query.fromDate = queryObj.fromDate;
 		this.query.toDate = queryObj.toDate;
 		this.query.userId = queryObj.userId;
 		this.query.projectStatusId = queryObj.projectStatusId;
+		this.query.leadGenerateFrom = queryObj.leadGenerateFrom;
 		this.query.projectName = queryObj.text1;
 		this.query.projectCode = queryObj.text2;
 		this.ptableSettings.downloadDataApiUrl = this.getDownloadDataApiUrl(this.query);
@@ -147,8 +151,13 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 		this.data = this.data.map(obj => { return this.commonService.renameKeys(obj, this.renameKeys)});
 		const obj = this.data[0] || {};
 		this.ptableSettings.tableColDef = Object.keys(obj).map((key) => {
-			return { headerName: this.commonService.insertSpaces(key), internalName: key, 
-				showTotal: (this.allTotalKeysOfNumberType ? (typeof obj[key] === 'number') : this.totalKeys.includes(key)) } as colDef;
+			return { headerName: this.commonService.insertSpaces(key), internalName: key,
+				showTotal: (this.allTotalKeysOfNumberType ?
+				(typeof obj[key] === 'number')
+				: this.totalKeys.includes(key)),
+				type: typeof obj[key] === 'number' ? 'text' : null, displayType: typeof obj[key] === 'number' ?
+					this.fractionKeys.includes(key) ? 'number-format-color-fraction' : 'number-format-color' : null,
+			} as colDef;
 		});
 
 		var columName = this.ptableSettings.tableColDef.filter(x => x.internalName == 'imageUrl');
@@ -156,7 +165,7 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 			columName[0].type = 'image';
 		}
 
-		// console.log(this.ptableSettings.tableColDef); 
+		// console.log(this.ptableSettings.tableColDef);
 	}
 
 	public ptableSettings: IPTableSetting = {
@@ -172,6 +181,7 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 		enabledDataLength: true,
 		enabledTotal: this.enabledTotal,
 		enabledExcelDownload: true,
+		downloadFileFromServer:true,
 		downloadDataApiUrl: `${this.getDownloadDataApiUrl(
 								new QueryObject({
 									page: 1,
@@ -181,7 +191,7 @@ export class LeadFollowUpDetailsReportComponent implements OnInit, OnDestroy {
 									globalSearchValue: ''
 								}))}`,
 	};
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query.page = queryObj.pageNo;

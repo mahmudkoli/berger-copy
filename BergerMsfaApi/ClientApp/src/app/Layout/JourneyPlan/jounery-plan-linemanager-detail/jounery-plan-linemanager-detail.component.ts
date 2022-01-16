@@ -50,7 +50,7 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
                 if (this.compareDate(this.journeyPlan.planDate)) {
                     this.showRejectedBtn = true;
                     this.showApprovedBtn = true;
-                    if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.Rejected) {
+                    if ((this.journeyPlan.planStatus) as PlanStatus == PlanStatus.ChangeRequested) {
                         this.showRejectedBtn = false;
                         this.showApprovedBtn = true;
                     }
@@ -105,8 +105,9 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         // debugger;
         this.journeyPlanStatus.planId = jPlan.id;
         this.journeyPlanStatus.status = Number(mySelect);
+        let message=this.journeyPlanStatus.status==PlanStatus.ChangeRequested?"Are you sure to request to change the journey plan?":"Are you sure to approve the journey plan?";
       
-        if (this.journeyPlanStatus.status == PlanStatus.Rejected) {
+        if (this.journeyPlanStatus.status == PlanStatus.ChangeRequested) {
             if (!this.journeyPlanStatus.comment) {
                 this.alertService.alert("Please leave a comment.");
                 return;
@@ -114,7 +115,8 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
         }
 
 
-        this.alertService.confirm(`Are you sure to change status?`, () => {
+
+        this.alertService.confirm(message, () => {
 
             //if (PlanStatus.Rejected == Number(mySelect)) {
             //    alert("Rejected");
@@ -158,6 +160,6 @@ export class JouneryPlanLinemanagerDetailComponent implements OnInit {
 }
 export enum PlanStatusNotEdited {
     Approved = 1,
-    Rejected=3
+    ChangeRequested=3
    
 }

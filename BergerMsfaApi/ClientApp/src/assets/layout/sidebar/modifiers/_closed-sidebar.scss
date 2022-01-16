@@ -9,10 +9,11 @@
 
     .app-header__logo {
       width: auto;
+      padding: 0 5px;
     }
 
     .logo-src {
-      width: 20px;
+      width: auto;
       margin: 0 auto;
     }
 
@@ -77,45 +78,48 @@
 // Closed Sidebar Open
 
 .closed-sidebar-open {
-  &.closed-sidebar {
-    .app-sidebar {
-      width: $app-sidebar-width;
+    &.closed-sidebar {
+        .app-sidebar {
+            width: $app-sidebar-width;
 
-      .logo-src {
-        width: $logo-width;
-        margin: 0;
-      }
+            .logo-src {
+                width: $logo-width;
+                margin: 0;
+            }
 
-      .header__pane {
-        display: block;
-      }
+            .header__pane {
+                display: block;
+            }
 
-      .v-sidebar-menu {
-        padding: 0 $layout-spacer-x $layout-spacer-x;
+            .v-sidebar-menu {
+                padding: 0 $layout-spacer-x $layout-spacer-x;
 
-        .vsm-arrow,
-        .vsm-title {
-          display: block;
+                .vsm-arrow,
+                .vsm-title {
+                    display: block;
+                }
+
+                .vsm-header {
+                    text-indent: 0px;
+                    text-align: left;
+                    background-color: rgba(12, 150, 253, 0.35);
+                    padding: 5px 13px;
+
+                    &::before {
+                        display: none;
+                    }
+                }
+
+                .vsm-icon {
+                    left: 5px;
+                    margin-left: 0;
+                }
+
+                .vsm-dropdown {
+                    display: block;
+                }
+            }
         }
-
-        .vsm-header {
-          text-indent: 0px;
-
-          &::before {
-            display: none;
-          }
-        }
-
-        .vsm-icon {
-          left: 5px;
-          margin-left: 0;
-        }
-
-        .vsm-dropdown {
-          display: block;
-        }
-      }
     }
-  }
 }
 

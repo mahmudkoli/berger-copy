@@ -35,7 +35,6 @@ export class AlertComponent implements OnInit {
         });
 
         setTimeout(() => {
-          console.log("tosterId: ", tosterId,this.tosterCollection);
           this.tosterCollection= this.tosterCollection.filter(res=>res.id!=tosterId)
         }, 5000);
       }

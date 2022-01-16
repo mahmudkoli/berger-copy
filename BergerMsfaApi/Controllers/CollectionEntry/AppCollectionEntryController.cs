@@ -1,5 +1,4 @@
 ﻿using BergerMsfaApi.Controllers.Common;
-using BergerMsfaApi.Filters;
 using BergerMsfaApi.Models.CollectionEntry;
 using BergerMsfaApi.Services.CollectionEntry.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace BergerMsfaApi.Controllers.CollectionEntry
 {
-    [AuthorizeFilter]
-    [ApiController]
     [ApiVersion("1")]
     [Route("api/v{v:apiVersion}/[controller]")]
     public class AppCollectionEntryController : BaseController
@@ -47,7 +44,7 @@ namespace BergerMsfaApi.Controllers.CollectionEntry
             {
                 if (!DateTime.TryParse(model.CollectionDate, out DateTime date))
                 {
-                    ModelState.AddModelError(nameof(model.CollectionDate), "collection date not valid format");
+                    ModelState.AddModelError(nameof(model.CollectionDate), "Collection date is not valid format.");
                     return ValidationResult(ModelState);
                 }
                     

@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
-import { finalize, take, delay } from 'rxjs/operators';
-import { Subscription, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
-import { CommonService } from 'src/app/Shared/Services/Common/common.service';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { of, Subscription } from 'rxjs';
+import { delay, finalize, take } from 'rxjs/operators';
 import { ELearningDocument, ELearningDocumentQuery } from 'src/app/Shared/Entity/ELearning/eLearningDocument';
+import { AlertService } from 'src/app/Shared/Modules/alert/alert.service';
+import { IPTableServerQueryObj, IPTableSetting } from 'src/app/Shared/Modules/p-table';
+import { CommonService } from 'src/app/Shared/Services/Common/common.service';
 import { ELearningService } from 'src/app/Shared/Services/ELearning/eLearning.service';
 
 @Component({
@@ -77,8 +77,8 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		this.query = new ELearningDocumentQuery({
 			page: 1,
 			pageSize: this.PAGE_SIZE,
-			sortBy: 'title',
-			isSortAscending: true,
+			sortBy: 'uploadDate',
+			isSortAscending: false,
 			globalSearchValue: ''
 		});
 	}
@@ -124,9 +124,12 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 		tableName: 'ELearning List',
 		tableRowIDInternalName: "id",
 		tableColDef: [
-			{ headerName: 'Title', width: '40%', internalName: 'title', sort: true, type: "" },
-			{ headerName: 'Category', width: '45%', internalName: 'categoryText', sort: true, type: "" },
-			{ headerName: 'Status', width: '15%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'Title', width: '15%', internalName: 'title', sort: true, type: "" },
+			{ headerName: 'Category', width: '15%', internalName: 'categoryText', sort: true, type: "" },
+			{ headerName: 'Status', width: '10%', internalName: 'statusText', sort: false, type: "" },
+			{ headerName: 'Upload Date', width: '10%', internalName: 'uploadDate', sort: true, type: "" },
+			{ headerName: 'Attached File Name', width: '25%', internalName: 'attachedFileName', sort: false, type: "" },
+			{ headerName: 'Attached Link Address', width: '25%', internalName: 'attachedLinkAddress', sort: false, type: "" },
 		],
 		enabledSearch: true,
 		enabledSerialNo: true,
@@ -153,7 +156,7 @@ export class ELearningListComponent implements OnInit, OnDestroy {
 			this.deleteELearningDocument(event.record.id);
 		}
 	}
-	
+
 	serverSiteCallbackFn(queryObj: IPTableServerQueryObj) {
 		console.log('server site : ', queryObj);
 		this.query = new ELearningDocumentQuery({

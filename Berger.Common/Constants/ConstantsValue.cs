@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Berger.Common.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,9 @@ namespace Berger.Common.Constants
         public const string ProjectStatusLeadCompletedTotalLoss = "Total Loss";
         public const string ProjectStatusLeadCompletedPartialBusiness = "Partial Business";
 
+        public const string ProjectStatusLeadCompletedDropdownCode = "PS02_03";
+        public const string ProjectStatusLeadHandOverDropdownCode = "PS02_04";
+        public const string ProjectStatusLeadCompletedPartialBusinessDropdownCode = "PSLC01_03";
 
 
 
@@ -38,10 +42,10 @@ namespace Berger.Common.Constants
 
     public static class ConstantsCustomerTypeValue
     {
-        public const string Dealer = "Dealer";
-        public const string SubDealer = "Sub-Dealer";
-        public const string Customer = "Customer";
-        public const string DirectProject = "Direct Project";
+        public const string DealerDropdownCode = "Customer01_01";
+        public const string SubDealerDropdownCode = "Customer01_02";
+        public const string CustomerDropdownCode = "Customer01_03";
+        public const string DirectProjectDropdownCode = "Customer01_04";
     }
 
     public static class ConstantPaintUsageMTDValue
@@ -71,14 +75,14 @@ namespace Berger.Common.Constants
 
     public static class ConstantIssuesValue
     {
-        public const string POSMaterialShort = "POS Material Short";
-        public const string ShadeCard = "Shade Card";
-        public const string ShopSignComplain = "Shop Sign Complain";
-        public const string DeliveryIssue = "Delivery Issue";
-        public const string Others = "Others";
-        public const string DamageProduct = "Damage Product";
-        public const string CBMachineMantainance = "CB Machine Mantainance";
-        public const string ProductComplaint = "Product Complain";
+        public const string POSMaterialShortDropdownCode = "ISSUES01_02";
+        public const string ShadeCardDropdownCode = "ISSUES01_03";
+        public const string ShopSignComplainDropdownCode = "ISSUES01_06";
+        public const string DeliveryIssueDropdownCode = "ISSUES01_07";
+        public const string OthersDropdownCode = "ISSUES01_08";
+        public const string DamageProductDropdownCode = "ISSUES01_04";
+        public const string CBMachineMantainanceDropdownCode = "ISSUES01_05";
+        public const string ProductComplaintDropdownCode = "ISSUES01_01";
     }
 
     public static class ConstantSnapShotValue
@@ -96,6 +100,51 @@ namespace Berger.Common.Constants
     {
         public const string PlatformHeaderName = "Platform";
         public const string AppPlatformHeader = "Mobile";
+        public const string AppVersionHeaderName = "AppVersion";
     }
 
+
+    public static class ConstantAlertNotificationValue
+    {
+        public const string OccasiontoCelebrate = "Occasion to Celebrate";
+        public const string LeadFollowupReminder = "Lead Followup Reminder";
+        public const string ChequeBounceNotification = "Cheque Bounce Notification";
+        public const string RPRSNotification = "RPRS Notification";
+        public const string FastPayCarryNotification = "Fast Pay & Carry Notification";
+        public const string CreditLimitCrossNotifiction  = "Credit Limit Cross Notifiction ";
+    }
+
+    public static class ConstantDealerOpeningValue
+    {
+        public const string Application_Form = "Application_Form";
+        public const string Trade_Licensee = "Trade_Licensee";
+        public const string NID_Passport_Birth = "NID_Passport_Birth";
+        public const string Photograph_of_proprietor = "Photograph_of_proprietor";
+        public const string Nominee_NID_PASSPORT_BIRTH = "Nominee_NID_PASSPORT_BIRTH";
+        public const string Nominee_Photograph = "Nominee_Photograph";
+        public const string Cheque = "Cheque";
+    }
+
+    public static class ConstantsApplication
+    {
+        public const string SerilogMSSqlServerTableName = "ApplicationLogs";
+        public const string SpaceString = " ";
+        public const string ApplicationCategory = "ApplicationCategory";
+    }
+
+    public static class ConstantsLeadProjectStatus
+    {
+        public const string UnderConstructionDropdownCode = "PS02_01";
+        public const string PaintingOngoingDropdownCode = "PS02_02";
+        public const string LeadCompletedDropdownCode = "PS02_03";
+        public const string LeadHandoverDropdownCode = "PS02_04";
+
+        public static IDictionary<string, string> HappyWalletProjectStatusDict = new Dictionary<string, string>()
+        {
+            { ConstantsLeadProjectStatus.UnderConstructionDropdownCode, "UnderConstruction" },
+            { ConstantsLeadProjectStatus.PaintingOngoingDropdownCode, "PaintingOngoing" },
+            { ConstantsLeadProjectStatus.LeadCompletedDropdownCode, "LeadCompleted" },
+            { ConstantsLeadProjectStatus.LeadHandoverDropdownCode, "LeadHandover" }
+        };
+    }
 }

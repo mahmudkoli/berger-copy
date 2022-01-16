@@ -3,6 +3,7 @@ export class EmailConfigForDealerSalesCall{
     public dealerSalesIssueCategoryId: number;
     public dealerSalesIssueCategory: any;
     public email:string;
+    public businessArea: string;
     constructor(){
         this.id=0;
     }

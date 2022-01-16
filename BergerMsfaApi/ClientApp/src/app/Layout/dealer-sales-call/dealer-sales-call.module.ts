@@ -12,6 +12,7 @@ import { DealerSalesCallListComponent } from './dealer-sales-call-list/dealer-sa
 import { DealerSalesCallDetailsComponent } from './dealer-sales-call-details/dealer-sales-call-details.component';
 import { DealerSalesCallEmailConfigListComponent } from './dealer-sales-call-email-config-list/dealer-sales-call-email-config-list.component';
 import { DealerSalesCallEmailConfigAddComponent } from './dealer-sales-call-email-config-add/dealer-sales-call-email-config-add.component';
+import { DealerSalesCallEditComponent } from './dealer-sales-call-edit/dealer-sales-call-edit.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { DealerSalesCallEmailConfigAddComponent } from './dealer-sales-call-emai
     DealerSalesCallDetailsComponent,
     DealerSalesCallComponent,
     DealerSalesCallEmailConfigListComponent,
-    DealerSalesCallEmailConfigAddComponent
+    DealerSalesCallEmailConfigAddComponent,
+    DealerSalesCallEditComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +31,7 @@ import { DealerSalesCallEmailConfigAddComponent } from './dealer-sales-call-emai
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    NgSelectModule
+    NgSelectModule,
   ],
   entryComponents: [
   ]

@@ -136,10 +136,13 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             return queryResult;
         }
 
-        public async Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(QueryObjectModel query)
+        public async Task<QueryResultModel<CollectionPlanModel>> GetAllCollectionPlansByCurrentUserAsync(CollectionPlanQueryObjectModel query)
         {
             var userId = AppIdentity.AppUser.UserId;
-            var orderby = new string[] { "yearMonthText", "slippageAmount", "collectionTargetAmount" };
+            var orderby = new string[] { "yearMonthText", "businessArea", "territory" };
+
+            Expression<Func<CollectionPlan, bool>> filterFunc = x => (string.IsNullOrEmpty(query.BusinessArea) || x.BusinessArea == query.BusinessArea)
+                                                                            && (!query.Territories.Any() || query.Territories.Contains(x.Territory));
 
             #region collection config
             var dateNow = DateTime.Now;
@@ -151,34 +154,34 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             var maxDateStr = maxDate.ToString("dd-MM-yyyy");
             #endregion
 
-            var totalCount = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId) select cpInfo).CountAsync();
+            var totalCount = await (from cpInfo in _collectionPlanSvc.FindAll(filterFunc) select cpInfo).CountAsync();
 
-            var filterCount = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId)
+            var filterCount = await (from cpInfo in _collectionPlanSvc.FindAll(filterFunc)
                                join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
                                from dpInfo in cpdLeftJoin.DefaultIfEmpty()
-                               where (
-                                   (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
-                                   dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
-                               )
+                               //where (
+                               //    (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                               //    dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                               //)
                                select cpInfo
                                ).CountAsync();
 
-            var result = await (from cpInfo in _collectionPlanSvc.FindAll(x => x.UserId == userId)
+            var result = await (from cpInfo in _collectionPlanSvc.FindAll(filterFunc)
                           join dp in _depotSvc.GetAll() on cpInfo.BusinessArea equals dp.Werks into cpdLeftJoin
                           from dpInfo in cpdLeftJoin.DefaultIfEmpty()
-                          where (
-                              (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
-                              dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
-                          )
+                          //where (
+                          //    (string.IsNullOrEmpty(query.GlobalSearchValue) || dpInfo.Name1.Contains(query.GlobalSearchValue) ||
+                          //    dpInfo.Werks.Contains(query.GlobalSearchValue) || cpInfo.Territory.Contains(query.GlobalSearchValue))
+                          //)
                           orderby 
                                 @orderby[0] == query.SortBy && query.IsSortAscending ? cpInfo.Year : 0,
                                 @orderby[0] == query.SortBy && @orderby[1] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.Year descending,
                                 @orderby[0] == query.SortBy && query.IsSortAscending ? cpInfo.Month : 0,
                                 @orderby[0] == query.SortBy && @orderby[1] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.Month descending,
-                                @orderby[1] == query.SortBy && query.IsSortAscending ? cpInfo.SlippageAmount : 0,
-                                @orderby[1] == query.SortBy && @orderby[0] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.SlippageAmount descending,
-                                @orderby[2] == query.SortBy && query.IsSortAscending ? cpInfo.CollectionTargetAmount : 0,
-                                @orderby[2] == query.SortBy && @orderby[0] != query.SortBy && @orderby[1] != query.SortBy && !query.IsSortAscending ? 0 : cpInfo.CollectionTargetAmount descending
+                                @orderby[1] == query.SortBy && query.IsSortAscending ? dpInfo.Name1 : null,
+                                @orderby[1] == query.SortBy && @orderby[0] != query.SortBy && @orderby[2] != query.SortBy && !query.IsSortAscending ? null : dpInfo.Name1 descending,
+                                @orderby[2] == query.SortBy && query.IsSortAscending ? cpInfo.Territory : null,
+                                @orderby[2] == query.SortBy && @orderby[0] != query.SortBy && @orderby[1] != query.SortBy && !query.IsSortAscending ? null : cpInfo.Territory descending
                           select new CollectionPlanModel()
                           {
                               Id = cpInfo.Id,
@@ -260,9 +263,9 @@ namespace BergerMsfaApi.Services.KPI.Implementation
             return result;
         }
 
-        public async Task<bool> IsExitsCollectionPlansAsync(int id, int userId, string businessArea, string territory, int year = 0, int month = 0)
+        public async Task<bool> IsExitsCollectionPlansAsync(int id, string businessArea, string territory, int year = 0, int month = 0)
         {
-            var result = await _collectionPlanSvc.IsExistAsync(f => f.Id != id && f.UserId == userId && 
+            var result = await _collectionPlanSvc.IsExistAsync(f => f.Id != id && 
                                                     f.BusinessArea == businessArea && f.Territory == territory &&
                                                     (f.Year == 0 || f.Year == year) && (f.Month == 0 || f.Month == month));
             return result;
@@ -271,16 +274,16 @@ namespace BergerMsfaApi.Services.KPI.Implementation
         public async Task<decimal> GetCustomerSlippageAmountToLastMonth(CustomerSlippageQueryModel query)
         {
             var currentDate = DateTime.Now;
-            var dealerIds = (await _dealerInfoSvc.FindAllAsync(x => x.BusinessArea == query.BusinessArea && x.Territory == query.Territory))
+            var dealerIds = (await _dealerInfoSvc.FindAllAsync(x => x.BusinessArea == query.BusinessArea && x.Territory == query.Territory && 
+                                                                       x.Channel == ConstantsODataValue.DistrbutionChannelDealer &&
+                                                                        x.Division == ConstantsODataValue.DivisionDecorative))
                                                     .Select(x => x.CustomerNo).Distinct().ToList();
 
             var lastMonthToDate = (new DateTime(currentDate.Year, currentDate.Month, 01)).AddDays(-1);
 
-            var slippageData = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
+            var result = await _financialDataService.GetCustomerSlippageAmount(dealerIds, lastMonthToDate);
 
-            var result = slippageData.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
-
-            return result;
+            return result.Sum(x => CustomConvertExtension.ObjectToDecimal(x.Amount));
         }
         #endregion
     }

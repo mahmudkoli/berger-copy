@@ -8,6 +8,7 @@ namespace Berger.Odata.Model
 {
     public class QuarterlyPerformanceDataResultModel
     {
+        public string Territory { get; internal set; } // only used for portal
         public IList<MonthlyDataModel> MonthlyTargetData { get; internal set; }
         public IList<MonthlyDataModel> MonthlyActualData { get; internal set; }
         public decimal TotalTarget { get; set; }
@@ -35,6 +36,7 @@ namespace Berger.Odata.Model
 
     public class PortalQuarterlyPerformanceDataResultModel
     {
+        public string Territory { get; internal set; }
         public string FirstMonthTargetName { get; internal set; }
         public string SecondMonthTargetName { get; internal set; }
         public string ThirdMonthTargetName { get; internal set; }
@@ -55,5 +57,26 @@ namespace Berger.Odata.Model
         {
             CustomConvertExtension.NullToEmptyString(this);
         }
+    }
+
+    public class PortalOSOver90DaysTrendResultModel
+    {
+        public string Month { get; internal set; }
+        public decimal OSOver90Days { get; internal set; }
+        public decimal Difference { get; internal set; }
+        public decimal Sales { get; internal set; }
+        public decimal OSPercentageWithSales { get; internal set; }
+
+        public PortalOSOver90DaysTrendResultModel()
+        {
+            CustomConvertExtension.NullToEmptyString(this);
+        }
+    }
+    public class AppQuarterlyPerformanceDataResultModel
+    {
+        public string MonthName { get; internal set; }
+        public decimal TargetOrLyOrDeco { get; set; }
+        public decimal ActualOrCyOrPrem { get; set; }
+        public decimal AchivementOrGrowthOrCont { get; set; }
     }
 }
