@@ -123,10 +123,17 @@ namespace BergerMsfaApi.Services.DemandGeneration.Implementation
 
             //return modelResult; 
 
+            var appUser = AppIdentity.AppUser;
+
             var result = await _leadGenerationRepository.GetAllIncludeAsync(
                                  x => x,
-                                 x => x.UserId == userId && (!x.LeadFollowUps.Any() ||
-                                        !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode
+                                 //x => x.UserId == userId && (!x.LeadFollowUps.Any() ||
+                                 x => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) || 
+                                        ((!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(x.Depot)) &&
+                                        (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(x.Territory)) &&
+                                        (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(x.Zone)))) && 
+                                        (!x.LeadFollowUps.Any() ||
+                                            !x.LeadFollowUps.Any(l => l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadCompletedDropdownCode
                                                                 || l.ProjectStatus.DropdownCode == ConstantsLeadValue.ProjectStatusLeadHandOverDropdownCode)),
                                  null,
                                  x => x.Include(i => i.LeadFollowUps).ThenInclude(i => i.ProjectStatus),
