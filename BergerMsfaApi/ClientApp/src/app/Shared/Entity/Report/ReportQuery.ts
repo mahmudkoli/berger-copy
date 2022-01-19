@@ -380,6 +380,17 @@ export class StrikeRateKpiReportQuery extends ReportBaseQuery {
 
   clear() {}
 }
+export class ColorBankTargetSetupKpiReportQuery extends ReportBaseQuery {
+  year: number;
+  territory: string;
+  constructor(init?: Partial<ColorBankTargetSetupKpiReportQuery>) {
+    super();
+    Object.assign(this, init);
+    this.year = new Date().getUTCFullYear();
+  }
+
+  clear() {}
+}
 
 export class BillingAnalysisKpiReportQuery extends ReportBaseQuery {
   month: number;

@@ -1,4 +1,7 @@
-﻿namespace Berger.Odata.Common
+﻿using System;
+using System.Collections.Generic;
+
+namespace Berger.Odata.Common
 {
     public class ConstantsValue
     {
@@ -23,5 +26,27 @@
         public const string ChequeBounceStatus = "Z1";
         public const int FyYearFirstMonth = 4;
         public const int FyYearLastMonth = 3;
+
+        public static Dictionary<int, string> GetBergerFyMonth(int year = 0)
+        {
+            var result = new Dictionary<int, string>();
+            DateTime date = new DateTime(DateTime.Now.Year, 4, 1);
+
+            if (year != 0)
+            {
+                date = new DateTime(year, 4, 1);
+            }
+
+            DateTime compareDate = date.AddMonths(12);
+
+            while (date != compareDate)
+            {
+                result.Add(date.Month, date.ToString("MMM"));
+                date = date.AddMonths(1);
+            }
+
+            return result;
+        }
+
     }
 }

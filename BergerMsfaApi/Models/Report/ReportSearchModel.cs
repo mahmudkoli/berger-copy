@@ -142,4 +142,11 @@ namespace BergerMsfaApi.Models.Report
     {
         public int? Status { get; set; }
     }
+
+    public class ColorBankTargetSetupSearchModel : ReportBaseSearchModel
+    {
+        public string Territory { get; set; }
+        public int Year { get; set; }
+    }
+
 }
