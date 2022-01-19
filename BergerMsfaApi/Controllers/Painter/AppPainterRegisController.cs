@@ -28,6 +28,7 @@ namespace BergerMsfaApi.Controllers.PainterRegistration1
             _uploadService = uploadService;
         }
 
+        // updated - area wise data get, not user wise
         [HttpGet("GetPainterList/{employeeId}")]
         public async Task<IActionResult> GetPainterList([BindRequired] string employeeId)
         {

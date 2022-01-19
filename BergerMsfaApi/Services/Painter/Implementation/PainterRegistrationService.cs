@@ -406,9 +406,16 @@ namespace BergerMsfaApi.Services.PainterRegistration.Implementation
         #region App
         public async Task<IEnumerable<PainterModel>> AppGetPainterListAsync(string employeeId)
         {
+            var appUser = AppIdentity.AppUser;
+
             var _painters = await _painterSvc.GetAllIncludeAsync(
                 s => s,
-                f => f.EmployeeId == employeeId && f.Status == Status.Active,
+                //f => f.EmployeeId == employeeId && 
+                f => ((appUser.EmployeeRole == (int)EnumEmployeeRole.Admin || appUser.EmployeeRole == (int)EnumEmployeeRole.GM) ||
+                            ((!appUser.PlantIdList.Any() || appUser.PlantIdList.Contains(f.Depot)) &&
+                            (!appUser.TerritoryIdList.Any() || appUser.TerritoryIdList.Contains(f.Territory)) &&
+                            (!appUser.ZoneIdList.Any() || appUser.ZoneIdList.Contains(f.Zone)))) && 
+                        f.Status == Status.Active,
                 null,
                 a => a.Include(f => f.AttachedDealers).Include(f => f.Attachments).Include(f => f.PainterCat),
                 false

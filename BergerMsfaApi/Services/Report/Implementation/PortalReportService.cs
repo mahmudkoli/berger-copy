@@ -597,7 +597,7 @@ namespace BergerMsfaApi.Services.Report.Implementation
                                           lba.ProductSourcingRemarks,
                                           lba.BergerValueSales,
                                           lf.ProjectStatusId
-                                      }).OrderByDescending(x => x.ActualVisitDate).ToListAsync();
+                                      }).OrderByDescending(x => x.Code).ThenByDescending(x => x.ActualVisitDate).ToListAsync();
 
             var groupOfLeadBusiness = leadBusiness.GroupBy(x => new { x.leadfolowupId });
 
