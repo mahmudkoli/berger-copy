@@ -431,7 +431,11 @@ export class CollectionEntryListComponent implements OnInit {
 
     if (event.action == "edit-item") {
 			//Edit code..
-      this.router.navigate([`/collection/payment-details/${event.record.id}`]);
+      // this.router.navigate([`/collection/payment-details/${event.record.id}`]);
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([`/collection/payment-details/${event.record.id}`])
+      );
+      window.open(url, '_blank');
 			
 		}
 	}

@@ -90,11 +90,19 @@ export class SchemedetailListComponent implements OnInit, OnDestroy {
 	// }
 
 	editSchemeDetail(id) {
-		this.router.navigate(['/scheme/detail-edit', id]);
+		// this.router.navigate(['/scheme/detail-edit', id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/scheme/detail-edit', id])
+		);
+		window.open(url, '_blank');
 	}
 
 	newSchemeDetail() {
-		this.router.navigate(['/scheme/detail-add']);
+		// this.router.navigate(['/scheme/detail-add']);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/scheme/detail-add'])
+		);
+		window.open(url, '_blank');
 	}
 
 	deleteSchemeDetail(id) {

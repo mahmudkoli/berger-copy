@@ -119,11 +119,19 @@ export class FocusDealerListComponent implements OnInit {
 	// }
 
 	editFocusDealer(id) {
-		this.router.navigate(['/dealer/edit-focus-dealer', id]);
+		// this.router.navigate(['/dealer/edit-focus-dealer', id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/dealer/edit-focus-dealer', id])
+		);
+		window.open(url, '_blank');
 	}
 
 	newFocusDealer() {
-		this.router.navigate(['/dealer/new-focus-dealer']);
+		// this.router.navigate(['/dealer/new-focus-dealer']);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/dealer/new-focus-dealer'])
+		);
+		window.open(url, '_blank');
 	}
 
 	deleteFocusDealer(id) {

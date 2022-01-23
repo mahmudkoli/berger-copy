@@ -220,7 +220,11 @@ export class DealerListComponent implements OnInit, OnDestroy {
 	}
 
 	detailsDealerInfoStatusLog(id: any) {
-		this.router.navigate([`/dealer/dealer-log-details/${id}`]);
+		// this.router.navigate([`/dealer/dealer-log-details/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/dealer/dealer-log-details/${id}`])
+		);
+		window.open(url, '_blank');
 	}
 
 	updateDealerStatus(dealerStatus: DealerInfoStatus) {

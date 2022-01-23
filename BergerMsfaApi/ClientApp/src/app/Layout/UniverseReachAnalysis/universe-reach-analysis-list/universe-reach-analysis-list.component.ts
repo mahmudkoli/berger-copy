@@ -113,11 +113,19 @@ export class UniverseReachAnalysisListComponent implements OnInit, OnDestroy {
 	// }
 
 	editUniverseReachAnalysis(id) {
-		this.router.navigate(['/universe-reach-analysis/universe-reach-analysis-edit', id]);
+		// this.router.navigate(['/universe-reach-analysis/universe-reach-analysis-edit', id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/universe-reach-analysis/universe-reach-analysis-edit', id])
+		);
+		window.open(url, '_blank');
 	}
 
 	newUniverseReachAnalysis() {
-		this.router.navigate(['/universe-reach-analysis/universe-reach-analysis-add']);
+		// this.router.navigate(['/universe-reach-analysis/universe-reach-analysis-add']);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/universe-reach-analysis/universe-reach-analysis-add'])
+		);
+		window.open(url, '_blank');
 	}
 
 	deleteUniverseReachAnalysis(id) {

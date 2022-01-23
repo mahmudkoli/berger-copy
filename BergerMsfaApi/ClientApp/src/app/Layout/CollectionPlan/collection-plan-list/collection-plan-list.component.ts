@@ -122,11 +122,19 @@ export class CollectionPlanListComponent implements OnInit, OnDestroy {
 		// 	this.alertService.tosterWarning(`Sorry! You can't edit after ${obj.changeableMaxDateText}.`);
 		// 	return;
 		// }
-		this.router.navigate(['/collection-plan/collection-plan-edit', obj.id]);
+		// this.router.navigate(['/collection-plan/collection-plan-edit', obj.id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/collection-plan/collection-plan-edit', obj.id])
+		);
+		window.open(url, '_blank');
 	}
 
 	newCollectionPlan() {
-		this.router.navigate(['/collection-plan/collection-plan-add']);
+		// this.router.navigate(['/collection-plan/collection-plan-add']);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/collection-plan/collection-plan-add'])
+		);
+		window.open(url, '_blank');
 	}
 
 	deleteCollectionPlan(id) {

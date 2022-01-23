@@ -189,11 +189,19 @@ export class LeadListComponent implements OnInit, OnDestroy {
 	}
 
 	public detailsLead(id) {
-		this.router.navigate([`/lead/details/${id}`]);
+		// this.router.navigate([`/lead/details/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/lead/details/${id}`])
+		);
+		window.open(url, '_blank');
 	}
 
 	public editLead(id) {
-		this.router.navigate([`/lead/edit/${id}`]);
+		// this.router.navigate([`/lead/edit/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/lead/edit/${id}`])
+		);
+		window.open(url, '_blank');
 	}
 
 	

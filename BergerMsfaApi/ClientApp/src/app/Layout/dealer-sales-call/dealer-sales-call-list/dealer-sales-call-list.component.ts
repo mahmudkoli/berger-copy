@@ -259,11 +259,19 @@ export class DealerSalesCallListComponent implements OnInit, OnDestroy {
   }
 
   public detailsDealerSalesCall(id) {
-    this.router.navigate([`/dealer-sales-call/details/${id}`]);
+    // this.router.navigate([`/dealer-sales-call/details/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/dealer-sales-call/details/${id}`])
+		);
+		window.open(url, '_blank');
   }
 
   public editDealerSalesCall(id) {
-    this.router.navigate([`/dealer-sales-call/edit/${id}`]);
+    // this.router.navigate([`/dealer-sales-call/edit/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/dealer-sales-call/edit/${id}`])
+		);
+		window.open(url, '_blank');
   }
 
   public fnCustomTrigger(event) {

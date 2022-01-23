@@ -107,7 +107,11 @@ export class DealerOpeningListComponent implements OnInit {
 	}
 
     viewDealerOpening(id) {
-		this.router.navigate(['/dealer/openingList/', id]);
+		// this.router.navigate(['/dealer/openingList/', id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/dealer/openingList/', id])
+		);
+		window.open(url, '_blank');
 	}
 
 
