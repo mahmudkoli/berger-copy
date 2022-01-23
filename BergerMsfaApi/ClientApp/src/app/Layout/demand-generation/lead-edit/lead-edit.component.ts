@@ -104,8 +104,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
     const forkJoinSubscription1 = forkJoin([
       this.commonService.getUserInfoListByCurrentUserWithoutZoUser(),
       this.commonService.getDepotList(),
-      // this.commonService.getTerritoryList(),
-      // this.commonService.getZoneList(),
+      this.commonService.getTerritoryList(),
+      this.commonService.getZoneList(),
       this.dynamicDropdownService.GetDropdownByTypeCd(
         EnumDynamicTypeCode.TypeOfClient
       ),
@@ -116,16 +116,16 @@ export class LeadEditComponent implements OnInit, OnDestroy {
       ([
         users,
         depot,
-        // territory,
-        // zone,
+        territory,
+        zone,
         typeOfClient,
         paintingStage
         
       ]) => {
         this.userList = users.data;
         this.depotList = depot.data;
-        // this.territoryList = territory.data;
-        // this.zoneList = zone.data;
+        this.territoryList = territory.data;
+        this.zoneList = zone.data;
         this.typeOfClientList = typeOfClient.data;
         this.paintingStageList=paintingStage.data
       },

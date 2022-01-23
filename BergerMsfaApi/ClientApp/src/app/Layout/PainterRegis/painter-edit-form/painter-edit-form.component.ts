@@ -202,19 +202,19 @@ export class PainterEditFormComponent implements OnInit {
 
     callTerritories () {
         const controls = this.painterForm.controls;
-        const depots = controls['depot'].value;
+        const depot = controls['depot'].value;
         
-            this.commonSvc.getTerritoryListByDepot({'depots':depots}).subscribe(res => {
+            this.commonSvc.getTerritoryListByDepot({'depots':[depot]}).subscribe(res => {
             this.territories = res.data;
             });
     }
  
     callZones () {
         const controls = this.painterForm.controls;
-        const depots = controls['depot'].value;
-        const territories = controls['territory'].value;
+        const depot = controls['depot'].value;
+        const territory = controls['territory'].value;
         
-            this.commonSvc.getZoneListByDepotTerritory({'depots':depots,'territories':territories}).subscribe(res => {
+            this.commonSvc.getZoneListByDepotTerritory({'depots':[depot],'territories':[territory]}).subscribe(res => {
             this.zones = res.data;
             });
     }
