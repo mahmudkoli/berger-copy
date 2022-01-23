@@ -228,7 +228,11 @@ export class BrandListComponent implements OnInit, OnDestroy {
 		}
 	}
 	detailsBrandInfoStatusLogCall(id: any) {
-		this.router.navigate([`/brand/log-details/${id}`]);
+		// this.router.navigate([`/brand/log-details/${id}`]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree([`/brand/log-details/${id}`])
+		);
+		window.open(url, '_blank');
 	}
 
 	updateBrandStatus(brandStatus) {

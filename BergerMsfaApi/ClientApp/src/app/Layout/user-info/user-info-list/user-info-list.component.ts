@@ -106,11 +106,19 @@ export class UserInfoListComponent implements OnInit, OnDestroy {
     // }
 
 	editUserInfo(id) {
-		this.router.navigate(['/users-info/edituser-info', id]);
+		// this.router.navigate(['/users-info/edituser-info', id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/users-info/edituser-info', id])
+		);
+		window.open(url, '_blank');
 	}
 
 	newUserInfo() {
-		this.router.navigate(['/users-info/newuser-info']);
+		// this.router.navigate(['/users-info/newuser-info']);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/users-info/newuser-info'])
+		);
+		window.open(url, '_blank');
 	}
 
 	deleteUserInfo(id) {

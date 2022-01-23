@@ -55,13 +55,25 @@ export class PainterRegisListComponent implements OnInit {
     }
     
     detail(id) {
-        this.router.navigate(['/painter/detail/' + id]);
+        // this.router.navigate(['/painter/detail/' + id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/painter/detail/' + id])
+		);
+		window.open(url, '_blank');
     }
     edit(id) {
-        this.router.navigate(['/painter/edit/' + id]);
+        // this.router.navigate(['/painter/edit/' + id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/painter/edit/' + id])
+		);
+		window.open(url, '_blank');
     }
     updateStatus(id) {
-        this.router.navigate(['/painter/update/' + id]);
+        // this.router.navigate(['/painter/update/' + id]);
+		const url = this.router.serializeUrl(
+			this.router.createUrlTree(['/painter/update/' + id])
+		);
+		window.open(url, '_blank');
     }
     
     updatePainterStatus(painter:PainterStatus) {
